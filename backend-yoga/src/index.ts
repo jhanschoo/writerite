@@ -70,7 +70,7 @@ server.express.use(helmet());
 
 server.start({
   cors: {
-    origin: [/https:\/\/local.writerite.site:3000/, /https:\/\/localhost:3000/, /https:\/\/writerite.site/],
+    origin: [/https:\/\/localhost:3000/, /https:\/\/writerite.site/],
     credentials: true,
   },
   debug: NODE_ENV !== 'production',
