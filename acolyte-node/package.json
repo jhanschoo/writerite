@@ -1,0 +1,52 @@
+{
+  "name": "@writerite/acolyte-node",
+  "version": "1.0.0",
+  "description": "node implementation of WriteRite acolyte (i.e. bot)",
+  "main": "dist/index.js",
+  "repository": "https://gitlab.com/writerite/acolyte-node",
+  "author": "Johannes Choo",
+  "license": "AGPL-3.0-or-later",
+  "private": false,
+  "dependencies": {
+    "@types/apollo-upload-client": "^8.1.1",
+    "@types/async-lock": "^1.1.0",
+    "@types/dotenv": "^6.1.0",
+    "@types/graphql": "^14.0.4",
+    "@types/ioredis": "^4.0.4",
+    "@types/node-fetch": "^2.1.4",
+    "@types/ws": "^6.0.1",
+    "apollo-cache-inmemory": "^1.3.12",
+    "apollo-client": "^2.4.8",
+    "apollo-link": "^1.2.6",
+    "apollo-link-context": "^1.0.12",
+    "apollo-link-error": "^1.1.5",
+    "apollo-link-persisted-queries": "^0.2.2",
+    "apollo-link-state": "^0.4.2",
+    "apollo-link-ws": "^1.0.12",
+    "apollo-upload-client": "^10.0.0",
+    "apollo-utilities": "^1.0.27",
+    "async-lock": "^1.1.3",
+    "dotenv": "^6.2.0",
+    "graphql": "^14.0.2",
+    "graphql-tag": "^2.10.0",
+    "ioredis": "^4.3.0",
+    "node-fetch": "^2.3.0",
+    "subscriptions-transport-ws": "^0.9.15",
+    "typescript": "^3.2.2",
+    "ws": "^6.1.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.10",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.0",
+    "typescript-tslint-plugin": "^0.2.1"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start:dev": "tsc NODE_ENV=development node dist/index.js",
+    "start:test": "tsc && NODE_ENV=testing node dist/index.js",
+    "start:production": "tsc && NODE_ENV=production node dist/index.js",
+    "test": "jest --runInBand"
+  }
+}

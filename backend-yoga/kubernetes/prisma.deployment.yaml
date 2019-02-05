@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prisma
+spec:
+  selector:
+    matchLabels:
+      app: prisma
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: prisma
+        env: production
+        tier: backend
+    spec:
+      containers:
+      - env:
+        - name: PRISMA_CONFIG
+          value: |
+            port: 4466
+            databases:
+              default:
+                connector: postgres
+                migrations: true
+                host: postgres
+                port: 5432
+                user: prisma
+                password: prisma
+        image: prismagraphql/prisma:1.25
+        name: prisma
+        ports:
+        - containerPort: 4466
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi

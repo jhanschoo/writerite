@@ -1,0 +1,139 @@
+# TODO: refactor once graphql supports `extend`
+# https://github.com/graphql/graphql-js/issues/922
+type Query {
+  _empty: String
+  # RwUser
+  rwUser(id: ID!): RwUser
+  rwUsers: [RwUser!]
+  # RwDeck
+  rwDeck(id: ID!): RwDeck
+  rwDecks: [RwDeck!]
+  # RwCard
+  rwCard(id: ID!): RwCard
+  rwCardsOfDeck(deckId: ID!): [RwCard!]
+  # RwRoom
+  rwRoom(id: ID!): RwRoom
+  rwRooms: [RwRoom!]
+  # RwRoomMessage
+  rwRoomMessage(id: ID!): RwRoomMessage
+  rwRoomMessagesOfRoom(roomId: ID!): [RwRoomMessage!]
+}
+
+type Mutation {
+  _empty: String
+  # Authorization
+  signin(
+    email: String!
+    token: String!
+    authorizer: String!
+    identifier: String!
+    persist: Boolean
+  ): RwAuthResponse
+  # Deck
+  rwDeckSave(id: ID, name: String): RwDeck
+  rwDeckDelete(id: ID!): ID
+  # Card
+  rwCardSave(id: ID, front: String!, back: String!, deckId: ID!): RwCard
+  rwCardDelete(id: ID!): ID
+  # Room
+  rwRoomCreate(name: String): RwRoom
+  rwRoomServeDeck(id: ID! deckId: ID): RwRoom
+  rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom
+  rwRoomMessageCreate(roomId: ID! content: String!): RwRoomMessage
+}
+
+type Subscription {
+  _empty: String
+  # Deck
+  rwDeckUpdates: RwDeckUpdate!
+  # Card
+  rwCardUpdatesOfDeck(deckId: ID!): RwCardUpdate!
+  # Room
+  rwRoomUpdates: RwRoomUpdate!
+  # RoomMessage
+  rwRoomMessageUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
+}
+
+enum RwMutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+type RwDeckUpdate {
+  mutation: RwMutationType!
+  new: RwDeck
+  oldId: ID
+}
+
+type RwCardUpdate {
+  mutation: RwMutationType!
+  new: RwCard
+  oldId: ID
+}
+
+type RwRoomMessageUpdate {
+  mutation: RwMutationType!
+  new: RwRoomMessage
+  oldId: ID
+}
+
+type RwRoomUpdate {
+  mutation: RwMutationType!
+  new: RwRoom
+  oldId: ID
+}
+
+# RwDeck
+
+type RwDeck {
+  id: ID!
+  name: String!
+  owner: RwUser!
+  cards: [RwCard!]!
+}
+
+# RwCard
+
+type RwCard {
+  id: ID!
+  front: String!
+  back: String!
+  sortKey: String!
+  deck: RwDeck!
+}
+
+# RwRoom
+
+type RwRoom {
+  id: ID!
+  name: String!
+  owner: RwUser!
+  occupants: [RwUser!]!
+  servingDeck: RwDeck
+  messages: [RwRoomMessage!]!
+}
+
+# RwRoomMessage
+
+type RwRoomMessage {
+  id: ID!
+  content: String!
+  sender: RwUser
+}
+
+# RwAuthorization
+
+type RwAuthResponse {
+  user: RwUser!
+  token: String!
+}
+
+# RwUser
+
+type RwUser {
+  id: ID!
+  email: String!
+  roles: [String!]!
+  decks: [RwDeck!]!
+}

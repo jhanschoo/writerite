@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  selector:
+    matchLabels:
+      app: postgres
+      env: production
+      tier: backend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+        env: production
+        tier: backend
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_PASSWORD
+          value: prisma
+        - name: POSTGRES_USER
+          value: prisma
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        image: postgres:11.1
+        name: postgres
+        ports:
+        - containerPort: 5432
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgres
+      volumes:
+      - name: postgres
+        persistentVolumeClaim:
+          claimName: postgres

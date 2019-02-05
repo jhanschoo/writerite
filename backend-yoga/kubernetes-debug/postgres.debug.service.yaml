@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-debug
+  labels:
+    app: postgres
+    env: debug
+    tier: backend
+spec:
+  ports:
+  - port: 5432
+    targetPort: 5432
+  selector:
+    app: postgres
+    env: production
+    tier: backend
+  type: LoadBalancer

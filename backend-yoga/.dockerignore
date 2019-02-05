@@ -1,0 +1,17 @@
+# generated
+node_modules
+generated
+dist
+
+# logs
+npm-debug.log
+
+# local
+.env
+
+# deployment
+kubernetes*
+
+# development
+.vscode
+*.code-workspace

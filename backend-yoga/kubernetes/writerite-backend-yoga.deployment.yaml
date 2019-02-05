@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: writerite-backend-yoga
+spec:
+  selector:
+    matchLabels:
+      app: writerite-backend-yoga
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: writerite-backend-yoga
+        env: production
+        tier: backend
+    spec:
+      containers:
+      - env:
+        - name: PRISMA_ENDPOINT
+          value: http://prisma:4466/writerite/production
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: writerite-oauth2-app-credentials-production
+              key: googleClientID
+              optional: false
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: writerite-oauth2-app-credentials-production
+              key: googleClientSecret
+              optional: false
+        - name: FACEBOOK_APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: writerite-oauth2-app-credentials-production
+              key: facebookAppID
+              optional: false
+        - name: FACEBOOK_APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: writerite-oauth2-app-credentials-production
+              key: facebookAppSecret
+              optional: false
+        - name: RECAPTCHA_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: writerite-oauth2-app-credentials-production
+              key: recaptchaSecret
+              optional: false
+        - name: REDIS_HOST
+          value: redis
+        - name: REDIS_PORT
+          value: "6379"
+        image: jhanschoo/writerite-backend-yoga:1.0.2
+        name: writerite-backend-yoga
+        ports:
+        - containerPort: 4000
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi

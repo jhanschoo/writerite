@@ -1,0 +1,87 @@
+type PUser {
+  id: ID! @unique
+  email: String! @unique
+  passwordHash: String
+  googleId: String
+  facebookId: String
+  decks: [PDeck!]!
+  defaultRoles: [String!]!
+  ownerOfRoom: [PRoom!]! @relation(name: "PUserOwningPRooms")
+  occupyingRoom: [PRoom!]! @relation(name: "PUsersOccupyingPRooms")
+  sentMessages: [PRoomMessage!]! @relation(name: "PUserSentPRoomMessages")
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# To refactor message types into inheritance once
+# interfaces extending interfaces is implemented
+# https://github.com/facebook/graphql/issues/295
+# https://github.com/prisma/prisma/issues/83
+# https://itnext.io/graphql-interfaces-and-union-types-with-prisma-and-yoga-7224f9e1d9ad
+
+# interface Card {
+#   id: ID! @unique
+#   deck: Deck!
+# }
+
+type PSimpleCard { # implements Card {
+  id: ID! @unique
+  deck: PDeck! @relation(name: "PDeckContainingPSimpleCards")
+  front: String!
+  back: String!
+  sortKey: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PDeck {
+  id: ID! @unique
+  name: String!
+  owner: PUser!
+  # cards: [PCard!]! @relation(onDelete: CASCADE)
+  cards: [PSimpleCard!]! @relation(name: "PDeckContainingPSimpleCards" onDelete: CASCADE)
+  servedAt: [PRoom!]! @relation(name: "PRoomServingPDeck" onDelete: SET_NULL)
+  published: Boolean! @default(value: "false")
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PRoom {
+  id: ID! @unique
+  name: String!
+  owner: PUser! @relation(name: "PUserOwningPRooms")
+  occupants: [PUser!]! @relation(name: "PUsersOccupyingPRooms")
+  servingDeck: PDeck @relation(name: "PRoomServingPDeck")
+  # messages: [PRoomMessage!]!
+  messages: [PRoomMessage!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+# To refactor message types into inheritance once
+# interfaces extending interfaces is implemented
+# https://github.com/facebook/graphql/issues/295
+# https://github.com/prisma/prisma/issues/83
+# https://itnext.io/graphql-interfaces-and-union-types-with-prisma-and-yoga-7224f9e1d9ad
+
+# interface RoomMessage {
+#   id: ID! @unique
+#   room: Room!
+# }
+
+# interface UserMessage {
+#   sender: User!
+# }
+
+# interface SimpleMessage {
+#   content: String!
+# }
+
+type PRoomMessage { # implements RoomMessage & UserMessage & SimpleMessage {
+  id: ID! @unique
+  room: PRoom!
+  sender: PUser @relation(name: "PUserSentPRoomMessages")
+  content: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

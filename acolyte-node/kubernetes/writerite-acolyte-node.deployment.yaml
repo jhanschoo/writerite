@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: writerite-acolyte-node
+spec:
+  selector:
+    matchLabels:
+      app: writerite-acolyte-node
+      env: production
+      tier: backend
+  template:
+    metadata:
+      labels:
+        app: writerite-acolyte-node
+        env: production
+        tier: backend
+    spec:
+      containers:
+      - env:
+        - name: GRAPHQL_HTTP
+          value: http://writerite-backend-yoga:4000
+        - name: REDIS_HOST
+          value: redis
+        - name: REDIS_PORT
+          value: "6379"
+        image: jhanschoo/writerite-acolyte-node:1.0.0
+        name: writerite-acolyte-node
+        ports:
+        - containerPort: 4000
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi

@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+
+# generated files
+generated/
+
+# logs
+npm-debug.log
+
+# dist
+dist/
+
+# secrets and local config
+.env

@@ -1,0 +1,16 @@
+{
+    "defaultSeverity": "warning",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "linterOptions": {},
+    "rules": {
+      "quotemark": [true, "single"],
+      "indent": [true, "spaces", 2],
+      "ordered-imports": false,
+      "object-literal-sort-keys": false,
+      "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"]
+    },
+    "rulesDirectory": []
+}
