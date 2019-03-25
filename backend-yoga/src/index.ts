@@ -70,7 +70,7 @@ server.express.use(helmet());
 
 server.start({
   cors: {
-    origin: [/https:\/\/localhost:3000/, /https:\/\/writerite.site/],
+    origin: NODE_ENV === 'production' ? /https:\/\/writerite.site/ : /https:\/\/localhost:3000/,
     credentials: true,
   },
   debug: NODE_ENV !== 'production',
@@ -81,4 +81,4 @@ server.start({
     }
     : undefined,
   // tslint:disable-next-line no-console
-}, () => console.log(`Server is running`));
+}, () => console.log(`Server is running in environment ${NODE_ENV}`));
