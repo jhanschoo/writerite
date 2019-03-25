@@ -1,0 +1,6 @@
+# development PKI files
+/pki/*.crt
+/pki/*.csr
+/pki/*.key
+/pki/*.private
+/pki/*.srl
