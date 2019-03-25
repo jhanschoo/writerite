@@ -1,2 +1,2 @@
 npx prisma deploy
-npm run start:production
+npm run start

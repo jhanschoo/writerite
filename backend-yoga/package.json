@@ -1,6 +1,6 @@
 {
   "name": "@writerite/backend-yoga",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "graphql-yoga implementation of WriteRite backend",
   "main": "dist/index.js",
   "repository": "https://gitlab.com/writerite/backend-yoga",
@@ -43,9 +43,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "start:dev": "tsc && NODE_ENV=development node dist/src/index.js",
-    "start:production": "tsc && NODE_ENV=production node dist/src/index.js",
-    "start:test": "tsc && NODE_ENV=testing node dist/src/index.js",
+    "start": "tsc && node dist/src/index.js",
     "test": "jest --runInBand"
   }
 }
