@@ -20,6 +20,7 @@ spec:
         - name: PRISMA_CONFIG
           value: |
             port: 4466
+            managementApiSecret: writerite-prisma
             databases:
               default:
                 connector: postgres
@@ -28,7 +29,7 @@ spec:
                 port: 5432
                 user: prisma
                 password: prisma
-        image: prismagraphql/prisma:1.25
+        image: prismagraphql/prisma:1.29
         name: prisma
         ports:
         - containerPort: 4466

@@ -1,3 +1,5 @@
+#!/usr/bin/env zsh
+
 NODE_ENV="development"
 if [[ -n "$1" ]]
 then

@@ -1,8 +1,8 @@
+import { Redis } from 'ioredis';
+import { PubSubEngine } from 'apollo-server';
+
 import { ContextParameters } from 'graphql-yoga/dist/types';
 import { Prisma } from '../generated/prisma-client';
-import { PubSub } from 'graphql-yoga';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
-import { Redis } from 'ioredis';
 
 export type AFunResTo<T> = ((parent: any) => Promise<T>);
 export type FunResTo<T> = ((parent: any) => T);
@@ -16,7 +16,7 @@ export interface IRwContext {
   req: ContextParameters;
   sub?: ICurrentUser;
   prisma: Prisma;
-  pubsub: PubSub | RedisPubSub;
+  pubsub: PubSubEngine;
   redisClient: Redis;
 }
 

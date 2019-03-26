@@ -6,11 +6,10 @@ const ENVVARS = [
   'GOOGLE_CLIENT_SECRET',
   'FACEBOOK_APP_ID',
   'FACEBOOK_APP_SECRET',
+  'PRISMA_ENDPOINT',
   'RECAPTCHA_SECRET',
-  // 'CERT_FILE',
-  // 'KEY_FILE',
-  // 'REDIS_HOST',
-  // 'REDIS_PORT',
+  'REDIS_HOST',
+  'REDIS_PORT',
 ];
 
 ENVVARS.forEach((varname) => {

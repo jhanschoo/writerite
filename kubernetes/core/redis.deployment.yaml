@@ -18,7 +18,7 @@ spec:
         tier: backend
     spec:
       containers:
-      - image: redis:5.0.3
+      - image: redis:5.0.4
         name: redis
         ports:
         - containerPort: 6379
