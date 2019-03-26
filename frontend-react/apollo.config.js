@@ -1,7 +1,7 @@
 module.exports = {
   client: {
     service: {
-      name: 'backend-yoga',
+      name: 'writerite-backend-yoga',
       localSchemaFile: '../backend-yoga/src/schema/schema.graphql'
     }
   }
