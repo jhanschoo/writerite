@@ -5,7 +5,7 @@ import WrBrandText from "./WrBrandText";
 import WrSignin from "./WrSignin";
 
 const WrLandingContent = (props: any) => (
-  <LandingContent as="article">
+  <LandingContent as="article" {...props}>
     <Flex
       as="header"
       css={{
@@ -30,8 +30,9 @@ const WrLandingContent = (props: any) => (
       p="1em"
       justifyContent="center"
       alignItems="center"
+      bg="bg1"
     >
-      <WrSignin />
+      <WrSignin bg="bg2" />
     </Flex>
   </LandingContent>
 )

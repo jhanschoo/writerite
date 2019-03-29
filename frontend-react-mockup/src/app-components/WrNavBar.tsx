@@ -7,7 +7,7 @@ import BrandText from "./WrBrandText";
 
 const WrNavBar = (props: any) => (
   <NavBar
-    left={
+    leftItems={
       <>
         <NavBarItem
           pt="0.5em"
@@ -17,13 +17,14 @@ const WrNavBar = (props: any) => (
         </NavBarItem>
       </>
     }
-    right={
+    rightItems={
       <>
         <NavBarItem>
           Sign in
         </NavBarItem>
       </>
     }
+    {...props}
   />
 );
 

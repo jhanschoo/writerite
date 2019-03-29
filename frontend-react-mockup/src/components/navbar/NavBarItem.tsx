@@ -5,8 +5,8 @@ const NavBarItem = styled(Box)``;
 
 NavBarItem.defaultProps = {
   width: "auto",
-  pt: "1em",
-  pb: "1em"
+  pt: 3,
+  pb: 3
 };
 
 export default NavBarItem;

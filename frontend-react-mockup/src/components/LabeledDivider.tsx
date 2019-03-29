@@ -8,7 +8,7 @@ const Spacer = styled(Box)`
 `;
 
 Spacer.defaultProps = {
-  bg: "fg"
+  bg: "edge"
 };
 
 const LabeledDivider = (props: any) => (
@@ -17,7 +17,7 @@ const LabeledDivider = (props: any) => (
   >
     <Spacer />
     <Box
-      m="0.5em"
+      m={2}
       {...props}
     />
     <Spacer />

@@ -4,17 +4,17 @@ import { Box, Flex } from "rebass";
 
 const LeftSpacer = styled(Box)`
   grid-area: 1 / 1 / 2 / 2;
-  border-bottom: 1px solid ${props => props.theme.colors.fg};
+  border-bottom: 1px solid ${props => props.theme.colors.edge};
 `;
 
 const RightSpacer =styled(Box)`
   grid-area: 1 / 14 / 2 / 15;
-  border-bottom: 1px solid ${props => props.theme.colors.fg};
+  border-bottom: 1px solid ${props => props.theme.colors.edge};
 `;
 
 const NavBarMain = styled(Flex)`
   grid-area: 1 / 2 / 2 / 14;
-  border-bottom: 1px solid ${props => props.theme.colors.fg};
+  border-bottom: 1px solid ${props => props.theme.colors.edge};
 `
 
 NavBarMain.defaultProps = {
@@ -25,19 +25,19 @@ NavBarMain.defaultProps = {
 
 const NavBar = (props: any) => (
   <>
-    <LeftSpacer />
-    <NavBarMain>
+    <LeftSpacer {...props} />
+    <NavBarMain {...props}>
       <Box>
-        {props.left}
+        {props.leftItems}
       </Box>
       <Box>
-        {props.center}
+        {props.centerItems}
       </Box>
       <Box>
-        {props.right}
+        {props.rightItems}
       </Box>
     </NavBarMain>
-    <RightSpacer />
+    <RightSpacer {...props} />
   </>
 );
 
