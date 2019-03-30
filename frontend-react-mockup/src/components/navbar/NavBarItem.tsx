@@ -1,12 +1,12 @@
 import styled from 'styled-components';
-import { Box } from "rebass";
+import { Flex } from "rebass";
 
-const NavBarItem = styled(Box)``;
+const NavBarItem = styled(Flex)``;
 
 NavBarItem.defaultProps = {
+  as: "li",
   width: "auto",
-  pt: 3,
-  pb: 3
+  py: 1
 };
 
 export default NavBarItem;

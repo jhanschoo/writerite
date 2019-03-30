@@ -12,7 +12,7 @@ const WrLandingContent = (props: any) => (
         minHeight: "33vh",
       }}
       width={[1, 3/5, 3/5 ]}
-      p="1em"
+      p={4}
       justifyContent="center"
       alignItems="center"
     >
@@ -21,13 +21,13 @@ const WrLandingContent = (props: any) => (
         fontSize={[4, 6, 6]}
         textAlign="center"
       >
-        Study with supercharged flashcards using <WrBrandText />.
+        <em>Study with supercharged flashcards on </em><WrBrandText /><em>.</em>
       </Heading>
     </Flex>
     <Flex
       as="aside"
       width={[1, 2/5, 2/5 ]}
-      p="1em"
+      p={3}
       justifyContent="center"
       alignItems="center"
       bg="bg1"

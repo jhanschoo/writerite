@@ -45,6 +45,7 @@ const fg1 = nearBlack;
 const bg0 = white;
 const bg1 = nearWhite;
 const bg2 = lightGray;
+const primary = orange;
 const activeBg = washedBlue;
 const edge = midGray;
 const activeEdge = darkBlue;
@@ -78,6 +79,7 @@ const theme = {
     bg0,
     bg1,
     bg2,
+    primary,
     edge,
     error,
     activeEdge,

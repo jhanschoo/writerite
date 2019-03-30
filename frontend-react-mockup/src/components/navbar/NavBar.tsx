@@ -20,24 +20,15 @@ const NavBarMain = styled(Flex)`
 NavBarMain.defaultProps = {
   as: "nav",
   justifyContent: "space-between",
-  alignItems: "center"
+  alignItems: "center",
+  flexWrap: "wrap"
 };
 
 const NavBar = (props: any) => (
   <>
-    <LeftSpacer {...props} />
-    <NavBarMain {...props}>
-      <Box>
-        {props.leftItems}
-      </Box>
-      <Box>
-        {props.centerItems}
-      </Box>
-      <Box>
-        {props.rightItems}
-      </Box>
-    </NavBarMain>
-    <RightSpacer {...props} />
+    <LeftSpacer />
+    <NavBarMain {...props} />
+    <RightSpacer />
   </>
 );
 
