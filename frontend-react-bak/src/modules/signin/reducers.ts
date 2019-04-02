@@ -1,6 +1,6 @@
 import { ActionTypes, AuthorizationAction } from './actions';
 import { OptionalUserAndToken } from './types';
-import { client } from '../apolloClient';
+import { client } from '../../apolloClient';
 
 export interface SigninState {
   data: OptionalUserAndToken;

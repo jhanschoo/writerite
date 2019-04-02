@@ -46,11 +46,3 @@ The app is hosted by Netlify. Netlify's zero-config deployment for create-react-
   * Session-global: Redux
   * Persistent: Apollo Cache
 * Deployment and build tooling: create-react-app with rescripts, published on Netlify
-
-## Other notes
-
-The package version of the following is fixxed because of the following
-performance issue.
-
-    // https://github.com/Microsoft/TypeScript/issues/30663
-    "@types/styled-components": "4.1.10",
