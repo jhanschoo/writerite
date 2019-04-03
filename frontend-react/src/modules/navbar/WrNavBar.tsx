@@ -59,13 +59,13 @@ class WrNavBar extends PureComponent<Props> {
     return (
       <>
         <NavBarItem>
-          <NavLink to="/decks">
+          <NavLink to="/deck">
             <Icon icon="layers" />
             Decks
           </NavLink>
         </NavBarItem>
         <NavBarItem>
-          <NavLink to="/rooms">
+          <NavLink to="/room">
             <Icon icon="message-circle" />
             Rooms
           </NavLink>

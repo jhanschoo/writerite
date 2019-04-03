@@ -27,7 +27,7 @@ mutation Signin(
 export interface SigninVariables {
   readonly email: string;
   readonly token: string;
-  readonly authorizer: 'GOOGLE' | 'FACEBOOK' | 'LOCAL';
+  readonly authorizer: 'GOOGLE' | 'FACEBOOK' | 'LOCAL' | 'DEVELOPMENT';
   readonly identifier: string;
 }
 

@@ -9,6 +9,7 @@ import { CurrentUser } from './modules/signin/types';
 
 import LandingView from './modules/landing/LandingView';
 import SigninView from './modules/signin/SigninView';
+import DeckView from './modules/deck/DeckView';
 import ViewportContainer from './ui/layout/ViewportContainer';
 
 interface StateProps {
@@ -18,13 +19,13 @@ interface StateProps {
 type Props = StateProps & RouteComponentProps;
 
 // tslint:disable-next-line: variable-name
-const App: React.FunctionComponent<StateProps & RouteComponentProps> = (_props: Props) => {
-  // const { user } = props;
+const App: React.FunctionComponent<StateProps & RouteComponentProps> = (props: Props) => {
+  const { user } = props;
   return (
     <ViewportContainer bg="bg1">
       <Switch>
         <Route path="/" exact={true} component={LandingView} />
-        {/* {user && <Route path="/dashboard" component={DashboardView} />} */}
+        {user && <Route path="/deck" component={DeckView} />}
         <Route path="/signin" exact={true} component={SigninView} />
         <Redirect to="/"/>
       </Switch>

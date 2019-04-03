@@ -17,9 +17,19 @@ body {
     transform: scaleY(0);
     max-height: 0em;
   }
-
   100% {
     transform: scaleY(1);
     max-height: 2em;
+  }
+}
+
+@keyframes fade-in-down {
+  0% {
+    opacity: 0;
+    transform: translateY(-0.5em);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

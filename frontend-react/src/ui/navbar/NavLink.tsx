@@ -5,9 +5,10 @@ import Link from '../Link';
 
 const NavLink = styled(Link)`
   display: flex;
+  border: 1px solid ${(props) => props.theme.colors.bg1};
 
   &.active {
-    background: ${(props) => props.theme.colors.activeBg};
+    border: 1px solid ${(props) => props.theme.colors.edge};
   }
 `;
 

@@ -1,22 +1,22 @@
 import React from 'react';
-import { Flex, FlexProps } from 'rebass';
 
-interface Props extends FlexProps { icon: string; }
+interface Props {
+  icon: string;
+  size?: number;
+}
 
 const Icon = (props: Props) => (
-  <Flex {...props}>
-    <svg
-      width="24"
-      height="24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <use xlinkHref={`feather/feather-sprite.svg#${props.icon}`} />
-    </svg>
-  </Flex>
+  <svg
+    width={props.size || 24}
+    height={props.size || 24}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <use xlinkHref={`feather/feather-sprite.svg#${props.icon}`} />
+  </svg>
 );
 
 export default Icon;

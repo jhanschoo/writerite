@@ -36,41 +36,28 @@ interface DispatchProps {
 
 type Props = DispatchProps & RouteComponentProps;
 
-const handleLocalSignin = (
-  mutate: MutationFn<SigninData, SigninVariables>,
-) => (values: FormValues) => {
-  return mutate({
-    variables: {
-      email: values.email,
-      token: values.recaptcha,
-      authorizer: 'LOCAL',
-      identifier: values.password,
-    },
-  });
-};
-
 interface FormValues {
-  email: string;
+  username: string;
   password: string;
   confirmPassword: string;
   recaptcha: string;
-  isSignin: boolean;
+  isSignup: boolean;
 }
 
 const formSchema = yup.object().shape({
-  email: yup.string()
+  username: yup.string()
     .required('Email is required')
     .email('Please enter a valid email'),
   password: yup.string()
     .required('Password is required')
-    .when('isSignin', {
+    .when('isSignup', {
       is: true,
       then: yup.string()
         .oneOf([yup.ref('confirmPassword')], 'Passwords do not match'),
     }),
   confirmPassword: yup.string(),
   recaptcha: yup.string()
-    .when('isSignin', {
+    .when('isSignup', {
       is: true,
       then: yup.string()
         .required('Please verify that you are human'),
@@ -79,17 +66,17 @@ const formSchema = yup.object().shape({
 });
 
 const formInitialValues: FormValues = {
-  email: '',
+  username: '',
   password: '',
   confirmPassword: '',
   recaptcha: '',
-  isSignin: true,
+  isSignup: true,
 };
 
 class WrSignin extends Component<Props> {
 
   public readonly state = {
-    isSignin: formInitialValues.isSignin,
+    isSignup: formInitialValues.isSignup,
     thirdPartySigninUnderway: false,
   };
 
@@ -98,12 +85,79 @@ class WrSignin extends Component<Props> {
   }
 
   public readonly render = () => {
-    const { isSignin } = this.state;
+    const { isSignup } = this.state;
     const { handleSigninSuccess, toggleSignin } = this;
     const renderForm = (
       mutate: MutationFn<SigninData, SigninVariables>,
       { loading }: MutationResult<SigninData>,
     ) => {
+      const {
+        setThirdPartySigninUnderway,
+        unsetThirdPartySigninUnderway,
+      } = this;
+      const { thirdPartySigninUnderway } = this.state;
+      const disabled = thirdPartySigninUnderway || loading;
+
+      const handleGoogleSignin = async (): Promise<void> => {
+        await setThirdPartySigninUnderway();
+        const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
+        return googleAuth.signIn().then((googleUser: any) => {
+          return mutate({
+            variables: {
+              email: googleUser.getBasicProfile().getEmail(),
+              token: googleUser.getAuthResponse().id_token,
+              authorizer: 'GOOGLE',
+              identifier: googleUser.getId(),
+            },
+          }).catch(() => unsetThirdPartySigninUnderway());
+        }, () => unsetThirdPartySigninUnderway());
+      };
+      const handleFacebookSignin = async (): Promise<void> => {
+        await setThirdPartySigninUnderway();
+        return (await FBDeferred).login(async (loginResponse: any) => {
+          const { authResponse } = loginResponse;
+          if (authResponse) {
+            (await FBDeferred).api('/me', {
+              fields: 'name,email',
+            }, (apiResponse: any) => {
+              mutate({
+                variables: {
+                  email: apiResponse.email,
+                  token: authResponse.accessToken,
+                  authorizer: 'FACEBOOK',
+                  identifier: authResponse.userID,
+                },
+              }).catch(() => unsetThirdPartySigninUnderway());
+            });
+          } else {
+            unsetThirdPartySigninUnderway();
+          }
+        }, {
+            scope: 'public_profile,email',
+          });
+      };
+
+      const handleLocalSignin = (values: FormValues) => {
+        return mutate({
+          variables: {
+            email: values.username,
+            token: values.recaptcha,
+            authorizer: 'LOCAL',
+            identifier: values.password,
+          },
+        });
+      };
+      
+      const handleDevelopmentSignin = () => {
+        return mutate({
+          variables: {
+            email: 'abc@123.xyz',
+            token: '',
+            authorizer: 'DEVELOPMENT',
+            identifier: '123',
+          },
+        });
+      };
       const renderFields = (props: FormikProps<FormValues>) => {
         const {
           handleSubmit,
@@ -115,11 +169,6 @@ class WrSignin extends Component<Props> {
           errors,
           touched,
         } = props;
-        const {
-          setThirdPartySigninUnderway,
-          unsetThirdPartySigninUnderway,
-        } = this;
-        const { thirdPartySigninUnderway } = this.state;
         this.recaptchaCallback = (gRecaptchaResponse: string) => {
           setFieldTouched('recaptcha');
           setFieldValue('recaptcha', gRecaptchaResponse || '');
@@ -151,94 +200,34 @@ class WrSignin extends Component<Props> {
             {errors.password || errors.confirmPassword}
           </SmallMessage>
         );
-
-        const handleGoogleSignin = async (): Promise<void> => {
-          await setThirdPartySigninUnderway();
-          const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
-          return googleAuth.signIn().then((googleUser: any) => {
-            return mutate({
-              variables: {
-                email: googleUser.getBasicProfile().getEmail(),
-                token: googleUser.getAuthResponse().id_token,
-                authorizer: 'GOOGLE',
-                identifier: googleUser.getId(),
-              },
-            }).catch(() => unsetThirdPartySigninUnderway());
-          }, () => unsetThirdPartySigninUnderway());
-        };
-        const handleFacebookSignin = async (): Promise<void> => {
-          await setThirdPartySigninUnderway();
-          return (await FBDeferred).login(async (loginResponse: any) => {
-            const { authResponse } = loginResponse;
-            if (authResponse) {
-              (await FBDeferred).api('/me', {
-                fields: 'name,email',
-              }, (apiResponse: any) => {
-                mutate({
-                  variables: {
-                    email: apiResponse.email,
-                    token: authResponse.accessToken,
-                    authorizer: 'FACEBOOK',
-                    identifier: authResponse.userID,
-                  },
-                }).catch(() => unsetThirdPartySigninUnderway());
-              });
-            } else {
-              unsetThirdPartySigninUnderway();
-            }
-          }, {
-              scope: 'public_profile,email',
-            });
-        };
-        const disabled = thirdPartySigninUnderway || loading;
         return (
-          <Box
-            p={3}
-            bg="bg2"
-          >
             <form onSubmit={handleSubmit}>
-              <Button
-                width="100%"
-                variant="googleRed"
-                disabled={disabled}
-                onClick={handleGoogleSignin}
-                my={2}
-              >
-                Sign in with Google
-              </Button>
-              <Button
-                width="100%"
-                variant="facebookBlue"
-                disabled={disabled}
-                onClick={handleFacebookSignin}
-                my={2}
-              >
-                Sign in with Facebook
-              </Button>
-              <LabeledDivider>
-                OR
-              </LabeledDivider>
               <Fieldset my={1}>
+                <label htmlFor="username">Email</label>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  id="username"
                   type="email"
-                  name="email"
-                  placeholder="Email"
+                  name="username"
+                  autocomplete={isSignup ? 'new-username' : 'current-username'}
+                  placeholder="abc@xyz.com"
                   disabled={disabled}
                   my={1}
                   width="100%"
-                  variant={showError('email') ? 'error' : (showValid('email') ? 'valid' : '')}
+                  variant={showError('username') ? 'error' : (showValid('username') ? 'valid' : '')}
                 />
-                {maybeError('email')}
+                {maybeError('username')}
               </Fieldset>
               <Fieldset my={1}>
+                <label htmlFor="password">Password</label>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  id="password"
                   type="password"
                   name="password"
-                  placeholder="Password"
+                  autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
                   my={1}
                   width="100%"
@@ -246,13 +235,15 @@ class WrSignin extends Component<Props> {
                 />
                 {formattedPasswordError}
               </Fieldset>
-              <Fieldset my={1} css={isSignin ? {} : { display: 'none' }}>
+              <Fieldset my={1} css={isSignup ? {} : { display: 'none' }}>
+                <label htmlFor="confirmPassword">Confirm Password</label>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
+                  id="confirmPassword"
                   type="password"
                   name="confirmPassword"
-                  placeholder="Confirm Password (required for new users)"
+                  autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
                   my={1}
                   width="100%"
@@ -260,9 +251,7 @@ class WrSignin extends Component<Props> {
                 />
                 {formattedPasswordError}
               </Fieldset>
-              <Fieldset
-                css={isSignin ? {} : { display: 'none' }}
-              >
+              <Fieldset>
                 <Text textAlign="center">
                   <div id="g-recaptcha" style={{ display: 'inline-block' }} />
                   {maybeError('recaptcha')}
@@ -274,26 +263,55 @@ class WrSignin extends Component<Props> {
                 variant="default"
                 my={2}
               >
-                {isSignin ? 'Sign in with Email and Password' : 'Login with Email and Password'}
+                {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
               </Button>
               <SmallMessage>
-                {isSignin ? 'Existing user? ' : 'New user? '}
+                {isSignup ? 'Existing user? ' : 'New user? '}
                 <a href="#" onClick={toggleSignin(props)}>
-                  {isSignin ? 'Login' : 'Sign in'}
+                  {isSignup ? 'Login' : 'Sign up'}
                 </a>
               </SmallMessage>
             </form>
-          </Box>
         );
       };
+      const developmentSignin = (process.env.NODE_ENV !== 'development')
+        ? ''
+        : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
       return (
-        <Formik
-          initialValues={formInitialValues}
-          onSubmit={handleLocalSignin(mutate)}
-          validationSchema={formSchema}
+        <Box
+          p={3}
+          bg="bg2"
         >
-          {renderFields}
-        </Formik>
+          <Button
+            width="100%"
+            variant="googleRed"
+            disabled={disabled}
+            onClick={handleGoogleSignin}
+            my={2}
+          >
+            Sign in with Google
+          </Button>
+          <Button
+            width="100%"
+            variant="facebookBlue"
+            disabled={disabled}
+            onClick={handleFacebookSignin}
+            my={2}
+          >
+            Sign in with Facebook
+          </Button>
+          <LabeledDivider>
+            OR
+          </LabeledDivider>
+          <Formik
+            initialValues={formInitialValues}
+            onSubmit={handleLocalSignin}
+            validationSchema={formSchema}
+          >
+            {renderFields}
+          </Formik>
+          {developmentSignin}
+        </Box>
       );
     };
     return (
@@ -312,13 +330,13 @@ class WrSignin extends Component<Props> {
     { setFieldTouched, setFieldValue }: FormikProps<FormValues>,
   ) => {
     return (event: React.MouseEvent) => {
-      const { isSignin } = this.state;
-      const newIsSignin = !isSignin;
+      const { isSignup } = this.state;
+      const newIsSignup = !isSignup;
       event.preventDefault();
       // note that setState is async
-      this.setState({ isSignin: newIsSignin });
-      setFieldTouched('isSignin');
-      setFieldValue('isSignin', newIsSignin);
+      this.setState({ isSignup: newIsSignup });
+      setFieldTouched('isSignup');
+      setFieldValue('isSignup', newIsSignup);
     };
   }
 
@@ -355,7 +373,7 @@ class WrSignin extends Component<Props> {
     createSignin(signin);
     if (signin) {
       restartWsConnection();
-      history.push('/dashboard');
+      history.push('/deck');
     } else {
       this.unsetThirdPartySigninUnderway();
     }

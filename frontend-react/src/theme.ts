@@ -43,6 +43,7 @@ const bg0 = white;
 const bg1 = nearWhite;
 const bg2 = lightGray;
 const primary = orange;
+const disabled = moonGray;
 const activeBg = moonGray;
 const edge = midGray;
 const activeEdge = lightBlue;
@@ -64,10 +65,12 @@ const theme = {
     googleRed: {
       color: 'white',
       backgroundColor: googleRed,
+      border: `1px solid ${edge}`,
     },
     facebookBlue: {
       color: 'white',
       backgroundColor: facebookBlue,
+      border: `1px solid ${edge}`,
     },
   },
   colors: {
@@ -77,6 +80,7 @@ const theme = {
     bg1,
     bg2,
     primary,
+    disabled,
     edge,
     error,
     activeEdge,
@@ -134,14 +138,14 @@ const theme = {
       ':active, :focus': {
         borderColor: red,
         background: washedRed,
-        boxShadow: `0 0 0 2px ${lightRed}`,
+        boxShadow: `0 0 1px 1px ${lightRed}`,
       },
     },
     valid: {
       'borderColor': green,
       ':active, :focus': {
         borderColor: green,
-        boxShadow: `0 0 0 2px ${lightGreen}`,
+        boxShadow: `0 0 1px 1px ${lightGreen}`,
       },
     },
   },
