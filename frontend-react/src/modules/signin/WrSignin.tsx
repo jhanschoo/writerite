@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 
 import { OptionalUserAndToken } from './types';
 
-import { Box, Text } from 'rebass';
+import { Text } from 'rebass';
+import RoundedBox from '../../ui/RoundedBox';
 import LabeledDivider from '../../ui/LabeledDivider';
 import Button from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
@@ -203,15 +204,14 @@ class WrSignin extends Component<Props> {
         return (
             <form onSubmit={handleSubmit}>
               <Fieldset my={1}>
-                <label htmlFor="username">Email</label>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  id="username"
                   type="email"
                   name="username"
+                  aria-label="Email"
+                  placeholder="Email"
                   autocomplete={isSignup ? 'new-username' : 'current-username'}
-                  placeholder="abc@xyz.com"
                   disabled={disabled}
                   my={1}
                   width="100%"
@@ -220,13 +220,13 @@ class WrSignin extends Component<Props> {
                 {maybeError('username')}
               </Fieldset>
               <Fieldset my={1}>
-                <label htmlFor="password">Password</label>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  id="password"
                   type="password"
                   name="password"
+                  aria-label="Password"
+                  placeholder="Password"
                   autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
                   my={1}
@@ -236,13 +236,13 @@ class WrSignin extends Component<Props> {
                 {formattedPasswordError}
               </Fieldset>
               <Fieldset my={1} css={isSignup ? {} : { display: 'none' }}>
-                <label htmlFor="confirmPassword">Confirm Password</label>
                 <TextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  id="confirmPassword"
                   type="password"
                   name="confirmPassword"
+                  aria-label="Confirm Password"
+                  placeholder="Confirm Password"
                   autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
                   my={1}
@@ -278,7 +278,7 @@ class WrSignin extends Component<Props> {
         ? ''
         : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
       return (
-        <Box
+        <RoundedBox
           p={3}
           bg="bg2"
         >
@@ -311,7 +311,7 @@ class WrSignin extends Component<Props> {
             {renderFields}
           </Formik>
           {developmentSignin}
-        </Box>
+        </RoundedBox>
       );
     };
     return (

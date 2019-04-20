@@ -6,6 +6,7 @@ import Link from '../Link';
 const NavLink = styled(Link)`
   display: flex;
   border: 1px solid ${(props) => props.theme.colors.bg1};
+  border-radius: 2px;
 
   &.active {
     border: 1px solid ${(props) => props.theme.colors.edge};

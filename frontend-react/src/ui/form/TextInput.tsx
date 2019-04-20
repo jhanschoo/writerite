@@ -8,30 +8,17 @@ const textInputStyle = variant({
 
 // TODO: make generic argument stricter in props that it accepts
 const TextInput: StyledComponent<React.FunctionComponent<any>, any> = styled(Box)`
-  position: relative;
-  top: -1px;
-  box-sizing: border-box;
   font-size: 100%;
   transition: top 0.05s linear, box-shadow 0.05s linear;
   height: ${(props) => props.theme.space[4]};
   padding: 0 ${(props) => props.theme.space[2]};
   background: ${(props) => props.theme.colors.bg1};
   border: 1px solid ${(props) => props.theme.colors.edge};
-  box-shadow: 0 1px 0 0 ${(props) => props.theme.colors.shadow};
+  border-radius: 2px;
   -webkit-appearance: none;
-
-  :hover {
-    top: -2px;
-    box-shadow: 0 2px ${(props) => props.theme.colors.shadow};
-  }
 
   :disabled {
     background: ${(props) => props.theme.colors.disabled}
-  }
-
-  :disabled:hover {
-    top: -1px;
-    box-shadow: 0 1px 0 0 ${(props) => props.theme.colors.shadow};
   }
 
   :focus {

@@ -52,6 +52,8 @@ const activeShadow = lightBlue;
 const error = red;
 const googleRed = '#DB4437';
 const facebookBlue = '#3C5A99';
+const transparent = 'rgba(255, 255, 255, 0)';
+const darken = 'rgba(0, 0, 0, 0.125)';
 
 const space = [ 0, '0.25em', '0.5em', '1em', '2em', '4em', '8em', '16em', '32em' ];
 
@@ -59,18 +61,15 @@ const theme = {
   buttons: {
     default: {
       color: fg1,
-      backgroundColor: bg1,
       border: `1px solid ${edge}`,
     },
     googleRed: {
-      color: 'white',
-      backgroundColor: googleRed,
-      border: `1px solid ${edge}`,
+      color: googleRed,
+      border: `1px solid ${googleRed}`,
     },
     facebookBlue: {
-      color: 'white',
-      backgroundColor: facebookBlue,
-      border: `1px solid ${edge}`,
+      color: facebookBlue,
+      border: `1px solid ${facebookBlue}`,
     },
   },
   colors: {
@@ -88,6 +87,8 @@ const theme = {
     activeShadow,
     googleRed,
     facebookBlue,
+    transparent,
+    darken,
     black,
     brightYellow,
     nearBlack,
@@ -136,16 +137,23 @@ const theme = {
       'borderColor': red,
       'background': washedRed,
       ':active, :focus': {
-        borderColor: red,
-        background: washedRed,
-        boxShadow: `0 0 1px 1px ${lightRed}`,
+        'borderColor': red,
+        'background': washedRed,
+        'boxShadow': `0 0 1px 1px ${lightRed}`,
       },
     },
     valid: {
       'borderColor': green,
       ':active, :focus': {
-        borderColor: green,
-        boxShadow: `0 0 1px 1px ${lightGreen}`,
+        'borderColor': green,
+        'boxShadow': `0 0 1px 1px ${lightGreen}`,
+      },
+    },
+    minimal: {
+      'borderWidth': '0px',
+      'background': transparent,
+      ':active, :focus': {
+        'borderWidth': '0px',
       },
     },
   },

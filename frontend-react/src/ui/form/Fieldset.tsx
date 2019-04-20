@@ -3,11 +3,12 @@ import { Box } from 'rebass';
 
 const Fieldset = styled(Box)`
   border: none;
-  padding: 0;
 `;
 
 Fieldset.defaultProps = {
   as: 'fieldset',
+  m: 0,
+  p: 0,
 };
 
 export default Fieldset;
