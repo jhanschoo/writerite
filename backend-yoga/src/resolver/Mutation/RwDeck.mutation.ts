@@ -13,9 +13,35 @@ import {
   throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError, randomThreeWords,
 } from '../../util';
 
-const rwDeckSave: IFieldResolver<any, IRwContext, {
-  id?: string,
+const rwDeckCreate: IFieldResolver<any, IRwContext, {
   name?: string,
+}> = async (
+  _parent, { name }, { sub, prisma, pubsub },
+): Promise<IBakedRwDeck | null> => {
+  try {
+    if (!sub) {
+      throw wrAuthenticationError();
+    }
+    const pDeck = await prisma.createPDeck({
+      name: (name && name.trim()) ? name.trim() : randomThreeWords(),
+      owner: { connect: { id: sub.id } },
+    });
+    wrGuardPrismaNullError(pDeck);
+    const pDeckUpdate: ICreatedUpdate<PDeck> = {
+      mutation: MutationType.CREATED,
+      new: pDeck,
+      oldId: null,
+    };
+    pubsub.publish(rwDeckTopic(), pDeckUpdate);
+    return pDeckToRwDeck(pDeck, prisma);
+  } catch (e) {
+    return throwIfDevel(e);
+  }
+};
+
+const rwDeckUpdateName: IFieldResolver<any, IRwContext, {
+  id: string,
+  name: string,
 }> = async (
   _parent, { id, name }, { sub, prisma, pubsub },
 ): Promise<IBakedRwDeck | null> => {
@@ -23,36 +49,21 @@ const rwDeckSave: IFieldResolver<any, IRwContext, {
     if (!sub) {
       throw wrAuthenticationError();
     }
-    if (id) {
-      if (!await prisma.$exists.pDeck({ id, owner: { id: sub.id } })) {
-        throw wrNotFoundError('deck');
-      }
-      const pDeck = await prisma.updatePDeck({
-        data: (name && name.trim()) ? { name: name.trim() } : {},
-        where: { id },
-      });
-      wrGuardPrismaNullError(pDeck);
-      const pDeckUpdate: IUpdatedUpdate<PDeck> = {
-        mutation: MutationType.UPDATED,
-        new: pDeck,
-        oldId: null,
-      };
-      pubsub.publish(rwDeckTopic(), pDeckUpdate);
-      return pDeckToRwDeck(pDeck, prisma);
-    } else {
-      const pDeck = await prisma.createPDeck({
-        name: (name && name.trim()) ? name.trim() : randomThreeWords(),
-        owner: { connect: { id: sub.id } },
-      });
-      wrGuardPrismaNullError(pDeck);
-      const pDeckUpdate: ICreatedUpdate<PDeck> = {
-        mutation: MutationType.CREATED,
-        new: pDeck,
-        oldId: null,
-      };
-      pubsub.publish(rwDeckTopic(), pDeckUpdate);
-      return pDeckToRwDeck(pDeck, prisma);
+    if (!await prisma.$exists.pDeck({ id, owner: { id: sub.id } })) {
+      throw wrNotFoundError('deck');
     }
+    const pDeck = await prisma.updatePDeck({
+      data: { name: name.trim() },
+      where: { id },
+    });
+    wrGuardPrismaNullError(pDeck);
+    const pDeckUpdate: IUpdatedUpdate<PDeck> = {
+      mutation: MutationType.UPDATED,
+      new: pDeck,
+      oldId: null,
+    };
+    pubsub.publish(rwDeckTopic(), pDeckUpdate);
+    return pDeckToRwDeck(pDeck, prisma);
   } catch (e) {
     return throwIfDevel(e);
   }
@@ -87,5 +98,5 @@ const rwDeckDelete: IFieldResolver<any, IRwContext, {
 };
 
 export const rwDeckMutation = {
-  rwDeckSave, rwDeckDelete,
+  rwDeckCreate, rwDeckUpdateName, rwDeckDelete,
 };

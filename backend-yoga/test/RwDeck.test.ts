@@ -11,7 +11,7 @@ import { rwDeckMutation } from '../src/resolver/Mutation/RwDeck.mutation';
 import { ContextParameters } from 'graphql-yoga/dist/types';
 
 const { rwDeck, rwOwnDecks } = rwDeckQuery;
-const { rwDeckSave, rwDeckDelete } = rwDeckMutation;
+const { rwDeckCreate, rwDeckUpdateName, rwDeckDelete } = rwDeckMutation;
 
 const req = {} as ContextParameters;
 const redisClient = new Redis();
@@ -88,18 +88,18 @@ describe('RwDeck resolvers', async () => {
     });
   });
 
-  describe('rwDeckSave', () => {
+  describe('rwDeckCreate', () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return null if sub is not present', async () => {
       expect.assertions(1);
-      expect(rwDeckSave(null, { name: NAME }, baseCtx, baseInfo))
+      expect(rwDeckCreate(null, { name: NAME }, baseCtx, baseInfo))
         .resolves.toBeNull();
     });
-    test('it saves a deck when no deck id is specified', async () => {
+    test('it saves a deck', async () => {
       expect.assertions(4);
-      const deckObj = await rwDeckSave(null, { name: NEW_NAME }, {
+      const deckObj = await rwDeckCreate(null, { name: NEW_NAME }, {
         ...baseCtx, sub: { id: USER.id },
       } as IRwContext, baseInfo);
       expect(deckObj).toHaveProperty('id');
@@ -111,9 +111,20 @@ describe('RwDeck resolvers', async () => {
       expect(await prisma.pDeck({ id: deckObj.id })).toHaveProperty('name', NEW_NAME);
       expect(await prisma.pDeck({ id: deckObj.id }).owner().id()).toBe(USER.id);
     });
+  });
+
+  describe('rwDeckUpdateName', () => {
+    beforeEach(commonBeforeEach);
+    afterEach(commonAfterEach);
+
+    test('it should return null if sub is not present', async () => {
+      expect.assertions(1);
+      expect(rwDeckUpdateName(null, { name: NAME }, baseCtx, baseInfo))
+        .resolves.toBeNull();
+    });
     test('it should return null and not save/update if specifies a deck not owned by sub.id', async () => {
       expect.assertions(2);
-      const otherDeckObj = await rwDeckSave(
+      const otherDeckObj = await rwDeckUpdateName(
         null,
         { id: OTHER_DECK.id, name: NEW_NAME },
         { ...baseCtx, sub: { id: USER.id } } as IRwContext,
@@ -124,7 +135,7 @@ describe('RwDeck resolvers', async () => {
     });
     test('it updates a deck when id specifies a deck owned by sub.id', async () => {
       expect.assertions(4);
-      const deckObj = await rwDeckSave(null, { id: DECK.id, name: NEW_NAME }, {
+      const deckObj = await rwDeckUpdateName(null, { id: DECK.id, name: NEW_NAME }, {
         ...baseCtx, sub: { id: USER.id },
       } as IRwContext, baseInfo);
       expect(deckObj).toHaveProperty('id');
