@@ -46,7 +46,7 @@ type Mutation {
 type Subscription {
   _empty: String
   # Deck
-  rwDeckUpdates: RwDeckUpdate!
+  rwOwnDeckUpdates: RwDeckUpdate!
   # Card
   rwCardUpdatesOfDeck(deckId: ID!): RwCardUpdate!
   # Room

@@ -6,7 +6,7 @@ import {
 
 import { pDeckToRwDeck, IBakedRwDeck } from '../RwDeck';
 import {
-  rwDeckTopic,
+  rwOwnDeckTopicFromOwner,
 } from '../Subscription/RwDeck.subscription';
 import { PDeck } from '../../../generated/prisma-client';
 import {
@@ -32,7 +32,7 @@ const rwDeckCreate: IFieldResolver<any, IRwContext, {
       new: pDeck,
       oldId: null,
     };
-    pubsub.publish(rwDeckTopic(), pDeckUpdate);
+    pubsub.publish(rwOwnDeckTopicFromOwner(sub.id), pDeckUpdate);
     return pDeckToRwDeck(pDeck, prisma);
   } catch (e) {
     return throwIfDevel(e);
@@ -62,7 +62,7 @@ const rwDeckUpdateName: IFieldResolver<any, IRwContext, {
       new: pDeck,
       oldId: null,
     };
-    pubsub.publish(rwDeckTopic(), pDeckUpdate);
+    pubsub.publish(rwOwnDeckTopicFromOwner(sub.id), pDeckUpdate);
     return pDeckToRwDeck(pDeck, prisma);
   } catch (e) {
     return throwIfDevel(e);
@@ -90,7 +90,7 @@ const rwDeckDelete: IFieldResolver<any, IRwContext, {
       new: null,
       oldId: pDeck.id,
     };
-    pubsub.publish(rwDeckTopic(), pDeckUpdate);
+    pubsub.publish(rwOwnDeckTopicFromOwner(sub.id), pDeckUpdate);
     return pDeck.id;
   } catch (e) {
     return throwIfDevel(e);

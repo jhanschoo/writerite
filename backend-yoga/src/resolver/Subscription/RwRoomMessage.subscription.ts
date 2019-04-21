@@ -19,7 +19,9 @@ const rwRoomMessageUpdatesOfRoomSubscribe: IFieldResolver<any, IRwContext, {
     if (!await prisma.$exists.pRoom({ id: roomId })) {
       throw wrNotFoundError('room');
     }
-    return pubsub.asyncIterator<IUpdate<PRoomMessage>>(rwRoomMessageTopicFromRwRoom(roomId));
+    return pubsub.asyncIterator<IUpdate<PRoomMessage>>(
+      rwRoomMessageTopicFromRwRoom(roomId)
+    );
   } catch (e) {
     return throwIfDevel(e);
   }
