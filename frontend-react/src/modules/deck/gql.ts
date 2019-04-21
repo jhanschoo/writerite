@@ -8,10 +8,6 @@ query Deck($deckId: ID!) {
   rwDeck(id: $deckId) {
     id
     name
-    owner {
-      id
-      email
-    }
   }
 }
 `;
@@ -26,30 +22,26 @@ export interface DeckData {
 
 // Decks query
 
-export const DECKS_QUERY = gql`
-query Decks {
-  rwDecks {
+export const OWN_DECKS_QUERY = gql`
+query OwnDecks {
+  rwOwnDecks {
     id
     name
-    owner {
-      id
-      email
-    }
   }
 }
 `;
 
 export type DecksVariables = object;
 
-export interface DecksData {
-  readonly rwDecks: WrDeck[] | null;
+export interface OwnDecksData {
+  readonly rwOwnDecks: WrDeck[] | null;
 }
 
 // DeckCreate mutation
 
 export const DECK_CREATE_MUTATION = gql`
 mutation DeckCreate($name: String) {
-  rwDeckSave(name: $name) {
+  rwDeckCreate(name: $name) {
     id
     name
   }
@@ -61,27 +53,27 @@ export interface DeckCreateVariables {
 }
 
 export interface DeckCreateData {
-  readonly rwDeckSave: WrDeck | null;
+  readonly rwDeckCreate: WrDeck | null;
 }
 
 // DeckUpdate mutation
 
-export const DECK_UPDATE_MUTATION = gql`
+export const DECK_UPDATE_NAME_MUTATION = gql`
 mutation DeckUpdate($id: ID! $name: String!) {
-  rwDeckSave(id: $id name: $name) {
+  rwDeckUpdateName(id: $id name: $name) {
     id
     name
   }
 }
 `;
 
-export interface DeckUpdateVariables {
+export interface DeckUpdateNameVariables {
   readonly id: string;
   readonly name: string;
 }
 
 export interface DeckUpdateData {
-  readonly rwDeckSave: WrDeck | null;
+  readonly rwDeckUpdateName: WrDeck | null;
 }
 
 // DeckDelete mutation
@@ -102,9 +94,9 @@ export interface DeckDeleteData {
 
 // DeckUpdates subscription
 
-export const DECK_UPDATES_SUBSCRIPTION = gql`
+export const OWN_DECK_UPDATES_SUBSCRIPTION = gql`
 subscription DeckUpdates {
-  rwDeckUpdates {
+  rwOwnDeckUpdates {
     mutation
     new {
       id
@@ -119,8 +111,8 @@ subscription DeckUpdates {
 }
 `;
 
-export type DeckUpdatesVariables = object;
+export type OwnDeckUpdatesVariables = object;
 
-export interface DeckUpdatesData {
-  readonly rwDeckUpdates: WrDeckUpdatesPayload;
+export interface OwnDeckUpdatesData {
+  readonly rwOwnDeckUpdates: WrDeckUpdatesPayload;
 }

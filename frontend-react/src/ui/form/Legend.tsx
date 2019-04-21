@@ -8,7 +8,7 @@ text-transform: uppercase;
 
 Legend.defaultProps = {
   as: 'legend',
-  fontSize: '75%',
+  fontSize: '100%',
   m: 0,
   p: 0,
 };

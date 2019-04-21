@@ -31,6 +31,21 @@ body {
   }
 }
 
+@keyframes grow-vertically-fade-in {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
 @keyframes fade-in-down {
   0% {
     opacity: 0;

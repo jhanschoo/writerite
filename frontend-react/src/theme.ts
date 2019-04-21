@@ -137,23 +137,27 @@ const theme = {
       'borderColor': red,
       'background': washedRed,
       ':active, :focus': {
-        'borderColor': red,
-        'background': washedRed,
-        'boxShadow': `0 0 1px 1px ${lightRed}`,
+        borderColor: red,
+        background: washedRed,
+        boxShadow: `0 0 1px 1px ${lightRed}`,
       },
     },
     valid: {
       'borderColor': green,
       ':active, :focus': {
-        'borderColor': green,
-        'boxShadow': `0 0 1px 1px ${lightGreen}`,
+        borderColor: green,
+        boxShadow: `0 0 1px 1px ${lightGreen}`,
       },
     },
     minimal: {
       'borderWidth': '0px',
       'background': transparent,
+      'flexGrow': 1,
       ':active, :focus': {
-        'borderWidth': '0px',
+        borderWidth: '0px',
+      },
+      '::placeholder': {
+        fontStyle: 'italic',
       },
     },
   },

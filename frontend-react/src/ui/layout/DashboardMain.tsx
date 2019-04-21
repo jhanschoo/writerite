@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Flex } from "rebass";
+import { Flex } from 'rebass';
 
 const DashboardMain = styled(Flex)`
   display: grid;
@@ -10,7 +10,8 @@ const DashboardMain = styled(Flex)`
 `;
 
 DashboardMain.defaultProps = {
-  p: 3
+  as: 'main',
+  p: 3,
 };
 
 export default DashboardMain;

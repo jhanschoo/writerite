@@ -9,7 +9,6 @@ const textInputStyle = variant({
 // TODO: make generic argument stricter in props that it accepts
 const TextInput: StyledComponent<React.FunctionComponent<any>, any> = styled(Box)`
   font-size: 100%;
-  transition: top 0.05s linear, box-shadow 0.05s linear;
   height: ${(props) => props.theme.space[4]};
   padding: 0 ${(props) => props.theme.space[2]};
   background: ${(props) => props.theme.colors.bg1};

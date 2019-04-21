@@ -1,10 +1,17 @@
 import React from 'react';
 import styled, { StyledComponent } from 'styled-components';
-import { Link as rrLink } from 'react-router-dom';
-import { Text } from 'rebass';
+import { NavLink as rrLink } from 'react-router-dom';
+import { Flex } from 'rebass';
 
-const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Text)`
+const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Flex)`
   text-decoration: none;
+  border: 1px solid ${(props) => props.theme.colors.transparent};
+  border-radius: 2px;
+  align-items: center;
+
+  &.active {
+    border-color: ${(props) => props.theme.colors.edge};
+  }
 
   :hover {
     background: ${(props) => props.theme.colors.bg2};
@@ -13,6 +20,7 @@ const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Text)`
 
 Link.defaultProps = {
   as: rrLink,
+  p: 2,
   color: 'fg1',
 };
 

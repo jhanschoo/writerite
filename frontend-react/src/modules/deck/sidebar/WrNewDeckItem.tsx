@@ -1,23 +1,18 @@
 import React, { Component } from 'react';
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
-import { Card, Flex } from 'rebass';
-import styled from 'styled-components';
+import { Flex } from 'rebass';
 
-import Icon from '../../ui/Icon';
-import Button from '../../ui/form/Button';
-import Fieldset from '../../ui/form/Fieldset';
-import Legend from '../../ui/form/Legend';
-import TextInput from '../../ui/form/TextInput';
+import Icon from '../../../ui/Icon';
+import Button from '../../../ui/form/Button';
+import Fieldset from '../../../ui/form/Fieldset';
+import Legend from '../../../ui/form/Legend';
+import TextInput from '../../../ui/form/TextInput';
+import FlexSection from '../../../ui/FlexSection';
+import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from './gql';
+import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gql';
 
-import { printApolloError } from '../../util';
-
-const NewDeckTextInput = styled(TextInput)`
-  flex-grow: 1;
-  font-weight: bold;
-  padding: 0;
-`;
+import { printApolloError } from '../../../util';
 
 class WrNewDeckItem extends Component {
   public readonly state = {
@@ -27,12 +22,7 @@ class WrNewDeckItem extends Component {
   public readonly render = () => {
     const { renderForm, handleCompleted } = this;
     return (
-      <Card
-        p={2}
-        border="1px solid"
-        borderColor="edge"
-        borderRadius={2}
-      >
+      <FlexSection>
         <Mutation<DeckCreateData, DeckCreateVariables>
           mutation={DECK_CREATE_MUTATION}
           onError={printApolloError}
@@ -40,7 +30,7 @@ class WrNewDeckItem extends Component {
         >
         {renderForm}
         </Mutation>
-      </Card>
+      </FlexSection>
     );
   }
 
@@ -57,16 +47,18 @@ class WrNewDeckItem extends Component {
           name,
         },
       });
-    }
+    };
     return (
       <form onSubmit={handleSubmit}>
         <Fieldset>
-          <Legend>Create a New Deck</Legend>
+          <SidebarMenuHeader as={Legend}>Create a New Deck</SidebarMenuHeader>
             <Flex width="100%" alignItems="center">
-              <NewDeckTextInput
+              <TextInput
                 variant="minimal"
-                aria-label="Title"
-                placeholder="Title..."
+                aria-label="Deck Name"
+                placeholder="Type a deck name..."
+                px={2}
+                py={1}
                 value={name}
                 onChange={handleChange}
                 disabled={loading}

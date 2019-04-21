@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Heading } from 'rebass';
-import NavLink from '../../ui/navbar/NavLink';
+import Link from '../../ui/Link';
 
 import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
@@ -34,9 +34,9 @@ class WrNavBar extends PureComponent<Props> {
         <NavBarItem
           py={2}
         >
-          <NavLink to="/" activeClassName="">
+          <Link to="/" activeClassName="">
             <Heading fontSize={2}><BrandText /></Heading>
-          </NavLink>
+          </Link>
         </NavBarItem>
       </NavBarList>
       <NavBarList justifyContent="flex-end">
@@ -59,28 +59,28 @@ class WrNavBar extends PureComponent<Props> {
     return (
       <>
         <NavBarItem>
-          <NavLink to="/deck">
+          <Link to="/deck">
             <Icon icon="layers" />
             Decks
-          </NavLink>
+          </Link>
         </NavBarItem>
         <NavBarItem>
-          <NavLink to="/room">
+          <Link to="/room">
             <Icon icon="message-circle" />
             Rooms
-          </NavLink>
+          </Link>
         </NavBarItem>
         <NavBarItem>
-          <NavLink to="/stats">
+          <Link to="/stats">
             <Icon icon="activity" />
             Stats
-          </NavLink>
+          </Link>
         </NavBarItem>
         <NavBarItem>
-          <NavLink as="a" onClick={signoutAndRestartWs}>
+          <Link as="a" onClick={signoutAndRestartWs}>
             <Icon icon="feather" />
             Sign out
-          </NavLink>
+          </Link>
         </NavBarItem>
       </>
     );
@@ -88,10 +88,10 @@ class WrNavBar extends PureComponent<Props> {
 
   private readonly renderLoggedOut = () => (
     <NavBarItem>
-      <NavLink to="/signin" exact={true}>
+      <Link to="/signin" exact={true}>
         <Icon icon="feather" />
         Sign in
-      </NavLink>
+      </Link>
     </NavBarItem>
   )
 }
