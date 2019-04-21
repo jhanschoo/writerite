@@ -3,7 +3,7 @@ import { IFieldResolver } from 'graphql-tools';
 import { IRwContext } from '../../types';
 
 import { IBakedRwDeck, pDeckToRwDeck } from '../RwDeck';
-import { throwIfDevel, wrGuardPrismaNullError } from '../../util';
+import { throwIfDevel, wrGuardPrismaNullError, wrAuthenticationError } from '../../util';
 
 const rwDeck: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
@@ -17,11 +17,20 @@ const rwDeck: IFieldResolver<any, IRwContext, { id: string }> = async (
   }
 };
 
-const rwDecks: IFieldResolver<any, IRwContext, {}> = async (
+const rwOwnDecks: IFieldResolver<any, IRwContext, {}> = async (
   _parent, _args, { prisma, sub },
 ): Promise<IBakedRwDeck[] | null> => {
   try {
-    const pDecks = await prisma.pDecks();
+    if (!sub) {
+      throw wrAuthenticationError();
+    }
+    const pDecks = await prisma.pDecks({
+      where: {
+        owner: {
+          id: sub.id,
+        },
+      },
+    });
     if (!pDecks) {
       return null;
     }
@@ -33,5 +42,5 @@ const rwDecks: IFieldResolver<any, IRwContext, {}> = async (
 };
 
 export const rwDeckQuery = {
-  rwDeck, rwDecks,
+  rwDeck, rwOwnDecks,
 };

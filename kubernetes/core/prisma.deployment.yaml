@@ -24,12 +24,11 @@ spec:
             databases:
               default:
                 connector: postgres
-                migrations: true
                 host: postgres
                 port: 5432
                 user: prisma
                 password: prisma
-        image: prismagraphql/prisma:1.29
+        image: prismagraphql/prisma:1.31
         name: prisma
         ports:
         - containerPort: 4466

@@ -30,7 +30,7 @@ export class LocalAuthService extends AbstractAuthService {
     // create
     const passwordHash = await hashPassword(password);
     const user = prisma.createPUser(
-      { email, passwordHash, defaultRoles: { set: ['user'] } },
+      { email, passwordHash, roles: { set: ['user'] } },
     );
     wrGuardPrismaNullError(user);
     return LocalAuthService.authResponseFromUser(await user, { persist, prisma });

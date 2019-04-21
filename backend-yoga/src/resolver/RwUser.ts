@@ -30,7 +30,7 @@ export function pUserToRwUser(pUser: PUser, prisma: Prisma): IBakedRwUser {
   return {
     id: pUser.id,
     email: pUser.email,
-    roles: pUser.defaultRoles,
+    roles: pUser.roles,
     decks: async () => (
       wrGuardPrismaNullError<PDeck[]>(await prisma.pUser({ id: pUser.id }).decks())
     ).map((pDeck) => pDeckToRwDeck(pDeck, prisma)),

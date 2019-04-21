@@ -44,7 +44,7 @@ export class FacebookAuthService extends AbstractAuthService {
       );
     } else {
       const pUser = await prisma.createPUser(
-        { email, facebookId, defaultRoles: { set: ['user'] } },
+        { email, facebookId, roles: { set: ['user'] } },
       );
       wrGuardPrismaNullError(pUser);
       return FacebookAuthService.authResponseFromUser(pUser, { persist, prisma });

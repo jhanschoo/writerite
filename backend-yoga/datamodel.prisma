@@ -1,16 +1,17 @@
 type PUser {
-  id: ID! @unique
+  id: ID! @id
   email: String! @unique
   passwordHash: String
   googleId: String
   facebookId: String
   decks: [PDeck!]!
-  defaultRoles: [String!]!
+  # https://github.com/prisma/prisma/issues/4424
+  roles: [String!]! @scalarList(strategy: RELATION)
   ownerOfRoom: [PRoom!]! @relation(name: "PUserOwningPRooms")
   occupyingRoom: [PRoom!]! @relation(name: "PUsersOccupyingPRooms")
-  sentMessages: [PRoomMessage!]! @relation(name: "PUserSentPRoomMessages")
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  sentMessages: [PRoomMessage!]!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 # To refactor message types into inheritance once
@@ -20,42 +21,42 @@ type PUser {
 # https://itnext.io/graphql-interfaces-and-union-types-with-prisma-and-yoga-7224f9e1d9ad
 
 # interface Card {
-#   id: ID! @unique
+#   id: ID! @id
 #   deck: Deck!
 # }
 
-type PSimpleCard { # implements Card {
-  id: ID! @unique
-  deck: PDeck! @relation(name: "PDeckContainingPSimpleCards")
+type PSimpleCard { # implements Card
+  id: ID! @id
+  deck: PDeck! @relation(link: INLINE)
   front: String!
   back: String!
   sortKey: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type PDeck {
-  id: ID! @unique
+  id: ID! @id
   name: String!
-  owner: PUser!
+  owner: PUser! @relation(link: INLINE)
   # cards: [PCard!]! @relation(onDelete: CASCADE)
-  cards: [PSimpleCard!]! @relation(name: "PDeckContainingPSimpleCards" onDelete: CASCADE)
-  servedAt: [PRoom!]! @relation(name: "PRoomServingPDeck" onDelete: SET_NULL)
-  published: Boolean! @default(value: "false")
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  cards: [PSimpleCard!]! @relation(onDelete: CASCADE)
+  servedAt: [PRoom!]! @relation(onDelete: SET_NULL)
+  published: Boolean! @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type PRoom {
-  id: ID! @unique
+  id: ID! @id
   name: String!
-  owner: PUser! @relation(name: "PUserOwningPRooms")
+  owner: PUser! @relation(link: INLINE name: "PUserOwningPRooms")
   occupants: [PUser!]! @relation(name: "PUsersOccupyingPRooms")
-  servingDeck: PDeck @relation(name: "PRoomServingPDeck")
+  servingDeck: PDeck @relation(link: INLINE)
   # messages: [PRoomMessage!]!
   messages: [PRoomMessage!]!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 # To refactor message types into inheritance once
@@ -65,7 +66,7 @@ type PRoom {
 # https://itnext.io/graphql-interfaces-and-union-types-with-prisma-and-yoga-7224f9e1d9ad
 
 # interface RoomMessage {
-#   id: ID! @unique
+#   id: ID! @id
 #   room: Room!
 # }
 
@@ -78,10 +79,10 @@ type PRoom {
 # }
 
 type PRoomMessage { # implements RoomMessage & UserMessage & SimpleMessage {
-  id: ID! @unique
-  room: PRoom!
-  sender: PUser @relation(name: "PUserSentPRoomMessages")
+  id: ID! @id
+  room: PRoom! @relation(link: INLINE)
+  sender: PUser @relation(link: INLINE)
   content: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }

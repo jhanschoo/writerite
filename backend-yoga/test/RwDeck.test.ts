@@ -8,13 +8,15 @@ import { IRwContext } from '../src/types';
 
 import { rwDeckQuery } from '../src/resolver/Query/RwDeck.query';
 import { rwDeckMutation } from '../src/resolver/Mutation/RwDeck.mutation';
+import { ContextParameters } from 'graphql-yoga/dist/types';
 
-const { rwDeck, rwDecks } = rwDeckQuery;
+const { rwDeck, rwOwnDecks } = rwDeckQuery;
 const { rwDeckSave, rwDeckDelete } = rwDeckMutation;
 
+const req = {} as ContextParameters;
 const redisClient = new Redis();
 const pubsub = new RedisPubSub();
-const baseCtx = { prisma, pubsub, redisClient } as IRwContext;
+const baseCtx = { req, prisma, pubsub, redisClient } as IRwContext;
 const baseInfo = {} as GraphQLResolveInfo & { mergeInfo: MergeInfo };
 
 const EMAIL = 'abc@xyz';
@@ -50,13 +52,13 @@ describe('RwDeck resolvers', async () => {
     await prisma.deleteManyPUsers({});
   });
 
-  describe('rwDecks', async () => {
+  describe('rwOwnDecks', async () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return user\'s decks if they exist', async () => {
       expect.assertions(1);
-      const retrievedDecks = await rwDecks(null, {}, {
+      const retrievedDecks = await rwOwnDecks(null, {}, {
         ...baseCtx, sub: { id: USER.id },
       } as IRwContext, baseInfo);
       expect(retrievedDecks).toContainEqual(expect.objectContaining({

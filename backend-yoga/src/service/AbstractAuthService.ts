@@ -23,7 +23,7 @@ export abstract class AbstractAuthService {
       token: generateJWT({
         id: pUser.id,
         email: pUser.email,
-        roles: pUser.defaultRoles,
+        roles: pUser.roles,
       }, persist),
       user,
     };

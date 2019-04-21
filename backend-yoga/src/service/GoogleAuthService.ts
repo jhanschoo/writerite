@@ -34,7 +34,7 @@ export class GoogleAuthService extends AbstractAuthService {
       );
     } else {
       const pUser = await prisma.createPUser(
-        { email, googleId, defaultRoles: { set: ['user'] } },
+        { email, googleId, roles: { set: ['user'] } },
       );
       wrGuardPrismaNullError(pUser);
       return GoogleAuthService.authResponseFromUser(pUser, { persist, prisma });

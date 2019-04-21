@@ -7,7 +7,7 @@ type Query {
   rwUsers: [RwUser!]
   # RwDeck
   rwDeck(id: ID!): RwDeck
-  rwDecks: [RwDeck!]
+  rwOwnDecks: [RwDeck!]
   # RwCard
   rwCard(id: ID!): RwCard
   rwCardsOfDeck(deckId: ID!): [RwCard!]
