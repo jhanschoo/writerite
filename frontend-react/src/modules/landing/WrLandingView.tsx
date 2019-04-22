@@ -3,11 +3,11 @@ import React from 'react';
 import WrNavBar from '../navbar/WrNavBar';
 import WrLandingContent from './WrLandingContent';
 
-const LandingView = (_props: any) => (
+const WrLandingView = (_props: any) => (
   <>
     <WrNavBar />
     <WrLandingContent />
   </>
 );
 
-export default LandingView;
+export default WrLandingView;

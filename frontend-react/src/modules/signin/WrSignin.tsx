@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
 
 import { OptionalUserAndToken } from './types';
 
@@ -8,6 +9,7 @@ import { WrState } from '../../store';
 
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { restartWsConnection } from '../../apolloClient';
+import { printApolloError } from '../../util';
 import { SIGNIN, SigninVariables, SigninData } from './gql';
 
 import { Text } from 'rebass';
@@ -24,9 +26,6 @@ import {
 } from 'formik';
 import * as yup from 'yup';
 
-import { withRouter, RouteComponentProps } from 'react-router';
-
-import { printApolloError } from '../../util';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;

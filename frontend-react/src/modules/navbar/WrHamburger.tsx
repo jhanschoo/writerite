@@ -1,5 +1,4 @@
 import React, { PureComponent, MouseEvent } from 'react';
-import styled from 'styled-components';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
@@ -7,6 +6,7 @@ import { initialState } from '../../ui/layout/sidebar/reducers';
 
 import { Menu } from 'react-feather';
 
+import styled from 'styled-components';
 import { createShow, createHide, SidebarAction } from '../../ui/layout/sidebar/actions';
 import { breakpoints } from '../../theme';
 import Button from '../../ui/form/Button';

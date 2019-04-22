@@ -7,9 +7,9 @@ import { connect } from 'react-redux';
 import { WrState } from './store';
 import { CurrentUser } from './modules/signin/types';
 
-import LandingView from './modules/landing/LandingView';
-import SigninView from './modules/signin/SigninView';
-import DeckView from './modules/deck/DeckView';
+import WrLandingView from './modules/landing/WrLandingView';
+import WrSigninView from './modules/signin/WrSigninView';
+import WrDeckView from './modules/deck/WrDeckView';
 import ViewportContainer from './ui/layout/ViewportContainer';
 
 interface StateProps {
@@ -24,9 +24,9 @@ const App: React.FunctionComponent<StateProps & RouteComponentProps> = (props: P
   return (
     <ViewportContainer bg="bg1">
       <Switch>
-        <Route path="/" exact={true} component={LandingView} />
-        {user && <Route path="/deck" component={DeckView} />}
-        <Route path="/signin" exact={true} component={SigninView} />
+        <Route path="/" exact={true} component={WrLandingView} />
+        {user && <Route path="/deck" component={WrDeckView} />}
+        <Route path="/signin" exact={true} component={WrSigninView} />
         <Redirect to="/"/>
       </Switch>
     </ViewportContainer>

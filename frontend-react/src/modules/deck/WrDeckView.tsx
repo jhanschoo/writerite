@@ -8,7 +8,7 @@ import WrDeckSidebar from './sidebar/WrDeckSidebar';
 import WrFindDeck from './finder/WrFindDeck';
 import WrDeckDetail from './detail/WrDeckDetail';
 
-const DeckView = (props: RouteComponentProps) => {
+const WrDeckView = (props: RouteComponentProps) => {
   const { match } = props;
   return (
     <>
@@ -24,4 +24,4 @@ const DeckView = (props: RouteComponentProps) => {
   );
 };
 
-export default withRouter<RouteComponentProps>(DeckView);
+export default withRouter<RouteComponentProps>(WrDeckView);

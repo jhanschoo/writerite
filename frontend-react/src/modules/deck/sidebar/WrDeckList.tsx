@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
+
+import { WrDeck } from '../types';
+
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { Filter } from 'react-feather';
-
-import { WrDeck } from './types';
 
 import { Flex } from 'rebass';
 import Fieldset from '../../../ui/form/Fieldset';

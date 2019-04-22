@@ -3,14 +3,15 @@ import React, { Component } from 'react';
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from './gql';
+
 import { Plus } from 'react-feather';
 
 import { Flex } from 'rebass';
+import FlexSection from '../../../ui/FlexSection';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import Legend from '../../../ui/form/Legend';
 import TextInput from '../../../ui/form/TextInput';
-import FlexSection from '../../../ui/FlexSection';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
 class WrNewDeck extends Component {

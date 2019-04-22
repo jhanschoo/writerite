@@ -4,7 +4,7 @@ import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 import { MutationType } from '../../../types';
-import { WrDeck } from './types';
+import { WrDeck } from '../types';
 import { OWN_DECK_UPDATES_SUBSCRIPTION, OwnDecksData, OwnDeckUpdatesData, OwnDeckUpdatesVariables } from './gql';
 
 interface Props {

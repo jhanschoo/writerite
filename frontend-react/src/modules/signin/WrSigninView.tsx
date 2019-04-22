@@ -3,11 +3,11 @@ import React from 'react';
 import WrNavBar from '../navbar/WrNavBar';
 import WrSigninContent from './WrSigninContent';
 
-const LandingView = (_props: any) => (
+const WrSigninView = (_props: any) => (
   <>
     <WrNavBar />
     <WrSigninContent />
   </>
 );
 
-export default LandingView;
+export default WrSigninView;

@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 
-import { restartWsConnection } from '../../apolloClient';
-
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
 import { createSignout, SigninAction } from '../signin/actions';
 import { CurrentUser } from '../signin/types';
+
+import { restartWsConnection } from '../../apolloClient';
 
 import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
 

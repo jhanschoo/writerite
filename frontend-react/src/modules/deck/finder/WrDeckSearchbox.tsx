@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { Search } from 'react-feather';
 
+import styled from 'styled-components';
 import { Card, Flex } from 'rebass';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
