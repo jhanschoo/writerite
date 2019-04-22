@@ -3,7 +3,7 @@ import React from 'react';
 import WrNavBar from '../navbar/WrNavBar';
 import WrLandingContent from './WrLandingContent';
 
-const WrLandingView = (_props: any) => (
+const WrLandingView = () => (
   <>
     <WrNavBar />
     <WrLandingContent />

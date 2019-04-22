@@ -1,13 +1,13 @@
 import React from 'react';
 
-import { Heading, Flex } from 'rebass';
+import { Heading, Flex, FlexProps } from 'rebass';
 import LandingContent from '../../ui/layout/LandingContent';
 
 import WrBrandText from '../brand/WrBrandText';
 import WrSignin from '../signin/WrSignin';
 
-const WrLandingContent = (props: any) => (
-  <LandingContent {...props}>
+const WrLandingContent = () => (
+  <LandingContent>
     <Flex as="article" flexWrap="wrap">
       <Flex
         as="header"

@@ -14,7 +14,7 @@ import WrDeckList from './WrDeckList';
 
 const renderList = ({
   subscribeToMore, loading, error, data,
-}: QueryResult<OwnDecksData, DecksVariables>) => {
+}: QueryResult<OwnDecksData, OwnDecksVariables>) => {
   const filter = '';
   if (error) {
     return null;
@@ -55,7 +55,7 @@ const WrOwnDecks = () => {
   return (
     <FlexSection>
       <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
-      <Query<OwnDecksData, DecksVariables>
+      <Query<OwnDecksData, OwnDecksVariables>
         query={OWN_DECKS_QUERY}
         onError={printApolloError}
       >

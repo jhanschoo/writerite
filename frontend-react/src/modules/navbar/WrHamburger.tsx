@@ -30,31 +30,29 @@ const HideableNavBarItem = styled(NavBarItem)`
   }
 `;
 
-class WrHamburger extends PureComponent<Props> {
-  public readonly render = () => {
-    // tslint:disable-next-line: no-shadowed-variable
-    const { num, hidden, createShow, createHide } = this.props;
-    const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
-    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-      if (hidden) {
-        createShow();
-      } else {
-        createHide();
-      }
-    };
-    const className = (num === 0 || !mq.matches) ? 'hidden' : undefined;
-    return (
-      <HideableNavBarItem
-        className={className}
-        p={[2, 2, 2]}
-      >
-        <Button variant="link" px={0} py={0} m={0} onClick={handleClick}>
-          <Menu />
-        </Button>
-      </HideableNavBarItem>
-    );
-  }
-}
+const WrHamburger = (props: Props) => {
+  // tslint:disable-next-line: no-shadowed-variable
+  const { num, hidden, createShow, createHide } = props;
+  const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    if (hidden) {
+      createShow();
+    } else {
+      createHide();
+    }
+  };
+  const className = (num === 0 || !mq.matches) ? 'hidden' : undefined;
+  return (
+    <HideableNavBarItem
+      className={className}
+      p={[2, 2, 2]}
+    >
+      <Button variant="link" px={0} py={0} m={0} onClick={handleClick}>
+        <Menu />
+      </Button>
+    </HideableNavBarItem>
+  );
+};
 
 const mapStateToProps = (state: WrState): StateProps => {
   const { num, hidden } = state.sidebar || initialState;

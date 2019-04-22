@@ -8,7 +8,7 @@ import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-const WrOwnDecks = () => {
+const WrManageDecks = () => {
   return (
     <FlexSection>
       <SidebarMenuHeader>Manage Decks</SidebarMenuHeader>
@@ -28,4 +28,4 @@ const WrOwnDecks = () => {
   );
 };
 
-export default WrOwnDecks;
+export default WrManageDecks;

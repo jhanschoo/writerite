@@ -12,12 +12,12 @@ const WideCard = styled(Card)`
   grid-column: 1 / 4;
 `;
 
-const NewDeckTextInput = styled(TextInput)`
+const SearchboxTextInput = styled(TextInput)`
   flex-grow: 1;
   padding: 0;
 `;
 
-class WrNewDeckItem extends Component {
+class WrDeckSearchbox extends Component {
   public readonly state = {
     name: '',
   };
@@ -44,7 +44,7 @@ class WrNewDeckItem extends Component {
         <Fieldset>
           <Legend>Search for a Deck</Legend>
             <Flex width="100%" alignItems="center">
-              <NewDeckTextInput
+              <SearchboxTextInput
                 variant="minimal"
                 type="search"
                 aria-label="Search with part of a Deck Name"
@@ -77,4 +77,4 @@ class WrNewDeckItem extends Component {
   }
 }
 
-export default WrNewDeckItem;
+export default WrDeckSearchbox;

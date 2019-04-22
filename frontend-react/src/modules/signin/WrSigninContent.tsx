@@ -5,7 +5,7 @@ import LandingContent from '../../ui/layout/LandingContent';
 
 import WrSignin from './WrSignin';
 
-const WrLandingContent = (props: any) => (
+const WrSigninContent = (props: any) => (
   <LandingContent as="article" {...props}>
     <Flex
       width={[1, 2 / 5, 2 / 5 ]}
@@ -19,4 +19,4 @@ const WrLandingContent = (props: any) => (
   </LandingContent>
 );
 
-export default WrLandingContent;
+export default WrSigninContent;
