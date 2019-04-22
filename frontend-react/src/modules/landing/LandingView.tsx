@@ -1,4 +1,5 @@
 import React from 'react';
+
 import WrNavBar from '../navbar/WrNavBar';
 import WrLandingContent from './WrLandingContent';
 

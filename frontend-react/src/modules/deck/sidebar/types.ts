@@ -1,4 +1,4 @@
-import { User, Payload } from '../../types';
+import { User, Payload } from '../../../types';
 
 export interface WrDeck {
   readonly id: string;

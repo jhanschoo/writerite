@@ -2,14 +2,6 @@ import React, { Component } from 'react';
 
 import { OptionalUserAndToken } from './types';
 
-import { Text } from 'rebass';
-import RoundedBox from '../../ui/RoundedBox';
-import LabeledDivider from '../../ui/LabeledDivider';
-import Button from '../../ui/form/Button';
-import TextInput from '../../ui/form/TextInput';
-import Fieldset from '../../ui/form/Fieldset';
-import SmallMessage from '../../ui/form/SmallMessage';
-
 import { connect } from 'react-redux';
 import { SigninAction, createSignin } from './actions';
 import { WrState } from '../../store';
@@ -17,6 +9,15 @@ import { WrState } from '../../store';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { restartWsConnection } from '../../apolloClient';
 import { SIGNIN, SigninVariables, SigninData } from './gql';
+
+import { Text } from 'rebass';
+import { breakpoints } from '../../theme';
+import RoundedBox from '../../ui/RoundedBox';
+import LabeledDivider from '../../ui/LabeledDivider';
+import Button from '../../ui/form/Button';
+import TextInput from '../../ui/form/TextInput';
+import Fieldset from '../../ui/form/Fieldset';
+import SmallMessage from '../../ui/form/SmallMessage';
 
 import {
   Formik, FormikProps, FormikErrors, FormikTouched,
@@ -148,7 +149,7 @@ class WrSignin extends Component<Props> {
           },
         });
       };
-      
+
       const handleDevelopmentSignin = () => {
         return mutate({
           variables: {
@@ -345,9 +346,11 @@ class WrSignin extends Component<Props> {
   }
 
   private readonly renderReCaptcha = () => {
+    const mq = window.matchMedia(`(max-width: ${breakpoints[0]})`);
     if (grecaptchaDeferred) {
       grecaptchaDeferred.then((grecaptcha) => {
         grecaptcha.render('g-recaptcha', {
+          size: (mq.matches) ? 'compact' : 'normal',
           sitekey: '6Lc2V3IUAAAAAFP-EiNvhlN533lN7F8TqJCEJmqX',
           callback: this.recaptchaCallback,
         });

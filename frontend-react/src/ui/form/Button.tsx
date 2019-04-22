@@ -5,10 +5,14 @@ const Button = styled(rebassButton)`
   :hover {
     cursor: pointer;
   }
+
+  :disabled {
+    color: ${(props) => props.theme.colors.bg3};
+  }
 `;
 
 Button.defaultProps = Object.assign({}, rebassButton.defaultProps as object, {
-  color: 'fg',
+  variant: 'default',
   bg: 'transparent',
   borderRadius: 2,
   fontWeight: 'normal',

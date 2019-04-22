@@ -1,16 +1,18 @@
 import React from 'react';
+
 import { Heading, Flex } from 'rebass';
 import LandingContent from '../../ui/layout/LandingContent';
+
 import WrBrandText from '../brand/WrBrandText';
 import WrSignin from '../signin/WrSignin';
 
 const WrLandingContent = (props: any) => (
   <LandingContent {...props}>
-    <Flex as="article">
+    <Flex as="article" flexWrap="wrap">
       <Flex
         as="header"
         css={{ minHeight: '33vh' }}
-        width={[1, 3 / 5, 3 / 5 ]}
+        width={[1, 1, 3 / 5 ]}
         p={4}
         justifyContent="center"
         alignItems="center"
@@ -25,7 +27,7 @@ const WrLandingContent = (props: any) => (
       </Flex>
       <Flex
         as="aside"
-        width={[1, 2 / 5, 2 / 5 ]}
+        width={[1, 1, 2 / 5 ]}
         p={3}
         justifyContent="center"
         alignItems="center"

@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { ReactType } from 'react';
 
 import SidebarMenu from '../../../ui/sidebar-menu/SidebarMenu';
+
 import WrManageDecks from './WrManageDecks';
-import WrNewDeckItem from './WrNewDeckItem';
+import WrNewDeck from './WrNewDeck';
 import WrOwnDecks from './WrOwnDecks';
 import WrOthersDecks from './WrOthersDecks';
 
-const WrDeckSidebar = (props: any) => {
+const WrDeckSidebar = (props: { children?: ReactType }) => {
   return (
     <SidebarMenu>
       <WrManageDecks />
-      <WrNewDeckItem />
+      <WrNewDeck />
       <WrOwnDecks />
       <WrOthersDecks />
       {props.children}

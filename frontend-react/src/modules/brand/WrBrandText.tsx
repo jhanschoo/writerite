@@ -1,16 +1,26 @@
 import React from 'react';
-import { Text } from 'rebass';
+import styled from 'styled-components';
+import { Text, TextProps } from 'rebass';
 
-const BrandText = (props: any) => (
-  <Text
-    as="span"
-    fontWeight="bold"
-    fontFamily="brand"
-    fontSize="150%"
-    {...props}
-  >
-    WriteRite
-  </Text>
-);
+const HideableText = styled(Text)`
+  @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
+    display: none;
+  }
+`;
 
-export default BrandText;
+const WrBrandText = (props: TextProps & { responsive?: boolean }) => {
+  const { responsive } = props;
+  return (
+    <Text
+      as="span"
+      fontWeight="bold"
+      fontFamily="brand"
+      fontSize="150%"
+      {...props}
+    >
+      W{responsive ? <HideableText as="span">riteRite</HideableText> : 'riteRite'}
+    </Text>
+  );
+};
+
+export default WrBrandText;

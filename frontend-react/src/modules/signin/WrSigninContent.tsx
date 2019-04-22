@@ -1,6 +1,8 @@
 import React from 'react';
+
 import { Flex } from 'rebass';
 import LandingContent from '../../ui/layout/LandingContent';
+
 import WrSignin from './WrSignin';
 
 const WrLandingContent = (props: any) => (

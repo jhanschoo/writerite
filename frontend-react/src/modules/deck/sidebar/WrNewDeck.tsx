@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { MutationFn, Mutation, MutationResult } from 'react-apollo';
-import { Flex } from 'rebass';
 
-import Icon from '../../../ui/Icon';
+import { MutationFn, Mutation, MutationResult } from 'react-apollo';
+import { printApolloError } from '../../../util';
+import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from './gql';
+import { Plus } from 'react-feather';
+
+import { Flex } from 'rebass';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import Legend from '../../../ui/form/Legend';
@@ -10,11 +13,7 @@ import TextInput from '../../../ui/form/TextInput';
 import FlexSection from '../../../ui/FlexSection';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gql';
-
-import { printApolloError } from '../../../util';
-
-class WrNewDeckItem extends Component {
+class WrNewDeck extends Component {
   public readonly state = {
     name: '',
   };
@@ -64,13 +63,13 @@ class WrNewDeckItem extends Component {
                 disabled={loading}
               />
               <Button
+                variant="minimal"
                 px={0}
                 py={0}
-                color="fg"
                 type="submit"
                 disabled={name === '' || loading}
               >
-                <Icon icon="plus" size={18} />
+                <Plus size={18} />
               </Button>
             </Flex>
         </Fieldset>
@@ -87,4 +86,4 @@ class WrNewDeckItem extends Component {
   }
 }
 
-export default WrNewDeckItem;
+export default WrNewDeck;

@@ -4,6 +4,7 @@ import styled, { StyledComponent } from 'styled-components';
 
 const NavBarList: StyledComponent<React.FunctionComponent<FlexProps>, any> = styled(Flex)`
   list-style: none;
+  align-items: center;
 `;
 
 NavBarList.defaultProps = {

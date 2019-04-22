@@ -8,6 +8,7 @@ const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Flex)`
   border: 1px solid ${(props) => props.theme.colors.transparent};
   border-radius: 2px;
   align-items: center;
+  cursor: pointer;
 
   &.active {
     border-color: ${(props) => props.theme.colors.edge};

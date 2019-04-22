@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { Filter } from 'react-feather';
+
+import { WrDeck } from './types';
+
 import { Flex } from 'rebass';
-
-import { WrDeck } from '../types';
-
-import Icon from '../../../ui/Icon';
 import Fieldset from '../../../ui/form/Fieldset';
 import Button from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
@@ -56,13 +56,13 @@ class WrDeckList extends Component<{ decks: WrDeck[] }, { filter: string }> {
                 ref={inputRef}
               />
               <Button
+                variant="minimal"
                 px={0}
                 py={0}
-                color="fg"
                 type="submit"
-                disabled={name === ''}
+                disabled={filter === ''}
               >
-                <Icon icon="filter" size={18} />
+                <Filter size={18} />
               </Button>
             </Flex>
           </Fieldset>

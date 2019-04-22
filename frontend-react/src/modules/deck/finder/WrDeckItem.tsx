@@ -1,13 +1,13 @@
 import React from 'react';
-import { Card, CardProps as rebassCardProps } from 'rebass';
 import styled from 'styled-components';
+import { Card, CardProps } from 'rebass';
 
-interface CardProps extends rebassCardProps {
+interface DeckItemProps extends CardProps {
   interactive?: boolean;
   gridColumn?: string;
 }
 
-const WrDeckItem = styled<React.FC<CardProps>>(Card)`
+const WrDeckItem = styled<React.FC<DeckItemProps>>(Card)`
   grid-column: ${(props) => props.gridColumn || 'auto'};
   :hover {
     cursor: ${(props) => props.interactive ? 'pointer' : 'auto'};

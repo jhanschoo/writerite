@@ -7,6 +7,10 @@ const DashboardMain = styled(Flex)`
   grid: min-content / repeat(3, auto);
   grid-gap: 1em;
   align-items: start;
+
+  @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
+    grid-area: 2 / 2 / 3 / 14;
+  }
 `;
 
 DashboardMain.defaultProps = {

@@ -1,14 +1,13 @@
 import styled from 'styled-components';
-import DashboardSidebar from '../layout/DashboardSidebar';
+import DashboardSidebar from '../layout/sidebar/DashboardSidebar';
 
 const SidebarMenu = styled(DashboardSidebar)`
+  font-size: 87.5%;
+  padding: ${(props) => props.theme.space[4]} ${(props) => props.theme.space[2]};
 `;
 
-SidebarMenu.defaultProps = Object.assign({}, DashboardSidebar.defaultProps, {
-  as: 'nav',
-  px: 2,
-  py: 4,
-  fontSize: '87.5%',
-});
+SidebarMenu.defaultProps = {
+  wrAs: 'nav',
+};
 
 export default SidebarMenu;

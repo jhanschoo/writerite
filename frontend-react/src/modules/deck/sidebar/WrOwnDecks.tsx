@@ -1,16 +1,16 @@
 import React from 'react';
-import { Query, QueryResult } from 'react-apollo';
 
-import { OWN_DECKS_QUERY, OwnDecksData, DecksVariables } from '../gql';
-import { WrDeck } from '../types';
+import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
+import { OWN_DECKS_QUERY, OwnDecksData, DecksVariables } from './gql';
 import WrOwnDecksSH from './WrOwnDecksSH';
 
 import FlexSection from '../../../ui/FlexSection';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
-import WrDeckList from './WrDeckList';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
+
+import WrDeckList from './WrDeckList';
 
 const renderList = ({
   subscribeToMore, loading, error, data,
@@ -38,7 +38,7 @@ const renderList = ({
       <List>
         <Item p={2}>You have no decks</Item>
       </List>
-    )
+    );
   }
   const list =  data.rwOwnDecks.filter((deck) => {
     return filter === '' || deck.name.includes(filter);

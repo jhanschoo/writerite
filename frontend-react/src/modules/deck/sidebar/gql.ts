@@ -1,4 +1,5 @@
 import gql from 'graphql-tag';
+
 import { WrDeck, WrDeckUpdatesPayload } from './types';
 
 // Deck query

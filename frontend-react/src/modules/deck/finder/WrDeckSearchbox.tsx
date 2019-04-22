@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Card, Flex } from 'rebass';
 import styled from 'styled-components';
+import { Search } from 'react-feather';
 
-import Icon from '../../../ui/Icon';
+import { Card, Flex } from 'rebass';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import Legend from '../../../ui/form/Legend';
@@ -53,13 +53,14 @@ class WrNewDeckItem extends Component {
                 onChange={handleChange}
               />
               <Button
+                variant="minimal"
                 px={0}
                 py={0}
                 color="fg"
                 type="submit"
                 disabled={name === ''}
               >
-                <Icon icon="search" size={18} />{/* TODO: convert to indicator */}
+                <Search size={18} />{/* TODO: convert to indicator */}
               </Button>
             </Flex>
         </Fieldset>

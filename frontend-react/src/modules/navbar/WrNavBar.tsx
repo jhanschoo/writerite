@@ -1,18 +1,23 @@
 import React, { PureComponent } from 'react';
+
+import { restartWsConnection } from '../../apolloClient';
+
 import { connect } from 'react-redux';
-import { Heading } from 'rebass';
-import Link from '../../ui/Link';
-
-import NavBar from '../../ui/navbar/NavBar';
-import NavBarItem from '../../ui/navbar/NavBarItem';
-import BrandText from '../brand/WrBrandText';
-import Icon from '../../ui/Icon';
-import NavBarList from '../../ui/navbar/NavBarList';
-
 import { WrState } from '../../store';
 import { createSignout, SigninAction } from '../signin/actions';
 import { CurrentUser } from '../signin/types';
-import { restartWsConnection } from '../../apolloClient';
+
+import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
+
+import { Heading } from 'rebass';
+import { breakpoints } from '../../theme';
+import Link from '../../ui/Link';
+import NavBar from '../../ui/navbar/NavBar';
+import NavBarItem from '../../ui/navbar/NavBarItem';
+import NavBarList from '../../ui/navbar/NavBarList';
+
+import WrHamburger from './WrHamburger';
+import WrBrandText from '../brand/WrBrandText';
 
 interface DispatchProps {
   createSignout: () => SigninAction;
@@ -29,13 +34,14 @@ class WrNavBar extends PureComponent<Props> {
     // const { user, dashboardPage, children } = this.props;
     const { renderLoggedIn, renderLoggedOut } = this;
     return (
-    <NavBar {...this.props}>
+    <NavBar {...this.props} fontSize={['75%', '75%', '100%']}>
       <NavBarList>
+        <WrHamburger />
         <NavBarItem
           py={2}
         >
-          <Link to="/" activeClassName="">
-            <Heading fontSize={2}><BrandText /></Heading>
+          <Link to="/" activeClassName="" p={0}>
+            <WrBrandText as={Heading} responsive={true} />
           </Link>
         </NavBarItem>
       </NavBarList>
@@ -49,6 +55,7 @@ class WrNavBar extends PureComponent<Props> {
   private readonly renderLoggedIn = () => {
     // tslint:disable-next-line: no-shadowed-variable
     const { createSignout, user } = this.props;
+    const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
     if (!user) {
       return null;
     }
@@ -59,26 +66,26 @@ class WrNavBar extends PureComponent<Props> {
     return (
       <>
         <NavBarItem>
-          <Link to="/deck">
-            <Icon icon="layers" />
+          <Link to="/deck" p={[0, 1, 2]}>
+            <Layers size={mq.matches ? 18 : 24} />
             Decks
           </Link>
         </NavBarItem>
         <NavBarItem>
-          <Link to="/room">
-            <Icon icon="message-circle" />
+          <Link to="/room" p={[0, 1, 2]}>
+            <MessageCircle size={mq.matches ? 18 : 24} />
             Rooms
           </Link>
         </NavBarItem>
         <NavBarItem>
-          <Link to="/stats">
-            <Icon icon="activity" />
+          <Link to="/stats" p={[0, 1, 2]}>
+            <Activity size={mq.matches ? 18 : 24} />
             Stats
           </Link>
         </NavBarItem>
         <NavBarItem>
-          <Link as="a" onClick={signoutAndRestartWs}>
-            <Icon icon="feather" />
+          <Link as="a" onClick={signoutAndRestartWs} p={[0, 1, 2]}>
+            <Feather size={mq.matches ? 18 : 24} />
             Sign out
           </Link>
         </NavBarItem>
@@ -86,14 +93,17 @@ class WrNavBar extends PureComponent<Props> {
     );
   }
 
-  private readonly renderLoggedOut = () => (
-    <NavBarItem>
-      <Link to="/signin" exact={true}>
-        <Icon icon="feather" />
-        Sign in
-      </Link>
-    </NavBarItem>
-  )
+  private readonly renderLoggedOut = () => {
+    const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
+    return (
+      <NavBarItem>
+        <Link to="/signin" exact={true} p={[0, 1, 2]}>
+          <Feather size={mq.matches ? 18 : 24} />
+          Sign in
+        </Link>
+      </NavBarItem>
+    );
+  }
 }
 
 const mapStateToProps = (state: WrState): StateProps => {

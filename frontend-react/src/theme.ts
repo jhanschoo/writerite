@@ -55,13 +55,36 @@ const facebookBlue = '#3C5A99';
 const transparent = 'rgba(255, 255, 255, 0)';
 const darken = 'rgba(0, 0, 0, 0.125)';
 
-const space = [ 0, '0.25em', '0.5em', '1em', '2em', '4em', '8em', '16em', '32em' ];
+export const breakpoints = [ '40em', '52em', '64em' ];
 
 const theme = {
+  breakpoints,
+  space: [ 0, '0.25em', '0.5em', '1em', '2em', '4em', '8em', '16em', '32em' ],
   buttons: {
+    link: {
+      'color': fg1,
+      'border': `1px solid ${transparent}`,
+      'borderRadius': '2px',
+      '&.active': {
+        borderColor: edge,
+      },
+      ':hover': {
+        background: bg2,
+      },
+    },
     default: {
-      color: fg1,
-      border: `1px solid ${edge}`,
+      'color': fg1,
+      'border': `1px solid ${edge}`,
+      ':disabled': {
+        border: `1px solid ${disabled}`,
+        color: disabled,
+      },
+    },
+    minimal: {
+      'color': fg1,
+      ':disabled': {
+        color: disabled,
+      },
     },
     googleRed: {
       color: googleRed,
@@ -131,7 +154,6 @@ const theme = {
     brand: '"Josefin Slab", serif',
     sans: '"Noto Sans", sans-serif',
   },
-  space,
   textInputs: {
     error: {
       'borderColor': red,
