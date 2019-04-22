@@ -1,33 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Provider } from 'react-redux';
-import { store } from './store';
-
-import { BrowserRouter } from 'react-router-dom';
-
-import { ApolloProvider } from 'react-apollo';
-import { client } from './apolloClient';
-
-import { ThemeProvider } from 'styled-components';
-import theme from './theme';
-
 import './index.css';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { withProviders } from './util';
 
-ReactDOM.render((
-    <Provider store={store}>
-      <ApolloProvider client={client}>
-        <ThemeProvider theme={theme}>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </ThemeProvider>
-      </ApolloProvider>
-  </Provider>
-),
+ReactDOM.render(withProviders(<App />),
   document.getElementById('root'),
 );
 
