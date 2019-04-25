@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from './gql';
+import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gql';
 
 import { Plus } from 'react-feather';
 
@@ -14,32 +14,20 @@ import Legend from '../../../ui/form/Legend';
 import TextInput from '../../../ui/form/TextInput';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-class WrNewDeck extends Component {
-  public readonly state = {
-    name: '',
+const initialName = '';
+
+const WrNewDeck = () => {
+  const [name, useName] = useState(initialName);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    useName(e.target.value);
   };
-
-  public readonly render = () => {
-    const { renderForm, handleCompleted } = this;
-    return (
-      <FlexSection>
-        <Mutation<DeckCreateData, DeckCreateVariables>
-          mutation={DECK_CREATE_MUTATION}
-          onError={printApolloError}
-          onCompleted={handleCompleted}
-        >
-        {renderForm}
-        </Mutation>
-      </FlexSection>
-    );
-  }
-
-  private readonly renderForm = (
+  const handleCompleted = () => {
+    useName(initialName);
+  };
+  const renderForm = (
     mutate: MutationFn<DeckCreateData, DeckCreateVariables>,
     { loading }: MutationResult<DeckCreateData>,
   ) => {
-    const { name } = this.state;
-    const { handleChange } = this;
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       return mutate({
@@ -76,15 +64,18 @@ class WrNewDeck extends Component {
         </Fieldset>
       </form>
     );
-  }
-
-  private readonly handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ name: e.target.value });
-  }
-
-  private readonly handleCompleted = () => {
-    this.setState({ name: '' });
-  }
-}
+  };
+  return (
+    <FlexSection>
+      <Mutation<DeckCreateData, DeckCreateVariables>
+        mutation={DECK_CREATE_MUTATION}
+        onError={printApolloError}
+        onCompleted={handleCompleted}
+      >
+      {renderForm}
+      </Mutation>
+    </FlexSection>
+  );
+};
 
 export default WrNewDeck;

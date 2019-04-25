@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, ReactNode, ReactNodeArray } from 'react';
 
 import { WrDeck } from '../types';
 
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { animated, useTransition } from 'react-spring';
 import { Filter } from 'react-feather';
 
 import { Flex } from 'rebass';
@@ -13,81 +13,102 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-class WrDeckList extends Component<{ decks: WrDeck[] }, { filter: string }> {
-  public readonly state = {
-    filter: '',
-  };
+const AnimatedItem = animated(Item);
 
-  private readonly inputRef: React.RefObject<HTMLInputElement> = React.createRef();
+const initialFilter = '';
 
-  public readonly render = () => {
-    const { decks } = this.props;
-    const { filter } = this.state;
-    const { handleSubmit, handleChange, inputRef } = this;
-    const formattedDecks = decks.filter((deck) => {
-      return filter === '' || deck.name.includes(filter);
-    }).map((deck: WrDeck) => (
-      <CSSTransition key={deck.id} timeout={250} classNames="fade">
-        <Item>
-          <SidebarMenuLink to={`/deck/${deck.id}`}>
-            {deck.name}
-          </SidebarMenuLink>
-        </Item>
-      </CSSTransition>
-    ));
-    const placeholder = (
-      <CSSTransition timeout={250} classNames="fade">
-        <Item p={2}><em>There are no matching decks</em></Item>
-      </CSSTransition>
-    );
-    return (
-      <>
-        <form onSubmit={handleSubmit}>
-          <Fieldset>
-            <Flex width="100%" alignItems="center">
-              <TextInput
-                variant="minimal"
-                type="text"
-                aria-label="Filter"
-                placeholder="Filter..."
-                px={2}
-                py={1}
-                value={filter}
-                onChange={handleChange}
-                ref={inputRef}
-              />
-              <Button
-                variant="minimal"
-                px={0}
-                py={0}
-                type="submit"
-                disabled={filter === ''}
-              >
-                <Filter size={18} />
-              </Button>
-            </Flex>
-          </Fieldset>
-        </form>
-        <List flexDirection="inherit">
-          <TransitionGroup component={null}>
-            {formattedDecks.length ? formattedDecks : placeholder}
-          </TransitionGroup>
-        </List>
-      </>
-    );
-  }
-
-  private readonly handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    const { inputRef } = this;
-    e.preventDefault();
-    if (inputRef.current) {
-      this.setState({ filter: inputRef.current.value });
-    }
-  }
-
-  private readonly handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ filter: e.target.value });
-  }
+interface Content {
+  id: string;
+  el: JSX.Element;
 }
+
+// TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
+const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
+  const [ filter, setFilter ] = useState(initialFilter);
+  const [refs] = useState<{[key: string]: HTMLDivElement}>({});
+  const inputEl = useRef<HTMLInputElement>(null);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (inputEl.current) {
+      setFilter(inputEl.current.value);
+    }
+  };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
+  const filteredDecks = decks.filter((deck) => {
+    return filter === '' || deck.name.includes(filter);
+  });
+  const contents = (filteredDecks.length === 0)
+    ? [{
+      id: 'placeholder',
+      el: (<em>There are no matching decks</em>),
+    }]
+    : filteredDecks.map((deck: WrDeck) => ({
+      id: deck.id,
+      el: (
+        <SidebarMenuLink to={`/deck/${deck.id}`}>
+          {deck.name}
+        </SidebarMenuLink>
+      ),
+    }));
+  // Note: defect in library typings, hence the `object` argument and `any` for `next` and `cancel`.
+  const transitions = useTransition<Content, object>(contents, (content) => content.id, {
+    from: { opacity: 0, height: 0 },
+    enter: (item) => async (next: any, cancel: any) => {
+      await next({ opacity: 0, height: 0 }); // initialize refs
+      await next({
+        opacity: 1,
+        height: refs[item.id] ? refs[item.id].getBoundingClientRect().height : 0,
+      });
+    },
+    leave: (item) => {
+      delete refs[item.id];
+      return { opacity: 0, height: 0 };
+    },
+  });
+  const wrapItem = (
+    { key, item, props }: { key: string, item: Content, props: {} },
+    ) => (
+    <AnimatedItem key={key} style={props}>
+      <div ref={(ref) => ref && (refs[item.id] = ref)}>
+        {item.el}
+      </div>
+    </AnimatedItem>
+  );
+  return (
+    <>
+      <form onSubmit={handleSubmit}>
+        <Fieldset>
+          <Flex width="100%" alignItems="center">
+            <TextInput
+              variant="minimal"
+              type="text"
+              aria-label="Filter"
+              placeholder="Filter..."
+              px={2}
+              py={1}
+              value={filter}
+              onChange={handleChange}
+              ref={inputEl}
+            />
+            <Button
+              variant="minimal"
+              px={0}
+              py={0}
+              type="submit"
+              disabled={filter === ''}
+            >
+              <Filter size={18} />
+            </Button>
+          </Flex>
+        </Fieldset>
+      </form>
+      <List flexDirection="inherit">
+        {transitions.map(wrapItem)}
+      </List>
+    </>
+  );
+};
 
 export default WrDeckList;

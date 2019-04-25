@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { Search } from 'react-feather';
 
 import styled from 'styled-components';
@@ -17,25 +17,17 @@ const SearchboxTextInput = styled(TextInput)`
   padding: 0;
 `;
 
-class WrDeckSearchbox extends Component {
-  public readonly state = {
-    name: '',
+const initialName = '';
+
+const WrDeckSearchbox = () => {
+  const [name, setName] = useState(initialName);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   };
-
-  public readonly render = () => {
-    const { renderForm, handleCompleted } = this;
-    return (
-      <WideCard
-        p={2}
-      >
-        {renderForm()}
-      </WideCard>
-    );
-  }
-
-  private readonly renderForm = () => {
-    const { name } = this.state;
-    const { handleChange } = this;
+  const handleCompleted = () => {
+    setName(initialName);
+  };
+  const renderForm = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
     };
@@ -66,15 +58,14 @@ class WrDeckSearchbox extends Component {
         </Fieldset>
       </form>
     );
-  }
-
-  private readonly handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    this.setState({ name: e.target.value });
-  }
-
-  private readonly handleCompleted = () => {
-    this.setState({ name: '' });
-  }
+  };
+  return (
+    <WideCard
+      p={2}
+    >
+      {renderForm()}
+    </WideCard>
+  );
 }
 
 export default WrDeckSearchbox;
