@@ -34,7 +34,8 @@ type Mutation {
   rwDeckUpdateName(id: ID!, name: String!): RwDeck
   rwDeckDelete(id: ID!): ID
   # Card
-  rwCardSave(id: ID, front: String!, back: String!, deckId: ID!): RwCard
+  rwCardCreate(front: String!, back: String!, sortKey: String, deckId: ID!): RwCard
+  rwCardUpdate(id: ID!, front: String, back: String, sortKey: String): RwCard
   rwCardDelete(id: ID!): ID
   # Room
   rwRoomCreate(name: String): RwRoom

@@ -27,8 +27,7 @@ const rwUser: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
 ): Promise<IRwUser | null> => {
   try {
-    const pUser = await prisma.pUser({ id });
-    wrGuardPrismaNullError(pUser);
+    const pUser = wrGuardPrismaNullError(await prisma.pUser({ id }));
     return pUserToRwUser(pUser, prisma);
   } catch (e) {
     return throwIfDevel(e);

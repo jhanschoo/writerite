@@ -37,16 +37,14 @@ export class FacebookAuthService extends AbstractAuthService {
       if (!await prisma.$exists.pUser({ email, facebookId })) {
         throw new ApolloError('writerite: user already exists');
       }
-      const pUser = await prisma.pUser({ email });
-      wrGuardPrismaNullError(pUser);
+      const pUser = wrGuardPrismaNullError(await prisma.pUser({ email }));
       return FacebookAuthService.authResponseFromUser(
         pUser, { persist, prisma },
       );
     } else {
-      const pUser = await prisma.createPUser(
+      const pUser = wrGuardPrismaNullError(await prisma.createPUser(
         { email, facebookId, roles: { set: ['user'] } },
-      );
-      wrGuardPrismaNullError(pUser);
+      ));
       return FacebookAuthService.authResponseFromUser(pUser, { persist, prisma });
     }
   }

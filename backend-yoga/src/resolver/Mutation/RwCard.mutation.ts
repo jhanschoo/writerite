@@ -11,58 +11,72 @@ import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNull
 
 // Mutation resolvers
 
-const rwCardSave: IFieldResolver<any, IRwContext, {
-  id?: string, front: string, back: string, sortKey?: string, deckId: string,
+const rwCardCreate: IFieldResolver<any, IRwContext, {
+  deckId: string, front?: string, back?: string, sortKey?: string,
 }> = async (
   _parent,
-  { id, front, back, sortKey, deckId },
+  { deckId, front, back, sortKey },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
     if (!sub) {
       throw wrAuthenticationError();
     }
-    if (id) {
-      if (!await prisma.$exists.pSimpleCard({
-        id,
-        deck: {
-          id: deckId,
-          owner: { id: sub.id },
-        },
-      })) {
-        throw wrNotFoundError('card');
-      }
-      const pCard = await prisma.updatePSimpleCard({
-        data: { front, back, sortKey },
-        where: { id },
-      });
-      wrGuardPrismaNullError(pCard);
-      const pCardUpdate: IUpdatedUpdate<PSimpleCard> = {
-        mutation: MutationType.UPDATED,
-        new: pCard,
-        oldId: null,
-      };
-      pubsub.publish(rwCardTopicFromRwDeck(deckId), pCardUpdate);
-      return pCardToRwCard(pCard, prisma);
-    } else {
-      if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
-        throw wrNotFoundError('deck');
-      }
-      const pCard = await prisma.createPSimpleCard({
-        front,
-        back,
-        sortKey: sortKey || front,
-        deck: { connect: { id: deckId } },
-      });
-      wrGuardPrismaNullError(pCard);
-      const pCardUpdate: ICreatedUpdate<PSimpleCard> = {
-        mutation: MutationType.CREATED,
-        new: pCard,
-        oldId: null,
-      };
-      pubsub.publish(rwCardTopicFromRwDeck(deckId), pCardUpdate);
-      return pCardToRwCard(pCard, prisma);
+    if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
+      throw wrNotFoundError('deck');
     }
+    const pCard = await prisma.createPSimpleCard({
+      front: front || '',
+      back: back || '',
+      sortKey: sortKey || front || '',
+      deck: { connect: { id: deckId } },
+    });
+    wrGuardPrismaNullError(pCard);
+    const pCardUpdate: ICreatedUpdate<PSimpleCard> = {
+      mutation: MutationType.CREATED,
+      new: pCard,
+      oldId: null,
+    };
+    pubsub.publish(rwCardTopicFromRwDeck(deckId), pCardUpdate);
+    return pCardToRwCard(pCard, prisma);
+  } catch (e) {
+    return throwIfDevel(e);
+  }
+};
+
+const rwCardUpdate: IFieldResolver<any, IRwContext, {
+  id: string, front?: string, back?: string, sortKey?: string,
+}> = async (
+  _parent,
+  { id, front, back, sortKey },
+  { prisma, sub, pubsub },
+): Promise<IBakedRwCard | null> => {
+  try {
+    if (!sub) {
+      throw wrAuthenticationError();
+    }
+    if (!await prisma.$exists.pSimpleCard({
+      id,
+      deck: {
+        owner: { id: sub.id },
+      },
+    })) {
+      throw wrNotFoundError('card');
+    }
+    const pCard = await prisma.updatePSimpleCard({
+      data: { front, back, sortKey },
+      where: { id },
+    });
+    const pDeck = await prisma.pSimpleCard({ id }).deck();
+    wrGuardPrismaNullError(pCard);
+    wrGuardPrismaNullError(pDeck);
+    const pCardUpdate: IUpdatedUpdate<PSimpleCard> = {
+      mutation: MutationType.UPDATED,
+      new: pCard,
+      oldId: null,
+    };
+    pubsub.publish(rwCardTopicFromRwDeck(pDeck.id), pCardUpdate);
+    return pCardToRwCard(pCard, prisma);
   } catch (e) {
     return throwIfDevel(e);
   }
@@ -96,5 +110,5 @@ const rwCardDelete: IFieldResolver<any, IRwContext, { id: string }> = async (
 };
 
 export const rwCardMutation = {
-  rwCardSave, rwCardDelete,
+  rwCardCreate, rwCardUpdate, rwCardDelete,
 };

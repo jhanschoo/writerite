@@ -9,8 +9,7 @@ const rwRoomMessage: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
 ): Promise<IBakedRwRoomMessage | null> => {
   try {
-    const pRoomMessage = await prisma.pRoomMessage({ id });
-    wrGuardPrismaNullError(pRoomMessage);
+    const pRoomMessage = wrGuardPrismaNullError(await prisma.pRoomMessage({ id }));
     return pRoomMessageToRwRoomMessage(pRoomMessage, prisma);
   } catch (e) {
     return throwIfDevel(e);

@@ -27,8 +27,7 @@ export class GoogleAuthService extends AbstractAuthService {
       if (!await prisma.$exists.pUser({ email, googleId })) {
         throw new ApolloError('writerite: user already exists');
       }
-      const pUser = await prisma.pUser({ email });
-      wrGuardPrismaNullError(pUser);
+      const pUser = wrGuardPrismaNullError(await prisma.pUser({ email }));
       return GoogleAuthService.authResponseFromUser(
         pUser, { persist, prisma },
       );

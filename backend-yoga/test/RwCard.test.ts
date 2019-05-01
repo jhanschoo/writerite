@@ -11,7 +11,7 @@ import { IRwContext } from '../src/types';
 import { resolveField } from '../src/util';
 
 const { rwCard, rwCardsOfDeck } = rwCardQuery;
-const { rwCardSave, rwCardDelete } = rwCardMutation;
+const { rwCardCreate, rwCardUpdate, rwCardDelete } = rwCardMutation;
 const { rwCardUpdatesOfDeck } = rwCardSubscription;
 
 const redisClient = new Redis();
@@ -118,19 +118,19 @@ describe('RwCard resolvers', async () => {
     });
   });
 
-  describe('rwCardSave', async () => {
+  describe('rwCardCreate', async () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return null if sub is not present', async () => {
       expect.assertions(1);
-      expect(rwCardSave(
+      expect(rwCardCreate(
         null, { front: NEW_FRONT, back: NEW_BACK, deckId: DECK.id }, baseCtx, baseInfo,
       )).resolves.toBeNull();
     });
-    test('it should save card if id not supplied and deck\'s owner is sub.id', async () => {
+    test('it should save card if deck\'s owner is sub.id', async () => {
       expect.assertions(7);
-      const cardObj = await rwCardSave(
+      const cardObj = await rwCardCreate(
         null,
         { front: NEW_FRONT, back: NEW_BACK, deckId: DECK.id },
         {
@@ -153,9 +153,9 @@ describe('RwCard resolvers', async () => {
       expect(savedCard).toHaveProperty('front', NEW_FRONT);
       expect(savedCard).toHaveProperty('back', NEW_BACK);
     });
-    test('it should return null if id not supplied and deck\'s owner is not sub.id', async () => {
+    test('it should return null if deck\'s owner is not sub.id', async () => {
       expect.assertions(2);
-      expect(rwCardSave(
+      expect(rwCardCreate(
         null,
         { front: NEW_FRONT, back: NEW_BACK, deckId: OTHER_DECK.id },
         {
@@ -175,11 +175,23 @@ describe('RwCard resolvers', async () => {
         expect.objectContaining({ front: NEW_FRONT, back: NEW_BACK }),
       );
     });
+  });
+
+  describe('rwCardUpdate', async () => {
+    beforeEach(commonBeforeEach);
+    afterEach(commonAfterEach);
+
+    test('it should return null if sub is not present', async () => {
+      expect.assertions(1);
+      expect(rwCardUpdate(
+        null, { id: CARD.id, front: NEW_FRONT, back: NEW_BACK }, baseCtx, baseInfo,
+      )).resolves.toBeNull();
+    });
     test('it should update if id is supplied and deck\'s owner is sub.id', async () => {
       expect.assertions(6);
-      const cardObj = await rwCardSave(
+      const cardObj = await rwCardUpdate(
         null,
-        { id: CARD.id, front: NEW_FRONT, back: NEW_BACK, deckId: DECK.id },
+        { id: CARD.id, front: NEW_FRONT, back: NEW_BACK },
         {
           ...baseCtx,
           sub: {
@@ -196,29 +208,11 @@ describe('RwCard resolvers', async () => {
       expect(savedCard).toHaveProperty('front', NEW_FRONT);
       expect(savedCard).toHaveProperty('back', NEW_BACK);
     });
-    test('it should return null if id is supplied but deck is not correct', async () => {
-      expect.assertions(4);
-      expect(rwCardSave(
-        null,
-        { id: CARD.id, front: NEW_FRONT, back: NEW_BACK, deckId: NEXT_DECK.id },
-        {
-          ...baseCtx,
-          sub: {
-            id: USER.id,
-          },
-        } as IRwContext,
-        baseInfo,
-      )).resolves.toBeNull();
-      const cardObj = await prisma.pSimpleCard({ id: CARD.id });
-      expect(cardObj).toHaveProperty('id', CARD.id);
-      expect(cardObj).toHaveProperty('front', FRONT);
-      expect(cardObj).toHaveProperty('back', BACK);
-    });
     test('it should return null if deck\'s owner is not sub.id', async () => {
       expect.assertions(4);
-      expect(rwCardSave(
+      expect(rwCardUpdate(
         null,
-        { id: OTHER_CARD.id, front: NEW_FRONT, back: NEW_BACK, deckId: OTHER_DECK.id },
+        { id: OTHER_CARD.id, front: NEW_FRONT, back: NEW_BACK },
         {
           ...baseCtx,
           sub: {
@@ -312,7 +306,7 @@ describe('RwCard resolvers', async () => {
         const subscr = await rwCardUpdatesOfDeck.subscribe(
           null, { deckId: DECK.id }, baseCtx, baseInfo,
         );
-        const cardObj = await rwCardSave(
+        const cardObj = await rwCardCreate(
           null,
           { deckId: DECK.id, front: NEW_FRONT, back: NEW_BACK },
           { ...baseCtx, sub: { id: USER.id } } as IRwContext,
@@ -340,7 +334,7 @@ describe('RwCard resolvers', async () => {
       room using rwRoomMessageCreate before subscription`,
       async () => {
         expect.assertions(1);
-        await rwCardSave(
+        await rwCardCreate(
           null,
           { deckId: DECK.id, front: NEW_FRONT, back: NEW_BACK },
           { ...baseCtx, sub: { id: USER.id } } as IRwContext,

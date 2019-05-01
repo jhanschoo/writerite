@@ -1,3 +1,4 @@
+set -e
 if [ "${NODE_ENV}" = "debug" ]
 then
   sleep infinity

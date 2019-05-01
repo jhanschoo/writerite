@@ -11,8 +11,7 @@ const rwCard: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
 ): Promise<IBakedRwCard | null> => {
   try {
-    const pSimpleCard = await prisma.pSimpleCard({ id });
-    wrGuardPrismaNullError(pSimpleCard);
+    const pSimpleCard = wrGuardPrismaNullError(await prisma.pSimpleCard({ id }));
     return pCardToRwCard(pSimpleCard, prisma);
   } catch (e) {
     return throwIfDevel(e);

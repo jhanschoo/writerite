@@ -86,8 +86,7 @@ const rwRoomAddOccupant: IFieldResolver<any, IRwContext, {
     if (!sub) {
       throw wrAuthenticationError();
     }
-    const pRoom = await prisma.pRoom({ id });
-    wrGuardPrismaNullError(pRoom);
+    const pRoom = wrGuardPrismaNullError(await prisma.pRoom({ id }));
     const rwRoom = pRoomToRwRoom(pRoom, prisma);
     const roomOwner = await rwRoom.owner(null);
     // TODO: implement allowing occupants to add new occupants

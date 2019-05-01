@@ -9,8 +9,7 @@ const rwDeck: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
 ): Promise<IBakedRwDeck | null> => {
   try {
-    const pDeck = await prisma.pDeck({ id });
-    wrGuardPrismaNullError(pDeck);
+    const pDeck = wrGuardPrismaNullError(await prisma.pDeck({ id }));
     return pDeckToRwDeck(pDeck, prisma);
   } catch (e) {
     return throwIfDevel(e);

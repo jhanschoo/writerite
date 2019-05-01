@@ -16,8 +16,7 @@ export class LocalAuthService extends AbstractAuthService {
 
   public async signin({ prisma, email, token, identifier: password, persist }: ISigninOptions) {
     if (await prisma.$exists.pUser({ email })) {
-      const knownUser = await prisma.pUser({ email });
-      wrGuardPrismaNullError(knownUser);
+      const knownUser = wrGuardPrismaNullError(await prisma.pUser({ email }));
       if (!knownUser.passwordHash || !await comparePassword(password, knownUser.passwordHash)) {
         throw new ApolloError('writerite: failed login');
       }

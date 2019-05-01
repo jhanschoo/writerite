@@ -14,7 +14,7 @@ PACKAGE_VERSION=$(cat package.json |
 SUFFIX="-${NODE_ENV}"
 if [[ "${SUFFIX}" == "-development" ]]
 then
-  SUFFIX="-dev3"
+  SUFFIX="-dev8"
 fi
 if [[ "${SUFFIX}" == "-production" ]]
 then
