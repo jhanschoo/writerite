@@ -28,7 +28,7 @@ spec:
                 port: 5432
                 user: prisma
                 password: prisma
-        image: prismagraphql/prisma:1.31
+        image: prismagraphql/prisma:1.32
         name: prisma
         ports:
         - containerPort: 4466
