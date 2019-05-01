@@ -4,3 +4,5 @@
 /pki/*.key
 /pki/*.private
 /pki/*.srl
+
+.env*

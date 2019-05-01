@@ -1,0 +1,57 @@
+version: '3.7'
+services:
+  backend-yoga:
+    image: jhanschoo/writerite-backend-yoga:1.3.4-dev8
+    restart: always
+    ports:
+      - '4000:4000'
+    env_file: .env
+    environment:
+      PRISMA_ENDPOINT: http://prisma:4466/writerite/production
+      PRISMA_MANAGEMENT_API_SECRET: writerite-prisma
+      REDIS_HOST: 'redis'
+      REDIS_PORT: '6379'
+      CERT_FILE: /run/secrets/https_cert
+      KEY_FILE: /run/secrets/https_key
+    secrets:
+      - https_cert
+      - https_key
+  redis:
+    image: redis:5.0.4
+    restart: always
+    ports:
+      - '6379:6379'
+  prisma:
+    image: prismagraphql/prisma:1.32
+    restart: always
+    ports:
+      - '4466:4466'
+    environment:
+      PRISMA_CONFIG: |
+        port: 4466
+        managementApiSecret: writerite-prisma
+        databases:
+          default:
+            connector: postgres
+            host: postgres
+            port: 5432
+            user: prisma
+            password: prisma
+  postgres:
+    image: postgres:11.2
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: prisma
+      POSTGRES_PASSWORD: prisma
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres:/var/lib/postgresql/data
+volumes:
+  postgres: null
+secrets:
+  https_cert:
+    file: pki/wr-dev.secp256r1.crt
+  https_key:
+    file: pki/wr-dev.secp256r1.private
