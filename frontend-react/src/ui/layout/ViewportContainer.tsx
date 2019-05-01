@@ -5,7 +5,7 @@ const ViewportContainer = styled(Box)`
   display: grid;
   min-height: 100vh;
   min-width: 100vw;
-  grid: min-content auto / minmax(1em, auto) repeat(12, minmax(1em, 96px)) minmax(1em, auto);
+  grid: min-content auto / minmax(1rem, auto) repeat(12, minmax(1rem, 96px)) minmax(1rem, auto);
   placeContent: start stretch;
 `;
 

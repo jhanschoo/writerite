@@ -6,7 +6,9 @@ const Fieldset = styled(Box)`
 `;
 
 Fieldset.defaultProps = {
-  as: 'fieldset',
+  // https://bugs.chromium.org/p/chromium/issues/detail?id=375693
+  // as: 'fieldset',
+  role: 'group',
   m: 0,
   p: 0,
 };

@@ -21,11 +21,11 @@ body {
 @keyframes grow-vertically {
   0% {
     transform: scaleY(0);
-    max-height: 0em;
+    max-height: 0;
   }
   100% {
     transform: scaleY(1);
-    max-height: 2em;
+    max-height: 2rem;
   }
 }
 
@@ -47,7 +47,7 @@ body {
 @keyframes fade-in-down {
   0% {
     opacity: 0;
-    transform: translateY(-0.5em);
+    transform: translateY(-0.5rem);
   }
   100% {
     opacity: 1;

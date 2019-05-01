@@ -32,3 +32,5 @@ export type Payload<T> =
   | Updated<T>
   | Deleted
   ;
+
+export type FixRef<T extends { ref?: any }> = Omit<T, 'ref'> & { ref?: Exclude<T['ref'], string> };

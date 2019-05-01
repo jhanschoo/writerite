@@ -15,12 +15,12 @@ const WrManageDecks = () => {
       <List flexDirection="inherit">
         <Item>
           <SidebarMenuLink to="/deck/manage">
-            <Grid size={16}/>&nbsp;Organize own decks
+            <Grid size={14}/>&nbsp;Organize own decks
           </SidebarMenuLink>
         </Item>
         <Item>
           <SidebarMenuLink to="/deck/search">
-            <Search size={16}/>&nbsp;Explore public decks
+            <Search size={14}/>&nbsp;Explore public decks
           </SidebarMenuLink>
         </Item>
       </List>

@@ -1,3 +1,5 @@
+import { nonExecutableDefinitionMessage } from "graphql/validation/rules/ExecutableDefinitions";
+
 // Tachyons colors
 // TODO: translate to variables for rgb
 const black = '#000';
@@ -47,7 +49,7 @@ const disabled = moonGray;
 const activeBg = moonGray;
 const edge = midGray;
 const activeEdge = lightBlue;
-const shadow = midGray;
+const shadow = moonGray;
 const activeShadow = lightBlue;
 const error = red;
 const googleRed = '#DB4437';
@@ -55,12 +57,19 @@ const facebookBlue = '#3C5A99';
 const transparent = 'rgba(255, 255, 255, 0)';
 const darken = 'rgba(0, 0, 0, 0.125)';
 
-export const breakpoints = [ '40em', '52em', '64em' ];
+export const breakpoints = [ '40rem', '52rem', '64rem' ];
 
 const theme = {
   breakpoints,
-  space: [ 0, '0.25em', '0.5em', '1em', '2em', '4em', '8em', '16em', '32em' ],
+  space: [ 0, '0.25rem', '0.5rem', '1rem', '2rem', '4rem', '8rem', '16rem', '32rem' ],
   buttons: {
+    card: {
+      alignItems: 'center',
+      background: bg0,
+      color: fg1,
+      display: 'flex',
+      border: 'none',
+    },
     link: {
       'color': fg1,
       'border': `1px solid ${transparent}`,
@@ -154,6 +163,9 @@ const theme = {
     brand: '"Josefin Slab", serif',
     sans: '"Noto Sans", sans-serif',
   },
+  shadows: [
+    `0 1px 2px ${shadow}`,
+  ],
   textInputs: {
     error: {
       'borderColor': red,

@@ -58,7 +58,7 @@ const WrNewDeck = () => {
                 type="submit"
                 disabled={name === '' || loading}
               >
-                <Plus size={18} />
+                <Plus size={14} />
               </Button>
             </Flex>
         </Fieldset>

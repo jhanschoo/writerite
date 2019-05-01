@@ -15,7 +15,7 @@ import { SIGNIN, SigninVariables, SigninData } from './gql';
 import { Text } from 'rebass';
 import { breakpoints } from '../../theme';
 import RoundedBox from '../../ui/RoundedBox';
-import LabeledDivider from '../../ui/LabeledDivider';
+import HDivider from '../../ui/HDivider';
 import Button from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 import Fieldset from '../../ui/form/Fieldset';
@@ -300,9 +300,9 @@ class WrSignin extends Component<Props> {
           >
             Sign in with Facebook
           </Button>
-          <LabeledDivider>
+          <HDivider>
             OR
-          </LabeledDivider>
+          </HDivider>
           <Formik
             initialValues={formInitialValues}
             onSubmit={handleLocalSignin}

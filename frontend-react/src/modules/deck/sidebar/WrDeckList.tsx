@@ -1,4 +1,4 @@
-import React, { useState, useRef, ReactNode, ReactNodeArray } from 'react';
+import React, { useState, useRef } from 'react';
 
 import { WrDeck } from '../types';
 
@@ -71,9 +71,9 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
     { key, item, props }: { key: string, item: Content, props: {} },
     ) => (
     <AnimatedItem key={key} style={props}>
-      <div ref={(ref) => ref && (refs[item.id] = ref)}>
+      <Flex width="100%" ref={(ref) => ref && (refs[item.id] = ref)}>
         {item.el}
-      </div>
+      </Flex>
     </AnimatedItem>
   );
   return (
@@ -99,7 +99,7 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
               type="submit"
               disabled={filter === ''}
             >
-              <Filter size={18} />
+              <Filter size={14} />
             </Button>
           </Flex>
         </Fieldset>
