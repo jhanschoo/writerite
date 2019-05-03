@@ -1,5 +1,3 @@
-import { nonExecutableDefinitionMessage } from "graphql/validation/rules/ExecutableDefinitions";
-
 // Tachyons colors
 // TODO: translate to variables for rgb
 const black = '#000';
