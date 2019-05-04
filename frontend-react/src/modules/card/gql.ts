@@ -7,8 +7,8 @@ export const CARDS_QUERY = gql`
 query Cards($deckId: ID!) {
   rwCardsOfDeck(deckId: $deckId) {
     id
-    front
-    back
+    prompt
+    fullAnswer
   }
 }
 `;
@@ -25,22 +25,22 @@ export interface CardsData {
 
 export const CARD_CREATE_MUTATION = gql`
 mutation CardCreate(
-  $front: String! $back: String! $deckId: ID!
+  $prompt: String! $fullAnswer: String! $deckId: ID!
 ) {
   rwCardCreate(
-    deckId: $deckId front: $front back: $back
+    deckId: $deckId prompt: $prompt fullAnswer: $fullAnswer
   ) {
     id
-    front
-    back
+    prompt
+    fullAnswer
   }
 }
 `;
 
 export interface CardCreateVariables {
   readonly deckId: string;
-  readonly front: string;
-  readonly back: string;
+  readonly prompt: string;
+  readonly fullAnswer: string;
 }
 
 export interface CardCreateData {
@@ -51,14 +51,14 @@ export interface CardCreateData {
 
 export const CARD_UPDATE_MUTATION = gql`
 mutation CardUpdate(
-  $id: ID! $front: String $back: String $sortKey: String
+  $id: ID! $prompt: String $fullAnswer: String $sortKey: String
 ) {
   rwCardUpdate(
-    id: $id front: $front back: $back sortKey: $sortKey
+    id: $id prompt: $prompt fullAnswer: $fullAnswer sortKey: $sortKey
   ) {
     id
-    front
-    back
+    prompt
+    fullAnswer
     sortKey
   }
 }
@@ -66,8 +66,8 @@ mutation CardUpdate(
 
 export interface CardUpdateVariables {
   readonly id: string;
-  readonly front?: string;
-  readonly back?: string;
+  readonly prompt?: string;
+  readonly fullAnswer?: string;
   readonly sortKey?: string;
 }
 
@@ -99,8 +99,8 @@ subscription CardUpdates($deckId: ID!) {
     mutation
     new {
       id
-      front
-      back
+      prompt
+      fullAnswer
       sortKey
     }
     oldId

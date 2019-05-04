@@ -30,8 +30,8 @@ query Deck($deckId: ID!) {
     name
     cards {
       id
-      front
-      back
+      prompt
+      fullAnswer
       sortKey
     }
   }

@@ -26,8 +26,8 @@ const NewCardButton: FC<Props> = (props: Props) => {
     const handleClick = () => {
       return mutate({
         variables: {
-          front: '',
-          back: '',
+          prompt: '',
+          fullAnswer: '',
           deckId,
         },
       });

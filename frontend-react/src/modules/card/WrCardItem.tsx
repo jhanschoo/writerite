@@ -19,13 +19,13 @@ interface Props {
 // https://github.com/lovasoa/react-contenteditable/issues/164
 class WrCardItem extends Component<Props> {
   public readonly state = {
-    front: this.props.card.front,
-    back: this.props.card.back,
+    prompt: this.props.card.prompt,
+    fullAnswer: this.props.card.fullAnswer,
   };
 
   public readonly render = () => {
-    const { handleFrontChange, handleBackChange } = this;
-    const { front, back } = this.state;
+    const { handlePromptChange, handleFullAnswerChange } = this;
+    const { prompt, fullAnswer } = this.state;
     const { id, sortKey } = this.props.card;
     const renderCardUpdate = (
       mutate: MutationFn<CardUpdateData, CardUpdateVariables>,
@@ -36,8 +36,8 @@ class WrCardItem extends Component<Props> {
         return mutate({
           variables: {
             id,
-            front: this.state.front,
-            back: this.state.back,
+            prompt: this.state.prompt,
+            fullAnswer: this.state.fullAnswer,
             sortKey,
           },
         });
@@ -53,18 +53,18 @@ class WrCardItem extends Component<Props> {
           <Flex bg="bg0" as="form" flexDirection="column">
             <Flex>
               <CardFieldset
-                label="Front"
-                html={front}
-                onChange={handleFrontChange}
+                label="Prompt"
+                html={prompt}
+                onChange={handlePromptChange}
                 onUnmodifiedEnter={handleUpdate}
               />
               <Flex flexDirection="column" justifyContent="center">
                 <VDivider height="75%" spacer={{ bg: 'lightLightEdge' }} />
               </Flex>
               <CardFieldset
-                label="Back"
-                html={back}
-                onChange={handleBackChange}
+                label="Displayed Answer"
+                html={fullAnswer}
+                onChange={handleFullAnswerChange}
                 onUnmodifiedEnter={handleUpdate}
               />
             </Flex>
@@ -81,11 +81,11 @@ class WrCardItem extends Component<Props> {
       </Mutation>
     );
   }
-  private readonly handleFrontChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ front: e.target.value });
+  private readonly handlePromptChange = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ prompt: e.target.value });
   }
-  private readonly handleBackChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ back: e.target.value });
+  private readonly handleFullAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
+    this.setState({ fullAnswer: e.target.value });
   }
 }
 
