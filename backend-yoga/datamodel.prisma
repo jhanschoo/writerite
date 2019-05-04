@@ -28,8 +28,8 @@ type PUser {
 type PSimpleCard { # implements Card
   id: ID! @id
   deck: PDeck! @relation(link: INLINE)
-  front: String!
-  back: String!
+  prompt: String!
+  fullAnswer: String!
   sortKey: String!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

@@ -12,10 +12,10 @@ import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNull
 // Mutation resolvers
 
 const rwCardCreate: IFieldResolver<any, IRwContext, {
-  deckId: string, front?: string, back?: string, sortKey?: string,
+  deckId: string, prompt?: string, fullAnswer?: string, sortKey?: string,
 }> = async (
   _parent,
-  { deckId, front, back, sortKey },
+  { deckId, prompt, fullAnswer, sortKey },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
@@ -26,9 +26,9 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
       throw wrNotFoundError('deck');
     }
     const pCard = await prisma.createPSimpleCard({
-      front: front || '',
-      back: back || '',
-      sortKey: sortKey || front || '',
+      prompt: prompt || '',
+      fullAnswer: fullAnswer || '',
+      sortKey: sortKey || prompt || '',
       deck: { connect: { id: deckId } },
     });
     wrGuardPrismaNullError(pCard);
@@ -45,10 +45,10 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
 };
 
 const rwCardUpdate: IFieldResolver<any, IRwContext, {
-  id: string, front?: string, back?: string, sortKey?: string,
+  id: string, prompt?: string, fullAnswer?: string, sortKey?: string,
 }> = async (
   _parent,
-  { id, front, back, sortKey },
+  { id, prompt, fullAnswer, sortKey },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
@@ -64,7 +64,7 @@ const rwCardUpdate: IFieldResolver<any, IRwContext, {
       throw wrNotFoundError('card');
     }
     const pCard = await prisma.updatePSimpleCard({
-      data: { front, back, sortKey },
+      data: { prompt, fullAnswer, sortKey },
       where: { id },
     });
     const pDeck = await prisma.pSimpleCard({ id }).deck();

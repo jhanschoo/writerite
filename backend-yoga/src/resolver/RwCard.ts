@@ -6,8 +6,8 @@ import { IRwDeck, IBakedRwDeck, pDeckToRwDeck } from './RwDeck';
 
 export interface IRwCard {
   id: ResTo<string>;
-  front: ResTo<string>;
-  back: ResTo<string>;
+  prompt: ResTo<string>;
+  fullAnswer: ResTo<string>;
   sortKey: ResTo<string>;
   deck: ResTo<IRwDeck>;
 }
@@ -15,16 +15,16 @@ export interface IRwCard {
 // tslint:disable-next-line: variable-name
 export const RwCard: IRwCard = {
   id: fieldGetter<string>('id'),
-  front: fieldGetter<string>('front'),
-  back: fieldGetter<string>('back'),
+  prompt: fieldGetter<string>('prompt'),
+  fullAnswer: fieldGetter<string>('fullAnswer'),
   sortKey: fieldGetter<string>('sortKey'),
   deck: fieldGetter<IRwDeck>('deck'),
 };
 
 export interface IBakedRwCard extends IRwCard {
   id: string;
-  front: string;
-  back: string;
+  prompt: string;
+  fullAnswer: string;
   sortKey: string;
   deck: AFunResTo<IBakedRwDeck>;
 }
@@ -33,8 +33,8 @@ export interface IBakedRwCard extends IRwCard {
 export function pCardToRwCard(pSimpleCard: PSimpleCard, prisma: Prisma): IBakedRwCard {
   return {
     id: pSimpleCard.id,
-    front: pSimpleCard.front,
-    back: pSimpleCard.back,
+    prompt: pSimpleCard.prompt,
+    fullAnswer: pSimpleCard.fullAnswer,
     sortKey: pSimpleCard.sortKey,
     deck: async () => {
       return pDeckToRwDeck(

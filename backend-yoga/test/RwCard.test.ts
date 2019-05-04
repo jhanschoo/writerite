@@ -26,14 +26,14 @@ const NAME = 'oldDeck';
 const OTHER_NAME = 'otherDeck';
 const NEXT_NAME = 'nextDeck';
 const NEW_NAME = 'newDeck';
-const FRONT = 'front';
-const BACK = 'back';
-const NEXT_FRONT = 'front';
-const NEXT_BACK = 'back';
-const OTHER_FRONT = 'otherFront';
-const OTHER_BACK = 'otherBack';
-const NEW_FRONT = 'newFront';
-const NEW_BACK = 'newBack';
+const PROMPT = 'prompt';
+const FULL_ANSWER = 'fullAnswer';
+const NEXT_PROMPT = 'prompt';
+const NEXT_FULL_ANSWER = 'fullAnswer';
+const OTHER_PROMPT = 'otherPrompt';
+const OTHER_FULL_ANSWER = 'otherFullAnswer';
+const NEW_PROMPT = 'newPrompt';
+const NEW_FULL_ANSWER = 'newFullAnswer';
 
 describe('RwCard resolvers', async () => {
   let USER: PUser;
@@ -54,13 +54,13 @@ describe('RwCard resolvers', async () => {
     NEXT_DECK = await prisma.createPDeck({ name: NEXT_NAME, owner: { connect: { id: USER.id } } });
     OTHER_DECK = await prisma.createPDeck({ name: OTHER_NAME, owner: { connect: { id: OTHER_USER.id } } });
     CARD = await prisma.createPSimpleCard({
-      front: FRONT, back: BACK, sortKey: FRONT, deck: { connect: { id: DECK.id } },
+      prompt: PROMPT, fullAnswer: FULL_ANSWER, sortKey: PROMPT, deck: { connect: { id: DECK.id } },
     });
     NEXT_CARD = await prisma.createPSimpleCard({
-      front: NEXT_FRONT, back: NEXT_BACK, sortKey: NEXT_FRONT, deck: { connect: { id: NEXT_DECK.id } },
+      prompt: NEXT_PROMPT, fullAnswer: NEXT_FULL_ANSWER, sortKey: NEXT_PROMPT, deck: { connect: { id: NEXT_DECK.id } },
     });
     OTHER_CARD = await prisma.createPSimpleCard({
-      front: OTHER_FRONT, back: OTHER_BACK, sortKey: OTHER_FRONT, deck: { connect: { id: OTHER_DECK.id } },
+      prompt: OTHER_PROMPT, fullAnswer: OTHER_FULL_ANSWER, sortKey: OTHER_PROMPT, deck: { connect: { id: OTHER_DECK.id } },
     });
   };
   const commonAfterEach = async () => {
@@ -86,8 +86,8 @@ describe('RwCard resolvers', async () => {
       const cardObj = await rwCard(
         null, { id: CARD.id }, baseCtx, baseInfo,
       );
-      expect(cardObj).toHaveProperty('front', FRONT);
-      expect(cardObj).toHaveProperty('back', BACK);
+      expect(cardObj).toHaveProperty('prompt', PROMPT);
+      expect(cardObj).toHaveProperty('fullAnswer', FULL_ANSWER);
     });
     test('it should return null if no card with said id exists', async () => {
       expect.assertions(1);
@@ -108,7 +108,7 @@ describe('RwCard resolvers', async () => {
         null, { deckId: DECK.id }, baseCtx, baseInfo,
       );
       expect(cardObjs).toContainEqual(
-        expect.objectContaining({ front: FRONT, back: BACK }),
+        expect.objectContaining({ prompt: PROMPT, fullAnswer: FULL_ANSWER }),
       );
     });
     test('it should return null if no deck with said id exists', async () => {
@@ -125,14 +125,14 @@ describe('RwCard resolvers', async () => {
     test('it should return null if sub is not present', async () => {
       expect.assertions(1);
       expect(rwCardCreate(
-        null, { front: NEW_FRONT, back: NEW_BACK, deckId: DECK.id }, baseCtx, baseInfo,
+        null, { prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER, deckId: DECK.id }, baseCtx, baseInfo,
       )).resolves.toBeNull();
     });
     test('it should save card if deck\'s owner is sub.id', async () => {
       expect.assertions(7);
       const cardObj = await rwCardCreate(
         null,
-        { front: NEW_FRONT, back: NEW_BACK, deckId: DECK.id },
+        { prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER, deckId: DECK.id },
         {
           ...baseCtx,
           sub: { id: USER.id },
@@ -144,20 +144,20 @@ describe('RwCard resolvers', async () => {
         throw new Error('`cardObj` could not be retrieved');
       }
       expect(cardObj).toHaveProperty('id');
-      expect(cardObj).toHaveProperty('front', NEW_FRONT);
-      expect(cardObj).toHaveProperty('back', NEW_BACK);
+      expect(cardObj).toHaveProperty('prompt', NEW_PROMPT);
+      expect(cardObj).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
       const savedCard = await prisma.pSimpleCard({
         id: await resolveField(cardObj.id),
       });
       expect(savedCard).toHaveProperty('id');
-      expect(savedCard).toHaveProperty('front', NEW_FRONT);
-      expect(savedCard).toHaveProperty('back', NEW_BACK);
+      expect(savedCard).toHaveProperty('prompt', NEW_PROMPT);
+      expect(savedCard).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
     });
     test('it should return null if deck\'s owner is not sub.id', async () => {
       expect.assertions(2);
       expect(rwCardCreate(
         null,
-        { front: NEW_FRONT, back: NEW_BACK, deckId: OTHER_DECK.id },
+        { prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER, deckId: OTHER_DECK.id },
         {
           ...baseCtx,
           sub: {
@@ -172,7 +172,7 @@ describe('RwCard resolvers', async () => {
         },
       });
       expect(otherCards).not.toContainEqual(
-        expect.objectContaining({ front: NEW_FRONT, back: NEW_BACK }),
+        expect.objectContaining({ prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER }),
       );
     });
   });
@@ -184,14 +184,14 @@ describe('RwCard resolvers', async () => {
     test('it should return null if sub is not present', async () => {
       expect.assertions(1);
       expect(rwCardUpdate(
-        null, { id: CARD.id, front: NEW_FRONT, back: NEW_BACK }, baseCtx, baseInfo,
+        null, { id: CARD.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER }, baseCtx, baseInfo,
       )).resolves.toBeNull();
     });
     test('it should update if id is supplied and deck\'s owner is sub.id', async () => {
       expect.assertions(6);
       const cardObj = await rwCardUpdate(
         null,
-        { id: CARD.id, front: NEW_FRONT, back: NEW_BACK },
+        { id: CARD.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER },
         {
           ...baseCtx,
           sub: {
@@ -201,18 +201,18 @@ describe('RwCard resolvers', async () => {
         baseInfo,
       );
       expect(cardObj).toHaveProperty('id', CARD.id);
-      expect(cardObj).toHaveProperty('front', NEW_FRONT);
-      expect(cardObj).toHaveProperty('back', NEW_BACK);
+      expect(cardObj).toHaveProperty('prompt', NEW_PROMPT);
+      expect(cardObj).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
       const savedCard = await prisma.pSimpleCard({ id: CARD.id });
       expect(savedCard).toHaveProperty('id', CARD.id);
-      expect(savedCard).toHaveProperty('front', NEW_FRONT);
-      expect(savedCard).toHaveProperty('back', NEW_BACK);
+      expect(savedCard).toHaveProperty('prompt', NEW_PROMPT);
+      expect(savedCard).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
     });
     test('it should return null if deck\'s owner is not sub.id', async () => {
       expect.assertions(4);
       expect(rwCardUpdate(
         null,
-        { id: OTHER_CARD.id, front: NEW_FRONT, back: NEW_BACK },
+        { id: OTHER_CARD.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER },
         {
           ...baseCtx,
           sub: {
@@ -223,8 +223,8 @@ describe('RwCard resolvers', async () => {
       )).resolves.toBeNull();
       const cardObj = await prisma.pSimpleCard({ id: OTHER_CARD.id });
       expect(cardObj).toHaveProperty('id', OTHER_CARD.id);
-      expect(cardObj).toHaveProperty('front', OTHER_FRONT);
-      expect(cardObj).toHaveProperty('back', OTHER_BACK);
+      expect(cardObj).toHaveProperty('prompt', OTHER_PROMPT);
+      expect(cardObj).toHaveProperty('fullAnswer', OTHER_FULL_ANSWER);
     });
   });
 
@@ -308,7 +308,7 @@ describe('RwCard resolvers', async () => {
         );
         const cardObj = await rwCardCreate(
           null,
-          { deckId: DECK.id, front: NEW_FRONT, back: NEW_BACK },
+          { deckId: DECK.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER },
           { ...baseCtx, sub: { id: USER.id } } as IRwContext,
           baseInfo,
         );
@@ -323,8 +323,8 @@ describe('RwCard resolvers', async () => {
             const payload: any = newCard.value;
             expect(payload.mutation).toBe('CREATED');
             expect(payload.new.id).toEqual(cardObj.id);
-            expect(payload.new.front).toEqual(cardObj.front);
-            expect(payload.new.back).toEqual(cardObj.back);
+            expect(payload.new.prompt).toEqual(cardObj.prompt);
+            expect(payload.new.fullAnswer).toEqual(cardObj.fullAnswer);
           }
           expect(newCard.done).toBe(false);
         }
@@ -336,7 +336,7 @@ describe('RwCard resolvers', async () => {
         expect.assertions(1);
         await rwCardCreate(
           null,
-          { deckId: DECK.id, front: NEW_FRONT, back: NEW_BACK },
+          { deckId: DECK.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER },
           { ...baseCtx, sub: { id: USER.id } } as IRwContext,
           baseInfo,
         );

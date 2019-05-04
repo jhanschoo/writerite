@@ -34,8 +34,8 @@ type Mutation {
   rwDeckUpdateName(id: ID!, name: String!): RwDeck
   rwDeckDelete(id: ID!): ID
   # Card
-  rwCardCreate(front: String!, back: String!, sortKey: String, deckId: ID!): RwCard
-  rwCardUpdate(id: ID!, front: String, back: String, sortKey: String): RwCard
+  rwCardCreate(prompt: String!, fullAnswer: String!, sortKey: String, deckId: ID!): RwCard
+  rwCardUpdate(id: ID!, prompt: String, fullAnswer: String, sortKey: String): RwCard
   rwCardDelete(id: ID!): ID
   # Room
   rwRoomCreate(name: String): RwRoom
@@ -99,8 +99,8 @@ type RwDeck {
 
 type RwCard {
   id: ID!
-  front: String!
-  back: String!
+  prompt: String!
+  fullAnswer: String!
   sortKey: String!
   deck: RwDeck!
 }
