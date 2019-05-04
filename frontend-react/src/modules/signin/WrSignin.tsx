@@ -12,9 +12,8 @@ import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
 import { SIGNIN, SigninVariables, SigninData } from './gql';
 
-import { Text } from 'rebass';
+import { Card, Text } from 'rebass';
 import { breakpoints } from '../../theme';
-import RoundedBox from '../../ui/RoundedBox';
 import HDivider from '../../ui/HDivider';
 import Button from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
@@ -267,9 +266,9 @@ class WrSignin extends Component<Props> {
               </Button>
               <SmallMessage>
                 {isSignup ? 'Existing user? ' : 'New user? '}
-                <a href="#" onClick={toggleSignin(props)}>
+                <Button variant="anchor" onClick={toggleSignin(props)}>
                   {isSignup ? 'Login' : 'Sign up'}
-                </a>
+                </Button>
               </SmallMessage>
             </form>
         );
@@ -278,9 +277,11 @@ class WrSignin extends Component<Props> {
         ? ''
         : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
       return (
-        <RoundedBox
+        <Card
           p={3}
-          bg="bg2"
+          borderRadius={2}
+          boxShadow={0}
+          bg="bg0"
         >
           <Button
             width="100%"
@@ -311,7 +312,7 @@ class WrSignin extends Component<Props> {
             {renderFields}
           </Formik>
           {developmentSignin}
-        </RoundedBox>
+        </Card>
       );
     };
     return (

@@ -1,7 +1,8 @@
-import React, { ReactChild } from 'react';
+import React, { FC } from 'react';
 import { FixRef } from '../types';
 
 import styled from 'styled-components';
+import { height, HeightProps } from 'styled-system';
 import { Box, Flex, BoxProps, FlexProps } from 'rebass';
 
 const Spacer = styled(Box)`
@@ -13,12 +14,20 @@ Spacer.defaultProps = {
   bg: 'edge',
 };
 
-interface Props extends FlexProps {
-  spacer?: FixRef<BoxProps>;
-  text?: FixRef<BoxProps>;
+type StyledFlexProps = FlexProps & HeightProps;
+
+const StyledFlex = styled<FC<StyledFlexProps>>(Flex)`
+  ${height}
+`;
+
+interface BaseProps extends FlexProps {
+  spacer?: Partial<FixRef<BoxProps>>;
+  text?: Partial<FixRef<BoxProps>>;
 }
 
-const HDivider: React.FunctionComponent<Props> = (props: Props) => {
+type Props = Partial<FixRef<BaseProps>>;
+
+const HDivider: FC<Props> = (props: Props) => {
   const { text, spacer, children, ...flexProps } = props;
   const labelAndHalf = (
     <>
@@ -32,14 +41,14 @@ const HDivider: React.FunctionComponent<Props> = (props: Props) => {
     </>
   );
   return (
-    <Flex
+    <StyledFlex
       flexDirection="row"
       alignItems="center"
       {...flexProps}
     >
-      <Spacer {...props.spacer} />
+      <Spacer {...spacer} />
       {children && labelAndHalf}
-    </Flex>
+    </StyledFlex>
   );
 };
 

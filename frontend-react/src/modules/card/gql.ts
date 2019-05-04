@@ -51,25 +51,27 @@ export interface CardCreateData {
 
 export const CARD_UPDATE_MUTATION = gql`
 mutation CardUpdate(
-  $id: ID! $front: String $back: String
+  $id: ID! $front: String $back: String $sortKey: String
 ) {
   rwCardUpdate(
-    id: $id front: $front back: $back
+    id: $id front: $front back: $back sortKey: $sortKey
   ) {
     id
     front
     back
+    sortKey
   }
 }
 `;
 
-export interface CardEditVariables {
+export interface CardUpdateVariables {
   readonly id: string;
   readonly front?: string;
   readonly back?: string;
+  readonly sortKey?: string;
 }
 
-export interface CardEditData {
+export interface CardUpdateData {
   readonly rwCardSave: WrCard | null;
 }
 
@@ -99,6 +101,7 @@ subscription CardUpdates($deckId: ID!) {
       id
       front
       back
+      sortKey
     }
     oldId
   }

@@ -23,7 +23,10 @@ class WrOwnDecksSH extends PureComponent<Props> {
       const { rwOwnDeckUpdates } = subscriptionData.data;
       switch (rwOwnDeckUpdates.mutation) {
         case MutationType.CREATED:
-          decks = decks.concat([rwOwnDeckUpdates.new]);
+          // https://github.com/apollographql/react-apollo/issues/2656
+          decks = [rwOwnDeckUpdates.new].concat(decks.filter((deck: WrDeck) => {
+            return deck.id !== rwOwnDeckUpdates.new.id;
+          }));
           break;
         case MutationType.UPDATED:
           decks = decks.map((deck: WrDeck) => {
@@ -38,6 +41,8 @@ class WrOwnDecksSH extends PureComponent<Props> {
             return deck.id !== rwOwnDeckUpdates.oldId;
           });
           break;
+        default:
+          throw new Error('Invalid MutationType');
       }
       return Object.assign<object, OwnDecksData, OwnDecksData>(
         {}, prev, { rwOwnDecks: decks },

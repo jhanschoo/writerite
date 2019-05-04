@@ -1,6 +1,6 @@
 import { gql } from 'graphql.macro';
 
-import { WrDeck } from './types';
+import { WrDeck, WrDeckDetail } from './types';
 
 // Deck query
 
@@ -19,6 +19,31 @@ export interface DeckVariables {
 
 export interface DeckData {
   readonly rwDeck: WrDeck | null;
+}
+
+// DeckDetail query
+
+export const DECK_DETAIL_QUERY = gql`
+query Deck($deckId: ID!) {
+  rwDeck(id: $deckId) {
+    id
+    name
+    cards {
+      id
+      front
+      back
+      sortKey
+    }
+  }
+}
+`;
+
+export interface DeckDetailVariables {
+  readonly deckId: string;
+}
+
+export interface DeckDetailData {
+  readonly rwDeck: WrDeckDetail | null;
 }
 
 // DeckCreate mutation

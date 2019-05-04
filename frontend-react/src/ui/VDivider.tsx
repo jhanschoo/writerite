@@ -21,13 +21,13 @@ const StyledFlex = styled<FC<StyledFlexProps>>(Flex)`
 `;
 
 interface BaseProps extends StyledFlexProps {
-  spacer?: FixRef<BoxProps>;
-  text?: FixRef<BoxProps>;
+  spacer?: Partial<FixRef<BoxProps>>;
+  text?: Partial<FixRef<BoxProps>>;
 }
 
-type Props = FixRef<BaseProps>;
+type Props = Partial<FixRef<BaseProps>>;
 
-const VDivider: React.FunctionComponent<Props> = (props: Props) => {
+const VDivider: FC<Props> = (props: Props) => {
   const { text, spacer, children, ...flexProps } = props;
   const labelAndHalf = (
     <>

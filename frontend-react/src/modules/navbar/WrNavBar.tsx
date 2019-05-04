@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React from 'react';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
@@ -12,6 +12,7 @@ import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
 import { Heading } from 'rebass';
 import { breakpoints } from '../../theme';
 import Link from '../../ui/Link';
+import Button from '../../ui/form/Button';
 import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
@@ -73,10 +74,10 @@ const renderLoggedIn = (props: Props) => {
         </Link>
       </NavBarItem>
       <NavBarItem>
-        <Link as="a" onClick={signoutAndRestartWs} p={[0, 1, 2]}>
+        <Button variant="link" onClick={signoutAndRestartWs} p={[0, 1, 2]}>
           <Feather size={mq.matches ? 18 : 24} />
           Sign out
-        </Link>
+        </Button>
       </NavBarItem>
     </>
   );

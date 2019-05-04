@@ -11,7 +11,6 @@ const TextInput: StyledComponent<React.FunctionComponent<any>, any> = styled(Box
   font-size: 100%;
   height: ${(props) => props.theme.space[4]};
   padding: 0 ${(props) => props.theme.space[2]};
-  background: ${(props) => props.theme.colors.bg1};
   border: 1px solid ${(props) => props.theme.colors.edge};
   border-radius: 2px;
   -webkit-appearance: none;

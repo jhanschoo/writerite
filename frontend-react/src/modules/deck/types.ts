@@ -1,5 +1,5 @@
 import { User, Payload } from '../../types';
-import { WrDeck } from './types';
+import { WrCard } from '../card/types';
 
 export interface WrDeck {
   readonly id: string;
@@ -7,9 +7,8 @@ export interface WrDeck {
 }
 
 export interface WrDeckDetail extends WrDeck {
-  readonly id: string;
-  readonly name: string;
-  readonly owner: User;
+  readonly owner?: User;
+  readonly cards: WrCard[];
 }
 
 export type WrDeckUpdatesPayload = Payload<WrDeck>;

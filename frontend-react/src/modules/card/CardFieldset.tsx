@@ -1,4 +1,4 @@
-import React, { useRef, ClipboardEvent, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
+import React, { useRef, ClipboardEvent, ChangeEvent, FC, KeyboardEvent, MouseEvent } from 'react';
 
 import ContentEditable from 'react-contenteditable';
 
@@ -17,8 +17,8 @@ const GrowingFieldset = styled(Fieldset)`
   }
 `;
 
-const UppercaseLabel = styled(Label)`
-  text-transform: uppercase;
+const LowercaseLabel = styled(Label)`
+  text-transform: lowercase;
 `;
 
 const StyledContentEditable = styled(ContentEditable)`
@@ -40,7 +40,7 @@ interface Props {
   onUnmodifiedEnter?: (e: KeyboardEvent<HTMLDivElement>) => void;
 }
 
-const CardFieldset = (props: Props) => {
+const CardFieldset: FC<Props> = (props: Props) => {
   const { label, html, onChange, onUnmodifiedEnter } = { html: '', ...props };
   const ceEl = useRef<HTMLDivElement>(null);
   const handleClick = (_e: MouseEvent<HTMLDivElement>) => {
@@ -52,13 +52,14 @@ const CardFieldset = (props: Props) => {
     const { key, shiftKey } = e;
     if (key === 'Enter' && !shiftKey) {
       e.preventDefault();
-    } else if (onUnmodifiedEnter) {
-      onUnmodifiedEnter(e);
+      if (onUnmodifiedEnter) {
+        onUnmodifiedEnter(e);
+      }
     }
   };
   return (
-    <GrowingFieldset p={[1, 1, 2]} onClick={handleClick}>
-    {label && <UppercaseLabel>{label}</UppercaseLabel>}
+    <GrowingFieldset p={[2, 2, 3]} onClick={handleClick}>
+    {label && <LowercaseLabel color="fg2" pb={1}>{label}</LowercaseLabel>}
     {
       // tslint:disable-next-line: jsx-no-multiline-js
       // @ts-ignore

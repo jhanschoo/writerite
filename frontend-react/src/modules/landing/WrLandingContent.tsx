@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Heading, Flex, FlexProps } from 'rebass';
+import { Heading, Flex } from 'rebass';
 import LandingContent from '../../ui/layout/LandingContent';
 
 import WrBrandText from '../brand/WrBrandText';
@@ -22,7 +22,7 @@ const WrLandingContent = () => (
           fontSize={[4, 6, 6]}
           textAlign="center"
         >
-          <em>Study with supercharged flashcards on </em><WrBrandText /><em>.</em>
+          <em>Study with supercharged flashcards on </em><WrBrandText suffix="." />
         </Heading>
       </Flex>
       <Flex

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { ChevronDown, ChevronUp } from 'react-feather';
 
-import { Card, Heading } from 'rebass';
+import { Heading } from 'rebass';
 import FlexCard from '../../../ui/FlexCard';
 
 const WrSubdeckList = () => {

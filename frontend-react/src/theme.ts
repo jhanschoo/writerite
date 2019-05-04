@@ -39,13 +39,15 @@ const washedYellow = '#FFFCEB';
 const washedRed = '#FFDFDF';
 
 const fg1 = nearBlack;
+const fg2 = gray;
 const bg0 = white;
 const bg1 = nearWhite;
 const bg2 = lightGray;
 const primary = orange;
-const disabled = moonGray;
-const activeBg = moonGray;
-const edge = midGray;
+const disabled = lightGray;
+const edge = gray;
+const lightEdge = lightSilver;
+const lightLightEdge = moonGray;
 const activeEdge = lightBlue;
 const shadow = moonGray;
 const activeShadow = lightBlue;
@@ -61,13 +63,6 @@ const theme = {
   breakpoints,
   space: [ 0, '0.25rem', '0.5rem', '1rem', '2rem', '4rem', '8rem', '16rem', '32rem' ],
   buttons: {
-    card: {
-      alignItems: 'center',
-      background: bg0,
-      color: fg1,
-      display: 'flex',
-      border: 'none',
-    },
     link: {
       'color': fg1,
       'border': `1px solid ${transparent}`,
@@ -86,31 +81,59 @@ const theme = {
         border: `1px solid ${disabled}`,
         color: disabled,
       },
+      ':hover': {
+        background: bg2,
+      },
     },
     minimal: {
       'color': fg1,
+      'padding': '0',
+      ':disabled': {
+        color: disabled,
+      },
+    },
+    anchor: {
+      'color': fg1,
+      'padding': '0',
+      'text-decoration': 'underline',
       ':disabled': {
         color: disabled,
       },
     },
     googleRed: {
-      color: googleRed,
-      border: `1px solid ${googleRed}`,
+      'color': googleRed,
+      'border': `1px solid ${googleRed}`,
+      ':disabled': {
+        border: `1px solid ${disabled}`,
+        color: disabled,
+      },
+      ':hover': {
+        background: bg2,
+      },
     },
     facebookBlue: {
-      color: facebookBlue,
-      border: `1px solid ${facebookBlue}`,
+      'color': facebookBlue,
+      'border': `1px solid ${facebookBlue}`,
+      ':disabled': {
+        border: `1px solid ${disabled}`,
+        color: disabled,
+      },
+      ':hover': {
+        background: bg2,
+      },
     },
   },
   colors: {
     fg1,
-    activeBg,
+    fg2,
     bg0,
     bg1,
     bg2,
     primary,
     disabled,
     edge,
+    lightEdge,
+    lightLightEdge,
     error,
     activeEdge,
     shadow,

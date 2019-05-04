@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid, Search } from 'react-feather';
 
-import { gridAutoRows } from 'styled-system';
 import FlexSection from '../../../ui/FlexSection';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';

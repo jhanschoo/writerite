@@ -1,7 +1,10 @@
 import styled from 'styled-components';
-import { Button as rebassButton, ButtonProps } from 'rebass';
+import { Button as rebassButton } from 'rebass';
 
 const Button = styled(rebassButton)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   :hover {
     cursor: pointer;
   }

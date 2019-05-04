@@ -17,12 +17,12 @@ import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 const initialName = '';
 
 const WrNewDeck = () => {
-  const [name, useName] = useState(initialName);
+  const [name, setName] = useState(initialName);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    useName(e.target.value);
+    setName(e.target.value);
   };
   const handleCompleted = () => {
-    useName(initialName);
+    setName(initialName);
   };
   const renderForm = (
     mutate: MutationFn<DeckCreateData, DeckCreateVariables>,

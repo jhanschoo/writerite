@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 
 import styled from 'styled-components';
 import { Text, TextProps } from 'rebass';
@@ -9,8 +9,14 @@ const HideableText = styled(Text)`
   }
 `;
 
-const WrBrandText = (props: TextProps & { responsive?: boolean }) => {
-  const { responsive } = props;
+interface Props extends TextProps {
+  responsive?: boolean;
+  prefix?: string;
+  suffix?: string;
+}
+
+const WrBrandText: FC<Props> = (props: Props) => {
+  const { prefix, responsive, suffix } = props;
   return (
     <Text
       as="span"
@@ -19,7 +25,7 @@ const WrBrandText = (props: TextProps & { responsive?: boolean }) => {
       fontSize="150%"
       {...props}
     >
-      W{responsive ? <HideableText as="span">riteRite</HideableText> : 'riteRite'}
+      {prefix}W{responsive ? <HideableText as="span">riteRite</HideableText> : 'riteRite'}{suffix}
     </Text>
   );
 };
