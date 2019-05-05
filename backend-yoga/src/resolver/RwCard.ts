@@ -10,6 +10,8 @@ export interface IRwCard {
   fullAnswer: ResTo<string>;
   sortKey: ResTo<string>;
   deck: ResTo<IRwDeck>;
+  editedAt: ResTo<string>;
+  template: ResTo<boolean>;
 }
 
 // tslint:disable-next-line: variable-name
@@ -19,6 +21,8 @@ export const RwCard: IRwCard = {
   fullAnswer: fieldGetter<string>('fullAnswer'),
   sortKey: fieldGetter<string>('sortKey'),
   deck: fieldGetter<IRwDeck>('deck'),
+  editedAt: fieldGetter<string>('editedAt'),
+  template: fieldGetter<boolean>('template'),
 };
 
 export interface IBakedRwCard extends IRwCard {
@@ -27,6 +31,8 @@ export interface IBakedRwCard extends IRwCard {
   fullAnswer: string;
   sortKey: string;
   deck: AFunResTo<IBakedRwDeck>;
+  editedAt: string;
+  template: boolean;
 }
 
 // Relation resolver
@@ -42,5 +48,7 @@ export function pCardToRwCard(pSimpleCard: PSimpleCard, prisma: Prisma): IBakedR
         prisma,
       );
     },
+    editedAt: pSimpleCard.editedAt,
+    template: pSimpleCard.template,
   };
 }

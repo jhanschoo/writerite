@@ -31,6 +31,8 @@ type PSimpleCard { # implements Card
   prompt: String!
   fullAnswer: String!
   sortKey: String!
+  editedAt: DateTime!
+  template: Boolean!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
