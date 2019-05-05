@@ -5,47 +5,58 @@ import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 import { MutationType } from '../../../types';
 import { WrCard } from '../../card/types';
-import { DeckDetailData } from '../gql';
-import { CARD_UPDATES_SUBSCRIPTION, CardUpdatesData, CardUpdatesVariables } from '../../card/gql';
+import { DeckDetailData, DECK_UPDATES_SUBSCRIPTION, DeckUpdatesVariables, DeckUpdatesData } from '../gql';
+import { CARDS_UPDATES_SUBSCRIPTION, CardsUpdatesData, CardsUpdatesVariables } from '../../card/gql';
 
 interface Props {
-  subscribeToMore: (options: SubscribeToMoreOptions<
-    DeckDetailData, CardUpdatesVariables, CardUpdatesData
-  >) => () => void;
+  subscribeToMore: ((options: SubscribeToMoreOptions<
+    DeckDetailData,
+    CardsUpdatesVariables,
+    CardsUpdatesData
+  >) => () => void) & ((options: SubscribeToMoreOptions<
+    DeckDetailData,
+    DeckUpdatesVariables,
+    DeckUpdatesData
+  >) => () => void);
   deckId: string;
 }
 
 class WrDeckDetailSH extends PureComponent<Props> {
   public readonly componentDidMount = () => {
+    this.subscribeToCardsUpdatesOfDeck();
+  }
+
+  public readonly render = () => null;
+
+  private subscribeToCardsUpdatesOfDeck = () => {
     const { subscribeToMore, deckId } = this.props;
-    const updateQuery: UpdateQueryFn<DeckDetailData, CardUpdatesVariables, CardUpdatesData> = (
+    const updateQuery: UpdateQueryFn<
+      DeckDetailData,
+      CardsUpdatesVariables,
+      CardsUpdatesData
+    > = (
       prev, { subscriptionData },
     ) => {
       let cards = (prev.rwDeck) ? prev.rwDeck.cards : [];
-      const { rwCardUpdatesOfDeck } = subscriptionData.data;
-      switch (rwCardUpdatesOfDeck.mutation) {
+      const { rwCardsUpdatesOfDeck } = subscriptionData.data;
+      switch (rwCardsUpdatesOfDeck.mutation) {
         case MutationType.CREATED:
           // https://github.com/apollographql/react-apollo/issues/2656
-          cards = [rwCardUpdatesOfDeck.new].concat(cards.filter((card: WrCard) => {
-            return card.id !== rwCardUpdatesOfDeck.new.id;
+          cards = [rwCardsUpdatesOfDeck.new].concat(cards.filter((card: WrCard) => {
+            return card.id !== rwCardsUpdatesOfDeck.new.id;
           }));
           break;
         case MutationType.UPDATED:
-          let hasMutation = false;
           cards = cards.map((card: WrCard) => {
-            if (card.id !== rwCardUpdatesOfDeck.new.id) {
+            if (card.id !== rwCardsUpdatesOfDeck.new.id) {
               return card;
             }
-            hasMutation = true;
-            return rwCardUpdatesOfDeck.new;
+            return rwCardsUpdatesOfDeck.new;
           });
-          if (hasMutation) {
-            cards = [rwCardUpdatesOfDeck.new].concat(cards);
-          }
           break;
         case MutationType.DELETED:
           cards = cards.filter((card: WrCard) => {
-            return card.id !== rwCardUpdatesOfDeck.oldId;
+            return card.id !== rwCardsUpdatesOfDeck.oldId;
           });
           break;
         default:
@@ -54,14 +65,47 @@ class WrDeckDetailSH extends PureComponent<Props> {
       return { ...prev, rwDeck: prev.rwDeck ? { ...prev.rwDeck, cards } : null };
     };
     subscribeToMore({
-      document: CARD_UPDATES_SUBSCRIPTION,
+      document: CARDS_UPDATES_SUBSCRIPTION,
       updateQuery,
       onError: printApolloError,
+      // workaround for insufficiently expressive type
       variables: { deckId },
     });
   }
 
-  public readonly render = () => null;
+  private subscribeToDeckUpdates = () => {
+    const { subscribeToMore, deckId } = this.props;
+    const updateQuery: UpdateQueryFn<
+      DeckDetailData,
+      DeckUpdatesVariables,
+      DeckUpdatesData
+    > = (
+      prev, { subscriptionData },
+    ) => {
+      let deck = prev.rwDeck;
+      const { rwDeckUpdates } = subscriptionData.data;
+      switch (rwDeckUpdates.mutation) {
+        case MutationType.CREATED:
+          throw new Error('CREATED not expected on subscription');
+        case MutationType.UPDATED:
+          deck = deck && { ...deck, ...rwDeckUpdates.new };
+          break;
+        case MutationType.DELETED:
+          deck = null;
+          break;
+        default:
+          throw new Error('Invalid MutationType');
+      }
+      return { ...prev, rwDeck: deck };
+    };
+    subscribeToMore({
+      document: DECK_UPDATES_SUBSCRIPTION,
+      updateQuery,
+      onError: printApolloError,
+      // workaround for insufficiently expressive type
+      variables: { id: deckId },
+    });
+  }
 }
 
 export default WrDeckDetailSH;

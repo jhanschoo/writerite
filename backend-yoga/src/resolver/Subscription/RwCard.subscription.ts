@@ -6,11 +6,11 @@ import { pCardToRwCard } from '../RwCard';
 import { PSimpleCard } from '../../../generated/prisma-client';
 import { updateMapFactory, throwIfDevel, wrNotFoundError } from '../../util';
 
-export function rwCardTopicFromRwDeck(id: string) {
+export function rwCardsTopicFromRwDeck(id: string) {
   return `card:deck:${id}`;
 }
 
-const rwCardUpdatesOfDeckSubscribe: IFieldResolver<any, IRwContext, {
+const rwCardsUpdatesOfDeckSubscribe: IFieldResolver<any, IRwContext, {
   deckId: string,
 }> = async (
   _parent, { deckId }, { prisma, pubsub },
@@ -20,7 +20,7 @@ const rwCardUpdatesOfDeckSubscribe: IFieldResolver<any, IRwContext, {
       throw wrNotFoundError('deck');
     }
     return pubsub.asyncIterator<IUpdate<PSimpleCard>>(
-      rwCardTopicFromRwDeck(deckId),
+      rwCardsTopicFromRwDeck(deckId),
     );
   } catch (e) {
     return throwIfDevel(e);
@@ -28,8 +28,8 @@ const rwCardUpdatesOfDeckSubscribe: IFieldResolver<any, IRwContext, {
 };
 
 export const rwCardSubscription = {
-  rwCardUpdatesOfDeck: {
+  rwCardsUpdatesOfDeck: {
     resolve: updateMapFactory(pCardToRwCard),
-    subscribe: rwCardUpdatesOfDeckSubscribe,
+    subscribe: rwCardsUpdatesOfDeckSubscribe,
   },
 };

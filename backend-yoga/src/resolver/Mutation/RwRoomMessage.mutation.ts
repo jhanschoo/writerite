@@ -4,7 +4,7 @@ import { MutationType, IRwContext, Roles, ICreatedUpdate } from '../../types';
 
 import { IBakedRwRoomMessage, pRoomMessageToRwRoomMessage } from '../RwRoomMessage';
 import {
-  rwRoomMessageTopicFromRwRoom,
+  rwRoomMessagesTopicFromRwRoom,
 } from '../Subscription/RwRoomMessage.subscription';
 import { PRoomMessage } from '../../../generated/prisma-client';
 import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError } from '../../util';
@@ -43,7 +43,7 @@ const rwRoomMessageCreate: IFieldResolver<any, IRwContext, {
       new: pRoomMessage,
       oldId: null,
     };
-    pubsub.publish(rwRoomMessageTopicFromRwRoom(roomId), pRoomMessageUpdate);
+    pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), pRoomMessageUpdate);
     if (!isAcolyte) {
       redisClient.publish(`writerite:room::${roomId}`, `${sub.id}:${content}`);
     }

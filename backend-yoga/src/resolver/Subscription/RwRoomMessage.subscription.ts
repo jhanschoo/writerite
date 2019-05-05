@@ -6,11 +6,11 @@ import { pRoomMessageToRwRoomMessage } from '../RwRoomMessage';
 import { PRoomMessage } from '../../../generated/prisma-client';
 import { updateMapFactory, throwIfDevel, wrNotFoundError } from '../../util';
 
-export function rwRoomMessageTopicFromRwRoom(id: string) {
+export function rwRoomMessagesTopicFromRwRoom(id: string) {
   return `room-message:room:${id}`;
 }
 
-const rwRoomMessageUpdatesOfRoomSubscribe: IFieldResolver<any, IRwContext, {
+const rwRoomMessagesUpdatesOfRoomSubscribe: IFieldResolver<any, IRwContext, {
   roomId: string,
 }> = async (
   _parent, { roomId }, { prisma, pubsub },
@@ -20,7 +20,7 @@ const rwRoomMessageUpdatesOfRoomSubscribe: IFieldResolver<any, IRwContext, {
       throw wrNotFoundError('room');
     }
     return pubsub.asyncIterator<IUpdate<PRoomMessage>>(
-      rwRoomMessageTopicFromRwRoom(roomId)
+      rwRoomMessagesTopicFromRwRoom(roomId),
     );
   } catch (e) {
     return throwIfDevel(e);
@@ -28,8 +28,8 @@ const rwRoomMessageUpdatesOfRoomSubscribe: IFieldResolver<any, IRwContext, {
 };
 
 export const rwRoomMessageSubscription = {
-  rwRoomMessageUpdatesOfRoom: {
+  rwRoomMessagesUpdatesOfRoom: {
     resolve: updateMapFactory(pRoomMessageToRwRoomMessage),
-    subscribe: rwRoomMessageUpdatesOfRoomSubscribe,
+    subscribe: rwRoomMessagesUpdatesOfRoomSubscribe,
   },
 };

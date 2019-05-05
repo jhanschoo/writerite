@@ -4,7 +4,7 @@ import { IRwContext, MutationType, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdat
 
 import { pCardToRwCard, IBakedRwCard } from '../RwCard';
 import {
-  rwCardTopicFromRwDeck,
+  rwCardsTopicFromRwDeck,
 } from '../Subscription/RwCard.subscription';
 import { PSimpleCard } from '../../../generated/prisma-client';
 import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError } from '../../util';
@@ -39,14 +39,14 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
       new: pCard,
       oldId: null,
     };
-    pubsub.publish(rwCardTopicFromRwDeck(deckId), pCardUpdate);
+    pubsub.publish(rwCardsTopicFromRwDeck(deckId), pCardUpdate);
     return pCardToRwCard(pCard, prisma);
   } catch (e) {
     return throwIfDevel(e);
   }
 };
 
-const rwCardUpdate: IFieldResolver<any, IRwContext, {
+const rwCardEdit: IFieldResolver<any, IRwContext, {
   id: string, prompt?: string, fullAnswer?: string, sortKey?: string, template?: boolean,
 }> = async (
   _parent,
@@ -83,7 +83,7 @@ const rwCardUpdate: IFieldResolver<any, IRwContext, {
       new: pCard,
       oldId: null,
     };
-    pubsub.publish(rwCardTopicFromRwDeck(pDeck.id), pCardUpdate);
+    pubsub.publish(rwCardsTopicFromRwDeck(pDeck.id), pCardUpdate);
     return pCardToRwCard(pCard, prisma);
   } catch (e) {
     return throwIfDevel(e);
@@ -110,7 +110,7 @@ const rwCardDelete: IFieldResolver<any, IRwContext, { id: string }> = async (
       new: null,
       oldId: pCard.id,
     };
-    pubsub.publish(rwCardTopicFromRwDeck(pDecks[0].id), pCardUpdate);
+    pubsub.publish(rwCardsTopicFromRwDeck(pDecks[0].id), pCardUpdate);
     return pCard.id;
   } catch (e) {
     return throwIfDevel(e);
@@ -118,5 +118,5 @@ const rwCardDelete: IFieldResolver<any, IRwContext, { id: string }> = async (
 };
 
 export const rwCardMutation = {
-  rwCardCreate, rwCardUpdate, rwCardDelete,
+  rwCardCreate, rwCardEdit, rwCardDelete,
 };

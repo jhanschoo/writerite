@@ -6,11 +6,15 @@ import { pDeckToRwDeck } from '../RwDeck';
 import { PDeck } from '../../../generated/prisma-client';
 import { updateMapFactory, throwIfDevel, wrAuthenticationError } from '../../util';
 
-export function rwOwnDeckTopicFromOwner(id: string) {
+export function rwOwnDecksTopicFromOwner(id: string) {
   return `deck:owner:${id}`;
 }
 
-const rwOwnDeckUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = (
+export function rwDeckTopic(id: string) {
+  return `deck:id:${id}`;
+}
+
+const rwOwnDecksUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = (
   _parent, _args, { sub, pubsub },
 ): AsyncIterator<IUpdate<PDeck>> | null => {
   try {
@@ -18,7 +22,22 @@ const rwOwnDeckUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = (
       throw wrAuthenticationError();
     }
     return pubsub.asyncIterator<IUpdate<PDeck>>(
-      rwOwnDeckTopicFromOwner(sub.id),
+      rwOwnDecksTopicFromOwner(sub.id),
+    );
+  } catch (e) {
+    return throwIfDevel(e);
+  }
+};
+
+const rwDeckUpdatesSubscribe: IFieldResolver<any, IRwContext, { id: string }> = (
+  _parent, { id }, { sub, pubsub },
+): AsyncIterator<IUpdate<PDeck>> | null => {
+  try {
+    if (!sub) {
+      throw wrAuthenticationError();
+    }
+    return pubsub.asyncIterator<IUpdate<PDeck>>(
+      rwDeckTopic(id),
     );
   } catch (e) {
     return throwIfDevel(e);
@@ -26,8 +45,12 @@ const rwOwnDeckUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = (
 };
 
 export const rwDeckSubscription = {
-  rwOwnDeckUpdates: {
+  rwOwnDecksUpdates: {
     resolve: updateMapFactory(pDeckToRwDeck),
-    subscribe: rwOwnDeckUpdatesSubscribe,
+    subscribe: rwOwnDecksUpdatesSubscribe,
+  },
+  rwDeckUpdates: {
+    resolve: updateMapFactory(pDeckToRwDeck),
+    subscribe: rwDeckUpdatesSubscribe,
   },
 };

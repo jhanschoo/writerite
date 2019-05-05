@@ -1,11 +1,14 @@
-import React, { Component, ChangeEvent } from 'react';
+import React, { Component, ChangeEvent, KeyboardEvent } from 'react';
 
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
-import { CARD_UPDATE_MUTATION, CardUpdateVariables, CardUpdateData } from './gql';
+import { CARD_EDIT_MUTATION, CardEditVariables, CardEditData } from './gql';
 
-import { Card, Flex } from 'rebass';
+import { Card, Flex, Text } from 'rebass';
+import HDivider from '../../ui/HDivider';
 import VDivider from '../../ui/VDivider';
+
+import moment from 'moment';
 
 import CardFieldset from './CardFieldset';
 import { WrCard } from './types';
@@ -19,28 +22,45 @@ interface Props {
 // https://github.com/lovasoa/react-contenteditable/issues/164
 class WrCardItem extends Component<Props> {
   public readonly state = {
-    prompt: this.props.card.prompt,
-    fullAnswer: this.props.card.fullAnswer,
+    promptInput: this.props.card.prompt,
+    fullAnswerInput: this.props.card.fullAnswer,
   };
 
   public readonly render = () => {
     const { handlePromptChange, handleFullAnswerChange } = this;
-    const { prompt, fullAnswer } = this.state;
-    const { id, sortKey } = this.props.card;
-    const renderCardUpdate = (
-      mutate: MutationFn<CardUpdateData, CardUpdateVariables>,
-      { loading }: MutationResult<CardUpdateData>,
+    const { promptInput, fullAnswerInput } = this.state;
+    const { id, prompt, fullAnswer, sortKey, editedAt } = this.props.card;
+    const hasUnsavedChanges = (prompt !== promptInput) || (fullAnswer !== fullAnswerInput);
+    const lastEditedNotice = `last edited ${moment(editedAt).fromNow()}`;
+    const unsavedChangesNotice = 'You have unsaved changes. Press Enter to save. Press Esc to discard changes.';
+    const renderCardEdit = (
+      mutate: MutationFn<CardEditData, CardEditVariables>,
+      { loading }: MutationResult<CardEditData>,
     ) => {
       const handleUpdate = () => {
         // https://github.com/lovasoa/react-contenteditable/issues/164
         return mutate({
           variables: {
             id,
-            prompt: this.state.prompt,
-            fullAnswer: this.state.fullAnswer,
+            prompt: this.state.promptInput,
+            fullAnswer: this.state.fullAnswerInput,
             sortKey,
           },
         });
+      };
+      const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        const { key, shiftKey } = e;
+        if (key === 'Enter' && !shiftKey) {
+          e.preventDefault();
+          handleUpdate();
+        }
+        if (key === 'Escape' || key === 'Esc') {
+          e.preventDefault();
+          this.setState({
+            promptInput: prompt,
+            fullAnswerInput: fullAnswer,
+          });
+        }
       };
       return (
         <Card
@@ -54,38 +74,46 @@ class WrCardItem extends Component<Props> {
             <Flex>
               <CardFieldset
                 label="Prompt"
-                html={prompt}
+                html={promptInput}
                 onChange={handlePromptChange}
-                onUnmodifiedEnter={handleUpdate}
+                onKeyDown={handleKeyDown}
               />
               <Flex flexDirection="column" justifyContent="center">
                 <VDivider height="75%" spacer={{ bg: 'lightLightEdge' }} />
               </Flex>
               <CardFieldset
                 label="Displayed Answer"
-                html={fullAnswer}
+                html={fullAnswerInput}
                 onChange={handleFullAnswerChange}
-                onUnmodifiedEnter={handleUpdate}
+                onKeyDown={handleKeyDown}
               />
+            </Flex>
+            <Flex justifyContent="center">
+              <HDivider width="75%" spacer={{ bg: 'lightLightEdge' }} />
+            </Flex>
+            <Flex px={[2, 2, 3]} py={1} justifyContent="flex-end">
+              <Text as="span" color="fg2" fontSize="75%">
+                <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
+              </Text>
             </Flex>
           </Flex>
         </Card>
       );
     };
     return (
-      <Mutation<CardUpdateData, CardUpdateVariables>
-        mutation={CARD_UPDATE_MUTATION}
+      <Mutation<CardEditData, CardEditVariables>
+        mutation={CARD_EDIT_MUTATION}
         onError={printApolloError}
       >
-        {renderCardUpdate}
+        {renderCardEdit}
       </Mutation>
     );
   }
   private readonly handlePromptChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ prompt: e.target.value });
+    this.setState({ promptInput: e.target.value });
   }
   private readonly handleFullAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ fullAnswer: e.target.value });
+    this.setState({ fullAnswerInput: e.target.value });
   }
 }
 

@@ -1,6 +1,6 @@
 import { gql } from 'graphql.macro';
 
-import { WrDeck, WrDeckDetail } from './types';
+import { WrDeck, WrDeckDetail, WrDeckUpdatesPayload } from './types';
 
 // Deck query
 
@@ -33,6 +33,8 @@ query Deck($deckId: ID!) {
       prompt
       fullAnswer
       sortKey
+      editedAt
+      template
     }
   }
 }
@@ -65,24 +67,24 @@ export interface DeckCreateData {
   readonly rwDeckCreate: WrDeck | null;
 }
 
-// DeckUpdate mutation
+// DeckEdit mutation
 
-export const DECK_UPDATE_NAME_MUTATION = gql`
-mutation DeckUpdate($id: ID! $name: String!) {
-  rwDeckUpdateName(id: $id name: $name) {
+export const DECK_EDIT_NAME_MUTATION = gql`
+mutation DeckEditName($id: ID! $name: String!) {
+  rwDeckEditName(id: $id name: $name) {
     id
     name
   }
 }
 `;
 
-export interface DeckUpdateNameVariables {
+export interface DeckEditNameVariables {
   readonly id: string;
   readonly name: string;
 }
 
-export interface DeckUpdateData {
-  readonly rwDeckUpdateName: WrDeck | null;
+export interface DeckEditNameData {
+  readonly rwDeckEditName: WrDeck | null;
 }
 
 // DeckDelete mutation
@@ -99,4 +101,27 @@ export interface DeckDeleteVariables {
 
 export interface DeckDeleteData {
   readonly rwDeckDelete: string | null;
+}
+
+// DeckUpdates subscription
+
+export const DECK_UPDATES_SUBSCRIPTION = gql`
+subscription DeckUpdates($id: ID!) {
+  rwDeckUpdates(id: $id) {
+    mutation
+    new {
+      id
+      name
+    }
+    oldId
+  }
+}
+`;
+
+export interface DeckUpdatesVariables {
+  readonly id: string;
+}
+
+export interface DeckUpdatesData {
+  readonly rwDeckUpdates: WrDeckUpdatesPayload;
 }

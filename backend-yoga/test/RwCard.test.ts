@@ -11,8 +11,8 @@ import { IRwContext } from '../src/types';
 import { resolveField } from '../src/util';
 
 const { rwCard, rwCardsOfDeck } = rwCardQuery;
-const { rwCardCreate, rwCardUpdate, rwCardDelete } = rwCardMutation;
-const { rwCardUpdatesOfDeck } = rwCardSubscription;
+const { rwCardCreate, rwCardEdit, rwCardDelete } = rwCardMutation;
+const { rwCardsUpdatesOfDeck } = rwCardSubscription;
 
 const redisClient = new Redis();
 const pubsub = new RedisPubSub();
@@ -177,19 +177,19 @@ describe('RwCard resolvers', async () => {
     });
   });
 
-  describe('rwCardUpdate', async () => {
+  describe('rwCardEdit', async () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return null if sub is not present', async () => {
       expect.assertions(1);
-      expect(rwCardUpdate(
+      expect(rwCardEdit(
         null, { id: CARD.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER }, baseCtx, baseInfo,
       )).resolves.toBeNull();
     });
     test('it should update if id is supplied and deck\'s owner is sub.id', async () => {
       expect.assertions(6);
-      const cardObj = await rwCardUpdate(
+      const cardObj = await rwCardEdit(
         null,
         { id: CARD.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER },
         {
@@ -210,7 +210,7 @@ describe('RwCard resolvers', async () => {
     });
     test('it should return null if deck\'s owner is not sub.id', async () => {
       expect.assertions(4);
-      expect(rwCardUpdate(
+      expect(rwCardEdit(
         null,
         { id: OTHER_CARD.id, prompt: NEW_PROMPT, fullAnswer: NEW_FULL_ANSWER },
         {
@@ -268,27 +268,27 @@ describe('RwCard resolvers', async () => {
     });
   });
 
-  describe('rwCardUpdatesOfDeck', () => {
+  describe('rwCardsUpdatesOfDeck', () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return null on no deck present', async () => {
       expect.assertions(1);
-      const subscr = await rwCardUpdatesOfDeck.subscribe(
+      const subscr = await rwCardsUpdatesOfDeck.subscribe(
         null, { deckId: '1234567' }, baseCtx, baseInfo,
       );
       expect(subscr).toBeNull();
     });
     test('it should return an AsyncIterator on deck present', async () => {
       expect.assertions(1);
-      const subscr = await rwCardUpdatesOfDeck.subscribe(
+      const subscr = await rwCardsUpdatesOfDeck.subscribe(
         null, { deckId: DECK.id }, baseCtx, baseInfo,
       );
       expect(subscr).toHaveProperty('next');
     });
     test('subscription on deck present is done if no new cards', async () => {
       expect.assertions(1);
-      const subscr = await rwCardUpdatesOfDeck.subscribe(
+      const subscr = await rwCardsUpdatesOfDeck.subscribe(
         null, { deckId: DECK.id }, baseCtx, baseInfo,
       );
       expect(subscr).toBeTruthy();
@@ -303,7 +303,7 @@ describe('RwCard resolvers', async () => {
       `subscription on room reproduces message posted in room using rwRoomMessageCreate since subscription`,
       async () => {
         expect.assertions(7);
-        const subscr = await rwCardUpdatesOfDeck.subscribe(
+        const subscr = await rwCardsUpdatesOfDeck.subscribe(
           null, { deckId: DECK.id }, baseCtx, baseInfo,
         );
         const cardObj = await rwCardCreate(
@@ -340,7 +340,7 @@ describe('RwCard resolvers', async () => {
           { ...baseCtx, sub: { id: USER.id } } as IRwContext,
           baseInfo,
         );
-        const subscr = await rwCardUpdatesOfDeck.subscribe(
+        const subscr = await rwCardsUpdatesOfDeck.subscribe(
           null, { deckId: DECK.id }, baseCtx, baseInfo,
         );
         expect(subscr).toBeTruthy();

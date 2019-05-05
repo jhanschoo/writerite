@@ -1,4 +1,4 @@
-import { User, Payload } from '../../types';
+import { Payload } from '../../types';
 import { WrCard } from '../card/types';
 
 export interface WrDeck {
@@ -7,7 +7,6 @@ export interface WrDeck {
 }
 
 export interface WrDeckDetail extends WrDeck {
-  readonly owner?: User;
   readonly cards: WrCard[];
 }
 

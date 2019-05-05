@@ -5,6 +5,8 @@ export interface WrCard {
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly sortKey: string;
+  readonly editedAt: string;
+  readonly template: boolean;
 }
 
 export type CardUpdatesPayload = Payload<WrCard>;

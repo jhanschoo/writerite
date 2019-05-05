@@ -4,7 +4,7 @@ import { IRwContext, MutationType, ICreatedUpdate, IUpdatedUpdate } from '../../
 
 import { IBakedRwRoom, pRoomToRwRoom } from '../RwRoom';
 import {
-  rwRoomTopic,
+  rwRoomsTopic,
 } from '../Subscription/RwRoom.subscription';
 import { PRoom } from '../../../generated/prisma-client';
 import {
@@ -28,7 +28,7 @@ const rwRoomCreate: IFieldResolver<any, IRwContext, {
       new: pRoom,
       oldId: null,
     };
-    pubsub.publish(rwRoomTopic(), pRoomUpdate);
+    pubsub.publish(rwRoomsTopic(), pRoomUpdate);
     return pRoomToRwRoom(pRoom, prisma);
   } catch (e) {
     return throwIfDevel(e);
@@ -69,7 +69,7 @@ const rwRoomServeDeck: IFieldResolver<any, IRwContext, {
       oldId: null,
     };
     redisClient.publish('writerite:room:serving', `${id}:${deckId}`);
-    pubsub.publish(rwRoomTopic(), pRoomUpdate);
+    pubsub.publish(rwRoomsTopic(), pRoomUpdate);
     return pRoomToRwRoom(pRoom, prisma);
   } catch (e) {
     return throwIfDevel(e);
@@ -111,7 +111,7 @@ const rwRoomAddOccupant: IFieldResolver<any, IRwContext, {
       new: pUpdatedRoom,
       oldId: null,
     };
-    pubsub.publish(rwRoomTopic(), pRoomUpdate);
+    pubsub.publish(rwRoomsTopic(), pRoomUpdate);
     return pRoomToRwRoom(pUpdatedRoom, prisma);
   } catch (e) {
     return throwIfDevel(e);

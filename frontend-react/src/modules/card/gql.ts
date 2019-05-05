@@ -9,6 +9,9 @@ query Cards($deckId: ID!) {
     id
     prompt
     fullAnswer
+    sortKey
+    editedAt
+    template
   }
 }
 `;
@@ -25,14 +28,21 @@ export interface CardsData {
 
 export const CARD_CREATE_MUTATION = gql`
 mutation CardCreate(
-  $prompt: String! $fullAnswer: String! $deckId: ID!
+  $prompt: String! $fullAnswer: String! $deckId: ID! $sortKey: String $template: Boolean
 ) {
   rwCardCreate(
-    deckId: $deckId prompt: $prompt fullAnswer: $fullAnswer
+    deckId: $deckId
+    prompt: $prompt
+    fullAnswer: $fullAnswer
+    sortKey: $sortKey
+    template: $template
   ) {
     id
     prompt
     fullAnswer
+    sortKey
+    editedAt
+    template
   }
 }
 `;
@@ -49,29 +59,36 @@ export interface CardCreateData {
 
 // CardEdit mutation
 
-export const CARD_UPDATE_MUTATION = gql`
-mutation CardUpdate(
-  $id: ID! $prompt: String $fullAnswer: String $sortKey: String
+export const CARD_EDIT_MUTATION = gql`
+mutation CardEdit(
+  $id: ID! $prompt: String $fullAnswer: String $sortKey: String $template: Boolean
 ) {
-  rwCardUpdate(
-    id: $id prompt: $prompt fullAnswer: $fullAnswer sortKey: $sortKey
+  rwCardEdit(
+    id: $id
+    prompt: $prompt
+    fullAnswer: $fullAnswer
+    sortKey: $sortKey
+    template: $template
   ) {
     id
     prompt
     fullAnswer
     sortKey
+    editedAt
+    template
   }
 }
 `;
 
-export interface CardUpdateVariables {
+export interface CardEditVariables {
   readonly id: string;
   readonly prompt?: string;
   readonly fullAnswer?: string;
   readonly sortKey?: string;
+  readonly template?: boolean;
 }
 
-export interface CardUpdateData {
+export interface CardEditData {
   readonly rwCardSave: WrCard | null;
 }
 
@@ -91,27 +108,29 @@ export interface CardDeleteData {
   rwCardDelete: string | null;
 }
 
-// CardUpdates subscription
+// CardsUpdates subscription
 
-export const CARD_UPDATES_SUBSCRIPTION = gql`
-subscription CardUpdates($deckId: ID!) {
-  rwCardUpdatesOfDeck(deckId: $deckId) {
+export const CARDS_UPDATES_SUBSCRIPTION = gql`
+subscription CardsUpdates($deckId: ID!) {
+  rwCardsUpdatesOfDeck(deckId: $deckId) {
     mutation
     new {
       id
       prompt
       fullAnswer
       sortKey
+      editedAt
+      template
     }
     oldId
   }
 }
 `;
 
-export interface CardUpdatesVariables {
+export interface CardsUpdatesVariables {
   deckId: string;
 }
 
-export interface CardUpdatesData {
-  rwCardUpdatesOfDeck: CardUpdatesPayload;
+export interface CardsUpdatesData {
+  rwCardsUpdatesOfDeck: CardUpdatesPayload;
 }

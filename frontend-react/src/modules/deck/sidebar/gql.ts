@@ -17,27 +17,23 @@ export interface OwnDecksData {
   readonly rwOwnDecks: WrDeck[] | null;
 }
 
-// DeckUpdates subscription
+// OwnDecksUpdates subscription
 
-export const OWN_DECK_UPDATES_SUBSCRIPTION = gql`
-subscription DeckUpdates {
-  rwOwnDeckUpdates {
+export const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
+subscription OwnDecksUpdates {
+  rwOwnDecksUpdates {
     mutation
     new {
       id
       name
-      owner {
-        id
-        email
-      }
     }
     oldId
   }
 }
 `;
 
-export type OwnDeckUpdatesVariables = object;
+export type OwnDecksUpdatesVariables = object;
 
-export interface OwnDeckUpdatesData {
-  readonly rwOwnDeckUpdates: WrDeckUpdatesPayload;
+export interface OwnDecksUpdatesData {
+  readonly rwOwnDecksUpdates: WrDeckUpdatesPayload;
 }

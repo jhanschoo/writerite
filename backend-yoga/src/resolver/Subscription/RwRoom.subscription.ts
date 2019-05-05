@@ -6,23 +6,23 @@ import { PRoom } from '../../../generated/prisma-client';
 import { pRoomToRwRoom } from '../RwRoom';
 import { updateMapFactory, throwIfDevel } from '../../util';
 
-export function rwRoomTopic() {
+export function rwRoomsTopic() {
   return `room`;
 }
 
-const rwRoomUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = async (
+const rwRoomsUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = async (
   _parent, _args, { pubsub },
 ): Promise<AsyncIterator<IUpdate<PRoom>> | null> => {
   try {
-    return pubsub.asyncIterator<IUpdate<PRoom>>(rwRoomTopic());
+    return pubsub.asyncIterator<IUpdate<PRoom>>(rwRoomsTopic());
   } catch (e) {
     return throwIfDevel(e);
   }
 };
 
 export const rwRoomSubscription = {
-  rwRoomUpdates: {
+  rwRoomsUpdates: {
     resolve: updateMapFactory(pRoomToRwRoom),
-    subscribe: rwRoomUpdatesSubscribe,
+    subscribe: rwRoomsUpdatesSubscribe,
   },
 };

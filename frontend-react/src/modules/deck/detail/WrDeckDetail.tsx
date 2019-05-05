@@ -13,7 +13,6 @@ import WrSubdeckList from './WrSubdeckList';
 import WrDetailHeader from './WrDetailHeader';
 import WrDeckDetailSH from './WrDeckDetailSH';
 
-
 const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
   const { match } = props;
   const { deckId } = match.params;
@@ -25,18 +24,27 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
     }
     if (loading) {
       return (
-        <WrDetailHeader><em>Retrieving Deck...</em></WrDetailHeader>
+        <WrDetailHeader name="Retrieving Deck..." />
       );
     }
     if (!data || !data.rwDeck) {
       return (
-        <WrDetailHeader><em>Error retrieving deck</em></WrDetailHeader>
+        <WrDetailHeader name="Error retrieving deck" />
       );
     }
     return (
       <>
-        <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
-        <WrDetailHeader m={1} py={3} textAlign="center" fontSize="250%">{data.rwDeck.name}</WrDetailHeader>
+        {
+          // tslint:disable-next-line: jsx-no-multiline-js
+          // https://github.com/apollographql/apollo-client/issues/4246
+          // @ts-ignore
+          <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
+        }
+        <WrDetailHeader
+          heading={{ m: 1, py: 3, textAlign: 'center', fontSize: '250%' }}
+          name={data.rwDeck.name}
+          deckId={deckId}
+        />
         <WrSubdeckList />
         <HDivider spacer={{ my: 2 }} />
         <WrTemplateCardsList />

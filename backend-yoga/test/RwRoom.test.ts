@@ -19,7 +19,7 @@ const baseInfo = {} as GraphQLResolveInfo & { mergeInfo: MergeInfo };
 const { rwRoom } = rwRoomQuery;
 const { rwRoomCreate, rwRoomAddOccupant } = rwRoomMutation;
 const { rwRoomMessageCreate } = rwRoomMessageMutation;
-const { rwRoomMessageUpdatesOfRoom } = rwRoomMessageSubscription;
+const { rwRoomMessagesUpdatesOfRoom } = rwRoomMessageSubscription;
 
 const EMAIL = 'abc@xyz';
 const OTHER_EMAIL = 'def@xyz';
@@ -274,27 +274,27 @@ describe('RwRoom resolvers', async () => {
     });
   });
 
-  describe('rwRoomMessageUpdatesOfRoom', () => {
+  describe('rwRoomMessagesUpdatesOfRoom', () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return null on no room present', async () => {
       expect.assertions(1);
-      const subscr = await rwRoomMessageUpdatesOfRoom.subscribe(
+      const subscr = await rwRoomMessagesUpdatesOfRoom.subscribe(
         null, { roomId: '1234567' }, baseCtx, baseInfo,
       );
       expect(subscr).toBeNull();
     });
     test('it should return an AsyncIterator on room present', async () => {
       expect.assertions(1);
-      const subscr = await rwRoomMessageUpdatesOfRoom.subscribe(
+      const subscr = await rwRoomMessagesUpdatesOfRoom.subscribe(
         null, { roomId: ROOM.id }, baseCtx, baseInfo,
       );
       expect(subscr).toHaveProperty('next');
     });
     test('subscription on room present is done if no new messages', async () => {
       expect.assertions(1);
-      const subscr = await rwRoomMessageUpdatesOfRoom.subscribe(
+      const subscr = await rwRoomMessagesUpdatesOfRoom.subscribe(
         null, { roomId: ROOM.id }, baseCtx, baseInfo,
       );
       expect(subscr).toBeTruthy();
@@ -310,7 +310,7 @@ describe('RwRoom resolvers', async () => {
       rwRoomMessageCreate since subscription`,
       async () => {
         expect.assertions(6);
-        const subscr = await rwRoomMessageUpdatesOfRoom.subscribe(
+        const subscr = await rwRoomMessagesUpdatesOfRoom.subscribe(
           null, { roomId: ROOM.id }, baseCtx, baseInfo,
         );
         const roomMessageObj = await rwRoomMessageCreate(
@@ -346,7 +346,7 @@ describe('RwRoom resolvers', async () => {
           { ...baseCtx, sub: { id: USER.id, roles: ['user'] } } as IRwContext,
           baseInfo,
         );
-        const subscr = await rwRoomMessageUpdatesOfRoom.subscribe(
+        const subscr = await rwRoomMessagesUpdatesOfRoom.subscribe(
           null, { roomId: ROOM.id }, baseCtx, baseInfo,
         );
         expect(subscr).toBeTruthy();

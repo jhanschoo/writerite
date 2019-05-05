@@ -31,11 +31,11 @@ type Mutation {
   ): RwAuthResponse
   # Deck
   rwDeckCreate(id: ID, name: String): RwDeck
-  rwDeckUpdateName(id: ID!, name: String!): RwDeck
+  rwDeckEditName(id: ID!, name: String!): RwDeck
   rwDeckDelete(id: ID!): ID
   # Card
   rwCardCreate(prompt: String!, fullAnswer: String!, sortKey: String, template: Boolean, deckId: ID!): RwCard
-  rwCardUpdate(id: ID!, prompt: String, fullAnswer: String, sortKey: String, template: Boolean): RwCard
+  rwCardEdit(id: ID!, prompt: String, fullAnswer: String, sortKey: String, template: Boolean): RwCard
   rwCardDelete(id: ID!): ID
   # Room
   rwRoomCreate(name: String): RwRoom
@@ -47,13 +47,14 @@ type Mutation {
 type Subscription {
   _empty: String
   # Deck
-  rwOwnDeckUpdates: RwDeckUpdate!
+  rwOwnDecksUpdates: RwDeckUpdate!
+  rwDeckUpdates(id: ID!): RwDeckUpdate!
   # Card
-  rwCardUpdatesOfDeck(deckId: ID!): RwCardUpdate!
+  rwCardsUpdatesOfDeck(deckId: ID!): RwCardUpdate!
   # Room
-  rwRoomUpdates: RwRoomUpdate!
+  rwRoomsUpdates: RwRoomUpdate!
   # RoomMessage
-  rwRoomMessageUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
+  rwRoomMessagesUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
 }
 
 enum RwMutationType {

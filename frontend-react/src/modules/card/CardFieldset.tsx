@@ -1,10 +1,10 @@
 import React, { useRef, ClipboardEvent, ChangeEvent, FC, KeyboardEvent, MouseEvent } from 'react';
 
-import ContentEditable from 'react-contenteditable';
-
 import styled from 'styled-components';
 import Fieldset from '../../ui/form/Fieldset';
 import Label from '../../ui/form/Label';
+
+import ContentEditable from 'react-contenteditable';
 
 const GrowingFieldset = styled(Fieldset)`
   flex-grow: 1;
@@ -37,24 +37,15 @@ interface Props {
   html?: string;
   label?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onUnmodifiedEnter?: (e: KeyboardEvent<HTMLDivElement>) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLDivElement>) => void;
 }
 
 const CardFieldset: FC<Props> = (props: Props) => {
-  const { label, html, onChange, onUnmodifiedEnter } = { html: '', ...props };
+  const { label, html, onChange, onKeyDown } = { html: '', ...props };
   const ceEl = useRef<HTMLDivElement>(null);
   const handleClick = (_e: MouseEvent<HTMLDivElement>) => {
     if (ceEl.current) {
       ceEl.current.focus();
-    }
-  };
-  const handleKeyPress = (e: KeyboardEvent<HTMLDivElement>) => {
-    const { key, shiftKey } = e;
-    if (key === 'Enter' && !shiftKey) {
-      e.preventDefault();
-      if (onUnmodifiedEnter) {
-        onUnmodifiedEnter(e);
-      }
     }
   };
   return (
@@ -69,7 +60,7 @@ const CardFieldset: FC<Props> = (props: Props) => {
         html={html}
         innerRef={ceEl}
         onChange={onChange}
-        onKeyDown={handleKeyPress}
+        onKeyDown={onKeyDown || undefined}
         onPaste={handlePaste}
       />
     }
