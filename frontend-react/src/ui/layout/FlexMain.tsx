@@ -4,6 +4,7 @@ import { Flex } from 'rebass';
 const FlexMain = styled(Flex)`
   grid-area: 2 / 5 / 3 / 14;
   align-items: stretch;
+  overflow-y: auto;
 
   @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
     grid-area: 2 / 2 / 3 / 14;

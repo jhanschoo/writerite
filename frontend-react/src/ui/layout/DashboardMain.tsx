@@ -7,6 +7,7 @@ const DashboardMain = styled(Flex)`
   grid: min-content / repeat(3, auto);
   grid-gap: 1rem;
   align-items: start;
+  overflow-y: auto;
 
   @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
     grid-area: 2 / 2 / 3 / 14;

@@ -3,10 +3,10 @@ import { Box } from 'rebass';
 
 const ViewportContainer = styled(Box)`
   display: grid;
-  min-height: 100vh;
+  height: 100vh;
   min-width: 100vw;
-  grid: min-content auto / minmax(1rem, auto) repeat(12, minmax(1rem, 96px)) minmax(1rem, auto);
-  placeContent: start stretch;
+  grid: max-content minmax(1rem, 1fr) / minmax(1rem, auto) repeat(12, minmax(1rem, 96px)) minmax(1rem, auto);
+  place-content: start stretch;
 `;
 
 ViewportContainer.defaultProps = {

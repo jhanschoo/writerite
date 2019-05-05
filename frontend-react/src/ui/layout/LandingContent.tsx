@@ -3,6 +3,7 @@ import { Flex } from 'rebass';
 
 const LandingContent = styled(Flex)`
   grid-area: 2 / 2 / 3 / 14;
+  overflow-y: auto;
 `;
 
 LandingContent.defaultProps = {
