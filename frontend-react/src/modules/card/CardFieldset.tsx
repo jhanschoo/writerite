@@ -36,12 +36,13 @@ const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
 interface Props {
   html?: string;
   label?: string;
+  lang?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLDivElement>) => void;
 }
 
 const CardFieldset: FC<Props> = (props: Props) => {
-  const { label, html, onChange, onKeyDown } = { html: '', ...props };
+  const { label, html, lang, onChange, onKeyDown } = { html: '', ...props };
   const ceEl = useRef<HTMLDivElement>(null);
   const handleClick = (_e: MouseEvent<HTMLDivElement>) => {
     if (ceEl.current) {
@@ -49,7 +50,7 @@ const CardFieldset: FC<Props> = (props: Props) => {
     }
   };
   return (
-    <GrowingFieldset p={[2, 2, 3]} onClick={handleClick}>
+    <GrowingFieldset py={[0, 0, 1]} px={[0, 0, 1]} onClick={handleClick} lang={lang}>
     {label && <LowercaseLabel color="fg2" pb={1}>{label}</LowercaseLabel>}
     {
       // tslint:disable-next-line: jsx-no-multiline-js

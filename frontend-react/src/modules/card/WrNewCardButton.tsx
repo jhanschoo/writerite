@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { Plus } from 'react-feather';
 
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
@@ -17,17 +17,20 @@ interface Props {
   deckId: string;
 }
 
-const NewCardButton: FC<Props> = (props: Props) => {
+const WrNewCardButton: FC<Props> = (props: Props) => {
   const { deckId } = props;
   const renderCardCreate = (
     mutate: MutationFn<CardCreateData, CardCreateVariables>,
     { loading }: MutationResult<CardCreateData>,
   ) => {
-    const handleClick = () => {
+    const handleClick = (e: MouseEvent<HTMLButtonElement> ) => {
+      e.preventDefault();
       return mutate({
         variables: {
           prompt: '',
           fullAnswer: '',
+          promptLang: navigator.language,
+          answerLang: navigator.language,
           deckId,
         },
       });
@@ -55,4 +58,4 @@ const NewCardButton: FC<Props> = (props: Props) => {
   );
 };
 
-export default NewCardButton;
+export default WrNewCardButton;

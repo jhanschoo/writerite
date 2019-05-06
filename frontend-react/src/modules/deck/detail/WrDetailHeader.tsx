@@ -1,4 +1,6 @@
 import React, { PureComponent, ChangeEvent, ClipboardEvent, KeyboardEvent } from 'react';
+import he from 'he';
+import ContentEditable from 'react-contenteditable';
 
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
@@ -7,11 +9,7 @@ import { DeckEditNameData, DeckEditNameVariables, DECK_EDIT_NAME_MUTATION } from
 import styled from 'styled-components';
 import { Card, CardProps, Heading, HeadingProps } from 'rebass';
 
-import ContentEditable from 'react-contenteditable';
-
 const StyledContentEditable = styled(ContentEditable)`
-  min-height: 1rem;
-  flex-grow: 1;
   outline: none;
 `;
 
@@ -30,7 +28,7 @@ interface DetailHeader extends HeadingProps {
 
 class WrDetailHeader extends PureComponent<DetailHeader> {
   public readonly state = {
-    nameInput: this.props.name,
+    nameInput: he.encode(this.props.name),
   };
 
   public readonly render = () => {
@@ -48,7 +46,7 @@ class WrDetailHeader extends PureComponent<DetailHeader> {
         mutate({
           variables: {
             id: deckId,
-            name: this.state.nameInput,
+            name: he.decode(this.state.nameInput),
           },
         });
       };

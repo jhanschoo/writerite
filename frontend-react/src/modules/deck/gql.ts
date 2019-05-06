@@ -32,6 +32,8 @@ query Deck($deckId: ID!) {
       id
       prompt
       fullAnswer
+      promptLang
+      answerLang
       sortKey
       editedAt
       template

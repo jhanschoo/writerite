@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, MouseEvent } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { OptionalUserAndToken } from './types';
@@ -265,7 +265,7 @@ class WrSignin extends Component<Props> {
                 {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
               </Button>
               <SmallMessage>
-                {isSignup ? 'Existing user? ' : 'New user? '}
+                {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
                 <Button variant="anchor" onClick={toggleSignin(props)}>
                   {isSignup ? 'Login' : 'Sign up'}
                 </Button>
@@ -330,10 +330,10 @@ class WrSignin extends Component<Props> {
   private readonly toggleSignin = (
     { setFieldTouched, setFieldValue }: FormikProps<FormValues>,
   ) => {
-    return (event: React.MouseEvent) => {
+    return (e: MouseEvent<HTMLButtonElement>) => {
       const { isSignup } = this.state;
       const newIsSignup = !isSignup;
-      event.preventDefault();
+      e.preventDefault();
       // note that setState is async
       this.setState({ isSignup: newIsSignup });
       setFieldTouched('isSignup');

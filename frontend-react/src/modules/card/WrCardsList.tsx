@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, MouseEvent } from 'react';
 import {
   withRouter, RouteComponentProps,
 } from 'react-router';
@@ -10,7 +10,7 @@ import { Heading } from 'rebass';
 import FlexCard from '../../ui/FlexCard';
 import Button from '../../ui/form/Button';
 
-import NewCardButton from './WrNewCardButton';
+import WrNewCardButton from './WrNewCardButton';
 import WrCardItem from './WrCardItem';
 
 interface OwnProps {
@@ -24,13 +24,16 @@ const WrCardsList: FC<Props> = (props: Props) => {
   const { cards } = props;
   const { deckId } = props.match.params;
   const formattedCards = cards.map((card: WrCard) => (
-    <WrCardItem key={card.id} card={card} />
+    <WrCardItem key={card.id} card={card} deckId={deckId} />
   ));
   const chevron = show ? <ChevronDown /> : <ChevronUp />;
-  const toggleShow = () => { setShow(!show); };
+  const toggleShow = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShow(!show);
+  };
   const content = (
     <>
-      <NewCardButton deckId={deckId} />
+      <WrNewCardButton deckId={deckId} />
       {formattedCards}
     </>
   );

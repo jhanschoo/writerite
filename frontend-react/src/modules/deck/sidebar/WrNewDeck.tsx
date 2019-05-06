@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { Plus } from 'react-feather';
 
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gql';
 
-import { Plus } from 'react-feather';
 
 import { Flex } from 'rebass';
 import FlexSection from '../../../ui/FlexSection';

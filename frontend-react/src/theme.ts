@@ -92,6 +92,16 @@ const theme = {
         color: disabled,
       },
     },
+    auxillary: {
+      'color': fg2,
+      'padding': '0',
+      ':disabled': {
+        color: disabled,
+      },
+      ':hover': {
+        color: fg1,
+      },
+    },
     anchor: {
       'color': fg1,
       'padding': '0',
@@ -211,6 +221,18 @@ const theme = {
       ':active, :focus': {
         borderWidth: '0px',
       },
+      '::placeholder': {
+        fontStyle: 'italic',
+      },
+    },
+    underscore: {
+      'borderWidth': '0 0 1px 0',
+      'borderRadius': '0px',
+      'background': transparent,
+      ':active, :focus': {
+        borderWidth: '0px',
+      },
+      'height': 'auto',
       '::placeholder': {
         fontStyle: 'italic',
       },
