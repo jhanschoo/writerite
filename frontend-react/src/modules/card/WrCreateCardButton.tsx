@@ -9,6 +9,7 @@ import Button from '../../ui/form/Button';
 
 type Props = CardCreateVariables;
 
+// TODO: change into a prompt for creating N cards
 const WrCreateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables) => {
   const renderCardCreate = (
     mutate: MutationFn<CardCreateData, CardCreateVariables>,

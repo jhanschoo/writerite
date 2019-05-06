@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 
 import { WrDeck } from '../types';
 
-import { animated, useTransition } from 'react-spring';
 import { Filter } from 'react-feather';
 
 import { Flex } from 'rebass';
@@ -12,8 +11,6 @@ import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
-
-const AnimatedItem = animated(Item);
 
 const initialFilter = '';
 
@@ -25,7 +22,6 @@ interface Content {
 // TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
 const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
   const [ filter, setFilter ] = useState(initialFilter);
-  const [refs] = useState<{[key: string]: HTMLDivElement}>({});
   const inputEl = useRef<HTMLInputElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,42 +36,18 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
     return filter === '' || deck.name.includes(filter);
   });
   const contents = (filteredDecks.length === 0)
-    ? [{
-      id: 'placeholder',
-      el: (<em>There are no matching decks</em>),
-    }]
-    : filteredDecks.map((deck: WrDeck) => ({
-      id: deck.id,
-      el: (
-        <SidebarMenuLink to={`/deck/${deck.id}`}>
-          {deck.name}
-        </SidebarMenuLink>
-      ),
-    }));
-  // Note: defect in library typings, hence the `object` argument and `any` for `next` and `cancel`.
-  const transitions = useTransition<Content, object>(contents, (content) => content.id, {
-    from: { opacity: 0, height: 0 },
-    enter: (item) => async (next: any, cancel: any) => {
-      await next({ opacity: 0, height: 0 }); // initialize refs
-      await next({
-        opacity: 1,
-        height: refs[item.id] ? refs[item.id].getBoundingClientRect().height : 0,
-      });
-    },
-    leave: (item) => {
-      delete refs[item.id];
-      return { opacity: 0, height: 0 };
-    },
-  });
-  const wrapItem = (
-    { key, item, props }: { key: string, item: Content, props: {} },
-    ) => (
-    <AnimatedItem key={key} style={props}>
-      <Flex width="100%" ref={(ref) => ref && (refs[item.id] = ref)}>
-        {item.el}
-      </Flex>
-    </AnimatedItem>
-  );
+    ? [(
+      <Item width="100%" key="no-match">
+        <em>There are no decks matching your filter.</em>
+      </Item>
+    )]
+    : filteredDecks.map((deck: WrDeck) => (
+        <Item width="100%" key={deck.id}>
+          <SidebarMenuLink to={`/deck/${deck.id}`}>
+            {deck.name}
+          </SidebarMenuLink>
+        </Item>
+    ));
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -105,7 +77,7 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
         </Fieldset>
       </form>
       <List flexDirection="inherit">
-        {transitions.map(wrapItem)}
+        {contents}
       </List>
     </>
   );
