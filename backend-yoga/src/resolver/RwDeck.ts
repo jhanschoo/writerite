@@ -1,4 +1,4 @@
-import { PDeck, Prisma, PSimpleCard } from '../../generated/prisma-client';
+import { PDeck, Prisma, PCard } from '../../generated/prisma-client';
 import { ResTo, AFunResTo } from '../types';
 import { fieldGetter, wrGuardPrismaNullError } from '../util';
 
@@ -36,7 +36,7 @@ export function pDeckToRwDeck(pDeck: PDeck, prisma: Prisma): IBakedRwDeck {
       prisma,
     ),
     cards: async () => (
-      wrGuardPrismaNullError<PSimpleCard[]>(await prisma.pDeck({ id: pDeck.id }).cards())
+      wrGuardPrismaNullError<PCard[]>(await prisma.pDeck({ id: pDeck.id }).cards())
     ).map((pCard) => pCardToRwCard(pCard, prisma)),
   };
 }

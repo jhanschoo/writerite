@@ -11,8 +11,8 @@ const rwCard: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
 ): Promise<IBakedRwCard | null> => {
   try {
-    const pSimpleCard = wrGuardPrismaNullError(await prisma.pSimpleCard({ id }));
-    return pCardToRwCard(pSimpleCard, prisma);
+    const pCard = wrGuardPrismaNullError(await prisma.pCard({ id }));
+    return pCardToRwCard(pCard, prisma);
   } catch (e) {
     return throwIfDevel(e);
   }
@@ -27,7 +27,7 @@ const rwCardsOfDeck: IFieldResolver<any, IRwContext, { deckId: string }> = async
     if (!await prisma.$exists.pDeck({ id: deckId })) {
       return null;
     }
-    const pCards = await prisma.pSimpleCards({
+    const pCards = await prisma.pCards({
       where: { deck: { id: deckId } },
       orderBy: 'sortKey_ASC',
     });

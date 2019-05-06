@@ -6,7 +6,7 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import { rwCardQuery } from '../src/resolver/Query/RwCard.query';
 import { rwCardMutation } from '../src/resolver/Mutation/RwCard.mutation';
 import { rwCardSubscription } from '../src/resolver/Subscription/RwCard.subscription';
-import { prisma, PDeck, PUser, PSimpleCard } from '../generated/prisma-client';
+import { prisma, PDeck, PUser, PCard } from '../generated/prisma-client';
 import { IRwContext } from '../src/types';
 import { resolveField } from '../src/util';
 
@@ -41,11 +41,11 @@ describe('RwCard resolvers', async () => {
   let DECK: PDeck;
   let NEXT_DECK: PDeck;
   let OTHER_DECK: PDeck;
-  let CARD: PSimpleCard;
-  let NEXT_CARD: PSimpleCard;
-  let OTHER_CARD: PSimpleCard;
+  let CARD: PCard;
+  let NEXT_CARD: PCard;
+  let OTHER_CARD: PCard;
   const commonBeforeEach = async () => {
-    await prisma.deleteManyPSimpleCards({});
+    await prisma.deleteManyPCards({});
     await prisma.deleteManyPDecks({});
     await prisma.deleteManyPUsers({});
     USER = await prisma.createPUser({ email: EMAIL });
@@ -53,18 +53,18 @@ describe('RwCard resolvers', async () => {
     DECK = await prisma.createPDeck({ name: NAME, owner: { connect: { id: USER.id } } });
     NEXT_DECK = await prisma.createPDeck({ name: NEXT_NAME, owner: { connect: { id: USER.id } } });
     OTHER_DECK = await prisma.createPDeck({ name: OTHER_NAME, owner: { connect: { id: OTHER_USER.id } } });
-    CARD = await prisma.createPSimpleCard({
+    CARD = await prisma.createPCard({
       prompt: PROMPT, fullAnswer: FULL_ANSWER, sortKey: PROMPT, deck: { connect: { id: DECK.id } },
     });
-    NEXT_CARD = await prisma.createPSimpleCard({
+    NEXT_CARD = await prisma.createPCard({
       prompt: NEXT_PROMPT, fullAnswer: NEXT_FULL_ANSWER, sortKey: NEXT_PROMPT, deck: { connect: { id: NEXT_DECK.id } },
     });
-    OTHER_CARD = await prisma.createPSimpleCard({
+    OTHER_CARD = await prisma.createPCard({
       prompt: OTHER_PROMPT, fullAnswer: OTHER_FULL_ANSWER, sortKey: OTHER_PROMPT, deck: { connect: { id: OTHER_DECK.id } },
     });
   };
   const commonAfterEach = async () => {
-    await prisma.deleteManyPSimpleCards({});
+    await prisma.deleteManyPCards({});
     await prisma.deleteManyPDecks({});
     await prisma.deleteManyPUsers({});
   };
@@ -72,7 +72,7 @@ describe('RwCard resolvers', async () => {
   beforeEach(async () => {
     await prisma.deleteManyPRoomMessages({});
     await prisma.deleteManyPRooms({});
-    await prisma.deleteManyPSimpleCards({});
+    await prisma.deleteManyPCards({});
     await prisma.deleteManyPDecks({});
     await prisma.deleteManyPUsers({});
   });
@@ -146,7 +146,7 @@ describe('RwCard resolvers', async () => {
       expect(cardObj).toHaveProperty('id');
       expect(cardObj).toHaveProperty('prompt', NEW_PROMPT);
       expect(cardObj).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
-      const savedCard = await prisma.pSimpleCard({
+      const savedCard = await prisma.pCard({
         id: await resolveField(cardObj.id),
       });
       expect(savedCard).toHaveProperty('id');
@@ -166,7 +166,7 @@ describe('RwCard resolvers', async () => {
         } as IRwContext,
         baseInfo,
       )).resolves.toBeNull();
-      const otherCards = await prisma.pSimpleCards({
+      const otherCards = await prisma.pCards({
         where: {
           deck: { id: OTHER_DECK.id },
         },
@@ -203,7 +203,7 @@ describe('RwCard resolvers', async () => {
       expect(cardObj).toHaveProperty('id', CARD.id);
       expect(cardObj).toHaveProperty('prompt', NEW_PROMPT);
       expect(cardObj).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
-      const savedCard = await prisma.pSimpleCard({ id: CARD.id });
+      const savedCard = await prisma.pCard({ id: CARD.id });
       expect(savedCard).toHaveProperty('id', CARD.id);
       expect(savedCard).toHaveProperty('prompt', NEW_PROMPT);
       expect(savedCard).toHaveProperty('fullAnswer', NEW_FULL_ANSWER);
@@ -221,7 +221,7 @@ describe('RwCard resolvers', async () => {
         } as IRwContext,
         baseInfo,
       )).resolves.toBeNull();
-      const cardObj = await prisma.pSimpleCard({ id: OTHER_CARD.id });
+      const cardObj = await prisma.pCard({ id: OTHER_CARD.id });
       expect(cardObj).toHaveProperty('id', OTHER_CARD.id);
       expect(cardObj).toHaveProperty('prompt', OTHER_PROMPT);
       expect(cardObj).toHaveProperty('fullAnswer', OTHER_FULL_ANSWER);
@@ -250,7 +250,7 @@ describe('RwCard resolvers', async () => {
         baseInfo,
       );
       expect(cardId).toBe(CARD.id);
-      expect(prisma.pSimpleCard({ id: await resolveField(cardId) })).resolves.toBeNull();
+      expect(prisma.pCard({ id: await resolveField(cardId) })).resolves.toBeNull();
     });
     test('it should not delete if deck\'s owner is not sub.id', async () => {
       expect.assertions(1);

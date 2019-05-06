@@ -6,16 +6,22 @@ import { pCardToRwCard, IBakedRwCard } from '../RwCard';
 import {
   rwCardsTopicFromRwDeck,
 } from '../Subscription/RwCard.subscription';
-import { PSimpleCard } from '../../../generated/prisma-client';
+import { PCard } from '../../../generated/prisma-client';
 import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError } from '../../util';
 
 // Mutation resolvers
 
 const rwCardCreate: IFieldResolver<any, IRwContext, {
-  deckId: string, prompt?: string, fullAnswer?: string, sortKey?: string, template?: boolean,
+  deckId: string,
+  prompt?: string,
+  fullAnswer?: string,
+  promptLang?: string,
+  answerLang?: string,
+  sortKey?: string,
+  template?: boolean,
 }> = async (
   _parent,
-  { deckId, prompt, fullAnswer, sortKey, template },
+  { deckId, prompt, fullAnswer, promptLang, answerLang, sortKey, template },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
@@ -25,16 +31,18 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
     if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
       throw wrNotFoundError('deck');
     }
-    const pCard = await prisma.createPSimpleCard({
+    const pCard = await prisma.createPCard({
       prompt: prompt || '',
       fullAnswer: fullAnswer || '',
+      promptLang: promptLang || '',
+      answerLang: answerLang || '',
       sortKey: sortKey || prompt || '',
       deck: { connect: { id: deckId } },
       editedAt: (new Date()).toISOString(),
       template: template || false,
     });
     wrGuardPrismaNullError(pCard);
-    const pCardUpdate: ICreatedUpdate<PSimpleCard> = {
+    const pCardUpdate: ICreatedUpdate<PCard> = {
       mutation: MutationType.CREATED,
       new: pCard,
       oldId: null,
@@ -47,17 +55,23 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
 };
 
 const rwCardEdit: IFieldResolver<any, IRwContext, {
-  id: string, prompt?: string, fullAnswer?: string, sortKey?: string, template?: boolean,
+  id: string,
+  prompt?: string,
+  fullAnswer?: string,
+  promptLang?: string,
+  answerLang?: string,
+  sortKey?: string,
+  template?: boolean,
 }> = async (
   _parent,
-  { id, prompt, fullAnswer, sortKey, template },
+  { id, prompt, fullAnswer, promptLang, answerLang, sortKey, template },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
     if (!sub) {
       throw wrAuthenticationError();
     }
-    if (!await prisma.$exists.pSimpleCard({
+    if (!await prisma.$exists.pCard({
       id,
       deck: {
         owner: { id: sub.id },
@@ -65,20 +79,22 @@ const rwCardEdit: IFieldResolver<any, IRwContext, {
     })) {
       throw wrNotFoundError('card');
     }
-    const pCard = await prisma.updatePSimpleCard({
+    const pCard = await prisma.updatePCard({
       data: {
         prompt,
         fullAnswer,
+        promptLang,
+        answerLang,
         sortKey,
         editedAt: (new Date()).toISOString(),
         template,
       },
       where: { id },
     });
-    const pDeck = await prisma.pSimpleCard({ id }).deck();
+    const pDeck = await prisma.pCard({ id }).deck();
     wrGuardPrismaNullError(pCard);
     wrGuardPrismaNullError(pDeck);
-    const pCardUpdate: IUpdatedUpdate<PSimpleCard> = {
+    const pCardUpdate: IUpdatedUpdate<PCard> = {
       mutation: MutationType.UPDATED,
       new: pCard,
       oldId: null,
@@ -103,9 +119,9 @@ const rwCardDelete: IFieldResolver<any, IRwContext, { id: string }> = async (
     if (pDecks.length !== 1) {
       throw wrNotFoundError('card');
     }
-    const pCard = await prisma.deletePSimpleCard({ id });
+    const pCard = await prisma.deletePCard({ id });
     wrGuardPrismaNullError(pCard);
-    const pCardUpdate: IDeletedUpdate<PSimpleCard> = {
+    const pCardUpdate: IDeletedUpdate<PCard> = {
       mutation: MutationType.DELETED,
       new: null,
       oldId: pCard.id,

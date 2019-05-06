@@ -34,7 +34,7 @@ describe('RwUser resolvers', async () => {
   beforeEach(async () => {
     await prisma.deleteManyPRoomMessages({});
     await prisma.deleteManyPRooms({});
-    await prisma.deleteManyPSimpleCards({});
+    await prisma.deleteManyPCards({});
     await prisma.deleteManyPDecks({});
     await prisma.deleteManyPUsers({});
   });

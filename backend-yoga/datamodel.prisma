@@ -20,16 +20,13 @@ type PUser {
 # https://github.com/prisma/prisma/issues/83
 # https://itnext.io/graphql-interfaces-and-union-types-with-prisma-and-yoga-7224f9e1d9ad
 
-# interface Card {
-#   id: ID! @id
-#   deck: Deck!
-# }
-
-type PSimpleCard { # implements Card
+type PCard { # implements Card
   id: ID! @id
   deck: PDeck! @relation(link: INLINE)
   prompt: String!
+  promptLang: String!
   fullAnswer: String!
+  answerLang: String!
   sortKey: String!
   editedAt: DateTime!
   template: Boolean!
@@ -41,8 +38,7 @@ type PDeck {
   id: ID! @id
   name: String!
   owner: PUser! @relation(link: INLINE)
-  # cards: [PCard!]! @relation(onDelete: CASCADE)
-  cards: [PSimpleCard!]! @relation(onDelete: CASCADE)
+  cards: [PCard!]! @relation(onDelete: CASCADE)
   servedAt: [PRoom!]! @relation(onDelete: SET_NULL)
   published: Boolean! @default(value: false)
   createdAt: DateTime! @createdAt
@@ -76,11 +72,11 @@ type PRoom {
 #   sender: User!
 # }
 
-# interface SimpleMessage {
+# interface Message {
 #   content: String!
 # }
 
-type PRoomMessage { # implements RoomMessage & UserMessage & SimpleMessage {
+type PRoomMessage { # implements RoomMessage & UserMessage & Message {
   id: ID! @id
   room: PRoom! @relation(link: INLINE)
   sender: PUser @relation(link: INLINE)

@@ -3,7 +3,7 @@ import { IFieldResolver } from 'graphql-tools';
 import { IRwContext, IUpdate } from '../../types';
 
 import { pCardToRwCard } from '../RwCard';
-import { PSimpleCard } from '../../../generated/prisma-client';
+import { PCard } from '../../../generated/prisma-client';
 import { updateMapFactory, throwIfDevel, wrNotFoundError } from '../../util';
 
 export function rwCardsTopicFromRwDeck(id: string) {
@@ -14,12 +14,12 @@ const rwCardsUpdatesOfDeckSubscribe: IFieldResolver<any, IRwContext, {
   deckId: string,
 }> = async (
   _parent, { deckId }, { prisma, pubsub },
-): Promise<AsyncIterator<IUpdate<PSimpleCard>> | null> => {
+): Promise<AsyncIterator<IUpdate<PCard>> | null> => {
   try {
     if (!await prisma.$exists.pDeck({ id: deckId })) {
       throw wrNotFoundError('deck');
     }
-    return pubsub.asyncIterator<IUpdate<PSimpleCard>>(
+    return pubsub.asyncIterator<IUpdate<PCard>>(
       rwCardsTopicFromRwDeck(deckId),
     );
   } catch (e) {
