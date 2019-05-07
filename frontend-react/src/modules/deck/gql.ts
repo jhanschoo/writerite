@@ -9,6 +9,7 @@ query Deck($deckId: ID!) {
   rwDeck(id: $deckId) {
     id
     name
+    nameLang
   }
 }
 `;
@@ -28,12 +29,13 @@ query Deck($deckId: ID!) {
   rwDeck(id: $deckId) {
     id
     name
+    nameLang
+    promptLang
+    answerLang
     cards {
       id
       prompt
       fullAnswer
-      promptLang
-      answerLang
       sortKey
       editedAt
       template
@@ -53,16 +55,32 @@ export interface DeckDetailData {
 // DeckCreate mutation
 
 export const DECK_CREATE_MUTATION = gql`
-mutation DeckCreate($name: String) {
-  rwDeckCreate(name: $name) {
+mutation DeckCreate(
+    $name: String
+    $nameLang: String
+    $promptLang: String
+    $answerLang: String
+  ) {
+  rwDeckCreate(
+    name: $name
+    nameLang: $nameLang
+    promptLang: $promptLang
+    answerLang: $answerLang
+  ) {
     id
     name
+    nameLang
+    promptLang
+    answerLang
   }
 }
 `;
 
 export interface DeckCreateVariables {
   readonly name?: string;
+  readonly nameLang?: string;
+  readonly promptLang?: string;
+  readonly answerLang?: string;
 }
 
 export interface DeckCreateData {
@@ -71,22 +89,40 @@ export interface DeckCreateData {
 
 // DeckEdit mutation
 
-export const DECK_EDIT_NAME_MUTATION = gql`
-mutation DeckEditName($id: ID! $name: String!) {
-  rwDeckEditName(id: $id name: $name) {
+export const DECK_EDIT_MUTATION = gql`
+mutation DeckEdit(
+    $id: ID!
+    $name: String
+    $nameLang: String
+    $promptLang: String
+    $answerLang: String
+  ) {
+  rwDeckEdit(
+    id: $id
+    name: $name
+    nameLang: $nameLang
+    promptLang: $promptLang
+    answerLang: $answerLang
+  ) {
     id
     name
+    nameLang
+    promptLang
+    answerLang
   }
 }
 `;
 
-export interface DeckEditNameVariables {
+export interface DeckEditVariables {
   readonly id: string;
-  readonly name: string;
+  readonly name?: string;
+  readonly nameLang?: string;
+  readonly promptLang?: string;
+  readonly answerLang?: string;
 }
 
-export interface DeckEditNameData {
-  readonly rwDeckEditName: WrDeck | null;
+export interface DeckEditData {
+  readonly rwDeckEdit: WrDeck | null;
 }
 
 // DeckDelete mutation
@@ -114,6 +150,7 @@ subscription DeckUpdates($id: ID!) {
     new {
       id
       name
+      nameLang
     }
     oldId
   }

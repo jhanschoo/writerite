@@ -8,6 +8,7 @@ query OwnDecks {
   rwOwnDecks {
     id
     name
+    nameLang
   }
 }
 `;
@@ -26,6 +27,7 @@ subscription OwnDecksUpdates {
     new {
       id
       name
+      nameLang
     }
     oldId
   }

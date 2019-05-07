@@ -4,8 +4,6 @@ export interface WrCard {
   readonly id: string;
   readonly prompt: string;
   readonly fullAnswer: string;
-  readonly promptLang: string;
-  readonly answerLang: string;
   readonly sortKey: string;
   readonly editedAt: string;
   readonly template: boolean;

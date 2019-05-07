@@ -30,25 +30,41 @@ type Mutation {
     persist: Boolean
   ): RwAuthResponse
   # Deck
-  rwDeckCreate(id: ID, name: String): RwDeck
-  rwDeckEditName(id: ID!, name: String!): RwDeck
+  rwDeckCreate(
+    id: ID
+    name: String
+    nameLang: String
+    promptLang: String
+    answerLang: String
+  ): RwDeck
+  rwDeckEdit(
+    id: ID!
+    name: String
+    nameLang: String
+    promptLang: String
+    answerLang: String
+  ): RwDeck
   rwDeckDelete(id: ID!): ID
   # Card
   rwCardCreate(
     deckId: ID!
     prompt: String!
     fullAnswer: String!
-    promptLang: String!
-    answerLang: String!
     sortKey: String
     template: Boolean
   ): RwCard
+  rwCardsCreate(
+    deckId: ID!
+    multiplicity: Int!
+    prompt: String!
+    fullAnswer: String!
+    sortKey: String
+    template: Boolean
+  ): [RwCard!]
   rwCardEdit(
     id: ID!
     prompt: String
     fullAnswer: String
-    promptLang: String
-    answerLang: String
     sortKey: String
     template: Boolean
   ): RwCard
@@ -108,6 +124,9 @@ type RwRoomUpdate {
 type RwDeck {
   id: ID!
   name: String!
+  nameLang: String!
+  promptLang: String!
+  answerLang: String!
   owner: RwUser!
   cards: [RwCard!]!
 }
@@ -118,8 +137,6 @@ type RwCard {
   id: ID!
   prompt: String!
   fullAnswer: String!
-  promptLang: String!
-  answerLang: String!
   sortKey: String!
   deck: RwDeck!
   editedAt: String!

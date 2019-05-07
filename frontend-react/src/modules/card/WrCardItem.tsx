@@ -22,6 +22,8 @@ import WrDeleteCardButton from './WrDeleteCardButton';
 
 interface Props {
   deckId: string;
+  promptLang: string;
+  answerLang: string;
   card: WrCard;
 }
 
@@ -48,25 +50,19 @@ class WrCardItem extends Component<Props> {
   public readonly state = {
     promptInput: this.props.card.prompt,
     fullAnswerInput: this.props.card.fullAnswer,
-    promptLangInput: he.encode(this.props.card.promptLang),
-    answerLangInput: he.encode(this.props.card.answerLang),
   };
 
   public readonly render = () => {
     const {
       handlePromptChange,
       handleFullAnswerChange,
-      handlePromptLangChange,
-      handleAnswerLangChange,
       resetState,
     } = this;
-    const { promptInput, fullAnswerInput, promptLangInput, answerLangInput } = this.state;
-    const { deckId } = this.props;
-    const { id, prompt, fullAnswer, promptLang, answerLang, sortKey, editedAt, template } = this.props.card;
+    const { promptInput, fullAnswerInput } = this.state;
+    const { deckId, promptLang, answerLang } = this.props;
+    const { id, prompt, fullAnswer, sortKey, editedAt, template } = this.props.card;
     const hasUnsavedChanges = (prompt !== promptInput)
-      || (fullAnswer !== fullAnswerInput)
-      || (he.encode(this.props.card.promptLang) !== promptLangInput)
-      || (he.encode(this.props.card.answerLang) !== answerLangInput);
+      || (fullAnswer !== fullAnswerInput);
     const lastEditedNotice = `last edited ${moment(editedAt).fromNow()}`;
     const unsavedChangesNotice = 'You have unsaved changes. Press Enter to save. Press Esc to discard changes.';
     const renderCardEdit = (
@@ -80,8 +76,6 @@ class WrCardItem extends Component<Props> {
             id,
             prompt: this.state.promptInput,
             fullAnswer: this.state.fullAnswerInput,
-            promptLang: he.decode(this.state.promptLangInput),
-            answerLang: he.decode(this.state.answerLangInput),
             sortKey,
           },
         });
@@ -117,52 +111,18 @@ class WrCardItem extends Component<Props> {
           borderColor="lightEdge"
         >
           <Flex px={3} bg="bg0" as="form" flexDirection="column">
-            <Flex pt={1} justifyContent="space-between">
-              <Flex className="auxillary">
-                <Text as="span" color="fg2" fontSize="75%">
-                  <em>prompt language:</em>&nbsp;
-                  {
-                    // tslint:disable-next-line: jsx-no-multiline-js
-                    // @ts-ignore
-                    <ContentEditable
-                      role="textbox"
-                      aria-multiline="true"
-                      html={promptLangInput}
-                      onChange={handlePromptLangChange}
-                      onKeyDown={handleSingleLineDown}
-                      onPaste={handlePaste}
-                      tagName="span"
-                    />
-                  }
-                  , <em>answer language:</em>&nbsp;
-                  {
-                    // tslint:disable-next-line: jsx-no-multiline-js
-                    // @ts-ignore
-                    <ContentEditable
-                      role="textbox"
-                      aria-multiline="true"
-                      html={answerLangInput}
-                      onChange={handleAnswerLangChange}
-                      onKeyDown={handleKeyDown}
-                      onPaste={handlePaste}
-                      tagName="span"
-                    />
-                  }
-                </Text>
-              </Flex>
+            <Flex pt={1} justifyContent="flex-end">
               <Flex>
-                <Button
+                {/* <Button
                   mx={1}
                   variant="auxillary"
                   className="auxillary"
                 ><MoreVertical size={16} />
-                </Button>
+                </Button> */}
                 <WrCreateCardButton
                   deckId={deckId}
                   prompt={prompt}
                   fullAnswer={fullAnswer}
-                  promptLang={promptLang}
-                  answerLang={answerLang}
                   sortKey={sortKey}
                   template={template}
                 />
@@ -212,19 +172,11 @@ class WrCardItem extends Component<Props> {
   private readonly handleFullAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
     this.setState({ fullAnswerInput: e.target.value });
   }
-  private readonly handlePromptLangChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ promptLangInput: e.target.value });
-  }
-  private readonly handleAnswerLangChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ answerLangInput: e.target.value });
-  }
   private readonly resetState = () => {
-    const { prompt, fullAnswer, promptLang, answerLang } = this.props.card;
+    const { prompt, fullAnswer } = this.props.card;
     this.setState({
       promptInput: prompt,
       fullAnswerInput: fullAnswer,
-      promptLangInput: promptLang,
-      answerLangInput: answerLang,
     });
   }
 }

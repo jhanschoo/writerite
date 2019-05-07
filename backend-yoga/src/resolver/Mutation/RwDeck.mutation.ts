@@ -15,15 +15,21 @@ import {
 
 const rwDeckCreate: IFieldResolver<any, IRwContext, {
   name?: string,
+  nameLang?: string,
+  promptLang?: string,
+  answerLang?: string,
 }> = async (
-  _parent, { name }, { sub, prisma, pubsub },
+  _parent, { name, nameLang, promptLang, answerLang }, { sub, prisma, pubsub },
 ): Promise<IBakedRwDeck | null> => {
   try {
     if (!sub) {
       throw wrAuthenticationError();
     }
     const pDeck = await prisma.createPDeck({
-      name: (name && name.trim()) ? name.trim() : randomThreeWords(),
+      name: name || randomThreeWords(),
+      nameLang: nameLang || '',
+      promptLang: promptLang || '',
+      answerLang: answerLang || '',
       owner: { connect: { id: sub.id } },
     });
     wrGuardPrismaNullError(pDeck);
@@ -40,11 +46,14 @@ const rwDeckCreate: IFieldResolver<any, IRwContext, {
   }
 };
 
-const rwDeckEditName: IFieldResolver<any, IRwContext, {
+const rwDeckEdit: IFieldResolver<any, IRwContext, {
   id: string,
   name: string,
+  nameLang: string,
+  promptLang: string,
+  answerLang: string,
 }> = async (
-  _parent, { id, name }, { sub, prisma, pubsub },
+  _parent, { id, name, nameLang, promptLang, answerLang }, { sub, prisma, pubsub },
 ): Promise<IBakedRwDeck | null> => {
   try {
     if (!sub) {
@@ -54,7 +63,7 @@ const rwDeckEditName: IFieldResolver<any, IRwContext, {
       throw wrNotFoundError('deck');
     }
     const pDeck = await prisma.updatePDeck({
-      data: { name: name.trim() },
+      data: { name, nameLang, promptLang, answerLang },
       where: { id },
     });
     wrGuardPrismaNullError(pDeck);
@@ -101,5 +110,5 @@ const rwDeckDelete: IFieldResolver<any, IRwContext, {
 };
 
 export const rwDeckMutation = {
-  rwDeckCreate, rwDeckEditName, rwDeckDelete,
+  rwDeckCreate, rwDeckEdit, rwDeckDelete,
 };

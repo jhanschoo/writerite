@@ -15,13 +15,11 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
   deckId: string,
   prompt?: string,
   fullAnswer?: string,
-  promptLang?: string,
-  answerLang?: string,
   sortKey?: string,
   template?: boolean,
 }> = async (
   _parent,
-  { deckId, prompt, fullAnswer, promptLang, answerLang, sortKey, template },
+  { deckId, prompt, fullAnswer, sortKey, template },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
@@ -34,8 +32,6 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
     const pCard = await prisma.createPCard({
       prompt: prompt || '',
       fullAnswer: fullAnswer || '',
-      promptLang: promptLang || '',
-      answerLang: answerLang || '',
       sortKey: sortKey || prompt || '',
       deck: { connect: { id: deckId } },
       editedAt: (new Date()).toISOString(),
@@ -54,17 +50,59 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
   }
 };
 
-const rwCardEdit: IFieldResolver<any, IRwContext, {
-  id: string,
+const rwCardsCreate: IFieldResolver<any, IRwContext, {
+  deckId: string,
+  multiplicity: number,
   prompt?: string,
   fullAnswer?: string,
-  promptLang?: string,
-  answerLang?: string,
   sortKey?: string,
   template?: boolean,
 }> = async (
   _parent,
-  { id, prompt, fullAnswer, promptLang, answerLang, sortKey, template },
+  { deckId, prompt, fullAnswer, sortKey, template, multiplicity },
+  { prisma, sub, pubsub },
+): Promise<IBakedRwCard[] | null> => {
+  try {
+    if (!sub) {
+      throw wrAuthenticationError();
+    }
+    if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
+      throw wrNotFoundError('deck');
+    }
+    const rwCards = [];
+    for (let i = 0; i < multiplicity; ++i) {
+      const pCard = await prisma.createPCard({
+        prompt: prompt || '',
+        fullAnswer: fullAnswer || '',
+        sortKey: sortKey || prompt || '',
+        deck: { connect: { id: deckId } },
+        editedAt: (new Date()).toISOString(),
+        template: template || false,
+      });
+      wrGuardPrismaNullError(pCard);
+      const pCardUpdate: ICreatedUpdate<PCard> = {
+        mutation: MutationType.CREATED,
+        new: pCard,
+        oldId: null,
+      };
+      pubsub.publish(rwCardsTopicFromRwDeck(deckId), pCardUpdate);
+      rwCards.push(pCardToRwCard(pCard, prisma));
+    }
+    return rwCards;
+  } catch (e) {
+    return throwIfDevel(e);
+  }
+};
+
+const rwCardEdit: IFieldResolver<any, IRwContext, {
+  id: string,
+  prompt?: string,
+  fullAnswer?: string,
+  sortKey?: string,
+  template?: boolean,
+}> = async (
+  _parent,
+  { id, prompt, fullAnswer, sortKey, template },
   { prisma, sub, pubsub },
 ): Promise<IBakedRwCard | null> => {
   try {
@@ -83,8 +121,6 @@ const rwCardEdit: IFieldResolver<any, IRwContext, {
       data: {
         prompt,
         fullAnswer,
-        promptLang,
-        answerLang,
         sortKey,
         editedAt: (new Date()).toISOString(),
         template,
@@ -134,5 +170,5 @@ const rwCardDelete: IFieldResolver<any, IRwContext, { id: string }> = async (
 };
 
 export const rwCardMutation = {
-  rwCardCreate, rwCardEdit, rwCardDelete,
+  rwCardCreate, rwCardsCreate, rwCardEdit, rwCardDelete,
 };

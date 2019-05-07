@@ -4,9 +4,12 @@ import { WrCard } from '../card/types';
 export interface WrDeck {
   readonly id: string;
   readonly name: string;
+  readonly nameLang: string;
 }
 
 export interface WrDeckDetail extends WrDeck {
+  readonly promptLang: string;
+  readonly answerLang: string;
   readonly cards: WrCard[];
 }
 

@@ -11,7 +11,7 @@ import { rwDeckMutation } from '../src/resolver/Mutation/RwDeck.mutation';
 import { ContextParameters } from 'graphql-yoga/dist/types';
 
 const { rwDeck, rwOwnDecks } = rwDeckQuery;
-const { rwDeckCreate, rwDeckEditName, rwDeckDelete } = rwDeckMutation;
+const { rwDeckCreate, rwDeckEdit, rwDeckDelete } = rwDeckMutation;
 
 const req = {} as ContextParameters;
 const redisClient = new Redis();
@@ -113,18 +113,18 @@ describe('RwDeck resolvers', async () => {
     });
   });
 
-  describe('rwDeckEditName', () => {
+  describe('rwDeckEdit', () => {
     beforeEach(commonBeforeEach);
     afterEach(commonAfterEach);
 
     test('it should return null if sub is not present', async () => {
       expect.assertions(1);
-      expect(rwDeckEditName(null, { name: NAME }, baseCtx, baseInfo))
+      expect(rwDeckEdits(null, { name: NAME }, baseCtx, baseInfo))
         .resolves.toBeNull();
     });
     test('it should return null and not save/update if specifies a deck not owned by sub.id', async () => {
       expect.assertions(2);
-      const otherDeckObj = await rwDeckEditName(
+      const otherDeckObj = await rwDeckEdit(
         null,
         { id: OTHER_DECK.id, name: NEW_NAME },
         { ...baseCtx, sub: { id: USER.id } } as IRwContext,
@@ -135,7 +135,7 @@ describe('RwDeck resolvers', async () => {
     });
     test('it updates a deck when id specifies a deck owned by sub.id', async () => {
       expect.assertions(4);
-      const deckObj = await rwDeckEditName(null, { id: DECK.id, name: NEW_NAME }, {
+      const deckObj = await rwDeckEdit(null, { id: DECK.id, name: NEW_NAME }, {
         ...baseCtx, sub: { id: USER.id },
       } as IRwContext, baseInfo);
       expect(deckObj).toHaveProperty('id');

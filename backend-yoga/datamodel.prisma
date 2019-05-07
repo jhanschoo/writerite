@@ -24,9 +24,7 @@ type PCard { # implements Card
   id: ID! @id
   deck: PDeck! @relation(link: INLINE)
   prompt: String!
-  promptLang: String!
   fullAnswer: String!
-  answerLang: String!
   sortKey: String!
   editedAt: DateTime!
   template: Boolean!
@@ -37,6 +35,9 @@ type PCard { # implements Card
 type PDeck {
   id: ID! @id
   name: String!
+  nameLang: String!
+  promptLang: String!
+  answerLang: String!
   owner: PUser! @relation(link: INLINE)
   cards: [PCard!]! @relation(onDelete: CASCADE)
   servedAt: [PRoom!]! @relation(onDelete: SET_NULL)

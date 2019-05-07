@@ -5,6 +5,7 @@ import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { DECK_DETAIL_QUERY, DeckDetailData, DeckDetailVariables } from '../gql';
 
+import { Card } from 'rebass';
 import HDivider from '../../../ui/HDivider';
 import FlexMain from '../../../ui/layout/FlexMain';
 import WrTemplateCardsList from './WrTemplateCardsList';
@@ -24,14 +25,19 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
     }
     if (loading) {
       return (
-        <WrDetailHeader name="Retrieving Deck..." />
+        <Card as="header" px={[2, 2, '12.5%']} py={[1, 1, 2]}>
+          Retrieving deck...
+        </Card>
       );
     }
     if (!data || !data.rwDeck) {
       return (
-        <WrDetailHeader name="Error retrieving deck" />
+        <Card as="header" px={[2, 2, '12.5%']} py={[1, 1, 2]}>
+          Error retrieving deck...
+        </Card>
       );
     }
+    const { name, cards, promptLang, answerLang } = data.rwDeck;
     return (
       <>
         {
@@ -40,15 +46,12 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           // @ts-ignore
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
-        <WrDetailHeader
-          heading={{ m: 1, py: 3, textAlign: 'center', fontSize: '250%' }}
-          name={data.rwDeck.name}
-          deckId={deckId}
-        />
+        <WrDetailHeader deck={data.rwDeck} />
+        <HDivider spacer={{ my: 2 }} />
         <WrSubdeckList />
         <HDivider spacer={{ my: 2 }} />
         <WrTemplateCardsList />
-        <WrCardsList cards={data.rwDeck.cards} />
+        <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
       </>
     );
   };

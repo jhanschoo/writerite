@@ -8,6 +8,9 @@ import { IRwCard, IBakedRwCard, pCardToRwCard } from './RwCard';
 export interface IRwDeck {
   id: ResTo<string>;
   name: ResTo<string>;
+  nameLang: ResTo<string>;
+  promptLang: ResTo<string>;
+  answerLang: ResTo<string>;
   owner: ResTo<IRwUser>;
   cards: ResTo<IRwCard[]>;
 }
@@ -16,6 +19,9 @@ export interface IRwDeck {
 export const RwDeck: ResTo<IRwDeck> = {
   id: fieldGetter('id'),
   name: fieldGetter('name'),
+  nameLang: fieldGetter('nameLang'),
+  promptLang: fieldGetter('promptLang'),
+  answerLang: fieldGetter('answerLang'),
   owner: fieldGetter('owner'),
   cards: fieldGetter('cards'),
 };
@@ -23,6 +29,9 @@ export const RwDeck: ResTo<IRwDeck> = {
 export interface IBakedRwDeck extends IRwDeck {
   id: string;
   name: string;
+  nameLang: string;
+  promptLang: string;
+  answerLang: string;
   owner: AFunResTo<IBakedRwUser>;
   cards: AFunResTo<IBakedRwCard[]>;
 }
@@ -31,6 +40,9 @@ export function pDeckToRwDeck(pDeck: PDeck, prisma: Prisma): IBakedRwDeck {
   return {
     id: pDeck.id,
     name: pDeck.name,
+    nameLang: pDeck.nameLang,
+    promptLang: pDeck.promptLang,
+    answerLang: pDeck.answerLang,
     owner: async () => pUserToRwUser(
       wrGuardPrismaNullError(await prisma.pDeck({ id: pDeck.id }).owner()),
       prisma,

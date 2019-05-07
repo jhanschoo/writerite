@@ -43,7 +43,7 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
     )]
     : filteredDecks.map((deck: WrDeck) => (
         <Item width="100%" key={deck.id}>
-          <SidebarMenuLink to={`/deck/${deck.id}`}>
+          <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.nameLang || undefined}>
             {deck.name}
           </SidebarMenuLink>
         </Item>

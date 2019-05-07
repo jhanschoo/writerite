@@ -9,8 +9,6 @@ query Cards($deckId: ID!) {
     id
     prompt
     fullAnswer
-    promptLang
-    answerLang
     sortKey
     editedAt
     template
@@ -33,8 +31,6 @@ mutation CardCreate(
   $deckId: ID!,
   $prompt: String!,
   $fullAnswer: String!,
-  $promptLang: String!,
-  $answerLang: String!,
   $sortKey: String,
   $template: Boolean,
 ) {
@@ -42,16 +38,12 @@ mutation CardCreate(
     deckId: $deckId,
     prompt: $prompt,
     fullAnswer: $fullAnswer,
-    promptLang: $promptLang,
-    answerLang: $answerLang,
     sortKey: $sortKey,
     template: $template,
   ) {
     id
     prompt
     fullAnswer
-    promptLang
-    answerLang
     sortKey
     editedAt
     template
@@ -63,14 +55,52 @@ export interface CardCreateVariables {
   readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
-  readonly promptLang: string;
-  readonly answerLang: string;
   readonly sortKey?: string;
   readonly template?: boolean;
 }
 
 export interface CardCreateData {
   readonly rwCardSave: WrCard | null;
+}
+
+export const CARDS_CREATE_MUTATION = gql`
+mutation CardCreate(
+  $deckId: ID!,
+  $prompt: String!,
+  $fullAnswer: String!,
+  $sortKey: String,
+  $template: Boolean,
+  $multiplicity: Int!
+) {
+  rwCardsCreate(
+    deckId: $deckId,
+    prompt: $prompt,
+    fullAnswer: $fullAnswer,
+    sortKey: $sortKey,
+    template: $template,
+    multiplicity: $multiplicity,
+  ) {
+    id
+    prompt
+    fullAnswer
+    sortKey
+    editedAt
+    template
+  }
+}
+`;
+
+export interface CardsCreateVariables {
+  readonly deckId: string;
+  readonly prompt: string;
+  readonly fullAnswer: string;
+  readonly sortKey?: string;
+  readonly template?: boolean;
+  readonly multiplicity: number;
+}
+
+export interface CardsCreateData {
+  readonly rwCardSave: WrCard[] | null;
 }
 
 // CardEdit mutation
@@ -80,8 +110,6 @@ mutation CardEdit(
   $id: ID!,
   $prompt: String,
   $fullAnswer: String,
-  $promptLang: String,
-  $answerLang: String,
   $sortKey: String,
   $template: Boolean,
 ) {
@@ -89,16 +117,12 @@ mutation CardEdit(
     id: $id,
     prompt: $prompt,
     fullAnswer: $fullAnswer,
-    promptLang: $promptLang,
-    answerLang: $answerLang,
     sortKey: $sortKey,
     template: $template,
   ) {
     id
     prompt
     fullAnswer
-    promptLang
-    answerLang
     sortKey
     editedAt
     template
@@ -110,8 +134,6 @@ export interface CardEditVariables {
   readonly id: string;
   readonly prompt?: string;
   readonly fullAnswer?: string;
-  readonly promptLang?: string;
-  readonly answerLang?: string;
   readonly sortKey?: string;
   readonly template?: boolean;
 }
@@ -146,8 +168,6 @@ subscription CardsUpdates($deckId: ID!) {
       id
       prompt
       fullAnswer
-      promptLang
-      answerLang
       sortKey
       editedAt
       template

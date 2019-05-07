@@ -230,7 +230,7 @@ const theme = {
       'borderRadius': '0px',
       'background': transparent,
       ':active, :focus': {
-        borderWidth: '0px',
+        borderWidth: '0 0 1px 0',
       },
       'height': 'auto',
       '::placeholder': {

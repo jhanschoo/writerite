@@ -50,7 +50,7 @@ const CardFieldset: FC<Props> = (props: Props) => {
     }
   };
   return (
-    <GrowingFieldset py={[0, 0, 1]} px={[0, 0, 1]} onClick={handleClick} lang={lang}>
+    <GrowingFieldset py={[0, 0, 1]} px={[0, 0, 1]} onClick={handleClick} lang={lang || undefined}>
     {label && <LowercaseLabel color="fg2" pb={1}>{label}</LowercaseLabel>}
     {
       // tslint:disable-next-line: jsx-no-multiline-js
