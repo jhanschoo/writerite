@@ -7,24 +7,27 @@ import Label from '../../ui/form/Label';
 import ContentEditable from 'react-contenteditable';
 
 const GrowingFieldset = styled(Fieldset)`
+  position: relative;
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
   width: 50%;
   cursor: text;
   > * {
     cursor: text;
   }
+  z-index: 0;
 `;
 
 const LowercaseLabel = styled(Label)`
+  position: absolute;
   text-transform: lowercase;
 `;
 
 const StyledContentEditable = styled(ContentEditable)`
   min-height: 1rem;
+  padding: 1rem 0 0.5rem 0;
   flex-grow: 1;
   outline: none;
+  z-index: 1;
 `;
 
 const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
@@ -43,15 +46,9 @@ interface Props {
 
 const CardFieldset: FC<Props> = (props: Props) => {
   const { label, html, lang, onChange, onKeyDown } = { html: '', ...props };
-  const ceEl = useRef<HTMLDivElement>(null);
-  const handleClick = (_e: MouseEvent<HTMLDivElement>) => {
-    if (ceEl.current) {
-      ceEl.current.focus();
-    }
-  };
   return (
-    <GrowingFieldset py={[0, 0, 1]} px={[0, 0, 1]} onClick={handleClick} lang={lang || undefined}>
-    {label && <LowercaseLabel color="fg2" pb={1}>{label}</LowercaseLabel>}
+    <GrowingFieldset p={0} lang={lang || undefined}>
+    {label && <LowercaseLabel color="fg2">{label}</LowercaseLabel>}
     {
       // tslint:disable-next-line: jsx-no-multiline-js
       // @ts-ignore
@@ -59,7 +56,6 @@ const CardFieldset: FC<Props> = (props: Props) => {
         role="textbox"
         aria-multiline="true"
         html={html}
-        innerRef={ceEl}
         onChange={onChange}
         onKeyDown={onKeyDown || undefined}
         onPaste={handlePaste}

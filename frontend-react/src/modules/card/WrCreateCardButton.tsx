@@ -23,7 +23,7 @@ const WrCreateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables)
     };
     return (
       <Button
-        my={1}
+        mx={1}
         variant="auxillary"
         className="auxillary"
         onClick={handleClick}

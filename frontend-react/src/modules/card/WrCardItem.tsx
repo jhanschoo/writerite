@@ -1,8 +1,5 @@
 import React, { Component, ChangeEvent, ClipboardEvent, KeyboardEvent } from 'react';
-import he from 'he';
 import moment from 'moment';
-import ContentEditable from 'react-contenteditable';
-import { MoreVertical } from 'react-feather';
 
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
@@ -111,14 +108,11 @@ class WrCardItem extends Component<Props> {
           borderColor="lightEdge"
         >
           <Flex px={3} bg="bg0" as="form" flexDirection="column">
-            <Flex pt={1} justifyContent="flex-end">
+            <Flex pt={1} justifyContent="space-between">
+              <Text as="span" color="fg2" fontSize="75%">
+                <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
+              </Text>
               <Flex>
-                {/* <Button
-                  mx={1}
-                  variant="auxillary"
-                  className="auxillary"
-                ><MoreVertical size={16} />
-                </Button> */}
                 <WrCreateCardButton
                   deckId={deckId}
                   prompt={prompt}
@@ -129,6 +123,9 @@ class WrCardItem extends Component<Props> {
                 <WrDeleteCardButton cardId={id} />
               </Flex>
             </Flex>
+            <Flex flexDirection="column">
+              <HDivider py={1} spacer={{ bg: 'lightLightEdge' }} />
+            </Flex>
             <Flex>
               <CardFieldset
                 label="Prompt"
@@ -137,9 +134,6 @@ class WrCardItem extends Component<Props> {
                 onChange={handlePromptChange}
                 onKeyDown={handleKeyDown}
               />
-              <Flex px={2} flexDirection="column">
-                <VDivider height="100%" spacer={{ bg: 'lightLightEdge' }} />
-              </Flex>
               <CardFieldset
                 label="Displayed Answer"
                 lang={answerLang}
@@ -147,11 +141,6 @@ class WrCardItem extends Component<Props> {
                 onChange={handleFullAnswerChange}
                 onKeyDown={handleKeyDown}
               />
-            </Flex>
-            <Flex pb={1} justifyContent="flex-end">
-              <Text as="span" color="fg2" fontSize="75%">
-                <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
-              </Text>
             </Flex>
           </Flex>
         </StyledCard>

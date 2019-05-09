@@ -62,7 +62,7 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
       >
         Add
         <StyledTextInput
-          variant="minimal"
+          variant="underscore"
           type="number"
           min="1"
           max="100"

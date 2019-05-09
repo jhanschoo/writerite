@@ -27,7 +27,7 @@ const WrDeleteCardButton: FC<Props> = (props: Props) => {
     };
     return (
       <Button
-        my={1}
+        mx={1}
         variant="auxillary"
         className="auxillary"
         onClick={handleClick}

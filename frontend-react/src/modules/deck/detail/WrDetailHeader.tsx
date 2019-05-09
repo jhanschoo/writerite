@@ -1,11 +1,13 @@
-import React, { PureComponent, ChangeEvent, ClipboardEvent, KeyboardEvent } from 'react';
-import { Settings } from 'react-feather';
-import he from 'he';
-import ContentEditable from 'react-contenteditable';
+import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, MouseEvent, Dispatch, SetStateAction } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router';
+import { Settings, Trash2 } from 'react-feather';
 
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { DeckEditData, DeckEditVariables, DECK_EDIT_MUTATION } from '../gql';
+import {
+  DeckEditData, DeckEditVariables, DECK_EDIT_MUTATION,
+  DeckDeleteData, DeckDeleteVariables, DECK_DELETE_MUTATION,
+} from '../gql';
 
 import styled from 'styled-components';
 import { Card, Text, Heading, HeadingProps } from 'rebass';
@@ -28,167 +30,196 @@ const StyledCard = styled(Card)`
   }
 `;
 
-const StyledContentEditable = styled(ContentEditable)`
+const StyledButton = styled(Button)`
+  display: inline;
   outline: none;
 `;
 
-const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
-  e.preventDefault();
-  const text = e.clipboardData.getData('text/plain');
-  document.execCommand('insertHTML', false, text);
-};
-
-interface DetailHeader extends HeadingProps {
+interface OwnProps {
   deck: WrDeckDetail;
 }
 
-class WrDetailHeader extends PureComponent<DetailHeader> {
-  public readonly state = {
-    nameInput: he.encode(this.props.deck.name),
-    showSettings: false,
-    nameLangInput: this.props.deck.nameLang,
-    promptLangInput: this.props.deck.promptLang,
-    answerLangInput: this.props.deck.answerLang,
-  };
+type Props = HeadingProps & RouteComponentProps & OwnProps;
 
-  public readonly render = () => {
-    const {
-      handleNameChange,
-      toggleSettings,
-      handleNameLangChange,
-      handlePromptLangChange,
-      handleAnswerLangChange,
-    } = this;
-    const { nameInput, nameLangInput, promptLangInput, answerLangInput, showSettings } = this.state;
-    const { id, name } = this.props.deck;
-    const renderName = (
-      mutate: MutationFn<DeckEditData, DeckEditVariables>,
-      { loading }: MutationResult<DeckEditData>,
+const WrDetailHeader = (props: Props) => {
+  const { history } = props;
+  const { id, name, nameLang, promptLang, answerLang } = props.deck;
+  const [nameInput, setNameInput] = useState(name);
+  const [deletePromptInput, setDeletePromptInput] = useState('');
+  const [nameLangInput, setNameLangInput] = useState(nameLang);
+  const [promptLangInput, setPromptLangInput] = useState(promptLang);
+  const [answerLangInput, setAnswerLangInput] = useState(answerLang);
+  const [showDeletePrompt, setShowDeletePrompt] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const handleTextChange = (setter: Dispatch<SetStateAction<string>>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+    setter(e.target.value);
+  };
+  const toggleBoolean = (current: boolean, setter: Dispatch<SetStateAction<boolean>>) =>
+    (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setter(!current);
+  };
+  const resetState = () => {
+    setNameInput(name);
+    setNameLangInput(nameLang);
+    setAnswerLangInput(answerLang);
+  };
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    const { key } = e;
+    if (key === 'Escape' || key === 'Esc') {
+      e.preventDefault();
+      resetState();
+    }
+  };
+  const renderName = (
+    mutate: MutationFn<DeckEditData, DeckEditVariables>,
+    { loading }: MutationResult<DeckEditData>,
+  ) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      mutate({
+        variables: {
+          id,
+          name: nameInput,
+          nameLang: nameLangInput,
+          promptLang: promptLangInput,
+          answerLang: answerLangInput,
+        },
+      });
+    };
+    const renderDeletePrompt = (
+      deleteMutate: MutationFn<DeckDeleteData, DeckDeleteVariables>,
+      { loading: deleteLoading }: MutationResult<DeckDeleteData>,
     ) => {
-      const handleUpdate = () => {
-        if (!id) {
-          return;
-        }
-        mutate({
+      const handleDelete = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        deleteMutate({
           variables: {
             id,
-            name: he.decode(this.state.nameInput),
-            nameLang: this.state.nameLangInput,
-            promptLang: this.state.promptLangInput,
-            answerLang: this.state.answerLangInput,
           },
         });
       };
-      const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-        const { key } = e;
-        if (key === 'Enter') {
-          e.preventDefault();
-          handleUpdate();
-        }
-        if (key === 'Escape' || key === 'Esc') {
-          e.preventDefault();
-          this.resetState();
-        }
-      };
-      const settingsToggle = (id) ? (
-        <Button variant="auxillary" className="auxillary" onClick={toggleSettings}>
-          <Settings />
-        </Button>
-      ) : undefined;
-      const settingsPanel = (showSettings) ? (
-        <Text color="fg2" textAlign="center">
-          Deck title language:
-          <TextInput
-            variant="underscore"
-            type="text"
-            value={nameLangInput}
-            width="6rem"
-            onChange={handleNameLangChange}
-            onKeyDown={handleKeyDown || undefined}
-          />,
-          Prompt language:
-          <TextInput
-            variant="underscore"
-            type="text"
-            value={promptLangInput}
-            width="6rem"
-            onChange={handlePromptLangChange}
-            onKeyDown={handleKeyDown || undefined}
-          />
-          , Answer language:
-          <TextInput
-            variant="underscore"
-            type="text"
-            value={answerLangInput}
-            width="4rem"
-            onChange={handleAnswerLangChange}
-            onKeyDown={handleKeyDown || undefined}
-          />
-        </Text>
-      ) : undefined;
       return (
-        <>
-          <Heading m={1} textAlign="center" fontSize="250%">
-            {
-              // tslint:disable-next-line: jsx-no-multiline-js
-              // @ts-ignore
-              <StyledContentEditable
-                role="textbox"
-                aria-multiline="true"
-                html={nameInput}
-                onChange={handleNameChange}
-                onKeyDown={handleKeyDown || undefined}
-                onPaste={handlePaste}
-                disabled={!id}
-              />
-            }
-          </Heading>
-          {settingsToggle}
-          {settingsPanel}
-        </>
+        // typings have onSubmit behave as though it were on an HTMLDivElement,
+        // even with as="form"
+        // @ts-ignore
+        <Text as="form" color="fg2" textAlign="center" onSubmit={handleDelete}>
+          If you really want to delete this deck, please enter the name of the deck first:
+          <TextInput
+            variant="underscore"
+            type="text"
+            value={deletePromptInput}
+            width="24rem"
+            onChange={handleTextChange(setDeletePromptInput)}
+            onKeyDown={handleKeyDown}
+          />.&nbsp;
+          <StyledButton
+            variant="minimal"
+            type="submit"
+            disabled={deletePromptInput !== name}
+          >
+            Delete
+          </StyledButton>
+        </Text>
       );
     };
-    return (
-      <StyledCard as="header" px={[2, 2, '12.5%']} py={[1, 1, 2]}>
-        <Mutation<DeckEditData, DeckEditVariables>
-          mutation={DECK_EDIT_MUTATION}
-          onError={printApolloError}
+    const handleCompleted = () => {
+      history.push('/deck');
+    }
+    const deletePrompt = (showDeletePrompt) ? (
+      <Mutation<DeckDeleteData, DeckDeleteVariables>
+        mutation={DECK_DELETE_MUTATION}
+        onError={printApolloError}
+        onCompleted={handleCompleted}
+      >
+        {renderDeletePrompt}
+      </Mutation>
+    ) : undefined;
+    const settingsPanel = (showSettings) ? (
+      // typings have onSubmit behave as though it were on an HTMLDivElement,
+      // even with as="form"
+      // @ts-ignore
+      <Text as="form" color="fg2" textAlign="center" onSubmit={handleSubmit}>
+        Deck name:
+        <TextInput
+          variant="underscore"
+          type="text"
+          value={nameInput}
+          width="24rem"
+          onChange={handleTextChange(setNameInput)}
+          onKeyDown={handleKeyDown}
+        />,<br />
+        Deck name's language:
+        <TextInput
+          variant="underscore"
+          type="text"
+          value={nameLangInput}
+          width="6rem"
+          onChange={handleTextChange(setNameLangInput)}
+          onKeyDown={handleKeyDown}
+        />,<br />
+        Prompt language:
+        <TextInput
+          variant="underscore"
+          type="text"
+          value={promptLangInput}
+          width="6rem"
+          onChange={handleTextChange(setPromptLangInput)}
+          onKeyDown={handleKeyDown}
+        />
+        ,<br />
+        Answer language:
+        <TextInput
+          variant="underscore"
+          type="text"
+          value={answerLangInput}
+          width="4rem"
+          onChange={handleTextChange(setAnswerLangInput)}
+          onKeyDown={handleKeyDown}
+        />.<br />
+        <StyledButton
+          variant="minimal"
+          type="submit"
         >
-          {renderName}
-        </Mutation>
-      </StyledCard>
+          Save Changes
+        </StyledButton>
+      </Text>
+    ) : undefined;
+    return (
+      <>
+        <Heading m={1} textAlign="center" fontSize="250%">
+          {name}
+          <StyledButton
+            variant="auxillary"
+            className="auxillary"
+            onClick={toggleBoolean(showSettings, setShowSettings)}
+          >
+            <Settings size={16} />
+          </StyledButton>
+          <StyledButton
+            variant="auxillary"
+            className="auxillary"
+            onClick={toggleBoolean(showDeletePrompt, setShowDeletePrompt)}
+          >
+            <Trash2 size={16} />
+          </StyledButton>
+        </Heading>
+        {deletePrompt}
+        {settingsPanel}
+      </>
     );
-  }
+  };
+  return (
+    <StyledCard as="header" px={[2, 2, '12.5%']} py={[1, 1, 2]}>
+      <Mutation<DeckEditData, DeckEditVariables>
+        mutation={DECK_EDIT_MUTATION}
+        onError={printApolloError}
+      >
+        {renderName}
+      </Mutation>
+    </StyledCard>
+  );
+};
 
-  private readonly handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ nameInput: e.target.value });
-  }
-
-  private readonly toggleSettings = () => {
-    this.setState({ showSettings: !this.state.showSettings });
-  }
-
-  private readonly handleNameLangChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ nameLangInput: e.target.value });
-  }
-
-  private readonly handlePromptLangChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ promptLangInput: e.target.value });
-  }
-
-  private readonly handleAnswerLangChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ answerLangInput: e.target.value });
-  }
-
-  private readonly resetState = () => {
-    const { name, nameLang, promptLang, answerLang } = this.props.deck;
-    this.setState({
-      nameInput: he.encode(name),
-      nameLangInput: nameLang,
-      promptLangInput: promptLang,
-      answerLangInput: answerLang,
-    });
-  }
-}
-
-export default WrDetailHeader;
+export default withRouter<Props>(WrDetailHeader);
