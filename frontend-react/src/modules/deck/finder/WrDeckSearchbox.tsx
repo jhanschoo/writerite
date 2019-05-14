@@ -5,8 +5,11 @@ import styled from 'styled-components';
 import { Card, Flex } from 'rebass';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
-import Legend from '../../../ui/form/Legend';
 import TextInput from '../../../ui/form/TextInput';
+
+const UppercaseLegend = styled.legend`
+  text-transform: uppercase;
+`;
 
 const WideCard = styled(Card)`
   grid-column: 1 / 4;
@@ -34,7 +37,7 @@ const WrDeckSearchbox = () => {
     return (
       <form onSubmit={handleSubmit}>
         <Fieldset>
-          <Legend>Search for a Deck</Legend>
+          <UppercaseLegend>Search for a Deck</UppercaseLegend>
             <Flex width="100%" alignItems="center">
               <SearchboxTextInput
                 variant="minimal"

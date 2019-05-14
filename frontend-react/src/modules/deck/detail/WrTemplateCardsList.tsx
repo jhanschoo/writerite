@@ -2,8 +2,15 @@ import React from 'react';
 
 import { ChevronDown, ChevronUp } from 'react-feather';
 
-import { Heading } from 'rebass';
+import styled from 'styled-components';
 import FlexCard from '../../../ui/FlexCard';
+
+const ListHeading = styled.h4`
+  font-size: 125%;
+  font-weight: normal;
+  text-align: center;
+  margin: 0;
+`;
 
 const WrTemplateCardsList = () => (
   <>
@@ -14,7 +21,7 @@ const WrTemplateCardsList = () => (
       p={1}
       m={1}
     >
-      <Heading as="h3" fontSize="125%" fontWeight="normal">0 Template Cards</Heading><ChevronDown />
+      <ListHeading>0 Template Cards</ListHeading><ChevronDown />
     </FlexCard>
   </>
 );

@@ -10,7 +10,7 @@ import {
 } from '../gql';
 
 import styled from 'styled-components';
-import { Card, Text, Heading, HeadingProps } from 'rebass';
+import { Card } from 'rebass';
 import Button from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 
@@ -35,11 +35,22 @@ const StyledButton = styled(Button)`
   outline: none;
 `;
 
+const StyledForm = styled.form`
+  color: ${(props) => props.theme.colors.fg2}
+  text-align: center;
+`;
+
+const DeckHeading = styled.h2`
+  margin: ${(props) => props.theme.space[1]};
+  text-align: center;
+  font-size: 250%;
+`;
+
 interface OwnProps {
   deck: WrDeckDetail;
 }
 
-type Props = HeadingProps & RouteComponentProps & OwnProps;
+type Props = RouteComponentProps & OwnProps;
 
 const WrDetailHeader = (props: Props) => {
   const { history } = props;
@@ -101,10 +112,7 @@ const WrDetailHeader = (props: Props) => {
         });
       };
       return (
-        // typings have onSubmit behave as though it were on an HTMLDivElement,
-        // even with as="form"
-        // @ts-ignore
-        <Text as="form" color="fg2" textAlign="center" onSubmit={handleDelete}>
+        <StyledForm onSubmit={handleDelete}>
           If you really want to delete this deck, please enter the name of the deck first:
           <TextInput
             variant="underscore"
@@ -121,12 +129,12 @@ const WrDetailHeader = (props: Props) => {
           >
             Delete
           </StyledButton>
-        </Text>
+        </StyledForm>
       );
     };
     const handleCompleted = () => {
       history.push('/deck');
-    }
+    };
     const deletePrompt = (showDeletePrompt) ? (
       <Mutation<DeckDeleteData, DeckDeleteVariables>
         mutation={DECK_DELETE_MUTATION}
@@ -137,10 +145,7 @@ const WrDetailHeader = (props: Props) => {
       </Mutation>
     ) : undefined;
     const settingsPanel = (showSettings) ? (
-      // typings have onSubmit behave as though it were on an HTMLDivElement,
-      // even with as="form"
-      // @ts-ignore
-      <Text as="form" color="fg2" textAlign="center" onSubmit={handleSubmit}>
+      <StyledForm onSubmit={handleSubmit}>
         Deck name:
         <TextInput
           variant="underscore"
@@ -184,11 +189,11 @@ const WrDetailHeader = (props: Props) => {
         >
           Save Changes
         </StyledButton>
-      </Text>
+      </StyledForm>
     ) : undefined;
     return (
       <>
-        <Heading m={1} textAlign="center" fontSize="250%">
+        <DeckHeading>
           {name}
           <StyledButton
             variant="auxillary"
@@ -204,7 +209,7 @@ const WrDetailHeader = (props: Props) => {
           >
             <Trash2 size={16} />
           </StyledButton>
-        </Heading>
+        </DeckHeading>
         {deletePrompt}
         {settingsPanel}
       </>

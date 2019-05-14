@@ -1,15 +1,20 @@
 import React, { FC } from 'react';
 
 import styled from 'styled-components';
-import { Text, TextProps } from 'rebass';
 
-const HideableText = styled(Text)`
+const BrandText = styled.span`
+  font-weight: bold;
+  font-size: 150%;
+  font-family: "Josefin Slab", serif;
+`;
+
+const HideableText = styled.span`
   @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
     display: none;
   }
 `;
 
-interface Props extends TextProps {
+interface Props {
   responsive?: boolean;
   prefix?: string;
   suffix?: string;
@@ -18,15 +23,9 @@ interface Props extends TextProps {
 const WrBrandText: FC<Props> = (props: Props) => {
   const { prefix, responsive, suffix } = props;
   return (
-    <Text
-      as="span"
-      fontWeight="bold"
-      fontFamily="brand"
-      fontSize="150%"
-      {...props}
-    >
-      {prefix}W{responsive ? <HideableText as="span">riteRite</HideableText> : 'riteRite'}{suffix}
-    </Text>
+    <BrandText>
+      {prefix}W{responsive ? <HideableText>riteRite</HideableText> : 'riteRite'}{suffix}
+    </BrandText>
   );
 };
 

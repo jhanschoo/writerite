@@ -1,14 +1,29 @@
 import React from 'react';
 
-import { Heading, Flex } from 'rebass';
+import styled from 'styled-components';
+import { Flex } from 'rebass';
 import LandingContent from '../../ui/layout/LandingContent';
 
 import WrBrandText from '../brand/WrBrandText';
 import WrSignin from '../signin/WrSignin';
 
+const HeroHeading = styled.h1`
+  font-size: 300%;
+  text-align: center;
+
+  @media (max-width: ${(props) => props.theme.breakpoints[0]}) {
+    font-size: 150%;
+  }
+`;
+
+const Article = styled.article`
+  display: flex;
+  flex-wrap: wrap;
+`;
+
 const WrLandingContent = () => (
   <LandingContent>
-    <Flex as="article" flexWrap="wrap">
+    <Article>
       <Flex
         as="header"
         css={{ minHeight: '33vh' }}
@@ -17,13 +32,9 @@ const WrLandingContent = () => (
         justifyContent="center"
         alignItems="center"
       >
-        <Heading
-          as="h1"
-          fontSize={[4, 6, 6]}
-          textAlign="center"
-        >
+        <HeroHeading>
           <em>Study with supercharged flashcards on </em><WrBrandText suffix="." />
-        </Heading>
+        </HeroHeading>
       </Flex>
       <Flex
         as="aside"
@@ -35,7 +46,7 @@ const WrLandingContent = () => (
       >
         <WrSignin />
       </Flex>
-    </Flex>
+    </Article>
   </LandingContent>
 );
 

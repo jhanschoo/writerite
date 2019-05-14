@@ -5,7 +5,7 @@ import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { DECK_DETAIL_QUERY, DeckDetailData, DeckDetailVariables } from '../gql';
 
-import { Text } from 'rebass';
+import styled from 'styled-components';
 import HDivider from '../../../ui/HDivider';
 import FlexMain from '../../../ui/layout/FlexMain';
 import WrTemplateCardsList from './WrTemplateCardsList';
@@ -13,6 +13,10 @@ import WrCardsList from '../../card/WrCardsList';
 import WrSubdeckList from './WrSubdeckList';
 import WrDetailHeader from './WrDetailHeader';
 import WrDeckDetailSH from './WrDeckDetailSH';
+
+const CenteredP = styled.p`
+  text-align: center;
+`;
 
 const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
   const { match } = props;
@@ -25,16 +29,16 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
     }
     if (loading) {
       return (
-        <Text as="header" textAlign="center">
+        <CenteredP>
           Retrieving deck...
-        </Text>
+        </CenteredP>
       );
     }
     if (!data || !data.rwDeck) {
       return (
-        <Text as="header" textAlign="center">
+        <CenteredP>
           Error retrieving deck. Please try again later.
-        </Text>
+        </CenteredP>
       );
     }
     const { name, cards, promptLang, answerLang } = data.rwDeck;
@@ -47,7 +51,7 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
         <WrDetailHeader deck={data.rwDeck} />
-        <HDivider spacer={{ my: 2 }} />
+        <HDivider />
         <WrSubdeckList />
         <WrTemplateCardsList />
         <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />

@@ -6,9 +6,7 @@ import { printApolloError } from '../../util';
 import { CARD_EDIT_MUTATION, CardEditVariables, CardEditData } from './gql';
 
 import styled from 'styled-components';
-import { Card, Flex, Text } from 'rebass';
-import Button from '../../ui/form/Button';
-import TextInput from '../../ui/form/TextInput';
+import { Card, Flex } from 'rebass';
 import HDivider from '../../ui/HDivider';
 import VDivider from '../../ui/VDivider';
 
@@ -34,15 +32,17 @@ const StyledCard = styled(Card)`
   }
 `;
 
+const EditNoticeText = styled.span`
+  color: ${(props) => props.theme.colors.fg2};
+  font-size: 75%;
+`;
+
 const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
   e.preventDefault();
   const text = e.clipboardData.getData('text/plain');
   document.execCommand('insertHTML', false, text);
 };
 
-// Note: Class implementation is needed to deal with ContentEditable
-//   not updating onKeyDown handlers
-// https://github.com/lovasoa/react-contenteditable/issues/164
 class WrCardItem extends Component<Props> {
   public readonly state = {
     promptInput: this.props.card.prompt,
@@ -77,20 +77,9 @@ class WrCardItem extends Component<Props> {
           },
         });
       };
-      const handleSingleLineDown = (e: KeyboardEvent<HTMLDivElement>) => {
+      const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
         const { key } = e;
         if (key === 'Enter') {
-          e.preventDefault();
-          handleUpdate();
-        }
-        if (key === 'Escape' || key === 'Esc') {
-          e.preventDefault();
-          resetState();
-        }
-      };
-      const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-        const { key, shiftKey } = e;
-        if (key === 'Enter' && !shiftKey) {
           e.preventDefault();
           handleUpdate();
         }
@@ -109,9 +98,9 @@ class WrCardItem extends Component<Props> {
         >
           <Flex px={3} bg="bg0" as="form" flexDirection="column">
             <Flex pt={1} justifyContent="space-between">
-              <Text as="span" color="fg2" fontSize="75%">
+              <EditNoticeText>
                 <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
-              </Text>
+              </EditNoticeText>
               <Flex>
                 <WrCreateCardButton
                   deckId={deckId}
@@ -124,20 +113,20 @@ class WrCardItem extends Component<Props> {
               </Flex>
             </Flex>
             <Flex flexDirection="column">
-              <HDivider py={1} spacer={{ bg: 'lightLightEdge' }} />
+              <HDivider spacerColor="lightLightEdge" />
             </Flex>
             <Flex>
               <CardFieldset
                 label="Prompt"
                 lang={promptLang}
-                html={promptInput}
+                input={promptInput}
                 onChange={handlePromptChange}
                 onKeyDown={handleKeyDown}
               />
               <CardFieldset
                 label="Displayed Answer"
                 lang={answerLang}
-                html={fullAnswerInput}
+                input={fullAnswerInput}
                 onChange={handleFullAnswerChange}
                 onKeyDown={handleKeyDown}
               />

@@ -1,54 +1,45 @@
-import React, { FC } from 'react';
-import { FixRef } from '../types';
+import React, { FC, ReactNode } from 'react';
 
-import styled from 'styled-components';
-import { height, HeightProps } from 'styled-system';
-import { Box, Flex, BoxProps, FlexProps } from 'rebass';
+import styled, { ThemedStyledFunction } from 'styled-components';
 
-const Spacer = styled(Box)`
+const styledSpacerDiv: ThemedStyledFunction<'div', any, { spacerColor?: string }, never> = styled.div;
+
+const OuterBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Spacer = styledSpacerDiv`
   width: 1px;
   flex-grow: 1;
+  background: ${({ spacerColor, theme }) => spacerColor ? theme.colors[spacerColor] : theme.colors.edge};
 `;
 
-Spacer.defaultProps = {
-  bg: 'edge',
-};
-
-type StyledFlexProps = FlexProps & HeightProps;
-
-const StyledFlex = styled<FC<StyledFlexProps>>(Flex)`
-  ${height}
+const TextBox = styled.div`
+  margin: ${({ theme }) => theme.space[2]};
 `;
 
-interface BaseProps extends StyledFlexProps {
-  spacer?: Partial<FixRef<BoxProps>>;
-  text?: Partial<FixRef<BoxProps>>;
+interface Props {
+  spacerColor?: string;
+  children?: ReactNode;
 }
 
-type Props = Partial<FixRef<BaseProps>>;
-
 const VDivider: FC<Props> = (props: Props) => {
-  const { text, spacer, children, ...flexProps } = props;
+  const { children, spacerColor } = props;
   const labelAndHalf = (
     <>
-      <Box
-        m={2}
-        {...text}
-      >
+      <TextBox>
       {children}
-      </Box>
-      <Spacer {...spacer} />
+      </TextBox>
+      <Spacer spacerColor={spacerColor} />
     </>
   );
   return (
-    <StyledFlex
-      flexDirection="column"
-      alignItems="center"
-      {...flexProps}
-    >
-      <Spacer {...spacer} />
+    <OuterBox>
+      <Spacer spacerColor={spacerColor} />
       {children && labelAndHalf}
-    </StyledFlex>
+    </OuterBox>
   );
 };
 

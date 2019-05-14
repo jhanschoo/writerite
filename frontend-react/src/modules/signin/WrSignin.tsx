@@ -12,7 +12,8 @@ import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
 import { SIGNIN, SigninVariables, SigninData } from './gql';
 
-import { Card, Text } from 'rebass';
+import styled from 'styled-components';
+import { Card } from 'rebass';
 import { breakpoints } from '../../theme';
 import HDivider from '../../ui/HDivider';
 import Button from '../../ui/form/Button';
@@ -24,7 +25,6 @@ import {
   Formik, FormikProps, FormikErrors, FormikTouched,
 } from 'formik';
 import * as yup from 'yup';
-
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;
@@ -43,6 +43,14 @@ interface FormValues {
   recaptcha: string;
   isSignup: boolean;
 }
+
+const TextCenteredDiv = styled.div`
+  text-align: center;
+`;
+
+const InlineBlockDiv = styled.div`
+  display: inline-block;
+`;
 
 const formSchema = yup.object().shape({
   username: yup.string()
@@ -251,10 +259,10 @@ class WrSignin extends Component<Props> {
                 {formattedPasswordError}
               </Fieldset>
               <Fieldset>
-                <Text textAlign="center">
-                  <div id="g-recaptcha" style={{ display: 'inline-block' }} />
+                <TextCenteredDiv>
+                  <InlineBlockDiv id="g-recaptcha" />
                   {maybeError('recaptcha')}
-                </Text>
+                </TextCenteredDiv>
               </Fieldset>
               <Button
                 type="submit"

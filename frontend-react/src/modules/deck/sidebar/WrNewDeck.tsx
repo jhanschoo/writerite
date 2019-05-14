@@ -10,7 +10,6 @@ import { Flex } from 'rebass';
 import FlexSection from '../../../ui/FlexSection';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
-import Legend from '../../../ui/form/Legend';
 import TextInput from '../../../ui/form/TextInput';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
@@ -39,7 +38,7 @@ const WrNewDeck = () => {
     return (
       <form onSubmit={handleSubmit}>
         <Fieldset>
-          <SidebarMenuHeader as={Legend}>Create a New Deck</SidebarMenuHeader>
+          <SidebarMenuHeader as="legend">Create a New Deck</SidebarMenuHeader>
             <Flex width="100%" alignItems="center">
               <TextInput
                 variant="minimal"

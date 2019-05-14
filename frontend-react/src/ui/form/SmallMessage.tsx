@@ -1,12 +1,8 @@
 import styled from 'styled-components';
-import { Text } from 'rebass';
 
-const SmallMessage = styled(Text)`
+const SmallMessage = styled.span`
   display: flex;
+  font-size: 75%;
 `;
-
-SmallMessage.defaultProps = {
-  fontSize: '75%',
-};
 
 export default SmallMessage;

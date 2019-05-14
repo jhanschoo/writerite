@@ -9,7 +9,7 @@ import { restartWsConnection } from '../../apolloClient';
 
 import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
 
-import { Heading } from 'rebass';
+import styled from 'styled-components';
 import { breakpoints } from '../../theme';
 import Link from '../../ui/Link';
 import Button from '../../ui/form/Button';
@@ -19,6 +19,10 @@ import NavBarList from '../../ui/navbar/NavBarList';
 
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
+
+const BrandHeading = styled.h3`
+  margin: 0;
+`;
 
 interface DispatchProps {
   createSignout: () => SigninAction;
@@ -93,7 +97,9 @@ const WrNavBar = (props: Props)  => {
         py={2}
       >
         <Link to="/" activeClassName="" p={0}>
-          <WrBrandText as={Heading} responsive={true} />
+          <BrandHeading>
+            <WrBrandText responsive={true} />
+          </BrandHeading>
         </Link>
       </NavBarItem>
     </NavBarList>
