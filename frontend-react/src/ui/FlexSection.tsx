@@ -1,11 +1,7 @@
 import styled from 'styled-components';
-import { Flex } from 'rebass';
 
-const FlexSection = styled(Flex)``;
-
-FlexSection.defaultProps = Object.assign({}, Flex.defaultProps as object, {
-  as: 'section',
-  flexDirection: 'inherit',
-});
+const FlexSection = styled.section`
+  flex-direction: inherit;
+`;
 
 export default FlexSection;

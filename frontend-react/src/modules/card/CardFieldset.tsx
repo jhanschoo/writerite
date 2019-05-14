@@ -19,7 +19,7 @@ const LowercaseLabel = styled.label`
   position: absolute;
   font-size: 75%;
   text-transform: lowercase;
-  color: ${(props) => props.theme.colors.fg2};
+  color: ${({ theme }) => theme.colors.fg2};
 `;
 
 const StyledTextInput = styled(TextInput)`

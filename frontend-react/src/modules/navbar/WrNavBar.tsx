@@ -24,6 +24,20 @@ const BrandHeading = styled.h3`
   margin: 0;
 `;
 
+const StyledNavBar = styled(NavBar)`
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    font-size: 75%;
+  }
+`;
+
+const BrandNavBarItem = styled(NavBarItem)`
+  padding: ${({ theme }) => theme.space[2]}
+`;
+
+const NavBarListRight = styled(NavBarList)`
+  justify-content: flex-end;
+`;
+
 interface DispatchProps {
   createSignout: () => SigninAction;
 }
@@ -88,25 +102,22 @@ const renderLoggedIn = (props: Props) => {
 };
 
 const WrNavBar = (props: Props)  => {
-  // const { user, dashboardPage, children } = this.props;
   return (
-  <NavBar {...props} fontSize={['75%', '75%', '100%']}>
+  <StyledNavBar>
     <NavBarList>
       <WrHamburger />
-      <NavBarItem
-        py={2}
-      >
+      <BrandNavBarItem>
         <Link to="/" activeClassName="" p={0}>
           <BrandHeading>
             <WrBrandText responsive={true} />
           </BrandHeading>
         </Link>
-      </NavBarItem>
+      </BrandNavBarItem>
     </NavBarList>
-    <NavBarList justifyContent="flex-end">
+    <NavBarListRight>
       {renderLoggedIn(props) || renderLoggedOut()}
-    </NavBarList>
-  </NavBar>
+    </NavBarListRight>
+  </StyledNavBar>
   );
 };
 

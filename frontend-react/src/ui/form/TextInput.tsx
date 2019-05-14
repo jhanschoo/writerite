@@ -9,18 +9,18 @@ const textInputStyle = variant({
 // TODO: make generic argument stricter in props that it accepts
 const TextInput: StyledComponent<React.FunctionComponent<any>, any> = styled(Box)`
   font-size: 100%;
-  height: ${(props) => props.theme.space[4]};
-  padding: 0 ${(props) => props.theme.space[2]};
-  border: 1px solid ${(props) => props.theme.colors.edge};
+  height: ${({ theme }) => theme.space[4]};
+  padding: 0 ${({ theme }) => theme.space[2]};
+  border: 1px solid ${({ theme }) => theme.colors.edge};
   border-radius: 2px;
   -webkit-appearance: none;
 
   :disabled {
-    background: ${(props) => props.theme.colors.disabled}
+    background: ${({ theme }) => theme.colors.disabled}
   }
 
   :focus {
-    border: 1px solid ${(props) => props.theme.colors.edge};
+    border: 1px solid ${({ theme }) => theme.colors.edge};
     outline: none;
   }
 

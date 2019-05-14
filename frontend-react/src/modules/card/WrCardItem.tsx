@@ -33,7 +33,7 @@ const StyledCard = styled(Card)`
 `;
 
 const EditNoticeText = styled.span`
-  color: ${(props) => props.theme.colors.fg2};
+  color: ${({ theme }) => theme.colors.fg2};
   font-size: 75%;
 `;
 

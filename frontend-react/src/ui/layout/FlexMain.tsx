@@ -6,7 +6,7 @@ const FlexMain = styled(Flex)`
   align-items: stretch;
   overflow-y: auto;
 
-  @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     grid-area: 2 / 2 / 3 / 14;
   }
 `;

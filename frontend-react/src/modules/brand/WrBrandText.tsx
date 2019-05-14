@@ -9,7 +9,7 @@ const BrandText = styled.span`
 `;
 
 const HideableText = styled.span`
-  @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     display: none;
   }
 `;

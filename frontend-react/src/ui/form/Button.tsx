@@ -10,7 +10,7 @@ const Button = styled(rebassButton)`
   }
 
   :disabled {
-    color: ${(props) => props.theme.colors.bg3};
+    color: ${({ theme }) => theme.colors.bg3};
   }
 `;
 

@@ -36,12 +36,12 @@ const StyledButton = styled(Button)`
 `;
 
 const StyledForm = styled.form`
-  color: ${(props) => props.theme.colors.fg2}
+  color: ${({ theme }) => theme.colors.fg2}
   text-align: center;
 `;
 
 const DeckHeading = styled.h2`
-  margin: ${(props) => props.theme.space[1]};
+  margin: ${({ theme }) => theme.space[1]};
   text-align: center;
   font-size: 250%;
 `;

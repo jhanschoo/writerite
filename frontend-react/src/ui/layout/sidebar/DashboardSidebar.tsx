@@ -59,9 +59,9 @@ const styledDashboardSidebar = styled(connectedDashboardSidebar)`
   flex-direction: column;
   overflow-y: auto;
 
-  @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     position: relative;
-    background: ${(props) => props.theme.colors.bg2};
+    background: ${({ theme }) => theme.colors.bg2};
     left: -100%;
     grid-area: 2 / 1 / 3 / 12;
     z-index: 50;

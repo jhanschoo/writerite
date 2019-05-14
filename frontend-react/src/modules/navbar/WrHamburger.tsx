@@ -8,7 +8,6 @@ import { Menu } from 'react-feather';
 
 import styled from 'styled-components';
 import { createShow, createHide, SidebarAction } from '../../ui/layout/sidebar/actions';
-import { breakpoints } from '../../theme';
 import Button from '../../ui/form/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 
@@ -25,15 +24,19 @@ interface StateProps {
 type Props = StateProps & DispatchProps;
 
 const HideableNavBarItem = styled(NavBarItem)`
-  &.hidden {
-    display: none;
+  padding: ${({ theme }) => theme.space[2]};
+  display: none;
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    display: flex;
+    &.hidden {
+      display: none;
+    }
   }
 `;
 
 const WrHamburger = (props: Props) => {
   // tslint:disable-next-line: no-shadowed-variable
   const { num, hidden, createShow, createHide } = props;
-  const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (hidden) {
       createShow();
@@ -41,12 +44,9 @@ const WrHamburger = (props: Props) => {
       createHide();
     }
   };
-  const className = (num === 0 || !mq.matches) ? 'hidden' : undefined;
+  const className = (num === 0) ? 'hidden' : undefined;
   return (
-    <HideableNavBarItem
-      className={className}
-      p={[2, 2, 2]}
-    >
+    <HideableNavBarItem className={className}>
       <Button variant="link" px={0} py={0} m={0} onClick={handleClick}>
         <Menu />
       </Button>

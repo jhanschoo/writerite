@@ -9,9 +9,9 @@ interface DeckItemProps extends CardProps {
 }
 
 const WrDeckItem = styled<React.FC<DeckItemProps>>(Card)`
-  grid-column: ${(props) => props.gridColumn || 'auto'};
+  grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
   :hover {
-    cursor: ${(props) => props.interactive ? 'pointer' : 'auto'};
+    cursor: ${({ interactive }) => interactive ? 'pointer' : 'auto'};
   }
 `;
 

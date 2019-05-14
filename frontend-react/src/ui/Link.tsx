@@ -5,17 +5,17 @@ import { Flex } from 'rebass';
 
 const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Flex)`
   text-decoration: none;
-  border: 1px solid ${(props) => props.theme.colors.transparent};
+  border: 1px solid ${({ theme }) => theme.colors.transparent};
   border-radius: 2px;
   align-items: center;
   cursor: pointer;
 
   &.active {
-    border-color: ${(props) => props.theme.colors.edge};
+    border-color: ${({ theme }) => theme.colors.edge};
   }
 
   :hover {
-    background: ${(props) => props.theme.colors.bg2};
+    background: ${({ theme }) => theme.colors.bg2};
   }
 `;
 

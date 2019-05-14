@@ -1,13 +1,8 @@
-import React from 'react';
-import styled, { StyledComponent } from 'styled-components';
-import { Flex, FlexProps } from 'rebass';
+import styled from 'styled-components';
 
-const NavBarItem: StyledComponent<React.FunctionComponent<FlexProps>, any> = styled(Flex)``;
-
-NavBarItem.defaultProps = {
-  as: 'li',
-  width: 'auto',
-  py: 1,
-};
+const NavBarItem = styled.li`
+  width: auto;
+  padding: ${({ theme }) => theme.space[1]};
+`;
 
 export default NavBarItem;

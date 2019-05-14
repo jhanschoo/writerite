@@ -1,21 +1,17 @@
-import React from 'react';
-import styled, { StyledComponent } from 'styled-components';
-import { Flex, FlexProps } from 'rebass';
+import styled from 'styled-components';
 
-const NavBar: StyledComponent<React.FunctionComponent<FlexProps>, any> = styled(Flex)`
+const NavBar = styled.nav`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  border-bottom: 1px solid ${({ theme }) => theme.colors.edge};
+
   grid-area: 1 / 2 / 2 / 14;
-  border-bottom: 1px solid ${(props) => props.theme.colors.edge};
 
-  @media (max-width: ${(props) => props.theme.breakpoints[1]}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     grid-area: 1 / 1 / 2 / 15;
   }
 `;
-
-NavBar.defaultProps = {
-  as: 'nav',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  flexWrap: 'wrap',
-};
 
 export default NavBar;
