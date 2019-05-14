@@ -7,7 +7,6 @@ import { WrCard } from './types';
 import { ChevronDown, ChevronUp } from 'react-feather';
 
 import styled from 'styled-components';
-import FlexCard from '../../ui/FlexCard';
 import Button from '../../ui/form/Button';
 
 import WrNewCardPrompt from './WrNewCardPrompt';
@@ -20,6 +19,14 @@ interface OwnProps {
 }
 
 type Props = OwnProps & RouteComponentProps<{ deckId: string }>;
+
+const Header = styled.header`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ theme }) => theme.space[1]}
+  margin: ${({ theme }) => theme.space[1]}
+`;
 
 const ListHeading = styled.h4`
   font-size: 125%;
@@ -48,16 +55,10 @@ const WrCardsList: FC<Props> = (props: Props) => {
   );
   return (
     <>
-      <FlexCard
-        as="header"
-        justifyContent="center"
-        alignItems="center"
-        p={1}
-        m={1}
-      >
+      <Header>
         <ListHeading>{formattedCards.length} Cards</ListHeading>
         <Button variant="minimal" onClick={toggleShow}>{chevron}</Button>
-      </FlexCard>
+      </Header>
       {show && content}
     </>
   );

@@ -1,14 +1,10 @@
 import styled from 'styled-components';
-import { Flex } from 'rebass';
 
-const Item = styled(Flex)`
+const Item = styled.li`
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
 `;
-
-Item.defaultProps = Object.assign({}, Flex.defaultProps as object, {
-  as: 'li',
-  m: 0,
-  p: 0,
-  alignItems: 'center',
-});
 
 export default Item;

@@ -3,7 +3,14 @@ import React from 'react';
 import { ChevronDown, ChevronUp } from 'react-feather';
 
 import styled from 'styled-components';
-import FlexCard from '../../../ui/FlexCard';
+
+const Header = styled.header`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: ${({ theme }) => theme.space[1]}
+  margin: ${({ theme }) => theme.space[1]}
+`;
 
 const ListHeading = styled.h4`
   font-size: 125%;
@@ -14,15 +21,9 @@ const ListHeading = styled.h4`
 
 const WrSubdeckList = () => {
   return (
-    <FlexCard
-      as="header"
-      justifyContent="center"
-      alignItems="center"
-      p={1}
-      m={1}
-    >
+    <Header>
       <ListHeading>0 Sub-Decks</ListHeading> <ChevronDown />
-    </FlexCard>
+    </Header>
   );
 };
 

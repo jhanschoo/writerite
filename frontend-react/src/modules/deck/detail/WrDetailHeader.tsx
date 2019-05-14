@@ -10,13 +10,12 @@ import {
 } from '../gql';
 
 import styled from 'styled-components';
-import { Card } from 'rebass';
 import Button from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 
 import { WrDeckDetail } from '../types';
 
-const StyledCard = styled(Card)`
+const DeckHeader = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -27,6 +26,12 @@ const StyledCard = styled(Card)`
 
   :hover .auxillary {
     visibility: visible;
+  }
+
+  padding: ${({ theme }) => theme.space[2]} 12.5%;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
   }
 `;
 
@@ -44,6 +49,14 @@ const DeckHeading = styled.h2`
   margin: ${({ theme }) => theme.space[1]};
   text-align: center;
   font-size: 250%;
+`;
+
+const LongTextInput = styled(TextInput)`
+  width: 24rem;
+`;
+
+const ShortTextInput = styled(TextInput)`
+  width: 6rem;
 `;
 
 interface OwnProps {
@@ -113,12 +126,11 @@ const WrDetailHeader = (props: Props) => {
       };
       return (
         <StyledForm onSubmit={handleDelete}>
-          If you really want to delete this deck, please enter the name of the deck first:
-          <TextInput
-            variant="underscore"
+          If you really want to delete this deck, please type in the name of the deck:
+          <LongTextInput
+            variant="borderless"
             type="text"
             value={deletePromptInput}
-            width="24rem"
             onChange={handleTextChange(setDeletePromptInput)}
             onKeyDown={handleKeyDown}
           />.&nbsp;
@@ -147,44 +159,40 @@ const WrDetailHeader = (props: Props) => {
     const settingsPanel = (showSettings) ? (
       <StyledForm onSubmit={handleSubmit}>
         Deck name:
-        <TextInput
-          variant="underscore"
+        <LongTextInput
+          variant="borderless"
           type="text"
           value={nameInput}
-          width="24rem"
           onChange={handleTextChange(setNameInput)}
           onKeyDown={handleKeyDown}
         />,<br />
         Deck name's language:
-        <TextInput
-          variant="underscore"
+        <ShortTextInput
+          variant="borderless"
           type="text"
           value={nameLangInput}
-          width="6rem"
           onChange={handleTextChange(setNameLangInput)}
           onKeyDown={handleKeyDown}
         />,<br />
         Prompt language:
-        <TextInput
-          variant="underscore"
+        <ShortTextInput
+          variant="borderless"
           type="text"
           value={promptLangInput}
-          width="6rem"
           onChange={handleTextChange(setPromptLangInput)}
           onKeyDown={handleKeyDown}
         />
         ,<br />
         Answer language:
-        <TextInput
-          variant="underscore"
+        <ShortTextInput
+          variant="borderless"
           type="text"
           value={answerLangInput}
-          width="4rem"
           onChange={handleTextChange(setAnswerLangInput)}
           onKeyDown={handleKeyDown}
         />.<br />
         <StyledButton
-          variant="minimal"
+          variant="anchor"
           type="submit"
         >
           Save Changes
@@ -216,14 +224,14 @@ const WrDetailHeader = (props: Props) => {
     );
   };
   return (
-    <StyledCard as="header" px={[2, 2, '12.5%']} py={[1, 1, 2]}>
+    <DeckHeader>
       <Mutation<DeckEditData, DeckEditVariables>
         mutation={DECK_EDIT_MUTATION}
         onError={printApolloError}
       >
         {renderName}
       </Mutation>
-    </StyledCard>
+    </DeckHeader>
   );
 };
 

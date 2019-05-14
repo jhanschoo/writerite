@@ -1,14 +1,21 @@
-import styled, { StyledComponent } from 'styled-components';
+import styled, { ThemedStyledFunction } from 'styled-components';
 import { variant } from 'styled-system';
-import { Box } from 'rebass';
+
+interface VariantProps {
+  variant?: string;
+}
 
 const textInputStyle = variant({
   key: 'textInputs',
 });
 
+const styledInput: ThemedStyledFunction<'input', any, VariantProps, never> = styled.input;
+
 // TODO: make generic argument stricter in props that it accepts
-const TextInput: StyledComponent<React.FunctionComponent<any>, any> = styled(Box)`
-  font-size: 100%;
+const TextInput = styledInput`
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
   height: ${({ theme }) => theme.space[4]};
   padding: 0 ${({ theme }) => theme.space[2]};
   border: 1px solid ${({ theme }) => theme.colors.edge};
@@ -26,9 +33,5 @@ const TextInput: StyledComponent<React.FunctionComponent<any>, any> = styled(Box
 
   ${textInputStyle}
 `;
-
-TextInput.defaultProps = {
-  as: 'input',
-};
 
 export default TextInput;

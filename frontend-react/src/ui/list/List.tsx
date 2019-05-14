@@ -1,14 +1,11 @@
 import styled from 'styled-components';
-import { Flex } from 'rebass';
 
-const List = styled(Flex)`
+const List = styled.ul`
   list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: inherit;
 `;
-
-List.defaultProps = Object.assign({}, Flex.defaultProps as object, {
-  as: 'ul',
-  m: 0,
-  p: 0,
-});
 
 export default List;

@@ -1,25 +1,22 @@
 import React from 'react';
 
-import styled from 'styled-components';
-import { Card, CardProps } from 'rebass';
+import styled, { ThemedStyledFunction } from 'styled-components';
 
-interface DeckItemProps extends CardProps {
+interface DeckItemProps {
   interactive?: boolean;
   gridColumn?: string;
 }
 
-const WrDeckItem = styled<React.FC<DeckItemProps>>(Card)`
+const styledDiv: ThemedStyledFunction<'div', any, DeckItemProps, never> = styled.div;
+
+const WrDeckItem = styledDiv`
   grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
+  padding: ${({ theme }) => theme.space[3]};
+  border: 1px solid ${({ theme }) => theme.colors.edge};
+  border-radius: 2px;
   :hover {
     cursor: ${({ interactive }) => interactive ? 'pointer' : 'auto'};
   }
 `;
-
-WrDeckItem.defaultProps = {
-  p: 3,
-  border: '1px solid',
-  borderRadius: 2,
-  borderColor: 'edge',
-};
 
 export default WrDeckItem;

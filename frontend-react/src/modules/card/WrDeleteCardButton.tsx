@@ -5,7 +5,12 @@ import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
 import { CARD_DELETE_MUTATION, CardDeleteVariables, CardDeleteData } from './gql';
 
+import styled from 'styled-components';
 import Button from '../../ui/form/Button';
+
+const StyledButton = styled(Button)`
+  margin: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[1]};
+`;
 
 interface Props {
   cardId: string;
@@ -26,13 +31,12 @@ const WrDeleteCardButton: FC<Props> = (props: Props) => {
       });
     };
     return (
-      <Button
-        mx={1}
+      <StyledButton
         variant="auxillary"
         className="auxillary"
         onClick={handleClick}
       ><Trash2 size={16} />
-      </Button>
+      </StyledButton>
     );
   };
   return (

@@ -6,9 +6,9 @@ import { printApolloError } from '../../util';
 import { CARD_EDIT_MUTATION, CardEditVariables, CardEditData } from './gql';
 
 import styled from 'styled-components';
-import { Card, Flex } from 'rebass';
 import HDivider from '../../ui/HDivider';
-import VDivider from '../../ui/VDivider';
+import List from '../../ui/list/List';
+import Item from '../../ui/list/Item';
 
 import CardFieldset from './CardFieldset';
 import { WrCard } from './types';
@@ -22,7 +22,24 @@ interface Props {
   card: WrCard;
 }
 
-const StyledCard = styled(Card)`
+const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+`;
+
+const MainSegment = styled.main`
+  display: flex;
+  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+`;
+
+const Card = styled.form`
+  border-radius: 2px;
+  margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+  padding: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[3]};
+  display: flex;
+  flex-direction: column;
+  background: ${({ theme }) => theme.colors.bg0};
   .auxillary {
     visibility: hidden;
   }
@@ -36,12 +53,6 @@ const EditNoticeText = styled.span`
   color: ${({ theme }) => theme.colors.fg2};
   font-size: 75%;
 `;
-
-const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
-  e.preventDefault();
-  const text = e.clipboardData.getData('text/plain');
-  document.execCommand('insertHTML', false, text);
-};
 
 class WrCardItem extends Component<Props> {
   public readonly state = {
@@ -89,19 +100,13 @@ class WrCardItem extends Component<Props> {
         }
       };
       return (
-        <StyledCard
-          m={1}
-          px={2}
-          borderTop="1px solid"
-          borderBottom="1px solid"
-          borderColor="lightEdge"
-        >
-          <Flex px={3} bg="bg0" as="form" flexDirection="column">
-            <Flex pt={1} justifyContent="space-between">
-              <EditNoticeText>
-                <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
-              </EditNoticeText>
-              <Flex>
+        <Card>
+          <Header>
+            <EditNoticeText>
+              <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
+            </EditNoticeText>
+            <List>
+              <Item>
                 <WrCreateCardButton
                   deckId={deckId}
                   prompt={prompt}
@@ -109,30 +114,30 @@ class WrCardItem extends Component<Props> {
                   sortKey={sortKey}
                   template={template}
                 />
+              </Item>
+              <Item>
                 <WrDeleteCardButton cardId={id} />
-              </Flex>
-            </Flex>
-            <Flex flexDirection="column">
-              <HDivider spacerColor="lightLightEdge" />
-            </Flex>
-            <Flex>
-              <CardFieldset
-                label="Prompt"
-                lang={promptLang}
-                input={promptInput}
-                onChange={handlePromptChange}
-                onKeyDown={handleKeyDown}
-              />
-              <CardFieldset
-                label="Displayed Answer"
-                lang={answerLang}
-                input={fullAnswerInput}
-                onChange={handleFullAnswerChange}
-                onKeyDown={handleKeyDown}
-              />
-            </Flex>
-          </Flex>
-        </StyledCard>
+              </Item>
+            </List>
+          </Header>
+          <HDivider spacerColor="lightLightEdge" />
+          <MainSegment>
+            <CardFieldset
+              label="Prompt"
+              lang={promptLang}
+              input={promptInput}
+              onChange={handlePromptChange}
+              onKeyDown={handleKeyDown}
+            />
+            <CardFieldset
+              label="Displayed Answer"
+              lang={answerLang}
+              input={fullAnswerInput}
+              onChange={handleFullAnswerChange}
+              onKeyDown={handleKeyDown}
+            />
+          </MainSegment>
+        </Card>
       );
     };
     return (

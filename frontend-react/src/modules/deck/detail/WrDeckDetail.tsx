@@ -18,6 +18,9 @@ const CenteredP = styled.p`
   text-align: center;
 `;
 
+// TODO: refactor accordion sections w/ header into a row of toggle
+// switches for displaying those sections
+// attached to a + <num> for adding one item of the respective kind
 const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
   const { match } = props;
   const { deckId } = match.params;

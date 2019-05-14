@@ -5,8 +5,7 @@ import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gql';
 
-
-import { Flex } from 'rebass';
+import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
@@ -14,6 +13,16 @@ import TextInput from '../../../ui/form/TextInput';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
 const initialName = '';
+
+const FlexContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+`;
+
+const StyledTextInput = styled(TextInput)`
+  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+`;
 
 const WrNewDeck = () => {
   const [name, setName] = useState(initialName);
@@ -39,27 +48,23 @@ const WrNewDeck = () => {
       <form onSubmit={handleSubmit}>
         <Fieldset>
           <SidebarMenuHeader as="legend">Create a New Deck</SidebarMenuHeader>
-            <Flex width="100%" alignItems="center">
-              <TextInput
+            <FlexContainer>
+              <StyledTextInput
                 variant="minimal"
                 aria-label="Deck Name"
                 placeholder="Type a deck name..."
-                px={2}
-                py={1}
                 value={name}
                 onChange={handleChange}
                 disabled={loading}
               />
               <Button
                 variant="minimal"
-                px={0}
-                py={0}
                 type="submit"
                 disabled={name === '' || loading}
               >
                 <Plus size={14} />
               </Button>
-            </Flex>
+            </FlexContainer>
         </Fieldset>
       </form>
     );

@@ -8,10 +8,6 @@ const GrowingFieldset = styled(Fieldset)`
   position: relative;
   flex-grow: 1;
   width: 50%;
-  cursor: text;
-  > * {
-    cursor: text;
-  }
   z-index: 0;
 `;
 
@@ -23,7 +19,12 @@ const LowercaseLabel = styled.label`
 `;
 
 const StyledTextInput = styled(TextInput)`
-  padding: 1rem 0.5rem;
+  width: 100%;
+  padding:
+    ${({ theme }) => theme.space[4]}
+    ${({ theme }) => theme.space[0]}
+    ${({ theme }) => theme.space[3]}
+    ${({ theme }) => theme.space[0]};
 `;
 
 interface Props {
@@ -37,7 +38,7 @@ interface Props {
 const CardFieldset: FC<Props> = (props: Props) => {
   const { label, input, lang, onChange, onKeyDown } = { input: '', ...props };
   return (
-    <GrowingFieldset p={0} lang={lang || undefined}>
+    <GrowingFieldset lang={lang || undefined}>
       {label && <LowercaseLabel>{label}</LowercaseLabel>}
       <StyledTextInput
         onChange={onChange}

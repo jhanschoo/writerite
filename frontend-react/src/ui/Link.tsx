@@ -1,14 +1,15 @@
-import React from 'react';
-import styled, { StyledComponent } from 'styled-components';
+import styled from 'styled-components';
 import { NavLink as rrLink } from 'react-router-dom';
-import { Flex } from 'rebass';
 
-const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Flex)`
+const Link = styled(rrLink)`
+  display: flex;
   text-decoration: none;
   border: 1px solid ${({ theme }) => theme.colors.transparent};
   border-radius: 2px;
   align-items: center;
   cursor: pointer;
+  padding: ${({ theme }) => theme.space[2]};
+  color: ${({ theme }) => theme.colors.fg1};
 
   &.active {
     border-color: ${({ theme }) => theme.colors.edge};
@@ -18,11 +19,5 @@ const Link: StyledComponent<React.FunctionComponent<any>, any> = styled(Flex)`
     background: ${({ theme }) => theme.colors.bg2};
   }
 `;
-
-Link.defaultProps = {
-  as: rrLink,
-  p: 2,
-  color: 'fg1',
-};
 
 export default Link;

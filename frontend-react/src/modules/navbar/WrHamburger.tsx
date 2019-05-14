@@ -2,12 +2,12 @@ import React, { MouseEvent } from 'react';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
-import { initialState } from '../../ui/layout/sidebar/reducers';
+import { initialState } from '../deck/sidebar/reducers';
 
 import { Menu } from 'react-feather';
 
 import styled from 'styled-components';
-import { createShow, createHide, SidebarAction } from '../../ui/layout/sidebar/actions';
+import { createShow, createHide, SidebarAction } from '../deck/sidebar/actions';
 import Button from '../../ui/form/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 
@@ -34,6 +34,11 @@ const HideableNavBarItem = styled(NavBarItem)`
   }
 `;
 
+const StyledButton = styled(Button)`
+  padding: 0;
+  margin: 0;
+`;
+
 const WrHamburger = (props: Props) => {
   // tslint:disable-next-line: no-shadowed-variable
   const { num, hidden, createShow, createHide } = props;
@@ -47,9 +52,9 @@ const WrHamburger = (props: Props) => {
   const className = (num === 0) ? 'hidden' : undefined;
   return (
     <HideableNavBarItem className={className}>
-      <Button variant="link" px={0} py={0} m={0} onClick={handleClick}>
+      <StyledButton variant="link" onClick={handleClick}>
         <Menu />
-      </Button>
+      </StyledButton>
     </HideableNavBarItem>
   );
 };

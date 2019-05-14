@@ -1,10 +1,28 @@
-import styled from 'styled-components';
-import { Button as rebassButton } from 'rebass';
+import styled, { ThemedStyledFunction } from 'styled-components';
+import { variant } from 'styled-system';
 
-const Button = styled(rebassButton)`
+interface VariantProps {
+  variant?: string;
+}
+
+const variantStyle = variant({
+  key: 'buttons',
+});
+
+const styledButton: ThemedStyledFunction<'button', any, VariantProps, never> = styled.button;
+
+const Button = styledButton`
   display: flex;
   justify-content: center;
   align-items: center;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+
   :hover {
     cursor: pointer;
   }
@@ -12,13 +30,8 @@ const Button = styled(rebassButton)`
   :disabled {
     color: ${({ theme }) => theme.colors.bg3};
   }
-`;
 
-Button.defaultProps = Object.assign({}, rebassButton.defaultProps as object, {
-  variant: 'default',
-  bg: 'transparent',
-  borderRadius: 2,
-  fontWeight: 'normal',
-});
+  ${variantStyle}
+`;
 
 export default Button;

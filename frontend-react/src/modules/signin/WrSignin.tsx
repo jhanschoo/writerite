@@ -13,7 +13,6 @@ import { printApolloError } from '../../util';
 import { SIGNIN, SigninVariables, SigninData } from './gql';
 
 import styled from 'styled-components';
-import { Card } from 'rebass';
 import { breakpoints } from '../../theme';
 import HDivider from '../../ui/HDivider';
 import Button from '../../ui/form/Button';
@@ -44,12 +43,38 @@ interface FormValues {
   isSignup: boolean;
 }
 
+const FlowButton = styled(Button)`
+  width: 100%;
+  margin: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[0]};
+  padding: ${({ theme }) => theme.space[2]};
+`;
+
+const SigninBox = styled.div`
+  padding: ${({ theme }) => theme.space[3]};
+  border-radius: 2px;
+  box-shadow: 0 1px 2px ${({ theme }) => theme.colors.shadow};
+  background: ${({ theme }) => theme.colors.bg0};
+`;
+
 const TextCenteredDiv = styled.div`
   text-align: center;
 `;
 
 const InlineBlockDiv = styled.div`
   display: inline-block;
+`;
+
+const FieldsetWithMargin = styled(Fieldset)`
+  margin: ${({ theme }) => theme.space[1]} 0;
+
+  &.hidden {
+    display: none;
+  }
+`;
+
+const FlowTextInput = styled(TextInput)`
+  width: 100%;
+  margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
 `;
 
 const formSchema = yup.object().shape({
@@ -210,68 +235,60 @@ class WrSignin extends Component<Props> {
         );
         return (
             <form onSubmit={handleSubmit}>
-              <Fieldset my={1}>
-                <TextInput
+              <FieldsetWithMargin>
+                <FlowTextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
                   type="email"
                   name="username"
                   aria-label="Email"
                   placeholder="Email"
-                  autocomplete={isSignup ? 'new-username' : 'current-username'}
+                  // autocomplete={isSignup ? 'new-username' : 'current-username'}
                   disabled={disabled}
-                  my={1}
-                  width="100%"
                   variant={showError('username') ? 'error' : (showValid('username') ? 'valid' : '')}
                 />
                 {maybeError('username')}
-              </Fieldset>
-              <Fieldset my={1}>
-                <TextInput
+              </FieldsetWithMargin>
+              <FieldsetWithMargin>
+                <FlowTextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
                   type="password"
                   name="password"
                   aria-label="Password"
                   placeholder="Password"
-                  autocomplete={isSignup ? 'new-password' : 'current-password'}
+                  // autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
-                  my={1}
-                  width="100%"
                   variant={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
                 />
                 {formattedPasswordError}
-              </Fieldset>
-              <Fieldset my={1} css={isSignup ? {} : { display: 'none' }}>
-                <TextInput
+              </FieldsetWithMargin>
+              <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+                <FlowTextInput
                   onChange={handleChange}
                   onBlur={handleBlur}
                   type="password"
                   name="confirmPassword"
                   aria-label="Confirm Password"
                   placeholder="Confirm Password"
-                  autocomplete={isSignup ? 'new-password' : 'current-password'}
+                  // autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
-                  my={1}
-                  width="100%"
                   variant={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
                 />
                 {formattedPasswordError}
-              </Fieldset>
+              </FieldsetWithMargin>
               <Fieldset>
                 <TextCenteredDiv>
                   <InlineBlockDiv id="g-recaptcha" />
                   {maybeError('recaptcha')}
                 </TextCenteredDiv>
               </Fieldset>
-              <Button
+              <FlowButton
                 type="submit"
-                width="100%"
                 variant="default"
-                my={2}
               >
                 {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
-              </Button>
+              </FlowButton>
               <SmallMessage>
                 {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
                 <Button variant="anchor" onClick={toggleSignin(props)}>
@@ -285,30 +302,21 @@ class WrSignin extends Component<Props> {
         ? ''
         : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
       return (
-        <Card
-          p={3}
-          borderRadius={2}
-          boxShadow={0}
-          bg="bg0"
-        >
-          <Button
-            width="100%"
+        <SigninBox>
+          <FlowButton
             variant="googleRed"
             disabled={disabled}
             onClick={handleGoogleSignin}
-            my={2}
           >
             Sign in with Google
-          </Button>
-          <Button
-            width="100%"
+          </FlowButton>
+          <FlowButton
             variant="facebookBlue"
             disabled={disabled}
             onClick={handleFacebookSignin}
-            my={2}
           >
             Sign in with Facebook
-          </Button>
+          </FlowButton>
           <HDivider>
             OR
           </HDivider>
@@ -320,7 +328,7 @@ class WrSignin extends Component<Props> {
             {renderFields}
           </Formik>
           {developmentSignin}
-        </Card>
+        </SigninBox>
       );
     };
     return (

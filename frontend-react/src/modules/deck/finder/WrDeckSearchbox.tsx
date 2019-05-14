@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Search } from 'react-feather';
 
 import styled from 'styled-components';
-import { Card, Flex } from 'rebass';
 import Button from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import TextInput from '../../../ui/form/TextInput';
@@ -11,8 +10,15 @@ const UppercaseLegend = styled.legend`
   text-transform: uppercase;
 `;
 
-const WideCard = styled(Card)`
+const WideCell = styled.div`
   grid-column: 1 / 4;
+  padding: ${({ theme }) => theme.space[2]};
+`;
+
+const FlexContainer = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
 `;
 
 const SearchboxTextInput = styled(TextInput)`
@@ -38,7 +44,7 @@ const WrDeckSearchbox = () => {
       <form onSubmit={handleSubmit}>
         <Fieldset>
           <UppercaseLegend>Search for a Deck</UppercaseLegend>
-            <Flex width="100%" alignItems="center">
+            <FlexContainer>
               <SearchboxTextInput
                 variant="minimal"
                 type="search"
@@ -49,25 +55,21 @@ const WrDeckSearchbox = () => {
               />
               <Button
                 variant="minimal"
-                px={0}
-                py={0}
                 color="fg"
                 type="submit"
                 disabled={name === ''}
               >
                 <Search size={18} />{/* TODO: convert to indicator */}
               </Button>
-            </Flex>
+            </FlexContainer>
         </Fieldset>
       </form>
     );
   };
   return (
-    <WideCard
-      p={2}
-    >
+    <WideCell>
       {renderForm()}
-    </WideCard>
+    </WideCell>
   );
 }
 

@@ -11,7 +11,7 @@ const WrManageDecks = () => {
   return (
     <FlexSection>
       <SidebarMenuHeader>Manage Decks</SidebarMenuHeader>
-      <List flexDirection="inherit">
+      <List>
         <Item>
           <SidebarMenuLink to="/deck/manage">
             <Grid size={14}/>&nbsp;Organize own decks

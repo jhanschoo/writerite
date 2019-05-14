@@ -10,8 +10,7 @@ const WrOthersDecks = () => {
   return (
     <FlexSection>
       <SidebarMenuHeader>Decks Shared With You</SidebarMenuHeader>
-      <List>
-      </List>
+      <List />
     </FlexSection>
   );
 };

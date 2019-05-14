@@ -6,8 +6,4 @@ const SidebarMenu = styled(DashboardSidebar)`
   padding: ${({ theme }) => theme.space[4]} ${({ theme }) => theme.space[2]};
 `;
 
-SidebarMenu.defaultProps = {
-  wrAs: 'nav',
-};
-
 export default SidebarMenu;

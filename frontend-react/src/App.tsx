@@ -22,7 +22,7 @@ type Props = StateProps & RouteComponentProps;
 const App: FC<StateProps & RouteComponentProps> = (props: Props) => {
   const { user } = props;
   return (
-    <ViewportContainer bg="bg1">
+    <ViewportContainer>
       <Switch>
         <Route path="/" exact={true} component={WrLandingView} />
         {user && <Route path="/deck" component={WrDeckView} />}

@@ -38,6 +38,29 @@ const NavBarListRight = styled(NavBarList)`
   justify-content: flex-end;
 `;
 
+const PageLink = styled(Link)`
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    padding: ${({ theme }) => theme.space[1]};
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
+    padding: ${({ theme }) => theme.space[0]};
+  }
+`;
+
+const SignoutButton = styled(Button)`
+  padding: ${({ theme }) => theme.space[2]};
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    padding: ${({ theme }) => theme.space[1]};
+  }
+  @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
+    padding: ${({ theme }) => theme.space[0]};
+  }
+`;
+
+const BrandLink = styled(Link)`
+  padding: 0;
+`;
+
 interface DispatchProps {
   createSignout: () => SigninAction;
 }
@@ -52,10 +75,10 @@ const renderLoggedOut = () => {
   const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
   return (
     <NavBarItem>
-      <Link to="/signin" exact={true} p={[0, 1, 2]}>
+      <PageLink to="/signin" exact={true}>
         <Feather size={mq.matches ? 18 : 24} />
         Sign in
-      </Link>
+      </PageLink>
     </NavBarItem>
   );
 };
@@ -74,28 +97,28 @@ const renderLoggedIn = (props: Props) => {
   return (
     <>
       <NavBarItem>
-        <Link to="/deck" p={[0, 1, 2]}>
+        <PageLink to="/deck">
           <Layers size={mq.matches ? 18 : 24} />
           Decks
-        </Link>
+        </PageLink>
       </NavBarItem>
       <NavBarItem>
-        <Link to="/room" p={[0, 1, 2]}>
+        <PageLink to="/room">
           <MessageCircle size={mq.matches ? 18 : 24} />
           Rooms
-        </Link>
+        </PageLink>
       </NavBarItem>
       <NavBarItem>
-        <Link to="/stats" p={[0, 1, 2]}>
+        <PageLink to="/stats">
           <Activity size={mq.matches ? 18 : 24} />
           Stats
-        </Link>
+        </PageLink>
       </NavBarItem>
       <NavBarItem>
-        <Button variant="link" onClick={signoutAndRestartWs} p={[0, 1, 2]}>
+        <SignoutButton variant="link" onClick={signoutAndRestartWs}>
           <Feather size={mq.matches ? 18 : 24} />
           Sign out
-        </Button>
+        </SignoutButton>
       </NavBarItem>
     </>
   );
@@ -107,11 +130,11 @@ const WrNavBar = (props: Props)  => {
     <NavBarList>
       <WrHamburger />
       <BrandNavBarItem>
-        <Link to="/" activeClassName="" p={0}>
+        <BrandLink to="/" activeClassName="">
           <BrandHeading>
-            <WrBrandText responsive={true} />
+            <WrBrandText short={true} />
           </BrandHeading>
-        </Link>
+        </BrandLink>
       </BrandNavBarItem>
     </NavBarList>
     <NavBarListRight>

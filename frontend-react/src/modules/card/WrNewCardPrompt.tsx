@@ -6,18 +6,19 @@ import { printApolloError } from '../../util';
 import { CARDS_CREATE_MUTATION, CardsCreateVariables, CardsCreateData } from './gql';
 
 import styled from 'styled-components';
-import { Card } from 'rebass';
 import Button from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 
-const CenteredCard = styled(Card)`
+const CenteredFlex = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  color: ${({ theme }) => theme.colors.fg2}
 `;
 
 const StyledTextInput = styled(TextInput)`
   flex-grow: 0;
+  width: 4rem;
 `;
 
 interface Props {
@@ -57,16 +58,13 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
       }
     };
     return (
-      <CenteredCard
-        color="fg2"
-      >
+      <CenteredFlex>
         Add
         <StyledTextInput
-          variant="underscore"
+          variant="borderless"
           type="number"
           min="1"
           max="100"
-          width="4rem"
           aria-label="Create this number of new cards"
           value={multiplicity}
           onChange={handleChange}
@@ -80,7 +78,7 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
           disabled={loading}
         ><Plus size={16} />
         </Button>
-      </CenteredCard>
+      </CenteredFlex>
     );
   };
   return (

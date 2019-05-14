@@ -8,23 +8,17 @@ const BrandText = styled.span`
   font-family: "Josefin Slab", serif;
 `;
 
-const HideableText = styled.span`
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    display: none;
-  }
-`;
-
 interface Props {
-  responsive?: boolean;
+  short?: boolean;
   prefix?: string;
   suffix?: string;
 }
 
 const WrBrandText: FC<Props> = (props: Props) => {
-  const { prefix, responsive, suffix } = props;
+  const { prefix, short, suffix } = props;
   return (
     <BrandText>
-      {prefix}W{responsive ? <HideableText>riteRite</HideableText> : 'riteRite'}{suffix}
+      {prefix}{short ? 'W' : 'WriteRite'}{suffix}
     </BrandText>
   );
 };

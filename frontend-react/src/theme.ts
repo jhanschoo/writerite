@@ -77,6 +77,7 @@ const theme = {
     default: {
       'color': fg1,
       'border': `1px solid ${edge}`,
+      'borderRadius': '2px',
       ':disabled': {
         border: `1px solid ${disabled}`,
         color: disabled,
@@ -87,14 +88,12 @@ const theme = {
     },
     minimal: {
       'color': fg1,
-      'padding': '0',
       ':disabled': {
         color: disabled,
       },
     },
     auxillary: {
       'color': fg2,
-      'padding': '0',
       ':disabled': {
         color: disabled,
       },
@@ -104,7 +103,6 @@ const theme = {
     },
     anchor: {
       'color': fg1,
-      'padding': '0',
       'text-decoration': 'underline',
       ':disabled': {
         color: disabled,
@@ -113,6 +111,7 @@ const theme = {
     googleRed: {
       'color': googleRed,
       'border': `1px solid ${googleRed}`,
+      'borderRadius': '2px',
       ':disabled': {
         border: `1px solid ${disabled}`,
         color: disabled,
@@ -124,6 +123,7 @@ const theme = {
     facebookBlue: {
       'color': facebookBlue,
       'border': `1px solid ${facebookBlue}`,
+      'borderRadius': '2px',
       ':disabled': {
         border: `1px solid ${disabled}`,
         color: disabled,
@@ -214,12 +214,20 @@ const theme = {
         boxShadow: `0 0 1px 1px ${lightGreen}`,
       },
     },
+    borderless: {
+      'border': 'none',
+      'background': bg0,
+      ':active, :focus': {
+        border: 'none',
+      },
+      'margin': '0.25rem 0.25rem',
+    },
     minimal: {
-      'borderWidth': '0px',
+      'border': 'none',
       'background': transparent,
       'flexGrow': 1,
       ':active, :focus': {
-        borderWidth: '0px',
+        border: 'none',
       },
       '::placeholder': {
         fontStyle: 'italic',

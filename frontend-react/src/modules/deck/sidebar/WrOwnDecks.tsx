@@ -4,6 +4,7 @@ import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { OWN_DECKS_QUERY, OwnDecksData, OwnDecksVariables } from './gql';
 
+import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
@@ -11,6 +12,10 @@ import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
 import WrOwnDecksSH from './WrOwnDecksSH';
 import WrDeckList from './WrDeckList';
+
+const PaddedItem = styled(Item)`
+  padding: ${({ theme }) => theme.space[2]}
+`;
 
 const renderList = ({
   subscribeToMore, loading, error, data,
@@ -22,21 +27,21 @@ const renderList = ({
   if (loading) {
     return (
       <List>
-        <Item p={2}><em>Loading...</em></Item>
+        <PaddedItem><em>Loading...</em></PaddedItem>
       </List>
     );
   }
   if (!data || data.rwOwnDecks === undefined || !Array.isArray(data.rwOwnDecks)) {
     return (
       <List>
-        <Item p={2}>Error fetching decks!</Item>
+        <PaddedItem>Error fetching decks!</PaddedItem>
       </List>
     );
   }
   if (data.rwOwnDecks.length === 0) {
     return (
       <List>
-        <Item p={2}>You have no decks</Item>
+        <PaddedItem>You have no decks</PaddedItem>
       </List>
     );
   }

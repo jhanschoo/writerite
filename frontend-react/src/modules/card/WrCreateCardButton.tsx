@@ -5,7 +5,12 @@ import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
 import { CARD_CREATE_MUTATION, CardCreateVariables, CardDeleteData as CardCreateData } from './gql';
 
+import styled from 'styled-components';
 import Button from '../../ui/form/Button';
+
+const StyledButton = styled(Button)`
+  margin: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[1]};
+`;
 
 type Props = CardCreateVariables;
 
@@ -22,13 +27,12 @@ const WrCreateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables)
       });
     };
     return (
-      <Button
-        mx={1}
+      <StyledButton
         variant="auxillary"
         className="auxillary"
         onClick={handleClick}
       ><Copy size={16} />
-      </Button>
+      </StyledButton>
     );
   };
   return (
