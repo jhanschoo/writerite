@@ -1,17 +1,83 @@
 import styled, { ThemedStyledFunction } from 'styled-components';
-import { variant } from 'styled-system';
 
-interface VariantProps {
-  variant?: string;
-}
+const Button = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: 1px solid ${({ theme }) => theme.colors.edge};
+  border-radius: 2px;
+  margin: 0;
+  padding: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  outline: none;
+  color: ${({ theme }) => theme.colors.fg1};
 
-const variantStyle = variant({
-  key: 'buttons',
-});
+  :hover {
+    background: ${({ theme }) => theme.colors.bg2};
+    cursor: pointer;
+  }
 
-const styledButton: ThemedStyledFunction<'button', any, VariantProps, never> = styled.button;
+  :disabled {
+    border-color: ${({ theme }) => theme.colors.disabled};
+    color: ${({ theme }) => theme.colors.disabled};
+  }
+`;
 
-const Button = styledButton`
+export const BorderlessButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: 1px solid ${({ theme }) => theme.colors.transparent};
+  border-radius: 2px;
+  margin: 0;
+  padding: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  outline: none;
+  color: ${({ theme }) => theme.colors.fg1};
+
+  &.active {
+    border-color: ${({ theme }) => theme.colors.edge};
+  }
+
+  :hover {
+    cursor: pointer;
+    background: ${({ theme }) => theme.colors.bg2};
+  }
+
+  :disabled {
+    color: ${({ theme }) => theme.colors.disabled};
+  }
+`;
+
+export const AnchorButton = styled.button`
+  display: inline;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  outline: none;
+  text-decoration: underline;
+  color: ${({ theme }) => theme.colors.fg1};
+
+  :hover {
+    cursor: pointer;
+  }
+
+  :disabled {
+    color: ${({ theme }) => theme.colors.disabled};
+  }
+`;
+
+export const AuxillaryButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -22,16 +88,40 @@ const Button = styledButton`
   font-weight: inherit;
   font-size: inherit;
   font-family: inherit;
+  outline: none;
+  color: ${({ theme }) => theme.colors.fg2};
+
+  :hover {
+    cursor: pointer;
+    color: ${({ theme }) => theme.colors.fg1};
+  }
+
+  :disabled {
+    color: ${({ theme }) => theme.colors.disabled};
+  }
+`;
+
+export const MinimalButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  outline: none;
+  color: ${({ theme }) => theme.colors.fg1};
 
   :hover {
     cursor: pointer;
   }
 
   :disabled {
-    color: ${({ theme }) => theme.colors.bg3};
+    color: ${({ theme }) => theme.colors.disabled};
   }
-
-  ${variantStyle}
 `;
 
 export default Button;

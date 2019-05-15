@@ -59,80 +59,11 @@ const darken = 'rgba(0, 0, 0, 0.125)';
 
 export const breakpoints = [ '40rem', '52rem', '64rem' ];
 
+// TODO: organize space according to whether they are fixed (for organisms)
+//   or variable (for molecules and below)
 const theme = {
   breakpoints,
   space: [ 0, '0.25rem', '0.5rem', '1rem', '2rem', '4rem', '8rem', '16rem', '32rem' ],
-  buttons: {
-    link: {
-      'color': fg1,
-      'border': `1px solid ${transparent}`,
-      'borderRadius': '2px',
-      '&.active': {
-        borderColor: edge,
-      },
-      ':hover': {
-        background: bg2,
-      },
-    },
-    default: {
-      'color': fg1,
-      'border': `1px solid ${edge}`,
-      'borderRadius': '2px',
-      ':disabled': {
-        border: `1px solid ${disabled}`,
-        color: disabled,
-      },
-      ':hover': {
-        background: bg2,
-      },
-    },
-    minimal: {
-      'color': fg1,
-      ':disabled': {
-        color: disabled,
-      },
-    },
-    auxillary: {
-      'color': fg2,
-      ':disabled': {
-        color: disabled,
-      },
-      ':hover': {
-        color: fg1,
-      },
-    },
-    anchor: {
-      'color': fg1,
-      'text-decoration': 'underline',
-      ':disabled': {
-        color: disabled,
-      },
-    },
-    googleRed: {
-      'color': googleRed,
-      'border': `1px solid ${googleRed}`,
-      'borderRadius': '2px',
-      ':disabled': {
-        border: `1px solid ${disabled}`,
-        color: disabled,
-      },
-      ':hover': {
-        background: bg2,
-      },
-    },
-    facebookBlue: {
-      'color': facebookBlue,
-      'border': `1px solid ${facebookBlue}`,
-      'borderRadius': '2px',
-      ':disabled': {
-        border: `1px solid ${disabled}`,
-        color: disabled,
-      },
-      ':hover': {
-        background: bg2,
-      },
-    },
-  },
   colors: {
     fg1,
     fg2,
@@ -189,62 +120,6 @@ const theme = {
     washedGreen,
     washedYellow,
     washedRed,
-  },
-  fonts: {
-    brand: '"Josefin Slab", serif',
-    sans: '"Noto Sans", sans-serif',
-  },
-  shadows: [
-    `0 1px 2px ${shadow}`,
-  ],
-  textInputs: {
-    error: {
-      'borderColor': red,
-      'background': washedRed,
-      ':active, :focus': {
-        borderColor: red,
-        background: washedRed,
-        boxShadow: `0 0 1px 1px ${lightRed}`,
-      },
-    },
-    valid: {
-      'borderColor': green,
-      ':active, :focus': {
-        borderColor: green,
-        boxShadow: `0 0 1px 1px ${lightGreen}`,
-      },
-    },
-    borderless: {
-      'border': 'none',
-      'background': bg0,
-      ':active, :focus': {
-        border: 'none',
-      },
-      'margin': '0.25rem 0.25rem',
-    },
-    minimal: {
-      'border': 'none',
-      'background': transparent,
-      'flexGrow': 1,
-      ':active, :focus': {
-        border: 'none',
-      },
-      '::placeholder': {
-        fontStyle: 'italic',
-      },
-    },
-    underscore: {
-      'borderWidth': '0 0 1px 0',
-      'borderRadius': '0px',
-      'background': transparent,
-      ':active, :focus': {
-        borderWidth: '0 0 1px 0',
-      },
-      'height': 'auto',
-      '::placeholder': {
-        fontStyle: 'italic',
-      },
-    },
   },
 };
 

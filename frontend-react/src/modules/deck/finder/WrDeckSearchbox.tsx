@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Search } from 'react-feather';
 
 import styled from 'styled-components';
-import Button from '../../../ui/form/Button';
+import { MinimalButton } from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
-import TextInput from '../../../ui/form/TextInput';
+import { MinimalTextInput } from '../../../ui/form/TextInput';
 
 const UppercaseLegend = styled.legend`
   text-transform: uppercase;
@@ -21,7 +21,7 @@ const FlexContainer = styled.div`
   align-items: center;
 `;
 
-const SearchboxTextInput = styled(TextInput)`
+const SearchboxTextInput = styled(MinimalTextInput)`
   flex-grow: 1;
   padding: 0;
 `;
@@ -46,21 +46,19 @@ const WrDeckSearchbox = () => {
           <UppercaseLegend>Search for a Deck</UppercaseLegend>
             <FlexContainer>
               <SearchboxTextInput
-                variant="minimal"
                 type="search"
                 aria-label="Search with part of a Deck Name"
                 placeholder="Type a deck name..."
                 value={name}
                 onChange={handleChange}
               />
-              <Button
-                variant="minimal"
+              <MinimalButton
                 color="fg"
                 type="submit"
                 disabled={name === ''}
               >
                 <Search size={18} />{/* TODO: convert to indicator */}
-              </Button>
+              </MinimalButton>
             </FlexContainer>
         </Fieldset>
       </form>

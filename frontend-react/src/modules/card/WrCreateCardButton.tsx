@@ -6,9 +6,9 @@ import { printApolloError } from '../../util';
 import { CARD_CREATE_MUTATION, CardCreateVariables, CardDeleteData as CardCreateData } from './gql';
 
 import styled from 'styled-components';
-import Button from '../../ui/form/Button';
+import { AuxillaryButton } from '../../ui/form/Button';
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(AuxillaryButton)`
   margin: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[1]};
 `;
 
@@ -28,7 +28,6 @@ const WrCreateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables)
     };
     return (
       <StyledButton
-        variant="auxillary"
         className="auxillary"
         onClick={handleClick}
       ><Copy size={16} />

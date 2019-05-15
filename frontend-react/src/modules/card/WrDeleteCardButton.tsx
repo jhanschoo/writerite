@@ -6,9 +6,9 @@ import { printApolloError } from '../../util';
 import { CARD_DELETE_MUTATION, CardDeleteVariables, CardDeleteData } from './gql';
 
 import styled from 'styled-components';
-import Button from '../../ui/form/Button';
+import { AuxillaryButton } from '../../ui/form/Button';
 
-const StyledButton = styled(Button)`
+const StyledButton = styled(AuxillaryButton)`
   margin: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[1]};
 `;
 
@@ -32,7 +32,6 @@ const WrDeleteCardButton: FC<Props> = (props: Props) => {
     };
     return (
       <StyledButton
-        variant="auxillary"
         className="auxillary"
         onClick={handleClick}
       ><Trash2 size={16} />

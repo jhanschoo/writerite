@@ -8,7 +8,7 @@ import { Menu } from 'react-feather';
 
 import styled from 'styled-components';
 import { createShow, createHide, SidebarAction } from '../deck/sidebar/actions';
-import Button from '../../ui/form/Button';
+import { BorderlessButton } from '../../ui/form/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 
 interface DispatchProps {
@@ -34,11 +34,6 @@ const HideableNavBarItem = styled(NavBarItem)`
   }
 `;
 
-const StyledButton = styled(Button)`
-  padding: 0;
-  margin: 0;
-`;
-
 const WrHamburger = (props: Props) => {
   // tslint:disable-next-line: no-shadowed-variable
   const { num, hidden, createShow, createHide } = props;
@@ -52,9 +47,9 @@ const WrHamburger = (props: Props) => {
   const className = (num === 0) ? 'hidden' : undefined;
   return (
     <HideableNavBarItem className={className}>
-      <StyledButton variant="link" onClick={handleClick}>
+      <BorderlessButton onClick={handleClick}>
         <Menu />
-      </StyledButton>
+      </BorderlessButton>
     </HideableNavBarItem>
   );
 };

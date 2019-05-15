@@ -7,9 +7,9 @@ import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gq
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
-import Button from '../../../ui/form/Button';
+import { MinimalButton } from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
-import TextInput from '../../../ui/form/TextInput';
+import { MinimalTextInput } from '../../../ui/form/TextInput';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
 const initialName = '';
@@ -20,7 +20,8 @@ const FlexContainer = styled.div`
   align-items: center;
 `;
 
-const StyledTextInput = styled(TextInput)`
+const StyledTextInput = styled(MinimalTextInput)`
+  flex-grow: 1;
   padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
 `;
 
@@ -50,20 +51,18 @@ const WrNewDeck = () => {
           <SidebarMenuHeader as="legend">Create a New Deck</SidebarMenuHeader>
             <FlexContainer>
               <StyledTextInput
-                variant="minimal"
                 aria-label="Deck Name"
                 placeholder="Type a deck name..."
                 value={name}
                 onChange={handleChange}
                 disabled={loading}
               />
-              <Button
-                variant="minimal"
+              <MinimalButton
                 type="submit"
                 disabled={name === '' || loading}
               >
                 <Plus size={14} />
-              </Button>
+              </MinimalButton>
             </FlexContainer>
         </Fieldset>
       </form>

@@ -2,7 +2,7 @@ import React, { ChangeEvent, FC, KeyboardEvent } from 'react';
 
 import styled from 'styled-components';
 import Fieldset from '../../ui/form/Fieldset';
-import TextInput from '../../ui/form/TextInput';
+import { MinimalTextInput } from '../../ui/form/TextInput';
 
 const GrowingFieldset = styled(Fieldset)`
   position: relative;
@@ -18,13 +18,14 @@ const LowercaseLabel = styled.label`
   color: ${({ theme }) => theme.colors.fg2};
 `;
 
-const StyledTextInput = styled(TextInput)`
+const StyledTextInput = styled(MinimalTextInput)`
   width: 100%;
   padding:
     ${({ theme }) => theme.space[4]}
     ${({ theme }) => theme.space[0]}
     ${({ theme }) => theme.space[3]}
     ${({ theme }) => theme.space[0]};
+  flex-grow: 1;
 `;
 
 interface Props {
@@ -44,7 +45,6 @@ const CardFieldset: FC<Props> = (props: Props) => {
         onChange={onChange}
         onKeyDown={onKeyDown}
         value={input}
-        variant="minimal"
       />
     </GrowingFieldset>
   );

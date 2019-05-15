@@ -10,7 +10,7 @@ import {
 } from '../gql';
 
 import styled from 'styled-components';
-import Button from '../../../ui/form/Button';
+import { AnchorButton, AuxillaryButton, MinimalButton } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 
 import { WrDeckDetail } from '../types';
@@ -35,9 +35,12 @@ const DeckHeader = styled.header`
   }
 `;
 
-const StyledButton = styled(Button)`
+const StyledAuxillaryButton = styled(AuxillaryButton)`
   display: inline;
-  outline: none;
+`;
+
+const StyledMinimalButton = styled(MinimalButton)`
+  display: inline;
 `;
 
 const StyledForm = styled.form`
@@ -128,19 +131,17 @@ const WrDetailHeader = (props: Props) => {
         <StyledForm onSubmit={handleDelete}>
           If you really want to delete this deck, please type in the name of the deck:
           <LongTextInput
-            variant="borderless"
             type="text"
             value={deletePromptInput}
             onChange={handleTextChange(setDeletePromptInput)}
             onKeyDown={handleKeyDown}
           />.&nbsp;
-          <StyledButton
-            variant="minimal"
+          <StyledMinimalButton
             type="submit"
             disabled={deletePromptInput !== name}
           >
             Delete
-          </StyledButton>
+          </StyledMinimalButton>
         </StyledForm>
       );
     };
@@ -160,7 +161,6 @@ const WrDetailHeader = (props: Props) => {
       <StyledForm onSubmit={handleSubmit}>
         Deck name:
         <LongTextInput
-          variant="borderless"
           type="text"
           value={nameInput}
           onChange={handleTextChange(setNameInput)}
@@ -168,7 +168,6 @@ const WrDetailHeader = (props: Props) => {
         />,<br />
         Deck name's language:
         <ShortTextInput
-          variant="borderless"
           type="text"
           value={nameLangInput}
           onChange={handleTextChange(setNameLangInput)}
@@ -176,7 +175,6 @@ const WrDetailHeader = (props: Props) => {
         />,<br />
         Prompt language:
         <ShortTextInput
-          variant="borderless"
           type="text"
           value={promptLangInput}
           onChange={handleTextChange(setPromptLangInput)}
@@ -185,38 +183,34 @@ const WrDetailHeader = (props: Props) => {
         ,<br />
         Answer language:
         <ShortTextInput
-          variant="borderless"
           type="text"
           value={answerLangInput}
           onChange={handleTextChange(setAnswerLangInput)}
           onKeyDown={handleKeyDown}
         />.<br />
-        <StyledButton
-          variant="anchor"
+        <AnchorButton
           type="submit"
         >
           Save Changes
-        </StyledButton>
+        </AnchorButton>
       </StyledForm>
     ) : undefined;
     return (
       <>
         <DeckHeading>
           {name}
-          <StyledButton
-            variant="auxillary"
+          <StyledAuxillaryButton
             className="auxillary"
             onClick={toggleBoolean(showSettings, setShowSettings)}
           >
             <Settings size={16} />
-          </StyledButton>
-          <StyledButton
-            variant="auxillary"
+          </StyledAuxillaryButton>
+          <StyledAuxillaryButton
             className="auxillary"
             onClick={toggleBoolean(showDeletePrompt, setShowDeletePrompt)}
           >
             <Trash2 size={16} />
-          </StyledButton>
+          </StyledAuxillaryButton>
         </DeckHeading>
         {deletePrompt}
         {settingsPanel}

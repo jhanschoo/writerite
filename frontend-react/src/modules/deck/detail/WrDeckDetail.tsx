@@ -6,12 +6,10 @@ import { printApolloError } from '../../../util';
 import { DECK_DETAIL_QUERY, DeckDetailData, DeckDetailVariables } from '../gql';
 
 import styled from 'styled-components';
-import HDivider from '../../../ui/HDivider';
 import FlexMain from '../../../ui/layout/FlexMain';
-import WrTemplateCardsList from './WrTemplateCardsList';
 import WrCardsList from '../../card/WrCardsList';
-import WrSubdeckList from './WrSubdeckList';
 import WrDetailHeader from './WrDetailHeader';
+import WrDetailButtons from './WrDetailButtons';
 import WrDeckDetailSH from './WrDeckDetailSH';
 
 const CenteredP = styled.p`
@@ -44,7 +42,7 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
         </CenteredP>
       );
     }
-    const { name, cards, promptLang, answerLang } = data.rwDeck;
+    const { cards, promptLang, answerLang } = data.rwDeck;
     return (
       <>
         {
@@ -54,9 +52,7 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
         <WrDetailHeader deck={data.rwDeck} />
-        <HDivider />
-        <WrSubdeckList />
-        <WrTemplateCardsList />
+        <WrDetailButtons />
         <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
       </>
     );

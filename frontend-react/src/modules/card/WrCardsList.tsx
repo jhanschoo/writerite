@@ -1,15 +1,8 @@
-import React, { useState, FC, MouseEvent } from 'react';
+import React, { FC } from 'react';
 import {
   withRouter, RouteComponentProps,
 } from 'react-router';
 import { WrCard } from './types';
-
-import { ChevronDown, ChevronUp } from 'react-feather';
-
-import styled from 'styled-components';
-import Button from '../../ui/form/Button';
-
-import WrNewCardPrompt from './WrNewCardPrompt';
 import WrCardItem from './WrCardItem';
 
 interface OwnProps {
@@ -20,46 +13,15 @@ interface OwnProps {
 
 type Props = OwnProps & RouteComponentProps<{ deckId: string }>;
 
-const Header = styled.header`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: ${({ theme }) => theme.space[1]}
-  margin: ${({ theme }) => theme.space[1]}
-`;
-
-const ListHeading = styled.h4`
-  font-size: 125%;
-  font-weight: normal;
-  text-align: center;
-  margin: 0;
-`;
-
 const WrCardsList: FC<Props> = (props: Props) => {
-  const [show, setShow] = useState(true);
   const { cards, promptLang, answerLang } = props;
   const { deckId } = props.match.params;
   const formattedCards = cards.map((card: WrCard) => (
     <WrCardItem key={card.id} card={card} deckId={deckId} promptLang={promptLang} answerLang={answerLang} />
   ));
-  const chevron = show ? <ChevronDown /> : <ChevronUp />;
-  const toggleShow = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setShow(!show);
-  };
-  const content = (
-    <>
-      <WrNewCardPrompt deckId={deckId} />
-      {formattedCards}
-    </>
-  );
   return (
     <>
-      <Header>
-        <ListHeading>{formattedCards.length} Cards</ListHeading>
-        <Button variant="minimal" onClick={toggleShow}>{chevron}</Button>
-      </Header>
-      {show && content}
+      {formattedCards}
     </>
   );
 };

@@ -6,7 +6,7 @@ import { printApolloError } from '../../util';
 import { CARDS_CREATE_MUTATION, CardsCreateVariables, CardsCreateData } from './gql';
 
 import styled from 'styled-components';
-import Button from '../../ui/form/Button';
+import { AuxillaryButton } from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 
 const CenteredFlex = styled.div`
@@ -61,7 +61,6 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
       <CenteredFlex>
         Add
         <StyledTextInput
-          variant="borderless"
           type="number"
           min="1"
           max="100"
@@ -72,12 +71,11 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
           disabled={loading}
         />
         new cards to the deck&emsp;
-        <Button
-          variant="auxillary"
+        <AuxillaryButton
           onClick={handleClick}
           disabled={loading}
         ><Plus size={16} />
-        </Button>
+        </AuxillaryButton>
       </CenteredFlex>
     );
   };

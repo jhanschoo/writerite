@@ -15,7 +15,7 @@ import { SIGNIN, SigninVariables, SigninData } from './gql';
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
 import HDivider from '../../ui/HDivider';
-import Button from '../../ui/form/Button';
+import Button, { AnchorButton } from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 import Fieldset from '../../ui/form/Fieldset';
 import SmallMessage from '../../ui/form/SmallMessage';
@@ -49,11 +49,20 @@ const FlowButton = styled(Button)`
   padding: ${({ theme }) => theme.space[2]};
 `;
 
+const GoogleButton = styled(FlowButton)`
+  border-color: ${({ theme }) => theme.colors.googleRed};
+  color: ${({ theme }) => theme.colors.googleRed};
+`;
+
+const FacebookButton = styled(FlowButton)`
+border-color: ${({ theme }) => theme.colors.facebookBlue};
+color: ${({ theme }) => theme.colors.facebookBlue};
+`;
+
 const SigninBox = styled.div`
   padding: ${({ theme }) => theme.space[3]};
   border-radius: 2px;
   box-shadow: 0 1px 2px ${({ theme }) => theme.colors.shadow};
-  background: ${({ theme }) => theme.colors.bg0};
 `;
 
 const TextCenteredDiv = styled.div`
@@ -75,6 +84,10 @@ const FieldsetWithMargin = styled(Fieldset)`
 const FlowTextInput = styled(TextInput)`
   width: 100%;
   margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+`;
+
+const ErrorMessage = styled(SmallMessage)`
+  color: ${({ theme }) => theme.colors.error};
 `;
 
 const formSchema = yup.object().shape({
@@ -224,14 +237,14 @@ class WrSignin extends Component<Props> {
         const maybeError = (
           key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
         ) => showError(key) && (
-          <SmallMessage color="error">
+          <ErrorMessage>
             {errors[key]}
-          </SmallMessage>
+          </ErrorMessage>
         );
         const formattedPasswordError = passwordShowError && (
-          <SmallMessage color="error">
+          <ErrorMessage>
             {errors.password || errors.confirmPassword}
-          </SmallMessage>
+          </ErrorMessage>
         );
         return (
             <form onSubmit={handleSubmit}>
@@ -245,7 +258,7 @@ class WrSignin extends Component<Props> {
                   placeholder="Email"
                   // autocomplete={isSignup ? 'new-username' : 'current-username'}
                   disabled={disabled}
-                  variant={showError('username') ? 'error' : (showValid('username') ? 'valid' : '')}
+                  className={showError('username') ? 'error' : (showValid('username') ? 'valid' : '')}
                 />
                 {maybeError('username')}
               </FieldsetWithMargin>
@@ -259,7 +272,7 @@ class WrSignin extends Component<Props> {
                   placeholder="Password"
                   // autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
-                  variant={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+                  className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
                 />
                 {formattedPasswordError}
               </FieldsetWithMargin>
@@ -273,9 +286,8 @@ class WrSignin extends Component<Props> {
                   placeholder="Confirm Password"
                   // autocomplete={isSignup ? 'new-password' : 'current-password'}
                   disabled={disabled}
-                  variant={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+                  className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
                 />
-                {formattedPasswordError}
               </FieldsetWithMargin>
               <Fieldset>
                 <TextCenteredDiv>
@@ -285,15 +297,14 @@ class WrSignin extends Component<Props> {
               </Fieldset>
               <FlowButton
                 type="submit"
-                variant="default"
               >
                 {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
               </FlowButton>
               <SmallMessage>
                 {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
-                <Button variant="anchor" onClick={toggleSignin(props)}>
+                <AnchorButton onClick={toggleSignin(props)}>
                   {isSignup ? 'Login' : 'Sign up'}
-                </Button>
+                </AnchorButton>
               </SmallMessage>
             </form>
         );
@@ -303,20 +314,18 @@ class WrSignin extends Component<Props> {
         : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
       return (
         <SigninBox>
-          <FlowButton
-            variant="googleRed"
+          <GoogleButton
             disabled={disabled}
             onClick={handleGoogleSignin}
           >
             Sign in with Google
-          </FlowButton>
-          <FlowButton
-            variant="facebookBlue"
+          </GoogleButton>
+          <FacebookButton
             disabled={disabled}
             onClick={handleFacebookSignin}
           >
             Sign in with Facebook
-          </FlowButton>
+          </FacebookButton>
           <HDivider>
             OR
           </HDivider>

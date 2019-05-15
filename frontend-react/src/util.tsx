@@ -12,11 +12,6 @@ import md5 from 'md5';
 import { ThemeProvider } from 'styled-components';
 import theme from './theme';
 
-export const WriteRiteMark = () => (
-  // <span className="wr-mark-style">WriteRite</span>
-  <span>WriteRite</span>
-);
-
 export const emailToGravatarLink = (email: string) => {
   return `https://www.gravatar.com/avatar/${md5(email.toLowerCase())}`;
 };

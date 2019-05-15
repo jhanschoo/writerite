@@ -6,8 +6,8 @@ import { Filter } from 'react-feather';
 
 import styled from 'styled-components';
 import Fieldset from '../../../ui/form/Fieldset';
-import Button from '../../../ui/form/Button';
-import TextInput from '../../../ui/form/TextInput';
+import { MinimalButton } from '../../../ui/form/Button';
+import { MinimalTextInput } from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
@@ -24,7 +24,8 @@ const FlowItem = styled(Item)`
   width: 100%;
 `;
 
-const StyledTextInput = styled(TextInput)`
+const StyledTextInput = styled(MinimalTextInput)`
+  flex-grow: 1;
   padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
 `;
 
@@ -68,7 +69,6 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
         <Fieldset>
           <FlexContainer>
             <StyledTextInput
-              variant="minimal"
               type="text"
               aria-label="Filter"
               placeholder="Filter..."
@@ -76,13 +76,12 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
               onChange={handleChange}
               ref={inputEl}
             />
-            <Button
-              variant="minimal"
+            <MinimalButton
               type="submit"
               disabled={filter === ''}
             >
               <Filter size={14} />
-            </Button>
+            </MinimalButton>
           </FlexContainer>
         </Fieldset>
       </form>

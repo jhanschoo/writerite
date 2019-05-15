@@ -1,26 +1,15 @@
-import styled, { ThemedStyledFunction } from 'styled-components';
-import { variant } from 'styled-system';
-
-interface VariantProps {
-  variant?: string;
-}
-
-const textInputStyle = variant({
-  key: 'textInputs',
-});
-
-const styledInput: ThemedStyledFunction<'input', any, VariantProps, never> = styled.input;
+import styled from 'styled-components';
 
 // TODO: make generic argument stricter in props that it accepts
-const TextInput = styledInput`
+const TextInput = styled.input`
   font-weight: inherit;
   font-size: inherit;
   font-family: inherit;
   height: ${({ theme }) => theme.space[4]};
   padding: 0 ${({ theme }) => theme.space[2]};
-  border: 1px solid ${({ theme }) => theme.colors.edge};
+  border: 1px solid ${({ theme }) => theme.colors.transparent};
   border-radius: 2px;
-  -webkit-appearance: none;
+  appearance: none;
 
   :disabled {
     background: ${({ theme }) => theme.colors.disabled}
@@ -31,7 +20,47 @@ const TextInput = styledInput`
     outline: none;
   }
 
-  ${textInputStyle}
+  &.error {
+    border-color: ${({ theme }) => theme.colors.red};
+    background: ${({ theme }) => theme.colors.washedRed};
+    :active, :focus: {
+      border-color: ${({ theme }) => theme.colors.red},
+      background: ${({ theme }) => theme.colors.washedRed},
+      box-shadow: 0 0 1px 1px ${({ theme }) => theme.colors.lightRed},
+    },
+  }
+
+  &.valid {
+    border-color: ${({ theme }) => theme.colors.green};
+    :active, :focus: {
+      border-color: ${({ theme }) => theme.colors.green},
+      background: ${({ theme }) => theme.colors.lightGreen},
+      box-shadow: 0 0 1px 1px ${({ theme }) => theme.colors.lightGreen},
+    },
+  }
+`;
+
+export const MinimalTextInput = styled.input`
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  height: ${({ theme }) => theme.space[4]};
+  padding: 0 ${({ theme }) => theme.space[2]};
+  border: none;
+  background: none;
+  appearance: none;
+
+  :disabled {
+    background: ${({ theme }) => theme.colors.disabled}
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  ::placeholder {
+    font-style: italic;
+  }
 `;
 
 export default TextInput;

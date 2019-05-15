@@ -12,7 +12,7 @@ import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
 import Link from '../../ui/Link';
-import Button from '../../ui/form/Button';
+import { BorderlessButton } from '../../ui/form/Button';
 import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
@@ -47,7 +47,7 @@ const PageLink = styled(Link)`
   }
 `;
 
-const SignoutButton = styled(Button)`
+const SignoutButton = styled(BorderlessButton)`
   padding: ${({ theme }) => theme.space[2]};
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     padding: ${({ theme }) => theme.space[1]};
@@ -115,7 +115,7 @@ const renderLoggedIn = (props: Props) => {
         </PageLink>
       </NavBarItem>
       <NavBarItem>
-        <SignoutButton variant="link" onClick={signoutAndRestartWs}>
+        <SignoutButton onClick={signoutAndRestartWs}>
           <Feather size={mq.matches ? 18 : 24} />
           Sign out
         </SignoutButton>
