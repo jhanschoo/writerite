@@ -56,10 +56,12 @@ const DeckHeading = styled.h2`
 
 const LongTextInput = styled(TextInput)`
   width: 24rem;
+  margin: ${({ theme }) => theme.space[1]} 0;
 `;
 
 const ShortTextInput = styled(TextInput)`
   width: 6rem;
+  margin: ${({ theme }) => theme.space[1]} 0;
 `;
 
 interface OwnProps {

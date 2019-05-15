@@ -8,7 +8,7 @@ const TextInput = styled.input`
   height: ${({ theme }) => theme.space[4]};
   padding: 0 ${({ theme }) => theme.space[2]};
   border: 1px solid ${({ theme }) => theme.colors.transparent};
-  border-radius: 2px;
+  border-radius: 4px;
   appearance: none;
 
   :disabled {

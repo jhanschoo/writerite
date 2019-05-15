@@ -20,8 +20,8 @@ const FlexContainer = styled.div`
   align-items: center;
 `;
 
-const FlowItem = styled(Item)`
-  width: 100%;
+const StyledItem = styled(Item)`
+  margin: 1px 0;
 `;
 
 const StyledTextInput = styled(MinimalTextInput)`
@@ -52,16 +52,16 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
   });
   const contents = (filteredDecks.length === 0)
     ? [(
-      <FlowItem key="no-match">
+      <StyledItem key="no-match">
         <em>There are no decks matching your filter.</em>
-      </FlowItem>
+      </StyledItem>
     )]
     : filteredDecks.map((deck: WrDeck) => (
-        <FlowItem key={deck.id}>
+        <StyledItem key={deck.id}>
           <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.nameLang || undefined}>
             {deck.name}
           </SidebarMenuLink>
-        </FlowItem>
+        </StyledItem>
     ));
   return (
     <>

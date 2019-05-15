@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent, ClipboardEvent, KeyboardEvent } from 'react';
+import React, { Component, ChangeEvent, KeyboardEvent } from 'react';
 import moment from 'moment';
 
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
@@ -25,18 +25,18 @@ interface Props {
 const Header = styled.header`
   display: flex;
   justify-content: space-between;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+  padding: ${({ theme }) => theme.space[1]} 0;
 `;
 
 const MainSegment = styled.main`
   display: flex;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+  padding: ${({ theme }) => theme.space[1]} 0;
 `;
 
 const Card = styled.form`
-  border-radius: 2px;
+  border-radius: 4px;
   margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
-  padding: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[3]};
+  padding: 0 ${({ theme }) => theme.space[3]};
   display: flex;
   flex-direction: column;
   background: ${({ theme }) => theme.colors.bg0};

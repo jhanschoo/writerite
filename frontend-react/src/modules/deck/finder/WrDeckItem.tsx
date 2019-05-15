@@ -13,7 +13,7 @@ const WrDeckItem = styledDiv`
   grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
   padding: ${({ theme }) => theme.space[3]};
   border: 1px solid ${({ theme }) => theme.colors.edge};
-  border-radius: 2px;
+  border-radius: 4px;
   :hover {
     cursor: ${({ interactive }) => interactive ? 'pointer' : 'auto'};
   }

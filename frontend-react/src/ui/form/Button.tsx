@@ -1,4 +1,4 @@
-import styled, { ThemedStyledFunction } from 'styled-components';
+import styled from 'styled-components';
 
 const Button = styled.button`
   display: flex;
@@ -6,7 +6,7 @@ const Button = styled.button`
   align-items: center;
   background: none;
   border: 1px solid ${({ theme }) => theme.colors.edge};
-  border-radius: 2px;
+  border-radius: 4px;
   margin: 0;
   padding: 0;
   font-weight: inherit;
@@ -32,7 +32,7 @@ export const BorderlessButton = styled.button`
   align-items: center;
   background: none;
   border: 1px solid ${({ theme }) => theme.colors.transparent};
-  border-radius: 2px;
+  border-radius: 4px;
   margin: 0;
   padding: 0;
   font-weight: inherit;

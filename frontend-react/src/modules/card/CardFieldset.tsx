@@ -22,9 +22,9 @@ const StyledTextInput = styled(MinimalTextInput)`
   width: 100%;
   padding:
     ${({ theme }) => theme.space[4]}
-    ${({ theme }) => theme.space[0]}
+    0
     ${({ theme }) => theme.space[3]}
-    ${({ theme }) => theme.space[0]};
+    0;
   flex-grow: 1;
 `;
 

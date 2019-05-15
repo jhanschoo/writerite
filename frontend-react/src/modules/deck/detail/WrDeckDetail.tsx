@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Query, QueryResult } from 'react-apollo';
@@ -12,6 +12,13 @@ import WrDetailHeader from './WrDetailHeader';
 import WrDetailButtons from './WrDetailButtons';
 import WrDeckDetailSH from './WrDeckDetailSH';
 
+export enum CurrentAddNewEnum {
+  SUBDECK,
+  TEMPLATE,
+  CARD,
+  NONE,
+}
+
 const CenteredP = styled.p`
   text-align: center;
 `;
@@ -22,6 +29,10 @@ const CenteredP = styled.p`
 const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
   const { match } = props;
   const { deckId } = match.params;
+  const [showSubDecks, setShowSubDecks] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
+  const [showCards, setShowCards] = useState(false);
+  const [currentAddNew, setCurrentAddNew] = useState(CurrentAddNewEnum.NONE);
   const renderDeck = ({
     subscribeToMore, loading, error, data,
   }: QueryResult<DeckDetailData, DeckDetailVariables>) => {
@@ -42,7 +53,9 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
         </CenteredP>
       );
     }
-    const { cards, promptLang, answerLang } = data.rwDeck;
+    const { promptLang, answerLang } = data.rwDeck;
+    const templates = data.rwDeck.cards.filter((card) => card.template);
+    const cards = data.rwDeck.cards.filter((card) => !card.template);
     return (
       <>
         {
@@ -52,8 +65,19 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
         <WrDetailHeader deck={data.rwDeck} />
-        <WrDetailButtons />
-        <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
+        <WrDetailButtons
+          showSubDecks={showSubDecks}
+          setShowSubDecks={setShowSubDecks}
+          showTemplates={showTemplates}
+          setShowTemplates={setShowTemplates}
+          showCards={showCards}
+          setShowCards={setShowCards}
+          currentAddNew={currentAddNew}
+          setCurrentAddNew={setCurrentAddNew}
+          deck={data.rwDeck}
+        />
+        {showTemplates && <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />}
+        {showCards && <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />}
       </>
     );
   };

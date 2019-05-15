@@ -33,9 +33,9 @@ const WrDeckSearchbox = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
-  const handleCompleted = () => {
-    setName(initialName);
-  };
+  // const handleCompleted = () => {
+  //   setName(initialName);
+  // };
   const renderForm = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();

@@ -9,7 +9,7 @@ import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
 
 const StyledButton = styled(AuxillaryButton)`
-  margin: ${({ theme }) => theme.space[0]} ${({ theme }) => theme.space[1]};
+  margin: 0 ${({ theme }) => theme.space[1]};
 `;
 
 interface Props {

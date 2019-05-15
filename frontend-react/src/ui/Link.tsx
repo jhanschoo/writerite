@@ -5,7 +5,7 @@ const Link = styled(rrLink)`
   display: flex;
   text-decoration: none;
   border: 1px solid ${({ theme }) => theme.colors.transparent};
-  border-radius: 2px;
+  border-radius: 4px;
   align-items: center;
   cursor: pointer;
   padding: ${({ theme }) => theme.space[2]};

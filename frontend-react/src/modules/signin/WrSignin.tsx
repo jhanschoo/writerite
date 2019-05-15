@@ -45,7 +45,7 @@ interface FormValues {
 
 const FlowButton = styled(Button)`
   width: 100%;
-  margin: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[0]};
+  margin: ${({ theme }) => theme.space[2]} 0;
   padding: ${({ theme }) => theme.space[2]};
 `;
 
@@ -61,7 +61,7 @@ color: ${({ theme }) => theme.colors.facebookBlue};
 
 const SigninBox = styled.div`
   padding: ${({ theme }) => theme.space[3]};
-  border-radius: 2px;
+  border-radius: 4px;
   box-shadow: 0 1px 2px ${({ theme }) => theme.colors.shadow};
 `;
 
