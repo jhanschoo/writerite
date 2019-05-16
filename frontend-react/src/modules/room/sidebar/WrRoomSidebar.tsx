@@ -4,7 +4,9 @@ import WrSidebarMenu from '../../sidebar-menu/WrSidebarMenu';
 
 const WrRoomSidebar = (props: {}) => {
   return (
-    <WrSidebarMenu />
+    <WrSidebarMenu>
+      Room Sidebar. Placeholder.
+    </WrSidebarMenu>
   );
 };
 

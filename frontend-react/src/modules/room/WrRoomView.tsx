@@ -15,7 +15,8 @@ const WrDeckView = (props: RouteComponentProps) => {
       <WrNavBar />
       <WrRoomSidebar />
       <Switch>
-        <Route path={`${match.url}/search`} component={WrFindRoom} />
+        {/* <Route path={`${match.url}/search`} component={WrFindRoom} /> */}
+        <Route path={`${match.url}/search`} component={WrRoomDetail} />
         <Route path={`${match.url}/:deckId`} component={WrRoomDetail} />
         <Redirect to={`${match.url}/search`} />
       </Switch>
