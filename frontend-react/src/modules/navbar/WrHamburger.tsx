@@ -2,12 +2,12 @@ import React, { MouseEvent } from 'react';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
-import { initialState } from '../deck/sidebar/reducers';
+import { initialState } from '../sidebar-menu/reducers';
 
 import { Menu } from 'react-feather';
 
 import styled from 'styled-components';
-import { createShow, createHide, SidebarAction } from '../deck/sidebar/actions';
+import { createShow, createHide, SidebarAction } from '../sidebar-menu/actions';
 import { BorderlessButton } from '../../ui/form/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 

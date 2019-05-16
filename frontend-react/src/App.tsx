@@ -10,6 +10,7 @@ import { CurrentUser } from './modules/signin/types';
 import WrLandingView from './modules/landing/WrLandingView';
 import WrSigninView from './modules/signin/WrSigninView';
 import WrDeckView from './modules/deck/WrDeckView';
+import WrRoomView from './modules/room/WrRoomView';
 import ViewportContainer from './ui/layout/ViewportContainer';
 
 interface StateProps {
@@ -26,6 +27,7 @@ const App: FC<StateProps & RouteComponentProps> = (props: Props) => {
       <Switch>
         <Route path="/" exact={true} component={WrLandingView} />
         {user && <Route path="/deck" component={WrDeckView} />}
+        {user && <Route path="/room" component={WrRoomView} />}
         <Route path="/signin" exact={true} component={WrSigninView} />
         <Redirect to="/"/>
       </Switch>

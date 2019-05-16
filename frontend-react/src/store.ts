@@ -1,7 +1,7 @@
 import { createStore, Store } from 'redux';
 import { rootReducer } from './reducers';
 
-import { SidebarState } from './modules/deck/sidebar/reducers';
+import { SidebarState } from './modules/sidebar-menu/reducers';
 import { SigninState } from './modules/signin/reducers';
 import { DeckState } from './modules/deck/reducers';
 import { RoomState } from './modules/room/reducers';

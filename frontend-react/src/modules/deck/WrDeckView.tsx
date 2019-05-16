@@ -5,7 +5,7 @@ import {
 
 import WrNavBar from '../navbar/WrNavBar';
 import WrDeckSidebar from './sidebar/WrDeckSidebar';
-import WrFindDeck from './finder/WrFindDeck';
+import WrFindDeck from './search/WrFindDeck';
 import WrDeckDetail from './detail/WrDeckDetail';
 
 const WrDeckView = (props: RouteComponentProps) => {
