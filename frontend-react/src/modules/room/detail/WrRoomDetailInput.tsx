@@ -8,6 +8,7 @@ import { BorderlessButton } from '../../../ui/form/Button';
 const InputBox = styled.div`
   display: flex;
   padding: ${({ theme }) => theme.space[2]};
+  align-items: center;
 `;
 
 const StyledTextInput = styled(TextInput)`
