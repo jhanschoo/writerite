@@ -15,7 +15,7 @@ const StyledButton = styled(AuxillaryButton)`
 type Props = CardCreateVariables;
 
 // TODO: change into a prompt for creating N cards
-const WrCreateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables) => {
+const WrDuplicateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables) => {
   const renderCardCreate = (
     mutate: MutationFn<CardCreateData, CardCreateVariables>,
     { loading }: MutationResult<CardCreateData>,
@@ -44,4 +44,4 @@ const WrCreateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables)
   );
 };
 
-export default WrCreateCardButton;
+export default WrDuplicateCardButton;

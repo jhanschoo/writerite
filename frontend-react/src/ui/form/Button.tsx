@@ -41,17 +41,22 @@ export const BorderlessButton = styled.button`
   outline: none;
   color: ${({ theme }) => theme.colors.fg1};
 
-  &.active {
-    border-color: ${({ theme }) => theme.colors.edge};
-  }
-
   :hover {
     cursor: pointer;
+    border-color: ${({ theme }) => theme.colors.bg2};
     background: ${({ theme }) => theme.colors.bg2};
   }
 
   :disabled {
     color: ${({ theme }) => theme.colors.disabled};
+  }
+
+  &.active {
+    border-color: ${({ theme }) => theme.colors.edge};
+
+    :hover {
+      border-color: ${({ theme }) => theme.colors.edge};
+    }
   }
 `;
 

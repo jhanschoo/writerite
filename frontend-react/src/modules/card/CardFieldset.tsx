@@ -29,6 +29,7 @@ const StyledTextInput = styled(MinimalTextInput)`
 `;
 
 interface Props {
+  name: string;
   input?: string;
   label?: string;
   lang?: string;
@@ -37,11 +38,13 @@ interface Props {
 }
 
 const CardFieldset: FC<Props> = (props: Props) => {
-  const { label, input, lang, onChange, onKeyDown } = { input: '', ...props };
+  const { name, label, input, lang, onChange, onKeyDown } = { input: '', ...props };
   return (
     <GrowingFieldset lang={lang || undefined}>
-      {label && <LowercaseLabel>{label}</LowercaseLabel>}
+      {label && <LowercaseLabel htmlFor={name}>{label}</LowercaseLabel>}
       <StyledTextInput
+        id={name}
+        name={name}
         onChange={onChange}
         onKeyDown={onKeyDown}
         value={input}

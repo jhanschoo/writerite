@@ -12,7 +12,7 @@ import Item from '../../ui/list/Item';
 
 import CardFieldset from './CardFieldset';
 import { WrCard } from './types';
-import WrCreateCardButton from './WrCreateCardButton';
+import WrDuplicateCardButton from './WrDuplicateCardButton';
 import WrDeleteCardButton from './WrDeleteCardButton';
 
 interface Props {
@@ -39,7 +39,7 @@ const Card = styled.form`
   padding: 0 ${({ theme }) => theme.space[3]};
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.colors.bg0};
+  background: ${({ theme }) => theme.colors.inputBg};
   .auxillary {
     visibility: hidden;
   }
@@ -107,7 +107,7 @@ class WrCardItem extends Component<Props> {
             </EditNoticeText>
             <List>
               <Item>
-                <WrCreateCardButton
+                <WrDuplicateCardButton
                   deckId={deckId}
                   prompt={prompt}
                   fullAnswer={fullAnswer}
@@ -123,6 +123,7 @@ class WrCardItem extends Component<Props> {
           <HDivider spacerColor="lightLightEdge" />
           <MainSegment>
             <CardFieldset
+              name={id + '-prompt'}
               label="Prompt"
               lang={promptLang}
               input={promptInput}
@@ -130,6 +131,7 @@ class WrCardItem extends Component<Props> {
               onKeyDown={handleKeyDown}
             />
             <CardFieldset
+              name={id + '-answer'}
               label="Displayed Answer"
               lang={answerLang}
               input={fullAnswerInput}

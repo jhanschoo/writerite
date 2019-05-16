@@ -1,19 +1,8 @@
-import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, MouseEvent, Dispatch, SetStateAction } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { Settings, Trash2 } from 'react-feather';
-
-import { MutationFn, Mutation, MutationResult } from 'react-apollo';
-import { printApolloError } from '../../../util';
-import {
-  DeckEditData, DeckEditVariables, DECK_EDIT_MUTATION,
-  DeckDeleteData, DeckDeleteVariables, DECK_DELETE_MUTATION,
-} from '../gql';
+import React, { MouseEvent } from 'react';
+import { Settings } from 'react-feather';
 
 import styled from 'styled-components';
-import { AnchorButton, AuxillaryButton, MinimalButton } from '../../../ui/form/Button';
-import TextInput from '../../../ui/form/TextInput';
-
-import { WrDeckDetail } from '../types';
+import { AuxillaryButton } from '../../../ui/form/Button';
 
 const DeckHeader = styled.header`
   display: flex;
@@ -39,196 +28,32 @@ const StyledAuxillaryButton = styled(AuxillaryButton)`
   display: inline;
 `;
 
-const StyledMinimalButton = styled(MinimalButton)`
-  display: inline;
-`;
-
-const StyledForm = styled.form`
-  color: ${({ theme }) => theme.colors.fg2}
-  text-align: center;
-`;
-
 const DeckHeading = styled.h2`
   margin: ${({ theme }) => theme.space[1]};
   text-align: center;
   font-size: 250%;
 `;
 
-const LongTextInput = styled(TextInput)`
-  width: 24rem;
-  margin: ${({ theme }) => theme.space[1]} 0;
-`;
-
-const ShortTextInput = styled(TextInput)`
-  width: 6rem;
-  margin: ${({ theme }) => theme.space[1]} 0;
-`;
-
-interface OwnProps {
-  deck: WrDeckDetail;
+interface Props {
+  name: string;
+  toggleSettings: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
-type Props = RouteComponentProps & OwnProps;
-
 const WrDetailHeader = (props: Props) => {
-  const { history } = props;
-  const { id, name, nameLang, promptLang, answerLang } = props.deck;
-  const [nameInput, setNameInput] = useState(name);
-  const [deletePromptInput, setDeletePromptInput] = useState('');
-  const [nameLangInput, setNameLangInput] = useState(nameLang);
-  const [promptLangInput, setPromptLangInput] = useState(promptLang);
-  const [answerLangInput, setAnswerLangInput] = useState(answerLang);
-  const [showDeletePrompt, setShowDeletePrompt] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const handleTextChange = (setter: Dispatch<SetStateAction<string>>) =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-    setter(e.target.value);
-  };
-  const toggleBoolean = (current: boolean, setter: Dispatch<SetStateAction<boolean>>) =>
-    (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setter(!current);
-  };
-  const resetState = () => {
-    setNameInput(name);
-    setNameLangInput(nameLang);
-    setAnswerLangInput(answerLang);
-  };
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    const { key } = e;
-    if (key === 'Escape' || key === 'Esc') {
-      e.preventDefault();
-      resetState();
-    }
-  };
-  const renderName = (
-    mutate: MutationFn<DeckEditData, DeckEditVariables>,
-    { loading }: MutationResult<DeckEditData>,
-  ) => {
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      mutate({
-        variables: {
-          id,
-          name: nameInput,
-          nameLang: nameLangInput,
-          promptLang: promptLangInput,
-          answerLang: answerLangInput,
-        },
-      });
-    };
-    const renderDeletePrompt = (
-      deleteMutate: MutationFn<DeckDeleteData, DeckDeleteVariables>,
-      { loading: deleteLoading }: MutationResult<DeckDeleteData>,
-    ) => {
-      const handleDelete = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        deleteMutate({
-          variables: {
-            id,
-          },
-        });
-      };
-      return (
-        <StyledForm onSubmit={handleDelete}>
-          If you really want to delete this deck, please type in the name of the deck:
-          <LongTextInput
-            type="text"
-            value={deletePromptInput}
-            onChange={handleTextChange(setDeletePromptInput)}
-            onKeyDown={handleKeyDown}
-          />.&nbsp;
-          <StyledMinimalButton
-            type="submit"
-            disabled={deletePromptInput !== name}
-          >
-            Delete
-          </StyledMinimalButton>
-        </StyledForm>
-      );
-    };
-    const handleCompleted = () => {
-      history.push('/deck');
-    };
-    const deletePrompt = (showDeletePrompt) ? (
-      <Mutation<DeckDeleteData, DeckDeleteVariables>
-        mutation={DECK_DELETE_MUTATION}
-        onError={printApolloError}
-        onCompleted={handleCompleted}
-      >
-        {renderDeletePrompt}
-      </Mutation>
-    ) : undefined;
-    const settingsPanel = (showSettings) ? (
-      <StyledForm onSubmit={handleSubmit}>
-        Deck name:
-        <LongTextInput
-          type="text"
-          value={nameInput}
-          onChange={handleTextChange(setNameInput)}
-          onKeyDown={handleKeyDown}
-        />,<br />
-        Deck name's language:
-        <ShortTextInput
-          type="text"
-          value={nameLangInput}
-          onChange={handleTextChange(setNameLangInput)}
-          onKeyDown={handleKeyDown}
-        />,<br />
-        Prompt language:
-        <ShortTextInput
-          type="text"
-          value={promptLangInput}
-          onChange={handleTextChange(setPromptLangInput)}
-          onKeyDown={handleKeyDown}
-        />
-        ,<br />
-        Answer language:
-        <ShortTextInput
-          type="text"
-          value={answerLangInput}
-          onChange={handleTextChange(setAnswerLangInput)}
-          onKeyDown={handleKeyDown}
-        />.<br />
-        <AnchorButton
-          type="submit"
-        >
-          Save Changes
-        </AnchorButton>
-      </StyledForm>
-    ) : undefined;
-    return (
-      <>
-        <DeckHeading>
-          {name}
-          <StyledAuxillaryButton
-            className="auxillary"
-            onClick={toggleBoolean(showSettings, setShowSettings)}
-          >
-            <Settings size={16} />
-          </StyledAuxillaryButton>
-          <StyledAuxillaryButton
-            className="auxillary"
-            onClick={toggleBoolean(showDeletePrompt, setShowDeletePrompt)}
-          >
-            <Trash2 size={16} />
-          </StyledAuxillaryButton>
-        </DeckHeading>
-        {deletePrompt}
-        {settingsPanel}
-      </>
-    );
-  };
+  const { name, toggleSettings } = props;
   return (
     <DeckHeader>
-      <Mutation<DeckEditData, DeckEditVariables>
-        mutation={DECK_EDIT_MUTATION}
-        onError={printApolloError}
-      >
-        {renderName}
-      </Mutation>
+      <DeckHeading>
+        {name}
+        <StyledAuxillaryButton
+          className="auxillary"
+          onClick={toggleSettings}
+        >
+          <Settings size={16} />
+        </StyledAuxillaryButton>
+      </DeckHeading>
     </DeckHeader>
   );
 };
 
-export default withRouter<Props>(WrDetailHeader);
+export default WrDetailHeader;

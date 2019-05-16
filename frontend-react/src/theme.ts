@@ -43,6 +43,9 @@ const fg2 = gray;
 const bg0 = white;
 const bg1 = nearWhite;
 const bg2 = lightGray;
+const inputBg = bg0;
+const homogBg = bg0;
+const heterogBg = bg2;
 const primary = orange;
 const disabled = moonGray;
 const edge = gray;
@@ -70,6 +73,9 @@ const theme = {
     bg0,
     bg1,
     bg2,
+    inputBg,
+    homogBg,
+    heterogBg,
     primary,
     disabled,
     edge,

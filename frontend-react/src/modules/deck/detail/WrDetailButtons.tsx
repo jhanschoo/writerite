@@ -29,7 +29,7 @@ const LeftButton = styled(BorderlessButton)`
     ${({ theme }) => theme.space[1]}
     ${({ theme }) => theme.space[2]}
     ${({ theme }) => theme.space[2]};
-  flex-grow: 3;
+  width: 66%;
 
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     padding: 0;
@@ -43,7 +43,7 @@ const RightButton = styled(BorderlessButton)`
     ${({ theme }) => theme.space[2]}
     ${({ theme }) => theme.space[2]}
     ${({ theme }) => theme.space[1]};
-  flex-grow: 1;
+  width: 33%;
 
   @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
     padding: 0;
@@ -53,6 +53,8 @@ const RightButton = styled(BorderlessButton)`
 const StyledList = styled(List)`
   flex-direction: row;
   justify-content: space-around;
+  flex-wrap: wrap;
+  padding: ${({ theme }) => theme.space[1]} 0;
 
   @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
     font-size: 66%;
@@ -63,9 +65,11 @@ const StyledItem = styled(Item)`
   max-width: 25%;
   flex-grow: 1;
   align-items: stretch;
+  margin: ${({ theme }) => theme.space[1]} 0;
 
   @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
     max-width: none;
+    width: 100%;
   }
 `;
 
@@ -106,7 +110,7 @@ const WrDetailButtons = (props: Props) => {
         className={showSubDecks ? 'active' : undefined}
         onClick={toggleSubDecks}
       >
-        0 Sub-Decks <Layers size={16} />
+        0&nbsp;<Layers size={16} />Sub-Decks
       </LeftButton>
       <RightButton
         className={currentAddNew === CurrentAddNewEnum.SUBDECK ? 'active' : undefined}
@@ -120,7 +124,7 @@ const WrDetailButtons = (props: Props) => {
         className={showTemplates ? 'active' : undefined}
         onClick={toggleTemplates}
       >
-        {templates.length} Templates <File size={16} />
+        {templates.length}&nbsp;<File size={16} />Templates
       </LeftButton>
       <RightButton
         className={currentAddNew === CurrentAddNewEnum.TEMPLATE ? 'active' : undefined}
@@ -134,7 +138,7 @@ const WrDetailButtons = (props: Props) => {
           className={showCards ? 'active' : undefined}
           onClick={toggleCards}
         >
-          {cards.length} Cards <FileText size={16} />
+          {cards.length}&nbsp;<FileText size={16} />Cards
         </LeftButton>
         <RightButton
           className={currentAddNew === CurrentAddNewEnum.CARD ? 'active' : undefined}

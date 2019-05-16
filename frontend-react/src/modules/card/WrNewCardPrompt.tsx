@@ -10,10 +10,14 @@ import { AuxillaryButton } from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 
 const CenteredFlex = styled.div`
+  align-self: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.fg2}
+  color: ${({ theme }) => theme.colors.fg2};
+  background: ${({ theme }) => theme.colors.heterogBg};
+  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[3]};
+  border-radius: 4px;
 `;
 
 const StyledTextInput = styled(TextInput)`

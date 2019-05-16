@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Query, QueryResult } from 'react-apollo';
@@ -8,7 +8,9 @@ import { DECK_DETAIL_QUERY, DeckDetailData, DeckDetailVariables } from '../gql';
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
 import WrCardsList from '../../card/WrCardsList';
+import WrNewCardPrompt from '../../card/WrNewCardPrompt';
 import WrDetailHeader from './WrDetailHeader';
+import WrDetailPanel from './WrDetailPanel';
 import WrDetailButtons from './WrDetailButtons';
 import WrDeckDetailSH from './WrDeckDetailSH';
 
@@ -29,10 +31,16 @@ const CenteredP = styled.p`
 const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
   const { match } = props;
   const { deckId } = match.params;
+  const [showSettings, setShowSettings] = useState(false);
   const [showSubDecks, setShowSubDecks] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
-  const [showCards, setShowCards] = useState(false);
-  const [currentAddNew, setCurrentAddNew] = useState(CurrentAddNewEnum.NONE);
+  const [showCards, setShowCards] = useState(true);
+  const [currentAddNew, setCurrentAddNew] = useState(CurrentAddNewEnum.CARD);
+  const toggleSettings =
+    (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowSettings(!showSettings);
+  };
   const renderDeck = ({
     subscribeToMore, loading, error, data,
   }: QueryResult<DeckDetailData, DeckDetailVariables>) => {
@@ -53,7 +61,8 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
         </CenteredP>
       );
     }
-    const { promptLang, answerLang } = data.rwDeck;
+    const deck = data.rwDeck;
+    const { name, promptLang, answerLang } = deck;
     const templates = data.rwDeck.cards.filter((card) => card.template);
     const cards = data.rwDeck.cards.filter((card) => !card.template);
     return (
@@ -64,7 +73,8 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           // @ts-ignore
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
-        <WrDetailHeader deck={data.rwDeck} />
+        <WrDetailHeader name={name} toggleSettings={toggleSettings} />
+        {showSettings && <WrDetailPanel deck={deck} />}
         <WrDetailButtons
           showSubDecks={showSubDecks}
           setShowSubDecks={setShowSubDecks}
@@ -74,8 +84,9 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           setShowCards={setShowCards}
           currentAddNew={currentAddNew}
           setCurrentAddNew={setCurrentAddNew}
-          deck={data.rwDeck}
+          deck={deck}
         />
+        {(currentAddNew === CurrentAddNewEnum.CARD) && <WrNewCardPrompt deckId={deckId} />}
         {showTemplates && <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />}
         {showCards && <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />}
       </>

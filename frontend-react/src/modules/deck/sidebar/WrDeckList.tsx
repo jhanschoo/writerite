@@ -21,7 +21,7 @@ const FlexContainer = styled.div`
 `;
 
 const StyledItem = styled(Item)`
-  margin: 1px 0;
+  margin: 2px 0;
 `;
 
 const StyledTextInput = styled(MinimalTextInput)`

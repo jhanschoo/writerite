@@ -9,10 +9,10 @@ const TextInput = styled.input`
   padding: 0 ${({ theme }) => theme.space[2]};
   border: 1px solid ${({ theme }) => theme.colors.transparent};
   border-radius: 4px;
-  appearance: none;
+  background: ${({ theme }) => theme.colors.inputBg};
 
   :disabled {
-    background: ${({ theme }) => theme.colors.disabled}
+    background: ${({ theme }) => theme.colors.disabled};
   }
 
   :focus {
@@ -24,19 +24,19 @@ const TextInput = styled.input`
     border-color: ${({ theme }) => theme.colors.red};
     background: ${({ theme }) => theme.colors.washedRed};
     :active, :focus: {
-      border-color: ${({ theme }) => theme.colors.red},
-      background: ${({ theme }) => theme.colors.washedRed},
-      box-shadow: 0 0 1px 1px ${({ theme }) => theme.colors.lightRed},
-    },
+      border-color: ${({ theme }) => theme.colors.red};
+      background: ${({ theme }) => theme.colors.washedRed};
+      box-shadow: 0 0 1px 1px ${({ theme }) => theme.colors.lightRed};
+    }
   }
 
   &.valid {
     border-color: ${({ theme }) => theme.colors.green};
     :active, :focus: {
-      border-color: ${({ theme }) => theme.colors.green},
-      background: ${({ theme }) => theme.colors.lightGreen},
-      box-shadow: 0 0 1px 1px ${({ theme }) => theme.colors.lightGreen},
-    },
+      border-color: ${({ theme }) => theme.colors.green};
+      background: ${({ theme }) => theme.colors.lightGreen};
+      box-shadow: 0 0 1px 1px ${({ theme }) => theme.colors.lightGreen};
+    }
   }
 `;
 
@@ -48,10 +48,9 @@ export const MinimalTextInput = styled.input`
   padding: 0 ${({ theme }) => theme.space[2]};
   border: none;
   background: none;
-  appearance: none;
 
   :disabled {
-    background: ${({ theme }) => theme.colors.disabled}
+    background: ${({ theme }) => theme.colors.disabled};
   }
 
   :focus {
