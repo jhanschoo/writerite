@@ -8,19 +8,19 @@ import {
 } from '../Subscription/RwRoom.subscription';
 import { PRoom } from '../../../generated/prisma-client';
 import {
-  throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError, randomThreeWords,
+  throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError,
 } from '../../util';
 
 const rwRoomCreate: IFieldResolver<any, IRwContext, {
-  name?: string,
-}> = async (_parent, { name }, { prisma, pubsub, sub }): Promise<IBakedRwRoom | null> => {
+  deckId: string,
+}> = async (_parent, { deckId }, { prisma, pubsub, sub, redisClient }): Promise<IBakedRwRoom | null> => {
   try {
     if (!sub) {
       throw wrAuthenticationError();
     }
     const pRoom = await prisma.createPRoom({
-      name: (name && name.trim()) || randomThreeWords(),
       owner: { connect: { id: sub.id } },
+      deck: { connect: { id: deckId } },
     });
     wrGuardPrismaNullError(pRoom);
     const pRoomUpdate: ICreatedUpdate<PRoom> = {
@@ -28,47 +28,7 @@ const rwRoomCreate: IFieldResolver<any, IRwContext, {
       new: pRoom,
       oldId: null,
     };
-    pubsub.publish(rwRoomsTopic(), pRoomUpdate);
-    return pRoomToRwRoom(pRoom, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
-  }
-};
-
-// TODO: access control: owner or self only
-const rwRoomServeDeck: IFieldResolver<any, IRwContext, {
-  id: string, deckId?: string,
-}> = async (
-  _parent: any, { id, deckId }, { prisma, sub, pubsub, redisClient },
-): Promise<IBakedRwRoom | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    const pRooms = await prisma.pRooms({
-        where: {
-        id,
-        owner: { id: sub.id },
-      },
-    });
-    if (!pRooms || pRooms.length !== 1) {
-      throw wrNotFoundError('room');
-    }
-    const pRoom = await prisma.updatePRoom({
-      data: {
-        servingDeck: (deckId)
-          ? { connect: { id: deckId } }
-          : { disconnect: true },
-      },
-      where: { id },
-    });
-    wrGuardPrismaNullError(pRoom);
-    const pRoomUpdate: IUpdatedUpdate<PRoom> = {
-      mutation: MutationType.UPDATED,
-      new: pRoom,
-      oldId: null,
-    };
-    redisClient.publish('writerite:room:serving', `${id}:${deckId}`);
+    redisClient.publish('writerite:room:serving', `${pRoom.id}:${deckId}`);
     pubsub.publish(rwRoomsTopic(), pRoomUpdate);
     return pRoomToRwRoom(pRoom, prisma);
   } catch (e) {
@@ -119,5 +79,5 @@ const rwRoomAddOccupant: IFieldResolver<any, IRwContext, {
 };
 
 export const rwRoomMutation = {
-  rwRoomCreate, rwRoomServeDeck, rwRoomAddOccupant,
+  rwRoomCreate, rwRoomAddOccupant,
 };

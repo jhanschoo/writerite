@@ -48,11 +48,9 @@ type PDeck {
 
 type PRoom {
   id: ID! @id
-  name: String!
   owner: PUser! @relation(link: INLINE name: "PUserOwningPRooms")
   occupants: [PUser!]! @relation(name: "PUsersOccupyingPRooms")
-  servingDeck: PDeck @relation(link: INLINE)
-  # messages: [PRoomMessage!]!
+  deck: PDeck @relation(link: INLINE)
   messages: [PRoomMessage!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

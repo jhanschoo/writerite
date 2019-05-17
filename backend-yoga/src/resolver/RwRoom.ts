@@ -11,7 +11,7 @@ export interface IRwRoom {
   id: ResTo<string>;
   owner: ResTo<IRwUser>;
   occupants: ResTo<IRwUser[]>;
-  servingDeck: ResTo<IRwDeck | null>;
+  deck: ResTo<IRwDeck | null>;
   messages: ResTo<IRwRoomMessage[]>;
 }
 
@@ -20,23 +20,21 @@ export const RwRoom = {
   id: fieldGetter('id'),
   owner: fieldGetter('owner'),
   occupants: fieldGetter('occupants'),
-  servingDeck: fieldGetter('servingDeck'),
+  deck: fieldGetter('deck'),
   messages: fieldGetter('messages'),
 };
 
 export interface IBakedRwRoom extends IRwRoom {
   id: string;
-  name: string;
   owner: AFunResTo<IBakedRwUser>;
   occupants: AFunResTo<IBakedRwUser[]>;
-  servingDeck: AFunResTo<IBakedRwDeck | null>;
+  deck: AFunResTo<IBakedRwDeck | null>;
   messages: AFunResTo<IBakedRwRoomMessage[]>;
 }
 
 export function pRoomToRwRoom(pRoom: PRoom, prisma: Prisma): IBakedRwRoom {
   return {
     id: pRoom.id,
-    name: pRoom.name,
     owner: async () => pUserToRwUser(
       wrGuardPrismaNullError(await prisma.pRoom({ id: pRoom.id }).owner()),
       prisma,
@@ -44,8 +42,8 @@ export function pRoomToRwRoom(pRoom: PRoom, prisma: Prisma): IBakedRwRoom {
     occupants: async () => wrGuardPrismaNullError<PUser[]>(
       await prisma.pRoom({ id: pRoom.id }).occupants(),
     ).map((pUser) => pUserToRwUser(pUser, prisma)),
-    servingDeck: async () => {
-      const pDeck = await prisma.pRoom({ id: pRoom.id }).servingDeck();
+    deck: async () => {
+      const pDeck = await prisma.pRoom({ id: pRoom.id }).deck();
       return pDeck ? pDeckToRwDeck(pDeck, prisma) : null;
     },
     messages: async () => wrGuardPrismaNullError<PRoomMessage[]>(
