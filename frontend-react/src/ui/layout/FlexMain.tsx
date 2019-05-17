@@ -5,7 +5,7 @@ const FlexMain = styled.main`
   align-items: stretch;
   overflow-y: auto;
 
-  padding: ${({ theme }) => theme.space[3]};
+  padding: 0 ${({ theme }) => theme.space[3]};
   display: flex;
   flex-direction: column;
 

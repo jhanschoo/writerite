@@ -13,7 +13,6 @@ const WrDeckView = (props: RouteComponentProps) => {
   return (
     <>
       <WrNavBar />
-      <WrRoomSidebar />
       <Switch>
         {/* <Route path={`${match.url}/search`} component={WrFindRoom} /> */}
         <Route path={`${match.url}/search`} component={WrRoomDetail} />
