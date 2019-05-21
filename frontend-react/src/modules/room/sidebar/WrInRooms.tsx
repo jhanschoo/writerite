@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { OWN_DECKS_QUERY, OwnDecksData, OwnDecksVariables } from './gql';
+import { IN_ROOMS_QUERY, InRoomsData, InRoomsVariables } from '../gql';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -10,8 +10,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import WrOwnDecksSH from './WrOwnDecksSH';
-import WrDeckList from './WrDeckList';
+import WrRoomList from './WrRoomList';
 
 const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}
@@ -19,7 +18,7 @@ const PaddedItem = styled(Item)`
 
 const renderList = ({
   subscribeToMore, loading, error, data,
-}: QueryResult<OwnDecksData, OwnDecksVariables>) => {
+}: QueryResult<InRoomsData, InRoomsVariables>) => {
   if (error) {
     return null;
   }
@@ -30,34 +29,33 @@ const renderList = ({
       </List>
     );
   }
-  if (!data || data.rwOwnDecks === undefined || !Array.isArray(data.rwOwnDecks)) {
+  if (!data || data.rwInRooms === undefined || !Array.isArray(data.rwInRooms)) {
     return (
       <List>
-        <PaddedItem>Error fetching decks!</PaddedItem>
+        <PaddedItem>Error fetching rooms!</PaddedItem>
       </List>
     );
   }
-  if (data.rwOwnDecks.length === 0) {
+  if (data.rwInRooms.length === 0) {
     return (
       <List>
-        <PaddedItem>You have no decks</PaddedItem>
+        <PaddedItem>You are not in any rooms.</PaddedItem>
       </List>
     );
   }
   return (
     <>
-      <WrOwnDecksSH subscribeToMore={subscribeToMore} />
-      <WrDeckList decks={data.rwOwnDecks} />
+      <WrRoomList rooms={data.rwInRooms} />
     </>
   );
 };
 
-const WrOwnDecks = () => {
+const WrInRooms = () => {
   return (
     <FlexSection>
-      <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
-      <Query<OwnDecksData, OwnDecksVariables>
-        query={OWN_DECKS_QUERY}
+      <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
+      <Query<InRoomsData, InRoomsVariables>
+        query={IN_ROOMS_QUERY}
         onError={printApolloError}
       >
       {renderList}
@@ -66,4 +64,4 @@ const WrOwnDecks = () => {
   );
 };
 
-export default WrOwnDecks;
+export default WrInRooms;

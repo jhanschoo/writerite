@@ -20,6 +20,9 @@ The following environment variables may be set:
 
 ## Notes
 
+* TODO: implement authorization-based visibility
+* Move key generation to redis
+
 ### Web server -- bot communication
 
 * Messages sent from web server to room bot due to user input

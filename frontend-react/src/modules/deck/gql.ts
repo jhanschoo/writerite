@@ -10,6 +10,11 @@ query Deck($deckId: ID!) {
     id
     name
     nameLang
+    owner {
+      id
+      email
+      roles
+    }
   }
 }
 `;
@@ -30,6 +35,11 @@ query Deck($deckId: ID!) {
     id
     name
     nameLang
+    owner {
+      id
+      email
+      roles
+    }
     promptLang
     answerLang
     cards {
@@ -70,8 +80,11 @@ mutation DeckCreate(
     id
     name
     nameLang
-    promptLang
-    answerLang
+    owner {
+      id
+      email
+      roles
+    }
   }
 }
 `;
@@ -107,8 +120,11 @@ mutation DeckEdit(
     id
     name
     nameLang
-    promptLang
-    answerLang
+    owner {
+      id
+      email
+      roles
+    }
   }
 }
 `;
@@ -151,6 +167,11 @@ subscription DeckUpdates($id: ID!) {
       id
       name
       nameLang
+      owner {
+        id
+        email
+        roles
+      }
     }
     oldId
   }

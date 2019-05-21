@@ -16,7 +16,8 @@ const rwRoom: IFieldResolver<any, IRwContext, { id: string }> = async (
   }
 };
 
-const rwRooms: IFieldResolver<any, IRwContext, {}> = async (
+// TODO: restrict retrieved rooms to only owned rooms or member of rooms
+const rwInRooms: IFieldResolver<any, IRwContext, {}> = async (
   _parent, _args, { prisma },
 ): Promise<IBakedRwRoom[] | null> => {
   try {
@@ -29,5 +30,5 @@ const rwRooms: IFieldResolver<any, IRwContext, {}> = async (
 };
 
 export const rwRoomQuery = {
-  rwRoom, rwRooms,
+  rwRoom, rwInRooms,
 };

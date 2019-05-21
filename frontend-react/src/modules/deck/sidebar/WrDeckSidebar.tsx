@@ -17,6 +17,7 @@ const WrDeckSidebar = (props: Props) => {
       <WrNewDeck />
       <WrOwnDecks />
       <WrOthersDecks />
+      {props.children}
     </WrSidebarMenu>
   );
 };

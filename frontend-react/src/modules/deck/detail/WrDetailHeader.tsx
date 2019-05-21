@@ -1,5 +1,5 @@
 import React, { MouseEvent } from 'react';
-import { Settings } from 'react-feather';
+import { MessageCircle, Settings } from 'react-feather';
 
 import styled from 'styled-components';
 import { AuxillaryButton } from '../../../ui/form/Button';
@@ -37,14 +37,21 @@ const DeckHeading = styled.h2`
 interface Props {
   name: string;
   toggleSettings: (e: MouseEvent<HTMLButtonElement>) => void;
+  handleCreateRoom: (e: MouseEvent<HTMLButtonElement>) => void;
 }
 
 const WrDetailHeader = (props: Props) => {
-  const { name, toggleSettings } = props;
+  const { name, handleCreateRoom, toggleSettings } = props;
   return (
     <DeckHeader>
       <DeckHeading>
         {name}
+        <StyledAuxillaryButton
+          className="auxillary"
+          onClick={handleCreateRoom}
+        >
+          <MessageCircle size={16} />
+        </StyledAuxillaryButton>
         <StyledAuxillaryButton
           className="auxillary"
           onClick={toggleSettings}

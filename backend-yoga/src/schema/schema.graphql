@@ -13,7 +13,7 @@ type Query {
   rwCardsOfDeck(deckId: ID!): [RwCard!]
   # RwRoom
   rwRoom(id: ID!): RwRoom
-  rwRooms: [RwRoom!]
+  rwInRooms: [RwRoom!]
   # RwRoomMessage
   rwRoomMessage(id: ID!): RwRoomMessage
   rwRoomMessagesOfRoom(roomId: ID!): [RwRoomMessage!]
@@ -88,6 +88,10 @@ type Subscription {
   rwRoomMessagesUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
 }
 
+enum RwMessageContentType {
+  TEXT
+}
+
 enum RwMutationType {
   CREATED
   UPDATED
@@ -157,6 +161,7 @@ type RwRoom {
 type RwRoomMessage {
   id: ID!
   content: String!
+  contentType: RwMessageContentType!
   sender: RwUser
 }
 

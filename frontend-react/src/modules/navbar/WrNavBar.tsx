@@ -3,7 +3,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
 import { createSignout, SigninAction } from '../signin/actions';
-import { CurrentUser } from '../signin/types';
+import { WrUser } from '../signin/types';
 
 import { restartWsConnection } from '../../apolloClient';
 
@@ -66,7 +66,7 @@ interface DispatchProps {
 }
 
 interface StateProps {
-  user: CurrentUser | null;
+  user: WrUser | null;
 }
 
 type Props = StateProps & DispatchProps;

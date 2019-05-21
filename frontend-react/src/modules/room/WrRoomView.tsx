@@ -4,7 +4,6 @@ import {
 } from 'react-router';
 
 import WrNavBar from '../navbar/WrNavBar';
-import WrRoomSidebar from './sidebar/WrRoomSidebar';
 import WrFindRoom from './search/WrFindRoom';
 import WrRoomDetail from './detail/WrRoomDetail';
 
@@ -15,8 +14,8 @@ const WrDeckView = (props: RouteComponentProps) => {
       <WrNavBar />
       <Switch>
         {/* <Route path={`${match.url}/search`} component={WrFindRoom} /> */}
-        <Route path={`${match.url}/search`} component={WrRoomDetail} />
-        <Route path={`${match.url}/:deckId`} component={WrRoomDetail} />
+        <Route path={`${match.url}/search`} component={WrFindRoom} />
+        <Route path={`${match.url}/:roomId`} component={WrRoomDetail} />
         <Redirect to={`${match.url}/search`} />
       </Switch>
     </>

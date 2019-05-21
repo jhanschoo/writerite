@@ -1,9 +1,10 @@
 import React, { useState, MouseEvent } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { Query, QueryResult } from 'react-apollo';
+import { Query, QueryResult, Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 import { DECK_DETAIL_QUERY, DeckDetailData, DeckDetailVariables } from '../gql';
+import { ROOM_CREATE_MUTATION, RoomCreateData, RoomCreateVariables } from '../../room/gql';
 
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
@@ -26,7 +27,7 @@ const CenteredP = styled.p`
 `;
 
 const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
-  const { match } = props;
+  const { history, match } = props;
   const { deckId } = match.params;
   const [showSettings, setShowSettings] = useState(false);
   const [showSubDecks, setShowSubDecks] = useState(false);
@@ -62,6 +63,30 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
     const { name, promptLang, answerLang } = deck;
     const templates = data.rwDeck.cards.filter((card) => card.template);
     const cards = data.rwDeck.cards.filter((card) => !card.template);
+    const renderHeader = (
+      mutate: MutationFn<RoomCreateData, RoomCreateVariables>,
+      { loading: createRoomLoading }: MutationResult<RoomCreateData>,
+    ) => {
+      const handleCreateRoom = (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        mutate({
+          variables: { deckId: deck.id },
+        });
+      };
+      return (
+        <WrDetailHeader
+          name={name}
+          toggleSettings={toggleSettings}
+          handleCreateRoom={handleCreateRoom}
+        />
+      );
+    };
+    const handleCompletedCreateRoom = (roomCreateData: RoomCreateData) => {
+      if (roomCreateData === null || roomCreateData.rwRoomCreate === null) {
+        return;
+      }
+      history.push(`/room/${roomCreateData.rwRoomCreate.id}`);
+    };
     return (
       <>
         {
@@ -70,7 +95,13 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
           // @ts-ignore
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
-        <WrDetailHeader name={name} toggleSettings={toggleSettings} />
+        <Mutation<RoomCreateData, RoomCreateVariables>
+          mutation={ROOM_CREATE_MUTATION}
+          onError={printApolloError}
+          onCompleted={handleCompletedCreateRoom}
+        >
+          {renderHeader}
+        </Mutation>
         {showSettings && <WrDetailPanel deck={deck} />}
         <WrDetailButtons
           showSubDecks={showSubDecks}

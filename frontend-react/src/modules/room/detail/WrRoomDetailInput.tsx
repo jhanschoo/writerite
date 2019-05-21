@@ -1,11 +1,19 @@
-import React from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { Send } from 'react-feather';
+
+import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { printApolloError } from '../../../util';
+import { ROOM_MESSAGE_CREATE_MUTATION, RoomMessageCreateVariables, RoomMessageCreateData } from '../gql';
 
 import styled from 'styled-components';
 import TextInput from '../../../ui/form/TextInput';
 import { BorderlessButton } from '../../../ui/form/Button';
 
-const InputBox = styled.div`
+interface Props {
+  roomId: string;
+}
+
+const InputBox = styled.form`
   display: flex;
   padding: ${({ theme }) => theme.space[2]};
   align-items: center;
@@ -20,14 +28,42 @@ const StyledButton = styled(BorderlessButton)`
   margin: ${({ theme }) => theme.space[1]};
 `;
 
-const WrRoomDetailInput = () => {
+const WrRoomDetailInput = (props: Props) => {
+  const { roomId } = props;
+  const [contentInput, setContentInput] = useState('');
+  const renderInputBox = (
+    mutate: MutationFn<RoomMessageCreateData, RoomMessageCreateVariables>,
+    { loading }: MutationResult<RoomMessageCreateData>,
+  ) => {
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      mutate({
+        variables: {
+          roomId,
+          content: contentInput,
+        },
+      });
+    };
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+      e.preventDefault();
+      setContentInput(e.target.value);
+    };
+    return (
+      <InputBox onSubmit={handleSubmit}>
+        <StyledTextInput type="text" value={contentInput} onChange={handleChange} />
+        <StyledButton type="submit">
+          Send&nbsp;<Send size={16} />
+        </StyledButton>
+      </InputBox>
+    );
+  };
   return (
-    <InputBox>
-      <StyledTextInput type="text" />
-      <StyledButton>
-        Send&nbsp;<Send size={16} />
-      </StyledButton>
-    </InputBox>
+    <Mutation<RoomMessageCreateData, RoomMessageCreateVariables>
+      mutation={ROOM_MESSAGE_CREATE_MUTATION}
+      onError={printApolloError}
+    >
+      {renderInputBox}
+    </Mutation>
   );
 };
 
