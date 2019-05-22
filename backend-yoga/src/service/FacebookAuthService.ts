@@ -2,7 +2,7 @@ import '../assertConfig';
 import fetch from 'node-fetch';
 
 import { AbstractAuthService, ISigninOptions } from './AbstractAuthService';
-import { ApolloError } from 'apollo-server';
+import { ApolloError } from 'apollo-server-express';
 import { wrGuardPrismaNullError } from '../util';
 
 const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;

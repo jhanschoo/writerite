@@ -2,7 +2,7 @@ import '../assertConfig';
 import { OAuth2Client } from 'google-auth-library';
 
 import { AbstractAuthService, ISigninOptions } from './AbstractAuthService';
-import { ApolloError } from 'apollo-server';
+import { ApolloError } from 'apollo-server-express';
 import { wrGuardPrismaNullError } from '../util';
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;

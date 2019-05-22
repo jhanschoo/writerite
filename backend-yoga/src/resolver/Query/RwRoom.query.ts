@@ -3,7 +3,7 @@ import { IFieldResolver } from 'graphql-tools';
 import { IRwContext } from '../../types';
 
 import { IBakedRwRoom, pRoomToRwRoom } from '../RwRoom';
-import { throwIfDevel, wrGuardPrismaNullError } from '../../util';
+import { throwIfDevel, wrGuardPrismaNullError, wrAuthenticationError } from '../../util';
 
 const rwRoom: IFieldResolver<any, IRwContext, { id: string }> = async (
   _parent, { id }, { prisma },
@@ -16,12 +16,26 @@ const rwRoom: IFieldResolver<any, IRwContext, { id: string }> = async (
   }
 };
 
-// TODO: restrict retrieved rooms to only owned rooms or member of rooms
 const rwInRooms: IFieldResolver<any, IRwContext, {}> = async (
-  _parent, _args, { prisma },
+  _parent, _args, { prisma, sub },
 ): Promise<IBakedRwRoom[] | null> => {
   try {
-    const pRooms = await prisma.pRooms();
+    if (!sub) {
+      throw wrAuthenticationError();
+    }
+    const pRooms = await prisma.pRooms({
+      where: {
+        OR: [{
+          owner: {
+            id: sub.id,
+          },
+        }, {
+          occupants_some: {
+            id: sub.id,
+          },
+        }],
+      },
+    });
     wrGuardPrismaNullError(pRooms);
     return pRooms.map((pRoom) => pRoomToRwRoom(pRoom, prisma));
   } catch (e) {

@@ -8,7 +8,6 @@ import { IRwContext } from '../src/types';
 
 import { rwDeckQuery } from '../src/resolver/Query/RwDeck.query';
 import { rwDeckMutation } from '../src/resolver/Mutation/RwDeck.mutation';
-import { ContextParameters } from 'graphql-yoga/dist/types';
 
 const { rwDeck, rwOwnDecks } = rwDeckQuery;
 const { rwDeckCreate, rwDeckEdit, rwDeckDelete } = rwDeckMutation;

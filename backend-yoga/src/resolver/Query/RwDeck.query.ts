@@ -17,9 +17,11 @@ const rwDeck: IFieldResolver<any, IRwContext, { id: string }> = async (
 };
 
 const rwOwnDecks: IFieldResolver<any, IRwContext, {}> = async (
-  _parent, _args, { prisma, sub },
+  _parent, _args, context,
 ): Promise<IBakedRwDeck[] | null> => {
   try {
+    console.log(context);
+    const { prisma, sub } = context;
     if (!sub) {
       throw wrAuthenticationError();
     }

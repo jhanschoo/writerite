@@ -1,8 +1,7 @@
-import { Context } from 'graphql-yoga/dist/types';
 import bcrypt from 'bcrypt';
 import KJUR from 'jsrsasign';
 import randomWords from 'random-words';
-import { AuthenticationError, ApolloError } from 'apollo-server';
+import { AuthenticationError, ApolloError } from 'apollo-server-express';
 
 import { ResTo, ICurrentUser, Roles, IUpdate, MutationType } from './types';
 import { Prisma, prisma } from '../generated/prisma-client';
@@ -138,13 +137,13 @@ export function generateJWT(sub: any, persist = false) {
   return jwt;
 }
 
-export function getClaims(ctx: Context): { sub: ICurrentUser } | null {
+export function getClaims(ctx: any): ICurrentUser | undefined {
   if (ctx.sub) {
-    return { sub: ctx.sub };
+    return ctx.sub;
   }
   let authorization = null;
-  if (ctx.request && ctx.request.get) {
-    authorization = ctx.request.get('Authorization');
+  if (ctx.req && ctx.req.get) {
+    authorization = ctx.req.get('Authorization');
   } else if (ctx.connection && ctx.connection.context) {
     if (ctx.connection.context.Authorization) {
       authorization = ctx.connection.context.Authorization;
@@ -153,7 +152,7 @@ export function getClaims(ctx: Context): { sub: ICurrentUser } | null {
     }
   }
   if (!authorization) {
-    return null;
+    return;
   }
   const jwt = authorization.slice(7);
   if (jwt) {
@@ -161,17 +160,15 @@ export function getClaims(ctx: Context): { sub: ICurrentUser } | null {
       if (KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, ['ES256'])) {
         const sub = KJUR.jws.JWS.parse(jwt)
           .payloadObj.sub as ICurrentUser;
-        ctx.sub = sub;
-        return { sub };
+        return sub;
       }
     } catch (e) {
-      ctx.sub = null;
-      return null;
+      return;
     }
   }
-  return null;
+  return;
 }
 
-export function getToken(ctx: Context) {
+export function getToken(ctx: any) {
   return ctx.request.header('Authorization').slice(7);
 }

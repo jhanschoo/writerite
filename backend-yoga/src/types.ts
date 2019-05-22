@@ -1,7 +1,6 @@
 import { Redis } from 'ioredis';
-import { PubSubEngine } from 'apollo-server';
+import { PubSubEngine } from 'apollo-server-express';
 
-import { ContextParameters } from 'graphql-yoga/dist/types';
 import { Prisma } from '../generated/prisma-client';
 
 export type AFunResTo<T> = ((parent: any) => Promise<T>);
@@ -13,7 +12,6 @@ export type ResTo<T> =
   | T;
 
 export interface IRwContext {
-  req: ContextParameters;
   sub?: ICurrentUser;
   prisma: Prisma;
   pubsub: PubSubEngine;

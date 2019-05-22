@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   backend-yoga:
-    image: jhanschoo/writerite-backend-yoga:1.3.4-dev24
+    image: jhanschoo/writerite-backend-yoga:1.3.4-dev28
     restart: always
     ports:
       - '4000:4000'
@@ -22,7 +22,7 @@ services:
     ports:
       - '6379:6379'
   prisma:
-    image: prismagraphql/prisma:1.32
+    image: prismagraphql/prisma:1.33
     restart: always
     ports:
       - '4466:4466'

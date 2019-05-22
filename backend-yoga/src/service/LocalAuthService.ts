@@ -4,7 +4,7 @@ import FormData from 'form-data';
 
 import { comparePassword, hashPassword, wrGuardPrismaNullError } from '../util';
 import { AbstractAuthService, ISigninOptions } from './AbstractAuthService';
-import { ApolloError } from 'apollo-server';
+import { ApolloError } from 'apollo-server-express';
 
 const { RECAPTCHA_SECRET } = process.env;
 
