@@ -1,9 +1,9 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MergeInfo } from 'graphql-tools';
+import { MergeInfo } from 'apollo-server-koa';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 
-import { prisma, PRoom, PUser, PDeck } from '../generated/prisma-client';
+import { prisma, PRoom, SUser, PDeck } from '../generated/prisma-client';
 import { IRwContext, ICurrentUser } from '../src/types';
 
 import { rwRoomQuery } from '../src/resolver/Query/RwRoom.query';
@@ -29,8 +29,8 @@ const DECK_NAME = 'd1';
 const ROOM_NAME = 'r1';
 
 describe('RwRoom resolvers', async () => {
-  let USER: PUser;
-  let OTHER_USER: PUser;
+  let USER: SUser;
+  let OTHER_USER: SUser;
   let DECK: PDeck;
   let OTHER_DECK: PDeck;
   let ROOM: PRoom;

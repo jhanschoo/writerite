@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt';
 import KJUR from 'jsrsasign';
 import randomWords from 'random-words';
-import { AuthenticationError, ApolloError } from 'apollo-server-express';
+import { AuthenticationError, ApolloError } from 'apollo-server-koa';
 
-import { ResTo, ICurrentUser, Roles, IUpdate, MutationType } from './types';
+import { ICurrentUser, Roles, IUpdate, MutationType } from './types';
 import { Prisma, prisma } from '../generated/prisma-client';
 
 const SALT_ROUNDS = 10;
@@ -14,15 +14,15 @@ export const randomThreeWords = () => {
   })[0] as string;
 };
 
-export const wrAuthenticationError = () => {
+export const rwAuthenticationError = () => {
   return new AuthenticationError('writerite: valid JWT not present');
 };
 
-export const wrNotFoundError = (obj?: string) => {
+export const rwNotFoundError = (obj?: string) => {
   return new ApolloError(`writerite: no ${obj || 'object'} was found that the client has access to`);
 };
 
-export const wrGuardPrismaNullError = <T>(obj: T | null) => {
+export const rwGuardPrismaNullError = <T>(obj: T | null) => {
   if (obj === null) {
     throw new ApolloError('writerite: prisma operation not successful');
   }
@@ -36,27 +36,21 @@ export const throwIfDevel = (e: Error) => {
   return null;
 };
 
-export function fieldGetter<T>(field: string): ResTo<T> {
-  return (parent: any) => {
-    return parent[field] instanceof Function ? parent[field]() : parent[field];
-  };
-}
-
 export function updateMapFactory<T, U>(
-  baker: (pObj: T, prisma: Prisma) => U,
+  rwFromS: (prisma: Prisma, pObj: T) => U,
 ): (pObjPayload: IUpdate<T>) => IUpdate<U> {
   return (pObjPayload: IUpdate<T>) => {
     switch (pObjPayload.mutation) {
       case MutationType.CREATED:
         return {
           mutation: MutationType.CREATED,
-          new: baker(pObjPayload.new, prisma),
+          new: rwFromS(prisma, pObjPayload.new),
           oldId: null,
         };
       case MutationType.UPDATED:
         return {
           mutation: MutationType.UPDATED,
-          new: baker(pObjPayload.new, prisma),
+          new: rwFromS(prisma, pObjPayload.new),
           oldId: null,
         };
       case MutationType.DELETED:
@@ -67,18 +61,6 @@ export function updateMapFactory<T, U>(
         };
     }
   };
-}
-
-export async function resolveField<T>(
-  f: ResTo<T>, parent = null,
-): Promise<T> {
-  return new Promise<T>((res, rej) => {
-    if (f instanceof Function) {
-      res(f(parent));
-    } else {
-      res(f);
-    }
-  });
 }
 
 export function isCurrentUser(o: any): o is ICurrentUser {
@@ -138,12 +120,9 @@ export function generateJWT(sub: any, persist = false) {
 }
 
 export function getClaims(ctx: any): ICurrentUser | undefined {
-  if (ctx.sub) {
-    return ctx.sub;
-  }
   let authorization = null;
-  if (ctx.req && ctx.req.get) {
-    authorization = ctx.req.get('Authorization');
+  if (ctx.ctx && ctx.ctx.get) {
+    authorization = ctx.ctx.get('Authorization');
   } else if (ctx.connection && ctx.connection.context) {
     if (ctx.connection.context.Authorization) {
       authorization = ctx.connection.context.Authorization;

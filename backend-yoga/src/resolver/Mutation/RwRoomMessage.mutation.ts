@@ -1,56 +1,39 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { MutationType, IRwContext, Roles, ICreatedUpdate } from '../../types';
-
-import { IBakedRwRoomMessage, pRoomMessageToRwRoomMessage } from '../RwRoomMessage';
+import { MutationType, IContext, Roles, ICreatedUpdate } from '../../types';
 import {
   rwRoomMessagesTopicFromRwRoom,
 } from '../Subscription/RwRoomMessage.subscription';
-import { PRoomMessage } from '../../../generated/prisma-client';
-import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError } from '../../util';
+import { rwAuthenticationError } from '../../util';
+import { ISRoomMessage, IRwRoomMessage } from '../../model/RwRoomMessage';
 
-const rwRoomMessageCreate: IFieldResolver<any, IRwContext, {
+const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   roomId: string, content: string,
 }> = async (
-  _parent, { roomId, content }, { sub, prisma, pubsub, redisClient },
-): Promise<IBakedRwRoomMessage | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    const isAcolyte = sub.roles.includes(Roles.acolyte);
-    if (!isAcolyte && (await prisma.pRooms({
-        where: {
-          id: roomId,
-          OR: [{
-            occupants_some: { id: sub.id },
-          }, {
-            owner: { id: sub.id },
-          }],
-        },
-      }) || []).length !== 1
-    ) {
-      throw wrNotFoundError('room');
-    }
-    const pRoomMessage = await prisma.createPRoomMessage({
-      content,
-      room: { connect: { id: roomId } },
-      sender: (isAcolyte) ? undefined : { connect: { id: sub.id } },
-    });
-    wrGuardPrismaNullError(pRoomMessage);
-    const pRoomMessageUpdate: ICreatedUpdate<PRoomMessage> = {
-      mutation: MutationType.CREATED,
-      new: pRoomMessage,
-      oldId: null,
-    };
-    pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), pRoomMessageUpdate);
-    if (!isAcolyte) {
-      redisClient.publish(`writerite:room::${roomId}`, `${sub.id}:${content}`);
-    }
-    return pRoomMessageToRwRoomMessage(pRoomMessage, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
+  _parent, { roomId, content }, { models, sub, prisma, pubsub, redisClient },
+): Promise<IRwRoomMessage | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
   }
+  const isAcolyte = sub.roles.includes(Roles.acolyte);
+  if (!isAcolyte && !await models.RwRoom.hasOccupant(prisma, {
+    id: roomId, occupantId: sub.id,
+  })) {
+    return null;
+  }
+  const sRoomMessage = await models.SRoomMessage.create(prisma, {
+    roomId, senderId: sub.id, content,
+  });
+  const sRoomMessageUpdate: ICreatedUpdate<ISRoomMessage> = {
+    mutation: MutationType.CREATED,
+    new: sRoomMessage,
+    oldId: null,
+  };
+  pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
+  if (!isAcolyte) {
+    redisClient.publish(`writerite:room::${roomId}`, `${sub.id}:${content}`);
+  }
+  return models.RwRoomMessage.fromSRoomMessage(prisma, sRoomMessage);
 };
 
 export const rwRoomMessageMutation = {

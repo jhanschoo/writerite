@@ -1,37 +1,22 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { Roles, IRwContext } from '../../types';
+import { Roles, IContext } from '../../types';
+import { IRwUser } from '../../model/RwUser';
+import { rwAuthenticationError } from '../../util';
 
-import { IRwUser, pUserToRwUser } from '../RwUser';
-import { wrAuthenticationError, throwIfDevel, wrNotFoundError, wrGuardPrismaNullError } from '../../util';
-
-const rwUsers: IFieldResolver<any, IRwContext, {}> = async (
-  _parent, _args, { prisma, sub },
+const rwUsers: IFieldResolver<any, IContext, any> = async (
+  _parent, _args, { models, prisma, sub },
 ): Promise<IRwUser[] | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    if (!sub.roles.includes(Roles.admin)) {
-      throw wrNotFoundError('users');
-    }
-    const pUsers = await prisma.pUsers();
-    wrGuardPrismaNullError(pUsers);
-    return pUsers.map((pUser) => pUserToRwUser(pUser, prisma));
-  } catch (e) {
-    return throwIfDevel(e);
+  if (!sub || !sub.roles.includes(Roles.admin)) {
+    throw rwAuthenticationError();
   }
+  return models.RwUser.getAll(prisma);
 };
 
-const rwUser: IFieldResolver<any, IRwContext, { id: string }> = async (
-  _parent, { id }, { prisma },
+const rwUser: IFieldResolver<any, IContext, { id: string }> = async (
+  _parent, { id }, { models, prisma },
 ): Promise<IRwUser | null> => {
-  try {
-    const pUser = wrGuardPrismaNullError(await prisma.pUser({ id }));
-    return pUserToRwUser(pUser, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
-  }
+  return models.RwUser.get(prisma, id);
 };
 
 export const rwUserQuery = {

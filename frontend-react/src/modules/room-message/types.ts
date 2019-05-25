@@ -6,7 +6,7 @@ export enum ContentTypeEnum {
 
 export interface WrRoomMessage {
   readonly id: string;
-  readonly sender: WrUser;
+  readonly sender?: WrUser;
   readonly content: string;
   readonly contentType: ContentTypeEnum;
 }

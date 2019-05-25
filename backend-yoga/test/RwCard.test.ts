@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MergeInfo } from 'graphql-tools';
+import { MergeInfo } from 'apollo-server-koa';
 import Redis from 'ioredis';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 

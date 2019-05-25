@@ -1,4 +1,4 @@
-import { IResolvers } from 'graphql-tools';
+import { IResolvers, IResolverObject } from 'apollo-server-koa';
 
 import Query from './Query';
 import Mutation from './Mutation';
@@ -8,8 +8,9 @@ import { RwDeck } from './RwDeck';
 import { RwRoom } from './RwRoom';
 import { RwRoomMessage } from './RwRoomMessage';
 import { RwUser } from './RwUser';
+import { IContext } from '../types';
 
-const resolvers: IResolvers = {
+const resolvers: IResolverObject<any, IContext, any> = {
   Query,
   Mutation,
   Subscription,
@@ -18,6 +19,6 @@ const resolvers: IResolvers = {
   RwRoom,
   RwRoomMessage,
   RwUser,
-} as IResolvers;
+};
 
-export default resolvers;
+export default (resolvers as IResolvers<any, IContext>);

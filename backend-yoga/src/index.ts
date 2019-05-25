@@ -5,15 +5,15 @@ import http from 'http';
 
 import Redis from 'ioredis';
 
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
+import Koa from 'koa';
+import helmet from 'koa-helmet';
 import { importSchema } from 'graphql-import';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer, gql } from 'apollo-server-koa';
 
 import { prisma } from '../generated/prisma-client';
+import models from './model';
 import resolvers from './resolver';
 
 import { getClaims, generateJWT } from './util';
@@ -65,34 +65,34 @@ writeJWT();
 
 // Initialize express
 
-const app = express();
+const app = new Koa();
 
 app.use(helmet());
-app.use(cors());
 
 const typeDefs = gql(importSchema('src/schema/schema.graphql'));
 
 const apollo = new ApolloServer({
   typeDefs,
   resolvers,
-  context: (req) => {
-    const sub = getClaims(req);
-    const ctx = {
-      sub,
+  context: (ctx) => {
+    return {
+      sub: getClaims(ctx),
+      models,
       prisma,
       pubsub,
       redisClient,
     };
-    return ctx;
   },
-  mocks: NODE_ENV === 'testing',
+  mocks: NODE_ENV === 'frontend-testing',
   debug: NODE_ENV !== 'production',
 });
 
 apollo.applyMiddleware({
   app,
   cors: {
-    origin: NODE_ENV === 'production' ? /https:\/\/writerite.site/ : /https:\/\/localhost:3000/,
+    origin: NODE_ENV === 'production'
+      ? 'https://writerite.site'
+      : 'https://localhost:3000',
     credentials: true,
   },
 });
@@ -101,8 +101,8 @@ const server = (CERT_FILE && KEY_FILE)
   ? https.createServer({
     cert: fs.readFileSync(CERT_FILE),
     key: fs.readFileSync(KEY_FILE),
-  }, app)
-  : http.createServer(app);
+  }, app.callback())
+  : http.createServer(app.callback());
 
 // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/33764
 // @ts-ignore

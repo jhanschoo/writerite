@@ -1,18 +1,18 @@
 import { Redis } from 'ioredis';
-import { PubSubEngine } from 'apollo-server-express';
+import { PubSubEngine } from 'apollo-server-koa';
 
 import { Prisma } from '../generated/prisma-client';
+import { IModels } from './model';
 
-export type AFunResTo<T> = ((parent: any) => Promise<T>);
-export type FunResTo<T> = ((parent: any) => T);
+export type AFunResTo<TReturn> = (() => Promise<TReturn>);
 
-export type ResTo<T> =
-  | AFunResTo<T>
-  | FunResTo<T>
-  | T;
+export interface IModel<T> {
+  [key: string]: (...args: any[]) => null | T | T[] | string | boolean | Promise<null | T | T[] | string | boolean>;
+}
 
-export interface IRwContext {
+export interface IContext {
   sub?: ICurrentUser;
+  models: IModels;
   prisma: Prisma;
   pubsub: PubSubEngine;
   redisClient: Redis;

@@ -37,12 +37,15 @@ padding: ${({ theme }) => theme.space[2]} 0;
 
 const WrRoomMessageItem = (props: Props) => {
   const { message } = props;
+  const header = message.sender ? (
+    <CommentHeader>
+      <CommentAuthor>{message.sender.email}</CommentAuthor>
+    </CommentHeader>
+  ) : undefined;
   return (
     <MessageItem>
       <TextContent>
-        <CommentHeader>
-          <CommentAuthor>{message.sender.email}</CommentAuthor>
-        </CommentHeader>
+        {header}
         <CommentText>
           {message.content}
         </CommentText>

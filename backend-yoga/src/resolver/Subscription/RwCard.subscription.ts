@@ -1,35 +1,30 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { IRwContext, IUpdate } from '../../types';
+import { IContext, IUpdate } from '../../types';
 
-import { pCardToRwCard } from '../RwCard';
-import { PCard } from '../../../generated/prisma-client';
-import { updateMapFactory, throwIfDevel, wrNotFoundError } from '../../util';
+import { ISCard, RwCard } from '../../model/RwCard';
+import { updateMapFactory } from '../../util';
 
 export function rwCardsTopicFromRwDeck(id: string) {
   return `card:deck:${id}`;
 }
 
-const rwCardsUpdatesOfDeckSubscribe: IFieldResolver<any, IRwContext, {
+const rwCardsUpdatesOfDeckSubscribe: IFieldResolver<any, IContext, {
   deckId: string,
 }> = async (
   _parent, { deckId }, { prisma, pubsub },
-): Promise<AsyncIterator<IUpdate<PCard>> | null> => {
-  try {
-    if (!await prisma.$exists.pDeck({ id: deckId })) {
-      throw wrNotFoundError('deck');
-    }
-    return pubsub.asyncIterator<IUpdate<PCard>>(
-      rwCardsTopicFromRwDeck(deckId),
-    );
-  } catch (e) {
-    return throwIfDevel(e);
+): Promise<AsyncIterator<IUpdate<ISCard>> | null> => {
+  if (!await prisma.$exists.pDeck({ id: deckId })) {
+    return null;
   }
+  return pubsub.asyncIterator<IUpdate<ISCard>>(
+    rwCardsTopicFromRwDeck(deckId),
+  );
 };
 
 export const rwCardSubscription = {
   rwCardsUpdatesOfDeck: {
-    resolve: updateMapFactory(pCardToRwCard),
+    resolve: updateMapFactory(RwCard.fromSCard),
     subscribe: rwCardsUpdatesOfDeckSubscribe,
   },
 };

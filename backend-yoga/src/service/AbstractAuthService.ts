@@ -1,9 +1,10 @@
 import { PUser, Prisma } from '../../generated/prisma-client';
 import { generateJWT } from '../util';
-import { pUserToRwUser } from '../resolver/RwUser';
 import { IRwAuthResponse } from '../resolver/authorization';
+import { IModels } from '../model';
 
 export interface ISigninOptions {
+  models: IModels;
   prisma: Prisma;
   email: string;
   token: string;
@@ -13,12 +14,11 @@ export interface ISigninOptions {
 
 export abstract class AbstractAuthService {
   protected static async authResponseFromUser(
-    pUser: PUser, { persist = false, prisma }: {
-      persist?: boolean,
-      prisma: Prisma,
+    pUser: PUser, { models, prisma, persist = false }: {
+      models: IModels, prisma: Prisma, persist?: boolean,
     },
   ): Promise<IRwAuthResponse> {
-    const user = pUserToRwUser(pUser, prisma);
+    const user = models.RwUser.fromPUser(prisma, pUser);
     return {
       token: generateJWT({
         id: pUser.id,
@@ -29,8 +29,6 @@ export abstract class AbstractAuthService {
     };
   }
 
-  public abstract async signin({
-    prisma, email, token, identifier, persist,
-  }: ISigninOptions): Promise<any>;
+  public abstract async signin(options: ISigninOptions): Promise<any>;
   protected abstract async verify(token: string): Promise<any>;
 }

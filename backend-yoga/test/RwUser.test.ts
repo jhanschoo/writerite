@@ -1,9 +1,9 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MergeInfo } from 'graphql-tools';
+import { MergeInfo } from 'apollo-server-koa';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 
-import { prisma, PUser } from '../generated/prisma-client';
+import { prisma, SUser } from '../generated/prisma-client';
 import { Roles, IRwContext } from '../src/types';
 
 import { rwUserQuery } from '../src/resolver/Query/RwUser.query';
@@ -20,8 +20,8 @@ const OTHER_EMAIL = 'def@xyz';
 const NEW_EMAIL = 'ghi@xyz';
 
 describe('RwUser resolvers', async () => {
-  let USER: PUser;
-  let OTHER_USER: PUser;
+  let USER: SUser;
+  let OTHER_USER: SUser;
   const commonBeforeEach = async () => {
     await prisma.deleteManyPUsers({});
     USER = await prisma.createPUser({ email: EMAIL });

@@ -1,36 +1,18 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { IRwContext } from '../../types';
+import { IContext } from '../../types';
+import { IRwRoomMessage } from '../../model/RwRoomMessage';
 
-import { IBakedRwRoomMessage, pRoomMessageToRwRoomMessage } from '../RwRoomMessage';
-import { throwIfDevel, wrGuardPrismaNullError } from '../../util';
-
-const rwRoomMessage: IFieldResolver<any, IRwContext, { id: string }> = async (
-  _parent, { id }, { prisma },
-): Promise<IBakedRwRoomMessage | null> => {
-  try {
-    const pRoomMessage = wrGuardPrismaNullError(await prisma.pRoomMessage({ id }));
-    return pRoomMessageToRwRoomMessage(pRoomMessage, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
-  }
+const rwRoomMessage: IFieldResolver<any, IContext, { id: string }> = async (
+  _parent, { id }, { models, prisma },
+): Promise<IRwRoomMessage | null> => {
+  return models.RwRoomMessage.get(prisma, id);
 };
 
-const rwRoomMessagesOfRoom: IFieldResolver<any, IRwContext, { roomId: string }> = async (
-  _parent, { roomId }, { prisma, sub },
-): Promise<IBakedRwRoomMessage[] | null> => {
-  try {
-    const pRoomMessages = await prisma.pRoomMessages({
-      where: {
-        room: { id: roomId },
-      },
-      orderBy: 'createdAt_ASC',
-    });
-    wrGuardPrismaNullError(pRoomMessages);
-    return pRoomMessages.map((pRoomMessage) => pRoomMessageToRwRoomMessage(pRoomMessage, prisma));
-  } catch (e) {
-    return throwIfDevel(e);
-  }
+const rwRoomMessagesOfRoom: IFieldResolver<any, IContext, { roomId: string }> = async (
+  _parent, { roomId }, { models, prisma },
+): Promise<IRwRoomMessage[] | null> => {
+  return models.RwRoomMessage.getFromRoomId(prisma, roomId);
 };
 
 export const rwRoomMessageQuery = {

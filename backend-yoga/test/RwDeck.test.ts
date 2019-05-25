@@ -1,9 +1,9 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { MergeInfo } from 'graphql-tools';
+import { MergeInfo } from 'apollo-server-koa';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 
-import { prisma, PDeck, PUser } from '../generated/prisma-client';
+import { prisma, PDeck, SUser } from '../generated/prisma-client';
 import { IRwContext } from '../src/types';
 
 import { rwDeckQuery } from '../src/resolver/Query/RwDeck.query';
@@ -26,8 +26,8 @@ const OTHER_NAME = 'otherDeck';
 const NEW_NAME = 'newDeck';
 
 describe('RwDeck resolvers', async () => {
-  let USER: PUser;
-  let OTHER_USER: PUser;
+  let USER: SUser;
+  let OTHER_USER: SUser;
   let DECK: PDeck;
   let OTHER_DECK: PDeck;
   const commonBeforeEach = async () => {

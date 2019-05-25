@@ -1,17 +1,14 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { IRwContext, MutationType, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from '../../types';
+import { IContext, MutationType, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from '../../types';
 
-import { pCardToRwCard, IBakedRwCard } from '../RwCard';
-import {
-  rwCardsTopicFromRwDeck,
-} from '../Subscription/RwCard.subscription';
-import { PCard } from '../../../generated/prisma-client';
-import { throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError } from '../../util';
+import { rwCardsTopicFromRwDeck } from '../Subscription/RwCard.subscription';
+import { rwAuthenticationError, rwNotFoundError } from '../../util';
+import { ISCard, IRwCard } from '../../model/RwCard';
 
 // Mutation resolvers
 
-const rwCardCreate: IFieldResolver<any, IRwContext, {
+const rwCardCreate: IFieldResolver<any, IContext, {
   deckId: string,
   prompt?: string,
   fullAnswer?: string,
@@ -19,38 +16,28 @@ const rwCardCreate: IFieldResolver<any, IRwContext, {
   template?: boolean,
 }> = async (
   _parent,
-  { deckId, prompt, fullAnswer, sortKey, template },
-  { prisma, sub, pubsub },
-): Promise<IBakedRwCard | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
-      throw wrNotFoundError('deck');
-    }
-    const pCard = await prisma.createPCard({
-      prompt: prompt || '',
-      fullAnswer: fullAnswer || '',
-      sortKey: sortKey || prompt || '',
-      deck: { connect: { id: deckId } },
-      editedAt: (new Date()).toISOString(),
-      template: template || false,
-    });
-    wrGuardPrismaNullError(pCard);
-    const pCardUpdate: ICreatedUpdate<PCard> = {
-      mutation: MutationType.CREATED,
-      new: pCard,
-      oldId: null,
-    };
-    pubsub.publish(rwCardsTopicFromRwDeck(deckId), pCardUpdate);
-    return pCardToRwCard(pCard, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
+  { deckId, ...params },
+  { models, prisma, sub, pubsub },
+): Promise<IRwCard | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
   }
+  if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
+    throw rwNotFoundError('deck');
+  }
+  const sCard = await models.SCard.create(prisma, {
+    ...params, deckId,
+  });
+  const sCardUpdate: ICreatedUpdate<ISCard> = {
+    mutation: MutationType.CREATED,
+    new: sCard,
+    oldId: null,
+  };
+  pubsub.publish(rwCardsTopicFromRwDeck(deckId), sCardUpdate);
+  return models.RwCard.fromSCard(prisma, sCard);
 };
 
-const rwCardsCreate: IFieldResolver<any, IRwContext, {
+const rwCardsCreate: IFieldResolver<any, IContext, {
   deckId: string,
   multiplicity: number,
   prompt?: string,
@@ -59,42 +46,30 @@ const rwCardsCreate: IFieldResolver<any, IRwContext, {
   template?: boolean,
 }> = async (
   _parent,
-  { deckId, prompt, fullAnswer, sortKey, template, multiplicity },
-  { prisma, sub, pubsub },
-): Promise<IBakedRwCard[] | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
-      throw wrNotFoundError('deck');
-    }
-    const rwCards = [];
-    for (let i = 0; i < multiplicity; ++i) {
-      const pCard = await prisma.createPCard({
-        prompt: prompt || '',
-        fullAnswer: fullAnswer || '',
-        sortKey: sortKey || prompt || '',
-        deck: { connect: { id: deckId } },
-        editedAt: (new Date()).toISOString(),
-        template: template || false,
-      });
-      wrGuardPrismaNullError(pCard);
-      const pCardUpdate: ICreatedUpdate<PCard> = {
-        mutation: MutationType.CREATED,
-        new: pCard,
-        oldId: null,
-      };
-      pubsub.publish(rwCardsTopicFromRwDeck(deckId), pCardUpdate);
-      rwCards.push(pCardToRwCard(pCard, prisma));
-    }
-    return rwCards;
-  } catch (e) {
-    return throwIfDevel(e);
+  { deckId, multiplicity, ...params },
+  { models, prisma, sub, pubsub },
+): Promise<IRwCard[] | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
   }
+  if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
+    throw rwNotFoundError('deck');
+  }
+  const sCards = await models.SCard.createMany(prisma, multiplicity, {
+    ...params, deckId,
+  });
+  sCards.forEach((sCard) => {
+    const sCardUpdate: ICreatedUpdate<ISCard> = {
+      mutation: MutationType.CREATED,
+      new: sCard,
+      oldId: null,
+    };
+    pubsub.publish(rwCardsTopicFromRwDeck(deckId), sCardUpdate);
+  });
+  return sCards.map((sCard) => models.RwCard.fromSCard(prisma, sCard));
 };
 
-const rwCardEdit: IFieldResolver<any, IRwContext, {
+const rwCardEdit: IFieldResolver<any, IContext, {
   id: string,
   prompt?: string,
   fullAnswer?: string,
@@ -102,71 +77,54 @@ const rwCardEdit: IFieldResolver<any, IRwContext, {
   template?: boolean,
 }> = async (
   _parent,
-  { id, prompt, fullAnswer, sortKey, template },
-  { prisma, sub, pubsub },
-): Promise<IBakedRwCard | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    if (!await prisma.$exists.pCard({
-      id,
-      deck: {
-        owner: { id: sub.id },
-      },
-    })) {
-      throw wrNotFoundError('card');
-    }
-    const pCard = await prisma.updatePCard({
-      data: {
-        prompt,
-        fullAnswer,
-        sortKey,
-        editedAt: (new Date()).toISOString(),
-        template,
-      },
-      where: { id },
-    });
-    const pDeck = await prisma.pCard({ id }).deck();
-    wrGuardPrismaNullError(pCard);
-    wrGuardPrismaNullError(pDeck);
-    const pCardUpdate: IUpdatedUpdate<PCard> = {
-      mutation: MutationType.UPDATED,
-      new: pCard,
-      oldId: null,
-    };
-    pubsub.publish(rwCardsTopicFromRwDeck(pDeck.id), pCardUpdate);
-    return pCardToRwCard(pCard, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
+  { id, ...params },
+  { models, prisma, sub, pubsub },
+): Promise<IRwCard | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
   }
+  if (!await prisma.$exists.pCard({
+    id,
+    deck: {
+      owner: { id: sub.id },
+    },
+  })) {
+    throw rwNotFoundError('card');
+  }
+  const sCard = await models.SCard.edit(prisma, {
+    ...params, id,
+  });
+  const rwCard = models.RwCard.fromSCard(prisma, sCard);
+  const rwDeck = await rwCard.deck();
+  const sCardUpdate: IUpdatedUpdate<ISCard> = {
+    mutation: MutationType.UPDATED,
+    new: sCard,
+    oldId: null,
+  };
+  pubsub.publish(rwCardsTopicFromRwDeck(rwDeck.id), sCardUpdate);
+  return rwCard;
 };
 
-const rwCardDelete: IFieldResolver<any, IRwContext, { id: string }> = async (
-  _parent, { id }, { prisma, sub, pubsub },
+const rwCardDelete: IFieldResolver<any, IContext, { id: string }> = async (
+  _parent, { id }, { models, prisma, sub, pubsub },
 ): Promise<string | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    const pDecks = await prisma.pDecks({
-      where: { cards_some: { id }, owner: { id: sub.id } },
-    });
-    if (pDecks.length !== 1) {
-      throw wrNotFoundError('card');
-    }
-    const pCard = await prisma.deletePCard({ id });
-    wrGuardPrismaNullError(pCard);
-    const pCardUpdate: IDeletedUpdate<PCard> = {
-      mutation: MutationType.DELETED,
-      new: null,
-      oldId: pCard.id,
-    };
-    pubsub.publish(rwCardsTopicFromRwDeck(pDecks[0].id), pCardUpdate);
-    return pCard.id;
-  } catch (e) {
-    return throwIfDevel(e);
+  if (!sub) {
+    throw rwAuthenticationError();
   }
+  const pDecks = await prisma.pDecks({
+    where: { cards_some: { id }, owner: { id: sub.id } },
+  });
+  if (pDecks.length !== 1) {
+    throw rwNotFoundError('card');
+  }
+  const oldId = await models.SCard.delete(prisma, id);
+  const sCardUpdate: IDeletedUpdate<ISCard> = {
+    mutation: MutationType.DELETED,
+    new: null,
+    oldId,
+  };
+  pubsub.publish(rwCardsTopicFromRwDeck(pDecks[0].id), sCardUpdate);
+  return oldId;
 };
 
 export const rwCardMutation = {

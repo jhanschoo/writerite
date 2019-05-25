@@ -1,35 +1,30 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { IUpdate, IRwContext } from '../../types';
+import { IUpdate, IContext } from '../../types';
 
-import { pRoomMessageToRwRoomMessage } from '../RwRoomMessage';
-import { PRoomMessage } from '../../../generated/prisma-client';
-import { updateMapFactory, throwIfDevel, wrNotFoundError } from '../../util';
+import { updateMapFactory } from '../../util';
+import { ISRoomMessage, RwRoomMessage } from '../../model/RwRoomMessage';
 
 export function rwRoomMessagesTopicFromRwRoom(id: string) {
   return `room-message:room:${id}`;
 }
 
-const rwRoomMessagesUpdatesOfRoomSubscribe: IFieldResolver<any, IRwContext, {
+const rwRoomMessagesUpdatesOfRoomSubscribe: IFieldResolver<any, IContext, {
   roomId: string,
 }> = async (
   _parent, { roomId }, { prisma, pubsub },
-): Promise<AsyncIterator<IUpdate<PRoomMessage>> | null> => {
-  try {
-    if (!await prisma.$exists.pRoom({ id: roomId })) {
-      throw wrNotFoundError('room');
-    }
-    return pubsub.asyncIterator<IUpdate<PRoomMessage>>(
-      rwRoomMessagesTopicFromRwRoom(roomId),
-    );
-  } catch (e) {
-    return throwIfDevel(e);
+): Promise<AsyncIterator<IUpdate<ISRoomMessage>> | null> => {
+  if (!await prisma.$exists.pRoom({ id: roomId })) {
+    return null;
   }
+  return pubsub.asyncIterator<IUpdate<ISRoomMessage>>(
+    rwRoomMessagesTopicFromRwRoom(roomId),
+  );
 };
 
 export const rwRoomMessageSubscription = {
   rwRoomMessagesUpdatesOfRoom: {
-    resolve: updateMapFactory(pRoomMessageToRwRoomMessage),
+    resolve: updateMapFactory(RwRoomMessage.fromSRoomMessage),
     subscribe: rwRoomMessagesUpdatesOfRoomSubscribe,
   },
 };

@@ -1,81 +1,51 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { IRwContext, MutationType, ICreatedUpdate, IUpdatedUpdate } from '../../types';
+import { IContext, MutationType, ICreatedUpdate, IUpdatedUpdate } from '../../types';
 
-import { IBakedRwRoom, pRoomToRwRoom } from '../RwRoom';
-import {
-  rwRoomsTopic,
-} from '../Subscription/RwRoom.subscription';
-import { PRoom } from '../../../generated/prisma-client';
-import {
-  throwIfDevel, wrAuthenticationError, wrNotFoundError, wrGuardPrismaNullError,
-} from '../../util';
+import { rwRoomsTopic } from '../Subscription/RwRoom.subscription';
+import { rwAuthenticationError } from '../../util';
+import { ISRoom, RwRoom, IRwRoom } from '../../model/RwRoom';
 
-const rwRoomCreate: IFieldResolver<any, IRwContext, {
+const rwRoomCreate: IFieldResolver<any, IContext, {
   deckId: string,
-}> = async (_parent, { deckId }, { prisma, pubsub, sub, redisClient }): Promise<IBakedRwRoom | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    const pRoom = await prisma.createPRoom({
-      owner: { connect: { id: sub.id } },
-      deck: { connect: { id: deckId } },
-    });
-    wrGuardPrismaNullError(pRoom);
-    const pRoomUpdate: ICreatedUpdate<PRoom> = {
-      mutation: MutationType.CREATED,
-      new: pRoom,
-      oldId: null,
-    };
-    redisClient.publish('writerite:room:serving', `${pRoom.id}:${deckId}`);
-    pubsub.publish(rwRoomsTopic(), pRoomUpdate);
-    return pRoomToRwRoom(pRoom, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
+}> = async (_parent, { deckId }, { models, prisma, pubsub, sub, redisClient }): Promise<IRwRoom | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
   }
+  const sRoom = await models.SRoom.create(prisma, { userId: sub.id, deckId });
+  const pRoomUpdate: ICreatedUpdate<ISRoom> = {
+    mutation: MutationType.CREATED,
+    new: sRoom,
+    oldId: null,
+  };
+  redisClient.publish('writerite:room:serving', `${sRoom.id}:${deckId}`);
+  pubsub.publish(rwRoomsTopic(), pRoomUpdate);
+  return models.RwRoom.fromSRoom(prisma, sRoom);
 };
 
 // TODO: access control: owner or self only
-const rwRoomAddOccupant: IFieldResolver<any, IRwContext, {
+const rwRoomAddOccupant: IFieldResolver<any, IContext, {
   id: string, occupantId: string,
 }> = async (
-  _parent: any, { id, occupantId }, { prisma, sub, pubsub },
-): Promise<IBakedRwRoom | null> => {
-  try {
-    if (!sub) {
-      throw wrAuthenticationError();
-    }
-    const pRoom = wrGuardPrismaNullError(await prisma.pRoom({ id }));
-    const rwRoom = pRoomToRwRoom(pRoom, prisma);
-    const roomOwner = await rwRoom.owner(null);
-    // TODO: implement allowing occupants to add new occupants
-    if (roomOwner.id !== sub.id) {
-      throw wrNotFoundError('room');
-    }
-    const pOccupants = await rwRoom.occupants(null);
-    const occupantIds = pOccupants.map((user) => user.id);
-    if (occupantId === roomOwner.id || occupantIds.includes(occupantId)) {
-      return rwRoom;
-    }
-    const pUpdatedRoom = await prisma.updatePRoom({
-      data: {
-        // TODO: verify that this appends an occupant rather than overwriting
-        occupants: { connect: { id: occupantId } },
-      },
-      where: { id },
-    });
-    wrGuardPrismaNullError(pUpdatedRoom);
-    const pRoomUpdate: IUpdatedUpdate<PRoom> = {
-      mutation: MutationType.UPDATED,
-      new: pUpdatedRoom,
-      oldId: null,
-    };
-    pubsub.publish(rwRoomsTopic(), pRoomUpdate);
-    return pRoomToRwRoom(pUpdatedRoom, prisma);
-  } catch (e) {
-    return throwIfDevel(e);
+  _parent: any, { id, occupantId }, { models, prisma, sub, pubsub },
+): Promise<IRwRoom | null> => {
+  if (!sub || !(sub.id === occupantId || await prisma.$exists.pRoom({
+    id,
+    owner: { id: occupantId },
+  }))) {
+    throw rwAuthenticationError();
   }
+  const sRoom = await models.SRoom.addOccupant(prisma, { id, occupantId });
+  if (!sRoom) {
+    return sRoom;
+  }
+  const sRoomUpdate: IUpdatedUpdate<ISRoom> = {
+    mutation: MutationType.UPDATED,
+    new: sRoom,
+    oldId: null,
+  };
+  pubsub.publish(rwRoomsTopic(), sRoomUpdate);
+  return RwRoom.fromSRoom(prisma, sRoom);
 };
 
 export const rwRoomMutation = {

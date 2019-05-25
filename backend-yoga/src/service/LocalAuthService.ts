@@ -2,9 +2,9 @@ import '../assertConfig';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
-import { comparePassword, hashPassword, wrGuardPrismaNullError } from '../util';
+import { comparePassword, hashPassword, rwGuardPrismaNullError } from '../util';
 import { AbstractAuthService, ISigninOptions } from './AbstractAuthService';
-import { ApolloError } from 'apollo-server-express';
+import { ApolloError } from 'apollo-server-koa';
 
 const { RECAPTCHA_SECRET } = process.env;
 
@@ -14,13 +14,14 @@ if (!RECAPTCHA_SECRET) {
 
 export class LocalAuthService extends AbstractAuthService {
 
-  public async signin({ prisma, email, token, identifier: password, persist }: ISigninOptions) {
+  public async signin({ models, prisma, email, token, identifier: password, persist }: ISigninOptions) {
+    // TODO: refactor to use null reply from prisma
     if (await prisma.$exists.pUser({ email })) {
-      const knownUser = wrGuardPrismaNullError(await prisma.pUser({ email }));
+      const knownUser = rwGuardPrismaNullError(await prisma.pUser({ email }));
       if (!knownUser.passwordHash || !await comparePassword(password, knownUser.passwordHash)) {
         throw new ApolloError('writerite: failed login');
       }
-      return LocalAuthService.authResponseFromUser(knownUser, { persist, prisma });
+      return LocalAuthService.authResponseFromUser(knownUser, { models, persist, prisma });
     }
     const verified = await this.verify(token);
     if (!verified) {
@@ -31,8 +32,8 @@ export class LocalAuthService extends AbstractAuthService {
     const user = prisma.createPUser(
       { email, passwordHash, roles: { set: ['user'] } },
     );
-    wrGuardPrismaNullError(user);
-    return LocalAuthService.authResponseFromUser(await user, { persist, prisma });
+    rwGuardPrismaNullError(user);
+    return LocalAuthService.authResponseFromUser(await user, { models, persist, prisma });
   }
 
   protected async verify(token: string) {
@@ -44,9 +45,10 @@ export class LocalAuthService extends AbstractAuthService {
       fetch('https://www.google.com/recaptcha/api/siteverify', {
         method: 'post',
         body: form,
-      }).then((response) => {
+      }).then(async (response) => {
         // TODO: assert that hostname is correct
-        return response.json().then((json) => json.success ? res('true' as string) : res(undefined));
+        const json = await response.json();
+        return json.success ? res(('true' as string)) : res(undefined);
       }).catch((e) => res(undefined));
     });
   }

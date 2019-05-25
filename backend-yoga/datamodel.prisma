@@ -22,12 +22,12 @@ type PUser {
 
 type PCard { # implements Card
   id: ID! @id
-  deck: PDeck! @relation(link: INLINE)
   prompt: String!
   fullAnswer: String!
   sortKey: String!
   editedAt: DateTime!
   template: Boolean!
+  deck: PDeck! @relation(link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

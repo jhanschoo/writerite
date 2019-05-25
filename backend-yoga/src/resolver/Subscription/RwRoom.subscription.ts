@@ -1,28 +1,23 @@
-import { IFieldResolver } from 'graphql-tools';
+import { IFieldResolver } from 'apollo-server-koa';
 
-import { IUpdate, IRwContext } from '../../types';
+import { IUpdate, IContext } from '../../types';
 
-import { PRoom } from '../../../generated/prisma-client';
-import { pRoomToRwRoom } from '../RwRoom';
-import { updateMapFactory, throwIfDevel } from '../../util';
+import { updateMapFactory } from '../../util';
+import { ISRoom, RwRoom } from '../../model/RwRoom';
 
 export function rwRoomsTopic() {
   return `room`;
 }
 
-const rwRoomsUpdatesSubscribe: IFieldResolver<any, IRwContext, {}> = async (
+const rwRoomsUpdatesSubscribe: IFieldResolver<any, IContext, any> = async (
   _parent, _args, { pubsub },
-): Promise<AsyncIterator<IUpdate<PRoom>> | null> => {
-  try {
-    return pubsub.asyncIterator<IUpdate<PRoom>>(rwRoomsTopic());
-  } catch (e) {
-    return throwIfDevel(e);
-  }
+): Promise<AsyncIterator<IUpdate<ISRoom>> | null> => {
+  return pubsub.asyncIterator<IUpdate<ISRoom>>(rwRoomsTopic());
 };
 
 export const rwRoomSubscription = {
   rwRoomsUpdates: {
-    resolve: updateMapFactory(pRoomToRwRoom),
+    resolve: updateMapFactory(RwRoom.fromSRoom),
     subscribe: rwRoomsUpdatesSubscribe,
   },
 };

@@ -27,7 +27,7 @@ export interface InRoomsData {
 }
 
 export const ROOM_DETAIL_QUERY = gql`
-query Room(
+query RoomDetail(
   $id: ID!
 ) {
   rwRoom(id: $id) {

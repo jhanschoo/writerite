@@ -2,8 +2,8 @@ import '../assertConfig';
 import { OAuth2Client } from 'google-auth-library';
 
 import { AbstractAuthService, ISigninOptions } from './AbstractAuthService';
-import { ApolloError } from 'apollo-server-express';
-import { wrGuardPrismaNullError } from '../util';
+import { ApolloError } from 'apollo-server-koa';
+import { rwGuardPrismaNullError } from '../util';
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 
@@ -18,25 +18,26 @@ const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
 
 export class GoogleAuthService extends AbstractAuthService {
 
-  public async signin({ prisma, email, token, identifier, persist }: ISigninOptions) {
+  public async signin({ models, prisma, email, token, identifier, persist }: ISigninOptions) {
     const googleId = await this.verify(token);
     if (!googleId || googleId !== identifier) {
       throw new ApolloError('writerite: failed google authentication');
     }
+    // TODO: refactor to use null reply from prisma
     if (await prisma.$exists.pUser({ email })) {
       if (!await prisma.$exists.pUser({ email, googleId })) {
         throw new ApolloError('writerite: user already exists');
       }
-      const pUser = wrGuardPrismaNullError(await prisma.pUser({ email }));
+      const pUser = rwGuardPrismaNullError(await prisma.pUser({ email }));
       return GoogleAuthService.authResponseFromUser(
-        pUser, { persist, prisma },
+        pUser, { models, persist, prisma },
       );
     } else {
       const pUser = await prisma.createPUser(
         { email, googleId, roles: { set: ['user'] } },
       );
-      wrGuardPrismaNullError(pUser);
-      return GoogleAuthService.authResponseFromUser(pUser, { persist, prisma });
+      rwGuardPrismaNullError(pUser);
+      return GoogleAuthService.authResponseFromUser(pUser, { models, persist, prisma });
     }
   }
 
