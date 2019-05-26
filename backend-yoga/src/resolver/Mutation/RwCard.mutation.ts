@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { IContext, MutationType, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from '../../types';
 
@@ -127,6 +127,6 @@ const rwCardDelete: IFieldResolver<any, IContext, { id: string }> = async (
   return oldId;
 };
 
-export const rwCardMutation = {
+export const rwCardMutation: IResolverObject<any, IContext, any> = {
   rwCardCreate, rwCardsCreate, rwCardEdit, rwCardDelete,
 };

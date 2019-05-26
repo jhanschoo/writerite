@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { IContext } from '../../types';
 
@@ -19,6 +19,6 @@ const rwOwnDecks: IFieldResolver<any, IContext, {}> = async (
   return models.RwDeck.getFromUserId(prisma, sub.id);
 };
 
-export const rwDeckQuery = {
+export const rwDeckQuery: IResolverObject<any, IContext, any> = {
   rwDeck, rwOwnDecks,
 };

@@ -17,6 +17,6 @@ const rwCardsOfDeck: IFieldResolver<any, IContext, { deckId: string }> = async (
   return models.RwCard.getFromDeckId(prisma, deckId);
 };
 
-export const rwCardQuery: IResolverObject<any, IContext> = {
+export const rwCardQuery: IResolverObject<any, IContext, any> = {
   rwCard, rwCardsOfDeck,
 };

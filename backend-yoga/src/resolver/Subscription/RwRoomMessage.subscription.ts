@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverOptions, IResolverObject } from 'apollo-server-koa';
 
 import { IUpdate, IContext } from '../../types';
 
@@ -22,9 +22,11 @@ const rwRoomMessagesUpdatesOfRoomSubscribe: IFieldResolver<any, IContext, {
   );
 };
 
-export const rwRoomMessageSubscription = {
-  rwRoomMessagesUpdatesOfRoom: {
-    resolve: updateMapFactory(RwRoomMessage.fromSRoomMessage),
-    subscribe: rwRoomMessagesUpdatesOfRoomSubscribe,
-  },
+const rwRoomMessagesUpdatesOfRoom: IResolverOptions<any, IContext, any> = {
+  resolve: updateMapFactory(RwRoomMessage.fromSRoomMessage),
+  subscribe: rwRoomMessagesUpdatesOfRoomSubscribe,
+};
+
+export const rwRoomMessageSubscription: IResolverObject<any, IContext, any> = {
+  rwRoomMessagesUpdatesOfRoom,
 };

@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { MutationType, IContext, Roles, ICreatedUpdate } from '../../types';
 import {
@@ -36,6 +36,6 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   return models.RwRoomMessage.fromSRoomMessage(prisma, sRoomMessage);
 };
 
-export const rwRoomMessageMutation = {
+export const rwRoomMessageMutation: IResolverObject<any, IContext, any> = {
   rwRoomMessageCreate,
 };

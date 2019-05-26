@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject, IResolverOptions } from 'apollo-server-koa';
 
 import { IContext, IUpdate } from '../../types';
 
@@ -22,9 +22,11 @@ const rwCardsUpdatesOfDeckSubscribe: IFieldResolver<any, IContext, {
   );
 };
 
-export const rwCardSubscription = {
-  rwCardsUpdatesOfDeck: {
-    resolve: updateMapFactory(RwCard.fromSCard),
-    subscribe: rwCardsUpdatesOfDeckSubscribe,
-  },
+const rwCardsUpdatesOfDeck: IResolverOptions<any, IContext, any> = {
+  resolve: updateMapFactory(RwCard.fromSCard),
+  subscribe: rwCardsUpdatesOfDeckSubscribe,
+};
+
+export const rwCardSubscription: IResolverObject<any, IContext, any> = {
+  rwCardsUpdatesOfDeck,
 };

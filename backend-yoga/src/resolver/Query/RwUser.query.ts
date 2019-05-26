@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { Roles, IContext } from '../../types';
 import { IRwUser } from '../../model/RwUser';
@@ -19,6 +19,6 @@ const rwUser: IFieldResolver<any, IContext, { id: string }> = async (
   return models.RwUser.get(prisma, id);
 };
 
-export const rwUserQuery = {
+export const rwUserQuery: IResolverObject<any, IContext, any> = {
   rwUser, rwUsers,
 };

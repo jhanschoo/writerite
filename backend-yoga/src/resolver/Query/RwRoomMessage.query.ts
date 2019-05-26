@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { IContext } from '../../types';
 import { IRwRoomMessage } from '../../model/RwRoomMessage';
@@ -15,6 +15,6 @@ const rwRoomMessagesOfRoom: IFieldResolver<any, IContext, { roomId: string }> = 
   return models.RwRoomMessage.getFromRoomId(prisma, roomId);
 };
 
-export const rwRoomMessageQuery = {
+export const rwRoomMessageQuery: IResolverObject<any, IContext, any> = {
   rwRoomMessage, rwRoomMessagesOfRoom,
 };

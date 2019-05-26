@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverOptions, IResolverObject } from 'apollo-server-koa';
 
 import { IUpdate, IContext } from '../../types';
 
@@ -15,9 +15,11 @@ const rwRoomsUpdatesSubscribe: IFieldResolver<any, IContext, any> = async (
   return pubsub.asyncIterator<IUpdate<ISRoom>>(rwRoomsTopic());
 };
 
-export const rwRoomSubscription = {
-  rwRoomsUpdates: {
-    resolve: updateMapFactory(RwRoom.fromSRoom),
-    subscribe: rwRoomsUpdatesSubscribe,
-  },
+const rwRoomsUpdates: IResolverOptions<any, IContext, any> = {
+  resolve: updateMapFactory(RwRoom.fromSRoom),
+  subscribe: rwRoomsUpdatesSubscribe,
+};
+
+export const rwRoomSubscription: IResolverObject<any, IContext, any> = {
+  rwRoomsUpdates,
 };

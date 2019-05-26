@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { IContext } from '../../types';
 import { IRwRoom } from '../../model/RwRoom';
@@ -18,6 +18,6 @@ const rwInRooms: IFieldResolver<any, IContext, any> = async (
   return models.RwRoom.getFromOccupantOrOwnerId(prisma, sub.id);
 };
 
-export const rwRoomQuery = {
+export const rwRoomQuery: IResolverObject<any, IContext, any> = {
   rwRoom, rwInRooms,
 };

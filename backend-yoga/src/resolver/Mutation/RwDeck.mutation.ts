@@ -1,4 +1,4 @@
-import { IFieldResolver } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import {
   MutationType, IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate,
@@ -74,6 +74,6 @@ const rwDeckDelete: IFieldResolver<any, IContext, {
   return oldId;
 };
 
-export const rwDeckMutation = {
+export const rwDeckMutation: IResolverObject<any, IContext, any> = {
   rwDeckCreate, rwDeckEdit, rwDeckDelete,
 };
