@@ -5,10 +5,11 @@ import http from 'http';
 
 import Redis from 'ioredis';
 
+import { RedisPubSub } from 'graphql-redis-subscriptions';
+
 import Koa from 'koa';
 import helmet from 'koa-helmet';
 import { importSchema } from 'graphql-import';
-import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import { ApolloServer, gql } from 'apollo-server-koa';
 
@@ -37,15 +38,15 @@ const redisOptions = {
   },
 };
 
-const redisClient = new Redis({ ...redisOptions, db: 2 });
+const pubsub = new RedisPubSub({
+  publisher: new Redis({ ...redisOptions, db: 2 }),
+  subscriber: new Redis({ ...redisOptions, db: 2 }),
+});
+
+const redisClient = new Redis({ ...redisOptions, db: 1 });
 redisClient.on('error', (err) => {
   // tslint:disable-next-line: no-console
   console.error(`redisClient error: ${err}`);
-});
-
-const pubsub = new RedisPubSub({
-  publisher: new Redis({ ...redisOptions, db: 1 }),
-  subscriber: new Redis({ ...redisOptions, db: 1 }),
 });
 
 const acolyteJWT = generateJWT({
