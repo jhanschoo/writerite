@@ -88,13 +88,17 @@ export const SDeck = {
 export const RwDeck = {
   fromSDeck: (prisma: Prisma, sDeck: ISDeck): IRwDeck => ({
     ...sDeck,
-    owner: async () => RwUser.fromPUser(
-      prisma,
-      await prisma.pDeck({ id: sDeck.id }).owner(),
-    ),
-    cards: async () => (
-      await prisma.pDeck({ id: sDeck.id }).cards()
-    ).map((pCard) => RwCard.fromPCard(prisma, pCard)),
+    owner: async () => {
+      const pUsers = await prisma.pUsers({ where: { decks_some: { id: sDeck.id } } });
+      return RwUser.fromPUser(
+        prisma,
+        pUsers[0],
+      );
+    },
+    cards: async () => {
+      const pCards = await prisma.pCards({ where: { deck: { id: sDeck.id } } });
+      return pCards.map((pCard) => RwCard.fromPCard(prisma, pCard));
+    },
   }),
   fromPDeck: (prisma: Prisma, pDeck: PDeck): IRwDeck => RwDeck.fromSDeck(
     prisma, SDeck.fromPDeck(pDeck),

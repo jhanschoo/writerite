@@ -103,20 +103,26 @@ export const SRoom = {
 export const RwRoom = {
   fromSRoom: (prisma: Prisma, sRoom: ISRoom): IRwRoom => ({
     ...sRoom,
-    owner: async () => RwUser.fromPUser(
-      prisma,
-      await prisma.pRoom({ id: sRoom.id }).owner(),
-    ),
-    occupants: async () => (
-      await prisma.pRoom({ id: sRoom.id }).occupants()
-    ).map((pUser) => RwUser.fromPUser(prisma, pUser)),
-    deck: async () => RwDeck.fromPDeck(
-      prisma,
-      await prisma.pRoom({ id: sRoom.id }).deck(),
-    ),
-    messages: async () => (
-      await prisma.pRoom({ id: sRoom.id }).messages()
-    ).map((pRoomMessage) => RwRoomMessage.fromPRoomMessage(prisma, pRoomMessage)),
+    owner: async () => {
+      const pUsers = await prisma.pUsers({ where: { ownerOfRoom_some: { id: sRoom.id } } });
+      return RwUser.fromPUser(prisma, pUsers[0]);
+    },
+    occupants: async () => {
+      const pUsers = await prisma.pUsers({ where: { occupyingRoom_some: { id: sRoom.id } } });
+      return pUsers.map((pUser) => RwUser.fromPUser(prisma, pUser));
+    },
+    deck: async () => {
+      const pDecks = await prisma.pDecks({ where: { servedAt_some: { id: sRoom.id } } });
+      return RwDeck.fromPDeck(prisma, pDecks[0]);
+    },
+    messages: async () => {
+      const pRoomMessages = await prisma.pRoomMessages({
+        where: { room: { id: sRoom.id } },
+      });
+      return pRoomMessages.map(
+        (pRoomMessage) => RwRoomMessage.fromPRoomMessage(prisma, pRoomMessage)
+      );
+    },
   }),
   fromPRoom: (prisma: Prisma, pRoom: PRoom) => RwRoom.fromSRoom(
     prisma, SRoom.fromPRoom(pRoom),

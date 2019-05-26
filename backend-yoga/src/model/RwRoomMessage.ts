@@ -59,10 +59,15 @@ export const SRoomMessage = {
 export const RwRoomMessage = {
   fromSRoomMessage: (prisma: Prisma, sRoomMessage: ISRoomMessage): IRwRoomMessage => ({
     ...sRoomMessage,
-    sender: async () => RwUser.fromSUser(
-      prisma,
-      await prisma.pRoomMessage({ id: sRoomMessage.id }).sender(),
-    ),
+    sender: async () => {
+      const pUsers = await prisma.pUsers({
+        where: { sentMessages_some: { id: sRoomMessage.id } }
+      });
+      if (pUsers.length !== 1) {
+        return null;
+      }
+      return RwUser.fromSUser(prisma, pUsers[0]);
+    },
   }),
   fromPRoomMessage: (
     prisma: Prisma, pRoomMessage: PRoomMessage,

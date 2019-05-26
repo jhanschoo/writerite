@@ -110,10 +110,10 @@ export const SCard = {
 export const RwCard = {
   fromSCard: (prisma: Prisma, sCard: ISCard): IRwCard => ({
     ...sCard,
-    deck: async (): Promise<IRwDeck> => RwDeck.fromPDeck(
-      prisma,
-      await prisma.pCard({ id: sCard.id }).deck(),
-    ),
+    deck: async (): Promise<IRwDeck> => {
+      const pDecks = await prisma.pDecks({ where: { cards_some: { id: sCard.id } } });
+      return RwDeck.fromPDeck(prisma, pDecks[0]);
+    },
   }),
   fromPCard: (prisma: Prisma, pCard: PCard): IRwCard => RwCard.fromSCard(
     prisma, SCard.fromPCard(pCard),
