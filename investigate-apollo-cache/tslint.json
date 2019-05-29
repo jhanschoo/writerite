@@ -1,0 +1,23 @@
+{
+  "defaultSeverity": "warning",
+  "extends": [
+    "tslint:recommended",
+    "tslint-react"
+  ],
+  "linterOptions": {
+    "exclude": [
+      "node_modules/**"
+    ]
+  },
+  "rules": {
+    "quotemark": [true, "single", "jsx-double"],
+    "indent": [true, "spaces", 2],
+    "interface-name": false,
+    "no-unused-variable": [true, "check-parameters", {"ignore-pattern": "^_"}],
+    "ordered-imports": false,
+    "object-literal-sort-keys": false,
+    "variable-name": {
+      "options": ["ban-keywords", "check-format", "allow-pascal-case", "allow-leading-underscore"]
+    }
+  }
+}
