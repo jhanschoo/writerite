@@ -26,10 +26,31 @@ WriteRite service.
 
 The app is hosted by Netlify. Netlify's zero-config deployment for create-react-app should do the job. You may need to change the constants in `.env.production`.
 
-## TODO
+## Desired local model consistency model
 
-* Handle unexpected `null` GQL responses as errors requiring a `resetCache`.
 
+
+* Data objects are either dry or hydrated.
+* Dry objects contain no references to other data objects, only scalars.
+* We do not support the deletion of dry objects.
+* Hydrated objects contain all their references to other data objects.
+* Whenever we fetch/update a hydrated object O or hydrate a dry object,
+  we check for each reference either that it refers to a dry object, a
+  hydrated object that has no corresponding reference, or
+  a hydrated object that has a corresponding reference back to O in the
+  appropriate field/array field. If it doesn't, dehydrate it.
+* We can only perform deletion on hydrated objects. When we perform
+  deletion, dehydrate all references.
+
+Problem: Apollo cannot detect whether a cached object is dry or hydrated,
+and there is no easy way to trigger a network-only refetch after detecting
+a hydrated object in user code.
+In addition, queries that directly reference a deleted object would
+still work. It is possible to implement this consistency by
+maintaining the state in redux, but the added complexity is too tedious.
+Will revisit when PWA capability is strongly desired or when
+https://github.com/apollographql/apollo-feature-requests/issues/4 is
+resolved/improved on.
 ## Stack summary
 
 * Language: Typescript

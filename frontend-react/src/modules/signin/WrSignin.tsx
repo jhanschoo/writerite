@@ -1,7 +1,8 @@
 import React, { Component, MouseEvent } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
-
-import { OptionalUserAndToken } from './types';
+import {
+  Formik, FormikProps, FormikErrors, FormikTouched,
+} from 'formik';
+import * as yup from 'yup';
 
 import { connect } from 'react-redux';
 import { SigninAction, createSignin } from './actions';
@@ -20,10 +21,9 @@ import TextInput from '../../ui/form/TextInput';
 import Fieldset from '../../ui/form/Fieldset';
 import SmallMessage from '../../ui/form/SmallMessage';
 
-import {
-  Formik, FormikProps, FormikErrors, FormikTouched,
-} from 'formik';
-import * as yup from 'yup';
+import { withRouter, RouteComponentProps } from 'react-router';
+
+import { OptionalUserAndToken } from './types';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;

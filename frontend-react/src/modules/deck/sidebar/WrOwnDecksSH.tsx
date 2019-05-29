@@ -3,9 +3,10 @@ import { PureComponent } from 'react';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
+import { OWN_DECKS_UPDATES_SUBSCRIPTION, OwnDecksData, OwnDecksUpdatesData, OwnDecksUpdatesVariables } from './gql';
+
 import { MutationType } from '../../../types';
 import { WrDeck } from '../types';
-import { OWN_DECKS_UPDATES_SUBSCRIPTION, OwnDecksData, OwnDecksUpdatesData, OwnDecksUpdatesVariables } from './gql';
 
 interface Props {
   subscribeToMore: (options: SubscribeToMoreOptions<

@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
@@ -10,6 +9,8 @@ import FlexMain from '../../../ui/layout/FlexMain';
 import HDivider from '../../../ui/HDivider';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
+
+import { withRouter, RouteComponentProps } from 'react-router';
 
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';

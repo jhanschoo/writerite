@@ -1,7 +1,4 @@
 import React, { useState, useRef } from 'react';
-
-import { WrDeck } from '../types';
-
 import { Filter } from 'react-feather';
 
 import styled from 'styled-components';
@@ -11,6 +8,8 @@ import { MinimalTextInput } from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
+
+import { WrDeck } from '../types';
 
 const initialFilter = '';
 

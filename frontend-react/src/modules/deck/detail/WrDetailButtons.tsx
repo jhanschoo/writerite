@@ -1,6 +1,4 @@
 import React, { Dispatch, SetStateAction, MouseEvent } from 'react';
-import { WrDeckDetail } from '../types';
-
 import { Layers, File, FileText, Plus } from 'react-feather';
 
 import styled from 'styled-components';
@@ -8,6 +6,7 @@ import { BorderlessButton } from '../../../ui/form/Button';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
+import { WrDeckDetail } from '../types';
 import { CurrentAddNewEnum } from './WrDeckDetail';
 
 interface Props {

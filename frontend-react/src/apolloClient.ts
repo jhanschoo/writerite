@@ -1,9 +1,7 @@
-import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createUploadLink } from 'apollo-upload-client';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import MessageTypes from 'subscriptions-transport-ws/dist/message-types';
 import { WebSocketLink } from 'apollo-link-ws';
-// import { BatchLink } from 'apollo-link-batch';
 import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
 import { RetryLink } from 'apollo-link-retry';
 import { getMainDefinition } from 'apollo-utilities';
@@ -12,9 +10,8 @@ import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import { ApolloClient } from 'apollo-client';
 
+import { cache } from './cache';
 import { getAuth } from './util';
-
-export const cache = new InMemoryCache();
 
 const httpUploadLink = createUploadLink({
   includeExtensions: true,
@@ -38,8 +35,6 @@ const wsClient = new SubscriptionClient(
 );
 
 export const wsLink = new WebSocketLink(wsClient);
-
-// const batchLink = new BatchLink();
 
 const persistedQueryLink = createPersistedQueryLink();
 
@@ -75,7 +70,6 @@ const link = ApolloLink.from([
   contextualizedLink,
   retryLink,
   persistedQueryLink,
-  // batchLink,
   ApolloLink.split(
     ({ query }) => {
       const definition = getMainDefinition(query);

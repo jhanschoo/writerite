@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-import { withProviders } from './util';
+import Providers from './Providers';
 
 // @ts-ignore
 global.grecaptchaDeferred = null;
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render(withProviders(<App />), div);
+  ReactDOM.render((<Providers><App /></Providers>), div);
   ReactDOM.unmountComponentAtNode(div);
 });

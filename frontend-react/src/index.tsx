@@ -5,9 +5,9 @@ import './index.css';
 
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { withProviders } from './util';
+import Providers from './Providers';
 
-ReactDOM.render(withProviders(<App />),
+ReactDOM.render((<Providers><App /></Providers>),
   document.getElementById('root'),
 );
 

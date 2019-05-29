@@ -1,5 +1,4 @@
 import React, { useState, MouseEvent } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
 
 import { Query, QueryResult, Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
@@ -14,6 +13,8 @@ import WrDetailHeader from './WrDetailHeader';
 import WrDetailPanel from './WrDetailPanel';
 import WrDetailButtons from './WrDetailButtons';
 import WrDeckDetailSH from './WrDeckDetailSH';
+
+import { withRouter, RouteComponentProps } from 'react-router';
 
 export enum CurrentAddNewEnum {
   SUBDECK,

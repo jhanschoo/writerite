@@ -1,29 +1,6 @@
 import { gql } from 'graphql.macro';
 import { WrCard, CardUpdatesPayload } from './types';
 
-// Cards query
-
-export const CARDS_QUERY = gql`
-query Cards($deckId: ID!) {
-  rwCardsOfDeck(deckId: $deckId) {
-    id
-    prompt
-    fullAnswer
-    sortKey
-    editedAt
-    template
-  }
-}
-`;
-
-export interface CardsVariables {
-  readonly deckId: string;
-}
-
-export interface CardsData {
-  readonly rwCardsOfDeck: WrCard[] | null;
-}
-
 // CardCreate mutation
 
 export const CARD_CREATE_MUTATION = gql`

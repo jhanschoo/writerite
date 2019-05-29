@@ -3,7 +3,7 @@ import { Copy } from 'react-feather';
 
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
-import { CARD_CREATE_MUTATION, CardCreateVariables, CardDeleteData as CardCreateData } from './gql';
+import { CARD_CREATE_MUTATION, CardCreateVariables, CardCreateData } from './gql';
 
 import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';

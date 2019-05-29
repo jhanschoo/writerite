@@ -1,6 +1,4 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, Dispatch, SetStateAction } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router';
-import { WrDeckDetail } from '../types';
 
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
@@ -15,6 +13,10 @@ import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import HDivider from '../../../ui/HDivider';
+
+import { withRouter, RouteComponentProps } from 'react-router';
+
+import { WrDeckDetail } from '../types';
 
 interface OwnProps {
   deck: WrDeckDetail;

@@ -1,7 +1,9 @@
 import React, { FC } from 'react';
+
 import {
   withRouter, RouteComponentProps,
 } from 'react-router';
+
 import { WrCard } from './types';
 import WrCardItem from './WrCardItem';
 

@@ -1,16 +1,8 @@
-import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
-
-import { store } from './store';
-import { Provider } from 'react-redux';
-
-import { ApolloProvider } from 'react-apollo';
-import { client } from './apolloClient';
-
 import md5 from 'md5';
 
-import { ThemeProvider } from 'styled-components';
-import theme from './theme';
+import { store } from './store';
+
+import { client } from './apolloClient';
 
 export const getAuth = () => {
   const storeState = store.getState();
@@ -27,18 +19,4 @@ export const printApolloError = (error: Error) => {
   // tslint:disable-next-line: no-console
   console.error(`Error communicating with server: ${error.message}`);
   return client.resetStore();
-};
-
-export const withProviders = (App: JSX.Element) => {
-  return (
-    <Provider store={store}>
-      <ApolloProvider client={client}>
-        <ThemeProvider theme={theme}>
-          <BrowserRouter>
-            {App}
-          </BrowserRouter>
-        </ThemeProvider>
-      </ApolloProvider>
-    </Provider>
-  );
 };

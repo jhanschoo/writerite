@@ -3,10 +3,11 @@ import { PureComponent } from 'react';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
-import { MutationType } from '../../../types';
-import { WrCard } from '../../card/types';
 import { DeckDetailData, DECK_UPDATES_SUBSCRIPTION, DeckUpdatesVariables, DeckUpdatesData } from '../gql';
 import { CARDS_UPDATES_SUBSCRIPTION, CardsUpdatesData, CardsUpdatesVariables } from '../../card/gql';
+
+import { MutationType } from '../../../types';
+import { WrCard } from '../../card/types';
 
 interface Props {
   subscribeToMore: ((options: SubscribeToMoreOptions<

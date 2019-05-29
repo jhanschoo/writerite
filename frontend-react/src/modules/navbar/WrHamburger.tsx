@@ -1,13 +1,12 @@
 import React, { MouseEvent } from 'react';
+import { Menu } from 'react-feather';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
 import { initialState } from '../sidebar-menu/reducers';
-
-import { Menu } from 'react-feather';
+import { createShow, createHide, SidebarAction } from '../sidebar-menu/actions';
 
 import styled from 'styled-components';
-import { createShow, createHide, SidebarAction } from '../sidebar-menu/actions';
 import { BorderlessButton } from '../../ui/form/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 

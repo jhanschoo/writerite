@@ -10,8 +10,8 @@ import HDivider from '../../ui/HDivider';
 import List from '../../ui/list/List';
 import Item from '../../ui/list/Item';
 
-import CardFieldset from './CardFieldset';
 import { WrCard } from './types';
+import CardFieldset from './CardFieldset';
 import WrDuplicateCardButton from './WrDuplicateCardButton';
 import WrDeleteCardButton from './WrDeleteCardButton';
 

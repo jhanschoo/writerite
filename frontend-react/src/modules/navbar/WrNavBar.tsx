@@ -1,13 +1,11 @@
 import React from 'react';
+import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
 import { createSignout, SigninAction } from '../signin/actions';
-import { WrUser } from '../signin/types';
 
 import { restartWsConnection } from '../../apolloClient';
-
-import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
 
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
@@ -17,6 +15,7 @@ import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
 
+import { WrUser } from '../signin/types';
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
 
