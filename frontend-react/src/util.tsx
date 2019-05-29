@@ -12,6 +12,13 @@ import md5 from 'md5';
 import { ThemeProvider } from 'styled-components';
 import theme from './theme';
 
+export const getAuth = () => {
+  const storeState = store.getState();
+  const token = storeState.signin
+    && storeState.signin.data && storeState.signin.data.token;
+  return token ? `Bearer ${token}` : '';
+};
+
 export const emailToGravatarLink = (email: string) => {
   return `https://www.gravatar.com/avatar/${md5(email.toLowerCase())}`;
 };

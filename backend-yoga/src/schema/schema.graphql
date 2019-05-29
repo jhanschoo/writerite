@@ -163,6 +163,7 @@ type RwRoomMessage {
   content: String!
   contentType: RwMessageContentType!
   sender: RwUser
+  room: RwRoom
 }
 
 # RwAuthorization

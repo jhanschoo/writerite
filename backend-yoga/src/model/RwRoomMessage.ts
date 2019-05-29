@@ -1,6 +1,7 @@
 import { PRoomMessage, Prisma } from '../../generated/prisma-client';
 import { AFunResTo, IModel } from '../types';
 import { IRwUser, RwUser } from './RwUser';
+import { IRwRoom, RwRoom } from './RwRoom';
 
 export enum RwMessageContentType {
   TEXT = 'TEXT',
@@ -17,6 +18,7 @@ export interface IRwRoomMessage extends ISRoomMessage {
   content: string;
   contentType: RwMessageContentType;
   sender: AFunResTo<IRwUser | null>;
+  room: AFunResTo<IRwRoom>;
 }
 
 // TODO: implement persistence of contentType
@@ -61,12 +63,18 @@ export const RwRoomMessage = {
     ...sRoomMessage,
     sender: async () => {
       const pUsers = await prisma.pUsers({
-        where: { sentMessages_some: { id: sRoomMessage.id } }
+        where: { sentMessages_some: { id: sRoomMessage.id } },
       });
       if (pUsers.length !== 1) {
         return null;
       }
       return RwUser.fromSUser(prisma, pUsers[0]);
+    },
+    room: async () => {
+      const pRooms = await prisma.pRooms({
+        where: { messages_some: { id: sRoomMessage.id } },
+      });
+      return RwRoom.fromSRoom(prisma, pRooms[0]);
     },
   }),
   fromPRoomMessage: (
