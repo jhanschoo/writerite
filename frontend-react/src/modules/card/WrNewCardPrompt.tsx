@@ -1,13 +1,51 @@
 import React, { useState, FC, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 import { Plus } from 'react-feather';
 
+import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
-import { CARDS_CREATE_MUTATION, CardsCreateVariables, CardsCreateData } from './gql';
+import { WrCard, IWrCard } from '../../models/WrCard';
 
 import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
+
+
+const CARDS_CREATE_MUTATION = gql`
+mutation CardCreate(
+  $deckId: ID!,
+  $prompt: String!,
+  $fullAnswer: String!,
+  $sortKey: String,
+  $template: Boolean,
+  $multiplicity: Int!
+) {
+  rwCardsCreate(
+    deckId: $deckId,
+    prompt: $prompt,
+    fullAnswer: $fullAnswer,
+    sortKey: $sortKey,
+    template: $template,
+    multiplicity: $multiplicity,
+  ) {
+    ...WrCard
+  }
+  ${WrCard}
+}
+`;
+
+interface CardsCreateVariables {
+  readonly deckId: string;
+  readonly prompt: string;
+  readonly fullAnswer: string;
+  readonly sortKey?: string;
+  readonly template?: boolean;
+  readonly multiplicity: number;
+}
+
+interface CardsCreateData {
+  readonly rwCardsCreate: IWrCard[] | null;
+}
 
 const CenteredFlex = styled.div`
   align-self: center;

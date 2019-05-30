@@ -6,8 +6,7 @@ import { BorderlessButton } from '../../../ui/form/Button';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
-import { WrDeckDetail } from '../types';
-import { CurrentAddNewEnum } from './WrDeckDetail';
+import { CurrentAddNewEnum, IWrDeckDetail } from './WrDeckDetail';
 
 interface Props {
   showSubDecks: boolean;
@@ -18,7 +17,7 @@ interface Props {
   setShowCards: Dispatch<SetStateAction<boolean>>;
   currentAddNew: CurrentAddNewEnum;
   setCurrentAddNew: Dispatch<SetStateAction<CurrentAddNewEnum>>;
-  deck: WrDeckDetail;
+  deck: IWrDeckDetail;
 }
 
 const LeftButton = styled(BorderlessButton)`

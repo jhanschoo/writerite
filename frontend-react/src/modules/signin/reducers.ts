@@ -1,9 +1,9 @@
 import { client } from '../../apolloClient';
 import { ActionTypes, AuthorizationAction } from './actions';
-import { OptionalUserAndToken } from './types';
+import { UserAndToken } from './WrSignin';
 
 export interface SigninState {
-  data: OptionalUserAndToken;
+  data: UserAndToken | null;
 }
 
 export const initialState: SigninState = {

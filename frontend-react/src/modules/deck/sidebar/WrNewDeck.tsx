@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Plus } from 'react-feather';
 
+import { gql } from 'graphql.macro';
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { DeckCreateData, DeckCreateVariables, DECK_CREATE_MUTATION } from '../gql';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -11,6 +11,38 @@ import { MinimalButton } from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import { MinimalTextInput } from '../../../ui/form/TextInput';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
+
+import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+
+const DECK_CREATE_MUTATION = gql`
+mutation DeckCreate(
+    $name: String
+    $nameLang: String
+    $promptLang: String
+    $answerLang: String
+  ) {
+  rwDeckCreate(
+    name: $name
+    nameLang: $nameLang
+    promptLang: $promptLang
+    answerLang: $answerLang
+  ) {
+    ...WrDeck
+  }
+  ${WrDeck}
+}
+`;
+
+interface DeckCreateVariables {
+  readonly name?: string;
+  readonly nameLang?: string;
+  readonly promptLang?: string;
+  readonly answerLang?: string;
+}
+
+interface DeckCreateData {
+  readonly rwDeckCreate: IWrDeck | null;
+}
 
 const initialName = '';
 

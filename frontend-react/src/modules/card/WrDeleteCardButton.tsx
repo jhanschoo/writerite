@@ -1,12 +1,26 @@
 import React, { FC, MouseEvent } from 'react';
 import { Trash2 } from 'react-feather';
 
+import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
-import { CARD_DELETE_MUTATION, CardDeleteVariables, CardDeleteData } from './gql';
 
 import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
+
+const CARD_DELETE_MUTATION = gql`
+mutation CardDelete($id: ID!) {
+  rwCardDelete(id: $id)
+}
+`;
+
+interface CardDeleteVariables {
+  readonly id: string;
+}
+
+interface CardDeleteData {
+  readonly rwCardDelete: string | null;
+}
 
 const StyledButton = styled(AuxillaryButton)`
   margin: 0 ${({ theme }) => theme.space[1]};

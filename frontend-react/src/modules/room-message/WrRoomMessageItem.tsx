@@ -1,11 +1,12 @@
 import React from 'react';
-import { WrRoomMessage } from './types';
 
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
 
+import { IWrRoomMessage } from '../../models/WrRoomMessage';
+
 interface Props {
-  message: WrRoomMessage;
+  message: IWrRoomMessage;
 }
 
 const MessageItem = styled(Item)`

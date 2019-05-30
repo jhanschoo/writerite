@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { gql } from 'graphql.macro';
 import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { OWN_DECKS_QUERY, OwnDecksData, OwnDecksVariables } from './gql';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -10,8 +10,23 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
+import { WrDeck, IWrDeck } from '../../../models/WrDeck';
 import WrOwnDecksSH from './WrOwnDecksSH';
 import WrDeckList from './WrDeckList';
+
+const OWN_DECKS_QUERY = gql`
+query OwnDecks {
+  rwOwnDecks {
+    ...WrDeck
+  }
+  ${WrDeck}
+}
+`;
+type OwnDecksVariables = object;
+
+export interface OwnDecksData {
+  readonly rwOwnDecks: IWrDeck[] | null;
+}
 
 const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}

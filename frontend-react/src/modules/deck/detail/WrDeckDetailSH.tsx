@@ -1,13 +1,64 @@
 import { PureComponent } from 'react';
 
+import { gql } from 'graphql.macro';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
-import { DeckDetailData, DECK_UPDATES_SUBSCRIPTION, DeckUpdatesVariables, DeckUpdatesData } from '../gql';
-import { CARDS_UPDATES_SUBSCRIPTION, CardsUpdatesData, CardsUpdatesVariables } from '../../card/gql';
 
-import { MutationType } from '../../../types';
-import { WrCard } from '../../card/types';
+import { DeckDetailData, IWrDeckDetail } from './WrDeckDetail';
+import { MutationType, Payload } from '../../../types';
+import { WrDeck } from '../../../models/WrDeck';
+import { WrCard, IWrCard } from '../../../models/WrCard';
+
+const CARDS_UPDATES_SUBSCRIPTION = gql`
+subscription CardsUpdates($deckId: ID!) {
+  rwCardsUpdatesOfDeck(deckId: $deckId) {
+    mutation
+    new {
+      ...WrCard
+    }
+    oldId
+  }
+  ${WrCard}
+}
+`;
+
+interface CardsUpdatesVariables {
+  readonly deckId: string;
+}
+
+type CardUpdatesPayload = Payload<IWrCard>;
+
+interface CardsUpdatesData {
+  readonly rwCardsUpdatesOfDeck: CardUpdatesPayload;
+}
+
+const DECK_UPDATES_SUBSCRIPTION = gql`
+subscription DeckUpdates($id: ID!) {
+  rwDeckUpdates(id: $id) {
+    mutation
+    new {
+      ...WrDeck
+      cards {
+        ...WrCard
+      }
+    }
+    oldId
+  }
+  ${WrDeck}
+  ${WrCard}
+}
+`;
+
+interface DeckUpdatesVariables {
+  readonly id: string;
+}
+
+type DeckUpdatesPayload = Payload<IWrDeckDetail>;
+
+interface DeckUpdatesData {
+  readonly rwDeckUpdates: DeckUpdatesPayload;
+}
 
 interface Props {
   subscribeToMore: ((options: SubscribeToMoreOptions<
@@ -43,12 +94,12 @@ class WrDeckDetailSH extends PureComponent<Props> {
       switch (rwCardsUpdatesOfDeck.mutation) {
         case MutationType.CREATED:
           // https://github.com/apollographql/react-apollo/issues/2656
-          cards = [rwCardsUpdatesOfDeck.new].concat(cards.filter((card: WrCard) => {
+          cards = [rwCardsUpdatesOfDeck.new].concat(cards.filter((card: IWrCard) => {
             return card.id !== rwCardsUpdatesOfDeck.new.id;
           }));
           break;
         case MutationType.UPDATED:
-          cards = cards.map((card: WrCard) => {
+          cards = cards.map((card: IWrCard) => {
             if (card.id !== rwCardsUpdatesOfDeck.new.id) {
               return card;
             }
@@ -56,7 +107,7 @@ class WrDeckDetailSH extends PureComponent<Props> {
           });
           break;
         case MutationType.DELETED:
-          cards = cards.filter((card: WrCard) => {
+          cards = cards.filter((card: IWrCard) => {
             return card.id !== rwCardsUpdatesOfDeck.oldId;
           });
           break;

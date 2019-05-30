@@ -1,7 +1,5 @@
 import React, { useState, useRef } from 'react';
 
-import { WrRoom } from '../types';
-
 import { Filter } from 'react-feather';
 
 import styled from 'styled-components';
@@ -11,6 +9,8 @@ import { MinimalTextInput } from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
+
+import { IWrRoom } from '../../../models/WrRoom';
 
 const initialFilter = '';
 
@@ -35,7 +35,7 @@ interface Content {
 }
 
 // TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
-const WrRoomList = ({ rooms }: { rooms: WrRoom[] }) => {
+const WrRoomList = ({ rooms }: { rooms: IWrRoom[] }) => {
   const [ filter, setFilter ] = useState(initialFilter);
   const inputEl = useRef<HTMLInputElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,7 +56,7 @@ const WrRoomList = ({ rooms }: { rooms: WrRoom[] }) => {
         <em>There are no rooms matching your filter.</em>
       </StyledItem>
     )]
-    : filteredRooms.map((room: WrRoom) => (
+    : filteredRooms.map((room: IWrRoom) => (
         <StyledItem key={room.id}>
           <SidebarMenuLink to={`/room/${room.id}`} lang={room.deck.nameLang || undefined}>
             {room.deck.name}

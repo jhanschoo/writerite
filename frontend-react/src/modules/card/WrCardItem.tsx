@@ -1,25 +1,58 @@
 import React, { Component, ChangeEvent, KeyboardEvent } from 'react';
 import moment from 'moment';
 
+import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
-import { CARD_EDIT_MUTATION, CardEditVariables, CardEditData } from './gql';
+import { WrCard, IWrCard } from '../../models/WrCard';
 
 import styled from 'styled-components';
 import HDivider from '../../ui/HDivider';
 import List from '../../ui/list/List';
 import Item from '../../ui/list/Item';
 
-import { WrCard } from './types';
 import CardFieldset from './CardFieldset';
 import WrDuplicateCardButton from './WrDuplicateCardButton';
 import WrDeleteCardButton from './WrDeleteCardButton';
+
+const CARD_EDIT_MUTATION = gql`
+mutation CardEdit(
+  $id: ID!,
+  $prompt: String,
+  $fullAnswer: String,
+  $sortKey: String,
+  $template: Boolean,
+) {
+  rwCardEdit(
+    id: $id,
+    prompt: $prompt,
+    fullAnswer: $fullAnswer,
+    sortKey: $sortKey,
+    template: $template,
+  ) {
+    ...WrCard
+  }
+  ${WrCard}
+}
+`;
+
+interface CardEditVariables {
+  readonly id: string;
+  readonly prompt?: string;
+  readonly fullAnswer?: string;
+  readonly sortKey?: string;
+  readonly template?: boolean;
+}
+
+interface CardEditData {
+  readonly rwCardEdit: IWrCard | null;
+}
 
 interface Props {
   deckId: string;
   promptLang: string;
   answerLang: string;
-  card: WrCard;
+  card: IWrCard;
 }
 
 const Header = styled.header`

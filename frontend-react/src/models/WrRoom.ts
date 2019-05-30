@@ -1,17 +1,8 @@
 import { gql } from 'graphql.macro';
-import { WrUserStub, IWrUserStub } from './WrUser';
-import { WrDeckStub, IWrDeckStub } from './WrDeck';
-import { WrRoomMessageStub, IWrRoomMessageStub } from './WrRoomMessage';
-
-export const WrRoomStub = gql`
-fragment WrRoomStub on RwRoom {
-  id
-}
-`;
-
-export interface IWrRoomStub {
-  id: string;
-}
+import { WrUserStub, IWrUserStub } from './WrUserStub';
+import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
+import { WrRoomStub, IWrRoomStub } from './WrRoomStub';
+import { WrRoomMessageStub, IWrRoomMessageStub } from './WrRoomMessageStub';
 
 export const WrRoom = gql`
 fragment WrRoom on RwRoom {

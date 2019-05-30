@@ -8,10 +8,10 @@ import { connect } from 'react-redux';
 import { SigninAction, createSignin } from './actions';
 import { WrState } from '../../store';
 
+import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
-import { SIGNIN, SigninVariables, SigninData } from './gql';
 
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
@@ -23,14 +23,50 @@ import SmallMessage from '../../ui/form/SmallMessage';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { OptionalUserAndToken } from './types';
+import { WrUserStub, IWrUserStub } from '../../models/WrUserStub';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;
 declare var FBDeferred: Promise<any>;
 
+const SIGNIN = gql`
+mutation Signin(
+  $email: String! $token: String! $authorizer: String! $identifier: String!
+  ) {
+  signin(
+    email: $email
+    token: $token
+    authorizer: $authorizer
+    identifier: $identifier
+    persist: false
+  ) {
+    user {
+      ...WrUserStub
+    }
+    token
+  }
+  ${WrUserStub}
+}
+`;
+
+interface SigninVariables {
+  readonly email: string;
+  readonly token: string;
+  readonly authorizer: 'GOOGLE' | 'FACEBOOK' | 'LOCAL' | 'DEVELOPMENT';
+  readonly identifier: string;
+}
+
+export interface UserAndToken {
+  readonly token: string;
+  readonly user: IWrUserStub;
+}
+
+interface SigninData {
+  readonly signin: UserAndToken | null;
+}
+
 interface DispatchProps {
-  createSignin: (data: OptionalUserAndToken) => SigninAction;
+  readonly createSignin: (data: UserAndToken | null) => SigninAction;
 }
 
 type Props = DispatchProps & RouteComponentProps;

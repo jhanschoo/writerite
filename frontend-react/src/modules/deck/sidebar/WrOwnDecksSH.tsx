@@ -1,12 +1,34 @@
 import { PureComponent } from 'react';
 
+import { gql } from 'graphql.macro';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
-import { OWN_DECKS_UPDATES_SUBSCRIPTION, OwnDecksData, OwnDecksUpdatesData, OwnDecksUpdatesVariables } from './gql';
 
-import { MutationType } from '../../../types';
-import { WrDeck } from '../types';
+import { MutationType, Payload } from '../../../types';
+import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+import { OwnDecksData } from './WrOwnDecks';
+
+const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
+subscription OwnDecksUpdates {
+  rwOwnDecksUpdates {
+    mutation
+    new {
+      ...WrDeck
+    }
+    oldId
+  }
+  ${WrDeck}
+}
+`;
+
+export type OwnDecksUpdatesVariables = object;
+
+export type WrDeckUpdatesPayload = Payload<IWrDeck>;
+
+export interface OwnDecksUpdatesData {
+  readonly rwOwnDecksUpdates: WrDeckUpdatesPayload;
+}
 
 interface Props {
   subscribeToMore: (options: SubscribeToMoreOptions<
@@ -25,12 +47,12 @@ class WrOwnDecksSH extends PureComponent<Props> {
       switch (rwOwnDecksUpdates.mutation) {
         case MutationType.CREATED:
           // https://github.com/apollographql/react-apollo/issues/2656
-          decks = [rwOwnDecksUpdates.new].concat(decks.filter((deck: WrDeck) => {
+          decks = [rwOwnDecksUpdates.new].concat(decks.filter((deck: IWrDeck) => {
             return deck.id !== rwOwnDecksUpdates.new.id;
           }));
           break;
         case MutationType.UPDATED:
-          decks = decks.map((deck: WrDeck) => {
+          decks = decks.map((deck: IWrDeck) => {
             if (deck.id !== rwOwnDecksUpdates.new.id) {
               return deck;
             }
@@ -38,7 +60,7 @@ class WrOwnDecksSH extends PureComponent<Props> {
           });
           break;
         case MutationType.DELETED:
-          decks = decks.filter((deck: WrDeck) => {
+          decks = decks.filter((deck: IWrDeck) => {
             return deck.id !== rwOwnDecksUpdates.oldId;
           });
           break;

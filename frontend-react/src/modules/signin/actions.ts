@@ -1,4 +1,4 @@
-import { OptionalUserAndToken } from './types';
+import { UserAndToken } from './WrSignin';
 
 export enum ActionTypes {
   SIGNIN = 'SIGNIN',
@@ -6,12 +6,12 @@ export enum ActionTypes {
 
 export interface SigninAction {
   readonly type: ActionTypes.SIGNIN;
-  readonly data: OptionalUserAndToken;
+  readonly data: UserAndToken | null;
 }
 
 export type AuthorizationAction = SigninAction;
 
-export const createSignin = (data: OptionalUserAndToken): AuthorizationAction => {
+export const createSignin = (data: UserAndToken | null): AuthorizationAction => {
   return {
     type: ActionTypes.SIGNIN,
     data,

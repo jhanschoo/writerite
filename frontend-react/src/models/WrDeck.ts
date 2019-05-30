@@ -1,24 +1,7 @@
 import { gql } from 'graphql.macro';
-import { WrUserStub, IWrUserStub } from './WrUser';
-import { WrCardStub, IWrCardStub } from './WrCard';
-
-export const WrDeckStub = gql`
-fragment WrDeckStub on RwDeck {
-  id
-  name
-  nameLang
-  promptLang
-  answerLang
-}
-`;
-
-export interface IWrDeckStub {
-  id: string;
-  name: string;
-  nameLang: string;
-  promptLang: string;
-  answerLang: string;
-}
+import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
+import { WrUserStub, IWrUserStub } from './WrUserStub';
+import { WrCardStub, IWrCardStub } from './WrCardStub';
 
 export const WrDeck = gql`
 fragment WrDeck on RwDeck {

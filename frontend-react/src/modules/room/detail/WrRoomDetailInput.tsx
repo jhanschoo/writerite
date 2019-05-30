@@ -1,13 +1,39 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { Send } from 'react-feather';
 
+import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { ROOM_MESSAGE_CREATE_MUTATION, RoomMessageCreateVariables, RoomMessageCreateData } from '../gql';
 
 import styled from 'styled-components';
 import TextInput from '../../../ui/form/TextInput';
 import { BorderlessButton } from '../../../ui/form/Button';
+
+import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
+
+const ROOM_MESSAGE_CREATE_MUTATION = gql`
+mutation RoomMessageCreate(
+  $roomId: ID!
+  $content: String!
+) {
+  rwRoomMessageCreate(
+    roomId: $roomId
+    content: $content
+  ) {
+    ...WrRoomMessage
+  }
+  ${WrRoomMessage}
+}
+`;
+
+interface RoomMessageCreateVariables {
+  readonly roomId: string;
+  readonly content: string;
+}
+
+interface RoomMessageCreateData {
+  readonly rwRoomMessageCreate: IWrRoomMessage | null;
+}
 
 interface Props {
   roomId: string;
@@ -42,7 +68,7 @@ const WrRoomDetailInput = (props: Props) => {
           roomId,
           content: contentInput,
         },
-      });
+      }).then(() => setContentInput(''));
     };
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
@@ -50,8 +76,13 @@ const WrRoomDetailInput = (props: Props) => {
     };
     return (
       <InputBox onSubmit={handleSubmit}>
-        <StyledTextInput type="text" value={contentInput} onChange={handleChange} />
-        <StyledButton type="submit">
+        <StyledTextInput
+          type="text"
+          value={contentInput}
+          onChange={handleChange}
+          disabled={loading}
+        />
+        <StyledButton type="submit" disabled={loading}>
           Send&nbsp;<Send size={16} />
         </StyledButton>
       </InputBox>

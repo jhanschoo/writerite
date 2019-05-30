@@ -15,7 +15,7 @@ import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
 
-import { WrUser } from '../signin/types';
+import { IWrUserStub } from '../../models/WrUserStub';
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
 
@@ -65,7 +65,7 @@ interface DispatchProps {
 }
 
 interface StateProps {
-  user: WrUser | null;
+  user: IWrUserStub | null;
 }
 
 type Props = StateProps & DispatchProps;

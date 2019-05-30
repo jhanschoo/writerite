@@ -1,11 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, Dispatch, SetStateAction } from 'react';
 
+import { gql } from 'graphql.macro';
 import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import {
-  DeckEditData, DeckEditVariables, DECK_EDIT_MUTATION,
-  DeckDeleteData, DeckDeleteVariables, DECK_DELETE_MUTATION,
-} from '../gql';
 
 import styled from 'styled-components';
 import { AnchorButton } from '../../../ui/form/Button';
@@ -16,10 +13,57 @@ import HDivider from '../../../ui/HDivider';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrDeckDetail } from '../types';
+import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+
+const DECK_EDIT_MUTATION = gql`
+mutation DeckEdit(
+    $id: ID!
+    $name: String
+    $nameLang: String
+    $promptLang: String
+    $answerLang: String
+  ) {
+  rwDeckEdit(
+    id: $id
+    name: $name
+    nameLang: $nameLang
+    promptLang: $promptLang
+    answerLang: $answerLang
+  ) {
+    ...WrDeck
+  }
+  ${WrDeck}
+}
+`;
+
+interface DeckEditVariables {
+  readonly id: string;
+  readonly name?: string;
+  readonly nameLang?: string;
+  readonly promptLang?: string;
+  readonly answerLang?: string;
+}
+
+interface DeckEditData {
+  readonly rwDeckEdit: IWrDeck | null;
+}
+
+const DECK_DELETE_MUTATION = gql`
+mutation DeckDelete($id: ID!) {
+  rwDeckDelete(id: $id)
+}
+`;
+
+interface DeckDeleteVariables {
+  readonly id: string;
+}
+
+interface DeckDeleteData {
+  readonly rwDeckDelete: string | null;
+}
 
 interface OwnProps {
-  deck: WrDeckDetail;
+  deck: IWrDeck;
 }
 
 type Props = RouteComponentProps & OwnProps;

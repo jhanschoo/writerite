@@ -1,12 +1,46 @@
 import React, { FC, MouseEvent } from 'react';
 import { Copy } from 'react-feather';
 
+import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
-import { CARD_CREATE_MUTATION, CardCreateVariables, CardCreateData } from './gql';
+import { WrCard, IWrCard } from '../../models/WrCard';
 
 import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
+
+const CARD_CREATE_MUTATION = gql`
+mutation CardCreate(
+  $deckId: ID!,
+  $prompt: String!,
+  $fullAnswer: String!,
+  $sortKey: String,
+  $template: Boolean,
+) {
+  rwCardCreate(
+    deckId: $deckId,
+    prompt: $prompt,
+    fullAnswer: $fullAnswer,
+    sortKey: $sortKey,
+    template: $template,
+  ) {
+    ...WrCard
+  }
+  ${WrCard}
+}
+`;
+
+interface CardCreateVariables {
+  readonly deckId: string;
+  readonly prompt: string;
+  readonly fullAnswer: string;
+  readonly sortKey?: string;
+  readonly template?: boolean;
+}
+
+interface CardCreateData {
+  readonly rwCardCreate: IWrCard | null;
+}
 
 const StyledButton = styled(AuxillaryButton)`
   margin: 0 ${({ theme }) => theme.space[1]};

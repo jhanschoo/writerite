@@ -9,7 +9,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-import { WrDeck } from '../types';
+import { IWrDeck } from '../../../models/WrDeck';
 
 const initialFilter = '';
 
@@ -33,8 +33,12 @@ interface Content {
   el: JSX.Element;
 }
 
+interface Props {
+  decks: IWrDeck[];
+}
+
 // TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
-const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
+const WrDeckList = ({ decks }: Props) => {
   const [ filter, setFilter ] = useState(initialFilter);
   const inputEl = useRef<HTMLInputElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,7 +59,7 @@ const WrDeckList = ({ decks }: { decks: WrDeck[] }) => {
         <em>There are no decks matching your filter.</em>
       </StyledItem>
     )]
-    : filteredDecks.map((deck: WrDeck) => (
+    : filteredDecks.map((deck: IWrDeck) => (
         <StyledItem key={deck.id}>
           <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.nameLang || undefined}>
             {deck.name}

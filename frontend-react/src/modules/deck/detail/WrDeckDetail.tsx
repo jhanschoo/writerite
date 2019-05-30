@@ -1,9 +1,8 @@
 import React, { useState, MouseEvent } from 'react';
 
+import { gql } from 'graphql.macro';
 import { Query, QueryResult, Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { DECK_DETAIL_QUERY, DeckDetailData, DeckDetailVariables } from '../gql';
-import { ROOM_CREATE_MUTATION, RoomCreateData, RoomCreateVariables } from '../../room/gql';
 
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
@@ -15,6 +14,56 @@ import WrDetailButtons from './WrDetailButtons';
 import WrDeckDetailSH from './WrDeckDetailSH';
 
 import { withRouter, RouteComponentProps } from 'react-router';
+
+import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+import { WrCard, IWrCard } from '../../../models/WrCard';
+import { WrRoom, IWrRoom } from '../../../models/WrRoom';
+
+const DECK_DETAIL_QUERY = gql`
+query Deck($deckId: ID!) {
+  rwDeck(id: $deckId) {
+    ...WrDeck
+    cards {
+      ...WrCard
+    }
+  }
+  ${WrDeck}
+  ${WrCard}
+}
+`;
+
+interface DeckDetailVariables {
+  readonly deckId: string;
+}
+
+export interface IWrDeckDetail extends IWrDeck {
+  readonly cards: IWrCard[];
+}
+
+export interface DeckDetailData {
+  readonly rwDeck: IWrDeckDetail | null;
+}
+
+const ROOM_CREATE_MUTATION = gql`
+mutation RoomCreate(
+  $deckId: ID!
+) {
+  rwRoomCreate(
+    deckId: $deckId
+  ) {
+    ...WrRoom
+  }
+  ${WrRoom}
+}
+`;
+
+interface RoomCreateVariables {
+  readonly deckId: string;
+}
+
+interface RoomCreateData {
+  readonly rwRoomCreate: IWrRoom | null;
+}
 
 export enum CurrentAddNewEnum {
   SUBDECK,

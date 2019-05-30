@@ -1,8 +1,8 @@
 import React from 'react';
 
+import { gql } from 'graphql.macro';
 import { Query, QueryResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
-import { IN_ROOMS_QUERY, InRoomsData, InRoomsVariables } from '../gql';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -10,7 +10,34 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
+import { WrRoom } from '../../../models/WrRoom';
+import { WrDeck } from '../../../models/WrDeck';
+import { WrRoomMessage } from '../../../models/WrRoomMessage';
 import WrRoomList from './WrRoomList';
+import { IWrRoomDetail } from '../detail/WrRoomDetail';
+
+const IN_ROOMS_QUERY = gql`
+query InRooms {
+  rwInRooms {
+    ...WrRoom
+    deck {
+      ...WrDeck
+    }
+    messages {
+      ...WrRoomMessage
+    }
+  }
+  ${WrRoom}
+  ${WrDeck}
+  ${WrRoomMessage}
+}
+`;
+
+type InRoomsVariables = object;
+
+interface InRoomsData {
+  rwInRooms: IWrRoomDetail[] | null;
+}
 
 const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}
