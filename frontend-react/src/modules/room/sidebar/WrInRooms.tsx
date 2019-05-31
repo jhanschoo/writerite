@@ -10,26 +10,15 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { WrRoom } from '../../../models/WrRoom';
-import { WrDeck } from '../../../models/WrDeck';
-import { WrRoomMessage } from '../../../models/WrRoomMessage';
+import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
 import WrRoomList from './WrRoomList';
-import { IWrRoomDetail } from '../detail/WrRoomDetail';
 
 const IN_ROOMS_QUERY = gql`
 query InRooms {
   rwInRooms {
-    ...WrRoom
-    deck {
-      ...WrDeck
-    }
-    messages {
-      ...WrRoomMessage
-    }
+    ...WrRoomDetail
   }
-  ${WrRoom}
-  ${WrDeck}
-  ${WrRoomMessage}
+  ${WrRoomDetail}
 }
 `;
 

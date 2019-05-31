@@ -5,9 +5,9 @@ import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 
-import { DeckDetailData, IWrDeckDetail } from './WrDeckDetail';
+import { WrDeckDetail, IWrDeckDetail } from '../../../models/WrDeckDetail';
+import { DeckDetailData } from './WrDeckDetail';
 import { MutationType, Payload } from '../../../types';
-import { WrDeck } from '../../../models/WrDeck';
 import { WrCard, IWrCard } from '../../../models/WrCard';
 
 const CARDS_UPDATES_SUBSCRIPTION = gql`
@@ -38,15 +38,11 @@ subscription DeckUpdates($id: ID!) {
   rwDeckUpdates(id: $id) {
     mutation
     new {
-      ...WrDeck
-      cards {
-        ...WrCard
-      }
+      ...WrDeckDetail
     }
     oldId
   }
-  ${WrDeck}
-  ${WrCard}
+  ${WrDeckDetail}
 }
 `;
 

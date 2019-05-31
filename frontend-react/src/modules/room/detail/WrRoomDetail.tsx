@@ -12,9 +12,7 @@ import Item from '../../../ui/list/Item';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrRoom, IWrRoom } from '../../../models/WrRoom';
-import { WrDeck, IWrDeck } from '../../../models/WrDeck';
-import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
+import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';
 import WrRoomMessageItem from '../../room-message/WrRoomMessageItem';
@@ -24,27 +22,14 @@ query RoomDetail(
   $id: ID!
 ) {
   rwRoom(id: $id) {
-    ...WrRoom
-    deck {
-      ...WrDeck
-    }
-    messages {
-      ...WrRoomMessage
-    }
+    ...WrRoomDetail
   }
-  ${WrRoom}
-  ${WrDeck}
-  ${WrRoomMessage}
+  ${WrRoomDetail}
 }
 `;
 
 export interface RoomDetailVariables {
   readonly id: string;
-}
-
-export interface IWrRoomDetail extends IWrRoom {
-  deck: IWrDeck;
-  messages: IWrRoomMessage[];
 }
 
 export interface RoomDetailData {
@@ -78,7 +63,7 @@ const Spacer = styled(Item)`
   flex-grow: 1;
 `;
 
-const WrRoomDetail = (props: RouteComponentProps<{ roomId: string }>) => {
+const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) => {
   const { match } = props;
   const { roomId } = match.params;
   const renderRoom = ({
@@ -148,4 +133,4 @@ const WrRoomDetail = (props: RouteComponentProps<{ roomId: string }>) => {
   );
 };
 
-export default withRouter(WrRoomDetail);
+export default withRouter(WrRoomDetailComponent);

@@ -15,29 +15,20 @@ import WrDeckDetailSH from './WrDeckDetailSH';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrDeck, IWrDeck } from '../../../models/WrDeck';
-import { WrCard, IWrCard } from '../../../models/WrCard';
+import { WrDeckDetail, IWrDeckDetail } from '../../../models/WrDeckDetail';
 import { WrRoom, IWrRoom } from '../../../models/WrRoom';
 
 const DECK_DETAIL_QUERY = gql`
 query Deck($deckId: ID!) {
   rwDeck(id: $deckId) {
-    ...WrDeck
-    cards {
-      ...WrCard
-    }
+    ...WrDeckDetail
   }
-  ${WrDeck}
-  ${WrCard}
+  ${WrDeckDetail}
 }
 `;
 
 interface DeckDetailVariables {
   readonly deckId: string;
-}
-
-export interface IWrDeckDetail extends IWrDeck {
-  readonly cards: IWrCard[];
 }
 
 export interface DeckDetailData {
@@ -76,7 +67,7 @@ const CenteredP = styled.p`
   text-align: center;
 `;
 
-const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
+const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) => {
   const { history, match } = props;
   const { deckId } = match.params;
   const [showSettings, setShowSettings] = useState(false);
@@ -183,4 +174,4 @@ const WrDeckDetail = (props: RouteComponentProps<{ deckId: string }>) => {
   );
 };
 
-export default withRouter(WrDeckDetail);
+export default withRouter(WrDeckDetailComponent);
