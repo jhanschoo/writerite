@@ -98,7 +98,6 @@ color: ${({ theme }) => theme.colors.facebookBlue};
 const SigninBox = styled.div`
   padding: ${({ theme }) => theme.space[3]};
   border-radius: 4px;
-  background: ${({ theme }) => theme.colors.heterogBg};
 `;
 
 const TextCenteredDiv = styled.div`

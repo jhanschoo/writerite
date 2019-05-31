@@ -6,7 +6,8 @@ import { BorderlessButton } from '../../../ui/form/Button';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
-import { CurrentAddNewEnum, IWrDeckDetail } from './WrDeckDetail';
+import { IWrDeckDetail } from '../../../models/WrDeckDetail';
+import { CurrentAddNewEnum } from './WrDeckDetail';
 
 interface Props {
   showSubDecks: boolean;

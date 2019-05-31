@@ -10,7 +10,10 @@ import FlexSection from '../../../ui/FlexSection';
 import { MinimalButton } from '../../../ui/form/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import { MinimalTextInput } from '../../../ui/form/TextInput';
+import List from '../../../ui/list/List';
+import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
+import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
 import { WrDeck, IWrDeck } from '../../../models/WrDeck';
 
@@ -46,15 +49,17 @@ interface DeckCreateData {
 
 const initialName = '';
 
-const FlexContainer = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
+const StyledList = styled(List)`
+  flex-direction: column;
+`;
+
+const StyledItem = styled(Item)`
+  margin: 1px 0;
 `;
 
 const StyledTextInput = styled(MinimalTextInput)`
   flex-grow: 1;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+  padding: 0 ${({ theme }) => theme.space[1]};
 `;
 
 const WrNewDeck = () => {
@@ -81,21 +86,29 @@ const WrNewDeck = () => {
       <form onSubmit={handleSubmit}>
         <Fieldset>
           <SidebarMenuHeader as="legend">Create a New Deck</SidebarMenuHeader>
-            <FlexContainer>
-              <StyledTextInput
-                aria-label="Deck Name"
-                placeholder="Type a deck name..."
-                value={name}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <MinimalButton
-                type="submit"
-                disabled={name === '' || loading}
-              >
-                <Plus size={14} />
-              </MinimalButton>
-            </FlexContainer>
+            <StyledList>
+              <StyledItem>
+                <StyledTextInput
+                  aria-label="Deck Name"
+                  placeholder="Type a deck name..."
+                  value={name}
+                  required={true}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+                <MinimalButton
+                  type="submit"
+                  disabled={name === '' || loading}
+                >
+                  <Plus size={14} />
+                </MinimalButton>
+              </StyledItem>
+              <StyledItem>
+                <SidebarMenuLink to="/deck/upload">
+                  Import from CSV
+                </SidebarMenuLink>
+              </StyledItem>
+            </StyledList>
         </Fieldset>
       </form>
     );
