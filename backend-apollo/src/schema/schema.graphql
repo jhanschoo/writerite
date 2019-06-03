@@ -31,11 +31,17 @@ type Mutation {
   ): RwAuthResponse
   # Deck
   rwDeckCreate(
-    id: ID
     name: String
     nameLang: String
     promptLang: String
     answerLang: String
+  ): RwDeck
+  rwDeckCreateFromCsv(
+    name: String
+    nameLang: String
+    promptLang: String
+    answerLang: String
+    csv: Upload!
   ): RwDeck
   rwDeckEdit(
     id: ID!
@@ -150,6 +156,7 @@ type RwCard {
 
 type RwRoom {
   id: ID!
+  #inactive: Boolean!
   owner: RwUser!
   occupants: [RwUser!]!
   deck: RwDeck

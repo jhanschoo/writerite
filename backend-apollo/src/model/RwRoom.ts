@@ -72,6 +72,8 @@ export const SRoom = {
     return await SRoom.fromPRoom(await prisma.createPRoom({
       deck: { connect: { id: deckId } },
       owner: { connect: { id: userId } },
+      lastKnownActiveMessage: new Date(0),
+      inactiveOverride: false,
     }));
   },
   addOccupant: async (prisma: Prisma, {

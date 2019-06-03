@@ -33,6 +33,7 @@
     "graphql.macro": "^1.4.2",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
+    "papaparse": "^5.0.0",
     "react": "^16.8.6",
     "react-apollo": "^2.5.5",
     "react-dom": "^16.8.6",

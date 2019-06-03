@@ -29,6 +29,10 @@ export interface IRwDeckCreateParams {
   userId: string;
 }
 
+export interface IRwDeckCreateFromRecordsParams extends IRwDeckCreateParams {
+  records: string[][];
+}
+
 export interface IRwDeckEditParams {
   id: string;
   name?: string;
@@ -63,6 +67,27 @@ export const SDeck = {
       promptLang: promptLang || '',
       answerLang: answerLang || '',
       owner: { connect: { id: userId } },
+    }));
+  },
+  createFromRecords: async (prisma: Prisma, {
+    name, nameLang, promptLang, answerLang, userId, records,
+  }: IRwDeckCreateFromRecordsParams): Promise<ISDeck> => {
+    const editedAt = (new Date()).toISOString();
+    return await SDeck.fromPDeck(await prisma.createPDeck({
+      name: name || '',
+      nameLang: nameLang || '',
+      promptLang: promptLang || '',
+      answerLang: answerLang || '',
+      owner: { connect: { id: userId } },
+      cards: {
+        create: records.map((record) => ({
+          prompt: record[0],
+          fullAnswer: record[1],
+          sortKey: (record.length > 2) ? record[2] : record[0],
+          editedAt,
+          template: false,
+        })),
+      },
     }));
   },
   edit: async (prisma: Prisma, {
@@ -113,6 +138,8 @@ export const RwDeck = {
   },
   create: async (prisma: Prisma, params: IRwDeckCreateParams) =>
     RwDeck.fromSDeck(prisma, await SDeck.create(prisma, params)),
+  createFromRecords: async (prisma: Prisma, params: IRwDeckCreateFromRecordsParams) =>
+    RwDeck.fromSDeck(prisma, await SDeck.createFromRecords(prisma, params)),
   edit: async (prisma: Prisma, params: IRwDeckEditParams) =>
     RwDeck.fromSDeck(prisma, await SDeck.edit(prisma, params)),
   delete: SDeck.delete,

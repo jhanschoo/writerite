@@ -3,6 +3,7 @@ import { PubSubEngine } from 'apollo-server-koa';
 
 import { Prisma } from '../generated/prisma-client';
 import { IModels } from './model';
+import { Readable } from 'stream';
 
 export type AFunResTo<TReturn> = (() => Promise<TReturn>);
 
@@ -36,6 +37,15 @@ export enum Roles {
   admin = 'admin',
   acolyte = 'acolyte',
 }
+
+export interface IFileUpload {
+  filename: string;
+  mimetype: string;
+  encoding: string;
+  createReadStream: () => Readable;
+}
+
+export type IUpload = Promise<IFileUpload>;
 
 export interface ICurrentUser {
   id: string;

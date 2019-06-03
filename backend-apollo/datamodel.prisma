@@ -48,6 +48,9 @@ type PDeck {
 
 type PRoom {
   id: ID! @id
+  # consistency: at most/latest equal to last (possibly deleted/edited) message in room
+  lastKnownActiveMessage: DateTime!
+  inactiveOverride: Boolean!
   owner: PUser! @relation(link: INLINE name: "PUserOwningPRooms")
   occupants: [PUser!]! @relation(name: "PUsersOccupyingPRooms")
   deck: PDeck @relation(link: INLINE)

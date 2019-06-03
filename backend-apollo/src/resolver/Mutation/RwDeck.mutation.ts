@@ -1,7 +1,8 @@
 import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
+import parse from 'csv-parse';
 
 import {
-  MutationType, IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate,
+  MutationType, IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate, IUpload,
 } from '../../types';
 
 import {
@@ -28,6 +29,55 @@ const rwDeckCreate: IFieldResolver<any, IContext, {
   pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
   pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
   return models.RwDeck.fromSDeck(prisma, sDeck);
+};
+
+const rwDeckCreateFromCsv: IFieldResolver<any, IContext, {
+  name?: string,
+  nameLang?: string,
+  promptLang?: string,
+  answerLang?: string,
+  csv: IUpload,
+}> = async (
+  _parent, { name, csv, ...params }, { models, sub, prisma, pubsub },
+): Promise<IRwDeck | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
+  }
+  const { filename, mimetype, createReadStream } = await csv;
+  const stream = createReadStream();
+  return new Promise((res, rej) => {
+    const parser = parse();
+    stream.pipe(parser);
+    const records: string[][] = [];
+    parser.on('error', (err) => rej(err));
+    parser.on('readable', () => {
+      let record: string[] = parser.read();
+      while (record) {
+        while (record.length < 2) {
+          record.push('');
+        }
+        records.push(record);
+        record = parser.read();
+      }
+    });
+    parser.on('end', async () => {
+      // save output
+      const sDeck = await models.SDeck.createFromRecords(prisma, {
+        ...params,
+        userId: sub.id,
+        name: name || filename,
+        records,
+      });
+      const sDeckUpdate: ICreatedUpdate<ISDeck> = {
+        mutation: MutationType.CREATED,
+        new: sDeck,
+        oldId: null,
+      };
+      pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
+      pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
+      res(models.RwDeck.fromSDeck(prisma, sDeck));
+    });
+  });
 };
 
 const rwDeckEdit: IFieldResolver<any, IContext, {
@@ -75,5 +125,5 @@ const rwDeckDelete: IFieldResolver<any, IContext, {
 };
 
 export const rwDeckMutation: IResolverObject<any, IContext, any> = {
-  rwDeckCreate, rwDeckEdit, rwDeckDelete,
+  rwDeckCreate, rwDeckCreateFromCsv, rwDeckEdit, rwDeckDelete,
 };

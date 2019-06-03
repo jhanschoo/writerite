@@ -9,7 +9,6 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 import Koa from 'koa';
 import helmet from 'koa-helmet';
-import { importSchema } from 'graphql-import';
 
 import { ApolloServer, gql } from 'apollo-server-koa';
 
@@ -70,7 +69,7 @@ const app = new Koa();
 
 app.use(helmet());
 
-const typeDefs = gql(importSchema('src/schema/schema.graphql'));
+const typeDefs = gql(fs.readFileSync('src/schema/schema.graphql', 'utf8'));
 
 const apollo = new ApolloServer({
   typeDefs,
