@@ -31,6 +31,18 @@ The following environment variables may be set:
   room conversation: these are not latency-critical and use GQL API
   calls.
 
+## Room consistency model
+
+* A room is active when created
+* Rooms can be set to inactive by an API
+* When a message is posted into a room, assuming no errors,
+  if it is not longer than one day since creation or the last known
+  posting of a message into the room while it was active, it updates
+  the last known posting of a message into the room while it was active
+* When more than one day has passed since the creation of a room or
+  the last known posting of a message into the room while it was active,
+  the room becomes inactive
+
 ## Stack summary
 
 * Language: Typescript
