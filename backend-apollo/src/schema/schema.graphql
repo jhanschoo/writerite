@@ -78,6 +78,8 @@ type Mutation {
   # Room
   rwRoomCreate(deckId: ID!): RwRoom
   rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom
+  rwRoomDeactivate(id: ID!): RwRoom
+  # RoomMessage
   rwRoomMessageCreate(roomId: ID! content: String!): RwRoomMessage
 }
 

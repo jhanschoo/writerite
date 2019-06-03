@@ -23,7 +23,6 @@ const rwRoomCreate: IFieldResolver<any, IContext, {
   return models.RwRoom.fromSRoom(prisma, sRoom);
 };
 
-// TODO: access control: owner or self only
 const rwRoomAddOccupant: IFieldResolver<any, IContext, {
   id: string, occupantId: string,
 }> = async (
@@ -48,6 +47,31 @@ const rwRoomAddOccupant: IFieldResolver<any, IContext, {
   return RwRoom.fromSRoom(prisma, sRoom);
 };
 
+// TODO: access control: owner or self only
+const rwRoomDeactivate: IFieldResolver<any, IContext, {
+  id: string,
+}> = async (
+  _parent: any, { id }, { models, prisma, sub, pubsub },
+): Promise<IRwRoom | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
+  }
+  if (!await prisma.$exists.pRoom({
+    id,
+    OR: [{ owner: { id: sub.id } }, { occupants_some: { id: sub.id } }],
+  })) {
+    return null;
+  }
+  const sRoom = await models.SRoom.deactivate(prisma, { id: sub.id });
+  const sRoomUpdate: IUpdatedUpdate<ISRoom> = {
+    mutation: MutationType.UPDATED,
+    new: sRoom,
+    oldId: null,
+  };
+  pubsub.publish(rwRoomsTopic(), sRoomUpdate);
+  return RwRoom.fromSRoom(prisma, sRoom);
+};
+
 export const rwRoomMutation: IResolverObject<any, IContext, any> = {
-  rwRoomCreate, rwRoomAddOccupant,
+  rwRoomCreate, rwRoomAddOccupant, rwRoomDeactivate,
 };

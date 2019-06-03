@@ -33,6 +33,15 @@ export interface IRwRoomAddOccupantParams {
   occupantId: string;
 }
 
+export interface IRwRoomDeactivateParams {
+  id: string;
+}
+
+!await prisma.$exists.pRoom({
+  id,
+  OR: [{ owner: { id: sub.id } }, { occupants_some: { id: sub.id } }],
+})
+
 // tslint:disable-next-line: variable-name
 export const SRoom = {
   fromPRoom: (pRoom: PRoom): ISRoom => ({
@@ -106,6 +115,14 @@ export const SRoom = {
       where: { id },
     }));
   },
+  deactivate: async (prisma: Prisma, {
+    id,
+  }: IRwRoomDeactivateParams): Promise<ISRoom> => {
+    return SRoom.fromPRoom(await prisma.updatePRoom({
+      data: { inactiveOverride: true },
+      where: { id },
+    }));
+  },
 };
 
 // tslint:disable-next-line: variable-name
@@ -152,6 +169,12 @@ export const RwRoom = {
   ): Promise<IRwRoom | null> => {
     const sRoom = await SRoom.addOccupant(prisma, params);
     return sRoom && RwRoom.fromSRoom(prisma, sRoom);
+  },
+  deactivate: async (
+    prisma: Prisma, params: IRwRoomDeactivateParams,
+  ): Promise<IRwRoom> => {
+    const sRoom = await SRoom.deactivate(prisma, params);
+    return RwRoom.fromSRoom(prisma, sRoom);
   },
 };
 
