@@ -12,12 +12,6 @@ export interface ISCard {
 }
 
 export interface IRwCard extends ISCard {
-  id: string;
-  prompt: string;
-  fullAnswer: string;
-  sortKey: string;
-  editedAt: string;
-  template: boolean;
   deck: AFunResTo<IRwDeck>;
 }
 

@@ -29,6 +29,7 @@
     "jsrsasign": "^8.0.12",
     "koa": "^2.7.0",
     "koa-helmet": "^4.1.0",
+    "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
     "prisma": "^1.34.0",
     "prisma-binding": "^2.3.10",

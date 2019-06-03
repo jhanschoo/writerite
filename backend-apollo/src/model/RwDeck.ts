@@ -12,11 +12,6 @@ export interface ISDeck {
 }
 
 export interface IRwDeck extends ISDeck {
-  id: string;
-  name: string;
-  nameLang: string;
-  promptLang: string;
-  answerLang: string;
   owner: AFunResTo<IRwUser>;
   cards: AFunResTo<IRwCard[]>;
 }

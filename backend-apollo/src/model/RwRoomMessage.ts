@@ -14,9 +14,6 @@ export interface ISRoomMessage {
 }
 
 export interface IRwRoomMessage extends ISRoomMessage {
-  id: string;
-  content: string;
-  contentType: RwMessageContentType;
   sender: AFunResTo<IRwUser | null>;
   room: AFunResTo<IRwRoom>;
 }
@@ -68,13 +65,13 @@ export const RwRoomMessage = {
       if (pUsers.length !== 1) {
         return null;
       }
-      return RwUser.fromSUser(prisma, pUsers[0]);
+      return RwUser.fromPUser(prisma, pUsers[0]);
     },
     room: async () => {
       const pRooms = await prisma.pRooms({
         where: { messages_some: { id: sRoomMessage.id } },
       });
-      return RwRoom.fromSRoom(prisma, pRooms[0]);
+      return RwRoom.fromPRoom(prisma, pRooms[0]);
     },
   }),
   fromPRoomMessage: (

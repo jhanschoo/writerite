@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { PRoom, Prisma } from '../../generated/prisma-client';
 import { AFunResTo, IModel } from '../types';
 import { IRwDeck, RwDeck } from './RwDeck';
@@ -6,10 +8,10 @@ import { IRwUser, RwUser } from './RwUser';
 
 export interface ISRoom {
   id: string;
+  active: boolean;
 }
 
 export interface IRwRoom extends ISRoom {
-  id: string;
   owner: AFunResTo<IRwUser>;
   occupants: AFunResTo<IRwUser[]>;
   deck: AFunResTo<IRwDeck>;
@@ -33,7 +35,12 @@ export interface IRwRoomAddOccupantParams {
 
 // tslint:disable-next-line: variable-name
 export const SRoom = {
-  fromPRoom: (pRoom: PRoom): ISRoom => pRoom,
+  fromPRoom: (pRoom: PRoom): ISRoom => ({
+    ...pRoom,
+    active: !pRoom.inactiveOverride &&  moment.utc(
+      pRoom.lastKnownActiveMessage,
+    ).isSameOrAfter(moment().subtract(1, 'days')),
+  }),
   get: async (prisma: Prisma, id: string): Promise<ISRoom | null> => {
     const pRoom = await prisma.pRoom({ id });
     return pRoom && SRoom.fromPRoom(pRoom);
@@ -72,7 +79,7 @@ export const SRoom = {
     return await SRoom.fromPRoom(await prisma.createPRoom({
       deck: { connect: { id: deckId } },
       owner: { connect: { id: userId } },
-      lastKnownActiveMessage: new Date(0),
+      lastKnownActiveMessage: moment().toDate(),
       inactiveOverride: false,
     }));
   },
@@ -122,7 +129,7 @@ export const RwRoom = {
         where: { room: { id: sRoom.id } },
       });
       return pRoomMessages.map(
-        (pRoomMessage) => RwRoomMessage.fromPRoomMessage(prisma, pRoomMessage)
+        (pRoomMessage) => RwRoomMessage.fromPRoomMessage(prisma, pRoomMessage),
       );
     },
   }),

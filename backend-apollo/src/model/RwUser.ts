@@ -9,9 +9,6 @@ export interface ISUser {
 }
 
 export interface IRwUser extends ISUser {
-  id: string;
-  email: string;
-  roles: string[];
   decks: AFunResTo<IRwDeck[]>;
 }
 

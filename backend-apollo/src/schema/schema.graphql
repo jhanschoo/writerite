@@ -156,7 +156,7 @@ type RwCard {
 
 type RwRoom {
   id: ID!
-  #inactive: Boolean!
+  inactive: Boolean!
   owner: RwUser!
   occupants: [RwUser!]!
   deck: RwDeck
