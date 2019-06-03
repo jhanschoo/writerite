@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import { PRoomMessage, Prisma } from '../../generated/prisma-client';
 import { AFunResTo, IModel } from '../types';
 import { IRwUser, RwUser } from './RwUser';
@@ -46,11 +48,21 @@ export const SRoomMessage = {
     return pRoomMessages.map(SRoomMessage.fromPRoomMessage);
   },
   create: async (prisma: Prisma, { roomId, senderId, content }: IRwRoomMessageCreate) => {
-    return SRoomMessage.fromPRoomMessage(await prisma.createPRoomMessage({
+    const pRoomMessage = await prisma.createPRoomMessage({
       room: { connect: { id: roomId } },
-      sender: senderId ? { connect: { id: senderId } } : undefined,
       content,
-    }));
+    });
+    const pRoom = await prisma.pRoom({ id: roomId });
+    // TODO: DRY-ify this together with other checks for inactivity in pooms
+    if (pRoom && !pRoom.inactiveOverride && moment.utc(
+      pRoom.lastKnownActiveMessage,
+    ).isSameOrAfter(moment(pRoomMessage.createdAt).subtract(1, 'days'))) {
+      await prisma.updatePRoom({
+        data: { lastKnownActiveMessage: pRoomMessage.createdAt },
+        where: { id: roomId },
+      });
+    }
+    return SRoomMessage.fromPRoomMessage(pRoomMessage);
   },
 };
 

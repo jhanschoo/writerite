@@ -37,7 +37,7 @@ export interface IRwRoomAddOccupantParams {
 export const SRoom = {
   fromPRoom: (pRoom: PRoom): ISRoom => ({
     ...pRoom,
-    active: !pRoom.inactiveOverride &&  moment.utc(
+    active: !pRoom.inactiveOverride && moment.utc(
       pRoom.lastKnownActiveMessage,
     ).isSameOrAfter(moment().subtract(1, 'days')),
   }),
