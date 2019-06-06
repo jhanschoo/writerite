@@ -35,7 +35,7 @@ export enum MutationType {
 export enum Roles {
   user = 'user',
   admin = 'admin',
-  acolyte = 'acolyte',
+  wright = 'wright',
 }
 
 export interface IFileUpload {

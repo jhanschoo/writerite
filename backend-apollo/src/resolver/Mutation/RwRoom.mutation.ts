@@ -2,7 +2,7 @@ import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import { IContext, MutationType, ICreatedUpdate, IUpdatedUpdate } from '../../types';
 
-import { rwRoomsTopic } from '../Subscription/RwRoom.subscription';
+import { rwRoomTopic } from '../Subscription/RwRoom.subscription';
 import { rwAuthenticationError } from '../../util';
 import { ISRoom, RwRoom, IRwRoom } from '../../model/RwRoom';
 
@@ -18,8 +18,8 @@ const rwRoomCreate: IFieldResolver<any, IContext, {
     new: sRoom,
     oldId: null,
   };
-  redisClient.publish('writerite:room:serving', `${sRoom.id}:${deckId}`);
-  pubsub.publish(rwRoomsTopic(), pRoomUpdate);
+  redisClient.publish('writerite:room:serving', sRoom.id);
+  pubsub.publish(rwRoomTopic(sRoom.id), pRoomUpdate);
   return models.RwRoom.fromSRoom(prisma, sRoom);
 };
 
@@ -43,7 +43,7 @@ const rwRoomAddOccupant: IFieldResolver<any, IContext, {
     new: sRoom,
     oldId: null,
   };
-  pubsub.publish(rwRoomsTopic(), sRoomUpdate);
+  pubsub.publish(rwRoomTopic(sRoom.id), sRoomUpdate);
   return RwRoom.fromSRoom(prisma, sRoom);
 };
 
@@ -68,7 +68,7 @@ const rwRoomDeactivate: IFieldResolver<any, IContext, {
     new: sRoom,
     oldId: null,
   };
-  pubsub.publish(rwRoomsTopic(), sRoomUpdate);
+  pubsub.publish(rwRoomTopic(sRoom.id), sRoomUpdate);
   return RwRoom.fromSRoom(prisma, sRoom);
 };
 

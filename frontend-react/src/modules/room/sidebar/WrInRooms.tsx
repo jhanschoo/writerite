@@ -13,12 +13,13 @@ import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
 import WrRoomList from './WrRoomList';
 
+// TODO: refactor all fragment references to be at the top
 const IN_ROOMS_QUERY = gql`
+${WrRoomDetail}
 query InRooms {
   rwInRooms {
     ...WrRoomDetail
   }
-  ${WrRoomDetail}
 }
 `;
 

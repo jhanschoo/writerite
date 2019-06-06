@@ -1,78 +1,107 @@
-import { ApolloClient } from 'apollo-client';
-import { createUploadLink } from 'apollo-upload-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
+import { createUploadLink } from 'apollo-upload-client';
+import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
+import { RetryLink } from 'apollo-link-retry';
 import { setContext } from 'apollo-link-context';
 import { onError } from 'apollo-link-error';
-import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
+import { ApolloLink } from 'apollo-link';
+import { ApolloClient } from 'apollo-client';
 
 import fetch from 'node-fetch';
 
 import './assertConfig';
-import { createRedis } from './createRedis';
+import { createClient } from './redisClient';
+
+const redisClient = createClient();
 
 // c.f. https://github.com/Akryum/vue-cli-plugin-apollo/blob/master/graphql-client/src/index.js
 
 let TOKEN: string | null = null;
-const { GRAPHQL_HTTP } = process.env;
-
-const redisClient = createRedis();
 
 (function refreshToken() {
-  redisClient.get('writerite:acolyte:jwt', (err, token) => {
+  redisClient.get('writerite:wright:jwt', (err, token) => {
     if (err) {
       // tslint:disable-next-line: no-console
       console.error(err.message);
     } else {
       TOKEN = token;
     }
-    setTimeout(refreshToken, 2000);
+    setTimeout(refreshToken, 5000);
   });
 })();
 
 const getAuth = () => {
-  return TOKEN ? `Bearer ${TOKEN}` : '';
+  return TOKEN ? `Bearer ${TOKEN}` : undefined;
 };
 
 const cache = new InMemoryCache();
 
-const httpLink = createUploadLink({
-  uri: GRAPHQL_HTTP,
+const httpUploadLink = createUploadLink({
+  includeExtensions: true,
+  uri: process.env.GRAPHQL_HTTP,
   credentials: 'same-origin',
   fetch,
 });
 
-let link = httpLink;
+const persistedQueryLink = createPersistedQueryLink();
 
-const authLink = setContext((_, { headers }) => {
+const retryLink = new RetryLink();
+
+const contextualizedLink = setContext((_, prevContext) => {
+  const { headers } = prevContext;
   const authorization = getAuth();
-  const authorizationHeader = authorization ? { authorization } : {};
+  if (!authorization) {
+    return { headers };
+  }
   return {
     headers: {
       ...headers,
-      ...authorizationHeader,
+      authorization,
     },
   };
 });
 
-link = authLink.concat(link);
-
-// hash large queries
-
-link = createPersistedQueryLink().concat(link);
-
-link = onError(({ graphQLErrors }) => {
+const logLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    // tslint:disable-next-line: no-console
-    graphQLErrors.map(({ message }) => console.log(message));
+    graphQLErrors.map(({ message, locations, path }) =>
+      // tslint:disable-next-line: no-console
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+      ),
+    );
   }
-}).concat(link);
+  if (networkError) {
+    // tslint:disable-next-line: no-console
+    console.log(`[Network error]: ${networkError}`);
+  }
+});
+
+const link = ApolloLink.from([
+  logLink,
+  contextualizedLink,
+  retryLink,
+  persistedQueryLink,
+  httpUploadLink,
+]);
 
 // end to disable if SSR
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   link,
   cache,
   ssrForceFetchDelay: 100,
+  defaultOptions: {
+    watchQuery: {
+      errorPolicy: 'all',
+      fetchPolicy: 'no-cache',
+    },
+    query: {
+      errorPolicy: 'all',
+      fetchPolicy: 'no-cache',
+    },
+    mutate: {
+      errorPolicy: 'all',
+      fetchPolicy: 'no-cache',
+    },
+  },
 });
-
-export { client };

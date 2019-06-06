@@ -91,7 +91,7 @@ type Subscription {
   # Card
   rwCardsUpdatesOfDeck(deckId: ID!): RwCardUpdate!
   # Room
-  rwRoomsUpdates: RwRoomUpdate!
+  rwRoomUpdates(id: ID!): RwRoomUpdate!
   # RoomMessage
   rwRoomMessagesUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
 }

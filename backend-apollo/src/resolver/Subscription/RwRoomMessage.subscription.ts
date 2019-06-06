@@ -6,7 +6,7 @@ import { updateMapFactory } from '../../util';
 import { ISRoomMessage, RwRoomMessage } from '../../model/RwRoomMessage';
 
 export function rwRoomMessagesTopicFromRwRoom(id: string) {
-  return `room-message:room:${id}`;
+  return `room-message:room::${id}`;
 }
 
 const rwRoomMessagesUpdatesOfRoomSubscribe: IFieldResolver<any, IContext, {

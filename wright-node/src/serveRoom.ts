@@ -1,50 +1,111 @@
-import { sendMessage } from './serveRoomUtil';
-import { ApolloQueryResult } from 'apollo-client';
-import { IRoomInfoData } from './gql';
-import { createRedis } from './createRedis';
+import gql from 'graphql-tag';
+import { WrRoomDetail, IWrRoomDetail } from './models/WrRoomDetail';
+import { WrRoomMessage, IWrRoomMessage } from './models/WrRoomMessage';
+import { client } from './apolloClient';
+import { createClient } from './redisClient';
 
-const [nodeBin, script, roomId, deckId] = process.argv;
+export const SERVE_ROOM_CHANNEL = 'writerite:room:serving';
 
-const main = async (room: ApolloQueryResult<IRoomInfoData>) => {
-
-  const messageSubscriber = createRedis();
-  if (!room.data || !room.data.rwRoom) {
-    throw new Error('Unable to obtain room info');
+const ROOM_DETAIL_QUERY = gql`
+${WrRoomDetail}
+query RoomDetail(
+  $id: ID!
+) {
+  rwRoom(id: $id) {
+    ...WrRoomDetail
   }
-  const cards = room.data.rwRoom.servingDeck.cards;
-  let currentBack: string | null = null;
+}
+`;
 
-  const serveNextCard = (i: number) => {
-    if (i >= cards.length) {
-      sendMessage('deck has been served!');
-      process.exit(0);
-    } else {
-      const card = cards[i];
-      currentBack = card.back;
-      sendMessage(`Next card: ${card.front}`);
-      setTimeout(serveNextCard, 10_000, ++i);
-    }
-  };
-  serveNextCard(0);
+// tslint:disable-next-line: interface-name
+export interface RoomDetailVariables {
+  readonly id: string;
+}
 
-  const handleUserMessage = async (_roomChannel: string, content: string) => {
-    const separator = content.indexOf(':');
-    const userId = content.slice(0, separator);
-    const message = content.slice(separator + 1);
-    if (message === currentBack) {
-      sendMessage('You got it!');
-    }
-    // TODO
-  };
+// tslint:disable-next-line: interface-name
+export interface RoomDetailData {
+  readonly rwRoom: IWrRoomDetail | null;
+}
 
-  messageSubscriber.subscribe(`writerite:room::${roomId}`);
-  messageSubscriber.on('message', handleUserMessage);
+export const MESSAGE_CREATE_MUTATION = gql`
+mutation MessageCreate($roomId: ID! $content: String!) {
+  rwRoomMessageCreate(roomId: $roomId content: $content) {
+    ...WrRoomMessage
+  }
+}
+${WrRoomMessage}
+`;
+
+// tslint:disable-next-line: interface-name
+export interface MessageCreateVariables {
+  readonly roomId: string;
+  readonly content: string;
+}
+
+// tslint:disable-next-line: interface-name
+export interface MessageCreateData {
+  readonly rwRoomMessageCreate: IWrRoomMessage | null;
+}
+
+const getRoom = (id: string) => {
+  return client.query<RoomDetailData, RoomDetailVariables>({
+    query: ROOM_DETAIL_QUERY,
+    variables: { id },
+  });
 };
 
-const listener = process.on('message', (m) => {
-  switch (m.operation) {
-    case 'getRoomInfo':
-      main(m.payload);
-      break;
-  }
-});
+const sendMessageFactory = (id: string) => (message: string) => {
+  return client.mutate<MessageCreateData, MessageCreateVariables>({
+    mutation: MESSAGE_CREATE_MUTATION,
+    variables: {
+      roomId: id,
+      content: message,
+    },
+  });
+};
+
+export const serveRoom = (id: string) => {
+  const ROOM_CHANNEL = `writerite:room::${id}`;
+  const redisClient = createClient();
+  redisClient.on('ready', async () => {
+    const { data } = await getRoom(id);
+    if (!data.rwRoom) {
+      throw new Error('Unable to obtain room info');
+    }
+    const sendMessage = sendMessageFactory(id);
+    await sendMessage(`serving room`);
+    const cards = data.rwRoom.deck.cards;
+    let currentlyServing = -1;
+    const handleMessage = (message: string) => {
+      if (message === cards[currentlyServing].fullAnswer) {
+        sendMessage('You got it!');
+        serveCard(currentlyServing + 1);
+      }
+    };
+    redisClient.subscribe(ROOM_CHANNEL);
+    redisClient.on('message', (channel: string, message: string) => {
+      const separator = message.indexOf(':');
+      const userId = message.slice(0, separator);
+      const content = message.slice(separator + 1);
+      if (channel === ROOM_CHANNEL) {
+        handleMessage(content);
+      }
+    });
+    const closeRoom = async () => {
+      // redisClient.unsubscribe(ROOM_CHANNEL);
+      await sendMessage('Done serving room!');
+    };
+    const serveCard = async (i: number) => {
+      if (i <= currentlyServing) {
+        return;
+      }
+      if (i === cards.length) {
+        return await closeRoom();
+      }
+      currentlyServing = i;
+      await sendMessage(`Next Card: ${cards[i].prompt}`);
+      return setTimeout(serveCard, 10000, i + 1);
+    };
+    setTimeout(serveCard, 1000, 0);
+  });
+};

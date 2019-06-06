@@ -13,6 +13,7 @@ import Item from '../../../ui/list/Item';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
+import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';
 import WrRoomMessageItem from '../../room-message/WrRoomMessageItem';
@@ -24,8 +25,8 @@ query RoomDetail(
   rwRoom(id: $id) {
     ...WrRoomDetail
   }
-  ${WrRoomDetail}
 }
+${WrRoomDetail}
 `;
 
 export interface RoomDetailVariables {
@@ -102,11 +103,12 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
     ));
     return (
       <>
+        <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />
         <WrRoomSidebar />
         <FlexMain>
           <Header>
             <RoomHeading>
-              {room.owner.email} is hosting 
+              {room.owner.email} is hosting
               <span lang={room.deck.nameLang || undefined}>{` ${room.deck.name} `}</span>
               by {room.deck.owner.email}
             </RoomHeading>

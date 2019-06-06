@@ -6,7 +6,7 @@ import { ISCard, RwCard } from '../../model/RwCard';
 import { updateMapFactory } from '../../util';
 
 export function rwCardsTopicFromRwDeck(id: string) {
-  return `card:deck:${id}`;
+  return `card:deck::${id}`;
 }
 
 const rwCardsUpdatesOfDeckSubscribe: IFieldResolver<any, IContext, {

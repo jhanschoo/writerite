@@ -6,11 +6,11 @@ import { updateMapFactory } from '../../util';
 import { ISDeck, RwDeck } from '../../model/RwDeck';
 
 export function rwOwnDecksTopicFromOwner(id: string) {
-  return `deck:owner:${id}`;
+  return `deck:owner::${id}`;
 }
 
 export function rwDeckTopic(id: string) {
-  return `deck:id:${id}`;
+  return `deck:id::${id}`;
 }
 
 const rwOwnDecksUpdatesSubscribe: IFieldResolver<any, IContext, any> = (

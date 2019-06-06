@@ -48,18 +48,15 @@ redisClient.on('error', (err) => {
   console.error(`redisClient error: ${err}`);
 });
 
-const acolyteJWT = generateJWT({
-  id: 'acolyte',
-  email: 'acolyte@writerite.site',
-  roles: ['acolyte'],
+const wrightJWT = generateJWT({
+  id: 'theWright',
+  email: 'wright@writerite.site',
+  roles: ['wright'],
 });
 
-// Send authorization to redis
-// TODO: have redis generate instead
-
 const writeJWT = () => {
-  redisClient.set('writerite:acolyte:jwt', acolyteJWT)
-    .then(() => setTimeout(writeJWT, 10000));
+  redisClient.set('writerite:wright:jwt', wrightJWT)
+    .then(() => setTimeout(writeJWT, 60000));
 };
 writeJWT();
 

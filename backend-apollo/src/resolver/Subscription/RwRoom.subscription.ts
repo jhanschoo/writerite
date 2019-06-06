@@ -5,21 +5,21 @@ import { IUpdate, IContext } from '../../types';
 import { updateMapFactory } from '../../util';
 import { ISRoom, RwRoom } from '../../model/RwRoom';
 
-export function rwRoomsTopic() {
-  return `room`;
+export function rwRoomTopic(id: string) {
+  return `room:id::${id}`;
 }
 
-const rwRoomsUpdatesSubscribe: IFieldResolver<any, IContext, any> = async (
-  _parent, _args, { pubsub },
+const rwRoomUpdatesSubscribe: IFieldResolver<any, IContext, { id: string }> = async (
+  _parent, { id }, { pubsub },
 ): Promise<AsyncIterator<IUpdate<ISRoom>> | null> => {
-  return pubsub.asyncIterator<IUpdate<ISRoom>>(rwRoomsTopic());
+  return pubsub.asyncIterator<IUpdate<ISRoom>>(rwRoomTopic(id));
 };
 
-const rwRoomsUpdates: IResolverOptions<any, IContext, any> = {
+const rwRoomUpdates: IResolverOptions<any, IContext, any> = {
   resolve: updateMapFactory(RwRoom.fromSRoom),
-  subscribe: rwRoomsUpdatesSubscribe,
+  subscribe: rwRoomUpdatesSubscribe,
 };
 
 export const rwRoomSubscription: IResolverObject<any, IContext, any> = {
-  rwRoomsUpdates,
+  rwRoomUpdates,
 };

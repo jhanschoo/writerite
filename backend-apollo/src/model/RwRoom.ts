@@ -37,11 +37,6 @@ export interface IRwRoomDeactivateParams {
   id: string;
 }
 
-!await prisma.$exists.pRoom({
-  id,
-  OR: [{ owner: { id: sub.id } }, { occupants_some: { id: sub.id } }],
-})
-
 // tslint:disable-next-line: variable-name
 export const SRoom = {
   fromPRoom: (pRoom: PRoom): ISRoom => ({

@@ -19,8 +19,8 @@ subscription CardsUpdates($deckId: ID!) {
     }
     oldId
   }
-  ${WrCard}
 }
+${WrCard}
 `;
 
 interface CardsUpdatesVariables {
@@ -42,8 +42,8 @@ subscription DeckUpdates($id: ID!) {
     }
     oldId
   }
-  ${WrDeckDetail}
 }
+${WrDeckDetail}
 `;
 
 interface DeckUpdatesVariables {

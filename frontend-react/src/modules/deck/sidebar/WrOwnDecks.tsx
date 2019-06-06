@@ -19,8 +19,8 @@ query OwnDecks {
   rwOwnDecks {
     ...WrDeck
   }
-  ${WrDeck}
 }
+${WrDeck}
 `;
 type OwnDecksVariables = object;
 

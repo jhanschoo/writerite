@@ -1,5 +1,16 @@
 version: '3.7'
 services:
+  wright-node:
+    image: jhanschoo/writerite-wright-node:1.0.0-dev2
+    restart: always
+    env_file: .env
+    environment:
+      # in production, URL is in http
+      # TODO: implement reading ca https://stackoverflow.com/questions/10888610/ignore-invalid-self-signed-ssl-certificate-in-node-js-with-https-request
+      GRAPHQL_HTTP: https://backend-apollo:4000/graphql
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
+      REDIS_HOST: redis
+      REDIS_PORT: '6379'
   backend-apollo:
     image: jhanschoo/writerite-backend-apollo:1.0.0-dev1
     restart: always
@@ -9,7 +20,7 @@ services:
     environment:
       PRISMA_ENDPOINT: http://prisma:4466/writerite/production
       PRISMA_MANAGEMENT_API_SECRET: writerite-prisma
-      REDIS_HOST: 'redis'
+      REDIS_HOST: redis
       REDIS_PORT: '6379'
       CERT_FILE: /run/secrets/https_cert
       KEY_FILE: /run/secrets/https_key

@@ -22,8 +22,8 @@ mutation RoomMessageCreate(
   ) {
     ...WrRoomMessage
   }
-  ${WrRoomMessage}
 }
+${WrRoomMessage}
 `;
 
 interface RoomMessageCreateVariables {

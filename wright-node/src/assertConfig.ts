@@ -3,6 +3,8 @@ dotenv.config();
 
 const ENVVARS = [
   'GRAPHQL_HTTP',
+  'REDIS_HOST',
+  'REDIS_PORT',
 ];
 
 ENVVARS.forEach((varname) => {

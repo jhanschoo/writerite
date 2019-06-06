@@ -15,14 +15,14 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   if (!sub) {
     throw rwAuthenticationError();
   }
-  const isAcolyte = sub.roles.includes(Roles.acolyte);
-  if (!isAcolyte && !await models.RwRoom.hasOccupant(prisma, {
+  const isWright = sub.roles.includes(Roles.wright);
+  if (!isWright && !await models.RwRoom.hasOccupant(prisma, {
     id: roomId, occupantId: sub.id,
   })) {
     return null;
   }
   const sRoomMessage = await models.SRoomMessage.create(prisma, {
-    roomId, senderId: sub.id, content,
+    roomId, senderId: (isWright) ? undefined : sub.id, content,
   });
   const sRoomMessageUpdate: ICreatedUpdate<ISRoomMessage> = {
     mutation: MutationType.CREATED,
@@ -30,7 +30,7 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
     oldId: null,
   };
   pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
-  if (!isAcolyte) {
+  if (!isWright) {
     redisClient.publish(`writerite:room::${roomId}`, `${sub.id}:${content}`);
   }
   return models.RwRoomMessage.fromSRoomMessage(prisma, sRoomMessage);

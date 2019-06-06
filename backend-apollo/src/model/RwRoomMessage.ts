@@ -51,6 +51,7 @@ export const SRoomMessage = {
     const pRoomMessage = await prisma.createPRoomMessage({
       room: { connect: { id: roomId } },
       content,
+      sender: (senderId === undefined) ? senderId : { connect: { id: senderId } },
     });
     const pRoom = await prisma.pRoom({ id: roomId });
     // TODO: DRY-ify this together with other checks for inactivity in pooms
