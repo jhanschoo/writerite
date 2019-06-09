@@ -1,3 +1,7 @@
+import fs from 'fs';
+import http from 'http';
+import https from 'https';
+
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { createUploadLink } from 'apollo-upload-client';
 import { createPersistedQueryLink } from 'apollo-link-persisted-queries';
@@ -11,10 +15,9 @@ import fetch from 'node-fetch';
 
 import './assertConfig';
 import { createClient } from './redisClient';
+import { URL } from 'url';
 
 const redisClient = createClient();
-
-// c.f. https://github.com/Akryum/vue-cli-plugin-apollo/blob/master/graphql-client/src/index.js
 
 let TOKEN: string | null = null;
 
@@ -36,11 +39,22 @@ const getAuth = () => {
 
 const cache = new InMemoryCache();
 
+const agent = new https.Agent({
+  keepAlive: true,
+  ca: (process.env.CA_CERT_FILE === undefined)
+    ? undefined
+    : fs.readFileSync(process.env.CA_CERT_FILE),
+});
+
 const httpUploadLink = createUploadLink({
   includeExtensions: true,
   uri: process.env.GRAPHQL_HTTP,
   credentials: 'same-origin',
   fetch,
+  fetchOptions: {
+    agent: (url: URL) =>
+      (url.protocol === 'http:') ? http.globalAgent : agent,
+  },
 });
 
 const persistedQueryLink = createPersistedQueryLink();

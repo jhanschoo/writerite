@@ -5,12 +5,13 @@ services:
     restart: always
     env_file: .env
     environment:
-      # in production, URL is in http
-      # TODO: implement reading ca https://stackoverflow.com/questions/10888610/ignore-invalid-self-signed-ssl-certificate-in-node-js-with-https-request
+      # see https://stackoverflow.com/questions/29283040/how-to-add-custom-certificate-authority-ca-to-nodejs
+      CA_CERT_FILE: /run/secrets/https_ca_cert
       GRAPHQL_HTTP: https://backend-apollo:4000/graphql
-      NODE_TLS_REJECT_UNAUTHORIZED: '0'
       REDIS_HOST: redis
       REDIS_PORT: '6379'
+    secrets:
+      - https_ca_cert
   backend-apollo:
     image: jhanschoo/writerite-backend-apollo:1.0.0-dev1
     restart: always
@@ -64,5 +65,7 @@ volumes:
 secrets:
   https_cert:
     file: pki/wr-dev.secp256r1.crt
+  https_ca_cert:
+    file: pki/wr-dev.secp256r1.ca.crt
   https_key:
     file: pki/wr-dev.secp256r1.private
