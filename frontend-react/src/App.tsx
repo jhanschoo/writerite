@@ -7,10 +7,10 @@ import { connect } from 'react-redux';
 import { WrState } from './store';
 import { IWrUserStub } from './models/WrUserStub';
 
-import WrLandingView from './modules/landing/WrLandingView';
-import WrSigninView from './modules/signin/WrSigninView';
-import WrDeckView from './modules/deck/WrDeckView';
-import WrRoomView from './modules/room/WrRoomView';
+import WrLandingView from './components/landing/WrLandingView';
+import WrSigninView from './components/signin/WrSigninView';
+import WrDeckView from './components/deck/WrDeckView';
+import WrRoomView from './components/room/WrRoomView';
 import ViewportContainer from './ui/layout/ViewportContainer';
 
 interface StateProps {

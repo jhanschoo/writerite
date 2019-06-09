@@ -1,11 +1,11 @@
 import { createStore, Store } from 'redux';
 import { rootReducer } from './reducers';
 
-import { SidebarState } from './modules/sidebar-menu/reducers';
-import { SigninState } from './modules/signin/reducers';
-import { DeckState } from './modules/deck/reducers';
-import { RoomState } from './modules/room/reducers';
-import { CardState } from './modules/card/reducers';
+import { SidebarState } from './components/sidebar-menu/reducers';
+import { SigninState } from './components/signin/reducers';
+import { DeckState } from './components/deck/reducers';
+import { RoomState } from './components/room/reducers';
+import { CardState } from './components/card/reducers';
 
 export interface WrState {
   readonly sidebar?: SidebarState;
