@@ -7,6 +7,7 @@ export interface ISigninOptions {
   models: IModels;
   prisma: Prisma;
   email: string;
+  name?: string;
   token: string;
   identifier: string;
   persist?: boolean;

@@ -16,36 +16,40 @@ const developmentAuth = new DevelopmentAuthService();
 
 const signin: IFieldResolver<any, IContext, {
   email: string,
+  name?: string,
   token: string,
   authorizer: string,
   identifier: string,
   persist?: boolean,
 }> = async (
   _parent,
-  { email, token, authorizer, identifier, persist },
+  params,
   { models, prisma },
 ): Promise<IRwAuthResponse | null> => {
-  if (authorizer === AuthorizerType.LOCAL) {
-    return localAuth.signin({
-      models, prisma, email, token, identifier, persist,
-    });
+  const { name, authorizer, ...otherParams } = params;
+  const normalizedName = (name && name !== '') ? name : undefined;
+  const authParams = {
+    ...otherParams,
+    name: normalizedName,
+    models,
+    prisma,
+  };
+  switch (authorizer) {
+    case AuthorizerType.LOCAL:
+      return localAuth.signin(authParams);
+      break;
+    case AuthorizerType.GOOGLE:
+      return googleAuth.signin(authParams);
+      break;
+    case AuthorizerType.FACEBOOK:
+      return facebookAuth.signin(authParams);
+      break;
+    case AuthorizerType.DEVELOPMENT:
+      return developmentAuth.signin(authParams);
+      break;
+    default:
+      throw new UserInputError('Invalid AuthorizerType');
   }
-  if (authorizer === AuthorizerType.GOOGLE) {
-    return googleAuth.signin({
-      models, prisma, email, token, identifier, persist,
-    });
-  }
-  if (authorizer === AuthorizerType.FACEBOOK) {
-    return facebookAuth.signin({
-      models, prisma, email, token, identifier, persist,
-    });
-  }
-  if (authorizer === AuthorizerType.DEVELOPMENT) {
-    return developmentAuth.signin({
-      models, prisma, email, token, identifier, persist,
-    });
-  }
-  throw new UserInputError('Invalid AuthorizerType');
 };
 
 export const authorizationMutation = {

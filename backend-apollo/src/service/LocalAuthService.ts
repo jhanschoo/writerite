@@ -14,7 +14,7 @@ if (!RECAPTCHA_SECRET) {
 
 export class LocalAuthService extends AbstractAuthService {
 
-  public async signin({ models, prisma, email, token, identifier: password, persist }: ISigninOptions) {
+  public async signin({ models, prisma, email, name, token, identifier: password, persist }: ISigninOptions) {
     // TODO: refactor to use null reply from prisma
     if (await prisma.$exists.pUser({ email })) {
       const knownUser = rwGuardPrismaNullError(await prisma.pUser({ email }));
@@ -30,7 +30,7 @@ export class LocalAuthService extends AbstractAuthService {
     // create
     const passwordHash = await hashPassword(password);
     const user = prisma.createPUser(
-      { email, passwordHash, roles: { set: ['user'] } },
+      { email, name, passwordHash, roles: { set: ['user'] } },
     );
     rwGuardPrismaNullError(user);
     return LocalAuthService.authResponseFromUser(await user, { models, persist, prisma });

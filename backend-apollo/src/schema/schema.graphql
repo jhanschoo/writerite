@@ -26,6 +26,7 @@ type Mutation {
   # Authorization
   signin(
     email: String!
+    name: String
     token: String!
     authorizer: String!
     identifier: String!

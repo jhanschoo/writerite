@@ -18,7 +18,7 @@ const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
 
 export class GoogleAuthService extends AbstractAuthService {
 
-  public async signin({ models, prisma, email, token, identifier, persist }: ISigninOptions) {
+  public async signin({ models, prisma, email, name, token, identifier, persist }: ISigninOptions) {
     const googleId = await this.verify(token);
     if (!googleId || googleId !== identifier) {
       throw new ApolloError('writerite: failed google authentication');
@@ -34,7 +34,7 @@ export class GoogleAuthService extends AbstractAuthService {
       );
     } else {
       const pUser = await prisma.createPUser(
-        { email, googleId, roles: { set: ['user'] } },
+        { email, name, googleId, roles: { set: ['user'] } },
       );
       rwGuardPrismaNullError(pUser);
       return GoogleAuthService.authResponseFromUser(pUser, { models, persist, prisma });

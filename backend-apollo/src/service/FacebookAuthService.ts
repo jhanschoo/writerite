@@ -28,7 +28,7 @@ fetch(FB_ACCESS_TOKEN_QUERY).then((response) => {
 
 export class FacebookAuthService extends AbstractAuthService {
 
-  public async signin({ models, prisma, email, token, identifier, persist }: ISigninOptions) {
+  public async signin({ models, prisma, email, name, token, identifier, persist }: ISigninOptions) {
     const facebookId = await this.verify(token);
     if (!facebookId || facebookId !== identifier) {
       throw new ApolloError('failed Facebook authentication');
@@ -44,7 +44,7 @@ export class FacebookAuthService extends AbstractAuthService {
       );
     } else {
       const pUser = rwGuardPrismaNullError(await prisma.createPUser(
-        { email, facebookId, roles: { set: ['user'] } },
+        { email, name, facebookId, roles: { set: ['user'] } },
       ));
       return FacebookAuthService.authResponseFromUser(pUser, { models, persist, prisma });
     }
