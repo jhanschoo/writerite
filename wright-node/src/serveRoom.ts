@@ -67,7 +67,7 @@ const sendMessageFactory = (id: string) => (message: string) => {
 export const serveRoom = (id: string) => {
   const ROOM_CHANNEL = `writerite:room::${id}`;
   const redisClient = createClient();
-  redisClient.on('ready', async () => {
+  redisClient.on('ready', () => setTimeout(async () => {
     const { data } = await getRoom(id);
     if (!data.rwRoom) {
       throw new Error('Unable to obtain room info');
@@ -107,5 +107,5 @@ export const serveRoom = (id: string) => {
       return setTimeout(serveCard, 10000, i + 1);
     };
     setTimeout(serveCard, 1000, 0);
-  });
+  }, 5000));
 };
