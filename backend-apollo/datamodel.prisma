@@ -1,6 +1,7 @@
 type PUser {
   id: ID! @id
   email: String! @unique
+  name: String @unique
   passwordHash: String
   googleId: String
   facebookId: String

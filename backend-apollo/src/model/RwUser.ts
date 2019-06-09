@@ -5,6 +5,7 @@ import { IRwDeck, RwDeck } from './RwDeck';
 export interface ISUser {
   id: string;
   email: string;
+  name?: string;
   roles: string[];
 }
 
