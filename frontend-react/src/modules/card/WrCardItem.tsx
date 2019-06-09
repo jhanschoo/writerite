@@ -16,6 +16,7 @@ import WrDuplicateCardButton from './WrDuplicateCardButton';
 import WrDeleteCardButton from './WrDeleteCardButton';
 
 const CARD_EDIT_MUTATION = gql`
+${WrCard}
 mutation CardEdit(
   $id: ID!,
   $prompt: String,
@@ -32,7 +33,6 @@ mutation CardEdit(
   ) {
     ...WrCard
   }
-  ${WrCard}
 }
 `;
 

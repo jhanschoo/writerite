@@ -12,6 +12,7 @@ import TextInput from '../../ui/form/TextInput';
 
 
 const CARDS_CREATE_MUTATION = gql`
+${WrCard}
 mutation CardCreate(
   $deckId: ID!,
   $prompt: String!,
@@ -30,7 +31,6 @@ mutation CardCreate(
   ) {
     ...WrCard
   }
-  ${WrCard}
 }
 `;
 

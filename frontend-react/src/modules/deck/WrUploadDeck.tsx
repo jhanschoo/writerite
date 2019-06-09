@@ -10,6 +10,7 @@ import DashboardMain from '../../ui/layout/DashboardMain';
 import { WrDeck, IWrDeck } from '../../models/WrDeck';
 
 const DECK_CREATE_FROM_CSV_MUTATION = gql`
+${WrDeck}
 mutation DeckCreateFromCsv(
     $name: String
     $nameLang: String
@@ -26,7 +27,6 @@ mutation DeckCreateFromCsv(
   ) {
     ...WrDeck
   }
-  ${WrDeck}
 }
 `;
 

@@ -11,6 +11,7 @@ import { MutationType, Payload } from '../../../types';
 import { WrCard, IWrCard } from '../../../models/WrCard';
 
 const CARDS_UPDATES_SUBSCRIPTION = gql`
+${WrCard}
 subscription CardsUpdates($deckId: ID!) {
   rwCardsUpdatesOfDeck(deckId: $deckId) {
     mutation
@@ -20,7 +21,6 @@ subscription CardsUpdates($deckId: ID!) {
     oldId
   }
 }
-${WrCard}
 `;
 
 interface CardsUpdatesVariables {
@@ -34,6 +34,7 @@ interface CardsUpdatesData {
 }
 
 const DECK_UPDATES_SUBSCRIPTION = gql`
+${WrDeckDetail}
 subscription DeckUpdates($id: ID!) {
   rwDeckUpdates(id: $id) {
     mutation
@@ -43,7 +44,6 @@ subscription DeckUpdates($id: ID!) {
     oldId
   }
 }
-${WrDeckDetail}
 `;
 
 interface DeckUpdatesVariables {

@@ -4,6 +4,9 @@ import { WrUserStub, IWrUserStub } from './WrUserStub';
 import { WrCardStub, IWrCardStub } from './WrCardStub';
 
 export const WrDeck = gql`
+${WrDeckStub}
+${WrUserStub}
+${WrCardStub}
 fragment WrDeck on RwDeck {
   ...WrDeckStub
   owner {
@@ -13,9 +16,6 @@ fragment WrDeck on RwDeck {
     ...WrCardStub
   }
 }
-${WrDeckStub}
-${WrUserStub}
-${WrCardStub}
 `;
 
 export interface IWrDeck extends IWrDeckStub {

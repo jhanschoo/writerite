@@ -15,12 +15,12 @@ import WrOwnDecksSH from './WrOwnDecksSH';
 import WrDeckList from './WrDeckList';
 
 const OWN_DECKS_QUERY = gql`
+${WrDeck}
 query OwnDecks {
   rwOwnDecks {
     ...WrDeck
   }
 }
-${WrDeck}
 `;
 type OwnDecksVariables = object;
 

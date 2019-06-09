@@ -11,6 +11,7 @@ import { MutationType, Payload } from '../../../types';
 import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
 
 const ROOM_MESSAGES_UPDATES_SUBSCRIPTION = gql`
+${WrRoomMessage}
 subscription RoomMessagesUpdates($roomId: ID!) {
   rwRoomMessagesUpdatesOfRoom(roomId: $roomId) {
     mutation
@@ -20,7 +21,6 @@ subscription RoomMessagesUpdates($roomId: ID!) {
     oldId
   }
 }
-${WrRoomMessage}
 `;
 
 interface RoomMessagesUpdatesVariables {
@@ -34,6 +34,7 @@ interface RoomMessagesUpdatesData {
 }
 
 const ROOM_UPDATES_SUBSCRIPTION = gql`
+${WrRoomDetail}
 subscription RoomUpdates($id: ID!) {
   rwRoomUpdates(id: $id) {
     mutation
@@ -43,7 +44,6 @@ subscription RoomUpdates($id: ID!) {
     oldId
   }
 }
-${WrRoomDetail}
 `;
 
 interface RoomUpdatesVariables {

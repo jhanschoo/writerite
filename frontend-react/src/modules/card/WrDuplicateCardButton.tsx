@@ -10,6 +10,7 @@ import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
 
 const CARD_CREATE_MUTATION = gql`
+${WrCard}
 mutation CardCreate(
   $deckId: ID!,
   $prompt: String!,
@@ -26,7 +27,6 @@ mutation CardCreate(
   ) {
     ...WrCard
   }
-  ${WrCard}
 }
 `;
 

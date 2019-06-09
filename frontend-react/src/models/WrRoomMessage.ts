@@ -4,6 +4,10 @@ import { WrRoomStub, IWrRoomStub } from './WrRoomStub';
 import { WrRoomMessageStub, IWrRoomMessageStub } from './WrRoomMessageStub';
 
 export const WrRoomMessage = gql`
+${WrRoomMessageStub}
+${WrUserStub}
+${WrUserStub}
+${WrRoomStub}
 fragment WrRoomMessage on RwRoomMessage {
   ...WrRoomMessageStub
   sender {
@@ -13,10 +17,6 @@ fragment WrRoomMessage on RwRoomMessage {
     ...WrRoomStub
   }
 }
-${WrRoomMessageStub}
-${WrUserStub}
-${WrUserStub}
-${WrRoomStub}
 `;
 
 export interface IWrRoomMessage extends IWrRoomMessageStub {

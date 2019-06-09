@@ -12,6 +12,7 @@ import { BorderlessButton } from '../../../ui/form/Button';
 import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
 
 const ROOM_MESSAGE_CREATE_MUTATION = gql`
+${WrRoomMessage}
 mutation RoomMessageCreate(
   $roomId: ID!
   $content: String!
@@ -23,7 +24,6 @@ mutation RoomMessageCreate(
     ...WrRoomMessage
   }
 }
-${WrRoomMessage}
 `;
 
 interface RoomMessageCreateVariables {

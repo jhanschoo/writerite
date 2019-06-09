@@ -10,6 +10,7 @@ import { WrDeck, IWrDeck } from '../../../models/WrDeck';
 import { OwnDecksData } from './WrOwnDecks';
 
 const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
+${WrDeck}
 subscription OwnDecksUpdates {
   rwOwnDecksUpdates {
     mutation
@@ -18,7 +19,6 @@ subscription OwnDecksUpdates {
     }
     oldId
   }
-  ${WrDeck}
 }
 `;
 

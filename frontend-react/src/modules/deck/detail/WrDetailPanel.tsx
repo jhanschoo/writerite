@@ -16,6 +16,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 import { WrDeck, IWrDeck } from '../../../models/WrDeck';
 
 const DECK_EDIT_MUTATION = gql`
+${WrDeck}
 mutation DeckEdit(
     $id: ID!
     $name: String
@@ -32,7 +33,6 @@ mutation DeckEdit(
   ) {
     ...WrDeck
   }
-  ${WrDeck}
 }
 `;
 

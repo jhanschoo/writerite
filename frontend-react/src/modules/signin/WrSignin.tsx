@@ -30,6 +30,7 @@ declare var grecaptchaDeferred: Promise<any>;
 declare var FBDeferred: Promise<any>;
 
 const SIGNIN = gql`
+${WrUserStub}
 mutation Signin(
   $email: String! $token: String! $authorizer: String! $identifier: String!
   ) {
@@ -45,7 +46,6 @@ mutation Signin(
     }
     token
   }
-  ${WrUserStub}
 }
 `;
 

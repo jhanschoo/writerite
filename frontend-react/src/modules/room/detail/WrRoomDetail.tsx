@@ -19,6 +19,7 @@ import WrRoomSidebar from '../sidebar/WrRoomSidebar';
 import WrRoomMessageItem from '../../room-message/WrRoomMessageItem';
 
 const ROOM_DETAIL_QUERY = gql`
+${WrRoomDetail}
 query RoomDetail(
   $id: ID!
 ) {
@@ -26,7 +27,6 @@ query RoomDetail(
     ...WrRoomDetail
   }
 }
-${WrRoomDetail}
 `;
 
 export interface RoomDetailVariables {

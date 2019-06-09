@@ -19,11 +19,11 @@ import { WrDeckDetail, IWrDeckDetail } from '../../../models/WrDeckDetail';
 import { WrRoom, IWrRoom } from '../../../models/WrRoom';
 
 const DECK_DETAIL_QUERY = gql`
+${WrDeckDetail}
 query Deck($deckId: ID!) {
   rwDeck(id: $deckId) {
     ...WrDeckDetail
   }
-  ${WrDeckDetail}
 }
 `;
 
@@ -36,6 +36,7 @@ export interface DeckDetailData {
 }
 
 const ROOM_CREATE_MUTATION = gql`
+${WrRoom}
 mutation RoomCreate(
   $deckId: ID!
 ) {
@@ -44,7 +45,6 @@ mutation RoomCreate(
   ) {
     ...WrRoom
   }
-  ${WrRoom}
 }
 `;
 

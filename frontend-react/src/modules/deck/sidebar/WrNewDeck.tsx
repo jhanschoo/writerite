@@ -18,6 +18,7 @@ import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 import { WrDeck, IWrDeck } from '../../../models/WrDeck';
 
 const DECK_CREATE_MUTATION = gql`
+${WrDeck}
 mutation DeckCreate(
     $name: String
     $nameLang: String
@@ -32,7 +33,6 @@ mutation DeckCreate(
   ) {
     ...WrDeck
   }
-  ${WrDeck}
 }
 `;
 

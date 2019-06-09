@@ -4,6 +4,9 @@ import { WrRoom, IWrRoom } from './WrRoom';
 import { WrRoomMessage, IWrRoomMessage } from './WrRoomMessage';
 
 export const WrRoomDetail = gql`
+${WrRoom}
+${WrDeck}
+${WrRoomMessage}
 fragment WrRoomDetail on RwRoom {
     ...WrRoom
     deck {
@@ -13,9 +16,6 @@ fragment WrRoomDetail on RwRoom {
       ...WrRoomMessage
     }
 }
-${WrRoom}
-${WrDeck}
-${WrRoomMessage}
 `;
 
 export interface IWrRoomDetail extends IWrRoom {
