@@ -26,9 +26,7 @@ WriteRite service.
 
 The app is hosted by Netlify. Netlify's zero-config deployment for create-react-app should do the job. You may need to change the constants in `.env.production`.
 
-## Desired local model consistency model
-
-
+## Desired local model self-correcting consistency model
 
 * Data objects are either dry or hydrated.
 * Dry objects contain no references to other data objects, only scalars.
@@ -39,6 +37,9 @@ The app is hosted by Netlify. Netlify's zero-config deployment for create-react-
   hydrated object that has no corresponding reference, or
   a hydrated object that has a corresponding reference back to O in the
   appropriate field/array field. If it doesn't, dehydrate it.
+* Even if a certain fetch from the server returns an inconsistent
+  object, after a query for the same data from the server that
+  returns consistent data we should have a consistent model again.
 * We can only perform deletion on hydrated objects. When we perform
   deletion, dehydrate all references.
 
