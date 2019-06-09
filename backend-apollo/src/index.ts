@@ -15,6 +15,7 @@ import { ApolloServer, gql } from 'apollo-server-koa';
 import { prisma } from '../generated/prisma-client';
 import models from './model';
 import resolvers from './resolver';
+import { makeExecutableSchema } from 'apollo-server-koa';
 
 import { getClaims, generateJWT } from './util';
 
@@ -68,9 +69,10 @@ app.use(helmet());
 
 const typeDefs = gql(fs.readFileSync('src/schema/schema.graphql', 'utf8'));
 
+const schema = makeExecutableSchema({ typeDefs, resolvers });
+
 const apollo = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   context: (ctx) => {
     return {
       sub: getClaims(ctx),

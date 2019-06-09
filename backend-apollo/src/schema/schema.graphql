@@ -1,5 +1,7 @@
 # TODO: refactor once graphql supports `extend`
-# https://github.com/graphql/graphql-js/issues/922
+# https://github.com/graphql/graphql-js/issues/922\
+scalar Upload
+
 type Query {
   _empty: String
   # RwUser
