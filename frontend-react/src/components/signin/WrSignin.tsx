@@ -119,12 +119,21 @@ const FieldsetWithMargin = styled(Fieldset)`
   }
 `;
 
+const StyledLabel = styled.label`
+  padding: 0 ${({ theme }) => theme.space[2]};
+  font-size: 87.5%;
+`;
+
 const FlowTextInput = styled(TextInput)`
   width: 100%;
   margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
 `;
 
-const ErrorMessage = styled(SmallMessage)`
+const ErrorMessage = styled.p`
+  display: flex;
+  font-size: 75%;
+  margin: 0;
+  padding: 0 ${({ theme }) => theme.space[2]};
   color: ${({ theme }) => theme.colors.error};
 `;
 
@@ -193,192 +202,193 @@ const WrSignin = (props: Props) => {
     { loading }: MutationResult<SigninData>,
   ) => {
 
-    const handleGoogleSignin = async (): Promise<void> => {
-      await setThirdPartySigninUnderway(true);
-      const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
-      return googleAuth.signIn().then((googleUser: any) => {
-        return mutate({
-          variables: {
-            email: googleUser.getBasicProfile().getEmail(),
-            token: googleUser.getAuthResponse().id_token,
-            authorizer: 'GOOGLE',
-            identifier: googleUser.getId(),
-          },
-        }).catch(() => setThirdPartySigninUnderway(false));
-      }, () => setThirdPartySigninUnderway(false));
-    };
-    const handleFacebookSignin = async (): Promise<void> => {
-      await setThirdPartySigninUnderway(true);
-      return (await FBDeferred).login(async (loginResponse: any) => {
-        const { authResponse } = loginResponse;
-        if (authResponse) {
-          (await FBDeferred).api('/me', {
-            fields: 'name,email',
-          }, (apiResponse: any) => {
-            mutate({
-              variables: {
-                email: apiResponse.email,
-                token: authResponse.accessToken,
-                authorizer: 'FACEBOOK',
-                identifier: authResponse.userID,
-              },
-            }).catch(() => setThirdPartySigninUnderway(false));
-          });
-        } else {
-          setThirdPartySigninUnderway(false);
-        }
-      }, {
-          scope: 'public_profile,email',
+  const handleGoogleSignin = async (): Promise<void> => {
+    await setThirdPartySigninUnderway(true);
+    const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
+    return googleAuth.signIn().then((googleUser: any) => {
+      return mutate({
+        variables: {
+          email: googleUser.getBasicProfile().getEmail(),
+          token: googleUser.getAuthResponse().id_token,
+          authorizer: 'GOOGLE',
+          identifier: googleUser.getId(),
+        },
+      }).catch(() => setThirdPartySigninUnderway(false));
+    }, () => setThirdPartySigninUnderway(false));
+  };
+  const handleFacebookSignin = async (): Promise<void> => {
+    await setThirdPartySigninUnderway(true);
+    return (await FBDeferred).login(async (loginResponse: any) => {
+      const { authResponse } = loginResponse;
+      if (authResponse) {
+        (await FBDeferred).api('/me', {
+          fields: 'name,email',
+        }, (apiResponse: any) => {
+          mutate({
+            variables: {
+              email: apiResponse.email,
+              token: authResponse.accessToken,
+              authorizer: 'FACEBOOK',
+              identifier: authResponse.userID,
+            },
+          }).catch(() => setThirdPartySigninUnderway(false));
         });
-    };
-
-    const handleLocalSignin = (values: FormValues) => {
-      return mutate({
-        variables: {
-          email: values.email,
-          name: (values.name === '') ? undefined : values.name,
-          token: values.recaptcha,
-          authorizer: 'LOCAL',
-          identifier: values.password,
-        },
+      } else {
+        setThirdPartySigninUnderway(false);
+      }
+    }, {
+        scope: 'public_profile,email',
       });
-    };
+  };
 
-    const handleDevelopmentSignin = () => {
-      return mutate({
-        variables: {
-          email: 'abc@123.xyz',
-          token: '',
-          authorizer: 'DEVELOPMENT',
-          identifier: '123',
-        },
-      });
+  const handleLocalSignin = (values: FormValues) => {
+    return mutate({
+      variables: {
+        email: values.email,
+        name: (values.name === '') ? undefined : values.name,
+        token: values.recaptcha,
+        authorizer: 'LOCAL',
+        identifier: values.password,
+      },
+    });
+  };
+
+  const handleDevelopmentSignin = () => {
+    return mutate({
+      variables: {
+        email: 'abc@123.xyz',
+        token: '',
+        authorizer: 'DEVELOPMENT',
+        identifier: '123',
+      },
+    });
+  };
+  const disabled = thirdPartySigninUnderway || loading;
+  const renderFields = (formikProps: FormikProps<FormValues>) => {
+    const {
+      handleSubmit,
+      handleChange,
+      handleBlur,
+      setFieldTouched,
+      setFieldValue,
+      // values,
+      errors,
+      touched,
+    } = formikProps;
+    const handleToggleSignin = (e: MouseEvent<HTMLButtonElement>) => {
+      const newIsSignup = !isSignup;
+      e.preventDefault();
+      setSignup(!isSignup);
+      setFieldTouched('isSignup');
+      setFieldValue('isSignup', newIsSignup);
     };
-    const disabled = thirdPartySigninUnderway || loading;
-    const renderFields = (formikProps: FormikProps<FormValues>) => {
-      const {
-        handleSubmit,
-        handleChange,
-        handleBlur,
-        setFieldTouched,
-        setFieldValue,
-        // values,
-        errors,
-        touched,
-      } = formikProps;
-      const handleToggleSignin = (e: MouseEvent<HTMLButtonElement>) => {
-        const newIsSignup = !isSignup;
-        e.preventDefault();
-        setSignup(!isSignup);
-        setFieldTouched('isSignup');
-        setFieldValue('isSignup', newIsSignup);
-      };
-      recaptchaCallback = (gRecaptchaResponse: string) => {
-        setFieldTouched('recaptcha');
-        setFieldValue('recaptcha', gRecaptchaResponse || '');
-        return null;
-      };
-      const showValid = (
-        key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
-      ) => touched[key] && !errors[key];
-      const showError = (
-        key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
-        ) => touched[key] && errors[key];
-      const passwordShowValid = (
-        touched.password && touched.confirmPassword && !(
-          errors.password || errors.confirmPassword
-        ));
-      const passwordShowError = (
-        touched.password && touched.confirmPassword && (
-          errors.password || errors.confirmPassword
-        ));
-      const maybeError = (
-        key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
-      ) => showError(key) && (
-        <ErrorMessage>
-          {errors[key]}
-        </ErrorMessage>
-      );
-      const formattedPasswordError = passwordShowError && (
-        <ErrorMessage>
-          {errors.password || errors.confirmPassword}
-        </ErrorMessage>
-      );
-      return (
-          <form onSubmit={handleSubmit}>
-            <FieldsetWithMargin>
-              <FlowTextInput
-                onChange={handleChange}
-                onBlur={handleBlur}
-                type="email"
-                name="email"
-                aria-label="Email"
-                placeholder="Email"
-                // autocomplete={isSignup ? 'new-username' : 'current-username'}
-                disabled={disabled}
-                className={showError('email') ? 'error' : (showValid('email') ? 'valid' : '')}
-              />
-              {maybeError('email')}
-            </FieldsetWithMargin>
-            <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
-              <FlowTextInput
-                onChange={handleChange}
-                onBlur={handleBlur}
-                type="text"
-                name="name"
-                aria-label="Display Name (can be changed)"
-                placeholder="Display Name (can be changed)"
-                // autocomplete={isSignup ? 'new-username' : 'current-username'}
-                disabled={disabled}
-                className={showError('name') ? 'error' : (showValid('name') ? 'valid' : '')}
-              />
-              {maybeError('name')}
-            </FieldsetWithMargin>
-            <FieldsetWithMargin>
-              <FlowTextInput
-                onChange={handleChange}
-                onBlur={handleBlur}
-                type="password"
-                name="password"
-                aria-label="Password"
-                placeholder="Password"
-                // autocomplete={isSignup ? 'new-password' : 'current-password'}
-                disabled={disabled}
-                className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
-              />
-              {formattedPasswordError}
-            </FieldsetWithMargin>
-            <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
-              <FlowTextInput
-                onChange={handleChange}
-                onBlur={handleBlur}
-                type="password"
-                name="confirmPassword"
-                aria-label="Confirm Password"
-                placeholder="Confirm Password"
-                // autocomplete={isSignup ? 'new-password' : 'current-password'}
-                disabled={disabled}
-                className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
-              />
-            </FieldsetWithMargin>
-            <Fieldset>
-              <TextCenteredDiv>
-                <InlineBlockDiv id="g-recaptcha" />
-                {maybeError('recaptcha')}
-              </TextCenteredDiv>
-            </Fieldset>
-            <FlowButton
-              type="submit"
-            >
-              {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
-            </FlowButton>
-            <SmallMessage>
-              {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
-              <AnchorButton onClick={handleToggleSignin}>
-                {isSignup ? 'Login' : 'Sign up'}
-              </AnchorButton>
-            </SmallMessage>
-          </form>
+    recaptchaCallback = (gRecaptchaResponse: string) => {
+      setFieldTouched('recaptcha');
+      setFieldValue('recaptcha', gRecaptchaResponse || '');
+      return null;
+    };
+    const showValid = (
+      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
+    ) => touched[key] && !errors[key];
+    const showError = (
+      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
+      ) => touched[key] && errors[key];
+    const passwordShowValid = (
+      touched.password && touched.confirmPassword && !(
+        errors.password || errors.confirmPassword
+      ));
+    const passwordShowError = (
+      touched.password && touched.confirmPassword && (
+        errors.password || errors.confirmPassword
+      ));
+    const maybeError = (
+      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
+    ) => showError(key) && (
+      <ErrorMessage>
+        {errors[key]}
+      </ErrorMessage>
+    );
+    const formattedPasswordError = passwordShowError && (
+      <ErrorMessage>
+        {errors.password || errors.confirmPassword}
+      </ErrorMessage>
+    );
+    return (
+        <form onSubmit={handleSubmit}>
+          <FieldsetWithMargin>
+            <StyledLabel htmlFor="email-input">Email</StyledLabel>
+            <FlowTextInput
+              onChange={handleChange}
+              onBlur={handleBlur}
+              type="email"
+              name="email"
+              id="email-input"
+              // autocomplete={isSignup ? 'new-username' : 'current-username'}
+              disabled={disabled}
+              className={showError('email') ? 'error' : (showValid('email') ? 'valid' : '')}
+            />
+            {maybeError('email')}
+          </FieldsetWithMargin>
+          <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+            <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
+            <FlowTextInput
+              onChange={handleChange}
+              onBlur={handleBlur}
+              type="text"
+              name="name"
+              id="name-input"
+              // autocomplete={isSignup ? 'new-username' : 'current-username'}
+              disabled={disabled}
+              className={showError('name') ? 'error' : (showValid('name') ? 'valid' : '')}
+            />
+            {maybeError('name')}
+          </FieldsetWithMargin>
+          <FieldsetWithMargin>
+            <StyledLabel htmlFor="password-input">Password</StyledLabel>
+            <FlowTextInput
+              onChange={handleChange}
+              onBlur={handleBlur}
+              type="password"
+              name="password"
+              id="password-input"
+              // autocomplete={isSignup ? 'new-password' : 'current-password'}
+              disabled={disabled}
+              className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+            />
+            {formattedPasswordError}
+          </FieldsetWithMargin>
+          <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+            <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
+            <FlowTextInput
+              onChange={handleChange}
+              onBlur={handleBlur}
+              type="password"
+              name="confirmPassword"
+              id="confirm-password-input"
+              aria-label="Confirm Password"
+              // autocomplete={isSignup ? 'new-password' : 'current-password'}
+              disabled={disabled}
+              className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+            />
+          </FieldsetWithMargin>
+          <Fieldset>
+            <TextCenteredDiv>
+              <InlineBlockDiv id="g-recaptcha" />
+              {maybeError('recaptcha')}
+            </TextCenteredDiv>
+          </Fieldset>
+          <FlowButton
+            type="submit"
+          >
+            {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
+          </FlowButton>
+          <SmallMessage>
+            {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
+            <AnchorButton onClick={handleToggleSignin}>
+              {isSignup ? 'Login' : 'Sign up'}
+            </AnchorButton>
+          </SmallMessage>
+        </form>
       );
     };
     const developmentSignin = (process.env.NODE_ENV !== 'development')
