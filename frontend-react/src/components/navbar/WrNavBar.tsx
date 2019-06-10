@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layers, MessageCircle, Activity, Feather } from 'react-feather';
+import { Layers, Play, Activity, Feather } from 'react-feather';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
@@ -7,8 +7,7 @@ import { createSignout, SigninAction } from '../signin/actions';
 
 import { restartWsConnection } from '../../apolloClient';
 
-import styled from 'styled-components';
-import { breakpoints } from '../../theme';
+import styled, { withTheme } from 'styled-components';
 import Link from '../../ui/Link';
 import { BorderlessButton } from '../../ui/form/Button';
 import NavBar from '../../ui/navbar/NavBar';
@@ -68,10 +67,15 @@ interface StateProps {
   user: IWrUserStub | null;
 }
 
-type Props = StateProps & DispatchProps;
+interface ThemeProps {
+  theme: any;
+}
 
-const renderLoggedOut = () => {
-  const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
+type Props = StateProps & DispatchProps & ThemeProps;
+
+const renderLoggedOut = (props: Props) => {
+  const { theme } = props;
+  const mq = window.matchMedia(`(max-width: ${theme.breakpoints[1]})`);
   return (
     <NavBarItem>
       <PageLink to="/signin" exact={true}>
@@ -84,8 +88,8 @@ const renderLoggedOut = () => {
 
 const renderLoggedIn = (props: Props) => {
   // tslint:disable-next-line: no-shadowed-variable
-  const { createSignout, user } = props;
-  const mq = window.matchMedia(`(max-width: ${breakpoints[1]})`);
+  const { createSignout, theme, user } = props;
+  const mq = window.matchMedia(`(max-width: ${theme.breakpoints[1]})`);
   if (!user) {
     return null;
   }
@@ -103,7 +107,7 @@ const renderLoggedIn = (props: Props) => {
       </NavBarItem>
       <NavBarItem>
         <PageLink to="/room">
-          <MessageCircle size={mq.matches ? 18 : 24} />
+          <Play size={mq.matches ? 18 : 24} />
           Rooms
         </PageLink>
       </NavBarItem>
@@ -137,7 +141,7 @@ const WrNavBar = (props: Props)  => {
       </BrandNavBarItem>
     </NavBarList>
     <NavBarListRight>
-      {renderLoggedIn(props) || renderLoggedOut()}
+      {renderLoggedIn(props) || renderLoggedOut(props)}
     </NavBarListRight>
   </StyledNavBar>
   );
@@ -152,4 +156,4 @@ const mapDispatchToProps: DispatchProps = {
   createSignout,
 };
 
-export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(WrNavBar);
+export default withTheme(connect<StateProps, DispatchProps, ThemeProps>(mapStateToProps, mapDispatchToProps)(WrNavBar));

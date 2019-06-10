@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 // TODO: make generic argument stricter in props that it accepts
-const TextInput = styled.input`
+export const TextInput = styled.input`
   font-weight: inherit;
   font-size: inherit;
   font-family: inherit;

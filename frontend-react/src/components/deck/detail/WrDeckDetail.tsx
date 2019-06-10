@@ -1,4 +1,5 @@
 import React, { useState, MouseEvent } from 'react';
+import { Play, Copy, Settings, Trash } from 'react-feather';
 
 import { gql } from 'graphql.macro';
 import { Query, QueryResult, Mutation, MutationFn, MutationResult } from 'react-apollo';
@@ -6,11 +7,15 @@ import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
+import List from '../../../ui/list/List';
+import Item from '../../../ui/list/Item';
 import WrCardsList from '../../card/WrCardsList';
 import WrNewCardPrompt from '../../card/WrNewCardPrompt';
-import WrDetailHeader from './WrDetailHeader';
-import WrDetailPanel from './WrDetailPanel';
-import WrDetailButtons from './WrDetailButtons';
+import HDivider from '../../../ui/HDivider';
+import { BorderlessButton } from '../../../ui/form/Button';
+
+import WrDeckDetailSettings from './WrDeckDetailSettings';
+import WrDeckDetailDeletePrompt from './WrDeckDetailDeletePrompt';
 import WrDeckDetailSH from './WrDeckDetailSH';
 
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -56,29 +61,75 @@ interface RoomCreateData {
   readonly rwRoomCreate: IWrRoom | null;
 }
 
-export enum CurrentAddNewEnum {
-  SUBDECK,
-  TEMPLATE,
-  CARD,
-  NONE,
-}
+const DeckHeader = styled.header`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: ${({ theme }) => theme.space[3]} 12.5%;
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+  }
+`;
+
+const DeckHeading = styled.h2`
+  margin: 0;
+  text-align: center;
+  font-size: 250%;
+`;
+
+const ActionTray = styled(List)`
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: ${({ theme }) => theme.space[3]};
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    padding: ${({ theme }) => theme.space[1]};
+  }
+`;
+
+const ActionTrayItem = styled(Item)`
+  flex-grow: 1;
+  flex-basis: 0;
+  padding: ${({ theme }) => theme.space[2]};
+  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+    width: 50%;
+  }
+`;
+
+const BigButton = styled(BorderlessButton)`
+  width: 100%;
+  flex-direction: column;
+  padding: ${({ theme }) => theme.space[2]};
+`;
 
 const CenteredP = styled.p`
   text-align: center;
 `;
 
+enum ActiveAction {
+  NONE,
+  SETTINGS,
+  DELETE,
+}
+
 const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) => {
   const { history, match } = props;
   const { deckId } = match.params;
-  const [showSettings, setShowSettings] = useState(false);
-  const [showSubDecks, setShowSubDecks] = useState(false);
-  const [showTemplates, setShowTemplates] = useState(false);
-  const [showCards, setShowCards] = useState(true);
-  const [currentAddNew, setCurrentAddNew] = useState(CurrentAddNewEnum.CARD);
+  const [activeAction, setActiveAction] = useState(ActiveAction.NONE);
   const toggleSettings =
     (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setShowSettings(!showSettings);
+    setActiveAction((activeAction === ActiveAction.SETTINGS)
+      ? ActiveAction.NONE
+      : ActiveAction.SETTINGS,
+    );
+  };
+  const toggleDelete =
+    (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setActiveAction((activeAction === ActiveAction.DELETE)
+      ? ActiveAction.NONE
+      : ActiveAction.DELETE,
+    );
   };
   const renderDeck = ({
     subscribeToMore, loading, error, data,
@@ -104,7 +155,7 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
     const { name, promptLang, answerLang } = deck;
     const templates = data.rwDeck.cards.filter((card) => card.template);
     const cards = data.rwDeck.cards.filter((card) => !card.template);
-    const renderHeader = (
+    const renderActionTray = (
       mutate: MutationFn<RoomCreateData, RoomCreateVariables>,
       { loading: createRoomLoading }: MutationResult<RoomCreateData>,
     ) => {
@@ -115,11 +166,45 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
         });
       };
       return (
-        <WrDetailHeader
-          name={name}
-          toggleSettings={toggleSettings}
-          handleCreateRoom={handleCreateRoom}
-        />
+        <ActionTray>
+          <ActionTrayItem>
+            <BigButton
+              onClick={handleCreateRoom}
+              disabled={loading}
+            >
+              <Play size={32} />
+              Serve
+            </BigButton>
+          </ActionTrayItem>
+          <ActionTrayItem>
+            <BigButton
+              disabled={loading}
+            >
+              <Copy size={32} />
+              Duplicate
+            </BigButton>
+          </ActionTrayItem>
+          <ActionTrayItem>
+            <BigButton
+              onClick={toggleSettings}
+              className={activeAction === ActiveAction.SETTINGS ? 'active' : undefined}
+              disabled={loading}
+            >
+              <Settings size={32} />
+              Settings
+            </BigButton>
+          </ActionTrayItem>
+          <ActionTrayItem>
+            <BigButton
+              onClick={toggleDelete}
+              className={activeAction === ActiveAction.DELETE ? 'active' : undefined}
+              disabled={loading}
+            >
+              <Trash size={32} />
+              Delete
+            </BigButton>
+          </ActionTrayItem>
+        </ActionTray>
       );
     };
     const handleCompletedCreateRoom = (roomCreateData: RoomCreateData) => {
@@ -136,28 +221,22 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
           // @ts-ignore
           <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
         }
+        <DeckHeader><DeckHeading>{name}</DeckHeading></DeckHeader>
         <Mutation<RoomCreateData, RoomCreateVariables>
           mutation={ROOM_CREATE_MUTATION}
           onError={printApolloError}
           onCompleted={handleCompletedCreateRoom}
         >
-          {renderHeader}
+          {renderActionTray}
         </Mutation>
-        {showSettings && <WrDetailPanel deck={deck} />}
-        <WrDetailButtons
-          showSubDecks={showSubDecks}
-          setShowSubDecks={setShowSubDecks}
-          showTemplates={showTemplates}
-          setShowTemplates={setShowTemplates}
-          showCards={showCards}
-          setShowCards={setShowCards}
-          currentAddNew={currentAddNew}
-          setCurrentAddNew={setCurrentAddNew}
-          deck={deck}
-        />
-        {(currentAddNew === CurrentAddNewEnum.CARD) && <WrNewCardPrompt deckId={deckId} />}
-        {showTemplates && <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />}
-        {showCards && <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />}
+        {activeAction === ActiveAction.SETTINGS && <WrDeckDetailSettings deck={deck} />}
+        {activeAction === ActiveAction.DELETE && <WrDeckDetailDeletePrompt deck={deck} />}
+        <HDivider>{templates.length} Sub-Decks</HDivider>
+        <HDivider>{templates.length} Template Cards</HDivider>
+        <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />
+        <HDivider>{cards.length} Cards</HDivider>
+        <WrNewCardPrompt deckId={deckId} />
+        <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
       </>
     );
   };

@@ -6,8 +6,7 @@ import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
 import { WrCard, IWrCard } from '../../models/WrCard';
 
-import styled from 'styled-components';
-import { AuxillaryButton } from '../../ui/form/Button';
+import CardAuxillaryButton from './CardAuxillaryButton';
 
 const CARD_CREATE_MUTATION = gql`
 ${WrCard}
@@ -42,10 +41,6 @@ interface CardCreateData {
   readonly rwCardCreate: IWrCard | null;
 }
 
-const StyledButton = styled(AuxillaryButton)`
-  margin: 0 ${({ theme }) => theme.space[1]};
-`;
-
 type Props = CardCreateVariables;
 
 // TODO: change into a prompt for creating N cards
@@ -61,11 +56,11 @@ const WrDuplicateCardButton: FC<CardCreateVariables> = (props: CardCreateVariabl
       });
     };
     return (
-      <StyledButton
+      <CardAuxillaryButton
         className="auxillary"
         onClick={handleClick}
       ><Copy size={16} />
-      </StyledButton>
+      </CardAuxillaryButton>
     );
   };
   return (

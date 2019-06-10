@@ -5,13 +5,10 @@ import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
-import { AnchorButton } from '../../../ui/form/Button';
+import { BorderlessButton } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
-import HDivider from '../../../ui/HDivider';
-
-import { withRouter, RouteComponentProps } from 'react-router';
 
 import { WrDeck, IWrDeck } from '../../../models/WrDeck';
 
@@ -48,48 +45,55 @@ interface DeckEditData {
   readonly rwDeckEdit: IWrDeck | null;
 }
 
-const DECK_DELETE_MUTATION = gql`
-mutation DeckDelete($id: ID!) {
-  rwDeckDelete(id: $id)
+interface Props {
+  deck: IWrDeck;
+  disabled?: boolean;
 }
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
 `;
 
-interface DeckDeleteVariables {
-  readonly id: string;
-}
+const StyledPanel = styled.div`
+  color: ${({ theme }) => theme.colors.fg2};
+  padding:
+    0
+    ${({ theme }) => theme.space[3]}
+    ${({ theme }) => theme.space[3]}
+    ${({ theme }) => theme.space[3]};
+  text-align: center;
+`;
 
-interface DeckDeleteData {
-  readonly rwDeckDelete: string | null;
-}
+const StyledList = styled(List)`
+  flex-direction: column;
+`;
 
-interface OwnProps {
-  deck: IWrDeck;
-}
+const StyledItem = styled(Item)`
+  flex-direction: column;
+  align-items: flex-start;
+  padding: ${({ theme }) => theme.space[1]} 0;
+`;
 
-type Props = RouteComponentProps & OwnProps;
+const StyledLabel = styled.label`
+  font-size: 87.5%;
+  padding: 0 ${({ theme }) => theme.space[2]};
+`;
 
 const StyledTextInput = styled(TextInput)`
   margin: ${({ theme }) => theme.space[1]} 0;
   width: 100%;
 `;
 
-const StyledList = styled(List)`
-flex-direction: column;
+const StyledButton = styled(BorderlessButton)`
+  text-transform: uppercase;
+  font-size: 87.5%;
 `;
 
-const StyledPanel = styled.div`
-background: ${({ theme }) => theme.colors.heterogBg};
-color: ${({ theme }) => theme.colors.fg2};
-padding: ${({ theme }) => theme.space[3]};
-border-radius: 4px;
-text-align: center;
-`;
-
-const WrDeckDetailPanel = (props: Props) => {
-  const { history } = props;
+const WrDetailSettings = (props: Props) => {
+  const { disabled } = props;
   const { id, name, nameLang, promptLang, answerLang } = props.deck;
   const [nameInput, setNameInput] = useState(name);
-  const [deletePromptInput, setDeletePromptInput] = useState('');
   const [nameLangInput, setNameLangInput] = useState(nameLang);
   const [promptLangInput, setPromptLangInput] = useState(promptLang);
   const [answerLangInput, setAnswerLangInput] = useState(answerLang);
@@ -126,91 +130,69 @@ const WrDeckDetailPanel = (props: Props) => {
       });
     };
     return (
-        <form onSubmit={handleSubmit}>
+        <StyledForm onSubmit={handleSubmit}>
           <StyledList>
-            <Item>
-              Deck name:&nbsp;
+            <StyledItem>
+              <StyledLabel htmlFor="name-input">
+              Deck name
+              </StyledLabel>
               <StyledTextInput
                 type="text"
+                id="name-input"
                 value={nameInput}
                 onChange={handleTextChange(setNameInput)}
                 onKeyDown={handleKeyDown}
-                disabled={loading}
+                disabled={disabled || loading}
               />
-            </Item>
-            <Item>
-              Deck name's language:&nbsp;
+            </StyledItem>
+            <StyledItem>
+              <StyledLabel htmlFor="name-lang-input">
+              Deck name language
+              </StyledLabel>
               <StyledTextInput
                 type="text"
+                id="name-lang-input"
                 value={nameLangInput}
                 onChange={handleTextChange(setNameLangInput)}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
               />
-            </Item>
-            <Item>
-              Prompt language:&nbsp;
+            </StyledItem>
+            <StyledItem>
+              <StyledLabel htmlFor="prompt-lang-input">
+              Prompt language
+              </StyledLabel>
               <StyledTextInput
                 type="text"
+                id="prompt-lang-input"
                 value={promptLangInput}
                 onChange={handleTextChange(setPromptLangInput)}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
               />
-            </Item>
-            <Item>
-              Answer language:&nbsp;
+            </StyledItem>
+            <StyledItem>
+              <StyledLabel htmlFor="answer-lang-input">
+              Answer language
+              </StyledLabel>
               <StyledTextInput
                 type="text"
+                id="answer-lang-input"
                 value={answerLangInput}
                 onChange={handleTextChange(setAnswerLangInput)}
                 onKeyDown={handleKeyDown}
                 disabled={loading}
               />
-            </Item>
+            </StyledItem>
           </StyledList>
-          <AnchorButton
+          <StyledButton
             type="submit"
             disabled={loading}
           >
             Save Changes
-          </AnchorButton>
-        </form>
+          </StyledButton>
+        </StyledForm>
     );
-  };
-  const renderDeletePrompt = (
-    deleteMutate: MutationFn<DeckDeleteData, DeckDeleteVariables>,
-    { loading }: MutationResult<DeckDeleteData>,
-  ) => {
-    const handleDelete = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      deleteMutate({
-        variables: {
-          id,
-        },
-      });
-    };
-    return (
-      <form onSubmit={handleDelete}>
-        To delete this deck, please type <strong>{name}</strong> in the following box:
-        <StyledTextInput
-          type="text"
-          value={deletePromptInput}
-          onChange={handleTextChange(setDeletePromptInput)}
-          onKeyDown={handleKeyDown}
-          disabled={loading}
-        />
-        <AnchorButton
-          type="submit"
-          disabled={loading || deletePromptInput !== name}
-        >
-          Delete
-        </AnchorButton>
-      </form>
-    );
-  };
-  const handleDeleteCompleted = () => {
-    history.push('/deck');
   };
   return (
     <StyledPanel>
@@ -220,16 +202,8 @@ const WrDeckDetailPanel = (props: Props) => {
       >
         {renderPanel}
       </Mutation>
-      <HDivider />
-      <Mutation<DeckDeleteData, DeckDeleteVariables>
-        mutation={DECK_DELETE_MUTATION}
-        onError={printApolloError}
-        onCompleted={handleDeleteCompleted}
-      >
-        {renderDeletePrompt}
-      </Mutation>
     </StyledPanel>
   );
 };
 
-export default withRouter<Props>(WrDeckDetailPanel);
+export default WrDetailSettings;

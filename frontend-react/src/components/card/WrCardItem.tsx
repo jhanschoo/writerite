@@ -1,52 +1,18 @@
-import React, { Component, ChangeEvent, KeyboardEvent } from 'react';
+import React, { useState, MouseEvent } from 'react';
+import { Edit } from 'react-feather';
 import moment from 'moment';
 
-import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
-import { printApolloError } from '../../util';
-import { WrCard, IWrCard } from '../../models/WrCard';
+import { IWrCard } from '../../models/WrCard';
 
 import styled from 'styled-components';
 import HDivider from '../../ui/HDivider';
 import List from '../../ui/list/List';
 import Item from '../../ui/list/Item';
+import CardAuxillaryButton from './CardAuxillaryButton';
 
-import CardFieldset from './CardFieldset';
 import WrDuplicateCardButton from './WrDuplicateCardButton';
 import WrDeleteCardButton from './WrDeleteCardButton';
-
-const CARD_EDIT_MUTATION = gql`
-${WrCard}
-mutation CardEdit(
-  $id: ID!,
-  $prompt: String,
-  $fullAnswer: String,
-  $sortKey: String,
-  $template: Boolean,
-) {
-  rwCardEdit(
-    id: $id,
-    prompt: $prompt,
-    fullAnswer: $fullAnswer,
-    sortKey: $sortKey,
-    template: $template,
-  ) {
-    ...WrCard
-  }
-}
-`;
-
-interface CardEditVariables {
-  readonly id: string;
-  readonly prompt?: string;
-  readonly fullAnswer?: string;
-  readonly sortKey?: string;
-  readonly template?: boolean;
-}
-
-interface CardEditData {
-  readonly rwCardEdit: IWrCard | null;
-}
+import WrCardItemEdit from './WrCardItemEdit';
 
 interface Props {
   deckId: string;
@@ -61,20 +27,16 @@ const Header = styled.header`
   padding: ${({ theme }) => theme.space[1]} 0;
 `;
 
-const MainSegment = styled.main`
-  display: flex;
-  padding: ${({ theme }) => theme.space[1]} 0;
-`;
-
-const Card = styled.form`
-  border-radius: 4px;
+const Card = styled.section`
   margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
-  padding: 0 ${({ theme }) => theme.space[3]};
+  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
   display: flex;
   flex-direction: column;
-  background: ${({ theme }) => theme.colors.inputBg};
   .auxillary {
     visibility: hidden;
+  }
+  :hover, &.active {
+    background: ${({ theme }) => theme.colors.bg2};
   }
 
   :hover .auxillary {
@@ -87,116 +49,85 @@ const EditNoticeText = styled.span`
   font-size: 75%;
 `;
 
-class WrCardItem extends Component<Props> {
-  public readonly state = {
-    promptInput: this.props.card.prompt,
-    fullAnswerInput: this.props.card.fullAnswer,
-  };
+const CardMainField = styled.div`
+  width: 100%;
+`;
 
-  public readonly render = () => {
-    const {
-      handlePromptChange,
-      handleFullAnswerChange,
-      resetState,
-    } = this;
-    const { promptInput, fullAnswerInput } = this.state;
-    const { deckId, promptLang, answerLang } = this.props;
-    const { id, prompt, fullAnswer, sortKey, editedAt, template } = this.props.card;
-    const hasUnsavedChanges = (prompt !== promptInput)
-      || (fullAnswer !== fullAnswerInput);
-    const lastEditedNotice = `last edited ${moment(editedAt).fromNow()}`;
-    const unsavedChangesNotice = 'You have unsaved changes. Press Enter to save. Press Esc to discard changes.';
-    const renderCardEdit = (
-      mutate: MutationFn<CardEditData, CardEditVariables>,
-      { loading }: MutationResult<CardEditData>,
-    ) => {
-      const handleUpdate = () => {
-        // https://github.com/lovasoa/react-contenteditable/issues/164
-        return mutate({
-          variables: {
-            id,
-            prompt: this.state.promptInput,
-            fullAnswer: this.state.fullAnswerInput,
-            sortKey,
-          },
-        });
-      };
-      const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-        const { key } = e;
-        if (key === 'Enter') {
-          e.preventDefault();
-          handleUpdate();
-        }
-        if (key === 'Escape' || key === 'Esc') {
-          e.preventDefault();
-          resetState();
-        }
-      };
-      return (
-        <Card>
-          <Header>
-            <EditNoticeText>
-              <em>{hasUnsavedChanges ? unsavedChangesNotice : lastEditedNotice}</em>
-            </EditNoticeText>
-            <List>
-              <Item>
-                <WrDuplicateCardButton
-                  deckId={deckId}
-                  prompt={prompt}
-                  fullAnswer={fullAnswer}
-                  sortKey={sortKey}
-                  template={template}
-                />
-              </Item>
-              <Item>
-                <WrDeleteCardButton cardId={id} />
-              </Item>
-            </List>
-          </Header>
-          <HDivider spacerColor="lightLightEdge" />
-          <MainSegment>
-            <CardFieldset
-              name={id + '-prompt'}
-              label="Prompt"
-              lang={promptLang}
-              input={promptInput}
-              onChange={handlePromptChange}
-              onKeyDown={handleKeyDown}
-            />
-            <CardFieldset
-              name={id + '-answer'}
-              label="Displayed Answer"
-              lang={answerLang}
-              input={fullAnswerInput}
-              onChange={handleFullAnswerChange}
-              onKeyDown={handleKeyDown}
-            />
-          </MainSegment>
-        </Card>
-      );
+const LowercaseHeader = styled.h4`
+  font-weight: normal;
+  font-size: 75%;
+  text-transform: lowercase;
+  margin: 0;
+  color: ${({ theme }) => theme.colors.fg2};
+`;
+
+const StyledParagraph = styled.p`
+  margin: 0;
+  padding: ${({ theme }) => theme.space[1]} 0;
+`;
+
+const WrCardItem = (props: Props) => {
+  const { deckId, promptLang, answerLang, card } = props;
+  const { id, prompt, fullAnswer, sortKey, editedAt, template } = card;
+  const lastEditedNotice = `last edited ${moment(editedAt).fromNow()}`;
+  const [edit, setEdit] = useState(false);
+  const stopEdit = () => {
+    setEdit(false);
+  };
+  const renderDisplay = () => {
+    const handleEditButton = (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setEdit(true);
     };
     return (
-      <Mutation<CardEditData, CardEditVariables>
-        mutation={CARD_EDIT_MUTATION}
-        onError={printApolloError}
-      >
-        {renderCardEdit}
-      </Mutation>
+      <>
+        <Header>
+          <EditNoticeText>
+            <em>{lastEditedNotice}</em>
+          </EditNoticeText>
+          <List>
+            <Item>
+              <CardAuxillaryButton
+                className="auxillary"
+                onClick={handleEditButton}
+              >
+                <Edit size={16} />
+              </CardAuxillaryButton>
+            </Item>
+            <Item>
+              <WrDuplicateCardButton
+                deckId={deckId}
+                prompt={prompt}
+                fullAnswer={fullAnswer}
+                sortKey={sortKey}
+                template={template}
+              />
+            </Item>
+            <Item>
+              <WrDeleteCardButton cardId={id} />
+            </Item>
+          </List>
+        </Header>
+        <HDivider spacerColor="lightLightEdge" />
+        <CardMainField lang={promptLang}>
+          <LowercaseHeader>Prompt</LowercaseHeader>
+          <StyledParagraph>{prompt}</StyledParagraph>
+        </CardMainField>
+        <CardMainField lang={answerLang}>
+          <LowercaseHeader>Displayed Answer</LowercaseHeader>
+          <StyledParagraph>{fullAnswer}</StyledParagraph>
+        </CardMainField>
+      </>
     );
-  }
-  private readonly handlePromptChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ promptInput: e.target.value });
-  }
-  private readonly handleFullAnswerChange = (e: ChangeEvent<HTMLInputElement>) => {
-    this.setState({ fullAnswerInput: e.target.value });
-  }
-  private readonly resetState = () => {
-    const { prompt, fullAnswer } = this.props.card;
-    this.setState({
-      promptInput: prompt,
-      fullAnswerInput: fullAnswer,
-    });
-  }
-}
+  };
+  const child = edit
+    ? <WrCardItemEdit promptLang={promptLang} answerLang={answerLang} card={card} stopEdit={stopEdit} />
+    : renderDisplay();
+  return (
+    <Card className={edit ? 'active' : undefined}>
+      {child}
+    </Card>
+  );
+};
 
 export default WrCardItem;

@@ -1,12 +1,11 @@
 import React, { FC, MouseEvent } from 'react';
-import { Trash2 } from 'react-feather';
+import { Trash } from 'react-feather';
 
 import { gql } from 'graphql.macro';
 import { Mutation, MutationFn, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../util';
 
-import styled from 'styled-components';
-import { AuxillaryButton } from '../../ui/form/Button';
+import CardAuxillaryButton from './CardAuxillaryButton';
 
 const CARD_DELETE_MUTATION = gql`
 mutation CardDelete($id: ID!) {
@@ -21,10 +20,6 @@ interface CardDeleteVariables {
 interface CardDeleteData {
   readonly rwCardDelete: string | null;
 }
-
-const StyledButton = styled(AuxillaryButton)`
-  margin: 0 ${({ theme }) => theme.space[1]};
-`;
 
 interface Props {
   cardId: string;
@@ -45,11 +40,11 @@ const WrDeleteCardButton: FC<Props> = (props: Props) => {
       });
     };
     return (
-      <StyledButton
+      <CardAuxillaryButton
         className="auxillary"
         onClick={handleClick}
-      ><Trash2 size={16} />
-      </StyledButton>
+      ><Trash size={16} />
+      </CardAuxillaryButton>
     );
   };
   return (

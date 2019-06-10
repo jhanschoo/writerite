@@ -10,7 +10,6 @@ import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 
-
 const CARDS_CREATE_MUTATION = gql`
 ${WrCard}
 mutation CardCreate(
@@ -53,12 +52,12 @@ const CenteredFlex = styled.div`
   align-items: center;
   justify-content: center;
   color: ${({ theme }) => theme.colors.fg2};
-  background: ${({ theme }) => theme.colors.heterogBg};
   padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[3]};
   border-radius: 4px;
 `;
 
 const StyledTextInput = styled(TextInput)`
+  margin: 0 ${({ theme }) => theme.space[2]};
   flex-grow: 0;
   width: 4rem;
 `;
