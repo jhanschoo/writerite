@@ -16,7 +16,7 @@ export interface IWrCardStub {
   id: string;
   prompt: string;
   fullAnswer: string;
-  answers: string[][];
+  answers: string[];
   sortKey: string;
   template: boolean;
   editedAt: string;
