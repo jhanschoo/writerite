@@ -98,7 +98,7 @@ const WrCardItem = (props: Props) => {
       <LowercaseHeader>Accepted Answers</LowercaseHeader>
       <AnswersDisplayDiv>{formattedAnswers}</AnswersDisplayDiv>
     </CardMainField>
-  )
+  );
   const renderDisplay = () => {
     const handleEditButton = (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
