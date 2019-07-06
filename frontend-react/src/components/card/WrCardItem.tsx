@@ -32,6 +32,7 @@ const Card = styled.section`
   padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
   display: flex;
   flex-direction: column;
+  border-radius: 8px;
   .auxillary {
     visibility: hidden;
   }

@@ -25,6 +25,7 @@ type PCard { # implements Card
   id: ID! @id
   prompt: String!
   fullAnswer: String!
+  answers: [String!]! @scalarList(strategy: RELATION)
   sortKey: String!
   editedAt: DateTime!
   template: Boolean!
@@ -36,6 +37,7 @@ type PCard { # implements Card
 type PDeck {
   id: ID! @id
   name: String!
+  description: String!
   nameLang: String!
   promptLang: String!
   answerLang: String!

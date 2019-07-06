@@ -7,16 +7,17 @@ export const TextInput = styled.input`
   font-family: inherit;
   height: ${({ theme }) => theme.space[4]};
   padding: 0 ${({ theme }) => theme.space[2]};
-  border: 1px solid ${({ theme }) => theme.colors.transparent};
+  border: 1px solid ${({ theme }) => theme.colors.lightEdge};
   border-radius: 4px;
   background: ${({ theme }) => theme.colors.inputBg};
+  color: ${({ theme }) => theme.colors.fg1};
 
   :disabled {
     background: ${({ theme }) => theme.colors.disabled};
   }
 
-  :focus {
-    border: 1px solid ${({ theme }) => theme.colors.edge};
+  :hover, :focus {
+    border: 1px solid ${({ theme }) => theme.colors.darkEdge};
     outline: none;
   }
 

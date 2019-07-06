@@ -51,7 +51,6 @@ const CenteredFlex = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${({ theme }) => theme.colors.fg2};
   padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[3]};
   border-radius: 4px;
 `;

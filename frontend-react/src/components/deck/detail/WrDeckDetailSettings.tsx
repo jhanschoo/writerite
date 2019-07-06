@@ -5,7 +5,7 @@ import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
-import { BorderlessButton } from '../../../ui/form/Button';
+import { Button } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
@@ -53,10 +53,10 @@ interface Props {
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const StyledPanel = styled.div`
-  color: ${({ theme }) => theme.colors.fg2};
   padding:
     0
     ${({ theme }) => theme.space[3]}
@@ -67,6 +67,7 @@ const StyledPanel = styled.div`
 
 const StyledList = styled(List)`
   flex-direction: column;
+  align-self: stretch;
 `;
 
 const StyledItem = styled(Item)`
@@ -85,9 +86,9 @@ const StyledTextInput = styled(TextInput)`
   width: 100%;
 `;
 
-const StyledButton = styled(BorderlessButton)`
-  text-transform: uppercase;
-  font-size: 87.5%;
+const StyledButton = styled(Button)`
+  margin-top: ${({ theme }) => theme.space[2]};
+  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
 `;
 
 const WrDetailSettings = (props: Props) => {
@@ -147,7 +148,7 @@ const WrDetailSettings = (props: Props) => {
             </StyledItem>
             <StyledItem>
               <StyledLabel htmlFor="name-lang-input">
-              Deck name language
+              Deck name language code
               </StyledLabel>
               <StyledTextInput
                 type="text"
@@ -160,7 +161,7 @@ const WrDetailSettings = (props: Props) => {
             </StyledItem>
             <StyledItem>
               <StyledLabel htmlFor="prompt-lang-input">
-              Prompt language
+              Prompt language code
               </StyledLabel>
               <StyledTextInput
                 type="text"
@@ -173,7 +174,7 @@ const WrDetailSettings = (props: Props) => {
             </StyledItem>
             <StyledItem>
               <StyledLabel htmlFor="answer-lang-input">
-              Answer language
+              Answer language code
               </StyledLabel>
               <StyledTextInput
                 type="text"

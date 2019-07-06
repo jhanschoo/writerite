@@ -61,6 +61,12 @@ interface RoomCreateData {
   readonly rwRoomCreate: IWrRoom | null;
 }
 
+enum ActiveAction {
+  NONE,
+  SETTINGS,
+  DELETE,
+}
+
 const DeckHeader = styled.header`
   display: flex;
   flex-direction: column;
@@ -104,12 +110,6 @@ const BigButton = styled(BorderlessButton)`
 const CenteredP = styled.p`
   text-align: center;
 `;
-
-enum ActiveAction {
-  NONE,
-  SETTINGS,
-  DELETE,
-}
 
 const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) => {
   const { history, match } = props;

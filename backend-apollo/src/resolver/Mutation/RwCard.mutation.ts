@@ -12,6 +12,7 @@ const rwCardCreate: IFieldResolver<any, IContext, {
   deckId: string,
   prompt?: string,
   fullAnswer?: string,
+  answers?: string[],
   sortKey?: string,
   template?: boolean,
 }> = async (
@@ -42,6 +43,7 @@ const rwCardsCreate: IFieldResolver<any, IContext, {
   multiplicity: number,
   prompt?: string,
   fullAnswer?: string,
+  answers?: string[],
   sortKey?: string,
   template?: boolean,
 }> = async (
@@ -73,6 +75,7 @@ const rwCardEdit: IFieldResolver<any, IContext, {
   id: string,
   prompt?: string,
   fullAnswer?: string,
+  answers?: string[],
   sortKey?: string,
   template?: boolean,
 }> = async (

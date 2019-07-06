@@ -6,6 +6,7 @@ export interface ISCard {
   id: string;
   prompt: string;
   fullAnswer: string;
+  answers: string[];
   sortKey: string;
   editedAt: string;
   template: boolean;
@@ -18,6 +19,7 @@ export interface IRwCard extends ISCard {
 export interface IRwCardCreateParams {
   prompt?: string;
   fullAnswer?: string;
+  answers?: string[];
   sortKey?: string;
   template?: boolean;
   deckId: string;
@@ -27,6 +29,7 @@ export interface IRwCardEditParams {
   id: string;
   prompt?: string;
   fullAnswer?: string;
+  answers?: string[];
   sortKey?: string;
   template?: boolean;
 }
@@ -49,11 +52,12 @@ export const SCard = {
     return pCards.map(SCard.fromPCard);
   },
   create: async (prisma: Prisma, {
-    prompt, fullAnswer, sortKey, template, deckId,
+    prompt, fullAnswer, answers, sortKey, template, deckId,
   }: IRwCardCreateParams): Promise<ISCard> => {
     return SCard.fromPCard(await prisma.createPCard({
       prompt: prompt || '',
       fullAnswer: fullAnswer || '',
+      answers: { set: (answers) ? answers : [] },
       sortKey: sortKey || prompt || '',
       editedAt: (new Date()).toISOString(),
       template: template || false,
@@ -61,7 +65,7 @@ export const SCard = {
     }));
   },
   createMany: async (prisma: Prisma, multiplicity: number, {
-    prompt, fullAnswer, sortKey, template, deckId,
+    prompt, fullAnswer, answers, sortKey, template, deckId,
   }: IRwCardCreateParams): Promise<ISCard[]> => {
     // no direct way to create multiple in the same transaction
     // and obtain a list of exactly the created cards
@@ -70,6 +74,7 @@ export const SCard = {
       const pCard = await prisma.createPCard({
         prompt: prompt || '',
         fullAnswer: fullAnswer || '',
+        answers: { set: (answers) ? answers : [] },
         sortKey: sortKey || prompt || '',
         deck: { connect: { id: deckId } },
         editedAt: (new Date()).toISOString(),
@@ -80,12 +85,13 @@ export const SCard = {
     return pCards.map(SCard.fromPCard);
   },
   edit: async (prisma: Prisma, {
-    id, prompt, fullAnswer, sortKey, template,
+    id, prompt, fullAnswer, answers, sortKey, template,
   }: IRwCardEditParams): Promise<ISCard> => {
     const pCard = await prisma.updatePCard({
       data: {
         prompt,
         fullAnswer,
+        answers: answers ? { set: answers } : undefined,
         sortKey,
         template,
         editedAt: (new Date()).toISOString(),

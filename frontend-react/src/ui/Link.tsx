@@ -11,12 +11,21 @@ const Link = styled(rrLink)`
   padding: ${({ theme }) => theme.space[2]};
   color: ${({ theme }) => theme.colors.fg1};
 
-  &.active {
-    border-color: ${({ theme }) => theme.colors.edge};
+  :hover {
+    border-color: ${({ theme }) => theme.colors.darkEdge};
+    background: ${({ theme }) => theme.colors.bg2};
   }
 
-  :hover {
-    background: ${({ theme }) => theme.colors.bg2};
+  :disabled {
+    color: ${({ theme }) => theme.colors.disabled};
+  }
+
+  &.active {
+    border-color: ${({ theme }) => theme.colors.edge};
+
+    :hover {
+      border-color: ${({ theme }) => theme.colors.darkEdge};
+    }
   }
 `;
 

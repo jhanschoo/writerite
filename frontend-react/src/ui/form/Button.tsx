@@ -5,7 +5,7 @@ export const Button = styled.button`
   justify-content: center;
   align-items: center;
   background: none;
-  border: 1px solid ${({ theme }) => theme.colors.edge};
+  border: 1px solid ${({ theme }) => theme.colors.lightEdge};
   border-radius: 4px;
   margin: 0;
   padding: 0;
@@ -16,7 +16,7 @@ export const Button = styled.button`
   color: ${({ theme }) => theme.colors.fg1};
 
   :hover {
-    background: ${({ theme }) => theme.colors.bg2};
+    border-color: ${({ theme }) => theme.colors.darkEdge};
     cursor: pointer;
   }
 
@@ -43,7 +43,7 @@ export const BorderlessButton = styled.button`
 
   :hover {
     cursor: pointer;
-    border-color: ${({ theme }) => theme.colors.bg2};
+    border-color: ${({ theme }) => theme.colors.darkEdge};
     background: ${({ theme }) => theme.colors.bg2};
   }
 
@@ -55,7 +55,7 @@ export const BorderlessButton = styled.button`
     border-color: ${({ theme }) => theme.colors.edge};
 
     :hover {
-      border-color: ${({ theme }) => theme.colors.edge};
+      border-color: ${({ theme }) => theme.colors.darkEdge};
     }
   }
 `;

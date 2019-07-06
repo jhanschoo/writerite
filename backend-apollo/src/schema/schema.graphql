@@ -35,20 +35,31 @@ type Mutation {
   # Deck
   rwDeckCreate(
     name: String
+    description: String
     nameLang: String
     promptLang: String
     answerLang: String
   ): RwDeck
   rwDeckCreateFromCsv(
     name: String
+    description: String
     nameLang: String
     promptLang: String
     answerLang: String
     csv: Upload!
   ): RwDeck
+  rwDeckCreateFromRows(
+    name: String
+    description: String
+    nameLang: String
+    promptLang: String
+    answerLang: String
+    rows: [[String!]!]!
+  ): RwDeck
   rwDeckEdit(
     id: ID!
     name: String
+    description: String
     nameLang: String
     promptLang: String
     answerLang: String
@@ -59,6 +70,7 @@ type Mutation {
     deckId: ID!
     prompt: String!
     fullAnswer: String!
+    answers: [String!]
     sortKey: String
     template: Boolean
   ): RwCard
@@ -67,6 +79,7 @@ type Mutation {
     multiplicity: Int!
     prompt: String!
     fullAnswer: String!
+    answers: [String!]
     sortKey: String
     template: Boolean
   ): [RwCard!]
@@ -74,6 +87,7 @@ type Mutation {
     id: ID!
     prompt: String
     fullAnswer: String
+    answers: [String!]
     sortKey: String
     template: Boolean
   ): RwCard
@@ -138,6 +152,7 @@ type RwRoomUpdate {
 type RwDeck {
   id: ID!
   name: String!
+  description: String!
   nameLang: String!
   promptLang: String!
   answerLang: String!
@@ -151,6 +166,7 @@ type RwCard {
   id: ID!
   prompt: String!
   fullAnswer: String!
+  answers: [String!]!
   sortKey: String!
   deck: RwDeck!
   editedAt: String!

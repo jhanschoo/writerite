@@ -13,7 +13,7 @@ import { rwAuthenticationError } from '../../util';
 import { ISDeck, IRwDeck } from '../../model/RwDeck';
 
 const rwDeckCreate: IFieldResolver<any, IContext, {
-  name?: string, nameLang?: string, promptLang?: string, answerLang?: string,
+  name?: string, description?: string, nameLang?: string, promptLang?: string, answerLang?: string,
 }> = async (
   _parent, params, { models, sub, prisma, pubsub },
 ): Promise<IRwDeck | null> => {
@@ -33,6 +33,7 @@ const rwDeckCreate: IFieldResolver<any, IContext, {
 
 const rwDeckCreateFromCsv: IFieldResolver<any, IContext, {
   name?: string,
+  description?: string,
   nameLang?: string,
   promptLang?: string,
   answerLang?: string,
@@ -48,25 +49,25 @@ const rwDeckCreateFromCsv: IFieldResolver<any, IContext, {
   return new Promise((res, rej) => {
     const parser = parse();
     stream.pipe(parser);
-    const records: string[][] = [];
+    const rows: string[][] = [];
     parser.on('error', (err) => rej(err));
     parser.on('readable', () => {
-      let record: string[] = parser.read();
-      while (record) {
-        while (record.length < 2) {
-          record.push('');
+      let row: string[] = parser.read();
+      while (row) {
+        while (row.length < 2) {
+          row.push('');
         }
-        records.push(record);
-        record = parser.read();
+        rows.push(row);
+        row = parser.read();
       }
     });
     parser.on('end', async () => {
       // save output
-      const sDeck = await models.SDeck.createFromRecords(prisma, {
+      const sDeck = await models.SDeck.createFromRows(prisma, {
         ...params,
         userId: sub.id,
         name: name || filename,
-        records,
+        rows,
       });
       const sDeckUpdate: ICreatedUpdate<ISDeck> = {
         mutation: MutationType.CREATED,
@@ -80,12 +81,40 @@ const rwDeckCreateFromCsv: IFieldResolver<any, IContext, {
   });
 };
 
+const rwDeckCreateFromRows: IFieldResolver<any, IContext, {
+  name?: string,
+  description?: string,
+  nameLang?: string,
+  promptLang?: string,
+  answerLang?: string,
+  rows: string[][],
+}> = async (
+  _parent, { ...params }, { models, sub, prisma, pubsub },
+): Promise<IRwDeck | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
+  }
+  const sDeck = await models.SDeck.createFromRows(prisma, {
+    ...params,
+    userId: sub.id,
+  });
+  const sDeckUpdate: ICreatedUpdate<ISDeck> = {
+    mutation: MutationType.CREATED,
+    new: sDeck,
+    oldId: null,
+  };
+  pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
+  pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
+  return models.RwDeck.fromSDeck(prisma, sDeck);
+};
+
 const rwDeckEdit: IFieldResolver<any, IContext, {
   id: string,
-  name: string,
-  nameLang: string,
-  promptLang: string,
-  answerLang: string,
+  name?: string,
+  description?: string,
+  nameLang?: string,
+  promptLang?: string,
+  answerLang?: string,
 }> = async (
   _parent, { id, ...params }, { models, sub, prisma, pubsub },
 ): Promise<IRwDeck | null> => {
@@ -125,5 +154,5 @@ const rwDeckDelete: IFieldResolver<any, IContext, {
 };
 
 export const rwDeckMutation: IResolverObject<any, IContext, any> = {
-  rwDeckCreate, rwDeckCreateFromCsv, rwDeckEdit, rwDeckDelete,
+  rwDeckCreate, rwDeckCreateFromCsv, rwDeckCreateFromRows, rwDeckEdit, rwDeckDelete,
 };

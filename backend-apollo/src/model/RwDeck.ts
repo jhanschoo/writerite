@@ -6,6 +6,7 @@ import { IRwUser, RwUser } from './RwUser';
 export interface ISDeck {
   id: string;
   name: string;
+  description: string;
   nameLang: string;
   promptLang: string;
   answerLang: string;
@@ -18,19 +19,21 @@ export interface IRwDeck extends ISDeck {
 
 export interface IRwDeckCreateParams {
   name?: string;
+  description?: string;
   nameLang?: string;
   promptLang?: string;
   answerLang?: string;
   userId: string;
 }
 
-export interface IRwDeckCreateFromRecordsParams extends IRwDeckCreateParams {
-  records: string[][];
+export interface IRwDeckCreateFromRowsParams extends IRwDeckCreateParams {
+  rows: string[][];
 }
 
 export interface IRwDeckEditParams {
   id: string;
   name?: string;
+  description?: string;
   nameLang?: string;
   promptLang?: string;
   answerLang?: string;
@@ -54,31 +57,33 @@ export const SDeck = {
     return pDecks.map(SDeck.fromPDeck);
   },
   create: async (prisma: Prisma, {
-    name, nameLang, promptLang, answerLang, userId,
+    name, description, nameLang, promptLang, answerLang, userId,
   }: IRwDeckCreateParams): Promise<ISDeck> => {
     return await SDeck.fromPDeck(await prisma.createPDeck({
       name: name || '',
+      description: description || '',
       nameLang: nameLang || '',
       promptLang: promptLang || '',
       answerLang: answerLang || '',
       owner: { connect: { id: userId } },
     }));
   },
-  createFromRecords: async (prisma: Prisma, {
-    name, nameLang, promptLang, answerLang, userId, records,
-  }: IRwDeckCreateFromRecordsParams): Promise<ISDeck> => {
+  createFromRows: async (prisma: Prisma, {
+    name, description, nameLang, promptLang, answerLang, userId, rows,
+  }: IRwDeckCreateFromRowsParams): Promise<ISDeck> => {
     const editedAt = (new Date()).toISOString();
     return await SDeck.fromPDeck(await prisma.createPDeck({
       name: name || '',
+      description: description || '',
       nameLang: nameLang || '',
       promptLang: promptLang || '',
       answerLang: answerLang || '',
       owner: { connect: { id: userId } },
       cards: {
-        create: records.map((record) => ({
-          prompt: record[0],
-          fullAnswer: record[1],
-          sortKey: (record.length > 2) ? record[2] : record[0],
+        create: rows.map((row) => ({
+          prompt: row[0] || '',
+          fullAnswer: row[1] || '',
+          sortKey: (row.length > 2) ? row[2] : row[0],
           editedAt,
           template: false,
         })),
@@ -86,14 +91,15 @@ export const SDeck = {
     }));
   },
   edit: async (prisma: Prisma, {
-    id, name, nameLang, promptLang, answerLang,
+    id, name, description, nameLang, promptLang, answerLang,
   }: IRwDeckEditParams): Promise<ISDeck> => {
     return await SDeck.fromPDeck(await prisma.updatePDeck({
       data: {
-        name: name || '',
-        nameLang: nameLang || '',
-        promptLang: promptLang || '',
-        answerLang: answerLang || '',
+        name,
+        description,
+        nameLang,
+        promptLang,
+        answerLang,
       },
       where: { id },
     }));
@@ -133,8 +139,8 @@ export const RwDeck = {
   },
   create: async (prisma: Prisma, params: IRwDeckCreateParams) =>
     RwDeck.fromSDeck(prisma, await SDeck.create(prisma, params)),
-  createFromRecords: async (prisma: Prisma, params: IRwDeckCreateFromRecordsParams) =>
-    RwDeck.fromSDeck(prisma, await SDeck.createFromRecords(prisma, params)),
+  createFromRows: async (prisma: Prisma, params: IRwDeckCreateFromRowsParams) =>
+    RwDeck.fromSDeck(prisma, await SDeck.createFromRows(prisma, params)),
   edit: async (prisma: Prisma, params: IRwDeckEditParams) =>
     RwDeck.fromSDeck(prisma, await SDeck.edit(prisma, params)),
   delete: SDeck.delete,

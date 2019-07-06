@@ -42,6 +42,13 @@ interface CardEditData {
   readonly rwCardEdit: IWrCard | null;
 }
 
+interface Props {
+  stopEdit: () => void;
+  promptLang: string;
+  answerLang: string;
+  card: IWrCard;
+}
+
 const StyledFrom = styled.form`
   display: flex;
   flex-direction: column;
@@ -74,13 +81,6 @@ const StyledButton = styled(BorderlessButton)`
   text-transform: uppercase;
   font-size: 87.5%;
 `;
-
-interface Props {
-  stopEdit: () => void;
-  promptLang: string;
-  answerLang: string;
-  card: IWrCard;
-}
 
 const WrCardItemEdit = (props: Props) => {
   const { stopEdit, promptLang, answerLang } = props;

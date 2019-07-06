@@ -5,7 +5,7 @@ import { MutationFn, Mutation, MutationResult } from 'react-apollo';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
-import { BorderlessButton } from '../../../ui/form/Button';
+import { Button } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -36,6 +36,7 @@ type Props = RouteComponentProps & OwnProps;
 const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const StyledTextInput = styled(TextInput)`
@@ -44,7 +45,6 @@ const StyledTextInput = styled(TextInput)`
 `;
 
 const StyledPanel = styled.div`
-  color: ${({ theme }) => theme.colors.fg2};
   padding:
     0
     ${({ theme }) => theme.space[3]}
@@ -53,9 +53,9 @@ const StyledPanel = styled.div`
   text-align: center;
 `;
 
-const StyledButton = styled(BorderlessButton)`
-  text-transform: uppercase;
-  font-size: 87.5%;
+const StyledButton = styled(Button)`
+  margin-top: ${({ theme }) => theme.space[2]};
+  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
 `;
 
 const WrDeckDetailDeletePrompt = (props: Props) => {
