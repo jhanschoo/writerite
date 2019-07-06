@@ -84,7 +84,7 @@ export const SDeck = {
           prompt: row[0] || '',
           fullAnswer: row[1] || '',
           sortKey: (row.length > 2 && row[2]) ? row[2] : row[0],
-          answers: { set: row.slice(3) },
+          answers: { set: row.slice(3).filter((answer) => answer !== '') },
           editedAt,
           template: false,
         })),

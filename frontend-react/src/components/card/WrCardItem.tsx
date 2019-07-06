@@ -62,6 +62,21 @@ const LowercaseHeader = styled.h4`
   color: ${({ theme }) => theme.colors.fg2};
 `;
 
+const AnswersDisplayDiv = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+`;
+
+const AnswersP = styled.p`
+  display: flex;
+  margin: ${({ theme }) => theme.space[1]};
+  padding: ${({ theme }) => theme.space[1]};
+  border-radius: 2px;
+  background: ${({ theme }) => theme.colors.bg0};
+  font-size: 75%;
+`;
+
 const StyledParagraph = styled.p`
   margin: 0;
   padding: ${({ theme }) => theme.space[1]} 0;
@@ -69,12 +84,21 @@ const StyledParagraph = styled.p`
 
 const WrCardItem = (props: Props) => {
   const { deckId, promptLang, answerLang, card } = props;
-  const { id, prompt, fullAnswer, sortKey, editedAt, template } = card;
+  const { id, prompt, fullAnswer, answers, sortKey, editedAt, template } = card;
   const lastEditedNotice = `last edited ${moment(editedAt).fromNow()}`;
   const [edit, setEdit] = useState(false);
   const stopEdit = () => {
     setEdit(false);
   };
+  const formattedAnswers = answers.map((answer, i) => (
+    <AnswersP key={i}>{answer}</AnswersP>
+  ));
+  const optionalAnswers = (answers.length === 0) ? null : (
+    <CardMainField lang={answerLang}>
+      <LowercaseHeader>Accepted Answers</LowercaseHeader>
+      <AnswersDisplayDiv>{formattedAnswers}</AnswersDisplayDiv>
+    </CardMainField>
+  )
   const renderDisplay = () => {
     const handleEditButton = (e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -118,6 +142,7 @@ const WrCardItem = (props: Props) => {
           <LowercaseHeader>Displayed Answer</LowercaseHeader>
           <StyledParagraph>{fullAnswer}</StyledParagraph>
         </CardMainField>
+        {optionalAnswers}
       </>
     );
   };
