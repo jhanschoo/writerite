@@ -22,4 +22,4 @@ const WrDeckView = (props: RouteComponentProps) => {
   );
 };
 
-export default withRouter<RouteComponentProps>(WrDeckView);
+export default withRouter(WrDeckView);

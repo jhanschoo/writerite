@@ -45,6 +45,7 @@ export const MinimalTextInput = styled.input`
   font-weight: inherit;
   font-size: inherit;
   font-family: inherit;
+  color: ${({ theme }) => theme.colors.fg1};
   height: ${({ theme }) => theme.space[4]};
   padding: 0 ${({ theme }) => theme.space[2]};
   border: none;

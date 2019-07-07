@@ -277,4 +277,4 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
   );
 };
 
-export default withRouter<Props>(WrUploadDeck);
+export default withRouter(WrUploadDeck);

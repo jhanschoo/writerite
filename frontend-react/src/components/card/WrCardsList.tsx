@@ -28,4 +28,4 @@ const WrCardsList: FC<Props> = (props: Props) => {
   );
 };
 
-export default withRouter<Props>(WrCardsList);
+export default withRouter(WrCardsList);

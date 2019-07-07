@@ -439,7 +439,7 @@ const mapDispatchToProps: DispatchProps = {
   createSignin,
 };
 
-export default withRouter<RouteComponentProps>(
+export default withRouter(
   connect<
     {}, DispatchProps, RouteComponentProps, WrState
   >(mapStateToProps, mapDispatchToProps)(WrSignin),

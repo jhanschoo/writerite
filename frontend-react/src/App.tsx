@@ -42,7 +42,7 @@ const mapStateToProps = (state: WrState): StateProps => {
 
 // withRouter decorator necessary for routing to work properly.
 // see: https://stackoverflow.com/questions/46036809
-export default withRouter<RouteComponentProps>(
+export default withRouter(
   connect<
     StateProps, {}, RouteComponentProps
   >(mapStateToProps)(App),

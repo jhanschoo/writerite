@@ -119,4 +119,4 @@ const WrDeckDetailDeletePrompt = (props: Props) => {
   );
 };
 
-export default withRouter<Props>(WrDeckDetailDeletePrompt);
+export default withRouter(WrDeckDetailDeletePrompt);
