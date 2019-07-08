@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import { WrRoomDetail, IWrRoomDetail } from './models/WrRoomDetail';
 import { WrRoomMessage, IWrRoomMessage } from './models/WrRoomMessage';
+import { WrRoomMessageContentType } from './models/WrRoomMessageStub';
 import { client } from './apolloClient';
 import { createClient } from './redisClient';
 
@@ -28,8 +29,8 @@ export interface RoomDetailData {
 }
 
 export const MESSAGE_CREATE_MUTATION = gql`
-mutation MessageCreate($roomId: ID! $content: String!) {
-  rwRoomMessageCreate(roomId: $roomId content: $content) {
+mutation MessageCreate($roomId: ID! $content: String! $contentType: RwRoomMessageContentType!) {
+  rwRoomMessageCreate(roomId: $roomId content: $content contentType: $contentType) {
     ...WrRoomMessage
   }
 }
@@ -40,6 +41,7 @@ ${WrRoomMessage}
 export interface MessageCreateVariables {
   readonly roomId: string;
   readonly content: string;
+  readonly contentType: WrRoomMessageContentType;
 }
 
 // tslint:disable-next-line: interface-name
@@ -54,12 +56,13 @@ const getRoom = (id: string) => {
   });
 };
 
-const sendMessageFactory = (id: string) => (message: string) => {
+const sendMessageFactory = (id: string) => (contentType: WrRoomMessageContentType, content: string) => {
   return client.mutate<MessageCreateData, MessageCreateVariables>({
     mutation: MESSAGE_CREATE_MUTATION,
     variables: {
       roomId: id,
-      content: message,
+      content,
+      contentType,
     },
   });
 };
@@ -73,12 +76,13 @@ export const serveRoom = (id: string) => {
       throw new Error('Unable to obtain room info');
     }
     const sendMessage = sendMessageFactory(id);
-    await sendMessage(`serving room`);
+    await sendMessage(WrRoomMessageContentType.TEXT, 'serving room');
+    await sendMessage(WrRoomMessageContentType.CONFIG, '');
     const cards = data.rwRoom.deck.cards;
     let currentlyServing = -1;
     const handleMessage = (message: string) => {
       if (message === cards[currentlyServing].fullAnswer) {
-        sendMessage('You got it!');
+        sendMessage(WrRoomMessageContentType.TEXT, 'You got it!');
         serveCard(currentlyServing + 1);
       }
     };
@@ -93,7 +97,7 @@ export const serveRoom = (id: string) => {
     });
     const closeRoom = async () => {
       // redisClient.unsubscribe(ROOM_CHANNEL);
-      await sendMessage('Done serving room!');
+      await sendMessage(WrRoomMessageContentType.TEXT, 'Done serving room!');
     };
     const serveCard = async (i: number) => {
       if (i <= currentlyServing) {
@@ -103,7 +107,7 @@ export const serveRoom = (id: string) => {
         return await closeRoom();
       }
       currentlyServing = i;
-      await sendMessage(`Next Card: ${cards[i].prompt}`);
+      await sendMessage(WrRoomMessageContentType.TEXT, `Next Card: ${cards[i].prompt}`);
       return setTimeout(serveCard, 10000, i + 1);
     };
     setTimeout(serveCard, 1000, 0);
