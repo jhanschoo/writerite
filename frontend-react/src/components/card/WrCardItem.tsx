@@ -82,13 +82,21 @@ const StyledParagraph = styled.p`
   padding: ${({ theme }) => theme.space[1]} 0;
 `;
 
+const EditDividerDiv = styled.div`
+  margin: ${({ theme }) => theme.space[1]} 0;
+`;
+
 const WrCardItem = (props: Props) => {
   const { deckId, promptLang, answerLang, card } = props;
   const { id, prompt, fullAnswer, answers, sortKey, editedAt, template } = card;
   const lastEditedNotice = `last edited ${moment(editedAt).fromNow()}`;
   const [edit, setEdit] = useState(false);
-  const stopEdit = () => {
-    setEdit(false);
+  const toggleEdit = () => {
+    setEdit(!edit);
+  };
+  const handleEditButton = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    toggleEdit();
   };
   const formattedAnswers = answers.map((answer, i) => (
     <AnswersP key={i}>{answer}</AnswersP>
@@ -99,59 +107,59 @@ const WrCardItem = (props: Props) => {
       <AnswersDisplayDiv>{formattedAnswers}</AnswersDisplayDiv>
     </CardMainField>
   );
-  const renderDisplay = () => {
-    const handleEditButton = (e: MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      setEdit(true);
-    };
-    return (
-      <>
-        <Header>
-          <EditNoticeText>
-            <em>{lastEditedNotice}</em>
-          </EditNoticeText>
-          <List>
-            <Item>
-              <CardAuxillaryButton
-                className="auxillary"
-                onClick={handleEditButton}
-              >
-                <Edit size={16} />
-              </CardAuxillaryButton>
-            </Item>
-            <Item>
-              <WrDuplicateCardButton
-                deckId={deckId}
-                prompt={prompt}
-                fullAnswer={fullAnswer}
-                sortKey={sortKey}
-                template={template}
-              />
-            </Item>
-            <Item>
-              <WrDeleteCardButton cardId={id} />
-            </Item>
-          </List>
-        </Header>
+  const optionalEdit = edit && (
+    <>
+      <EditDividerDiv>
         <HDivider spacerColor="lightLightEdge" />
-        <CardMainField lang={promptLang}>
-          <LowercaseHeader>Prompt</LowercaseHeader>
-          <StyledParagraph>{prompt}</StyledParagraph>
-        </CardMainField>
-        <CardMainField lang={answerLang}>
-          <LowercaseHeader>Displayed Answer</LowercaseHeader>
-          <StyledParagraph>{fullAnswer}</StyledParagraph>
-        </CardMainField>
-        {optionalAnswers}
-      </>
-    );
-  };
-  const child = edit
-    ? <WrCardItemEdit promptLang={promptLang} answerLang={answerLang} card={card} stopEdit={stopEdit} />
-    : renderDisplay();
+      </EditDividerDiv>
+      <WrCardItemEdit
+        promptLang={promptLang}
+        answerLang={answerLang}
+        card={card}
+        toggleEdit={toggleEdit}
+      />
+    </>
+  );
   return (
     <Card className={edit ? 'active' : undefined}>
-      {child}
+      <Header>
+        <EditNoticeText>
+          <em>{lastEditedNotice}</em>
+        </EditNoticeText>
+        <List>
+          <Item>
+            <CardAuxillaryButton
+              className="auxillary"
+              onClick={handleEditButton}
+            >
+              <Edit size={16} />
+            </CardAuxillaryButton>
+          </Item>
+          <Item>
+            <WrDuplicateCardButton
+              deckId={deckId}
+              prompt={prompt}
+              fullAnswer={fullAnswer}
+              sortKey={sortKey}
+              template={template}
+            />
+          </Item>
+          <Item>
+            <WrDeleteCardButton cardId={id} />
+          </Item>
+        </List>
+      </Header>
+      <HDivider spacerColor="lightLightEdge" />
+      <CardMainField lang={promptLang}>
+        <LowercaseHeader>Prompt</LowercaseHeader>
+        <StyledParagraph>{prompt}</StyledParagraph>
+      </CardMainField>
+      <CardMainField lang={answerLang}>
+        <LowercaseHeader>Displayed Answer</LowercaseHeader>
+        <StyledParagraph>{fullAnswer}</StyledParagraph>
+      </CardMainField>
+      {optionalAnswers}
+      {optionalEdit}
     </Card>
   );
 };
