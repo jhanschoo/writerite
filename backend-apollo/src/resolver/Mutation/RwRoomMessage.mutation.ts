@@ -5,12 +5,12 @@ import {
   rwRoomMessagesTopicFromRwRoom,
 } from '../Subscription/RwRoomMessage.subscription';
 import { rwAuthenticationError } from '../../util';
-import { ISRoomMessage, IRwRoomMessage } from '../../model/RwRoomMessage';
+import { ISRoomMessage, IRwRoomMessage, RwRoomMessageContentType } from '../../model/RwRoomMessage';
 
 const rwRoomMessageCreate: IFieldResolver<any, IContext, {
-  roomId: string, content: string,
+  roomId: string, content: string, contentType: RwRoomMessageContentType,
 }> = async (
-  _parent, { roomId, content }, { models, sub, prisma, pubsub, redisClient },
+  _parent, { roomId, content, contentType }, { models, sub, prisma, pubsub, redisClient },
 ): Promise<IRwRoomMessage | null> => {
   if (!sub) {
     throw rwAuthenticationError();
@@ -21,8 +21,34 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   })) {
     return null;
   }
+  switch (contentType) {
+    case RwRoomMessageContentType.CONFIG:
+      if (!isWright) {
+        const pOwner = await prisma.pUsers({ where: { ownerOfRoom_some: { id: roomId } } });
+        if (pOwner.length !== 1 || pOwner[0].id !== sub.id) {
+          return null;
+        }
+        await prisma.updateManyPRoomMessages({
+          where: { room: { id: roomId }, contentType: 'CONFIG' },
+          data: { content },
+        });
+        const pConfigMessages = await prisma.pRoomMessages({ where: {
+          room: { id: roomId },
+          contentType: 'CONFIG',
+        }});
+        if (pConfigMessages.length > 0) {
+          redisClient.publish(`writerite:room::${roomId}`, `CONFIG:${sub.id}:${content}`);
+        }
+        return null;
+      }
+      break;
+  }
+  // default message handling is to add to record and broadcast to bot and users
   const sRoomMessage = await models.SRoomMessage.create(prisma, {
-    roomId, senderId: (isWright) ? undefined : sub.id, content,
+    roomId,
+    senderId: (isWright) ? undefined : sub.id,
+    content,
+    contentType,
   });
   const sRoomMessageUpdate: ICreatedUpdate<ISRoomMessage> = {
     mutation: MutationType.CREATED,
@@ -31,7 +57,7 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   };
   pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
   if (!isWright) {
-    redisClient.publish(`writerite:room::${roomId}`, `${sub.id}:${content}`);
+    redisClient.publish(`writerite:room::${roomId}`, `DEFAULT:${sub.id}:${content}`);
   }
   return models.RwRoomMessage.fromSRoomMessage(prisma, sRoomMessage);
 };

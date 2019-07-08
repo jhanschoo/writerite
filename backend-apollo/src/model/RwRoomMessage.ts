@@ -1,18 +1,28 @@
 import moment from 'moment';
 
-import { PRoomMessage, Prisma } from '../../generated/prisma-client';
+import { PRoomMessage, Prisma, PRoomMessageContentType } from '../../generated/prisma-client';
 import { AFunResTo, IModel } from '../types';
 import { IRwUser, RwUser } from './RwUser';
 import { IRwRoom, RwRoom } from './RwRoom';
 
-export enum RwMessageContentType {
+export const enum RwRoomMessageContentType {
   TEXT = 'TEXT',
+  CONFIG = 'CONFIG',
 }
+
+const rwRoomMessageContentTypeFromPRoomMessageContentType = (v: PRoomMessageContentType) => {
+  switch (v) {
+    case 'TEXT':
+      return RwRoomMessageContentType.TEXT;
+    case 'CONFIG':
+      return RwRoomMessageContentType.CONFIG;
+  }
+};
 
 export interface ISRoomMessage {
   id: string;
   content: string;
-  contentType: RwMessageContentType;
+  contentType: RwRoomMessageContentType;
 }
 
 export interface IRwRoomMessage extends ISRoomMessage {
@@ -25,13 +35,14 @@ export interface IRwRoomMessageCreate {
   roomId: string;
   senderId?: string;
   content: string;
+  contentType: RwRoomMessageContentType;
 }
 
 // tslint:disable-next-line: variable-name
 export const SRoomMessage = {
-  fromPRoomMessage: (pRoomMessage: PRoomMessage) => ({
+  fromPRoomMessage: (pRoomMessage: PRoomMessage): ISRoomMessage => ({
     ...pRoomMessage,
-    contentType: RwMessageContentType.TEXT,
+    contentType: rwRoomMessageContentTypeFromPRoomMessageContentType(pRoomMessage.contentType),
   }),
   get: async (prisma: Prisma, id: string): Promise<ISRoomMessage | null> => {
     const pRoomMessage = await prisma.pRoomMessage({ id });
@@ -47,11 +58,12 @@ export const SRoomMessage = {
     });
     return pRoomMessages.map(SRoomMessage.fromPRoomMessage);
   },
-  create: async (prisma: Prisma, { roomId, senderId, content }: IRwRoomMessageCreate) => {
+  create: async (prisma: Prisma, { roomId, senderId, contentType, content }: IRwRoomMessageCreate) => {
     const pRoomMessage = await prisma.createPRoomMessage({
       room: { connect: { id: roomId } },
       content,
-      sender: (senderId === undefined) ? senderId : { connect: { id: senderId } },
+      contentType,
+      sender: (senderId === undefined) ? undefined : { connect: { id: senderId } },
     });
     const pRoom = await prisma.pRoom({ id: roomId });
     // TODO: DRY-ify this together with other checks for inactivity in pooms

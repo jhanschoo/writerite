@@ -2,6 +2,11 @@
 # https://github.com/graphql/graphql-js/issues/922\
 scalar Upload
 
+enum RwRoomMessageContentType {
+  TEXT
+  CONFIG
+}
+
 type Query {
   _empty: String
   # RwUser
@@ -97,7 +102,11 @@ type Mutation {
   rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom
   rwRoomDeactivate(id: ID!): RwRoom
   # RoomMessage
-  rwRoomMessageCreate(roomId: ID! content: String!): RwRoomMessage
+  rwRoomMessageCreate(
+    roomId: ID!
+    content: String!
+    contentType: RwRoomMessageContentType!
+  ): RwRoomMessage
 }
 
 type Subscription {
