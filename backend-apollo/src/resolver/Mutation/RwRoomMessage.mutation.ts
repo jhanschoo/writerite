@@ -1,6 +1,6 @@
 import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
-import { MutationType, IContext, Roles, ICreatedUpdate } from '../../types';
+import { MutationType, IContext, Roles, ICreatedUpdate, IUpdatedUpdate } from '../../types';
 import {
   rwRoomMessagesTopicFromRwRoom,
 } from '../Subscription/RwRoomMessage.subscription';
@@ -21,6 +21,9 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   })) {
     return null;
   }
+  // NOTE: most special cases should return. Some special cases will
+  //   be processed using default behavior outside the switch construct.
+  //   No case should fall-through.
   switch (contentType) {
     case RwRoomMessageContentType.CONFIG:
       if (!isWright) {
@@ -28,14 +31,23 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
         if (pOwner.length !== 1 || pOwner[0].id !== sub.id) {
           return null;
         }
-        await prisma.updateManyPRoomMessages({
+        const pConfigMessages = await prisma.pRoomMessages({
           where: { room: { id: roomId }, contentType: 'CONFIG' },
-          data: { content },
         });
-        const pConfigMessages = await prisma.pRoomMessages({ where: {
-          room: { id: roomId },
-          contentType: 'CONFIG',
-        }});
+        for (const { id } of pConfigMessages) {
+          const pConfigMessage = await prisma.updatePRoomMessage({
+            where: { id }, data: { content },
+          });
+          // tslint:disable-next-line: no-shadowed-variable
+          const sRoomMessage = await models.SRoomMessage.fromPRoomMessage(pConfigMessage);
+          // tslint:disable-next-line: no-shadowed-variable
+          const sRoomMessageUpdate: IUpdatedUpdate<ISRoomMessage> = {
+            mutation: MutationType.UPDATED,
+            new: sRoomMessage,
+            oldId: null,
+          };
+          pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
+        }
         if (pConfigMessages.length > 0) {
           redisClient.publish(`writerite:room::${roomId}`, `CONFIG:${sub.id}:${content}`);
         }
