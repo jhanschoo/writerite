@@ -10,16 +10,19 @@ import TextInput from '../../../ui/form/TextInput';
 import { BorderlessButton } from '../../../ui/form/Button';
 
 import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
+import { WrRoomMessageContentType } from '../../../models/WrRoomMessageStub';
 
 const ROOM_MESSAGE_CREATE_MUTATION = gql`
 ${WrRoomMessage}
 mutation RoomMessageCreate(
   $roomId: ID!
   $content: String!
+  $contentType: RwRoomMessageContentType!
 ) {
   rwRoomMessageCreate(
     roomId: $roomId
     content: $content
+    contentType: $contentType
   ) {
     ...WrRoomMessage
   }
@@ -29,6 +32,7 @@ mutation RoomMessageCreate(
 interface RoomMessageCreateVariables {
   readonly roomId: string;
   readonly content: string;
+  readonly contentType: WrRoomMessageContentType;
 }
 
 interface RoomMessageCreateData {
@@ -67,6 +71,7 @@ const WrRoomDetailInput = (props: Props) => {
         variables: {
           roomId,
           content: contentInput,
+          contentType: WrRoomMessageContentType.TEXT,
         },
       }).then(() => setContentInput(''));
     };

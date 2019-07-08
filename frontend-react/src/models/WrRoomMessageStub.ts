@@ -8,12 +8,13 @@ fragment WrRoomMessageStub on RwRoomMessage {
 }
 `;
 
-export enum WrMessageContentType {
+export enum WrRoomMessageContentType {
   TEXT = 'TEXT',
+  CONFIG = 'CONFIG',
 }
 
 export interface IWrRoomMessageStub {
   id: string;
   content: string;
-  contentType: WrMessageContentType;
+  contentType: WrRoomMessageContentType;
 }
