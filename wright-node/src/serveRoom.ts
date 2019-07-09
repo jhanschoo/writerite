@@ -88,9 +88,10 @@ export const serveRoom = (id: string) => {
     };
     redisClient.subscribe(ROOM_CHANNEL);
     redisClient.on('message', (channel: string, message: string) => {
-      const separator = message.indexOf(':');
-      const userId = message.slice(0, separator);
-      const content = message.slice(separator + 1);
+      const a = message.split(':');
+      const contentType = a[0];
+      const userId = a[1];
+      const content = a.join(':');
       if (channel === ROOM_CHANNEL) {
         handleMessage(content);
       }
