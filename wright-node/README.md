@@ -12,3 +12,7 @@ Worker servicing chat in `@writerite/backend-yoga` as a chatroom bot. Check `kub
 * Deployment:
   * Containerization: Docker
   * Orchestration: Kubernetes
+
+## TODO
+
+* communication API needs huge refactor

@@ -109,8 +109,6 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
           <Header>
             <RoomHeading>
               {room.owner.email} is hosting
-              <span lang={room.deck.nameLang || undefined}>{` ${room.deck.name} `}</span>
-              by {room.deck.owner.email}
             </RoomHeading>
           </Header>
           <HDivider />

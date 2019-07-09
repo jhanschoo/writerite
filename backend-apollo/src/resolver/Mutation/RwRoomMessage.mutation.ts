@@ -25,7 +25,7 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   //   be processed using default behavior outside the switch construct.
   //   No case should fall-through.
   switch (contentType) {
-    case RwRoomMessageContentType.CONFIG:
+    case 'CONFIG':
       if (!isWright) {
         const pOwner = await prisma.pUsers({ where: { ownerOfRoom_some: { id: roomId } } });
         if (pOwner.length !== 1 || pOwner[0].id !== sub.id) {
@@ -49,7 +49,11 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
           pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
         }
         if (pConfigMessages.length > 0) {
-          redisClient.publish(`writerite:room::${roomId}`, `CONFIG:${sub.id}:${content}`);
+          redisClient.publish(`writerite:room::${roomId}`, JSON.stringify({
+            contentType: 'CONFIG',
+            senderId: sub.id,
+            content,
+          }));
         }
         return null;
       }
@@ -69,7 +73,11 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   };
   pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
   if (!isWright) {
-    redisClient.publish(`writerite:room::${roomId}`, `DEFAULT:${sub.id}:${content}`);
+    redisClient.publish(`writerite:room::${roomId}`, JSON.stringify({
+      contentType: 'DEFAULT',
+      senderId: sub.id,
+      content,
+    }));
   }
   return models.RwRoomMessage.fromSRoomMessage(prisma, sRoomMessage);
 };

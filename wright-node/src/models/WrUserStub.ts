@@ -5,6 +5,7 @@ export const WrUserStub = gql`
 fragment WrUserStub on RwUser {
   id
   email
+  name
   roles
 }
 `;
@@ -12,5 +13,6 @@ fragment WrUserStub on RwUser {
 export interface IWrUserStub {
   id: string;
   email: string;
+  name?: string;
   roles: string[];
 }

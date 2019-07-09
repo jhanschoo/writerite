@@ -48,7 +48,7 @@ const WrRoomList = ({ rooms }: { rooms: IWrRoom[] }) => {
     setFilter(e.target.value);
   };
   const filteredRooms = rooms.filter((room) => {
-    return filter === '' || room.deck.name.includes(filter);
+    return filter === '' || room.id.includes(filter);
   });
   const contents = (filteredRooms.length === 0)
     ? [(
@@ -58,8 +58,8 @@ const WrRoomList = ({ rooms }: { rooms: IWrRoom[] }) => {
     )]
     : filteredRooms.map((room: IWrRoom) => (
         <StyledItem key={room.id}>
-          <SidebarMenuLink to={`/room/${room.id}`} lang={room.deck.nameLang || undefined}>
-            {room.deck.name}
+          <SidebarMenuLink to={`/room/${room.id}`}>
+            {room.id}
           </SidebarMenuLink>
         </StyledItem>
     ));

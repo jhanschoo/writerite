@@ -1,5 +1,6 @@
 import gql from 'graphql-tag';
 
+// tslint:disable-next-line: variable-name
 export const WrDeckStub = gql`
 fragment WrDeckStub on RwDeck {
   id

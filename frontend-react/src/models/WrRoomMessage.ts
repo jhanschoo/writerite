@@ -3,6 +3,7 @@ import { WrUserStub, IWrUserStub } from './WrUserStub';
 import { WrRoomStub, IWrRoomStub } from './WrRoomStub';
 import { WrRoomMessageStub, IWrRoomMessageStub } from './WrRoomMessageStub';
 
+// tslint:disable-next-line: variable-name
 export const WrRoomMessage = gql`
 ${WrRoomMessageStub}
 ${WrUserStub}

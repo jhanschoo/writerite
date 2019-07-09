@@ -43,10 +43,10 @@ export interface DeckDetailData {
 const ROOM_CREATE_MUTATION = gql`
 ${WrRoom}
 mutation RoomCreate(
-  $deckId: ID!
+  $config: String!
 ) {
   rwRoomCreate(
-    deckId: $deckId
+    config: $config
   ) {
     ...WrRoom
   }
@@ -54,7 +54,7 @@ mutation RoomCreate(
 `;
 
 interface RoomCreateVariables {
-  readonly deckId: string;
+  readonly config: string;
 }
 
 interface RoomCreateData {
@@ -162,7 +162,9 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
       const handleCreateRoom = (e: MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         mutate({
-          variables: { deckId: deck.id },
+          variables: {
+            config: JSON.stringify({ deckId: deck.id }),
+          },
         });
       };
       return (

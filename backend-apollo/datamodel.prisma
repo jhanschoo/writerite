@@ -48,7 +48,6 @@ type PDeck {
   answerLang: String!
   owner: PUser! @relation(link: INLINE)
   cards: [PCard!]! @relation(onDelete: CASCADE)
-  servedAt: [PRoom!]! @relation(onDelete: SET_NULL)
   published: Boolean! @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -59,9 +58,9 @@ type PRoom {
   # consistency: at most/latest equal to last (possibly deleted/edited) message in room
   lastKnownActiveMessage: DateTime!
   inactiveOverride: Boolean!
+  config: String!
   owner: PUser! @relation(link: INLINE name: "PUserOwningPRooms")
   occupants: [PUser!]! @relation(name: "PUsersOccupyingPRooms")
-  deck: PDeck @relation(link: INLINE)
   messages: [PRoomMessage!]!
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt

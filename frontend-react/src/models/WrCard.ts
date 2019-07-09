@@ -2,6 +2,7 @@ import { gql } from 'graphql.macro';
 import { WrCardStub, IWrCardStub } from './WrCardStub';
 import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
 
+// tslint:disable-next-line: variable-name
 export const WrCard = gql`
 ${WrCardStub}
 ${WrDeckStub}

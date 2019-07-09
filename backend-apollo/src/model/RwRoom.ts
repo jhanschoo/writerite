@@ -6,15 +6,20 @@ import { IRwDeck, RwDeck } from './RwDeck';
 import { IRwRoomMessage, RwRoomMessage } from './RwRoomMessage';
 import { IRwUser, RwUser } from './RwUser';
 
+// All fields in config should be optional for safety
+export interface IRoomConfig {
+  deckId?: string;
+}
+
 export interface ISRoom {
   id: string;
   active: boolean;
+  config: string;
 }
 
 export interface IRwRoom extends ISRoom {
   owner: AFunResTo<IRwUser>;
   occupants: AFunResTo<IRwUser[]>;
-  deck: AFunResTo<IRwDeck>;
   messages: AFunResTo<IRwRoomMessage[]>;
 }
 
@@ -25,7 +30,7 @@ export interface IRwRoomHasOccupantParams {
 
 export interface IRwRoomCreateParams {
   userId: string;
-  deckId: string;
+  config: string;
 }
 
 export interface IRwRoomAddOccupantParams {
@@ -78,13 +83,13 @@ export const SRoom = {
     });
   },
   create: async (prisma: Prisma, {
-    userId, deckId,
+    userId, config,
   }: IRwRoomCreateParams): Promise<ISRoom> => {
     return await SRoom.fromPRoom(await prisma.createPRoom({
-      deck: { connect: { id: deckId } },
       owner: { connect: { id: userId } },
       lastKnownActiveMessage: moment().toDate(),
       inactiveOverride: false,
+      config,
     }));
   },
   addOccupant: async (prisma: Prisma, {
@@ -131,10 +136,6 @@ export const RwRoom = {
     occupants: async () => {
       const pUsers = await prisma.pUsers({ where: { occupyingRoom_some: { id: sRoom.id } } });
       return pUsers.map((pUser) => RwUser.fromPUser(prisma, pUser));
-    },
-    deck: async () => {
-      const pDecks = await prisma.pDecks({ where: { servedAt_some: { id: sRoom.id } } });
-      return RwDeck.fromPDeck(prisma, pDecks[0]);
     },
     messages: async () => {
       const pRoomMessages = await prisma.pRoomMessages({

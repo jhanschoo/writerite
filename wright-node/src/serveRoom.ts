@@ -1,31 +1,32 @@
 import gql from 'graphql-tag';
-import { WrRoomDetail, IWrRoomDetail } from './models/WrRoomDetail';
+import { WrDeckDetail, IWrDeckDetail } from './models/WrDeckDetail';
 import { WrRoomMessage, IWrRoomMessage } from './models/WrRoomMessage';
 import { WrRoomMessageContentType } from './models/WrRoomMessageStub';
 import { client } from './apolloClient';
 import { createClient } from './redisClient';
+import { IRoomConfig } from './models/WrRoomStub';
 
 export const SERVE_ROOM_CHANNEL = 'writerite:room:serving';
 
-const ROOM_DETAIL_QUERY = gql`
-${WrRoomDetail}
-query RoomDetail(
+const DECK_DETAIL_QUERY = gql`
+${WrDeckDetail}
+query DeckDetail(
   $id: ID!
 ) {
-  rwRoom(id: $id) {
-    ...WrRoomDetail
+  rwDeck(id: $id) {
+    ...WrDeckDetail
   }
 }
 `;
 
 // tslint:disable-next-line: interface-name
-export interface RoomDetailVariables {
+export interface DeckDetailVariables {
   readonly id: string;
 }
 
 // tslint:disable-next-line: interface-name
-export interface RoomDetailData {
-  readonly rwRoom: IWrRoomDetail | null;
+export interface DeckDetailData {
+  readonly rwDeck: IWrDeckDetail | null;
 }
 
 export const MESSAGE_CREATE_MUTATION = gql`
@@ -49,9 +50,9 @@ export interface MessageCreateData {
   readonly rwRoomMessageCreate: IWrRoomMessage | null;
 }
 
-const getRoom = (id: string) => {
-  return client.query<RoomDetailData, RoomDetailVariables>({
-    query: ROOM_DETAIL_QUERY,
+const getDeck = (id: string) => {
+  return client.query<DeckDetailData, DeckDetailVariables>({
+    query: DECK_DETAIL_QUERY,
     variables: { id },
   });
 };
@@ -67,18 +68,22 @@ const sendMessageFactory = (id: string) => (contentType: WrRoomMessageContentTyp
   });
 };
 
-export const serveRoom = (id: string) => {
+export const serveRoom = (id: string, config: IRoomConfig) => {
   const ROOM_CHANNEL = `writerite:room::${id}`;
+  const { deckId } = config;
+  if (!deckId) {
+    throw new Error('deckId not present in config');
+  }
   const redisClient = createClient();
   redisClient.on('ready', () => setTimeout(async () => {
-    const { data } = await getRoom(id);
-    if (!data.rwRoom) {
+    const { data } = await getDeck(deckId);
+    if (!data.rwDeck) {
       throw new Error('Unable to obtain room info');
     }
     const sendMessage = sendMessageFactory(id);
     await sendMessage(WrRoomMessageContentType.TEXT, 'serving room');
     await sendMessage(WrRoomMessageContentType.CONFIG, '');
-    const cards = data.rwRoom.deck.cards;
+    const cards = data.rwDeck.cards;
     let currentlyServing = -1;
     const handleMessage = (message: string) => {
       if (message === cards[currentlyServing].fullAnswer) {
@@ -88,10 +93,8 @@ export const serveRoom = (id: string) => {
     };
     redisClient.subscribe(ROOM_CHANNEL);
     redisClient.on('message', (channel: string, message: string) => {
-      const a = message.split(':');
-      const contentType = a[0];
-      const userId = a[1];
-      const content = a.join(':');
+      // TODO: write an interface for message JSON for backend-apollo and wright-node
+      const { contentType, content, senderId } = JSON.parse(message);
       if (channel === ROOM_CHANNEL) {
         handleMessage(content);
       }

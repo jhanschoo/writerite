@@ -4,21 +4,27 @@ import { IContext, MutationType, ICreatedUpdate, IUpdatedUpdate } from '../../ty
 
 import { rwRoomTopic } from '../Subscription/RwRoom.subscription';
 import { rwAuthenticationError } from '../../util';
-import { ISRoom, RwRoom, IRwRoom } from '../../model/RwRoom';
+import { ISRoom, RwRoom, IRwRoom, IRoomConfig } from '../../model/RwRoom';
 
 const rwRoomCreate: IFieldResolver<any, IContext, {
-  deckId: string,
-}> = async (_parent, { deckId }, { models, prisma, pubsub, sub, redisClient }): Promise<IRwRoom | null> => {
+  config: string,
+}> = async (_parent, { config }, { models, prisma, pubsub, sub, redisClient }): Promise<IRwRoom | null> => {
   if (!sub) {
     throw rwAuthenticationError();
   }
-  const sRoom = await models.SRoom.create(prisma, { userId: sub.id, deckId });
+  const {
+    deckId,
+  }: IRoomConfig = JSON.parse(config);
+  if (!deckId) {
+    return null;
+  }
+  const sRoom = await models.SRoom.create(prisma, { userId: sub.id, config });
   const pRoomUpdate: ICreatedUpdate<ISRoom> = {
     mutation: MutationType.CREATED,
     new: sRoom,
     oldId: null,
   };
-  redisClient.publish('writerite:room:serving', sRoom.id);
+  redisClient.publish('writerite:room:serving', `${sRoom.id}:${config}`);
   pubsub.publish(rwRoomTopic(sRoom.id), pRoomUpdate);
   return models.RwRoom.fromSRoom(prisma, sRoom);
 };

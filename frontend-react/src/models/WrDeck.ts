@@ -3,6 +3,7 @@ import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
 import { WrUserStub, IWrUserStub } from './WrUserStub';
 import { WrCardStub, IWrCardStub } from './WrCardStub';
 
+// tslint:disable-next-line: variable-name
 export const WrDeck = gql`
 ${WrDeckStub}
 ${WrUserStub}

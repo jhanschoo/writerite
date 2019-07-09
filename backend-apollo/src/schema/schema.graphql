@@ -1,6 +1,6 @@
 # TODO: refactor once graphql supports `extend`
 # https://github.com/graphql/graphql-js/issues/922\
-scalar Upload
+#scalar Upload
 
 enum RwRoomMessageContentType {
   TEXT
@@ -44,14 +44,6 @@ type Mutation {
     nameLang: String
     promptLang: String
     answerLang: String
-  ): RwDeck
-  rwDeckCreateFromCsv(
-    name: String
-    description: String
-    nameLang: String
-    promptLang: String
-    answerLang: String
-    csv: Upload!
   ): RwDeck
   rwDeckCreateFromRows(
     name: String
@@ -98,7 +90,7 @@ type Mutation {
   ): RwCard
   rwCardDelete(id: ID!): ID
   # Room
-  rwRoomCreate(deckId: ID!): RwRoom
+  rwRoomCreate(config: String!): RwRoom
   rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom
   rwRoomDeactivate(id: ID!): RwRoom
   # RoomMessage
@@ -120,10 +112,6 @@ type Subscription {
   rwRoomUpdates(id: ID!): RwRoomUpdate!
   # RoomMessage
   rwRoomMessagesUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
-}
-
-enum RwMessageContentType {
-  TEXT
 }
 
 enum RwMutationType {
@@ -187,9 +175,9 @@ type RwCard {
 type RwRoom {
   id: ID!
   inactive: Boolean!
+  config: String!
   owner: RwUser!
   occupants: [RwUser!]!
-  deck: RwDeck
   messages: [RwRoomMessage!]!
 }
 
@@ -198,7 +186,7 @@ type RwRoom {
 type RwRoomMessage {
   id: ID!
   content: String!
-  contentType: RwMessageContentType!
+  contentType: RwRoomMessageContentType!
   sender: RwUser
   room: RwRoom
 }

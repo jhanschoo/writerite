@@ -1,13 +1,12 @@
 import { gql } from 'graphql.macro';
 import { WrUserStub, IWrUserStub } from './WrUserStub';
-import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
 import { WrRoomStub, IWrRoomStub } from './WrRoomStub';
 import { WrRoomMessageStub, IWrRoomMessageStub } from './WrRoomMessageStub';
 
+// tslint:disable-next-line: variable-name
 export const WrRoom = gql`
 ${WrRoomStub}
 ${WrUserStub}
-${WrDeckStub}
 ${WrRoomMessageStub}
 fragment WrRoom on RwRoom {
   ...WrRoomStub
@@ -16,9 +15,6 @@ fragment WrRoom on RwRoom {
   }
   occupants {
     ...WrUserStub
-  }
-  deck {
-    ...WrDeckStub
   }
   messages {
     ...WrRoomMessageStub
@@ -29,6 +25,5 @@ fragment WrRoom on RwRoom {
 export interface IWrRoom extends IWrRoomStub {
   owner: IWrUserStub;
   occupants: IWrUserStub[];
-  deck: IWrDeckStub;
   messages: IWrRoomMessageStub[];
 }

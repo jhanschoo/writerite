@@ -9,7 +9,7 @@ fragment WrRoomMessageStub on RwRoomMessage {
 }
 `;
 
-export const enum WrRoomMessageContentType {
+export enum WrRoomMessageContentType {
   TEXT = 'TEXT',
   CONFIG = 'CONFIG',
 }

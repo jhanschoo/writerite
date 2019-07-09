@@ -1,17 +1,13 @@
 import { gql } from 'graphql.macro';
-import { WrDeck, IWrDeck } from './WrDeck';
 import { WrRoom, IWrRoom } from './WrRoom';
 import { WrRoomMessage, IWrRoomMessage } from './WrRoomMessage';
 
+// tslint:disable-next-line: variable-name
 export const WrRoomDetail = gql`
 ${WrRoom}
-${WrDeck}
 ${WrRoomMessage}
 fragment WrRoomDetail on RwRoom {
     ...WrRoom
-    deck {
-      ...WrDeck
-    }
     messages {
       ...WrRoomMessage
     }
@@ -19,6 +15,5 @@ fragment WrRoomDetail on RwRoom {
 `;
 
 export interface IWrRoomDetail extends IWrRoom {
-  deck: IWrDeck;
   messages: IWrRoomMessage[];
 }

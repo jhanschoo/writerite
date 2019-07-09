@@ -5,19 +5,7 @@ import { AFunResTo, IModel } from '../types';
 import { IRwUser, RwUser } from './RwUser';
 import { IRwRoom, RwRoom } from './RwRoom';
 
-export const enum RwRoomMessageContentType {
-  TEXT = 'TEXT',
-  CONFIG = 'CONFIG',
-}
-
-const rwRoomMessageContentTypeFromPRoomMessageContentType = (v: PRoomMessageContentType) => {
-  switch (v) {
-    case 'TEXT':
-      return RwRoomMessageContentType.TEXT;
-    case 'CONFIG':
-      return RwRoomMessageContentType.CONFIG;
-  }
-};
+export type RwRoomMessageContentType = 'TEXT' | 'CONFIG';
 
 export interface ISRoomMessage {
   id: string;
@@ -42,7 +30,6 @@ export interface IRwRoomMessageCreate {
 export const SRoomMessage = {
   fromPRoomMessage: (pRoomMessage: PRoomMessage): ISRoomMessage => ({
     ...pRoomMessage,
-    contentType: rwRoomMessageContentTypeFromPRoomMessageContentType(pRoomMessage.contentType),
   }),
   get: async (prisma: Prisma, id: string): Promise<ISRoomMessage | null> => {
     const pRoomMessage = await prisma.pRoomMessage({ id });

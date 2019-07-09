@@ -1,5 +1,6 @@
 import { gql } from 'graphql.macro';
 
+// tslint:disable-next-line: variable-name
 export const WrUserStub = gql`
 fragment WrUserStub on RwUser {
   id

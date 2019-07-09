@@ -4,9 +4,9 @@ import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
 
 // tslint:disable-next-line: variable-name
 export const WrCard = gql`
-fragment WrCard on RwCard {
 ${WrCardStub}
 ${WrDeckStub}
+fragment WrCard on RwCard {
   ...WrCardStub
   deck {
     ...WrDeckStub
