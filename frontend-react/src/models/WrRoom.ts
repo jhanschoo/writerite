@@ -23,7 +23,7 @@ fragment WrRoom on RwRoom {
 `;
 
 export interface IWrRoom extends IWrRoomStub {
-  owner: IWrUserStub;
-  occupants: IWrUserStub[];
-  messages: IWrRoomMessageStub[];
+  readonly owner: IWrUserStub;
+  readonly occupants: IWrUserStub[];
+  readonly messages: IWrRoomMessageStub[];
 }

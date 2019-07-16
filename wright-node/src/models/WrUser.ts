@@ -15,5 +15,5 @@ fragment WrUser on RwUser {
 `;
 
 export interface IWrUser extends IWrUserStub {
-  decks: IWrDeckStub[];
+  readonly decks: IWrDeckStub[];
 }

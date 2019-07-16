@@ -14,11 +14,11 @@ fragment WrCardStub on RwCard {
 `;
 
 export interface IWrCardStub {
-  id: string;
-  prompt: string;
-  fullAnswer: string;
-  answers: string[];
-  sortKey: string;
-  template: boolean;
-  editedAt: string;
+  readonly id: string;
+  readonly prompt: string;
+  readonly fullAnswer: string;
+  readonly answers: string[];
+  readonly sortKey: string;
+  readonly template: boolean;
+  readonly editedAt: string;
 }

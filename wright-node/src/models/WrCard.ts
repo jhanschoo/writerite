@@ -15,5 +15,5 @@ fragment WrCard on RwCard {
 `;
 
 export interface IWrCard extends IWrCardStub {
-  deck: IWrDeckStub[];
+  readonly deck: IWrDeckStub[];
 }

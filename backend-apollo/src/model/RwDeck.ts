@@ -72,7 +72,7 @@ export const SDeck = {
     name, description, nameLang, promptLang, answerLang, userId, rows,
   }: IRwDeckCreateFromRowsParams): Promise<ISDeck> => {
     const editedAt = (new Date()).toISOString();
-    return await SDeck.fromPDeck(await prisma.createPDeck({
+    return SDeck.fromPDeck(await prisma.createPDeck({
       name: name || '',
       description: description || '',
       nameLang: nameLang || '',

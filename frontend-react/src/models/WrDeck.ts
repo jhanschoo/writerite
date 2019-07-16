@@ -20,6 +20,6 @@ fragment WrDeck on RwDeck {
 `;
 
 export interface IWrDeck extends IWrDeckStub {
-  owner: IWrUserStub;
-  cards: IWrCardStub[];
+  readonly owner: IWrUserStub;
+  readonly cards: IWrCardStub[];
 }

@@ -16,7 +16,8 @@ import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
 import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';
-import WrRoomMessageItem from '../../room-message/WrRoomMessageItem';
+import WrRoomMessageConfigItem from '../../room-message/WrRoomMessageConfigItem';
+import WrRoomMessageTextItem from '../../room-message/WrRoomMessageTextItem';
 
 const ROOM_DETAIL_QUERY = gql`
 ${WrRoomDetail}
@@ -98,9 +99,14 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
       );
     }
     const room = data.rwRoom;
-    const formattedMessages = room.messages.map((message) => (
-      <WrRoomMessageItem key={message.id} message={message} />
-    ));
+    const { config } = room;
+    const formattedMessages = room.messages.map((message) => {
+      switch (message.contentType) {
+        case 'CONFIG':
+          return <WrRoomMessageConfigItem key={message.id} config={config} />;
+      }
+      return <WrRoomMessageTextItem key={message.id} message={message} />;
+    });
     return (
       <>
         <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />

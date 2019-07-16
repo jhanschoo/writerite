@@ -36,7 +36,7 @@ margin: 0;
 padding: ${({ theme }) => theme.space[2]} 0;
 `;
 
-const WrRoomMessageItem = (props: Props) => {
+const WrRoomMessageTextItem = (props: Props) => {
   const { message } = props;
   const header = message.sender ? (
     <CommentHeader>
@@ -55,4 +55,4 @@ const WrRoomMessageItem = (props: Props) => {
   );
 };
 
-export default WrRoomMessageItem;
+export default WrRoomMessageTextItem;

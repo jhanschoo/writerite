@@ -22,6 +22,7 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import { WrDeckDetail, IWrDeckDetail } from '../../../models/WrDeckDetail';
 import { WrRoom, IWrRoom } from '../../../models/WrRoom';
+import { IRoomConfig } from '../../../models/WrRoomStub';
 
 const DECK_DETAIL_QUERY = gql`
 ${WrDeckDetail}
@@ -43,7 +44,7 @@ export interface DeckDetailData {
 const ROOM_CREATE_MUTATION = gql`
 ${WrRoom}
 mutation RoomCreate(
-  $config: String!
+  $config: IRoomConfigInput!
 ) {
   rwRoomCreate(
     config: $config
@@ -54,7 +55,7 @@ mutation RoomCreate(
 `;
 
 interface RoomCreateVariables {
-  readonly config: string;
+  readonly config: IRoomConfig;
 }
 
 interface RoomCreateData {
@@ -163,7 +164,11 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
         e.preventDefault();
         mutate({
           variables: {
-            config: JSON.stringify({ deckId: deck.id }),
+            config: {
+              deckId: deck.id,
+              deckName: deck.name,
+              deckNameLang: deck.nameLang,
+            },
           },
         });
       };

@@ -4,16 +4,26 @@ import { gql } from 'graphql.macro';
 export const WrRoomStub = gql`
 fragment WrRoomStub on RwRoom {
   id
-  config
+  config {
+    deckId
+    deckName
+    deckNameLang
+    roundLength
+    clientDone
+  }
 }
 `;
 
 export interface IWrRoomStub {
-  id: string;
-  config: string;
+  readonly id: string;
+  readonly config: IRoomConfig;
 }
 
 // All fields in config should be optional for safety
 export interface IRoomConfig {
-  deckId?: string;
+  readonly deckId?: string;
+  readonly deckName?: string;
+  readonly deckNameLang?: string;
+  readonly roundLength?: number;
+  readonly clientDone?: boolean;
 }

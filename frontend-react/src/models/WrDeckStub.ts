@@ -12,9 +12,9 @@ fragment WrDeckStub on RwDeck {
 `;
 
 export interface IWrDeckStub {
-  id: string;
-  name: string;
-  nameLang: string;
-  promptLang: string;
-  answerLang: string;
+  readonly id: string;
+  readonly name: string;
+  readonly nameLang: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
 }

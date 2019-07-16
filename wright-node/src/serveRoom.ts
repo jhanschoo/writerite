@@ -3,8 +3,22 @@ import { WrDeckDetail, IWrDeckDetail } from './models/WrDeckDetail';
 import { WrRoomMessage, IWrRoomMessage } from './models/WrRoomMessage';
 import { WrRoomMessageContentType } from './models/WrRoomMessageStub';
 import { client } from './apolloClient';
-import { createClient } from './redisClient';
+import { quizServer, Round } from './quizServer';
 import { IRoomConfig } from './models/WrRoomStub';
+
+interface IConfigMessage {
+  type: 'CONFIG';
+  senderId: string;
+  config: IRoomConfig;
+}
+
+interface IMessageMessage {
+  type: 'MESSAGE';
+  senderId: string;
+  content: string;
+}
+
+type Message = IConfigMessage | IMessageMessage;
 
 export const SERVE_ROOM_CHANNEL = 'writerite:room:serving';
 
@@ -68,52 +82,66 @@ const sendMessageFactory = (id: string) => (contentType: WrRoomMessageContentTyp
   });
 };
 
-export const serveRoom = (id: string, config: IRoomConfig) => {
+export const serveRoom = async (id: string, config: IRoomConfig) => {
   const ROOM_CHANNEL = `writerite:room::${id}`;
   const { deckId } = config;
   if (!deckId) {
     throw new Error('deckId not present in config');
   }
-  const redisClient = createClient();
-  redisClient.on('ready', () => setTimeout(async () => {
-    const { data } = await getDeck(deckId);
-    if (!data.rwDeck) {
-      throw new Error('Unable to obtain room info');
-    }
-    const sendMessage = sendMessageFactory(id);
-    await sendMessage(WrRoomMessageContentType.TEXT, 'serving room');
+  const { data } = await getDeck(deckId);
+  if (!data.rwDeck) {
+    throw new Error('Unable to obtain room info');
+  }
+  const sendMessage = sendMessageFactory(id);
+  let delay = 2000;
+  const rounds: Round[] = [async () => {
     await sendMessage(WrRoomMessageContentType.CONFIG, '');
-    const cards = data.rwDeck.cards;
-    let currentlyServing = -1;
-    const handleMessage = (message: string) => {
-      if (message === cards[currentlyServing].fullAnswer) {
-        sendMessage(WrRoomMessageContentType.TEXT, 'You got it!');
-        serveCard(currentlyServing + 1);
-      }
+    return {
+      // TODO: for debugging purpose we'll set a nonzero delay first
+      // we should actually have delay: null
+      delay: 10000,
+      messageHandler: (message: string) => {
+        const messageObj: Message = JSON.parse(message);
+        if (messageObj.type === 'CONFIG' && messageObj.config.clientDone) {
+          const { roundLength } = messageObj.config;
+          if (roundLength === undefined) {
+            throw new Error('clientDone is true but roundLength is not present');
+          }
+          delay = roundLength;
+          return {};
+        }
+        return { delay: null };
+      },
     };
-    redisClient.subscribe(ROOM_CHANNEL);
-    redisClient.on('message', (channel: string, message: string) => {
-      // TODO: write an interface for message JSON for backend-apollo and wright-node
-      const { contentType, content, senderId } = JSON.parse(message);
-      if (channel === ROOM_CHANNEL) {
-        handleMessage(content);
-      }
-    });
-    const closeRoom = async () => {
-      // redisClient.unsubscribe(ROOM_CHANNEL);
-      await sendMessage(WrRoomMessageContentType.TEXT, 'Done serving room!');
+  }, async () => {
+    await sendMessage(
+      WrRoomMessageContentType.TEXT,
+      `Beginning to serve ${
+        data.rwDeck && data.rwDeck.name
+      } with an interval of ${Math.ceil(delay / 1000)} seconds per round.`,
+    );
+    return {};
+  }];
+  data.rwDeck.cards.forEach((card) => rounds.push(async () => {
+    await sendMessage(WrRoomMessageContentType.TEXT, `Prompt: ${card.prompt}`);
+    return {
+      delay, messageHandler: async (message: string) => {
+        const messageObj = JSON.parse(message);
+        if (messageObj.type !== 'MESSAGE') {
+          return { delay: null };
+        }
+        const { content } = messageObj;
+        if (content === card.fullAnswer || card.answers.includes(content)) {
+          await sendMessage(WrRoomMessageContentType.TEXT, 'You got it!');
+        }
+        return { delay: null };
+      },
     };
-    const serveCard = async (i: number) => {
-      if (i <= currentlyServing) {
-        return;
-      }
-      if (i === cards.length) {
-        return await closeRoom();
-      }
-      currentlyServing = i;
-      await sendMessage(WrRoomMessageContentType.TEXT, `Next Card: ${cards[i].prompt}`);
-      return setTimeout(serveCard, 10000, i + 1);
-    };
-    setTimeout(serveCard, 1000, 0);
-  }, 5000));
+  }));
+  quizServer(ROOM_CHANNEL, rounds.reverse()).then(async () => {
+    await sendMessage(WrRoomMessageContentType.TEXT, 'Done serving deck!');
+  }, (reason) => {
+    // tslint:disable-next-line: no-console
+    console.error(reason);
+  });
 };

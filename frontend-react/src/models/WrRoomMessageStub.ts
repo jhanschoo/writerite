@@ -15,7 +15,7 @@ export enum WrRoomMessageContentType {
 }
 
 export interface IWrRoomMessageStub {
-  id: string;
-  content: string;
-  contentType: WrRoomMessageContentType;
+  readonly id: string;
+  readonly content: string;
+  readonly contentType: WrRoomMessageContentType;
 }

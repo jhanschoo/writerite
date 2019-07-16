@@ -21,6 +21,6 @@ fragment WrRoomMessage on RwRoomMessage {
 `;
 
 export interface IWrRoomMessage extends IWrRoomMessageStub {
-  sender?: IWrUserStub;
-  room: IWrRoomStub;
+  readonly sender?: IWrUserStub;
+  readonly room: IWrRoomStub;
 }

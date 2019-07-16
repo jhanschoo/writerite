@@ -10,14 +10,14 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
+import { WrRoomStub, IWrRoomStub } from '../../../models/WrRoomStub';
 import WrRoomList from './WrRoomList';
 
 const IN_ROOMS_QUERY = gql`
-${WrRoomDetail}
+${WrRoomStub}
 query InRooms {
   rwInRooms {
-    ...WrRoomDetail
+    ...WrRoomStub
   }
 }
 `;
@@ -25,7 +25,7 @@ query InRooms {
 type InRoomsVariables = object;
 
 interface InRoomsData {
-  rwInRooms: IWrRoomDetail[] | null;
+  rwInRooms: IWrRoomStub[] | null;
 }
 
 const PaddedItem = styled(Item)`

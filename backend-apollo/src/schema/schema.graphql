@@ -90,7 +90,8 @@ type Mutation {
   ): RwCard
   rwCardDelete(id: ID!): ID
   # Room
-  rwRoomCreate(config: String!): RwRoom
+  rwRoomCreate(config: IRoomConfigInput!): RwRoom
+  rwRoomUpdateConfig(id: ID! config: IRoomConfigInput!): RwRoom
   rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom
   rwRoomDeactivate(id: ID!): RwRoom
   # RoomMessage
@@ -175,7 +176,7 @@ type RwCard {
 type RwRoom {
   id: ID!
   inactive: Boolean!
-  config: String!
+  config: IRoomConfig!
   owner: RwUser!
   occupants: [RwUser!]!
   messages: [RwRoomMessage!]!
@@ -206,4 +207,21 @@ type RwUser {
   name: String
   roles: [String!]!
   decks: [RwDeck!]!
+}
+
+# IRoomConfig
+input IRoomConfigInput {
+  deckId: ID
+  deckName: String
+  deckNameLang: String
+  roundLength: Int
+  clientDone: Boolean
+}
+
+type IRoomConfig {
+  deckId: ID
+  deckName: String
+  deckNameLang: String
+  roundLength: Int
+  clientDone: Boolean
 }

@@ -15,5 +15,5 @@ fragment WrDeckDetail on RwDeck {
 `;
 
 export interface IWrDeckDetail extends IWrDeck {
-  cards: IWrCard[];
+  readonly cards: IWrCard[];
 }

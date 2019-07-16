@@ -11,8 +11,8 @@ fragment WrUserStub on RwUser {
 `;
 
 export interface IWrUserStub {
-  id: string;
-  email: string;
-  name?: string;
-  roles: string[];
+  readonly id: string;
+  readonly email: string;
+  readonly name?: string;
+  readonly roles: string[];
 }

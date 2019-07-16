@@ -2,19 +2,22 @@ import moment from 'moment';
 
 import { PRoom, Prisma } from '../../generated/prisma-client';
 import { AFunResTo, IModel } from '../types';
-import { IRwDeck, RwDeck } from './RwDeck';
 import { IRwRoomMessage, RwRoomMessage } from './RwRoomMessage';
 import { IRwUser, RwUser } from './RwUser';
 
 // All fields in config should be optional for safety
 export interface IRoomConfig {
-  deckId?: string;
+  readonly deckId?: string;
+  readonly deckName?: string;
+  readonly deckNameLang?: string;
+  readonly roundLength?: number;
+  readonly clientDone?: boolean;
 }
 
 export interface ISRoom {
   id: string;
   active: boolean;
-  config: string;
+  config: IRoomConfig;
 }
 
 export interface IRwRoom extends ISRoom {
@@ -30,7 +33,12 @@ export interface IRwRoomHasOccupantParams {
 
 export interface IRwRoomCreateParams {
   userId: string;
-  config: string;
+  config: IRoomConfig;
+}
+
+export interface IRwRoomUpdateConfigParams {
+  id: string;
+  config: IRoomConfig;
 }
 
 export interface IRwRoomAddOccupantParams {
@@ -46,6 +54,7 @@ export interface IRwRoomDeactivateParams {
 export const SRoom = {
   fromPRoom: (pRoom: PRoom): ISRoom => ({
     ...pRoom,
+    config: JSON.parse(pRoom.config),
     active: !pRoom.inactiveOverride && moment.utc(
       pRoom.lastKnownActiveMessage,
     ).isSameOrAfter(moment().subtract(1, 'days')),
@@ -89,7 +98,15 @@ export const SRoom = {
       owner: { connect: { id: userId } },
       lastKnownActiveMessage: moment().toDate(),
       inactiveOverride: false,
-      config,
+      config: JSON.stringify(config),
+    }));
+  },
+  updateConfig: async (prisma: Prisma, {
+    id, config,
+  }: IRwRoomUpdateConfigParams): Promise<ISRoom | null> => {
+    return SRoom.fromPRoom(await prisma.updatePRoom({
+      where: { id },
+      data: { config: JSON.stringify(config) },
     }));
   },
   addOccupant: async (prisma: Prisma, {
@@ -160,6 +177,12 @@ export const RwRoom = {
   hasOccupant: SRoom.hasOccupant,
   create: async (prisma: Prisma, params: IRwRoomCreateParams) =>
     RwRoom.fromSRoom(prisma, await SRoom.create(prisma, params)),
+  updateConfig: async (
+    prisma: Prisma, params: IRwRoomUpdateConfigParams,
+  ): Promise<IRwRoom | null> => {
+    const sRoom = await SRoom.updateConfig(prisma, params);
+    return sRoom && RwRoom.fromSRoom(prisma, sRoom);
+  },
   addOccupant: async (
     prisma: Prisma, params: IRwRoomAddOccupantParams,
   ): Promise<IRwRoom | null> => {

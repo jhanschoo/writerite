@@ -21,44 +21,6 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   })) {
     return null;
   }
-  // NOTE: most special cases should return. Some special cases will
-  //   be processed using default behavior outside the switch construct.
-  //   No case should fall-through.
-  switch (contentType) {
-    case 'CONFIG':
-      if (!isWright) {
-        const pOwner = await prisma.pUsers({ where: { ownerOfRoom_some: { id: roomId } } });
-        if (pOwner.length !== 1 || pOwner[0].id !== sub.id) {
-          return null;
-        }
-        const pConfigMessages = await prisma.pRoomMessages({
-          where: { room: { id: roomId }, contentType: 'CONFIG' },
-        });
-        for (const { id } of pConfigMessages) {
-          const pConfigMessage = await prisma.updatePRoomMessage({
-            where: { id }, data: { content },
-          });
-          // tslint:disable-next-line: no-shadowed-variable
-          const sRoomMessage = await models.SRoomMessage.fromPRoomMessage(pConfigMessage);
-          // tslint:disable-next-line: no-shadowed-variable
-          const sRoomMessageUpdate: IUpdatedUpdate<ISRoomMessage> = {
-            mutation: MutationType.UPDATED,
-            new: sRoomMessage,
-            oldId: null,
-          };
-          pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
-        }
-        if (pConfigMessages.length > 0) {
-          redisClient.publish(`writerite:room::${roomId}`, JSON.stringify({
-            contentType: 'CONFIG',
-            senderId: sub.id,
-            content,
-          }));
-        }
-        return null;
-      }
-      break;
-  }
   // default message handling is to add to record and broadcast to bot and users
   const sRoomMessage = await models.SRoomMessage.create(prisma, {
     roomId,
@@ -74,7 +36,7 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
   pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
   if (!isWright) {
     redisClient.publish(`writerite:room::${roomId}`, JSON.stringify({
-      contentType: 'DEFAULT',
+      type: 'MESSAGE',
       senderId: sub.id,
       content,
     }));

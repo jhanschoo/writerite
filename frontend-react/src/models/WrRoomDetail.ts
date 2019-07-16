@@ -15,5 +15,5 @@ fragment WrRoomDetail on RwRoom {
 `;
 
 export interface IWrRoomDetail extends IWrRoom {
-  messages: IWrRoomMessage[];
+  readonly messages: IWrRoomMessage[];
 }
