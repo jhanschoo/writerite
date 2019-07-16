@@ -14,8 +14,10 @@ const rwRoomCreate: IFieldResolver<any, IContext, {
   }
   const {
     deckId,
+    roundLength,
   } = config;
-  if (!deckId) {
+  // additional validation
+  if (!deckId || (roundLength && roundLength < 0)) {
     return null;
   }
   const sRoom = await models.SRoom.create(prisma, { userId: sub.id, config });
@@ -39,7 +41,11 @@ const rwRoomUpdateConfig: IFieldResolver<any, IContext, {
   })) {
     throw rwAuthenticationError();
   }
-  const isWright = sub.roles.includes(Roles.wright);
+  const { deckId, roundLength } = config;
+  // additional validation
+  if (!deckId || (roundLength && roundLength < 0)) {
+    return null;
+  }
   const sRoom = await models.SRoom.updateConfig(prisma, { id, config });
   if (!sRoom) {
     return sRoom;
@@ -49,13 +55,11 @@ const rwRoomUpdateConfig: IFieldResolver<any, IContext, {
     new: sRoom,
     oldId: null,
   };
-  if (!isWright) {
-    redisClient.publish(`writerite:room::${id}`, JSON.stringify({
-      type: 'CONFIG',
-      senderId: sub.id,
-      config,
-    }));
-  }
+  redisClient.publish(`writerite:room::${id}`, JSON.stringify({
+    type: 'CONFIG',
+    senderId: sub.id,
+    config,
+  }));
   pubsub.publish(rwRoomTopic(sRoom.id), sRoomUpdate);
   return models.RwRoom.fromSRoom(prisma, sRoom);
 };

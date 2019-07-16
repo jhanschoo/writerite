@@ -97,9 +97,14 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
   const rounds: Round[] = [async () => {
     await sendMessage(WrRoomMessageContentType.CONFIG, '');
     return {
-      // TODO: for debugging purpose we'll set a nonzero delay first
-      // we should actually have delay: null
-      delay: 10000,
+      rounds: [async () => {
+        await sendMessage(
+          WrRoomMessageContentType.TEXT,
+          'Room not configured after 5 minutes. Stopping.',
+        );
+        return {};
+      }],
+      delay: 300000,
       messageHandler: (message: string) => {
         const messageObj: Message = JSON.parse(message);
         if (messageObj.type === 'CONFIG' && messageObj.config.clientDone) {
@@ -108,7 +113,7 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
             throw new Error('clientDone is true but roundLength is not present');
           }
           delay = roundLength;
-          return {};
+          return { rounds };
         }
         return { delay: null };
       },

@@ -7,17 +7,17 @@ import { printApolloError } from '../../../util';
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
 import HDivider from '../../../ui/HDivider';
-import List from '../../../ui/list/List';
-import Item from '../../../ui/list/Item';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
 import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
 import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
+import WrRoomConfig from './WrRoomConfig';
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';
 import WrRoomMessageConfigItem from '../../room-message/WrRoomMessageConfigItem';
 import WrRoomMessageTextItem from '../../room-message/WrRoomMessageTextItem';
+import WrRoomConversationBox from './WrRoomConversationBox';
 
 const ROOM_DETAIL_QUERY = gql`
 ${WrRoomDetail}
@@ -44,25 +44,13 @@ const CenteredP = styled.p`
 
 const Header = styled.header`
   display: flex;
+  flex-direction: column;
   padding: ${({ theme }) => theme.space[3]} 0;
 `;
 
 const RoomHeading = styled.h3`
   margin: 0;
   font-size: 112.5%;
-`;
-
-const ConversationBox = styled(List)`
-  flex-direction: column;
-  flex-grow: 1;
-  overflow-y: auto;
-  padding: 0 ${({ theme }) => theme.space[2]};
-`;
-
-// https://github.com/philipwalton/flexbugs/issues/53
-const Spacer = styled(Item)`
-  display: flex;
-  flex-grow: 1;
 `;
 
 const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) => {
@@ -100,9 +88,11 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
     }
     const room = data.rwRoom;
     const { config } = room;
+    let hasConfigMessage = false;
     const formattedMessages = room.messages.map((message) => {
       switch (message.contentType) {
         case 'CONFIG':
+          hasConfigMessage = true;
           return <WrRoomMessageConfigItem key={message.id} config={config} />;
       }
       return <WrRoomMessageTextItem key={message.id} message={message} />;
@@ -110,18 +100,18 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
     return (
       <>
         <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />
-        <WrRoomSidebar />
+        <WrRoomSidebar room={room} />
         <FlexMain>
           <Header>
             <RoomHeading>
-              {room.owner.email} is hosting
+              {room.owner.email} is hosting <span lang={config.deckNameLang}>{config.deckName}</span>
             </RoomHeading>
           </Header>
           <HDivider />
-          <ConversationBox>
-            <Spacer />
+          {hasConfigMessage && <WrRoomConfig room={room} />}
+          <WrRoomConversationBox>
             {formattedMessages}
-          </ConversationBox>
+          </WrRoomConversationBox>
           <HDivider />
           <WrRoomDetailInput roomId={roomId} />
         </FlexMain>
