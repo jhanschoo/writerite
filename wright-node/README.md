@@ -44,7 +44,7 @@ The return object `INextParams` tells `quizServer` how to serve the next round, 
 
 ### Some Guarantees and Limitations
 
-* Every round handler and message handler must have no deferred execution left in the event loop when they resolve. They should eventually resolve or reject.
+* If a round handler and message handler has any deferred execution left in the event loop when they resolve/reject, the deferred execution is not managed by `quizServer`. Hence the deferred execution should not mutate `rounds`, and how it may asynchronously affect the execution of other round handlers or message handlers should be noted. All round handlers and message handlers should eventually resolve or reject.
 * Until an invocation of `quizServer` resolves, every `rounds` passed in the initial invocation and via `INextParams` should not be mutated outside the round handlers and message handlers passed to that invocation. Conversely, it is allowed to mutate `rounds` from within the round handlers and message handlers.
 * `quizServer` guarantees that only one invocation among the round handlers and message handlers (passed to that invocation) is active at a time. That is, another round handler or message handler will not be invoked wrt this invocation of `quizServer` while a round handler or message handler is yet to resolve.
 * `quizServer` immediately rejects and stops processing queued rounds and messages upon encountering an error.

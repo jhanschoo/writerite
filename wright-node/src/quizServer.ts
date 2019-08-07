@@ -12,15 +12,15 @@ export type MessageHandler = (message: string) => Promise<INextParams>;
 
 type WrappedMessageHandler = (message: string) => Promise<void>;
 
-const DO_NOTHING: WrappedMessageHandler = (message: string) => Promise.resolve();
+const DO_NOTHING: WrappedMessageHandler = (_message: string) => Promise.resolve();
 
-export const quizServer = (channel: string, rounds: Round[]) => {
+export const quizServer = (channel: string, rounds: Round[]): Promise<void> => {
   if (rounds.length === 0) {
     return Promise.resolve();
   }
   const client = createClient();
   let roundNum = 0;
-  let safeMessageHandler = DO_NOTHING;
+  let wrappedMessageHandler = DO_NOTHING;
   return new Promise<void>((res, rej) => {
     const readyListener = () => {
       client.subscribe(channel);
@@ -36,7 +36,7 @@ export const quizServer = (channel: string, rounds: Round[]) => {
       // round's message handler (good), though not all due to race
       // conditions out of our control. Perhaps consider just naively
       // using safeMessageHandler.
-      const currentMessageHandler = safeMessageHandler;
+      const currentMessageHandler = wrappedMessageHandler;
       queue(() => currentMessageHandler(message));
     };
     const quitHandler = () => {
@@ -74,7 +74,7 @@ export const quizServer = (channel: string, rounds: Round[]) => {
           setTimeout(queueNextRound, delay);
         }
         if (messageHandler) {
-          safeMessageHandler = tagMessageHandler(messageHandler);
+          wrappedMessageHandler = tagMessageHandler(messageHandler);
         }
       };
       const tagMessageHandler = (messageHandler: MessageHandler) => async (message: string) => {
