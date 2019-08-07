@@ -27,10 +27,11 @@ interface Props {
 
 const WrDeleteCardButton: FC<Props> = (props: Props) => {
   const { cardId } = props;
-  const [mutate, { loading }] =
-    useMutation<CardDeleteData, CardDeleteVariables>(CARD_DELETE_MUTATION, {
+  const [mutate, { loading }] = useMutation<CardDeleteData, CardDeleteVariables>(
+    CARD_DELETE_MUTATION, {
       onError: printApolloError,
-    });
+    },
+  );
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     return mutate({

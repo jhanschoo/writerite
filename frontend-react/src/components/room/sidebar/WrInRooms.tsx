@@ -33,10 +33,11 @@ const PaddedItem = styled(Item)`
 `;
 
 const WrInRooms = () => {
-  const { loading, error, data } =
-    useQuery<InRoomsData, InRoomsVariables>(IN_ROOMS_QUERY, {
-      onError: printApolloError,
-    });
+  const {
+    loading, error, data,
+  } = useQuery<InRoomsData, InRoomsVariables>(IN_ROOMS_QUERY, {
+    onError: printApolloError,
+  });
   if (error) {
     return (
       <FlexSection>

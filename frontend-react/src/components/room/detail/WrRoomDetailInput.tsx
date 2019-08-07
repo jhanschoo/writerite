@@ -61,10 +61,13 @@ const StyledButton = styled(BorderlessButton)`
 const WrRoomDetailInput = (props: Props) => {
   const { roomId } = props;
   const [contentInput, setContentInput] = useState('');
-  const [mutate, { loading }] =
-    useMutation<RoomMessageCreateData, RoomMessageCreateVariables>(ROOM_MESSAGE_CREATE_MUTATION, {
+  const [
+    mutate, { loading },
+  ] = useMutation<RoomMessageCreateData, RoomMessageCreateVariables>(
+    ROOM_MESSAGE_CREATE_MUTATION, {
       onError: printApolloError,
-    });
+    },
+  );
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutate({

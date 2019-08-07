@@ -122,16 +122,20 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
     }
     history.push(`/room/${roomCreateData.rwRoomCreate.id}`);
   };
-  const { loading, error, data, subscribeToMore } =
-    useQuery<DeckDetailData, DeckDetailVariables>(DECK_DETAIL_QUERY, {
-      variables: { deckId },
-      onError: printApolloError,
-    });
-  const [mutate, { loading: createRoomLoading }] =
-    useMutation<RoomCreateData, RoomCreateVariables>(ROOM_CREATE_MUTATION, {
+  const {
+    loading, error, data, subscribeToMore,
+  } = useQuery<DeckDetailData, DeckDetailVariables>(DECK_DETAIL_QUERY, {
+    variables: { deckId },
+    onError: printApolloError,
+  });
+  const [
+    mutate, { loading: createRoomLoading },
+  ] = useMutation<RoomCreateData, RoomCreateVariables>(
+      ROOM_CREATE_MUTATION, {
       onError: printApolloError,
       onCompleted: handleCompletedCreateRoom,
-    });
+    },
+  );
   if (error) {
     return (<FlexMain/>);
   }

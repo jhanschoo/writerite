@@ -205,10 +205,11 @@ const WrCardItemEdit = (props: Props) => {
       </DeleteAnswerButton>
     </AnswersP>
   ));
-  const [mutate, { loading }] =
-    useMutation<CardEditData, CardEditVariables>(CARD_EDIT_MUTATION, {
+  const [mutate, { loading }] = useMutation<CardEditData, CardEditVariables>(
+    CARD_EDIT_MUTATION, {
       onError: printApolloError,
-    });
+    },
+  );
   const handleUpdate = () => mutate({
     variables: {
       id,

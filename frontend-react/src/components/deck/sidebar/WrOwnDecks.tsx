@@ -33,10 +33,11 @@ const PaddedItem = styled(Item)`
 `;
 
 const WrOwnDecks = () => {
-  const { subscribeToMore, loading, error, data } =
-    useQuery<OwnDecksData, OwnDecksVariables>(OWN_DECKS_QUERY, {
-      onError: printApolloError,
-    });
+  const {
+    subscribeToMore, loading, error, data,
+  } = useQuery<OwnDecksData, OwnDecksVariables>(OWN_DECKS_QUERY, {
+    onError: printApolloError,
+  });
   if (error) {
     return (
       <FlexSection>

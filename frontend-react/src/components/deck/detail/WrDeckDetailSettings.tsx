@@ -98,10 +98,11 @@ const WrDetailSettings = (props: Props) => {
   const [nameLangInput, setNameLangInput] = useState(nameLang);
   const [promptLangInput, setPromptLangInput] = useState(promptLang);
   const [answerLangInput, setAnswerLangInput] = useState(answerLang);
-  const [mutate, { loading }] =
-    useMutation<DeckEditData, DeckEditVariables>(DECK_EDIT_MUTATION, {
+  const [mutate, { loading }] = useMutation<DeckEditData, DeckEditVariables>(
+    DECK_EDIT_MUTATION, {
       onError: printApolloError,
-    });
+    },
+  );
   const handleTextChange = (setter: Dispatch<SetStateAction<string>>) =>
     (e: ChangeEvent<HTMLInputElement>) => {
     setter(e.target.value);

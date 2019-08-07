@@ -136,7 +136,7 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
     mutate, { loading },
   ] = useMutation<DeckCreateFromCsvData, DeckCreateFromCsvVariables>(
     DECK_CREATE_FROM_CSV_MUTATION, {
-      onError: printApolloError
+      onError: printApolloError,
     },
   );
   const filenameMessage = (filename === null)

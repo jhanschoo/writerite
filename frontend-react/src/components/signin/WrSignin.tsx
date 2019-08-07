@@ -29,7 +29,7 @@ declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;
 declare var FBDeferred: Promise<any>;
 
-const SIGNIN = gql`
+const SIGNIN_MUTATION = gql`
 ${WrUserStub}
 mutation Signin(
   $email: String! $name: String $token: String! $authorizer: String! $identifier: String!
@@ -197,11 +197,12 @@ const WrSignin = (props: Props) => {
       setThirdPartySigninUnderway(false);
     }
   };
-  const [mutate, { loading }] =
-    useMutation<SigninData, SigninVariables>(SIGNIN, {
+  const [mutate, { loading }] = useMutation<SigninData, SigninVariables>(
+    SIGNIN_MUTATION, {
       onCompleted: handleSigninSuccess,
       onError: printApolloError,
-    });
+    },
+  );
 
   const handleGoogleSignin = async (): Promise<void> => {
     await setThirdPartySigninUnderway(true);

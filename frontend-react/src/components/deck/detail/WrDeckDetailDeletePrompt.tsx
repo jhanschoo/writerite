@@ -65,11 +65,12 @@ const WrDeckDetailDeletePrompt = (props: Props) => {
   const handleDeleteCompleted = () => {
     history.push('/deck');
   };
-  const [mutate, { loading }] =
-    useMutation<DeckDeleteData, DeckDeleteVariables>(DECK_DELETE_MUTATION, {
+  const [mutate, { loading }] = useMutation<DeckDeleteData, DeckDeleteVariables>(
+    DECK_DELETE_MUTATION, {
       onError: printApolloError,
       onCompleted: handleDeleteCompleted
-    });
+    },
+  );
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDeletePromptInput(e.target.value);
   };

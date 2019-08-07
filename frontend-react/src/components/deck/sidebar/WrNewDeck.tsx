@@ -67,11 +67,12 @@ const WrNewDeck = () => {
   const handleCompleted = () => {
     setName(initialName);
   };
-  const [mutate, { loading }] =
-    useMutation<DeckCreateData, DeckCreateVariables>(DECK_CREATE_MUTATION, {
+  const [mutate, { loading }] = useMutation<DeckCreateData, DeckCreateVariables>(
+      DECK_CREATE_MUTATION, {
       onError: printApolloError,
       onCompleted: handleCompleted,
-    });
+    },
+  );
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };

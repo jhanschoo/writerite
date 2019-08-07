@@ -69,10 +69,12 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
   const { deckId } = props;
   const [multiplicity, setMultiplicity] = useState(1);
   const resetMultiplicity = () => setMultiplicity(1);
-  const [mutate, { loading }] = useMutation<CardsCreateData, CardsCreateVariables>(CARDS_CREATE_MUTATION, {
-    onError: printApolloError,
-    onCompleted: resetMultiplicity,
-  });
+  const [mutate, { loading }] = useMutation<CardsCreateData, CardsCreateVariables>(
+    CARDS_CREATE_MUTATION, {
+      onError: printApolloError,
+      onCompleted: resetMultiplicity,
+    },
+  );
   const handleUpdate = () => {
     return mutate({
       variables: {

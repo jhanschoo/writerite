@@ -56,11 +56,12 @@ const RoomHeading = styled.h3`
 const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) => {
   const { match } = props;
   const { roomId } = match.params;
-  const { subscribeToMore, loading, error, data } =
-    useQuery<RoomDetailData, RoomDetailVariables>(ROOM_DETAIL_QUERY, {
-      variables: { id: roomId },
-      onError: printApolloError,
-    });
+  const {
+    subscribeToMore, loading, error, data,
+  } = useQuery<RoomDetailData, RoomDetailVariables>(ROOM_DETAIL_QUERY, {
+    variables: { id: roomId },
+    onError: printApolloError,
+  });
   if (error) {
     return (
       <>

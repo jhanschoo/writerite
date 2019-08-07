@@ -44,10 +44,11 @@ interface CardCreateData {
 type Props = CardCreateVariables;
 
 const WrDuplicateCardButton: FC<Props> = (props: Props) => {
-  const [mutate, { loading }] =
-    useMutation<CardCreateData, CardCreateVariables>(CARD_CREATE_MUTATION, {
+  const [mutate, { loading }] = useMutation<CardCreateData, CardCreateVariables>(
+    CARD_CREATE_MUTATION, {
       onError: printApolloError,
-    });
+    },
+  );
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     return mutate({
