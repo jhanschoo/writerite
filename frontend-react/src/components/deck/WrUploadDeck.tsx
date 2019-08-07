@@ -2,7 +2,7 @@ import React, { useRef, useState, ChangeEvent, DragEvent, FC, FormEvent } from '
 import Papa from 'papaparse';
 
 import { gql } from 'graphql.macro';
-import { MutationFn, Mutation, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
 
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -132,6 +132,13 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
   const [numEntered, setNumEntered] = useState<number>(0);
   const [draggedFileStatus, setDraggedFileStatus] = useState<DraggedFileStatus>(DraggedFileStatus.NONE);
   const dropDivEl = useRef<HTMLDivElement>(null);
+  const [
+    mutate, { loading },
+  ] = useMutation<DeckCreateFromCsvData, DeckCreateFromCsvVariables>(
+    DECK_CREATE_FROM_CSV_MUTATION, {
+      onError: printApolloError
+    },
+  );
   const filenameMessage = (filename === null)
     ? (<DropDivP>no file selected</DropDivP>)
     : (<DropDivP><strong>{filename}</strong> will be uploaded</DropDivP>);
@@ -212,26 +219,23 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
       setFile(e.target.files[0]);
     }
   };
-  const renderForm = (
-    mutate: MutationFn<DeckCreateFromCsvData, DeckCreateFromCsvVariables>,
-    { loading }: MutationResult<DeckCreateFromCsvData>,
-  ) => {
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      if (rows) {
-        mutate({
-          variables: {
-            name: nameInput,
-            rows,
-          },
-        }).then((res) => {
-          if (res && res.data && res.data.rwDeckCreate && res.data.rwDeckCreate.id) {
-            history.push(`/deck/${res.data.rwDeckCreate.id}`);
-          }
-        });
-      }
-    };
-    return (
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (rows) {
+      mutate({
+        variables: {
+          name: nameInput,
+          rows,
+        },
+      }).then((res) => {
+        if (res && res.data && res.data.rwDeckCreate && res.data.rwDeckCreate.id) {
+          history.push(`/deck/${res.data.rwDeckCreate.id}`);
+        }
+      });
+    }
+  };
+  return (
+    <FlexMain>
       <StyledForm onSubmit={handleSubmit}>
         <label htmlFor="upload-deck-name">Deck Name</label>
         <StyledTextInput
@@ -255,24 +259,15 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
             id="deck-upload-file-input"
             required={true}
             onChange={handleFileChange}
+            disabled={loading}
           />
           <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
           {filenameMessage}
         </DropDiv>
-        <StyledButton type="submit" disabled={!rows}>
+        <StyledButton type="submit" disabled={!rows || loading}>
           Upload
         </StyledButton>
       </StyledForm>
-    );
-  };
-  return (
-    <FlexMain>
-      <Mutation<DeckCreateFromCsvData, DeckCreateFromCsvVariables>
-        mutation={DECK_CREATE_FROM_CSV_MUTATION}
-        onError={printApolloError}
-      >
-        {renderForm}
-      </Mutation>
     </FlexMain>
   );
 };

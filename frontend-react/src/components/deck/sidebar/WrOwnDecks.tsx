@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { gql } from 'graphql.macro';
-import { Query, QueryResult } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -32,51 +32,53 @@ const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}
 `;
 
-const renderList = ({
-  subscribeToMore, loading, error, data,
-}: QueryResult<OwnDecksData, OwnDecksVariables>) => {
+const WrOwnDecks = () => {
+  const { subscribeToMore, loading, error, data } =
+    useQuery<OwnDecksData, OwnDecksVariables>(OWN_DECKS_QUERY, {
+      onError: printApolloError,
+    });
   if (error) {
-    return null;
+    return (
+      <FlexSection>
+        <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
+      </FlexSection>
+    );
   }
   if (loading) {
     return (
-      <List>
-        <PaddedItem><em>Loading...</em></PaddedItem>
-      </List>
+      <FlexSection>
+        <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
+        <List>
+          <PaddedItem><em>Loading...</em></PaddedItem>
+        </List>
+      </FlexSection>
     );
   }
   if (!data || data.rwOwnDecks === undefined || !Array.isArray(data.rwOwnDecks)) {
     return (
-      <List>
-        <PaddedItem>Error fetching decks!</PaddedItem>
-      </List>
+      <FlexSection>
+        <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
+        <List>
+          <PaddedItem>Error fetching decks!</PaddedItem>
+        </List>
+      </FlexSection>
     );
   }
   if (data.rwOwnDecks.length === 0) {
     return (
-      <List>
-        <PaddedItem>You have no decks</PaddedItem>
-      </List>
+      <FlexSection>
+        <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
+        <List>
+          <PaddedItem>You have no decks</PaddedItem>
+        </List>
+      </FlexSection>
     );
   }
   return (
-    <>
-      <WrOwnDecksSH subscribeToMore={subscribeToMore} />
-      <WrDeckList decks={data.rwOwnDecks} />
-    </>
-  );
-};
-
-const WrOwnDecks = () => {
-  return (
     <FlexSection>
       <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
-      <Query<OwnDecksData, OwnDecksVariables>
-        query={OWN_DECKS_QUERY}
-        onError={printApolloError}
-      >
-      {renderList}
-      </Query>
+      <WrOwnDecksSH subscribeToMore={subscribeToMore} />
+      <WrDeckList decks={data.rwOwnDecks} />
     </FlexSection>
   );
 };

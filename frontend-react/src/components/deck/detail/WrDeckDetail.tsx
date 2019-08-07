@@ -2,7 +2,7 @@ import React, { useState, MouseEvent } from 'react';
 import { Play, Copy, Settings, Trash } from 'react-feather';
 
 import { gql } from 'graphql.macro';
-import { Query, QueryResult, Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -116,6 +116,45 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
   const { history, match } = props;
   const { deckId } = match.params;
   const [activeAction, setActiveAction] = useState(ActiveAction.NONE);
+  const handleCompletedCreateRoom = (roomCreateData: RoomCreateData) => {
+    if (roomCreateData === null || roomCreateData.rwRoomCreate === null) {
+      return;
+    }
+    history.push(`/room/${roomCreateData.rwRoomCreate.id}`);
+  };
+  const { loading, error, data, subscribeToMore } =
+    useQuery<DeckDetailData, DeckDetailVariables>(DECK_DETAIL_QUERY, {
+      variables: { deckId },
+      onError: printApolloError,
+    });
+  const [mutate, { loading: createRoomLoading }] =
+    useMutation<RoomCreateData, RoomCreateVariables>(ROOM_CREATE_MUTATION, {
+      onError: printApolloError,
+      onCompleted: handleCompletedCreateRoom,
+    });
+  if (error) {
+    return (<FlexMain/>);
+  }
+  if (loading) {
+    return (
+      <FlexMain>
+        <CenteredP>
+          Retrieving deck...
+        </CenteredP>
+      </FlexMain>
+    );
+  }
+  if (!data || !data.rwDeck) {
+    return (
+      <CenteredP>
+        Error retrieving deck. Please try again later.
+      </CenteredP>
+    );
+  }
+  const deck = data.rwDeck;
+  const { name, promptLang, answerLang } = deck;
+  const templates = data.rwDeck.cards.filter((card) => card.template);
+  const cards = data.rwDeck.cards.filter((card) => !card.template);
   const toggleSettings =
     (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -132,131 +171,75 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
       : ActiveAction.DELETE,
     );
   };
-  const renderDeck = ({
-    subscribeToMore, loading, error, data,
-  }: QueryResult<DeckDetailData, DeckDetailVariables>) => {
-    if (error) {
-      return null;
-    }
-    if (loading) {
-      return (
-        <CenteredP>
-          Retrieving deck...
-        </CenteredP>
-      );
-    }
-    if (!data || !data.rwDeck) {
-      return (
-        <CenteredP>
-          Error retrieving deck. Please try again later.
-        </CenteredP>
-      );
-    }
-    const deck = data.rwDeck;
-    const { name, promptLang, answerLang } = deck;
-    const templates = data.rwDeck.cards.filter((card) => card.template);
-    const cards = data.rwDeck.cards.filter((card) => !card.template);
-    const renderActionTray = (
-      mutate: MutationFn<RoomCreateData, RoomCreateVariables>,
-      { loading: createRoomLoading }: MutationResult<RoomCreateData>,
-    ) => {
-      const handleCreateRoom = (e: MouseEvent<HTMLButtonElement>) => {
-        e.preventDefault();
-        mutate({
-          variables: {
-            config: {
-              deckId: deck.id,
-              deckName: deck.name,
-              deckNameLang: deck.nameLang,
-            },
-          },
-        });
-      };
-      return (
-        <ActionTray>
-          <ActionTrayItem>
-            <BigButton
-              onClick={handleCreateRoom}
-              disabled={loading}
-            >
-              <Play size={32} />
-              Serve
-            </BigButton>
-          </ActionTrayItem>
-          <ActionTrayItem>
-            <BigButton
-              disabled={loading}
-            >
-              <Copy size={32} />
-              Duplicate
-            </BigButton>
-          </ActionTrayItem>
-          <ActionTrayItem>
-            <BigButton
-              onClick={toggleSettings}
-              className={activeAction === ActiveAction.SETTINGS ? 'active' : undefined}
-              disabled={loading}
-            >
-              <Settings size={32} />
-              Settings
-            </BigButton>
-          </ActionTrayItem>
-          <ActionTrayItem>
-            <BigButton
-              onClick={toggleDelete}
-              className={activeAction === ActiveAction.DELETE ? 'active' : undefined}
-              disabled={loading}
-            >
-              <Trash size={32} />
-              Delete
-            </BigButton>
-          </ActionTrayItem>
-        </ActionTray>
-      );
-    };
-    const handleCompletedCreateRoom = (roomCreateData: RoomCreateData) => {
-      if (roomCreateData === null || roomCreateData.rwRoomCreate === null) {
-        return;
-      }
-      history.push(`/room/${roomCreateData.rwRoomCreate.id}`);
-    };
-    return (
-      <>
-        {
-          // tslint:disable-next-line: jsx-no-multiline-js
-          // https://github.com/apollographql/apollo-client/issues/4246
-          // @ts-ignore
-          <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
-        }
-        <DeckHeader><DeckHeading>{name}</DeckHeading></DeckHeader>
-        <Mutation<RoomCreateData, RoomCreateVariables>
-          mutation={ROOM_CREATE_MUTATION}
-          onError={printApolloError}
-          onCompleted={handleCompletedCreateRoom}
-        >
-          {renderActionTray}
-        </Mutation>
-        {activeAction === ActiveAction.SETTINGS && <WrDeckDetailSettings deck={deck} />}
-        {activeAction === ActiveAction.DELETE && <WrDeckDetailDeletePrompt deck={deck} />}
-        <HDivider>{templates.length} Sub-Decks</HDivider>
-        <HDivider>{templates.length} Template Cards</HDivider>
-        <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />
-        <HDivider>{cards.length} Cards</HDivider>
-        <WrNewCardPrompt deckId={deckId} />
-        <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
-      </>
-    );
+  const handleCreateRoom = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    mutate({
+      variables: {
+        config: {
+          deckId: deck.id,
+          deckName: deck.name,
+          deckNameLang: deck.nameLang,
+        },
+      },
+    });
   };
   return (
-    <FlexMain>
-      <Query<DeckDetailData, DeckDetailVariables>
-        query={DECK_DETAIL_QUERY}
-        variables={{deckId}}
-        onError={printApolloError}
-      >
-        {renderDeck}
-      </Query>
-    </FlexMain>
+    <>
+      {
+        // tslint:disable-next-line: jsx-no-multiline-js
+        // https://github.com/apollographql/apollo-client/issues/4246
+        // @ts-ignore
+        <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
+      }
+      <DeckHeader><DeckHeading>{name}</DeckHeading></DeckHeader>
+      <ActionTray>
+        <ActionTrayItem>
+          <BigButton
+            onClick={handleCreateRoom}
+            disabled={loading || createRoomLoading}
+          >
+            <Play size={32} />
+            Serve
+          </BigButton>
+        </ActionTrayItem>
+        <ActionTrayItem>
+          <BigButton
+            disabled={loading || createRoomLoading}
+          >
+            <Copy size={32} />
+            Duplicate
+          </BigButton>
+        </ActionTrayItem>
+        <ActionTrayItem>
+          <BigButton
+            onClick={toggleSettings}
+            className={activeAction === ActiveAction.SETTINGS ? 'active' : undefined}
+            disabled={loading || createRoomLoading}
+          >
+            <Settings size={32} />
+            Settings
+          </BigButton>
+        </ActionTrayItem>
+        <ActionTrayItem>
+          <BigButton
+            onClick={toggleDelete}
+            className={activeAction === ActiveAction.DELETE ? 'active' : undefined}
+            disabled={loading || createRoomLoading}
+          >
+            <Trash size={32} />
+            Delete
+          </BigButton>
+        </ActionTrayItem>
+      </ActionTray>
+      {activeAction === ActiveAction.SETTINGS && <WrDeckDetailSettings deck={deck} />}
+      {activeAction === ActiveAction.DELETE && <WrDeckDetailDeletePrompt deck={deck} />}
+      <HDivider>{templates.length} Sub-Decks</HDivider>
+      <HDivider>{templates.length} Template Cards</HDivider>
+      <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />
+      <HDivider>{cards.length} Cards</HDivider>
+      <WrNewCardPrompt deckId={deckId} />
+      <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
+    </>
   );
 };
 

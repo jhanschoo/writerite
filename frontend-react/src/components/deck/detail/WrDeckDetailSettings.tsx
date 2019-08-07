@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, Dispatch, SetStateAction } from 'react';
 
 import { gql } from 'graphql.macro';
-import { MutationFn, Mutation, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -98,6 +98,10 @@ const WrDetailSettings = (props: Props) => {
   const [nameLangInput, setNameLangInput] = useState(nameLang);
   const [promptLangInput, setPromptLangInput] = useState(promptLang);
   const [answerLangInput, setAnswerLangInput] = useState(answerLang);
+  const [mutate, { loading }] =
+    useMutation<DeckEditData, DeckEditVariables>(DECK_EDIT_MUTATION, {
+      onError: printApolloError,
+    });
   const handleTextChange = (setter: Dispatch<SetStateAction<string>>) =>
     (e: ChangeEvent<HTMLInputElement>) => {
     setter(e.target.value);
@@ -114,95 +118,82 @@ const WrDetailSettings = (props: Props) => {
       resetState();
     }
   };
-  const renderPanel = (
-    mutate: MutationFn<DeckEditData, DeckEditVariables>,
-    { loading }: MutationResult<DeckEditData>,
-  ) => {
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      mutate({
-        variables: {
-          id,
-          name: nameInput,
-          nameLang: nameLangInput,
-          promptLang: promptLangInput,
-          answerLang: answerLangInput,
-        },
-      });
-    };
-    return (
-        <StyledForm onSubmit={handleSubmit}>
-          <StyledList>
-            <StyledItem>
-              <StyledLabel htmlFor="name-input">
-              Deck name
-              </StyledLabel>
-              <StyledTextInput
-                type="text"
-                id="name-input"
-                value={nameInput}
-                onChange={handleTextChange(setNameInput)}
-                onKeyDown={handleKeyDown}
-                disabled={disabled || loading}
-              />
-            </StyledItem>
-            <StyledItem>
-              <StyledLabel htmlFor="name-lang-input">
-              Deck name language code
-              </StyledLabel>
-              <StyledTextInput
-                type="text"
-                id="name-lang-input"
-                value={nameLangInput}
-                onChange={handleTextChange(setNameLangInput)}
-                onKeyDown={handleKeyDown}
-                disabled={loading}
-              />
-            </StyledItem>
-            <StyledItem>
-              <StyledLabel htmlFor="prompt-lang-input">
-              Prompt language code
-              </StyledLabel>
-              <StyledTextInput
-                type="text"
-                id="prompt-lang-input"
-                value={promptLangInput}
-                onChange={handleTextChange(setPromptLangInput)}
-                onKeyDown={handleKeyDown}
-                disabled={loading}
-              />
-            </StyledItem>
-            <StyledItem>
-              <StyledLabel htmlFor="answer-lang-input">
-              Answer language code
-              </StyledLabel>
-              <StyledTextInput
-                type="text"
-                id="answer-lang-input"
-                value={answerLangInput}
-                onChange={handleTextChange(setAnswerLangInput)}
-                onKeyDown={handleKeyDown}
-                disabled={loading}
-              />
-            </StyledItem>
-          </StyledList>
-          <StyledButton
-            type="submit"
-            disabled={loading}
-          >
-            Save Changes
-          </StyledButton>
-        </StyledForm>
-    );
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutate({
+      variables: {
+        id,
+        name: nameInput,
+        nameLang: nameLangInput,
+        promptLang: promptLangInput,
+        answerLang: answerLangInput,
+      },
+    });
   };
   return (
     <StyledPanel>
-      <Mutation<DeckEditData, DeckEditVariables>
-        mutation={DECK_EDIT_MUTATION}
-        onError={printApolloError}
-      >
-        {renderPanel}
-      </Mutation>
+      <StyledForm onSubmit={handleSubmit}>
+        <StyledList>
+          <StyledItem>
+            <StyledLabel htmlFor="name-input">
+            Deck name
+            </StyledLabel>
+            <StyledTextInput
+              type="text"
+              id="name-input"
+              value={nameInput}
+              onChange={handleTextChange(setNameInput)}
+              onKeyDown={handleKeyDown}
+              disabled={disabled || loading}
+            />
+          </StyledItem>
+          <StyledItem>
+            <StyledLabel htmlFor="name-lang-input">
+            Deck name language code
+            </StyledLabel>
+            <StyledTextInput
+              type="text"
+              id="name-lang-input"
+              value={nameLangInput}
+              onChange={handleTextChange(setNameLangInput)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+            />
+          </StyledItem>
+          <StyledItem>
+            <StyledLabel htmlFor="prompt-lang-input">
+            Prompt language code
+            </StyledLabel>
+            <StyledTextInput
+              type="text"
+              id="prompt-lang-input"
+              value={promptLangInput}
+              onChange={handleTextChange(setPromptLangInput)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+            />
+          </StyledItem>
+          <StyledItem>
+            <StyledLabel htmlFor="answer-lang-input">
+            Answer language code
+            </StyledLabel>
+            <StyledTextInput
+              type="text"
+              id="answer-lang-input"
+              value={answerLangInput}
+              onChange={handleTextChange(setAnswerLangInput)}
+              onKeyDown={handleKeyDown}
+              disabled={loading}
+            />
+          </StyledItem>
+        </StyledList>
+        <StyledButton
+          type="submit"
+          disabled={loading}
+        >
+          Save Changes
+        </StyledButton>
+      </StyledForm>
     </StyledPanel>
   );
 };

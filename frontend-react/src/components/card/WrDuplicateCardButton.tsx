@@ -2,7 +2,7 @@ import React, { FC, MouseEvent } from 'react';
 import { Copy } from 'react-feather';
 
 import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
 import { WrCard, IWrCard } from '../../models/WrCard';
 
@@ -43,33 +43,24 @@ interface CardCreateData {
 
 type Props = CardCreateVariables;
 
-// TODO: change into a prompt for creating N cards
-const WrDuplicateCardButton: FC<CardCreateVariables> = (props: CardCreateVariables) => {
-  const renderCardCreate = (
-    mutate: MutationFn<CardCreateData, CardCreateVariables>,
-    { loading }: MutationResult<CardCreateData>,
-  ) => {
-    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      return mutate({
-        variables: props,
-      });
-    };
-    return (
-      <CardAuxillaryButton
-        className="auxillary"
-        onClick={handleClick}
-      ><Copy size={16} />
-      </CardAuxillaryButton>
-    );
+const WrDuplicateCardButton: FC<Props> = (props: Props) => {
+  const [mutate, { loading }] =
+    useMutation<CardCreateData, CardCreateVariables>(CARD_CREATE_MUTATION, {
+      onError: printApolloError,
+    });
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    return mutate({
+      variables: props,
+    });
   };
   return (
-    <Mutation<CardCreateData, CardCreateVariables>
-      mutation={CARD_CREATE_MUTATION}
-      onError={printApolloError}
-    >
-    {renderCardCreate}
-    </Mutation>
+    <CardAuxillaryButton
+      className="auxillary"
+      onClick={handleClick}
+      disabled={loading}
+    ><Copy size={16} />
+    </CardAuxillaryButton>
   );
 };
 

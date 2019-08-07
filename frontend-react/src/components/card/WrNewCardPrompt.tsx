@@ -2,7 +2,7 @@ import React, { useState, FC, ChangeEvent, KeyboardEvent, MouseEvent } from 'rea
 import { Plus } from 'react-feather';
 
 import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
 import { WrCard, IWrCard } from '../../models/WrCard';
 
@@ -69,64 +69,54 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
   const { deckId } = props;
   const [multiplicity, setMultiplicity] = useState(1);
   const resetMultiplicity = () => setMultiplicity(1);
-  const renderCardCreate = (
-    mutate: MutationFn<CardsCreateData, CardsCreateVariables>,
-    { loading }: MutationResult<CardsCreateData>,
-  ) => {
-    const handleUpdate = () => {
-      return mutate({
-        variables: {
-          deckId,
-          prompt: '',
-          fullAnswer: '',
-          multiplicity,
-        },
-      });
-    };
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setMultiplicity(parseInt(e.target.value, undefined));
-    };
-    const handleClick = (e: MouseEvent<HTMLButtonElement> ) => {
+  const [mutate, { loading }] = useMutation<CardsCreateData, CardsCreateVariables>(CARDS_CREATE_MUTATION, {
+    onError: printApolloError,
+    onCompleted: resetMultiplicity,
+  });
+  const handleUpdate = () => {
+    return mutate({
+      variables: {
+        deckId,
+        prompt: '',
+        fullAnswer: '',
+        multiplicity,
+      },
+    });
+  };
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setMultiplicity(parseInt(e.target.value, undefined));
+  };
+  const handleClick = (e: MouseEvent<HTMLButtonElement> ) => {
+    e.preventDefault();
+    handleUpdate();
+  };
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    const { key } = e;
+    if (key === 'Enter') {
       e.preventDefault();
       handleUpdate();
-    };
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-      const { key } = e;
-      if (key === 'Enter') {
-        e.preventDefault();
-        handleUpdate();
-      }
-    };
-    return (
-      <CenteredFlex>
-        Add
-        <StyledTextInput
-          type="number"
-          min="1"
-          max="100"
-          aria-label="Create this number of new cards"
-          value={multiplicity}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          disabled={loading}
-        />
-        new cards to the deck&emsp;
-        <AuxillaryButton
-          onClick={handleClick}
-          disabled={loading}
-        ><Plus size={16} />
-        </AuxillaryButton>
-      </CenteredFlex>
-    );
+    }
   };
   return (
-    <Mutation<CardsCreateData, CardsCreateVariables>
-      mutation={CARDS_CREATE_MUTATION}
-      onError={printApolloError}
-      onCompleted={resetMultiplicity}
-    >
-    {renderCardCreate}
-    </Mutation>
+    <CenteredFlex>
+      Add
+      <StyledTextInput
+        type="number"
+        min="1"
+        max="100"
+        aria-label="Create this number of new cards"
+        value={multiplicity}
+        onChange={handleChange}
+        onKeyDown={handleKeyDown}
+        disabled={loading}
+      />
+      new cards to the deck&emsp;
+      <AuxillaryButton
+        onClick={handleClick}
+        disabled={loading}
+      ><Plus size={16} />
+      </AuxillaryButton>
+    </CenteredFlex>
   );
 };
 

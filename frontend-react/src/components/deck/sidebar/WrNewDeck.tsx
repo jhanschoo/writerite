@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Plus } from 'react-feather';
 
 import { gql } from 'graphql.macro';
-import { MutationFn, Mutation, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -64,25 +64,27 @@ const StyledTextInput = styled(MinimalTextInput)`
 
 const WrNewDeck = () => {
   const [name, setName] = useState(initialName);
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
   const handleCompleted = () => {
     setName(initialName);
   };
-  const renderForm = (
-    mutate: MutationFn<DeckCreateData, DeckCreateVariables>,
-    { loading }: MutationResult<DeckCreateData>,
-  ) => {
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      return mutate({
-        variables: {
-          name,
-        },
-      });
-    };
-    return (
+  const [mutate, { loading }] =
+    useMutation<DeckCreateData, DeckCreateVariables>(DECK_CREATE_MUTATION, {
+      onError: printApolloError,
+      onCompleted: handleCompleted,
+    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
+  };
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    return mutate({
+      variables: {
+        name,
+      },
+    });
+  };
+  return (
+    <FlexSection>
       <form onSubmit={handleSubmit}>
         <Fieldset>
           <SidebarMenuHeader as="legend">Create a New Deck</SidebarMenuHeader>
@@ -111,17 +113,6 @@ const WrNewDeck = () => {
             </StyledList>
         </Fieldset>
       </form>
-    );
-  };
-  return (
-    <FlexSection>
-      <Mutation<DeckCreateData, DeckCreateVariables>
-        mutation={DECK_CREATE_MUTATION}
-        onError={printApolloError}
-        onCompleted={handleCompleted}
-      >
-      {renderForm}
-      </Mutation>
     </FlexSection>
   );
 };

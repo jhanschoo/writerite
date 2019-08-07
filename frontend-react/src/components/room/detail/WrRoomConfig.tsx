@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { WrState } from '../../../store';
 
 import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -75,33 +75,37 @@ type Props = StateProps & OwnProps;
 const WrRoomConfig = (props: Props) => {
   const { id, room } = props;
   const [roundLengthInput, setRoundLength] = useState<string>('20');
+  const [
+    mutate, { loading },
+  ] = useMutation<RoomUpdateConfigData, RoomUpdateConfigVariables>(
+    ROOM_UPDATE_CONFIG_MUTATION, {
+      onError: printApolloError,
+    },
+  );
   if (room.config.clientDone || id !== room.owner.id) {
     return null;
   }
 
   // case where config is still open for modification and room owner is
   // this client
-  const renderEditConfig = (
-    mutate: MutationFn<RoomUpdateConfigData, RoomUpdateConfigVariables>,
-    { loading }: MutationResult<RoomUpdateConfigData>,
-  ) => {
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      mutate({
-        variables: {
-          id: room.id,
-          config: Object.assign({}, room.config, {
-            roundLength: Number.parseInt(roundLengthInput, 10) * 1000,
-            clientDone: true,
-            __typename: undefined,
-          }),
-        },
-      });
-    };
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setRoundLength(e.target.value);
-    };
-    return (
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutate({
+      variables: {
+        id: room.id,
+        config: Object.assign({}, room.config, {
+          roundLength: Number.parseInt(roundLengthInput, 10) * 1000,
+          clientDone: true,
+          __typename: undefined,
+        }),
+      },
+    });
+  };
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setRoundLength(e.target.value);
+  };
+  return (
+    <>
       <StyledForm onSubmit={handleSubmit}>
         <StyledHeader>
           Configure Room
@@ -119,16 +123,6 @@ const WrRoomConfig = (props: Props) => {
           /> s
         </Field>
       </StyledForm>
-    );
-  };
-  return (
-    <>
-      <Mutation<RoomUpdateConfigData, RoomUpdateConfigVariables>
-        mutation={ROOM_UPDATE_CONFIG_MUTATION}
-        onError={printApolloError}
-      >
-        {renderEditConfig}
-      </Mutation>
       <HDivider />
     </>
   );

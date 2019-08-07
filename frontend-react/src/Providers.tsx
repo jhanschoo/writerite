@@ -3,7 +3,7 @@ import React, { useState, ReactNode } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store';
 
-import { ApolloProvider } from 'react-apollo';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { client } from './apolloClient';
 import { persistedCache } from './cache';
 

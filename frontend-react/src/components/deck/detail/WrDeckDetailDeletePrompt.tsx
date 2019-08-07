@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 
 import { gql } from 'graphql.macro';
-import { MutationFn, Mutation, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -62,6 +62,14 @@ const WrDeckDetailDeletePrompt = (props: Props) => {
   const { disabled, history } = props;
   const { id, name } = props.deck;
   const [deletePromptInput, setDeletePromptInput] = useState('');
+  const handleDeleteCompleted = () => {
+    history.push('/deck');
+  };
+  const [mutate, { loading }] =
+    useMutation<DeckDeleteData, DeckDeleteVariables>(DECK_DELETE_MUTATION, {
+      onError: printApolloError,
+      onCompleted: handleDeleteCompleted
+    });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDeletePromptInput(e.target.value);
   };
@@ -72,19 +80,16 @@ const WrDeckDetailDeletePrompt = (props: Props) => {
       setDeletePromptInput('');
     }
   };
-  const renderDeletePrompt = (
-    deleteMutate: MutationFn<DeckDeleteData, DeckDeleteVariables>,
-    { loading }: MutationResult<DeckDeleteData>,
-  ) => {
-    const handleDelete = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      deleteMutate({
-        variables: {
-          id,
-        },
-      });
-    };
-    return (
+  const handleDelete = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    mutate({
+      variables: {
+        id,
+      },
+    });
+  };
+  return (
+    <StyledPanel>
       <StyledForm onSubmit={handleDelete}>
         To delete this deck, please type <strong>{name}</strong> in the following box:
         <StyledTextInput
@@ -101,20 +106,6 @@ const WrDeckDetailDeletePrompt = (props: Props) => {
           Delete
         </StyledButton>
       </StyledForm>
-    );
-  };
-  const handleDeleteCompleted = () => {
-    history.push('/deck');
-  };
-  return (
-    <StyledPanel>
-      <Mutation<DeckDeleteData, DeckDeleteVariables>
-        mutation={DECK_DELETE_MUTATION}
-        onError={printApolloError}
-        onCompleted={handleDeleteCompleted}
-      >
-        {renderDeletePrompt}
-      </Mutation>
     </StyledPanel>
   );
 };

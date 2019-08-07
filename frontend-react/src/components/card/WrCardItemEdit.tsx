@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } fr
 import { Plus, X } from 'react-feather';
 
 import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
 import { WrCard, IWrCard } from '../../models/WrCard';
 
@@ -205,81 +205,76 @@ const WrCardItemEdit = (props: Props) => {
       </DeleteAnswerButton>
     </AnswersP>
   ));
-  const renderCardItemEdit = (
-    mutate: MutationFn<CardEditData, CardEditVariables>,
-    { loading }: MutationResult<CardEditData>,
-  ) => {
-    const handleUpdate = () => mutate({
-      variables: {
-        id,
-        prompt: promptInput,
-        fullAnswer: fullAnswerInput,
-        answers: newAnswers,
-        sortKey,
-      },
-    }).then(() => toggleEdit());
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      handleUpdate();
-    };
-    return (
-      <StyledFrom onSubmit={handleSubmit}>
-        <CardFieldset lang={promptLang}>
-          <LowercaseLabel htmlFor={promptId}>Prompt</LowercaseLabel>
-          <StyledTextInput
-            id={promptId}
-            value={promptInput}
-            onChange={handlePromptChange}
-            onKeyDown={handleKeyDown}
-          />
-        </CardFieldset>
-        <CardFieldset lang={answerLang}>
-          <LowercaseLabel htmlFor={fullAnswerId}>Displayed Answer</LowercaseLabel>
-          <StyledTextInput
-            id={fullAnswerId}
-            value={fullAnswerInput}
-            onChange={handleFullAnswerChange}
-            onKeyDown={handleKeyDown}
-          />
-        </CardFieldset>
-        <AnswersFieldset>
-          <LowercaseLegend as="legend">Accepted Answers</LowercaseLegend>
-          <NewAcceptedAnswerDiv>
-            <LowercaseLabel htmlFor={newAnswerId}>Add a new accepted answer</LowercaseLabel>
-            <NewAcceptedAnswerSubdiv>
-              <StyledTextInput
-                id={newAnswerId}
-                value={newAnswerInput}
-                onChange={handleNewAnswerChange}
-                onKeyDown={handleNewAnswerKeyDown}
-              />
-              <PlusButton onClick={handleAddNewAnswer}>
-                <Plus size={16} />
-              </PlusButton>
-            </NewAcceptedAnswerSubdiv>
-          </NewAcceptedAnswerDiv>
-          {formattedAnswers}
-        </AnswersFieldset>
-        <SubmitDiv>
-          <CancelButton
-            onClick={handleCancelButton}
-          >
-            Cancel
-          </CancelButton>
-          <SubmitButton type="submit">
-            Save Changes
-          </SubmitButton>
-        </SubmitDiv>
-      </StyledFrom>
-    );
+  const [mutate, { loading }] =
+    useMutation<CardEditData, CardEditVariables>(CARD_EDIT_MUTATION, {
+      onError: printApolloError,
+    });
+  const handleUpdate = () => mutate({
+    variables: {
+      id,
+      prompt: promptInput,
+      fullAnswer: fullAnswerInput,
+      answers: newAnswers,
+      sortKey,
+    },
+  }).then(() => toggleEdit());
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleUpdate();
   };
   return (
-    <Mutation<CardEditData, CardEditVariables>
-      mutation={CARD_EDIT_MUTATION}
-      onError={printApolloError}
-    >
-      {renderCardItemEdit}
-    </Mutation>
+    <StyledFrom onSubmit={handleSubmit}>
+      <CardFieldset lang={promptLang}>
+        <LowercaseLabel htmlFor={promptId}>Prompt</LowercaseLabel>
+        <StyledTextInput
+          id={promptId}
+          value={promptInput}
+          onChange={handlePromptChange}
+          onKeyDown={handleKeyDown}
+          disabled={loading}
+        />
+      </CardFieldset>
+      <CardFieldset lang={answerLang}>
+        <LowercaseLabel htmlFor={fullAnswerId}>Displayed Answer</LowercaseLabel>
+        <StyledTextInput
+          id={fullAnswerId}
+          value={fullAnswerInput}
+          onChange={handleFullAnswerChange}
+          onKeyDown={handleKeyDown}
+          disabled={loading}
+        />
+      </CardFieldset>
+      <AnswersFieldset>
+        <LowercaseLegend as="legend">Accepted Answers</LowercaseLegend>
+        <NewAcceptedAnswerDiv>
+          <LowercaseLabel htmlFor={newAnswerId}>Add a new accepted answer</LowercaseLabel>
+          <NewAcceptedAnswerSubdiv>
+            <StyledTextInput
+              id={newAnswerId}
+              value={newAnswerInput}
+              onChange={handleNewAnswerChange}
+              onKeyDown={handleNewAnswerKeyDown}
+              disabled={loading}
+            />
+            <PlusButton onClick={handleAddNewAnswer}>
+              <Plus size={16} />
+            </PlusButton>
+          </NewAcceptedAnswerSubdiv>
+        </NewAcceptedAnswerDiv>
+        {formattedAnswers}
+      </AnswersFieldset>
+      <SubmitDiv>
+        <CancelButton
+          onClick={handleCancelButton}
+          disabled={loading}
+        >
+          Cancel
+        </CancelButton>
+        <SubmitButton type="submit">
+          Save Changes
+        </SubmitButton>
+      </SubmitDiv>
+    </StyledFrom>
   );
 };
 

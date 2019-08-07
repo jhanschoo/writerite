@@ -2,7 +2,7 @@ import React, { FC, MouseEvent } from 'react';
 import { Trash } from 'react-feather';
 
 import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
 
 import CardAuxillaryButton from './CardAuxillaryButton';
@@ -27,33 +27,25 @@ interface Props {
 
 const WrDeleteCardButton: FC<Props> = (props: Props) => {
   const { cardId } = props;
-  const renderCardCreate = (
-    mutate: MutationFn<CardDeleteData, CardDeleteVariables>,
-    { loading }: MutationResult<CardDeleteData>,
-  ) => {
-    const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      return mutate({
-        variables: {
-          id: cardId,
-        },
-      });
-    };
-    return (
-      <CardAuxillaryButton
-        className="auxillary"
-        onClick={handleClick}
-      ><Trash size={16} />
-      </CardAuxillaryButton>
-    );
+  const [mutate, { loading }] =
+    useMutation<CardDeleteData, CardDeleteVariables>(CARD_DELETE_MUTATION, {
+      onError: printApolloError,
+    });
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    return mutate({
+      variables: {
+        id: cardId,
+      },
+    });
   };
   return (
-    <Mutation<CardDeleteData, CardDeleteVariables>
-      mutation={CARD_DELETE_MUTATION}
-      onError={printApolloError}
-    >
-    {renderCardCreate}
-    </Mutation>
+    <CardAuxillaryButton
+      className="auxillary"
+      onClick={handleClick}
+      disabled={loading}
+    ><Trash size={16} />
+    </CardAuxillaryButton>
   );
 };
 

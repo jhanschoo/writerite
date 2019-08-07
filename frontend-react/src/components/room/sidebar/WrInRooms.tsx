@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { gql } from 'graphql.macro';
-import { Query, QueryResult } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -32,50 +32,52 @@ const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}
 `;
 
-const renderList = ({
-  subscribeToMore, loading, error, data,
-}: QueryResult<InRoomsData, InRoomsVariables>) => {
+const WrInRooms = () => {
+  const { loading, error, data } =
+    useQuery<InRoomsData, InRoomsVariables>(IN_ROOMS_QUERY, {
+      onError: printApolloError,
+    });
   if (error) {
-    return null;
+    return (
+      <FlexSection>
+        <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
+      </FlexSection>
+    );
   }
   if (loading) {
     return (
-      <List>
-        <PaddedItem><em>Loading...</em></PaddedItem>
-      </List>
+      <FlexSection>
+        <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
+        <List>
+          <PaddedItem><em>Loading...</em></PaddedItem>
+        </List>
+      </FlexSection>
     );
   }
   if (!data || data.rwInRooms === undefined || !Array.isArray(data.rwInRooms)) {
     return (
-      <List>
-        <PaddedItem>Error fetching rooms!</PaddedItem>
-      </List>
+      <FlexSection>
+        <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
+        <List>
+          <PaddedItem>Error fetching rooms!</PaddedItem>
+        </List>
+      </FlexSection>
     );
   }
   if (data.rwInRooms.length === 0) {
     return (
-      <List>
-        <PaddedItem>You are not in any rooms.</PaddedItem>
-      </List>
+      <FlexSection>
+        <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
+        <List>
+          <PaddedItem>You are not in any rooms.</PaddedItem>
+        </List>
+      </FlexSection>
     );
   }
   return (
-    <>
-      <WrRoomList rooms={data.rwInRooms} />
-    </>
-  );
-};
-
-const WrInRooms = () => {
-  return (
     <FlexSection>
       <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
-      <Query<InRoomsData, InRoomsVariables>
-        query={IN_ROOMS_QUERY}
-        onError={printApolloError}
-      >
-      {renderList}
-      </Query>
+      <WrRoomList rooms={data.rwInRooms} />
     </FlexSection>
   );
 };

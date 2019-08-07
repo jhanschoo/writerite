@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { gql } from 'graphql.macro';
-import { Query, QueryResult } from 'react-apollo';
+import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 
 import styled from 'styled-components';
@@ -56,76 +56,68 @@ const RoomHeading = styled.h3`
 const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) => {
   const { match } = props;
   const { roomId } = match.params;
-  const renderRoom = ({
-    subscribeToMore, loading, error, data,
-  }: QueryResult<RoomDetailData, RoomDetailVariables>) => {
-    if (error) {
-      return (
-        <>
-          <WrRoomSidebar />
-          <FlexMain />
-        </>
-      );
-    }
-    if (loading) {
-      return (
-        <>
-          <WrRoomSidebar />
-          <FlexMain>
-            <CenteredP>
-              Retrieving room...
-            </CenteredP>
-          </FlexMain>
-        </>
-      );
-    }
-    if (!data || !data.rwRoom) {
-      return (
-        <CenteredP>
-          Error retrieving room. Please try again later.
-        </CenteredP>
-      );
-    }
-    const room = data.rwRoom;
-    const { config } = room;
-    let hasConfigMessage = false;
-    const formattedMessages = room.messages.map((message) => {
-      switch (message.contentType) {
-        case 'CONFIG':
-          hasConfigMessage = true;
-          return <WrRoomMessageConfigItem key={message.id} config={config} />;
-      }
-      return <WrRoomMessageTextItem key={message.id} message={message} />;
+  const { subscribeToMore, loading, error, data } =
+    useQuery<RoomDetailData, RoomDetailVariables>(ROOM_DETAIL_QUERY, {
+      variables: { id: roomId },
+      onError: printApolloError,
     });
+  if (error) {
     return (
       <>
-        <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />
-        <WrRoomSidebar room={room} />
+        <WrRoomSidebar />
+        <FlexMain />
+      </>
+    );
+  }
+  if (loading) {
+    return (
+      <>
+        <WrRoomSidebar />
         <FlexMain>
-          <Header>
-            <RoomHeading>
-              {room.owner.email} is hosting <span lang={config.deckNameLang}>{config.deckName}</span>
-            </RoomHeading>
-          </Header>
-          <HDivider />
-          {hasConfigMessage && <WrRoomConfig room={room} />}
-          <WrRoomConversationBox>
-            {formattedMessages}
-          </WrRoomConversationBox>
-          <HDivider />
-          <WrRoomDetailInput roomId={roomId} />
+          <CenteredP>
+            Retrieving room...
+          </CenteredP>
         </FlexMain>
       </>
     );
-  };
+  }
+  if (!data || !data.rwRoom) {
+    return (
+      <CenteredP>
+        Error retrieving room. Please try again later.
+      </CenteredP>
+    );
+  }
+  const room = data.rwRoom;
+  const { config } = room;
+  let hasConfigMessage = false;
+  const formattedMessages = room.messages.map((message) => {
+    switch (message.contentType) {
+      case 'CONFIG':
+        hasConfigMessage = true;
+        return <WrRoomMessageConfigItem key={message.id} config={config} />;
+    }
+    return <WrRoomMessageTextItem key={message.id} message={message} />;
+  });
   return (
-    <Query<RoomDetailData, RoomDetailVariables>
-      query={ROOM_DETAIL_QUERY}
-      variables={{ id: roomId }}
-      onError={printApolloError}
-    >
-      {renderRoom}
-    </Query>
+    <>
+      <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />
+      <WrRoomSidebar room={room} />
+      <FlexMain>
+        <Header>
+          <RoomHeading>
+            {room.owner.email} is hosting <span lang={config.deckNameLang}>{config.deckName}</span>
+          </RoomHeading>
+        </Header>
+        <HDivider />
+        {hasConfigMessage && <WrRoomConfig room={room} />}
+        <WrRoomConversationBox>
+          {formattedMessages}
+        </WrRoomConversationBox>
+        <HDivider />
+        <WrRoomDetailInput roomId={roomId} />
+      </FlexMain>
+    </>
   );
 };
 

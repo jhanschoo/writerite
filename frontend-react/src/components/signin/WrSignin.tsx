@@ -9,7 +9,7 @@ import { SigninAction, createSignin } from './actions';
 import { WrState } from '../../store';
 
 import { gql } from 'graphql.macro';
-import { Mutation, MutationFn, MutationResult } from 'react-apollo';
+import { useMutation } from '@apollo/react-hooks';
 import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
 
@@ -197,10 +197,11 @@ const WrSignin = (props: Props) => {
       setThirdPartySigninUnderway(false);
     }
   };
-  const renderForm = (
-    mutate: MutationFn<SigninData, SigninVariables>,
-    { loading }: MutationResult<SigninData>,
-  ) => {
+  const [mutate, { loading }] =
+    useMutation<SigninData, SigninVariables>(SIGNIN, {
+      onCompleted: handleSigninSuccess,
+      onError: printApolloError,
+    });
 
   const handleGoogleSignin = async (): Promise<void> => {
     await setThirdPartySigninUnderway(true);
@@ -314,122 +315,112 @@ const WrSignin = (props: Props) => {
       </ErrorMessage>
     );
     return (
-        <form onSubmit={handleSubmit}>
-          <FieldsetWithMargin>
-            <StyledLabel htmlFor="email-input">Email</StyledLabel>
-            <FlowTextInput
-              onChange={handleChange}
-              onBlur={handleBlur}
-              type="email"
-              name="email"
-              id="email-input"
-              // autocomplete={isSignup ? 'new-username' : 'current-username'}
-              disabled={disabled}
-              className={showError('email') ? 'error' : (showValid('email') ? 'valid' : '')}
-            />
-            {maybeError('email')}
-          </FieldsetWithMargin>
-          <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
-            <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
-            <FlowTextInput
-              onChange={handleChange}
-              onBlur={handleBlur}
-              type="text"
-              name="name"
-              id="name-input"
-              // autocomplete={isSignup ? 'new-username' : 'current-username'}
-              disabled={disabled}
-              className={showError('name') ? 'error' : (showValid('name') ? 'valid' : '')}
-            />
-            {maybeError('name')}
-          </FieldsetWithMargin>
-          <FieldsetWithMargin>
-            <StyledLabel htmlFor="password-input">Password</StyledLabel>
-            <FlowTextInput
-              onChange={handleChange}
-              onBlur={handleBlur}
-              type="password"
-              name="password"
-              id="password-input"
-              // autocomplete={isSignup ? 'new-password' : 'current-password'}
-              disabled={disabled}
-              className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
-            />
-            {formattedPasswordError}
-          </FieldsetWithMargin>
-          <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
-            <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
-            <FlowTextInput
-              onChange={handleChange}
-              onBlur={handleBlur}
-              type="password"
-              name="confirmPassword"
-              id="confirm-password-input"
-              aria-label="Confirm Password"
-              // autocomplete={isSignup ? 'new-password' : 'current-password'}
-              disabled={disabled}
-              className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
-            />
-          </FieldsetWithMargin>
-          <Fieldset>
-            <TextCenteredDiv>
-              <InlineBlockDiv id="g-recaptcha" />
-              {maybeError('recaptcha')}
-            </TextCenteredDiv>
-          </Fieldset>
-          <FlowButton
-            type="submit"
-          >
-            {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
-          </FlowButton>
-          <SmallMessage>
-            {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
-            <AnchorButton onClick={handleToggleSignin}>
-              {isSignup ? 'Login' : 'Sign up'}
-            </AnchorButton>
-          </SmallMessage>
-        </form>
-      );
-    };
-    const developmentSignin = (process.env.NODE_ENV !== 'development')
-      ? ''
-      : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
-    return (
-      <SigninBox>
-        <GoogleButton
-          disabled={disabled}
-          onClick={handleGoogleSignin}
+      <form onSubmit={handleSubmit}>
+        <FieldsetWithMargin>
+          <StyledLabel htmlFor="email-input">Email</StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="email"
+            name="email"
+            id="email-input"
+            // autocomplete={isSignup ? 'new-username' : 'current-username'}
+            disabled={disabled}
+            className={showError('email') ? 'error' : (showValid('email') ? 'valid' : '')}
+          />
+          {maybeError('email')}
+        </FieldsetWithMargin>
+        <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+          <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="text"
+            name="name"
+            id="name-input"
+            // autocomplete={isSignup ? 'new-username' : 'current-username'}
+            disabled={disabled}
+            className={showError('name') ? 'error' : (showValid('name') ? 'valid' : '')}
+          />
+          {maybeError('name')}
+        </FieldsetWithMargin>
+        <FieldsetWithMargin>
+          <StyledLabel htmlFor="password-input">Password</StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="password"
+            name="password"
+            id="password-input"
+            // autocomplete={isSignup ? 'new-password' : 'current-password'}
+            disabled={disabled}
+            className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+          />
+          {formattedPasswordError}
+        </FieldsetWithMargin>
+        <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+          <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="password"
+            name="confirmPassword"
+            id="confirm-password-input"
+            aria-label="Confirm Password"
+            // autocomplete={isSignup ? 'new-password' : 'current-password'}
+            disabled={disabled}
+            className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+          />
+        </FieldsetWithMargin>
+        <Fieldset>
+          <TextCenteredDiv>
+            <InlineBlockDiv id="g-recaptcha" />
+            {maybeError('recaptcha')}
+          </TextCenteredDiv>
+        </Fieldset>
+        <FlowButton
+          type="submit"
         >
-          Sign in with Google
-        </GoogleButton>
-        <FacebookButton
-          disabled={disabled}
-          onClick={handleFacebookSignin}
-        >
-          Sign in with Facebook
-        </FacebookButton>
-        <HDivider>
-          OR
-        </HDivider>
-        <Formik
-          initialValues={formInitialValues}
-          onSubmit={handleLocalSignin}
-          validationSchema={formSchema}
-        >
-          {renderFields}
-        </Formik>
-        {developmentSignin}
-      </SigninBox>
+          {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
+        </FlowButton>
+        <SmallMessage>
+          {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
+          <AnchorButton onClick={handleToggleSignin}>
+            {isSignup ? 'Login' : 'Sign up'}
+          </AnchorButton>
+        </SmallMessage>
+      </form>
     );
   };
+  const developmentSignin = (process.env.NODE_ENV !== 'development')
+      ? ''
+      : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
   return (
-    <Mutation<SigninData, SigninVariables>
-      mutation={SIGNIN}
-      onCompleted={handleSigninSuccess}
-      onError={printApolloError}
-    >
-      {renderForm}
-    </Mutation>
+    <SigninBox>
+      <GoogleButton
+        disabled={disabled}
+        onClick={handleGoogleSignin}
+      >
+        Sign in with Google
+      </GoogleButton>
+      <FacebookButton
+        disabled={disabled}
+        onClick={handleFacebookSignin}
+      >
+        Sign in with Facebook
+      </FacebookButton>
+      <HDivider>
+        OR
+      </HDivider>
+      <Formik
+        initialValues={formInitialValues}
+        onSubmit={handleLocalSignin}
+        validationSchema={formSchema}
+      >
+        {renderFields}
+      </Formik>
+      {developmentSignin}
+    </SigninBox>
   );
 };
 
