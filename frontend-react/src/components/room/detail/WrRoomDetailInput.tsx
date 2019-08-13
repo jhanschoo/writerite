@@ -9,8 +9,8 @@ import styled from 'styled-components';
 import TextInput from '../../../ui/form/TextInput';
 import { BorderlessButton } from '../../../ui/form/Button';
 
-import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
-import { WrRoomMessageContentType } from '../../../models/WrRoomMessageStub';
+import { WrRoomMessage, IWrRoomMessage } from '../../../client-models/WrRoomMessage';
+import { WrRoomMessageContentType } from '../../../client-models/WrRoomMessageStub';
 
 const ROOM_MESSAGE_CREATE_MUTATION = gql`
 ${WrRoomMessage}

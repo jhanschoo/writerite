@@ -67,7 +67,7 @@ const app = new Koa();
 
 app.use(helmet());
 
-const typeDefs = gql(fs.readFileSync('src/schema/schema.graphql', 'utf8'));
+const typeDefs = gql(fs.readFileSync('schema.graphql', 'utf8'));
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 

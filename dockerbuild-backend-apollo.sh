@@ -1,11 +1,13 @@
 #!/usr/bin/env zsh
 
+# Run in project root (i.e. writerite/, and not in writerite/backend-apollo/)
+
 NODE_ENV="development"
 if [[ -n "$1" ]]
 then
   NODE_ENV="$1"
 fi
-PACKAGE_VERSION=$(cat package.json |
+PACKAGE_VERSION=$(cat backend-apollo/package.json |
   grep version |
   head -1 |
   awk -F: '{ print $2 }' |

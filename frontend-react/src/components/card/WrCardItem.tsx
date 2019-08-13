@@ -2,7 +2,7 @@ import React, { useState, MouseEvent } from 'react';
 import { Edit } from 'react-feather';
 import moment from 'moment';
 
-import { IWrCard } from '../../models/WrCard';
+import { IWrCard } from '../../client-models/WrCard';
 
 import styled from 'styled-components';
 import HDivider from '../../ui/HDivider';

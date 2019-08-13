@@ -23,7 +23,7 @@ import SmallMessage from '../../ui/form/SmallMessage';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrUserStub, IWrUserStub } from '../../models/WrUserStub';
+import { WrUserStub, IWrUserStub } from '../../client-models/WrUserStub';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;

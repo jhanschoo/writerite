@@ -10,7 +10,7 @@ import HDivider from '../../../ui/HDivider';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
+import { WrRoomDetail, IWrRoomDetail } from '../../../client-models/WrRoomDetail';
 import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomConfig from './WrRoomConfig';

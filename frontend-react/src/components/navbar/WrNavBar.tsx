@@ -14,7 +14,7 @@ import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
 
-import { IWrUserStub } from '../../models/WrUserStub';
+import { IWrUserStub } from '../../client-models/WrUserStub';
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
 

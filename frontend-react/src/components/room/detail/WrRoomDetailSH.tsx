@@ -5,10 +5,10 @@ import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 
-import { WrRoomDetail, IWrRoomDetail } from '../../../models/WrRoomDetail';
+import { WrRoomDetail, IWrRoomDetail } from '../../../client-models/WrRoomDetail';
 import { RoomDetailData } from './WrRoomDetail';
 import { MutationType, Payload } from '../../../types';
-import { WrRoomMessage, IWrRoomMessage } from '../../../models/WrRoomMessage';
+import { WrRoomMessage, IWrRoomMessage } from '../../../client-models/WrRoomMessage';
 
 const ROOM_MESSAGES_UPDATES_SUBSCRIPTION = gql`
 ${WrRoomMessage}

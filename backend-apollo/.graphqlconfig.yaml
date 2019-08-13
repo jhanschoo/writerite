@@ -1,7 +1,7 @@
 
 projects:
-  writerite-backend-yoga:
-    schemaPath: src/schema/schema.graphql
+  writerite-backend-apollo:
+    schemaPath: schema.graphql
     extensions:
       endpoints:
         dev: http://localhost:4000

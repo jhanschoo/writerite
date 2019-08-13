@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IWrRoomDetail } from '../../../models/WrRoomDetail';
+import { IWrRoomDetail } from '../../../client-models/WrRoomDetail';
 
 import WrSidebarMenu from '../../sidebar-menu/WrSidebarMenu';
 import WrInRooms from './WrInRooms';

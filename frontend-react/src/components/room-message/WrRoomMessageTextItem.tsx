@@ -3,7 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
 
-import { IWrRoomMessage } from '../../models/WrRoomMessage';
+import { IWrRoomMessage } from '../../client-models/WrRoomMessage';
 
 interface Props {
   message: IWrRoomMessage;

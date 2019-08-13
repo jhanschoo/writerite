@@ -4,7 +4,7 @@ import { Plus, X } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard, IWrCard } from '../../models/WrCard';
+import { WrCard, IWrCard } from '../../client-models/WrCard';
 
 import styled, { StyledComponent } from 'styled-components';
 import TextInput from '../../ui/form/TextInput';

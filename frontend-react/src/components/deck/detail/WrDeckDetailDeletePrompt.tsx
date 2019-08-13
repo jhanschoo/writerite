@@ -10,7 +10,7 @@ import TextInput from '../../../ui/form/TextInput';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { IWrDeck } from '../../../models/WrDeck';
+import { IWrDeck } from '../../../client-models/WrDeck';
 
 const DECK_DELETE_MUTATION = gql`
 mutation DeckDelete($id: ID!) {

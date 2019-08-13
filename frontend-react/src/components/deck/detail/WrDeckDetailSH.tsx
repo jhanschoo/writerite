@@ -5,10 +5,10 @@ import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 
-import { WrDeckDetail, IWrDeckDetail } from '../../../models/WrDeckDetail';
+import { WrDeckDetail, IWrDeckDetail } from '../../../client-models/WrDeckDetail';
 import { DeckDetailData } from './WrDeckDetail';
 import { MutationType, Payload } from '../../../types';
-import { WrCard, IWrCard } from '../../../models/WrCard';
+import { WrCard, IWrCard } from '../../../client-models/WrCard';
 
 const CARDS_UPDATES_SUBSCRIPTION = gql`
 ${WrCard}

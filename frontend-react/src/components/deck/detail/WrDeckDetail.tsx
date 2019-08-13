@@ -20,9 +20,9 @@ import WrDeckDetailSH from './WrDeckDetailSH';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrDeckDetail, IWrDeckDetail } from '../../../models/WrDeckDetail';
-import { WrRoom, IWrRoom } from '../../../models/WrRoom';
-import { IRoomConfig } from '../../../models/WrRoomStub';
+import { WrDeckDetail, IWrDeckDetail } from '../../../client-models/WrDeckDetail';
+import { WrRoom, IWrRoom } from '../../../client-models/WrRoom';
+import { IRoomConfig } from '../../../client-models/WrRoomStub';
 
 const DECK_DETAIL_QUERY = gql`
 ${WrDeckDetail}
@@ -188,7 +188,7 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
     });
   };
   return (
-    <>
+    <FlexMain>
       {
         // tslint:disable-next-line: jsx-no-multiline-js
         // https://github.com/apollographql/apollo-client/issues/4246
@@ -243,7 +243,7 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
       <HDivider>{cards.length} Cards</HDivider>
       <WrNewCardPrompt deckId={deckId} />
       <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
-    </>
+    </FlexMain>
   );
 };
 

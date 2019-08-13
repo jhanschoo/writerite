@@ -9,7 +9,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-import { IWrDeck } from '../../../models/WrDeck';
+import { IWrDeck } from '../../../client-models/WrDeck';
 
 const initialFilter = '';
 

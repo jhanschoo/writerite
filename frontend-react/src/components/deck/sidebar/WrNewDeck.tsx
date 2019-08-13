@@ -15,7 +15,7 @@ import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
 
 const DECK_CREATE_MUTATION = gql`
 ${WrDeck}

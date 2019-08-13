@@ -14,7 +14,7 @@ import TextInput from '../../ui/form/TextInput';
 import { Button } from '../../ui/form/Button';
 import HDivider from '../../ui/HDivider';
 
-import { WrDeck, IWrDeck } from '../../models/WrDeck';
+import { WrDeck, IWrDeck } from '../../client-models/WrDeck';
 
 const DECK_CREATE_FROM_CSV_MUTATION = gql`
 ${WrDeck}

@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@types/jest": "^24.0.17",
+    "apollo": "^2.17.3",
     "eslint-plugin-html": "^6.0.0",
     "jest-dom": "^4.0.0",
     "react-test-renderer": "^16.8.6",
@@ -59,10 +60,10 @@
     "typescript-tslint-plugin": "^0.5.4"
   },
   "scripts": {
-    "start": "rescripts start",
-    "build": "rescripts build",
-    "test": "rescripts test",
-    "test:debug": "rescripts --inspect-brk test --runInBand",
+    "start": "cp -R ../client-models src/ && rescripts start",
+    "build": "cp -R ../client-models src/ && rescripts build",
+    "test": "cp -R ../client-models src/ && rescripts test",
+    "test:debug": "cp -R ../client-models src/ && rescripts --inspect-brk test --runInBand",
     "eject": "rescripts eject"
   },
   "eslintConfig": {

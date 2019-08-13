@@ -10,7 +10,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-import { IWrRoomStub } from '../../../models/WrRoomStub';
+import { IWrRoomStub } from '../../../client-models/WrRoomStub';
 
 const initialFilter = '';
 

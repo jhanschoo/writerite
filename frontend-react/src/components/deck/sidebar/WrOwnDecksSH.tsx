@@ -6,7 +6,7 @@ import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 
 import { MutationType, Payload } from '../../../types';
-import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
 import { OwnDecksData } from './WrOwnDecks';
 
 const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`

@@ -12,8 +12,8 @@ import { Button } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 import HDivider from '../../../ui/HDivider';
 
-import { WrRoomStub, IWrRoomStub, IRoomConfig } from '../../../models/WrRoomStub';
-import { IWrRoomDetail } from '../../../models/WrRoomDetail';
+import { WrRoomStub, IWrRoomStub, IRoomConfig } from '../../../client-models/WrRoomStub';
+import { IWrRoomDetail } from '../../../client-models/WrRoomDetail';
 
 const ROOM_UPDATE_CONFIG_MUTATION = gql`
 ${WrRoomStub}

@@ -10,7 +10,7 @@ import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
-import { WrDeck, IWrDeck } from '../../../models/WrDeck';
+import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
 
 const DECK_EDIT_MUTATION = gql`
 ${WrDeck}

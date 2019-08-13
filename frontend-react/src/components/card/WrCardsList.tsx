@@ -4,7 +4,7 @@ import {
   withRouter, RouteComponentProps,
 } from 'react-router';
 
-import { IWrCard } from '../../models/WrCard';
+import { IWrCard } from '../../client-models/WrCard';
 import WrCardItem from './WrCardItem';
 
 interface OwnProps {

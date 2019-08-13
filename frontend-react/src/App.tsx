@@ -5,7 +5,7 @@ import {
 
 import { connect } from 'react-redux';
 import { WrState } from './store';
-import { IWrUserStub } from './models/WrUserStub';
+import { IWrUserStub } from './client-models/WrUserStub';
 
 import WrLandingView from './components/landing/WrLandingView';
 import WrSigninView from './components/signin/WrSigninView';

@@ -10,7 +10,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { WrRoomStub, IWrRoomStub } from '../../../models/WrRoomStub';
+import { WrRoomStub, IWrRoomStub } from '../../../client-models/WrRoomStub';
 import WrRoomList from './WrRoomList';
 
 const IN_ROOMS_QUERY = gql`

@@ -71,8 +71,4 @@ resolved/improved on.
 
 ## Other notes
 
-The package version of the following is fixxed because of the following
-performance issue.
-
-    // https://github.com/Microsoft/TypeScript/issues/30663
-    "@types/styled-components": "4.1.10",
+`client-models` folder is copied rather than symlinked due to following bug: https://github.com/facebook/create-react-app/issues/6556
