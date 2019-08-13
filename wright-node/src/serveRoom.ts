@@ -1,10 +1,10 @@
 import gql from 'graphql-tag';
-import { WrDeckDetail, IWrDeckDetail } from './models/WrDeckDetail';
-import { WrRoomMessage, IWrRoomMessage } from './models/WrRoomMessage';
-import { WrRoomMessageContentType } from './models/WrRoomMessageStub';
+import { WrDeckDetail, IWrDeckDetail } from './client-models/WrDeckDetail';
+import { WrRoomMessage, IWrRoomMessage } from './client-models/WrRoomMessage';
+import { WrRoomMessageContentType } from './client-models/WrRoomMessageStub';
 import { client } from './apolloClient';
 import { quizServer, Round } from './quizServer';
-import { IRoomConfig } from './models/WrRoomStub';
+import { IRoomConfig } from './client-models/WrRoomStub';
 
 interface IConfigMessage {
   type: 'CONFIG';

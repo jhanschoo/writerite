@@ -1,5 +1,7 @@
 #!/usr/bin/env zsh
 
+# Run in in writerite/wright-node/
+
 NODE_ENV="development"
 if [[ -n "$1" ]]
 then
@@ -20,6 +22,10 @@ if [[ "${SUFFIX}" == "-production" ]]
 then
   SUFFIX=""
 fi
+
+cp -r ../client-models .dockerbuild/
+sed -i "s/import { gql } from 'graphql.macro';/import gql from 'graphql-tag';/" .dockerbuild/client-models/*
+
 IMAGE_NAME="jhanschoo/writerite-wright-node:${PACKAGE_VERSION}${SUFFIX}"
 docker build -t "${IMAGE_NAME}" --build-arg node_env="${NODE_ENV}" .
 docker push "${IMAGE_NAME}"

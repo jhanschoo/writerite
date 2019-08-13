@@ -1,6 +1,6 @@
 import { createClient } from './redisClient';
 import { SERVE_ROOM_CHANNEL, serveRoom } from './serveRoom';
-import { IRoomConfig } from './models/WrRoomStub';
+import { IRoomConfig } from './client-models/WrRoomStub';
 
 const subscriberClient = createClient();
 
