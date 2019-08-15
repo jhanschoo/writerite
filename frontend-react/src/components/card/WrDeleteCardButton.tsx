@@ -4,6 +4,7 @@ import { Trash } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
+import { CardDelete, CardDeleteVariables } from './gqlTypes/CardDelete';
 
 import CardAuxillaryButton from './CardAuxillaryButton';
 
@@ -13,21 +14,13 @@ mutation CardDelete($id: ID!) {
 }
 `;
 
-interface CardDeleteVariables {
-  readonly id: string;
-}
-
-interface CardDeleteData {
-  readonly rwCardDelete: string | null;
-}
-
 interface Props {
   cardId: string;
 }
 
 const WrDeleteCardButton: FC<Props> = (props: Props) => {
   const { cardId } = props;
-  const [mutate, { loading }] = useMutation<CardDeleteData, CardDeleteVariables>(
+  const [mutate, { loading }] = useMutation<CardDelete, CardDeleteVariables>(
     CARD_DELETE_MUTATION, {
       onError: printApolloError,
     },

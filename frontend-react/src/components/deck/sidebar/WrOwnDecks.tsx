@@ -3,6 +3,8 @@ import React from 'react';
 import { gql } from 'graphql.macro';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WrDeck } from '../../../client-models/WrDeck';
+import { OwnDecks } from './gqlTypes/OwnDecks';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -10,7 +12,6 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
 import WrOwnDecksSH from './WrOwnDecksSH';
 import WrDeckList from './WrDeckList';
 
@@ -22,11 +23,6 @@ query OwnDecks {
   }
 }
 `;
-type OwnDecksVariables = object;
-
-export interface OwnDecksData {
-  readonly rwOwnDecks: IWrDeck[] | null;
-}
 
 const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}
@@ -35,7 +31,7 @@ const PaddedItem = styled(Item)`
 const WrOwnDecks = () => {
   const {
     subscribeToMore, loading, error, data,
-  } = useQuery<OwnDecksData, OwnDecksVariables>(OWN_DECKS_QUERY, {
+  } = useQuery<OwnDecks>(OWN_DECKS_QUERY, {
     onError: printApolloError,
   });
   if (error) {
@@ -55,7 +51,7 @@ const WrOwnDecks = () => {
       </FlexSection>
     );
   }
-  if (!data || data.rwOwnDecks === undefined || !Array.isArray(data.rwOwnDecks)) {
+  if (!data || !data.rwOwnDecks) {
     return (
       <FlexSection>
         <SidebarMenuHeader>Your Decks</SidebarMenuHeader>

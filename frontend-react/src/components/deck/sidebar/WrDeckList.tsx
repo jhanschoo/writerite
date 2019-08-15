@@ -9,7 +9,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-import { IWrDeck } from '../../../client-models/WrDeck';
+import { OwnDecks_rwOwnDecks } from './gqlTypes/OwnDecks';
 
 const initialFilter = '';
 
@@ -34,7 +34,7 @@ interface Content {
 }
 
 interface Props {
-  decks: IWrDeck[];
+  decks: readonly OwnDecks_rwOwnDecks[];
 }
 
 // TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
@@ -59,7 +59,7 @@ const WrDeckList = ({ decks }: Props) => {
         <em>There are no decks matching your filter.</em>
       </StyledItem>
     )]
-    : filteredDecks.map((deck: IWrDeck) => (
+    : filteredDecks.map((deck: OwnDecks_rwOwnDecks) => (
         <StyledItem key={deck.id}>
           <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.nameLang || undefined}>
             {deck.name}

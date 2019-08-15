@@ -5,7 +5,7 @@ import {
 
 import { connect } from 'react-redux';
 import { WrState } from './store';
-import { IWrUserStub } from './client-models/WrUserStub';
+import { WrUserStub } from './client-models/gqlTypes/WrUserStub';
 
 import WrLandingView from './components/landing/WrLandingView';
 import WrSigninView from './components/signin/WrSigninView';
@@ -14,7 +14,7 @@ import WrRoomView from './components/room/WrRoomView';
 import ViewportContainer from './ui/layout/ViewportContainer';
 
 interface StateProps {
-  user: IWrUserStub | null;
+  user: WrUserStub | null;
 }
 
 type Props = StateProps & RouteComponentProps;

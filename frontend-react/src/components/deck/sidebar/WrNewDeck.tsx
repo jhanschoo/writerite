@@ -4,6 +4,8 @@ import { Plus } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WrDeck } from '../../../client-models/WrDeck';
+import { DeckCreate, DeckCreateVariables } from './gqlTypes/DeckCreate';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -14,8 +16,6 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
-
-import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
 
 const DECK_CREATE_MUTATION = gql`
 ${WrDeck}
@@ -35,17 +35,6 @@ mutation DeckCreate(
   }
 }
 `;
-
-interface DeckCreateVariables {
-  readonly name?: string;
-  readonly nameLang?: string;
-  readonly promptLang?: string;
-  readonly answerLang?: string;
-}
-
-interface DeckCreateData {
-  readonly rwDeckCreate: IWrDeck | null;
-}
 
 const initialName = '';
 
@@ -67,7 +56,7 @@ const WrNewDeck = () => {
   const handleCompleted = () => {
     setName(initialName);
   };
-  const [mutate, { loading }] = useMutation<DeckCreateData, DeckCreateVariables>(
+  const [mutate, { loading }] = useMutation<DeckCreate, DeckCreateVariables>(
       DECK_CREATE_MUTATION, {
       onError: printApolloError,
       onCompleted: handleCompleted,

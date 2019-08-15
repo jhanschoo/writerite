@@ -4,7 +4,8 @@ import { Copy } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard, IWrCard } from '../../client-models/WrCard';
+import { WrCard } from '../../client-models/WrCard';
+import { CardCreate, CardCreateVariables } from './gqlTypes/CardCreate';
 
 import CardAuxillaryButton from './CardAuxillaryButton';
 
@@ -29,22 +30,10 @@ mutation CardCreate(
 }
 `;
 
-interface CardCreateVariables {
-  readonly deckId: string;
-  readonly prompt: string;
-  readonly fullAnswer: string;
-  readonly sortKey?: string;
-  readonly template?: boolean;
-}
-
-interface CardCreateData {
-  readonly rwCardCreate: IWrCard | null;
-}
-
 type Props = CardCreateVariables;
 
 const WrDuplicateCardButton: FC<Props> = (props: Props) => {
-  const [mutate, { loading }] = useMutation<CardCreateData, CardCreateVariables>(
+  const [mutate, { loading }] = useMutation<CardCreate, CardCreateVariables>(
     CARD_CREATE_MUTATION, {
       onError: printApolloError,
     },

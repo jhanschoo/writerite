@@ -4,7 +4,8 @@ import { Plus } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard, IWrCard } from '../../client-models/WrCard';
+import { WrCard } from '../../client-models/WrCard';
+import { CardsCreate, CardsCreateVariables } from './gqlTypes/CardsCreate';
 
 import styled from 'styled-components';
 import { AuxillaryButton } from '../../ui/form/Button';
@@ -12,7 +13,7 @@ import TextInput from '../../ui/form/TextInput';
 
 const CARDS_CREATE_MUTATION = gql`
 ${WrCard}
-mutation CardCreate(
+mutation CardsCreate(
   $deckId: ID!,
   $prompt: String!,
   $fullAnswer: String!,
@@ -32,19 +33,6 @@ mutation CardCreate(
   }
 }
 `;
-
-interface CardsCreateVariables {
-  readonly deckId: string;
-  readonly prompt: string;
-  readonly fullAnswer: string;
-  readonly sortKey?: string;
-  readonly template?: boolean;
-  readonly multiplicity: number;
-}
-
-interface CardsCreateData {
-  readonly rwCardsCreate: IWrCard[] | null;
-}
 
 const CenteredFlex = styled.div`
   align-self: center;
@@ -69,7 +57,7 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
   const { deckId } = props;
   const [multiplicity, setMultiplicity] = useState(1);
   const resetMultiplicity = () => setMultiplicity(1);
-  const [mutate, { loading }] = useMutation<CardsCreateData, CardsCreateVariables>(
+  const [mutate, { loading }] = useMutation<CardsCreate, CardsCreateVariables>(
     CARDS_CREATE_MUTATION, {
       onError: printApolloError,
       onCompleted: resetMultiplicity,

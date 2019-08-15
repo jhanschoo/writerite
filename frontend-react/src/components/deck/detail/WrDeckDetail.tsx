@@ -4,6 +4,10 @@ import { Play, Copy, Settings, Trash } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WrDeckDetail } from '../../../client-models/WrDeckDetail';
+import { WrRoom } from '../../../client-models/WrRoom';
+import { DeckDetail, DeckDetailVariables } from './gqlTypes/DeckDetail';
+import { RoomCreate, RoomCreateVariables } from './gqlTypes/RoomCreate';
 
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
@@ -20,26 +24,14 @@ import WrDeckDetailSH from './WrDeckDetailSH';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrDeckDetail, IWrDeckDetail } from '../../../client-models/WrDeckDetail';
-import { WrRoom, IWrRoom } from '../../../client-models/WrRoom';
-import { IRoomConfig } from '../../../client-models/WrRoomStub';
-
 const DECK_DETAIL_QUERY = gql`
 ${WrDeckDetail}
-query Deck($deckId: ID!) {
+query DeckDetail($deckId: ID!) {
   rwDeck(id: $deckId) {
     ...WrDeckDetail
   }
 }
 `;
-
-interface DeckDetailVariables {
-  readonly deckId: string;
-}
-
-export interface DeckDetailData {
-  readonly rwDeck: IWrDeckDetail | null;
-}
 
 const ROOM_CREATE_MUTATION = gql`
 ${WrRoom}
@@ -53,14 +45,6 @@ mutation RoomCreate(
   }
 }
 `;
-
-interface RoomCreateVariables {
-  readonly config: IRoomConfig;
-}
-
-interface RoomCreateData {
-  readonly rwRoomCreate: IWrRoom | null;
-}
 
 enum ActiveAction {
   NONE,
@@ -116,21 +100,21 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
   const { history, match } = props;
   const { deckId } = match.params;
   const [activeAction, setActiveAction] = useState(ActiveAction.NONE);
-  const handleCompletedCreateRoom = (roomCreateData: RoomCreateData) => {
-    if (roomCreateData === null || roomCreateData.rwRoomCreate === null) {
+  const handleCompletedCreateRoom = (roomCreate: RoomCreate) => {
+    if (roomCreate === null || roomCreate.rwRoomCreate === null) {
       return;
     }
-    history.push(`/room/${roomCreateData.rwRoomCreate.id}`);
+    history.push(`/room/${roomCreate.rwRoomCreate.id}`);
   };
   const {
     loading, error, data, subscribeToMore,
-  } = useQuery<DeckDetailData, DeckDetailVariables>(DECK_DETAIL_QUERY, {
+  } = useQuery<DeckDetail, DeckDetailVariables>(DECK_DETAIL_QUERY, {
     variables: { deckId },
     onError: printApolloError,
   });
   const [
     mutate, { loading: createRoomLoading },
-  ] = useMutation<RoomCreateData, RoomCreateVariables>(
+  ] = useMutation<RoomCreate, RoomCreateVariables>(
       ROOM_CREATE_MUTATION, {
       onError: printApolloError,
       onCompleted: handleCompletedCreateRoom,

@@ -3,6 +3,8 @@ import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, Dispatch, SetSt
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { DeckDetail_rwDeck } from './gqlTypes/DeckDetail';
+import { DeckEdit, DeckEditVariables } from './gqlTypes/DeckEdit';
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/form/Button';
@@ -10,7 +12,7 @@ import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
-import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
+import { WrDeck } from '../../../client-models/WrDeck';
 
 const DECK_EDIT_MUTATION = gql`
 ${WrDeck}
@@ -33,20 +35,8 @@ mutation DeckEdit(
 }
 `;
 
-interface DeckEditVariables {
-  readonly id: string;
-  readonly name?: string;
-  readonly nameLang?: string;
-  readonly promptLang?: string;
-  readonly answerLang?: string;
-}
-
-interface DeckEditData {
-  readonly rwDeckEdit: IWrDeck | null;
-}
-
 interface Props {
-  deck: IWrDeck;
+  deck: DeckDetail_rwDeck;
   disabled?: boolean;
 }
 
@@ -98,7 +88,7 @@ const WrDetailSettings = (props: Props) => {
   const [nameLangInput, setNameLangInput] = useState(nameLang);
   const [promptLangInput, setPromptLangInput] = useState(promptLang);
   const [answerLangInput, setAnswerLangInput] = useState(answerLang);
-  const [mutate, { loading }] = useMutation<DeckEditData, DeckEditVariables>(
+  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(
     DECK_EDIT_MUTATION, {
       onError: printApolloError,
     },

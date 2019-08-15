@@ -4,11 +4,13 @@ import { gql } from 'graphql.macro';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
+import { CardsUpdates_rwCardsUpdatesOfDeck_new } from './gqlTypes/CardsUpdates';
+import { DeckUpdates_rwDeckUpdates_new } from './gqlTypes/DeckUpdates';
 
-import { WrDeckDetail, IWrDeckDetail } from '../../../client-models/WrDeckDetail';
-import { DeckDetailData } from './WrDeckDetail';
+import { WrDeckDetail } from '../../../client-models/WrDeckDetail';
+import { DeckDetail, DeckDetail_rwDeck_cards } from './gqlTypes/DeckDetail';
 import { MutationType, Payload } from '../../../types';
-import { WrCard, IWrCard } from '../../../client-models/WrCard';
+import { WrCard } from '../../../client-models/WrCard';
 
 const CARDS_UPDATES_SUBSCRIPTION = gql`
 ${WrCard}
@@ -27,7 +29,7 @@ interface CardsUpdatesVariables {
   readonly deckId: string;
 }
 
-type CardUpdatesPayload = Payload<IWrCard>;
+type CardUpdatesPayload = Payload<CardsUpdates_rwCardsUpdatesOfDeck_new>;
 
 interface CardsUpdatesData {
   readonly rwCardsUpdatesOfDeck: CardUpdatesPayload;
@@ -50,7 +52,7 @@ interface DeckUpdatesVariables {
   readonly id: string;
 }
 
-type DeckUpdatesPayload = Payload<IWrDeckDetail>;
+type DeckUpdatesPayload = Payload<DeckUpdates_rwDeckUpdates_new>;
 
 interface DeckUpdatesData {
   readonly rwDeckUpdates: DeckUpdatesPayload;
@@ -58,11 +60,11 @@ interface DeckUpdatesData {
 
 interface Props {
   subscribeToMore: ((options: SubscribeToMoreOptions<
-    DeckDetailData,
+    DeckDetail,
     CardsUpdatesVariables,
     CardsUpdatesData
   >) => () => void) & ((options: SubscribeToMoreOptions<
-    DeckDetailData,
+    DeckDetail,
     DeckUpdatesVariables,
     DeckUpdatesData
   >) => () => void);
@@ -79,7 +81,7 @@ class WrDeckDetailSH extends PureComponent<Props> {
   private subscribeToCardsUpdatesOfDeck = () => {
     const { subscribeToMore, deckId } = this.props;
     const updateQuery: UpdateQueryFn<
-      DeckDetailData,
+      DeckDetail,
       CardsUpdatesVariables,
       CardsUpdatesData
     > = (
@@ -90,12 +92,12 @@ class WrDeckDetailSH extends PureComponent<Props> {
       switch (rwCardsUpdatesOfDeck.mutation) {
         case MutationType.CREATED:
           // https://github.com/apollographql/react-apollo/issues/2656
-          cards = [rwCardsUpdatesOfDeck.new].concat(cards.filter((card: IWrCard) => {
+          cards = [rwCardsUpdatesOfDeck.new].concat(cards.filter((card) => {
             return card.id !== rwCardsUpdatesOfDeck.new.id;
           }));
           break;
         case MutationType.UPDATED:
-          cards = cards.map((card: IWrCard) => {
+          cards = cards.map((card) => {
             if (card.id !== rwCardsUpdatesOfDeck.new.id) {
               return card;
             }
@@ -103,7 +105,7 @@ class WrDeckDetailSH extends PureComponent<Props> {
           });
           break;
         case MutationType.DELETED:
-          cards = cards.filter((card: IWrCard) => {
+          cards = cards.filter((card) => {
             return card.id !== rwCardsUpdatesOfDeck.oldId;
           });
           break;
@@ -124,7 +126,7 @@ class WrDeckDetailSH extends PureComponent<Props> {
   private subscribeToDeckUpdates = () => {
     const { subscribeToMore, deckId } = this.props;
     const updateQuery: UpdateQueryFn<
-      DeckDetailData,
+      DeckDetail,
       DeckUpdatesVariables,
       DeckUpdatesData
     > = (

@@ -4,6 +4,8 @@ import Papa from 'papaparse';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
+import { WrDeck } from '../../client-models/WrDeck';
+import { DeckCreateFromRows, DeckCreateFromRowsVariables } from './gqlTypes/DeckCreateFromRows';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
@@ -14,11 +16,9 @@ import TextInput from '../../ui/form/TextInput';
 import { Button } from '../../ui/form/Button';
 import HDivider from '../../ui/HDivider';
 
-import { WrDeck, IWrDeck } from '../../client-models/WrDeck';
-
-const DECK_CREATE_FROM_CSV_MUTATION = gql`
+const DECK_CREATE_FROM_ROWS_MUTATION = gql`
 ${WrDeck}
-mutation DeckCreateFromCsv(
+mutation DeckCreateFromRows(
     $name: String
     $nameLang: String
     $promptLang: String
@@ -36,18 +36,6 @@ mutation DeckCreateFromCsv(
   }
 }
 `;
-
-interface DeckCreateFromCsvVariables {
-  readonly name?: string;
-  readonly nameLang?: string;
-  readonly promptLang?: string;
-  readonly answerLang?: string;
-  readonly rows: string[][];
-}
-
-interface DeckCreateFromCsvData {
-  readonly rwDeckCreate: IWrDeck | null;
-}
 
 enum DraggedFileStatus {
   NONE,
@@ -134,8 +122,8 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
   const dropDivEl = useRef<HTMLDivElement>(null);
   const [
     mutate, { loading },
-  ] = useMutation<DeckCreateFromCsvData, DeckCreateFromCsvVariables>(
-    DECK_CREATE_FROM_CSV_MUTATION, {
+  ] = useMutation<DeckCreateFromRows, DeckCreateFromRowsVariables>(
+    DECK_CREATE_FROM_ROWS_MUTATION, {
       onError: printApolloError,
     },
   );
@@ -228,8 +216,8 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
           rows,
         },
       }).then((res) => {
-        if (res && res.data && res.data.rwDeckCreate && res.data.rwDeckCreate.id) {
-          history.push(`/deck/${res.data.rwDeckCreate.id}`);
+        if (res && res.data && res.data.rwDeckCreateFromRows && res.data.rwDeckCreateFromRows.id) {
+          history.push(`/deck/${res.data.rwDeckCreateFromRows.id}`);
         }
       });
     }

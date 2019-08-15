@@ -6,8 +6,9 @@ import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 
 import { MutationType, Payload } from '../../../types';
-import { WrDeck, IWrDeck } from '../../../client-models/WrDeck';
-import { OwnDecksData } from './WrOwnDecks';
+import { WrDeck } from '../../../client-models/WrDeck';
+import { OwnDecks } from './gqlTypes/OwnDecks';
+import { OwnDecksUpdates_rwOwnDecksUpdates_new } from './gqlTypes/OwnDecksUpdates';
 
 const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
 ${WrDeck}
@@ -24,7 +25,7 @@ subscription OwnDecksUpdates {
 
 export type OwnDecksUpdatesVariables = object;
 
-export type WrDeckUpdatesPayload = Payload<IWrDeck>;
+export type WrDeckUpdatesPayload = Payload<OwnDecksUpdates_rwOwnDecksUpdates_new>;
 
 export interface OwnDecksUpdatesData {
   readonly rwOwnDecksUpdates: WrDeckUpdatesPayload;
@@ -32,14 +33,14 @@ export interface OwnDecksUpdatesData {
 
 interface Props {
   subscribeToMore: (options: SubscribeToMoreOptions<
-    OwnDecksData, OwnDecksUpdatesVariables, OwnDecksUpdatesData
+    OwnDecks, OwnDecksUpdatesVariables, OwnDecksUpdatesData
   >) => () => void;
 }
 
 class WrOwnDecksSH extends PureComponent<Props> {
   public readonly componentDidMount = () => {
     const { subscribeToMore } = this.props;
-    const updateQuery: UpdateQueryFn<OwnDecksData, OwnDecksUpdatesVariables, OwnDecksUpdatesData> = (
+    const updateQuery: UpdateQueryFn<OwnDecks, OwnDecksUpdatesVariables, OwnDecksUpdatesData> = (
       prev, { subscriptionData },
     ) => {
       let decks = prev.rwOwnDecks || [];
@@ -47,12 +48,12 @@ class WrOwnDecksSH extends PureComponent<Props> {
       switch (rwOwnDecksUpdates.mutation) {
         case MutationType.CREATED:
           // https://github.com/apollographql/react-apollo/issues/2656
-          decks = [rwOwnDecksUpdates.new].concat(decks.filter((deck: IWrDeck) => {
+          decks = [rwOwnDecksUpdates.new].concat(decks.filter((deck) => {
             return deck.id !== rwOwnDecksUpdates.new.id;
           }));
           break;
         case MutationType.UPDATED:
-          decks = decks.map((deck: IWrDeck) => {
+          decks = decks.map((deck) => {
             if (deck.id !== rwOwnDecksUpdates.new.id) {
               return deck;
             }
@@ -60,14 +61,14 @@ class WrOwnDecksSH extends PureComponent<Props> {
           });
           break;
         case MutationType.DELETED:
-          decks = decks.filter((deck: IWrDeck) => {
+          decks = decks.filter((deck) => {
             return deck.id !== rwOwnDecksUpdates.oldId;
           });
           break;
         default:
           throw new Error('Invalid MutationType');
       }
-      return Object.assign<object, OwnDecksData, OwnDecksData>(
+      return Object.assign<object, OwnDecks, OwnDecks>(
         {}, prev, { rwOwnDecks: decks },
       );
     };

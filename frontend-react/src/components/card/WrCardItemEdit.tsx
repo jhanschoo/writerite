@@ -4,7 +4,9 @@ import { Plus, X } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard, IWrCard } from '../../client-models/WrCard';
+import { WrCard } from '../../client-models/WrCard';
+import { WrCard as IWrCard } from '../../client-models/gqlTypes/WrCard';
+import { CardEditVariables, CardEdit } from './gqlTypes/CardEdit';
 
 import styled, { StyledComponent } from 'styled-components';
 import TextInput from '../../ui/form/TextInput';
@@ -32,19 +34,6 @@ mutation CardEdit(
   }
 }
 `;
-
-interface CardEditVariables {
-  readonly id: string;
-  readonly prompt?: string;
-  readonly fullAnswer?: string;
-  readonly sortKey?: string;
-  readonly answers?: string[];
-  readonly template?: boolean;
-}
-
-interface CardEditData {
-  readonly rwCardEdit: IWrCard | null;
-}
 
 interface Props {
   toggleEdit: () => void;
@@ -205,7 +194,7 @@ const WrCardItemEdit = (props: Props) => {
       </DeleteAnswerButton>
     </AnswersP>
   ));
-  const [mutate, { loading }] = useMutation<CardEditData, CardEditVariables>(
+  const [mutate, { loading }] = useMutation<CardEdit, CardEditVariables>(
     CARD_EDIT_MUTATION, {
       onError: printApolloError,
     },

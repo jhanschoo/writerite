@@ -3,6 +3,8 @@ import React, { useState, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { DeckDetail_rwDeck } from './gqlTypes/DeckDetail';
+import { DeckDelete, DeckDeleteVariables } from './gqlTypes/DeckDelete';
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/form/Button';
@@ -10,24 +12,14 @@ import TextInput from '../../../ui/form/TextInput';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { IWrDeck } from '../../../client-models/WrDeck';
-
 const DECK_DELETE_MUTATION = gql`
 mutation DeckDelete($id: ID!) {
   rwDeckDelete(id: $id)
 }
 `;
 
-interface DeckDeleteVariables {
-  readonly id: string;
-}
-
-interface DeckDeleteData {
-  readonly rwDeckDelete: string | null;
-}
-
 interface OwnProps {
-  deck: IWrDeck;
+  deck: DeckDetail_rwDeck;
   disabled?: boolean;
 }
 
@@ -65,10 +57,10 @@ const WrDeckDetailDeletePrompt = (props: Props) => {
   const handleDeleteCompleted = () => {
     history.push('/deck');
   };
-  const [mutate, { loading }] = useMutation<DeckDeleteData, DeckDeleteVariables>(
+  const [mutate, { loading }] = useMutation<DeckDelete, DeckDeleteVariables>(
     DECK_DELETE_MUTATION, {
       onError: printApolloError,
-      onCompleted: handleDeleteCompleted
+      onCompleted: handleDeleteCompleted,
     },
   );
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
