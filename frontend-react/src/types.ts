@@ -3,34 +3,22 @@ export interface User {
   readonly email: string;
 }
 
-export enum MutationType {
-  CREATED = 'CREATED',
-  UPDATED = 'UPDATED',
-  DELETED = 'DELETED',
-}
-
 export interface Created<T> {
-  readonly mutation: MutationType.CREATED;
-  readonly new: T;
-  readonly oldId: null;
+  readonly created: T;
 }
 
 export interface Updated<T> {
-  readonly mutation: MutationType.UPDATED;
-  readonly new: T;
-  readonly oldId: null;
+  readonly updated: T;
 }
 
-export interface Deleted {
-  readonly mutation: MutationType.DELETED;
-  readonly new: null;
-  readonly oldId: string;
+export interface Deleted<T> {
+  readonly deletedId: string;
 }
 
 export type Payload<T> =
   | Created<T>
   | Updated<T>
-  | Deleted
+  | Deleted<T>
   ;
 
 export type FixRef<T extends { ref?: any }> = Omit<T, 'ref'> & { ref?: Exclude<T['ref'], string> };

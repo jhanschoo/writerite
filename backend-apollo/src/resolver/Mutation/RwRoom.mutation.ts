@@ -1,6 +1,6 @@
 import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
-import { IContext, MutationType, ICreatedUpdate, IUpdatedUpdate, Roles } from '../../types';
+import { IContext, ICreatedUpdate, IUpdatedUpdate } from '../../types';
 
 import { rwRoomTopic } from '../Subscription/RwRoom.subscription';
 import { rwAuthenticationError } from '../../util';
@@ -21,11 +21,7 @@ const rwRoomCreate: IFieldResolver<any, IContext, {
     return null;
   }
   const sRoom = await models.SRoom.create(prisma, { userId: sub.id, config });
-  const pRoomUpdate: ICreatedUpdate<ISRoom> = {
-    mutation: MutationType.CREATED,
-    new: sRoom,
-    oldId: null,
-  };
+  const pRoomUpdate: ICreatedUpdate<ISRoom> = { created: sRoom };
   redisClient.publish('writerite:room:serving', `${sRoom.id}:${JSON.stringify(config)}`);
   pubsub.publish(rwRoomTopic(sRoom.id), pRoomUpdate);
   return models.RwRoom.fromSRoom(prisma, sRoom);
@@ -50,11 +46,7 @@ const rwRoomUpdateConfig: IFieldResolver<any, IContext, {
   if (!sRoom) {
     return sRoom;
   }
-  const sRoomUpdate: IUpdatedUpdate<ISRoom> = {
-    mutation: MutationType.UPDATED,
-    new: sRoom,
-    oldId: null,
-  };
+  const sRoomUpdate: IUpdatedUpdate<ISRoom> = { updated: sRoom };
   redisClient.publish(`writerite:room::${id}`, JSON.stringify({
     type: 'CONFIG',
     senderId: sub.id,
@@ -79,11 +71,7 @@ const rwRoomAddOccupant: IFieldResolver<any, IContext, {
   if (!sRoom) {
     return sRoom;
   }
-  const sRoomUpdate: IUpdatedUpdate<ISRoom> = {
-    mutation: MutationType.UPDATED,
-    new: sRoom,
-    oldId: null,
-  };
+  const sRoomUpdate: IUpdatedUpdate<ISRoom> = { updated: sRoom };
   pubsub.publish(rwRoomTopic(sRoom.id), sRoomUpdate);
   return models.RwRoom.fromSRoom(prisma, sRoom);
 };
@@ -104,11 +92,7 @@ const rwRoomDeactivate: IFieldResolver<any, IContext, {
     return null;
   }
   const sRoom = await models.SRoom.deactivate(prisma, { id: sub.id });
-  const sRoomUpdate: IUpdatedUpdate<ISRoom> = {
-    mutation: MutationType.UPDATED,
-    new: sRoom,
-    oldId: null,
-  };
+  const sRoomUpdate: IUpdatedUpdate<ISRoom> = { updated: sRoom };
   pubsub.publish(rwRoomTopic(sRoom.id), sRoomUpdate);
   return models.RwRoom.fromSRoom(prisma, sRoom);
 };

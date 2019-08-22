@@ -26,12 +26,6 @@ export enum AuthorizerType {
   DEVELOPMENT = 'DEVELOPMENT',
 }
 
-export enum MutationType {
-  CREATED = 'CREATED',
-  UPDATED = 'UPDATED',
-  DELETED = 'DELETED',
-}
-
 export enum Roles {
   user = 'user',
   admin = 'admin',
@@ -54,21 +48,15 @@ export interface ICurrentUser {
 }
 
 export interface ICreatedUpdate<T> {
-  mutation: MutationType.CREATED;
-  new: T;
-  oldId: null;
+  created: T;
 }
 
 export interface IUpdatedUpdate<T> {
-  mutation: MutationType.UPDATED;
-  new: T;
-  oldId: null;
+  updated: T;
 }
 
 export interface IDeletedUpdate<T> {
-  mutation: MutationType.DELETED;
-  new: null;
-  oldId: string;
+  deletedId: string;
 }
 
 export type IUpdate<T> =

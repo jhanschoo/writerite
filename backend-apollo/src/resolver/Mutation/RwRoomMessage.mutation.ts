@@ -1,6 +1,6 @@
 import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
-import { MutationType, IContext, Roles, ICreatedUpdate, IUpdatedUpdate } from '../../types';
+import { IContext, Roles, ICreatedUpdate } from '../../types';
 import {
   rwRoomMessagesTopicFromRwRoom,
 } from '../Subscription/RwRoomMessage.subscription';
@@ -28,11 +28,7 @@ const rwRoomMessageCreate: IFieldResolver<any, IContext, {
     content,
     contentType,
   });
-  const sRoomMessageUpdate: ICreatedUpdate<ISRoomMessage> = {
-    mutation: MutationType.CREATED,
-    new: sRoomMessage,
-    oldId: null,
-  };
+  const sRoomMessageUpdate: ICreatedUpdate<ISRoomMessage> = { created: sRoomMessage };
   pubsub.publish(rwRoomMessagesTopicFromRwRoom(roomId), sRoomMessageUpdate);
   if (!isWright) {
     redisClient.publish(`writerite:room::${roomId}`, JSON.stringify({

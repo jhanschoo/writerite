@@ -1,6 +1,6 @@
 import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
-import { IContext, MutationType, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from '../../types';
+import { IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from '../../types';
 
 import { rwCardsTopicFromRwDeck } from '../Subscription/RwCard.subscription';
 import { rwAuthenticationError, rwNotFoundError } from '../../util';
@@ -29,11 +29,7 @@ const rwCardCreate: IFieldResolver<any, IContext, {
   const sCard = await models.SCard.create(prisma, {
     ...params, deckId,
   });
-  const sCardUpdate: ICreatedUpdate<ISCard> = {
-    mutation: MutationType.CREATED,
-    new: sCard,
-    oldId: null,
-  };
+  const sCardUpdate: ICreatedUpdate<ISCard> = { created: sCard };
   pubsub.publish(rwCardsTopicFromRwDeck(deckId), sCardUpdate);
   return models.RwCard.fromSCard(prisma, sCard);
 };
@@ -61,11 +57,7 @@ const rwCardsCreate: IFieldResolver<any, IContext, {
     ...params, deckId,
   });
   sCards.forEach((sCard) => {
-    const sCardUpdate: ICreatedUpdate<ISCard> = {
-      mutation: MutationType.CREATED,
-      new: sCard,
-      oldId: null,
-    };
+    const sCardUpdate: ICreatedUpdate<ISCard> = { created: sCard };
     pubsub.publish(rwCardsTopicFromRwDeck(deckId), sCardUpdate);
   });
   return sCards.map((sCard) => models.RwCard.fromSCard(prisma, sCard));
@@ -99,11 +91,7 @@ const rwCardEdit: IFieldResolver<any, IContext, {
   });
   const rwCard = models.RwCard.fromSCard(prisma, sCard);
   const rwDeck = await rwCard.deck();
-  const sCardUpdate: IUpdatedUpdate<ISCard> = {
-    mutation: MutationType.UPDATED,
-    new: sCard,
-    oldId: null,
-  };
+  const sCardUpdate: IUpdatedUpdate<ISCard> = { updated: sCard };
   pubsub.publish(rwCardsTopicFromRwDeck(rwDeck.id), sCardUpdate);
   return rwCard;
 };
@@ -120,14 +108,10 @@ const rwCardDelete: IFieldResolver<any, IContext, { id: string }> = async (
   if (pDecks.length !== 1) {
     throw rwNotFoundError('card');
   }
-  const oldId = await models.SCard.delete(prisma, id);
-  const sCardUpdate: IDeletedUpdate<ISCard> = {
-    mutation: MutationType.DELETED,
-    new: null,
-    oldId,
-  };
+  const deletedId = await models.SCard.delete(prisma, id);
+  const sCardUpdate: IDeletedUpdate<ISCard> = { deletedId };
   pubsub.publish(rwCardsTopicFromRwDeck(pDecks[0].id), sCardUpdate);
-  return oldId;
+  return deletedId;
 };
 
 export const rwCardMutation: IResolverObject<any, IContext, any> = {

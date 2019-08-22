@@ -1,7 +1,7 @@
 import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
 
 import {
-  MutationType, IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate, IUpload,
+  IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate, IUpload,
 } from '../../types';
 
 import {
@@ -20,11 +20,7 @@ const rwDeckCreate: IFieldResolver<any, IContext, {
     throw rwAuthenticationError();
   }
   const sDeck = await models.SDeck.create(prisma, { ...params, userId: sub.id });
-  const sDeckUpdate: ICreatedUpdate<ISDeck> = {
-    mutation: MutationType.CREATED,
-    new: sDeck,
-    oldId: null,
-  };
+  const sDeckUpdate: ICreatedUpdate<ISDeck> = { created: sDeck };
   pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
   pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
   return models.RwDeck.fromSDeck(prisma, sDeck);
@@ -47,11 +43,7 @@ const rwDeckCreateFromRows: IFieldResolver<any, IContext, {
     ...params,
     userId: sub.id,
   });
-  const sDeckUpdate: ICreatedUpdate<ISDeck> = {
-    mutation: MutationType.CREATED,
-    new: sDeck,
-    oldId: null,
-  };
+  const sDeckUpdate: ICreatedUpdate<ISDeck> = { created: sDeck };
   pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
   pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
   return models.RwDeck.fromSDeck(prisma, sDeck);
@@ -71,11 +63,7 @@ const rwDeckEdit: IFieldResolver<any, IContext, {
     throw rwAuthenticationError();
   }
   const sDeck = await models.SDeck.edit(prisma, { ...params, id });
-  const sDeckUpdate: IUpdatedUpdate<ISDeck> = {
-    mutation: MutationType.UPDATED,
-    new: sDeck,
-    oldId: null,
-  };
+  const sDeckUpdate: IUpdatedUpdate<ISDeck> = { updated: sDeck };
   pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
   pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
   return models.RwDeck.fromSDeck(prisma, sDeck);
@@ -91,15 +79,11 @@ const rwDeckDelete: IFieldResolver<any, IContext, {
   if (!sub) {
     throw rwAuthenticationError();
   }
-  const oldId = await models.SDeck.delete(prisma, id);
-  const sDeckUpdate: IDeletedUpdate<PDeck> = {
-    mutation: MutationType.DELETED,
-    new: null,
-    oldId,
-  };
+  const deletedId = await models.SDeck.delete(prisma, id);
+  const sDeckUpdate: IDeletedUpdate<PDeck> = { deletedId };
   pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
-  pubsub.publish(rwDeckTopic(oldId), sDeckUpdate);
-  return oldId;
+  pubsub.publish(rwDeckTopic(deletedId), sDeckUpdate);
+  return deletedId;
 };
 
 export const rwDeckMutation: IResolverObject<any, IContext, any> = {

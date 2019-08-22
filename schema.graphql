@@ -115,35 +115,25 @@ type Subscription {
   rwRoomMessagesUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
 }
 
-enum RwMutationType {
-  CREATED
-  UPDATED
-  DELETED
-}
+type RwDeckCreated { created: RwDeck }
+type RwDeckUpdated { updated: RwDeck }
+type RwDeckDeleted { oldId: ID }
+union RwDeckUpdate = RwDeckCreated | RwDeckUpdated | RwDeckDeleted
 
-type RwDeckUpdate {
-  mutation: RwMutationType!
-  new: RwDeck
-  oldId: ID
-}
+type RwCardCreated { created: RwCard }
+type RwCardUpdated { updated: RwCard}
+type RwCardDeleted { deletedId: ID }
+union RwCardUpdate = RwCardCreated | RwCardUpdated | RwCardDeleted
 
-type RwCardUpdate {
-  mutation: RwMutationType!
-  new: RwCard
-  oldId: ID
-}
+type RwRoomMessageCreated { created: RwRoomMessage }
+type RwRoomMessageUpdated { updated: RwRoomMessage }
+type RwRoomMessageDeleted { deletedId: ID }
+union RwRoomMessageUpdate = RwRoomMessageCreated | RwRoomMessageUpdated | RwRoomMessageDeleted
 
-type RwRoomMessageUpdate {
-  mutation: RwMutationType!
-  new: RwRoomMessage
-  oldId: ID
-}
-
-type RwRoomUpdate {
-  mutation: RwMutationType!
-  new: RwRoom
-  oldId: ID
-}
+type RwRoomCreated { created: RwRoom }
+type RwRoomUpdated { updated: RwRoom }
+type RwRoomDeleted { deletedId: ID }
+union RwRoomUpdate = RwRoomCreated | RwRoomUpdated | RwRoomDeleted
 
 # RwDeck
 
