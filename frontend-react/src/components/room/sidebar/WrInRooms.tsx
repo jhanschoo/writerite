@@ -3,6 +3,7 @@ import React from 'react';
 import { gql } from 'graphql.macro';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { InRooms } from './gqlTypes/InRooms';
 
 import styled from 'styled-components';
 import FlexSection from '../../../ui/FlexSection';
@@ -10,23 +11,17 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { WrRoomStub, IWrRoomStub } from '../../../client-models/WrRoomStub';
+import { WR_ROOM_STUB } from '../../../client-models/WrRoomStub';
 import WrRoomList from './WrRoomList';
 
 const IN_ROOMS_QUERY = gql`
-${WrRoomStub}
+${WR_ROOM_STUB}
 query InRooms {
   rwInRooms {
     ...WrRoomStub
   }
 }
 `;
-
-type InRoomsVariables = object;
-
-interface InRoomsData {
-  rwInRooms: IWrRoomStub[] | null;
-}
 
 const PaddedItem = styled(Item)`
   padding: ${({ theme }) => theme.space[2]}
@@ -35,7 +30,7 @@ const PaddedItem = styled(Item)`
 const WrInRooms = () => {
   const {
     loading, error, data,
-  } = useQuery<InRoomsData, InRoomsVariables>(IN_ROOMS_QUERY, {
+  } = useQuery<InRooms, object>(IN_ROOMS_QUERY, {
     onError: printApolloError,
   });
   if (error) {

@@ -4,16 +4,17 @@ import { Send } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { RoomMessageCreate, RoomMessageCreateVariables } from './gqlTypes/RoomMessageCreate';
+import { RwRoomMessageContentType } from '../../../gqlGlobalTypes';
 
 import styled from 'styled-components';
 import TextInput from '../../../ui/form/TextInput';
 import { BorderlessButton } from '../../../ui/form/Button';
 
-import { WrRoomMessage, IWrRoomMessage } from '../../../client-models/WrRoomMessage';
-import { WrRoomMessageContentType } from '../../../client-models/WrRoomMessageStub';
+import { WR_ROOM_MESSAGE } from '../../../client-models/WrRoomMessage';
 
 const ROOM_MESSAGE_CREATE_MUTATION = gql`
-${WrRoomMessage}
+${WR_ROOM_MESSAGE}
 mutation RoomMessageCreate(
   $roomId: ID!
   $content: String!
@@ -28,16 +29,6 @@ mutation RoomMessageCreate(
   }
 }
 `;
-
-interface RoomMessageCreateVariables {
-  readonly roomId: string;
-  readonly content: string;
-  readonly contentType: WrRoomMessageContentType;
-}
-
-interface RoomMessageCreateData {
-  readonly rwRoomMessageCreate: IWrRoomMessage | null;
-}
 
 interface Props {
   roomId: string;
@@ -63,7 +54,7 @@ const WrRoomDetailInput = (props: Props) => {
   const [contentInput, setContentInput] = useState('');
   const [
     mutate, { loading },
-  ] = useMutation<RoomMessageCreateData, RoomMessageCreateVariables>(
+  ] = useMutation<RoomMessageCreate, RoomMessageCreateVariables>(
     ROOM_MESSAGE_CREATE_MUTATION, {
       onError: printApolloError,
     },
@@ -74,7 +65,7 @@ const WrRoomDetailInput = (props: Props) => {
       variables: {
         roomId,
         content: contentInput,
-        contentType: WrRoomMessageContentType.TEXT,
+        contentType: RwRoomMessageContentType.TEXT,
       },
     }).then(() => setContentInput(''));
   };

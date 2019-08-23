@@ -6,17 +6,18 @@ import { WrState } from '../../../store';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { RoomUpdateConfig, RoomUpdateConfigVariables } from './gqlTypes/RoomUpdateConfig';
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 import HDivider from '../../../ui/HDivider';
 
-import { WrRoomStub, IWrRoomStub, IRoomConfig } from '../../../client-models/WrRoomStub';
-import { IWrRoomDetail } from '../../../client-models/WrRoomDetail';
+import { WR_ROOM_STUB } from '../../../client-models/WrRoomStub';
+import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 
 const ROOM_UPDATE_CONFIG_MUTATION = gql`
-${WrRoomStub}
+${WR_ROOM_STUB}
 mutation RoomUpdateConfig(
   $id: ID!
   $config: IRoomConfigInput!
@@ -30,21 +31,12 @@ mutation RoomUpdateConfig(
 }
 `;
 
-interface RoomUpdateConfigVariables {
-  readonly id: string;
-  readonly config: IRoomConfig;
-}
-
-interface RoomUpdateConfigData {
-  readonly rwRoomUpdateConfig: IWrRoomStub | null;
-}
-
 interface StateProps {
   id?: string;
 }
 
 interface OwnProps {
-  room: IWrRoomDetail;
+  room: WrRoomDetail;
 }
 
 const StyledForm = styled.form``;
@@ -77,7 +69,7 @@ const WrRoomConfig = (props: Props) => {
   const [roundLengthInput, setRoundLength] = useState<string>('20');
   const [
     mutate, { loading },
-  ] = useMutation<RoomUpdateConfigData, RoomUpdateConfigVariables>(
+  ] = useMutation<RoomUpdateConfig, RoomUpdateConfigVariables>(
     ROOM_UPDATE_CONFIG_MUTATION, {
       onError: printApolloError,
     },

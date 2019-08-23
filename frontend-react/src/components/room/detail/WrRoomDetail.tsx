@@ -3,6 +3,7 @@ import React from 'react';
 import { gql } from 'graphql.macro';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { RoomDetail, RoomDetailVariables } from './gqlTypes/RoomDetail';
 
 import styled from 'styled-components';
 import FlexMain from '../../../ui/layout/FlexMain';
@@ -10,7 +11,7 @@ import HDivider from '../../../ui/HDivider';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrRoomDetail, IWrRoomDetail } from '../../../client-models/WrRoomDetail';
+import { WR_ROOM_DETAIL } from '../../../client-models/WrRoomDetail';
 import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomConfig from './WrRoomConfig';
@@ -20,7 +21,7 @@ import WrRoomMessageTextItem from '../../room-message/WrRoomMessageTextItem';
 import WrRoomConversationBox from './WrRoomConversationBox';
 
 const ROOM_DETAIL_QUERY = gql`
-${WrRoomDetail}
+${WR_ROOM_DETAIL}
 query RoomDetail(
   $id: ID!
 ) {
@@ -29,14 +30,6 @@ query RoomDetail(
   }
 }
 `;
-
-export interface RoomDetailVariables {
-  readonly id: string;
-}
-
-export interface RoomDetailData {
-  readonly rwRoom: IWrRoomDetail | null;
-}
 
 const CenteredP = styled.p`
   text-align: center;
@@ -58,7 +51,7 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
   const { roomId } = match.params;
   const {
     subscribeToMore, loading, error, data,
-  } = useQuery<RoomDetailData, RoomDetailVariables>(ROOM_DETAIL_QUERY, {
+  } = useQuery<RoomDetail, RoomDetailVariables>(ROOM_DETAIL_QUERY, {
     variables: { id: roomId },
     onError: printApolloError,
   });
@@ -107,7 +100,8 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
       <FlexMain>
         <Header>
           <RoomHeading>
-            {room.owner.email} is hosting <span lang={config.deckNameLang}>{config.deckName}</span>
+            {room.owner.email} is hosting
+            <span lang={config.deckNameLang ? config.deckNameLang : undefined}>{config.deckName}</span>
           </RoomHeading>
         </Header>
         <HDivider />

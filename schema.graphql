@@ -117,11 +117,11 @@ type Subscription {
 
 type RwDeckCreated { created: RwDeck }
 type RwDeckUpdated { updated: RwDeck }
-type RwDeckDeleted { oldId: ID }
+type RwDeckDeleted { deletedId: ID }
 union RwDeckUpdate = RwDeckCreated | RwDeckUpdated | RwDeckDeleted
 
 type RwCardCreated { created: RwCard }
-type RwCardUpdated { updated: RwCard}
+type RwCardUpdated { updated: RwCard }
 type RwCardDeleted { deletedId: ID }
 union RwCardUpdate = RwCardCreated | RwCardUpdated | RwCardDeleted
 

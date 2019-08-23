@@ -1,7 +1,7 @@
 import { gql } from 'graphql.macro';
 
 // tslint:disable-next-line: variable-name
-export const WrDeckStub = gql`
+export const WR_DECK_STUB = gql`
 fragment WrDeckStub on RwDeck {
   id
   name
@@ -10,11 +10,3 @@ fragment WrDeckStub on RwDeck {
   answerLang
 }
 `;
-
-export interface IWrDeckStub {
-  readonly id: string;
-  readonly name: string;
-  readonly nameLang: string;
-  readonly promptLang: string;
-  readonly answerLang: string;
-}

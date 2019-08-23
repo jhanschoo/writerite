@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { IWrRoomDetail } from '../../../client-models/WrRoomDetail';
+import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 
 import WrSidebarMenu from '../../sidebar-menu/WrSidebarMenu';
 import WrInRooms from './WrInRooms';
 
 interface Props {
-  readonly room?: IWrRoomDetail;
+  readonly room?: WrRoomDetail;
 }
 
 const WrRoomSidebar = (props: Props) => {

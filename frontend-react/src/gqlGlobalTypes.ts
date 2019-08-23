@@ -6,12 +6,6 @@
 // START Enums and Input Objects
 //==============================================================
 
-export enum RwMutationType {
-  CREATED = "CREATED",
-  DELETED = "DELETED",
-  UPDATED = "UPDATED",
-}
-
 export enum RwRoomMessageContentType {
   CONFIG = "CONFIG",
   TEXT = "TEXT",

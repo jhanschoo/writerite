@@ -3,7 +3,7 @@ import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, Dispatch, SetSt
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { DeckDetail_rwDeck } from './gqlTypes/DeckDetail';
+import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { DeckEdit, DeckEditVariables } from './gqlTypes/DeckEdit';
 
 import styled from 'styled-components';
@@ -12,10 +12,10 @@ import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
-import { WrDeck } from '../../../client-models/WrDeck';
+import { WR_DECK } from '../../../client-models/WrDeck';
 
 const DECK_EDIT_MUTATION = gql`
-${WrDeck}
+${WR_DECK}
 mutation DeckEdit(
     $id: ID!
     $name: String
@@ -36,7 +36,7 @@ mutation DeckEdit(
 `;
 
 interface Props {
-  deck: DeckDetail_rwDeck;
+  deck: WrDeckDetail;
   disabled?: boolean;
 }
 

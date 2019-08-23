@@ -1,7 +1,7 @@
 import { gql } from 'graphql.macro';
 
 // tslint:disable-next-line: variable-name
-export const WrUserStub = gql`
+export const WR_USER_STUB = gql`
 fragment WrUserStub on RwUser {
   id
   email
@@ -9,10 +9,3 @@ fragment WrUserStub on RwUser {
   roles
 }
 `;
-
-export interface IWrUserStub {
-  readonly id: string;
-  readonly email: string;
-  readonly name?: string;
-  readonly roles: string[];
-}

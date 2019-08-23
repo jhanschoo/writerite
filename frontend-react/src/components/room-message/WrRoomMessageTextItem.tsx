@@ -3,10 +3,10 @@ import React from 'react';
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
 
-import { IWrRoomMessage } from '../../client-models/WrRoomMessage';
+import { WrRoomMessage } from '../../client-models/gqlTypes/WrRoomMessage';
 
 interface Props {
-  message: IWrRoomMessage;
+  message: WrRoomMessage;
 }
 
 const MessageItem = styled(Item)`

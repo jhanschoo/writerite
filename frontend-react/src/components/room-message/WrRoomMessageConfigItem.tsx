@@ -2,10 +2,10 @@ import React from 'react';
 
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
-import { IRoomConfig } from '../../client-models/WrRoomStub';
+import { WrRoomStub_config } from '../../client-models/gqlTypes/WrRoomStub';
 
 interface Props {
-  config: IRoomConfig;
+  config: WrRoomStub_config;
 }
 
 const MessageItem = styled(Item)`
@@ -32,7 +32,7 @@ const WrRoomMessageConfigItem = ({ config }: Props) => {
       <MessageItem>
         <CommentText>
           Hi! We're about to begin a room serving
-          <span lang={deckNameLang}>{' ' + deckName || ' a deck'}</span>.
+          <span lang={deckNameLang || undefined}>{' ' + deckName || ' a deck'}</span>.
           The room owner will now configure how the deck is going to be
           served. They also have the opportunity to invite other
           participants into the room before starting.

@@ -4,13 +4,13 @@ import { Copy } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard } from '../../client-models/WrCard';
+import { WR_CARD } from '../../client-models/WrCard';
 import { CardCreate, CardCreateVariables } from './gqlTypes/CardCreate';
 
 import CardAuxillaryButton from './CardAuxillaryButton';
 
 const CARD_CREATE_MUTATION = gql`
-${WrCard}
+${WR_CARD}
 mutation CardCreate(
   $deckId: ID!,
   $prompt: String!,

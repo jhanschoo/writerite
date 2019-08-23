@@ -4,8 +4,8 @@ import { Plus, X } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard } from '../../client-models/WrCard';
-import { WrCard as IWrCard } from '../../client-models/gqlTypes/WrCard';
+import { WR_CARD } from '../../client-models/WrCard';
+import { WrCard } from '../../client-models/gqlTypes/WrCard';
 import { CardEditVariables, CardEdit } from './gqlTypes/CardEdit';
 
 import styled, { StyledComponent } from 'styled-components';
@@ -13,7 +13,7 @@ import TextInput from '../../ui/form/TextInput';
 import { Button, BorderlessButton } from '../../ui/form/Button';
 
 const CARD_EDIT_MUTATION = gql`
-${WrCard}
+${WR_CARD}
 mutation CardEdit(
   $id: ID!,
   $prompt: String,
@@ -39,7 +39,7 @@ interface Props {
   toggleEdit: () => void;
   promptLang: string;
   answerLang: string;
-  card: IWrCard;
+  card: WrCard;
 }
 
 const StyledFrom = styled.form`

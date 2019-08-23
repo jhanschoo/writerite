@@ -14,7 +14,7 @@ import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
 
-import { IWrUserStub } from '../../client-models/WrUserStub';
+import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
 
@@ -64,7 +64,7 @@ interface DispatchProps {
 }
 
 interface StateProps {
-  user: IWrUserStub | null;
+  user: WrUserStub | null;
 }
 
 interface ThemeProps {

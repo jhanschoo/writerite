@@ -4,8 +4,8 @@ import { Play, Copy, Settings, Trash } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WrDeckDetail } from '../../../client-models/WrDeckDetail';
-import { WrRoom } from '../../../client-models/WrRoom';
+import { WR_DECK_DETAIL } from '../../../client-models/WrDeckDetail';
+import { WR_ROOM } from '../../../client-models/WrRoom';
 import { DeckDetail, DeckDetailVariables } from './gqlTypes/DeckDetail';
 import { RoomCreate, RoomCreateVariables } from './gqlTypes/RoomCreate';
 
@@ -25,7 +25,7 @@ import WrDeckDetailSH from './WrDeckDetailSH';
 import { withRouter, RouteComponentProps } from 'react-router';
 
 const DECK_DETAIL_QUERY = gql`
-${WrDeckDetail}
+${WR_DECK_DETAIL}
 query DeckDetail($deckId: ID!) {
   rwDeck(id: $deckId) {
     ...WrDeckDetail
@@ -34,7 +34,7 @@ query DeckDetail($deckId: ID!) {
 `;
 
 const ROOM_CREATE_MUTATION = gql`
-${WrRoom}
+${WR_ROOM}
 mutation RoomCreate(
   $config: IRoomConfigInput!
 ) {

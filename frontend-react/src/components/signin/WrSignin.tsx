@@ -12,6 +12,7 @@ import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
+import { Signin, SigninVariables } from './gqlTypes/Signin';
 
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
@@ -23,14 +24,15 @@ import SmallMessage from '../../ui/form/SmallMessage';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WrUserStub, IWrUserStub } from '../../client-models/WrUserStub';
+import { WR_USER_STUB } from '../../client-models/WrUserStub';
+import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;
 declare var FBDeferred: Promise<any>;
 
 const SIGNIN_MUTATION = gql`
-${WrUserStub}
+${WR_USER_STUB}
 mutation Signin(
   $email: String! $name: String $token: String! $authorizer: String! $identifier: String!
   ) {
@@ -50,21 +52,9 @@ mutation Signin(
 }
 `;
 
-interface SigninVariables {
-  readonly email: string;
-  readonly name?: string;
-  readonly token: string;
-  readonly authorizer: 'GOOGLE' | 'FACEBOOK' | 'LOCAL' | 'DEVELOPMENT';
-  readonly identifier: string;
-}
-
 export interface UserAndToken {
   readonly token: string;
-  readonly user: IWrUserStub;
-}
-
-interface SigninData {
-  readonly signin: UserAndToken | null;
+  readonly user: WrUserStub;
 }
 
 interface DispatchProps {
@@ -188,7 +178,7 @@ const WrSignin = (props: Props) => {
       });
     }
   }, []);
-  const handleSigninSuccess = ({ signin }: SigninData) => {
+  const handleSigninSuccess = ({ signin }: Signin) => {
     createSignin(signin);
     if (signin) {
       restartWsConnection();
@@ -197,7 +187,7 @@ const WrSignin = (props: Props) => {
       setThirdPartySigninUnderway(false);
     }
   };
-  const [mutate, { loading }] = useMutation<SigninData, SigninVariables>(
+  const [mutate, { loading }] = useMutation<Signin, SigninVariables>(
     SIGNIN_MUTATION, {
       onCompleted: handleSigninSuccess,
       onError: printApolloError,

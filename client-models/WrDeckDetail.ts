@@ -1,11 +1,11 @@
 import { gql } from 'graphql.macro';
-import { WrDeck, IWrDeck } from './WrDeck';
-import { WrCard, IWrCard } from './WrCard';
+import { WR_DECK } from './WrDeck';
+import { WR_CARD } from './WrCard';
 
 // tslint:disable-next-line: variable-name
-export const WrDeckDetail = gql`
-${WrDeck}
-${WrCard}
+export const WR_DECK_DETAIL = gql`
+${WR_DECK}
+${WR_CARD}
 fragment WrDeckDetail on RwDeck {
   ...WrDeck
   cards {
@@ -13,7 +13,3 @@ fragment WrDeckDetail on RwDeck {
   }
 }
 `;
-
-export interface IWrDeckDetail extends IWrDeck {
-  readonly cards: IWrCard[];
-}

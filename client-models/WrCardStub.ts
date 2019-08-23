@@ -1,7 +1,7 @@
 import { gql } from 'graphql.macro';
 
 // tslint:disable-next-line: variable-name
-export const WrCardStub = gql`
+export const WR_CARD_STUB = gql`
 fragment WrCardStub on RwCard {
   id
   prompt
@@ -12,13 +12,3 @@ fragment WrCardStub on RwCard {
   editedAt
 }
 `;
-
-export interface IWrCardStub {
-  readonly id: string;
-  readonly prompt: string;
-  readonly fullAnswer: string;
-  readonly answers: string[];
-  readonly sortKey: string;
-  readonly template: boolean;
-  readonly editedAt: string;
-}

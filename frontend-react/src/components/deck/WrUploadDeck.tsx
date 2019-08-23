@@ -4,7 +4,7 @@ import Papa from 'papaparse';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrDeck } from '../../client-models/WrDeck';
+import { WR_DECK } from '../../client-models/WrDeck';
 import { DeckCreateFromRows, DeckCreateFromRowsVariables } from './gqlTypes/DeckCreateFromRows';
 
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -17,7 +17,7 @@ import { Button } from '../../ui/form/Button';
 import HDivider from '../../ui/HDivider';
 
 const DECK_CREATE_FROM_ROWS_MUTATION = gql`
-${WrDeck}
+${WR_DECK}
 mutation DeckCreateFromRows(
     $name: String
     $nameLang: String

@@ -4,7 +4,7 @@ import { Plus } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WrDeck } from '../../../client-models/WrDeck';
+import { WR_DECK } from '../../../client-models/WrDeck';
 import { DeckCreate, DeckCreateVariables } from './gqlTypes/DeckCreate';
 
 import styled from 'styled-components';
@@ -18,7 +18,7 @@ import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
 const DECK_CREATE_MUTATION = gql`
-${WrDeck}
+${WR_DECK}
 mutation DeckCreate(
     $name: String
     $nameLang: String

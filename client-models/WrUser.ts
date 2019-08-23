@@ -1,11 +1,11 @@
 import { gql } from 'graphql.macro';
-import { WrUserStub, IWrUserStub } from './WrUserStub';
-import { WrDeckStub, IWrDeckStub } from './WrDeckStub';
+import { WR_USER_STUB } from './WrUserStub';
+import { WR_DECK_STUB } from './WrDeckStub';
 
 // tslint:disable-next-line: variable-name
-export const WrUser = gql`
-${WrUserStub}
-${WrDeckStub}
+export const WR_USER = gql`
+${WR_USER_STUB}
+${WR_DECK_STUB}
 fragment WrUser on RwUser {
   ...WrUserStub
   decks {
@@ -13,7 +13,3 @@ fragment WrUser on RwUser {
   }
 }
 `;
-
-export interface IWrUser extends IWrUserStub {
-  readonly decks: IWrDeckStub[];
-}

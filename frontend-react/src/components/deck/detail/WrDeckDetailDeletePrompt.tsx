@@ -3,7 +3,7 @@ import React, { useState, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { DeckDetail_rwDeck } from './gqlTypes/DeckDetail';
+import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { DeckDelete, DeckDeleteVariables } from './gqlTypes/DeckDelete';
 
 import styled from 'styled-components';
@@ -19,7 +19,7 @@ mutation DeckDelete($id: ID!) {
 `;
 
 interface OwnProps {
-  deck: DeckDetail_rwDeck;
+  deck: WrDeckDetail;
   disabled?: boolean;
 }
 

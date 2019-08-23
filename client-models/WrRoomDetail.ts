@@ -1,11 +1,11 @@
 import { gql } from 'graphql.macro';
-import { WrRoom, IWrRoom } from './WrRoom';
-import { WrRoomMessage, IWrRoomMessage } from './WrRoomMessage';
+import { WR_ROOM } from './WrRoom';
+import { WR_ROOM_MESSAGE } from './WrRoomMessage';
 
 // tslint:disable-next-line: variable-name
-export const WrRoomDetail = gql`
-${WrRoom}
-${WrRoomMessage}
+export const WR_ROOM_DETAIL = gql`
+${WR_ROOM}
+${WR_ROOM_MESSAGE}
 fragment WrRoomDetail on RwRoom {
     ...WrRoom
     messages {
@@ -13,7 +13,3 @@ fragment WrRoomDetail on RwRoom {
     }
 }
 `;
-
-export interface IWrRoomDetail extends IWrRoom {
-  readonly messages: IWrRoomMessage[];
-}

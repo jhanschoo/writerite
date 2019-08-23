@@ -1,14 +1,14 @@
 import { gql } from 'graphql.macro';
-import { WrUserStub, IWrUserStub } from './WrUserStub';
-import { WrRoomStub, IWrRoomStub } from './WrRoomStub';
-import { WrRoomMessageStub, IWrRoomMessageStub } from './WrRoomMessageStub';
+import { WR_USER_STUB } from './WrUserStub';
+import { WR_ROOM_STUB } from './WrRoomStub';
+import { WR_ROOM_MESSAGE_STUB } from './WrRoomMessageStub';
 
 // tslint:disable-next-line: variable-name
-export const WrRoomMessage = gql`
-${WrRoomMessageStub}
-${WrUserStub}
-${WrUserStub}
-${WrRoomStub}
+export const WR_ROOM_MESSAGE = gql`
+${WR_ROOM_MESSAGE_STUB}
+${WR_USER_STUB}
+${WR_USER_STUB}
+${WR_ROOM_STUB}
 fragment WrRoomMessage on RwRoomMessage {
   ...WrRoomMessageStub
   sender {
@@ -19,8 +19,3 @@ fragment WrRoomMessage on RwRoomMessage {
   }
 }
 `;
-
-export interface IWrRoomMessage extends IWrRoomMessageStub {
-  readonly sender?: IWrUserStub;
-  readonly room: IWrRoomStub;
-}

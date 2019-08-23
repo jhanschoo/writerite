@@ -4,7 +4,7 @@ import { Plus } from 'react-feather';
 import { gql } from 'graphql.macro';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WrCard } from '../../client-models/WrCard';
+import { WR_CARD } from '../../client-models/WrCard';
 import { CardsCreate, CardsCreateVariables } from './gqlTypes/CardsCreate';
 
 import styled from 'styled-components';
@@ -12,7 +12,7 @@ import { AuxillaryButton } from '../../ui/form/Button';
 import TextInput from '../../ui/form/TextInput';
 
 const CARDS_CREATE_MUTATION = gql`
-${WrCard}
+${WR_CARD}
 mutation CardsCreate(
   $deckId: ID!,
   $prompt: String!,

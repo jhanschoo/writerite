@@ -3,7 +3,7 @@ import React from 'react';
 import { gql } from 'graphql.macro';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WrDeck } from '../../../client-models/WrDeck';
+import { WR_DECK } from '../../../client-models/WrDeck';
 import { OwnDecks } from './gqlTypes/OwnDecks';
 
 import styled from 'styled-components';
@@ -16,7 +16,7 @@ import WrOwnDecksSH from './WrOwnDecksSH';
 import WrDeckList from './WrDeckList';
 
 const OWN_DECKS_QUERY = gql`
-${WrDeck}
+${WR_DECK}
 query OwnDecks {
   rwOwnDecks {
     ...WrDeck

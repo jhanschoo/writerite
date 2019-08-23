@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import { RwRoomMessageContentType } from "./../../../../../gqlTypes/globalTypes";
+import { RwRoomMessageContentType } from "./../../../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL query operation: RoomDetail

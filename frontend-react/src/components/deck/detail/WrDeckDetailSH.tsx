@@ -4,69 +4,64 @@ import { gql } from 'graphql.macro';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
-import { CardsUpdates_rwCardsUpdatesOfDeck_new } from './gqlTypes/CardsUpdates';
-import { DeckUpdates_rwDeckUpdates_new } from './gqlTypes/DeckUpdates';
+import { CardsUpdates, CardsUpdatesVariables } from './gqlTypes/CardsUpdates';
+import { DeckUpdates, DeckUpdatesVariables } from './gqlTypes/DeckUpdates';
 
-import { WrDeckDetail } from '../../../client-models/WrDeckDetail';
-import { DeckDetail, DeckDetail_rwDeck_cards } from './gqlTypes/DeckDetail';
-import { MutationType, Payload } from '../../../types';
-import { WrCard } from '../../../client-models/WrCard';
+import { WR_DECK_DETAIL } from '../../../client-models/WrDeckDetail';
+import { DeckDetail } from './gqlTypes/DeckDetail';
+import { WR_CARD } from '../../../client-models/WrCard';
 
 const CARDS_UPDATES_SUBSCRIPTION = gql`
-${WrCard}
+${WR_CARD}
 subscription CardsUpdates($deckId: ID!) {
   rwCardsUpdatesOfDeck(deckId: $deckId) {
-    mutation
-    new {
-      ...WrCard
+    ... on RwCardCreated {
+      created {
+        ...WrCard
+      }
     }
-    oldId
+    ... on RwCardUpdated {
+      updated {
+        ...WrCard
+      }
+    }
+    ... on RwCardDeleted {
+      deletedId
+    }
   }
 }
 `;
-
-interface CardsUpdatesVariables {
-  readonly deckId: string;
-}
-
-type CardUpdatesPayload = Payload<CardsUpdates_rwCardsUpdatesOfDeck_new>;
-
-interface CardsUpdatesData {
-  readonly rwCardsUpdatesOfDeck: CardUpdatesPayload;
-}
 
 const DECK_UPDATES_SUBSCRIPTION = gql`
-${WrDeckDetail}
+${WR_DECK_DETAIL}
 subscription DeckUpdates($id: ID!) {
   rwDeckUpdates(id: $id) {
-    mutation
-    new {
-      ...WrDeckDetail
+    ... on RwDeckCreated {
+      created {
+        ...WrDeckDetail
+      }
     }
-    oldId
+    ... on RwDeckUpdated {
+      updated {
+        ...WrDeckDetail
+      }
+    }
+    ... on RwDeckDeleted {
+      deletedId
+    }
   }
 }
 `;
-
-interface DeckUpdatesVariables {
-  readonly id: string;
-}
-
-type DeckUpdatesPayload = Payload<DeckUpdates_rwDeckUpdates_new>;
-
-interface DeckUpdatesData {
-  readonly rwDeckUpdates: DeckUpdatesPayload;
-}
 
 interface Props {
   subscribeToMore: ((options: SubscribeToMoreOptions<
     DeckDetail,
     CardsUpdatesVariables,
-    CardsUpdatesData
+    CardsUpdates
   >) => () => void) & ((options: SubscribeToMoreOptions<
     DeckDetail,
     DeckUpdatesVariables,
-    DeckUpdatesData
+    DeckUpdates
   >) => () => void);
   deckId: string;
 }
@@ -74,6 +69,7 @@ interface Props {
 class WrDeckDetailSH extends PureComponent<Props> {
   public readonly componentDidMount = () => {
     this.subscribeToCardsUpdatesOfDeck();
+    this.subscribeToDeckUpdates();
   }
 
   public readonly render = () => null;
@@ -83,34 +79,32 @@ class WrDeckDetailSH extends PureComponent<Props> {
     const updateQuery: UpdateQueryFn<
       DeckDetail,
       CardsUpdatesVariables,
-      CardsUpdatesData
+      CardsUpdates
     > = (
       prev, { subscriptionData },
     ) => {
-      let cards = (prev.rwDeck) ? prev.rwDeck.cards : [];
+      let cards = (prev.rwDeck) ? [...prev.rwDeck.cards] : [];
       const { rwCardsUpdatesOfDeck } = subscriptionData.data;
-      switch (rwCardsUpdatesOfDeck.mutation) {
-        case MutationType.CREATED:
-          // https://github.com/apollographql/react-apollo/issues/2656
-          cards = [rwCardsUpdatesOfDeck.new].concat(cards.filter((card) => {
-            return card.id !== rwCardsUpdatesOfDeck.new.id;
-          }));
-          break;
-        case MutationType.UPDATED:
-          cards = cards.map((card) => {
-            if (card.id !== rwCardsUpdatesOfDeck.new.id) {
-              return card;
-            }
-            return rwCardsUpdatesOfDeck.new;
-          });
-          break;
-        case MutationType.DELETED:
-          cards = cards.filter((card) => {
-            return card.id !== rwCardsUpdatesOfDeck.oldId;
-          });
-          break;
-        default:
-          throw new Error('Invalid MutationType');
+      if ('created' in rwCardsUpdatesOfDeck && rwCardsUpdatesOfDeck.created) {
+        const { created } = rwCardsUpdatesOfDeck;
+        cards = [created].concat(cards.filter((card) => {
+          return card.id !== created.id;
+        }));
+      }
+      if ('updated' in rwCardsUpdatesOfDeck && rwCardsUpdatesOfDeck.updated) {
+        const { updated } = rwCardsUpdatesOfDeck;
+        cards = cards.map((card) => {
+          if (card.id !== updated.id) {
+            return card;
+          }
+          return updated;
+        });
+      }
+      if ('deletedId' in rwCardsUpdatesOfDeck && rwCardsUpdatesOfDeck.deletedId) {
+        const { deletedId } = rwCardsUpdatesOfDeck;
+        cards = cards.filter((card) => {
+          return card.id !== deletedId;
+        });
       }
       return { ...prev, rwDeck: prev.rwDeck ? { ...prev.rwDeck, cards } : null };
     };
@@ -128,25 +122,22 @@ class WrDeckDetailSH extends PureComponent<Props> {
     const updateQuery: UpdateQueryFn<
       DeckDetail,
       DeckUpdatesVariables,
-      DeckUpdatesData
+      DeckUpdates
     > = (
       prev, { subscriptionData },
     ) => {
-      let deck = prev.rwDeck;
+      let rwDeck = prev.rwDeck;
       const { rwDeckUpdates } = subscriptionData.data;
-      switch (rwDeckUpdates.mutation) {
-        case MutationType.CREATED:
-          throw new Error('CREATED not expected on subscription');
-        case MutationType.UPDATED:
-          deck = deck && { ...deck, ...rwDeckUpdates.new };
-          break;
-        case MutationType.DELETED:
-          deck = null;
-          break;
-        default:
-          throw new Error('Invalid MutationType');
+      if ('created' in rwDeckUpdates) {
+        throw new Error('created not expected on subscription');
       }
-      return { ...prev, rwDeck: deck };
+      if ('updated' in rwDeckUpdates && rwDeckUpdates.updated) {
+        rwDeck = rwDeck && { ...rwDeck, ...rwDeckUpdates.updated };
+      }
+      if ('deletedId' in rwDeckUpdates && rwDeckUpdates.deletedId) {
+        rwDeck = null;
+      }
+      return { ...prev, rwDeck };
     };
     subscribeToMore({
       document: DECK_UPDATES_SUBSCRIPTION,
