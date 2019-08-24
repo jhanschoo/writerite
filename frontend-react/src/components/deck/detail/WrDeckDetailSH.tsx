@@ -1,15 +1,13 @@
 import { PureComponent } from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
+import { WR_DECK_DETAIL, WR_CARD } from '../../../client-models';
 import { CardsUpdates, CardsUpdatesVariables } from './gqlTypes/CardsUpdates';
 import { DeckUpdates, DeckUpdatesVariables } from './gqlTypes/DeckUpdates';
-
-import { WR_DECK_DETAIL } from '../../../client-models/WrDeckDetail';
 import { DeckDetail } from './gqlTypes/DeckDetail';
-import { WR_CARD } from '../../../client-models/WrCard';
 
 const CARDS_UPDATES_SUBSCRIPTION = gql`
 ${WR_CARD}

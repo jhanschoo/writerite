@@ -1,6 +1,8 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent } from 'react';
 
-import { gql } from 'graphql.macro';
+import { withRouter, RouteComponentProps } from 'react-router';
+
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
@@ -9,8 +11,6 @@ import { DeckDelete, DeckDeleteVariables } from './gqlTypes/DeckDelete';
 import styled from 'styled-components';
 import { Button } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
-
-import { withRouter, RouteComponentProps } from 'react-router';
 
 const DECK_DELETE_MUTATION = gql`
 mutation DeckDelete($id: ID!) {

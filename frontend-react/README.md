@@ -52,6 +52,7 @@ maintaining the state in redux, but the added complexity is too tedious.
 Will revisit when PWA capability is strongly desired or when
 https://github.com/apollographql/apollo-feature-requests/issues/4 is
 resolved/improved on.
+
 ## Stack summary
 
 * Language: Typescript
@@ -62,7 +63,7 @@ resolved/improved on.
   * Third-party (Google or Facebook) identity verification: hand-rolled authorization flow; frontend obtains an access token issued by third-party verifying user's identity sent to the server for verification.
   * Authorization managed using JWTs issued by server.
 * Form management: Formik, with verification using yup.
-* CSS Framework: Semantic UI
+* CSS Framework: Styled Components
 * Other API: Gravatar
 * State management:
   * Session-global: Redux
@@ -71,4 +72,4 @@ resolved/improved on.
 
 ## Other notes
 
-`client-models` folder is copied rather than symlinked due to following bug: https://github.com/facebook/create-react-app/issues/6556
+`client-models` folder is copied rather than symlinked due to limitations in code generation

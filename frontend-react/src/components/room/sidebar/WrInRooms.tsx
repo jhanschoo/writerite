@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WR_ROOM_STUB } from '../../../client-models';
 import { InRooms } from './gqlTypes/InRooms';
 
 import styled from 'styled-components';
@@ -11,7 +12,6 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import { WR_ROOM_STUB } from '../../../client-models/WrRoomStub';
 import WrRoomList from './WrRoomList';
 
 const IN_ROOMS_QUERY = gql`

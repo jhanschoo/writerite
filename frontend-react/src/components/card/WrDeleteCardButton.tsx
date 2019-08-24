@@ -1,7 +1,7 @@
 import React, { FC, MouseEvent } from 'react';
 import { Trash } from 'react-feather';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
 import { CardDelete, CardDeleteVariables } from './gqlTypes/CardDelete';

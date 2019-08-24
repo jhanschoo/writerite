@@ -5,6 +5,7 @@ import {
 
 import { connect } from 'react-redux';
 import { WrState } from './store';
+
 import { WrUserStub } from './client-models/gqlTypes/WrUserStub';
 
 import WrLandingView from './components/landing/WrLandingView';

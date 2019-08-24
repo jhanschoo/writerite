@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { Plus } from 'react-feather';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_DECK } from '../../../client-models/WrDeck';
+import { WR_DECK } from '../../../client-models';
 import { DeckCreate, DeckCreateVariables } from './gqlTypes/DeckCreate';
 
 import styled from 'styled-components';

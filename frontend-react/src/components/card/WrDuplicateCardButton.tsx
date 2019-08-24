@@ -1,10 +1,10 @@
 import React, { FC, MouseEvent } from 'react';
 import { Copy } from 'react-feather';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WR_CARD } from '../../client-models/WrCard';
+import { WR_CARD } from '../../client-models';
 import { CardCreate, CardCreateVariables } from './gqlTypes/CardCreate';
 
 import CardAuxillaryButton from './CardAuxillaryButton';

@@ -5,6 +5,7 @@ import {
 } from 'react-router';
 
 import { WrCard } from '../../client-models/gqlTypes/WrCard';
+
 import WrCardItem from './WrCardItem';
 
 interface OwnProps {

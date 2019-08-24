@@ -33,12 +33,14 @@ module.exports = [{
     return config;
   },
   webpack: (config) => {
+    //console.log(JSON.stringify(config));
     //console.log(config.module.rules[2].oneOf[1].options.plugins);
-    const babelLoaderPaths = getPaths(isBabelLoader, config)
+    const babelLoaderPaths = getPaths(isBabelLoader, config);
     return edit((babelLoader) => {
       const plugins = babelLoader.options.plugins;
-      plugins.push("babel-plugin-styled-components")
-      return babelLoader
+      plugins.push("babel-plugin-styled-components");
+      plugins.push("babel-plugin-graphql-tag");
+      return babelLoader;
     }, babelLoaderPaths, config);
   }
 }];

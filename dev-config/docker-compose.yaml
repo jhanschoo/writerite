@@ -19,6 +19,7 @@ services:
       - '4000:4000'
     env_file: .env
     environment:
+      ENGINE_API_KEY: service:writerite:QKWx_SWe7yDr4yzAqOeSPw
       PRISMA_ENDPOINT: http://prisma:4466/writerite/production
       PRISMA_MANAGEMENT_API_SECRET: writerite-prisma
       REDIS_HOST: redis

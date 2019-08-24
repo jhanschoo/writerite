@@ -1,17 +1,17 @@
 {
-  "name": "@writerite/acolyte-node",
+  "name": "@writerite/wright-node",
   "version": "1.0.0",
-  "description": "node implementation of WriteRite acolyte (i.e. bot)",
+  "description": "node implementation of WriteRite wright (i.e. bot)",
   "main": "dist/index.js",
-  "repository": "https://gitlab.com/writerite/acolyte-node",
+  "repository": "https://gitlab.com/writerite/writerite",
   "author": "Johannes Choo",
   "license": "AGPL-3.0-or-later",
   "private": false,
   "dependencies": {
     "@types/apollo-upload-client": "^8.1.2",
     "@types/dotenv": "^6.1.1",
-    "@types/graphql": "^14.2.3",
-    "@types/ioredis": "^4.0.14",
+    "@types/graphql": "^14.5.0",
+    "@types/ioredis": "^4.0.15",
     "@types/node-fetch": "^2.5.0",
     "apollo-cache-inmemory": "^1.6.3",
     "apollo-client": "^2.6.4",
@@ -21,26 +21,29 @@
     "apollo-link-persisted-queries": "^0.2.2",
     "apollo-link-retry": "^2.2.14",
     "apollo-upload-client": "^11.0.0",
-    "dotenv": "^8.0.0",
-    "graphql": "^14.4.2",
+    "dotenv": "^8.1.0",
+    "graphql": "^14.5.3",
     "graphql-tag": "^2.10.1",
     "ioredis": "^4.14.0",
     "node-fetch": "^2.6.0",
     "typescript": "^3.5.3"
   },
   "devDependencies": {
-    "@types/jest": "^24.0.17",
-    "eslint": "^6.1.0",
-    "jest": "^24.8.0",
+    "@types/jest": "^24.0.18",
+    "apollo": "^2.18.0",
+    "eslint": "^6.2.2",
+    "jest": "^24.9.0",
     "ts-jest": "^24.0.2",
-    "tslint": "^5.18.0",
+    "tslint": "^5.19.0",
     "typescript-tslint-plugin": "^0.5.4"
   },
   "scripts": {
-    "build": "tsc",
-    "start:dev": "tsc && NODE_ENV=development node dist/index.js",
-    "start:test": "tsc && NODE_ENV=testing node dist/index.js",
-    "start:production": "tsc && NODE_ENV=production node dist/index.js",
-    "test": "jest --runInBand"
+    "build": "npm run codegen && tsc",
+    "start:dev": "NODE_ENV=development node dist/index.js",
+    "start:test": "NODE_ENV=testing node dist/index.js",
+    "start:production": "NODE_ENV=production node dist/index.js",
+    "test": "jest --runInBand",
+    "copymodels": "cp -R ../client-models/ src/",
+    "codegen": "npm run copymodels && apollo client:codegen --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --target=typescript gqlTypes"
   }
 }

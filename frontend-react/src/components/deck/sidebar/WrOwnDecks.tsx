@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_DECK } from '../../../client-models/WrDeck';
+import { WR_DECK } from '../../../client-models';
 import { OwnDecks } from './gqlTypes/OwnDecks';
 
 import styled from 'styled-components';

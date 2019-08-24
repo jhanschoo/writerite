@@ -1,15 +1,14 @@
 # generated
 node_modules
-dist
+
+# source
+src
 
 # logs
 npm-debug.log
 
 # local
 .env
-
-# deployment
-kubernetes*
 
 # development
 .vscode

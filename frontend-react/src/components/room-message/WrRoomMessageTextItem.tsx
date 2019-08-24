@@ -1,9 +1,9 @@
 import React from 'react';
 
+import { WrRoomMessage } from '../../client-models/gqlTypes/WrRoomMessage';
+
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
-
-import { WrRoomMessage } from '../../client-models/gqlTypes/WrRoomMessage';
 
 interface Props {
   message: WrRoomMessage;

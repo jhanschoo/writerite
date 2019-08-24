@@ -6,6 +6,7 @@ import { WrState } from '../../store';
 import { createSignout, SigninAction } from '../signin/actions';
 
 import { restartWsConnection } from '../../apolloClient';
+import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 
 import styled, { withTheme } from 'styled-components';
 import Link from '../../ui/Link';
@@ -14,7 +15,6 @@ import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
 
-import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
 

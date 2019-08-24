@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const ENVVARS = [
+  'ENGINE_API_KEY',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',
   'FACEBOOK_APP_ID',

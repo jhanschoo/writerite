@@ -23,7 +23,7 @@ then
   SUFFIX=""
 fi
 
-cp ../schema.graphql .dockerbuild/schema.graphql
+npm run build
 
 IMAGE_NAME="jhanschoo/writerite-backend-apollo:${PACKAGE_VERSION}${SUFFIX}"
 docker build -t "${IMAGE_NAME}" --build-arg node_env="${NODE_ENV}" .

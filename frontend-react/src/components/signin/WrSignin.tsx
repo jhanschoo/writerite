@@ -8,10 +8,12 @@ import { connect } from 'react-redux';
 import { SigninAction, createSignin } from './actions';
 import { WrState } from '../../store';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
+import { WR_USER_STUB } from '../../client-models';
+import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 import { Signin, SigninVariables } from './gqlTypes/Signin';
 
 import styled from 'styled-components';
@@ -24,8 +26,6 @@ import SmallMessage from '../../ui/form/SmallMessage';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WR_USER_STUB } from '../../client-models/WrUserStub';
-import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;

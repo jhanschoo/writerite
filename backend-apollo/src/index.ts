@@ -21,6 +21,7 @@ import { getClaims, generateJWT } from './util';
 
 const {
   NODE_ENV,
+  ENGINE_API_KEY,
   REDIS_HOST,
   REDIS_PORT,
   CERT_FILE,

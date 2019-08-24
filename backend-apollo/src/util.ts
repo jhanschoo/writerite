@@ -3,7 +3,7 @@ import KJUR from 'jsrsasign';
 import randomWords from 'random-words';
 import { AuthenticationError, ApolloError } from 'apollo-server-koa';
 
-import { ICurrentUser, Roles, IUpdate, MutationType } from './types';
+import { ICurrentUser, Roles, IUpdate } from './types';
 import { Prisma, prisma } from '../generated/prisma-client';
 
 const SALT_ROUNDS = 10;
@@ -36,66 +36,59 @@ export const throwIfDevel = (e: Error) => {
   return null;
 };
 
-export function updateMapFactory<T, U>(
+export const updateMapFactory = <T, U>(
   rwFromS: (prisma: Prisma, pObj: T) => U,
-): (pObjPayload: IUpdate<T>) => IUpdate<U> {
+): (pObjPayload: IUpdate<T>) => IUpdate<U> => {
   return (pObjPayload: IUpdate<T>) => {
-    switch (pObjPayload.mutation) {
-      case MutationType.CREATED:
-        return {
-          mutation: MutationType.CREATED,
-          new: rwFromS(prisma, pObjPayload.new),
-          oldId: null,
-        };
-      case MutationType.UPDATED:
-        return {
-          mutation: MutationType.UPDATED,
-          new: rwFromS(prisma, pObjPayload.new),
-          oldId: null,
-        };
-      case MutationType.DELETED:
-        return {
-          mutation: MutationType.DELETED,
-          new: null,
-          oldId: pObjPayload.oldId,
-        };
+    if ('created' in pObjPayload) {
+      return {
+        created: rwFromS(prisma, pObjPayload.created),
+      };
     }
+    if ('updated' in pObjPayload) {
+      return {
+        updated: rwFromS(prisma, pObjPayload.updated),
+      };
+    }
+    return { deletedId: pObjPayload.deletedId };
   };
-}
+};
 
-export function isCurrentUser(o: any): o is ICurrentUser {
+export const isCurrentUser = (o: any): o is ICurrentUser => {
   return o && o.id && typeof o.id === 'string'
     && o.email && o.email === 'string'
     && o.roles && o.roles instanceof Array && o.roles.every((r: any) => {
       return r === Roles.admin || r === Roles.user;
     });
-}
+};
 
 const EC_KEYPAIR = (
   new KJUR.crypto.ECDSA({ curve: 'secp256r1' })
 ).generateKeyPairHex();
+
 const PUBLIC_KEY = new KJUR.crypto.ECDSA(
   { curve: 'secp256r1', pub: EC_KEYPAIR.ecpubhex },
 );
+
 const PRIVATE_KEY = new KJUR.crypto.ECDSA(
   { curve: 'secp256r1', prv: EC_KEYPAIR.ecprvhex },
 );
 
-export async function comparePassword(plain: string, hashed: string) {
+export const comparePassword = async (plain: string, hashed: string) => {
   return bcrypt.compare(plain, hashed);
-}
+};
 
-export async function hashPassword(plain: string) {
+export const hashPassword = async (plain: string) => {
   return bcrypt.hash(plain, SALT_ROUNDS);
-}
+};
 
-export function generateB64UUID() {
+export const generateB64UUID = () => {
   const uuid = KJUR.crypto.Util.getRandomHexOfNbits(128);
   const b64uuid = KJUR.hextob64(uuid);
   return b64uuid;
-}
+};
 
-export function generateJWT(sub: any, persist = false) {
+export const generateJWT = (sub: any, persist = false) => {
   const timeNow = KJUR.jws.IntDate.get('now');
   const expiryTime = KJUR.jws.IntDate.get(
     persist ? 'now + 1year' : 'now + 1day',
@@ -117,9 +110,9 @@ export function generateJWT(sub: any, persist = false) {
 
   const jwt = KJUR.jws.JWS.sign(null, header, payload, PRIVATE_KEY) as string;
   return jwt;
-}
+};
 
-export function getClaims(ctx: any): ICurrentUser | undefined {
+export const getClaims = (ctx: any): ICurrentUser | undefined => {
   let authorization = null;
   if (ctx.ctx && ctx.ctx.get) {
     authorization = ctx.ctx.get('Authorization');
@@ -148,6 +141,6 @@ export function getClaims(ctx: any): ICurrentUser | undefined {
   return;
 }
 
-export function getToken(ctx: any) {
+export const getToken = (ctx: any) => {
   return ctx.request.header('Authorization').slice(7);
 }

@@ -1,8 +1,9 @@
 import React from 'react';
 
+import { WrRoomStub_config } from '../../client-models/gqlTypes/WrRoomStub';
+
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
-import { WrRoomStub_config } from '../../client-models/gqlTypes/WrRoomStub';
 
 interface Props {
   config: WrRoomStub_config;

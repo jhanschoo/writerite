@@ -1,11 +1,10 @@
 import React, { useState, MouseEvent } from 'react';
 import { Play, Copy, Settings, Trash } from 'react-feather';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_DECK_DETAIL } from '../../../client-models/WrDeckDetail';
-import { WR_ROOM } from '../../../client-models/WrRoom';
+import { WR_DECK_DETAIL, WR_ROOM } from '../../../client-models';
 import { DeckDetail, DeckDetailVariables } from './gqlTypes/DeckDetail';
 import { RoomCreate, RoomCreateVariables } from './gqlTypes/RoomCreate';
 

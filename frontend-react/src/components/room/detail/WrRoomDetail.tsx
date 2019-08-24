@@ -1,8 +1,9 @@
 import React from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WR_ROOM_DETAIL } from '../../../client-models';
 import { RoomDetail, RoomDetailVariables } from './gqlTypes/RoomDetail';
 
 import styled from 'styled-components';
@@ -11,7 +12,6 @@ import HDivider from '../../../ui/HDivider';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import { WR_ROOM_DETAIL } from '../../../client-models/WrRoomDetail';
 import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomConfig from './WrRoomConfig';

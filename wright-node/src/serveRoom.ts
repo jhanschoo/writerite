@@ -1,15 +1,20 @@
 import gql from 'graphql-tag';
-import { WrDeckDetail, IWrDeckDetail } from './client-models/WrDeckDetail';
-import { WrRoomMessage, IWrRoomMessage } from './client-models/WrRoomMessage';
-import { WrRoomMessageContentType } from './client-models/WrRoomMessageStub';
+
+import {
+  WR_DECK_DETAIL, WR_ROOM_MESSAGE,
+} from './client-models';
+import { RwRoomMessageContentType } from './gqlGlobalTypes';
+import { WrRoomStub_config } from './client-models/gqlTypes/WrRoomStub';
+import { DeckDetail, DeckDetailVariables } from './gqlTypes/DeckDetail';
+import { MessageCreate, MessageCreateVariables } from './gqlTypes/MessageCreate';
+
 import { client } from './apolloClient';
 import { quizServer, Round } from './quizServer';
-import { IRoomConfig } from './client-models/WrRoomStub';
 
 interface IConfigMessage {
   type: 'CONFIG';
   senderId: string;
-  config: IRoomConfig;
+  config: WrRoomStub_config;
 }
 
 interface IMessageMessage {
@@ -23,7 +28,7 @@ type Message = IConfigMessage | IMessageMessage;
 export const SERVE_ROOM_CHANNEL = 'writerite:room:serving';
 
 const DECK_DETAIL_QUERY = gql`
-${WrDeckDetail}
+${WR_DECK_DETAIL}
 query DeckDetail(
   $id: ID!
 ) {
@@ -33,46 +38,31 @@ query DeckDetail(
 }
 `;
 
-// tslint:disable-next-line: interface-name
-export interface DeckDetailVariables {
-  readonly id: string;
-}
-
-// tslint:disable-next-line: interface-name
-export interface DeckDetailData {
-  readonly rwDeck: IWrDeckDetail | null;
-}
-
 export const MESSAGE_CREATE_MUTATION = gql`
+${WR_ROOM_MESSAGE}
 mutation MessageCreate($roomId: ID! $content: String! $contentType: RwRoomMessageContentType!) {
   rwRoomMessageCreate(roomId: $roomId content: $content contentType: $contentType) {
     ...WrRoomMessage
   }
 }
-${WrRoomMessage}
 `;
 
 // tslint:disable-next-line: interface-name
 export interface MessageCreateVariables {
   readonly roomId: string;
   readonly content: string;
-  readonly contentType: WrRoomMessageContentType;
-}
-
-// tslint:disable-next-line: interface-name
-export interface MessageCreateData {
-  readonly rwRoomMessageCreate: IWrRoomMessage | null;
+  readonly contentType: RwRoomMessageContentType;
 }
 
 const getDeck = (id: string) => {
-  return client.query<DeckDetailData, DeckDetailVariables>({
+  return client.query<DeckDetail, DeckDetailVariables>({
     query: DECK_DETAIL_QUERY,
     variables: { id },
   });
 };
 
-const sendMessageFactory = (id: string) => (contentType: WrRoomMessageContentType, content: string) => {
-  return client.mutate<MessageCreateData, MessageCreateVariables>({
+const sendMessageFactory = (id: string) => (contentType: RwRoomMessageContentType, content: string) => {
+  return client.mutate<MessageCreate, MessageCreateVariables>({
     mutation: MESSAGE_CREATE_MUTATION,
     variables: {
       roomId: id,
@@ -82,7 +72,7 @@ const sendMessageFactory = (id: string) => (contentType: WrRoomMessageContentTyp
   });
 };
 
-export const serveRoom = async (id: string, config: IRoomConfig) => {
+export const serveRoom = async (id: string, config: WrRoomStub_config) => {
   const ROOM_CHANNEL = `writerite:room::${id}`;
   const { deckId } = config;
   if (!deckId) {
@@ -95,11 +85,11 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
   const sendMessage = sendMessageFactory(id);
   let delay = 2000;
   const rounds: Round[] = [async () => {
-    await sendMessage(WrRoomMessageContentType.CONFIG, '');
+    await sendMessage(RwRoomMessageContentType.CONFIG, '');
     return {
       rounds: [async () => {
         await sendMessage(
-          WrRoomMessageContentType.TEXT,
+          RwRoomMessageContentType.TEXT,
           'Room not configured after 5 minutes. Stopping.',
         );
         return {};
@@ -109,7 +99,7 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
         const messageObj: Message = JSON.parse(message);
         if (messageObj.type === 'CONFIG' && messageObj.config.clientDone) {
           const { roundLength } = messageObj.config;
-          if (roundLength === undefined) {
+          if (roundLength === undefined || roundLength === null) {
             throw new Error('clientDone is true but roundLength is not present');
           }
           delay = roundLength;
@@ -120,7 +110,7 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
     };
   }, async () => {
     await sendMessage(
-      WrRoomMessageContentType.TEXT,
+      RwRoomMessageContentType.TEXT,
       `Beginning to serve ${
         data.rwDeck && data.rwDeck.name
       } with an interval of ${Math.ceil(delay / 1000)} seconds per round.`,
@@ -128,7 +118,7 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
     return {};
   }];
   data.rwDeck.cards.forEach((card) => rounds.push(async () => {
-    await sendMessage(WrRoomMessageContentType.TEXT, `Prompt: ${card.prompt}`);
+    await sendMessage(RwRoomMessageContentType.TEXT, `Prompt: ${card.prompt}`);
     return {
       delay, messageHandler: async (message: string) => {
         const messageObj = JSON.parse(message);
@@ -137,14 +127,14 @@ export const serveRoom = async (id: string, config: IRoomConfig) => {
         }
         const { content } = messageObj;
         if (content === card.fullAnswer || card.answers.includes(content)) {
-          await sendMessage(WrRoomMessageContentType.TEXT, 'You got it!');
+          await sendMessage(RwRoomMessageContentType.TEXT, 'You got it!');
         }
         return { delay: null };
       },
     };
   }));
   quizServer(ROOM_CHANNEL, rounds.reverse()).then(async () => {
-    await sendMessage(WrRoomMessageContentType.TEXT, 'Done serving deck!');
+    await sendMessage(RwRoomMessageContentType.TEXT, 'Done serving deck!');
   }, (reason) => {
     // tslint:disable-next-line: no-console
     console.error(reason);

@@ -1,10 +1,10 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
 import { Plus, X } from 'react-feather';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WR_CARD } from '../../client-models/WrCard';
+import { WR_CARD } from '../../client-models';
 import { WrCard } from '../../client-models/gqlTypes/WrCard';
 import { CardEditVariables, CardEdit } from './gqlTypes/CardEdit';
 
@@ -95,6 +95,12 @@ const NewAcceptedAnswerDiv = styled.div`
 
 const NewAcceptedAnswerSubdiv = styled.div`
   display: flex;
+`;
+
+const AnswersDisplayDiv = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
 `;
 
 const AnswersP = styled.p`
@@ -251,7 +257,9 @@ const WrCardItemEdit = (props: Props) => {
             </PlusButton>
           </NewAcceptedAnswerSubdiv>
         </NewAcceptedAnswerDiv>
-        {formattedAnswers}
+        <AnswersDisplayDiv>
+          {formattedAnswers}
+        </AnswersDisplayDiv>
       </AnswersFieldset>
       <SubmitDiv>
         <CancelButton

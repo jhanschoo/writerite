@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 
 import { Filter } from 'react-feather';
 
+import { WrRoomStub } from '../../../client-models/gqlTypes/WrRoomStub';
+
 import styled from 'styled-components';
 import Fieldset from '../../../ui/form/Fieldset';
 import { MinimalButton } from '../../../ui/form/Button';
@@ -9,8 +11,6 @@ import { MinimalTextInput } from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
-
-import { WrRoomStub } from '../../../client-models/gqlTypes/WrRoomStub';
 
 const initialFilter = '';
 

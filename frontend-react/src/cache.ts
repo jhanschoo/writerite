@@ -1,7 +1,10 @@
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache, IntrospectionFragmentMatcher } from 'apollo-cache-inmemory';
 import { persistCache } from 'apollo-cache-persist';
+import introspectionQueryResultData from './schema.json';
 
-export const cache = new InMemoryCache();
+const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
+
+export const cache = new InMemoryCache({ fragmentMatcher });
 
 export const persistedCache = persistCache({
   cache,

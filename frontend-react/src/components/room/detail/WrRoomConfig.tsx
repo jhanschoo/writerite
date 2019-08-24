@@ -3,18 +3,17 @@ import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { connect } from 'react-redux';
 import { WrState } from '../../../store';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WR_ROOM_STUB } from '../../../client-models';
+import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 import { RoomUpdateConfig, RoomUpdateConfigVariables } from './gqlTypes/RoomUpdateConfig';
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/form/Button';
 import TextInput from '../../../ui/form/TextInput';
 import HDivider from '../../../ui/HDivider';
-
-import { WR_ROOM_STUB } from '../../../client-models/WrRoomStub';
-import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 
 const ROOM_UPDATE_CONFIG_MUTATION = gql`
 ${WR_ROOM_STUB}

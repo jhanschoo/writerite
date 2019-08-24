@@ -1,13 +1,12 @@
 import { PureComponent } from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
+import { WR_DECK } from '../../../client-models';
 import { OwnDecksUpdates } from './gqlTypes/OwnDecksUpdates';
 import { OwnDecks } from './gqlTypes/OwnDecks';
-
-import { WR_DECK } from '../../../client-models/WrDeck';
 
 const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
 ${WR_DECK}

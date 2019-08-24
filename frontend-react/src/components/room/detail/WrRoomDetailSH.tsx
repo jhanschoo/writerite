@@ -1,15 +1,13 @@
 import { PureComponent } from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
+import { WR_ROOM_DETAIL, WR_ROOM_MESSAGE } from '../../../client-models';
 import { RoomMessagesUpdates, RoomMessagesUpdatesVariables } from './gqlTypes/RoomMessagesUpdates';
 import { RoomUpdates, RoomUpdatesVariables } from './gqlTypes/RoomUpdates';
 import { RoomDetail } from './gqlTypes/RoomDetail';
-
-import { WR_ROOM_DETAIL } from '../../../client-models/WrRoomDetail';
-import { WR_ROOM_MESSAGE } from '../../../client-models/WrRoomMessage';
 
 const ROOM_MESSAGES_UPDATES_SUBSCRIPTION = gql`
 ${WR_ROOM_MESSAGE}

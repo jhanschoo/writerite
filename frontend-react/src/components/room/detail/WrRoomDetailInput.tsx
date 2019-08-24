@@ -1,7 +1,7 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 import { Send } from 'react-feather';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
 import { RoomMessageCreate, RoomMessageCreateVariables } from './gqlTypes/RoomMessageCreate';
@@ -11,7 +11,7 @@ import styled from 'styled-components';
 import TextInput from '../../../ui/form/TextInput';
 import { BorderlessButton } from '../../../ui/form/Button';
 
-import { WR_ROOM_MESSAGE } from '../../../client-models/WrRoomMessage';
+import { WR_ROOM_MESSAGE } from '../../../client-models';
 
 const ROOM_MESSAGE_CREATE_MUTATION = gql`
 ${WR_ROOM_MESSAGE}

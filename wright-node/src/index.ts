@@ -1,6 +1,6 @@
 import { createClient } from './redisClient';
 import { SERVE_ROOM_CHANNEL, serveRoom } from './serveRoom';
-import { IRoomConfig } from './client-models/WrRoomStub';
+import { WrRoomStub_config } from './client-models/gqlTypes/WrRoomStub';
 
 const subscriberClient = createClient();
 
@@ -16,7 +16,7 @@ subscriberClient.on('message', (channel: string, message: string) => {
         }
         const roomId = message.slice(0, separatorIndex);
         const config = message.slice(separatorIndex + 1);
-        const configObj: IRoomConfig = JSON.parse(config);
+        const configObj: WrRoomStub_config = JSON.parse(config);
         serveRoom(roomId, configObj);
         break;
     }

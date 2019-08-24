@@ -1,10 +1,10 @@
 import React, { useRef, useState, ChangeEvent, DragEvent, FC, FormEvent } from 'react';
 import Papa from 'papaparse';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WR_DECK } from '../../client-models/WrDeck';
+import { WR_DECK } from '../../client-models';
 import { DeckCreateFromRows, DeckCreateFromRowsVariables } from './gqlTypes/DeckCreateFromRows';
 
 import { withRouter, RouteComponentProps } from 'react-router';

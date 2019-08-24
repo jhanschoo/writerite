@@ -1,8 +1,9 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, Dispatch, SetStateAction } from 'react';
 
-import { gql } from 'graphql.macro';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WR_DECK } from '../../../client-models';
 import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { DeckEdit, DeckEditVariables } from './gqlTypes/DeckEdit';
 
@@ -12,7 +13,6 @@ import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 
-import { WR_DECK } from '../../../client-models/WrDeck';
 
 const DECK_EDIT_MUTATION = gql`
 ${WR_DECK}
