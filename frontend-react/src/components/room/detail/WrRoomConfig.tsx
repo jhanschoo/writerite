@@ -11,7 +11,7 @@ import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 import { RoomUpdateConfig, RoomUpdateConfigVariables } from './gqlTypes/RoomUpdateConfig';
 
 import styled from 'styled-components';
-import { Button } from '../../../ui/form/Button';
+import { Button } from '../../../ui/Button';
 import TextInput from '../../../ui/form/TextInput';
 import HDivider from '../../../ui/HDivider';
 

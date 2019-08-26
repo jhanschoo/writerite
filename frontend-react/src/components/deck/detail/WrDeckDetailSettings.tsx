@@ -8,7 +8,7 @@ import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { DeckEdit, DeckEditVariables } from './gqlTypes/DeckEdit';
 
 import styled from 'styled-components';
-import { Button } from '../../../ui/form/Button';
+import { Button } from '../../../ui/Button';
 import TextInput from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';

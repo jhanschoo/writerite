@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import DashboardSidebar from '../layout/sidebar/DashboardSidebar';
+import Sidebar from '../layout/sidebar/Sidebar';
 
-const SidebarMenu = styled(DashboardSidebar)`
+const SidebarMenu = styled(Sidebar)`
   font-size: 87.5%;
-  padding: ${({ theme }) => theme.space[3]} ${({ theme }) => theme.space[2]};
+  padding: 0 ${({ theme }) => theme.space[2]};
 `;
 
 export default SidebarMenu;

@@ -19,10 +19,9 @@ import { Signin, SigninVariables } from './gqlTypes/Signin';
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
 import HDivider from '../../ui/HDivider';
-import Button, { AnchorButton } from '../../ui/form/Button';
+import Button, { AnchorButton } from '../../ui/Button';
 import TextInput from '../../ui/form/TextInput';
 import Fieldset from '../../ui/form/Fieldset';
-import SmallMessage from '../../ui/form/SmallMessage';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
@@ -72,24 +71,46 @@ interface FormValues {
   isSignup: boolean;
 }
 
-const FlowButton = styled(Button)`
+const GoogleButton = styled(Button)`
+  width: 100%;
+  margin: 0 0 ${({ theme }) => theme.space[2]} 0;
+  padding: ${({ theme }) => theme.space[2]};
+  border-color: ${({ theme }) => theme.colors.googleRed};
+  color: ${({ theme }) => theme.colors.googleRed};
+
+  :hover, :focus {
+    border: 1px solid ${({ theme }) => theme.colors.googleRed};
+    color: ${({ theme }) => theme.colors.bg1};
+    background: ${({ theme }) => theme.colors.googleRed};
+    outline: none;
+  }
+`;
+
+const FacebookButton = styled(Button)`
+  width: 100%;
+  margin: 0 0 ${({ theme }) => theme.space[2]} 0;
+  padding: ${({ theme }) => theme.space[2]};
+  border-color: ${({ theme }) => theme.colors.facebookBlue};
+  color: ${({ theme }) => theme.colors.facebookBlue};
+
+  :hover, :focus {
+    border: 1px solid ${({ theme }) => theme.colors.facebookBlue};
+    color: ${({ theme }) => theme.colors.bg1};
+    background: ${({ theme }) => theme.colors.facebookBlue};
+    outline: none;
+  }
+`;
+
+const LocalSigninButton = styled(Button)`
   width: 100%;
   margin: ${({ theme }) => theme.space[2]} 0;
   padding: ${({ theme }) => theme.space[2]};
 `;
 
-const GoogleButton = styled(FlowButton)`
-  border-color: ${({ theme }) => theme.colors.googleRed};
-  color: ${({ theme }) => theme.colors.googleRed};
-`;
-
-const FacebookButton = styled(FlowButton)`
-border-color: ${({ theme }) => theme.colors.facebookBlue};
-color: ${({ theme }) => theme.colors.facebookBlue};
-`;
-
 const SigninBox = styled.div`
   padding: ${({ theme }) => theme.space[3]};
+  border: 1px solid ${({ theme }) => theme.colors.lightEdge};
+  background: ${({ theme }) => theme.colors.bg1};
   border-radius: 4px;
 `;
 
@@ -125,6 +146,14 @@ const ErrorMessage = styled.p`
   margin: 0;
   padding: 0 ${({ theme }) => theme.space[2]};
   color: ${({ theme }) => theme.colors.error};
+`;
+
+const SmallMessage = styled.p`
+  display: flex;
+  font-size: 75%;
+  margin: 0;
+  padding: 0 ${({ theme }) => theme.space[2]};
+  align-items: baseline;
 `;
 
 const formSchema = yup.object().shape({
@@ -305,6 +334,9 @@ const WrSignin = (props: Props) => {
         {errors.password || errors.confirmPassword}
       </ErrorMessage>
     );
+    const developmentSignin = (process.env.NODE_ENV !== 'development')
+        ? ''
+        : <AnchorButton onClick={handleDevelopmentSignin}>Development Login</AnchorButton>;
     return (
       <form onSubmit={handleSubmit}>
         <FieldsetWithMargin>
@@ -369,23 +401,20 @@ const WrSignin = (props: Props) => {
             {maybeError('recaptcha')}
           </TextCenteredDiv>
         </Fieldset>
-        <FlowButton
+        <LocalSigninButton
           type="submit"
         >
           {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
-        </FlowButton>
+        </LocalSigninButton>
         <SmallMessage>
           {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
           <AnchorButton onClick={handleToggleSignin}>
             {isSignup ? 'Login' : 'Sign up'}
-          </AnchorButton>
+          </AnchorButton> {developmentSignin}
         </SmallMessage>
       </form>
     );
   };
-  const developmentSignin = (process.env.NODE_ENV !== 'development')
-      ? ''
-      : <Button onClick={handleDevelopmentSignin}>Development Login</Button>;
   return (
     <SigninBox>
       <GoogleButton
@@ -410,7 +439,6 @@ const WrSignin = (props: Props) => {
       >
         {renderFields}
       </Formik>
-      {developmentSignin}
     </SigninBox>
   );
 };

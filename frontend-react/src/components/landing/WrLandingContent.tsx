@@ -12,7 +12,7 @@ const HeroHeader = styled.header`
   min-height: 33vh;
   justify-content: center;
   align-items: center;
-  padding: ${({ theme }) => theme.space[4]};
+  padding: 0 ${({ theme }) => theme.space[4]};
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     width: 100%;
   }
@@ -24,7 +24,7 @@ const Aside = styled.aside`
   min-height: 33vh;
   justify-content: center;
   align-items: center;
-  padding: ${({ theme }) => theme.space[3]};
+  padding: 0 ${({ theme }) => theme.space[3]};
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     width: 100%;
   }

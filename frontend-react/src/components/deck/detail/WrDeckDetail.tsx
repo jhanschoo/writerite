@@ -9,13 +9,13 @@ import { DeckDetail, DeckDetailVariables } from './gqlTypes/DeckDetail';
 import { RoomCreate, RoomCreateVariables } from './gqlTypes/RoomCreate';
 
 import styled from 'styled-components';
-import FlexMain from '../../../ui/layout/FlexMain';
+import Main from '../../../ui/layout/Main';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import WrCardsList from '../../card/WrCardsList';
 import WrNewCardPrompt from '../../card/WrNewCardPrompt';
 import HDivider from '../../../ui/HDivider';
-import { BorderlessButton } from '../../../ui/form/Button';
+import { BorderlessButton } from '../../../ui/Button';
 
 import WrDeckDetailSettings from './WrDeckDetailSettings';
 import WrDeckDetailDeletePrompt from './WrDeckDetailDeletePrompt';
@@ -55,7 +55,7 @@ const DeckHeader = styled.header`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: ${({ theme }) => theme.space[3]} 12.5%;
+  padding: 0 12.5% ${({ theme }) => theme.space[3]} 12.5%;
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
   }
@@ -120,15 +120,15 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
     },
   );
   if (error) {
-    return (<FlexMain/>);
+    return (<Main/>);
   }
   if (loading) {
     return (
-      <FlexMain>
+      <Main>
         <CenteredP>
           Retrieving deck...
         </CenteredP>
-      </FlexMain>
+      </Main>
     );
   }
   if (!data || !data.rwDeck) {
@@ -171,7 +171,7 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
     });
   };
   return (
-    <FlexMain>
+    <Main>
       {
         // tslint:disable-next-line: jsx-no-multiline-js
         // https://github.com/apollographql/apollo-client/issues/4246
@@ -226,7 +226,7 @@ const WrDeckDetailComponent = (props: RouteComponentProps<{ deckId: string }>) =
       <HDivider>{cards.length} Cards</HDivider>
       <WrNewCardPrompt deckId={deckId} />
       <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />
-    </FlexMain>
+    </Main>
   );
 };
 

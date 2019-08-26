@@ -7,7 +7,6 @@ import { WR_ROOM_STUB } from '../../../client-models';
 import { InRooms } from './gqlTypes/InRooms';
 
 import styled from 'styled-components';
-import FlexSection from '../../../ui/FlexSection';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
@@ -21,6 +20,12 @@ query InRooms {
     ...WrRoomStub
   }
 }
+`;
+
+const FlexSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: ${({ theme }) => theme.space[1]};
 `;
 
 const PaddedItem = styled(Item)`

@@ -11,9 +11,10 @@ import { withRouter, RouteComponentProps } from 'react-router';
 
 import styled, { StyledComponent } from 'styled-components';
 
-import FlexMain from '../../ui/layout/FlexMain';
+import Main from '../../ui/layout/Main';
+import Fieldset from '../../ui/form/Fieldset';
 import TextInput from '../../ui/form/TextInput';
-import { Button } from '../../ui/form/Button';
+import { Button } from '../../ui/Button';
 import HDivider from '../../ui/HDivider';
 
 const DECK_CREATE_FROM_ROWS_MUTATION = gql`
@@ -54,13 +55,14 @@ const StyledForm = styled.form`
 `;
 
 const StyledTextInput = styled(TextInput)`
-  margin: ${({ theme }) => theme.space[1]} 0;
+  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
   width: 100%;
 `;
 
 const DropDiv = styled.div`
-  margin: ${({ theme }) => theme.space[3]} 0;
-  border: 1px solid ${({ theme }) => theme.colors.lightEdge};
+  margin: 0;
+  padding: ${({ theme }) => theme.space[3]};
+  border: 1px solid ${({ theme }) => theme.colors.edge};
   border-radius: 8px;
   flex-grow: 1;
   min-height: 33vh;
@@ -83,9 +85,15 @@ const DividerDiv = styled.div`
 `;
 
 const DropDivP = styled.p`
-  margin: ${({ theme }) => theme.space[3]};
-  width: 67%;
   text-align: center;
+  margin: ${({ theme }) => theme.space[3]} 0;
+`;
+
+const DropDivLabel = styled.label`
+  display: block;
+  text-align: center;
+  width: 100%;
+  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
 `;
 
 const DropDivPBold = styled(DropDivP)`
@@ -101,6 +109,17 @@ const FileInput = styled.input`
   width: 1px;
   overflow: hidden;
   clip: rect(0,0,0,0);
+`;
+
+const StyledFieldset = styled(Fieldset)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: ${({ theme }) => theme.space[4]};
+  width: 67%;
+  &.hidden {
+    display: none;
+  }
 `;
 
 const StyledButton = styled(Button)`
@@ -127,9 +146,7 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
       onError: printApolloError,
     },
   );
-  const filenameMessage = (filename === null)
-    ? (<DropDivP>no file selected</DropDivP>)
-    : (<DropDivP><strong>{filename}</strong> will be uploaded</DropDivP>);
+  const noFilenameMessage = (filename === null) ? (<DropDivP>no file selected</DropDivP>) : null;
   let dragStatusMessage = <DropDivPBold>drag a .csv file here</DropDivPBold>;
   switch (draggedFileStatus) {
     case DraggedFileStatus.MULTIPLE:
@@ -223,14 +240,8 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
     }
   };
   return (
-    <FlexMain>
+    <Main>
       <StyledForm onSubmit={handleSubmit}>
-        <label htmlFor="upload-deck-name">Deck Name</label>
-        <StyledTextInput
-          id="upload-deck-name"
-          value={nameInput}
-          onChange={handleNameChange}
-        />
         <DropDiv
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
@@ -250,13 +261,24 @@ const WrUploadDeck: FC<Props> = (props: Props) => {
             disabled={loading}
           />
           <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
-          {filenameMessage}
+          {noFilenameMessage}
+          <StyledFieldset className={(filename === null) ? 'hidden' : undefined}>
+            <DropDivLabel htmlFor="upload-deck-name">
+              <strong>{filename}</strong> will be uploaded with name
+            </DropDivLabel>
+            <StyledTextInput
+              id="upload-deck-name"
+              value={nameInput}
+              onChange={handleNameChange}
+              className={(filename === null) ? 'hidden' : undefined}
+            />
+            <StyledButton type="submit" disabled={!rows || loading}>
+              Upload
+            </StyledButton>
+          </StyledFieldset>
         </DropDiv>
-        <StyledButton type="submit" disabled={!rows || loading}>
-          Upload
-        </StyledButton>
       </StyledForm>
-    </FlexMain>
+    </Main>
   );
 };
 

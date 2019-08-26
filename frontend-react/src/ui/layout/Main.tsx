@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const FlexMain = styled.main`
+const Main = styled.main`
   grid-area: 2 / 5 / 3 / 14;
   align-items: stretch;
   overflow-y: auto;
@@ -14,4 +14,4 @@ const FlexMain = styled.main`
   }
 `;
 
-export default FlexMain;
+export default Main;

@@ -49,9 +49,8 @@ const heterogBg = bg2;
 const primary = orange;
 const disabled = moonGray;
 const darkEdge = fg1;
-const edge = gray;
-const lightEdge = silver;
-const lightLightEdge = lightSilver;
+const edge = silver;
+const lightEdge = lightSilver;
 const activeEdge = lightBlue;
 const shadow = moonGray;
 const activeShadow = lightBlue;
@@ -82,7 +81,6 @@ const theme = {
     darkEdge,
     edge,
     lightEdge,
-    lightLightEdge,
     error,
     activeEdge,
     shadow,

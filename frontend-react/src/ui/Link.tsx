@@ -12,8 +12,7 @@ const Link = styled(rrLink)`
   color: ${({ theme }) => theme.colors.fg1};
 
   :hover {
-    border-color: ${({ theme }) => theme.colors.darkEdge};
-    background: ${({ theme }) => theme.colors.bg2};
+    border-color: ${({ theme }) => theme.colors.lightEdge};
   }
 
   :disabled {
@@ -21,10 +20,11 @@ const Link = styled(rrLink)`
   }
 
   &.active {
-    border-color: ${({ theme }) => theme.colors.edge};
+    border-color: ${({ theme }) => theme.colors.lightEdge};
+    background: ${({ theme }) => theme.colors.bg1};
 
     :hover {
-      border-color: ${({ theme }) => theme.colors.darkEdge};
+      border-color: ${({ theme }) => theme.colors.edge};
     }
   }
 `;

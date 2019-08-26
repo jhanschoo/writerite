@@ -32,12 +32,14 @@ const Card = styled.section`
   padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
   display: flex;
   flex-direction: column;
+  border: 1px solid ${({ theme }) => theme.colors.transparent};
   border-radius: 8px;
   .auxillary {
     visibility: hidden;
   }
   :hover, &.active {
-    background: ${({ theme }) => theme.colors.bg2};
+    border: 1px solid ${({ theme }) => theme.colors.lightEdge};
+    background: ${({ theme }) => theme.colors.bg1};
   }
 
   :hover .auxillary {

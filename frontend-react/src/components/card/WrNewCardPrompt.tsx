@@ -8,7 +8,7 @@ import { WR_CARD } from '../../client-models';
 import { CardsCreate, CardsCreateVariables } from './gqlTypes/CardsCreate';
 
 import styled from 'styled-components';
-import { AuxillaryButton } from '../../ui/form/Button';
+import { AuxillaryButton } from '../../ui/Button';
 import TextInput from '../../ui/form/TextInput';
 
 const CARDS_CREATE_MUTATION = gql`

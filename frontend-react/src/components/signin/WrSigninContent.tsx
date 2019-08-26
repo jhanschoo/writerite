@@ -9,9 +9,8 @@ const SigninBox = styled.div`
   display: flex;
   width: 40%;
   justify-content: center;
-  align-content: center;
-  background: ${({ theme }) => theme.colors.bg1};
-  padding: ${({ theme }) => theme.space[3]};
+  align-items: center;
+  padding: ${({ theme }) => theme.space[1]};
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     width: 100%;
   }

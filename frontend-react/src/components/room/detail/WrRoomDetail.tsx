@@ -7,7 +7,7 @@ import { WR_ROOM_DETAIL } from '../../../client-models';
 import { RoomDetail, RoomDetailVariables } from './gqlTypes/RoomDetail';
 
 import styled from 'styled-components';
-import FlexMain from '../../../ui/layout/FlexMain';
+import Main from '../../../ui/layout/Main';
 import HDivider from '../../../ui/HDivider';
 
 import { withRouter, RouteComponentProps } from 'react-router';
@@ -59,7 +59,7 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
     return (
       <>
         <WrRoomSidebar />
-        <FlexMain />
+        <Main />
       </>
     );
   }
@@ -67,11 +67,11 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
     return (
       <>
         <WrRoomSidebar />
-        <FlexMain>
+        <Main>
           <CenteredP>
             Retrieving room...
           </CenteredP>
-        </FlexMain>
+        </Main>
       </>
     );
   }
@@ -97,7 +97,7 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
     <>
       <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />
       <WrRoomSidebar room={room} />
-      <FlexMain>
+      <Main>
         <Header>
           <RoomHeading>
             {room.owner.email} is hosting
@@ -111,7 +111,7 @@ const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) =
         </WrRoomConversationBox>
         <HDivider />
         <WrRoomDetailInput roomId={roomId} />
-      </FlexMain>
+      </Main>
     </>
   );
 };

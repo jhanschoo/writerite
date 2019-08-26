@@ -7,7 +7,7 @@ import { initialState } from '../sidebar-menu/reducers';
 import { createShow, createHide, SidebarAction } from '../sidebar-menu/actions';
 
 import styled from 'styled-components';
-import { BorderlessButton } from '../../ui/form/Button';
+import { BorderlessButton } from '../../ui/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 
 interface DispatchProps {

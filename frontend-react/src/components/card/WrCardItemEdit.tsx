@@ -10,7 +10,7 @@ import { CardEditVariables, CardEdit } from './gqlTypes/CardEdit';
 
 import styled, { StyledComponent } from 'styled-components';
 import TextInput from '../../ui/form/TextInput';
-import { Button, BorderlessButton } from '../../ui/form/Button';
+import { Button, BorderlessButton } from '../../ui/Button';
 
 const CARD_EDIT_MUTATION = gql`
 ${WR_CARD}

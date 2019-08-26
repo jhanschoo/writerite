@@ -16,7 +16,7 @@ export const Button = styled.button`
   color: ${({ theme }) => theme.colors.fg1};
 
   :hover {
-    border-color: ${({ theme }) => theme.colors.darkEdge};
+    border-color: ${({ theme }) => theme.colors.edge};
     cursor: pointer;
   }
 
@@ -43,8 +43,7 @@ export const BorderlessButton = styled.button`
 
   :hover {
     cursor: pointer;
-    border-color: ${({ theme }) => theme.colors.darkEdge};
-    background: ${({ theme }) => theme.colors.bg2};
+    border-color: ${({ theme }) => theme.colors.lightEdge};
   }
 
   :disabled {
@@ -52,10 +51,12 @@ export const BorderlessButton = styled.button`
   }
 
   &.active {
-    border-color: ${({ theme }) => theme.colors.edge};
+    border-color: ${({ theme }) => theme.colors.lightEdge};
+    background: ${({ theme }) => theme.colors.bg2};
 
     :hover {
-      border-color: ${({ theme }) => theme.colors.darkEdge};
+      cursor: pointer;
+      border-color: ${({ theme }) => theme.colors.edge};
     }
   }
 `;

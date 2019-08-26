@@ -3,9 +3,9 @@ import React, { FC } from 'react';
 import styled from 'styled-components';
 
 const BrandText = styled.span`
-  font-weight: bold;
-  font-size: 150%;
-  font-family: "Josefin Slab", serif;
+  font-weight: 400;
+  font-size: 125%;
+  font-family: "Yeseva One", serif;
 `;
 
 interface Props {
@@ -18,7 +18,7 @@ const WrBrandText: FC<Props> = (props: Props) => {
   const { prefix, short, suffix } = props;
   return (
     <BrandText>
-      {prefix}{short ? 'W' : 'WriteRite'}{suffix}
+      {prefix}{short ? 'Wr' : 'WriteRite'}{suffix}
     </BrandText>
   );
 };

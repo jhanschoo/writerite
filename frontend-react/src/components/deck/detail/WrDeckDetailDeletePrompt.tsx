@@ -9,7 +9,7 @@ import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { DeckDelete, DeckDeleteVariables } from './gqlTypes/DeckDelete';
 
 import styled from 'styled-components';
-import { Button } from '../../../ui/form/Button';
+import { Button } from '../../../ui/Button';
 import TextInput from '../../../ui/form/TextInput';
 
 const DECK_DELETE_MUTATION = gql`

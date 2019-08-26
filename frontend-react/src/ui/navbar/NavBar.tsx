@@ -5,7 +5,7 @@ const NavBar = styled.nav`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  border-bottom: 1px solid ${({ theme }) => theme.colors.edge};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.darkEdge};
 
   grid-area: 1 / 2 / 2 / 14;
 

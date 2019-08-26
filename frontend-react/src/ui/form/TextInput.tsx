@@ -17,7 +17,7 @@ export const TextInput = styled.input`
   }
 
   :hover, :focus {
-    border: 1px solid ${({ theme }) => theme.colors.darkEdge};
+    border: 1px solid ${({ theme }) => theme.colors.edge};
     outline: none;
   }
 

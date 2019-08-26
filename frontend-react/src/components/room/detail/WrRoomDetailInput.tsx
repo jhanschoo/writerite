@@ -9,7 +9,7 @@ import { RwRoomMessageContentType } from '../../../gqlGlobalTypes';
 
 import styled from 'styled-components';
 import TextInput from '../../../ui/form/TextInput';
-import { BorderlessButton } from '../../../ui/form/Button';
+import { BorderlessButton } from '../../../ui/Button';
 
 import { WR_ROOM_MESSAGE } from '../../../client-models';
 

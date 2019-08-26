@@ -5,7 +5,7 @@ const SidebarMenuHeader = styled.h4`
   font-size: 100%;
   font-weight: bold;
   margin: 0;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+  padding: 0 0 ${({ theme }) => theme.space[1]} 0;
 `;
 
 export default SidebarMenuHeader;

@@ -8,8 +8,7 @@ import { WR_DECK } from '../../../client-models';
 import { DeckCreate, DeckCreateVariables } from './gqlTypes/DeckCreate';
 
 import styled from 'styled-components';
-import FlexSection from '../../../ui/FlexSection';
-import { MinimalButton } from '../../../ui/form/Button';
+import { MinimalButton } from '../../../ui/Button';
 import Fieldset from '../../../ui/form/Fieldset';
 import { MinimalTextInput } from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
@@ -37,6 +36,12 @@ mutation DeckCreate(
 `;
 
 const initialName = '';
+
+const FlexSection = styled.section`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: ${({ theme }) => theme.space[1]};
+`;
 
 const StyledList = styled(List)`
   flex-direction: column;

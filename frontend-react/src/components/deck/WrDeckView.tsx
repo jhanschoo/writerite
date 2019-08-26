@@ -6,7 +6,8 @@ import {
 
 import WrNavBar from '../navbar/WrNavBar';
 import WrDeckSidebar from './sidebar/WrDeckSidebar';
-import WrFindDeck from './search/WrFindDeck';
+import WrOrganizeDecks from './organize/WrOrganizeDecks';
+import WrFindDecks from './find/WrFindDecks';
 import WrUploadDeck from './WrUploadDeck';
 import WrDeckDetail from './detail/WrDeckDetail';
 
@@ -17,11 +18,11 @@ const WrDeckView = (props: RouteComponentProps) => {
       <WrNavBar />
       <WrDeckSidebar />
       <Switch>
-        <Route path={`${match.url}/manage`} component={WrFindDeck} />
-        <Route path={`${match.url}/search`} component={WrFindDeck} />
+        <Route path={`${match.url}/organize`} component={WrOrganizeDecks} />
+        <Route path={`${match.url}/search`} component={WrFindDecks} />
         <Route path={`${match.url}/upload`} component={WrUploadDeck} />
         <Route path={`${match.url}/:deckId`} component={WrDeckDetail} />
-        <Redirect to={`${match.url}/manage`} />
+        <Redirect to={`${match.url}/organize`} />
       </Switch>
     </>
   );

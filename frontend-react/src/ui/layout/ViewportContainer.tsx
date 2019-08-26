@@ -6,7 +6,7 @@ const ViewportContainer = styled.div`
   min-width: 100vw;
   grid: max-content minmax(1rem, 1fr) / minmax(1rem, auto) repeat(12, minmax(1rem, 96px)) minmax(1rem, auto);
   place-content: start stretch;
-  background: ${({ theme }) => theme.colors.bg1};
+  background: ${({ theme }) => theme.colors.bg2};
 `;
 
 export default ViewportContainer;

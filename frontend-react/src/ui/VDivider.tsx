@@ -13,7 +13,7 @@ const OuterBox = styled.div`
 const Spacer = styledSpacerDiv`
   width: 1px;
   flex-grow: 1;
-  background: ${({ spacerColor, theme }) => spacerColor ? theme.colors[spacerColor] : theme.colors.edge};
+  background: ${({ spacerColor, theme }) => spacerColor ? theme.colors[spacerColor] : theme.colors.darkEdge};
 `;
 
 const TextBox = styled.div`

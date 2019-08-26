@@ -18,7 +18,7 @@ Worker servicing chat in `@writerite/backend-yoga` as a chatroom bot. Check `kub
 * Config messages specify where to place the config message in chat.
   they do not contain anything about the current config state.
 
-## Quiz Round Framework API Sketch
+## Quiz Round Framework API
 
 * `quizServer(channel: string, rounds: Round[]): Promise<void>` asynchronously serves a quiz consisting of rounds.
   * `channel` is the channel on which to listen for messages.

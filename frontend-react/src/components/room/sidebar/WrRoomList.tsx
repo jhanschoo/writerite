@@ -6,7 +6,7 @@ import { WrRoomStub } from '../../../client-models/gqlTypes/WrRoomStub';
 
 import styled from 'styled-components';
 import Fieldset from '../../../ui/form/Fieldset';
-import { MinimalButton } from '../../../ui/form/Button';
+import { MinimalButton } from '../../../ui/Button';
 import { MinimalTextInput } from '../../../ui/form/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';

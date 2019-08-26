@@ -1,13 +1,13 @@
 import React from 'react';
 
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';
-import DashboardMain from '../../../ui/layout/DashboardMain';
+import Main from '../../../ui/layout/Main';
 
 const WrFindRoom = () => {
   return (
     <>
       <WrRoomSidebar />
-      <DashboardMain />
+      <Main />
     </>
   );
 };

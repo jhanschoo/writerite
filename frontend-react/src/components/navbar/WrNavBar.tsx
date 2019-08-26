@@ -10,7 +10,7 @@ import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 
 import styled, { withTheme } from 'styled-components';
 import Link from '../../ui/Link';
-import { BorderlessButton } from '../../ui/form/Button';
+import { BorderlessButton } from '../../ui/Button';
 import NavBar from '../../ui/navbar/NavBar';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 import NavBarList from '../../ui/navbar/NavBarList';
@@ -23,13 +23,14 @@ const BrandHeading = styled.h3`
 `;
 
 const StyledNavBar = styled(NavBar)`
+  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
   @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
     font-size: 75%;
   }
 `;
 
 const BrandNavBarItem = styled(NavBarItem)`
-  padding: ${({ theme }) => theme.space[2]}
+  padding: ${({ theme }) => theme.space[2]};
 `;
 
 const NavBarListRight = styled(NavBarList)`
@@ -57,6 +58,7 @@ const SignoutButton = styled(BorderlessButton)`
 
 const BrandLink = styled(Link)`
   padding: 0;
+  border: none;
 `;
 
 interface DispatchProps {

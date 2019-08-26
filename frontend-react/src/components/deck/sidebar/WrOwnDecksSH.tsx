@@ -5,12 +5,12 @@ import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
 import { WR_DECK } from '../../../client-models';
-import { OwnDecksUpdates } from './gqlTypes/OwnDecksUpdates';
-import { OwnDecks } from './gqlTypes/OwnDecks';
+import { SidebarOwnDecksUpdates } from './gqlTypes/SidebarOwnDecksUpdates';
+import { SidebarOwnDecks } from './gqlTypes/SidebarOwnDecks';
 
 const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
 ${WR_DECK}
-subscription OwnDecksUpdates {
+subscription SidebarOwnDecksUpdates {
   rwOwnDecksUpdates {
     ... on RwDeckCreated {
       created {
@@ -31,14 +31,14 @@ subscription OwnDecksUpdates {
 
 interface Props {
   subscribeToMore: (options: SubscribeToMoreOptions<
-    OwnDecks, object, OwnDecksUpdates
+    SidebarOwnDecks, object, SidebarOwnDecksUpdates
   >) => () => void;
 }
 
 class WrOwnDecksSH extends PureComponent<Props> {
   public readonly componentDidMount = () => {
     const { subscribeToMore } = this.props;
-    const updateQuery: UpdateQueryFn<OwnDecks, object, OwnDecksUpdates> = (
+    const updateQuery: UpdateQueryFn<SidebarOwnDecks, object, SidebarOwnDecksUpdates> = (
       prev, { subscriptionData },
     ) => {
       // note changes should be idempotent due to following issue
@@ -65,7 +65,7 @@ class WrOwnDecksSH extends PureComponent<Props> {
           return deck.id !== rwOwnDecksUpdates.deletedId;
         });
       }
-      return Object.assign<object, OwnDecks, OwnDecks>(
+      return Object.assign<object, SidebarOwnDecks, SidebarOwnDecks>(
         {}, prev, { rwOwnDecks: decks },
       );
     };
