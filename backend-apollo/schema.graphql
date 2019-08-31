@@ -179,6 +179,7 @@ type RwDeck {
   promptLang: String!
   answerLang: String!
   owner: RwUser!
+  subdecks: [RwDeck!]!
   cards: [RwCard!]!
 }
 

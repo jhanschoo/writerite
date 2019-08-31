@@ -13,6 +13,9 @@ fragment WrDeck on RwDeck {
   owner {
     ...WrUserStub
   }
+  subdecks {
+    ...WrDeckStub
+  }
   cards {
     ...WrCardStub
   }

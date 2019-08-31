@@ -1,44 +1,22 @@
 import { PureComponent } from 'react';
 
-import gql from 'graphql-tag';
 import { SubscribeToMoreOptions } from 'apollo-client';
 import { UpdateQueryFn } from 'apollo-client/core/watchQueryOptions';
 import { printApolloError } from '../../../util';
-import { WR_DECK } from '../../../client-models';
-import { SidebarOwnDecksUpdates } from './gqlTypes/SidebarOwnDecksUpdates';
-import { SidebarOwnDecks } from './gqlTypes/SidebarOwnDecks';
-
-const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
-${WR_DECK}
-subscription SidebarOwnDecksUpdates {
-  rwOwnDecksUpdates {
-    ... on RwDeckCreated {
-      created {
-        ...WrDeck
-      }
-    }
-    ... on RwDeckUpdated {
-      updated {
-        ...WrDeck
-      }
-    }
-    ... on RwDeckDeleted {
-      deletedId
-    }
-  }
-}
-`;
+import { OWN_DECKS_UPDATES_SUBSCRIPTION } from '../sharedGql';
+import { OwnDecksUpdates } from '../gqlTypes/OwnDecksUpdates';
+import { OwnDecks } from '../gqlTypes/OwnDecks';
 
 interface Props {
   subscribeToMore: (options: SubscribeToMoreOptions<
-    SidebarOwnDecks, object, SidebarOwnDecksUpdates
+    OwnDecks, object, OwnDecksUpdates
   >) => () => void;
 }
 
 class WrOwnDecksSH extends PureComponent<Props> {
   public readonly componentDidMount = () => {
     const { subscribeToMore } = this.props;
-    const updateQuery: UpdateQueryFn<SidebarOwnDecks, object, SidebarOwnDecksUpdates> = (
+    const updateQuery: UpdateQueryFn<OwnDecks, object, OwnDecksUpdates> = (
       prev, { subscriptionData },
     ) => {
       // note changes should be idempotent due to following issue
@@ -65,7 +43,7 @@ class WrOwnDecksSH extends PureComponent<Props> {
           return deck.id !== rwOwnDecksUpdates.deletedId;
         });
       }
-      return Object.assign<object, SidebarOwnDecks, SidebarOwnDecks>(
+      return Object.assign<object, OwnDecks, OwnDecks>(
         {}, prev, { rwOwnDecks: decks },
       );
     };

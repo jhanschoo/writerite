@@ -4,7 +4,7 @@ export const Button = styled.button`
 display: flex;
 justify-content: center;
 align-items: center;
-border: 1px solid ${({ theme }) => theme.color.edge};
+border: 1px solid ${({ theme }) => theme.edge[1]};
 margin: 0;
 padding: 0;
 font-weight: bold;
@@ -12,10 +12,10 @@ font-size: inherit;
 font-family: inherit;
 outline: none;
 cursor: pointer;
-${({ theme }) => theme.fgbg[0]}
+${({ theme }) => theme.fgbg[1]}
 
 &.active, :hover {
-  ${({ theme }) => theme.bgfg[0]}
+  ${({ theme }) => theme.bgfg[1]}
 }
 `;
 

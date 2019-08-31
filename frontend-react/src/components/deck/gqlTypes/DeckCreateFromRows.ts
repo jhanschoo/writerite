@@ -14,6 +14,15 @@ export interface DeckCreateFromRows_rwDeckCreateFromRows_owner {
   readonly roles: ReadonlyArray<string>;
 }
 
+export interface DeckCreateFromRows_rwDeckCreateFromRows_subdecks {
+  readonly __typename: "RwDeck";
+  readonly id: string;
+  readonly name: string;
+  readonly nameLang: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+}
+
 export interface DeckCreateFromRows_rwDeckCreateFromRows_cards {
   readonly __typename: "RwCard";
   readonly id: string;
@@ -33,6 +42,7 @@ export interface DeckCreateFromRows_rwDeckCreateFromRows {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly owner: DeckCreateFromRows_rwDeckCreateFromRows_owner;
+  readonly subdecks: ReadonlyArray<DeckCreateFromRows_rwDeckCreateFromRows_subdecks>;
   readonly cards: ReadonlyArray<DeckCreateFromRows_rwDeckCreateFromRows_cards>;
 }
 

@@ -14,6 +14,7 @@ export interface ISDeck {
 
 export interface IRwDeck extends ISDeck {
   owner: AFunResTo<IRwUser>;
+  subdecks: AFunResTo<IRwDeck[]>;
   cards: AFunResTo<IRwCard[]>;
 }
 
@@ -142,6 +143,10 @@ export const RwDeck = {
       const pCards = await prisma.pCards({ where: { deck: { id: sDeck.id } } });
       return pCards.map((pCard) => RwCard.fromPCard(prisma, pCard));
     },
+    subdecks: async () => {
+      const pDecks = await prisma.pDeck({ id: sDeck.id }).subdecks();
+      return pDecks.map((pDeck) => RwDeck.fromPDeck(prisma, pDeck));
+    }
   }),
   fromPDeck: (prisma: Prisma, pDeck: PDeck): IRwDeck => RwDeck.fromSDeck(
     prisma, SDeck.fromPDeck(pDeck),

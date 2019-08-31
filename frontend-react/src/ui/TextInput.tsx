@@ -5,9 +5,8 @@ export const TextInput = styled.input`
 font-size: 100%;
 height: ${({ theme }) => theme.space[4]};
 padding: 0 ${({ theme }) => theme.space[2]};
-border: 1px solid ${({ theme }) => theme.color.edge};
-background: ${({ theme }) => theme.color.bg0};
-color: ${({ theme }) => theme.color.fg1};
+border: 1px solid ${({ theme }) => theme.edge[1]};
+${({ theme }) => theme.fgbg[1]}
 
 :hover, :focus {
   outline: none;

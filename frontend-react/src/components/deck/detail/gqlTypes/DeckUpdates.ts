@@ -14,6 +14,15 @@ export interface DeckUpdates_rwDeckUpdates_RwDeckCreated_created_owner {
   readonly roles: ReadonlyArray<string>;
 }
 
+export interface DeckUpdates_rwDeckUpdates_RwDeckCreated_created_subdecks {
+  readonly __typename: "RwDeck";
+  readonly id: string;
+  readonly name: string;
+  readonly nameLang: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+}
+
 export interface DeckUpdates_rwDeckUpdates_RwDeckCreated_created_cards_deck {
   readonly __typename: "RwDeck";
   readonly id: string;
@@ -43,6 +52,7 @@ export interface DeckUpdates_rwDeckUpdates_RwDeckCreated_created {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly owner: DeckUpdates_rwDeckUpdates_RwDeckCreated_created_owner;
+  readonly subdecks: ReadonlyArray<DeckUpdates_rwDeckUpdates_RwDeckCreated_created_subdecks>;
   readonly cards: ReadonlyArray<DeckUpdates_rwDeckUpdates_RwDeckCreated_created_cards>;
 }
 
@@ -57,6 +67,15 @@ export interface DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated_owner {
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
+}
+
+export interface DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated_subdecks {
+  readonly __typename: "RwDeck";
+  readonly id: string;
+  readonly name: string;
+  readonly nameLang: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
 }
 
 export interface DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated_cards_deck {
@@ -88,6 +107,7 @@ export interface DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly owner: DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated_owner;
+  readonly subdecks: ReadonlyArray<DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated_subdecks>;
   readonly cards: ReadonlyArray<DeckUpdates_rwDeckUpdates_RwDeckUpdated_updated_cards>;
 }
 

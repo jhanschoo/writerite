@@ -10,6 +10,27 @@ query OwnDecks {
 }
 `;
 
+export const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
+${WR_DECK}
+subscription OwnDecksUpdates {
+  rwOwnDecksUpdates {
+    ... on RwDeckCreated {
+      created {
+        ...WrDeck
+      }
+    }
+    ... on RwDeckUpdated {
+      updated {
+        ...WrDeck
+      }
+    }
+    ... on RwDeckDeleted {
+      deletedId
+    }
+  }
+}
+`;
+
 export const ROOM_CREATE_MUTATION = gql`
 ${WR_ROOM}
 mutation RoomCreate(

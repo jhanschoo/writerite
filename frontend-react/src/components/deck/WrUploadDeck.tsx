@@ -60,8 +60,7 @@ width: 100%;
 const DropDiv = styled.div`
 margin: 0;
 padding: ${({ theme }) => theme.space[3]};
-border: 1px solid ${({ theme }) => theme.color.edge};
-border-radius: 8px;
+border: 1px solid ${({ theme }) => theme.edge[1]};
 flex-grow: 1;
 min-height: 33vh;
 display: flex;
@@ -69,8 +68,8 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 
-:hover {
-  border: 1px solid ${({ theme }) => theme.color.darkEdge};
+&.active, :hover {
+  ${({ theme }) => theme.fgbg[1]}
 }
 `;
 
