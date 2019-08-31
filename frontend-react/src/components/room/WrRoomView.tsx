@@ -7,16 +7,15 @@ import WrNavBar from '../navbar/WrNavBar';
 import WrFindRoom from './search/WrFindRoom';
 import WrRoomDetail from './detail/WrRoomDetail';
 
-const WrDeckView = (props: RouteComponentProps) => {
-  const { match } = props;
+const WrDeckView = ({ match: { url } }: RouteComponentProps) => {
   return (
     <>
       <WrNavBar />
       <Switch>
         {/* <Route path={`${match.url}/search`} component={WrFindRoom} /> */}
-        <Route path={`${match.url}/search`} component={WrFindRoom} />
-        <Route path={`${match.url}/:roomId`} component={WrRoomDetail} />
-        <Redirect to={`${match.url}/search`} />
+        <Route path={`${url}/search`} component={WrFindRoom} />
+        <Route path={`${url}/:roomId`} component={WrRoomDetail} />
+        <Redirect to={`${url}/search`} />
       </Switch>
     </>
   );

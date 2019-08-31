@@ -1,5 +1,7 @@
-import React, { useRef, useState, ChangeEvent, DragEvent, FC, FormEvent } from 'react';
+import React, { useRef, useState, ChangeEvent, DragEvent, FormEvent } from 'react';
 import Papa from 'papaparse';
+
+import { withRouter, RouteComponentProps } from 'react-router';
 
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
@@ -7,15 +9,13 @@ import { printApolloError } from '../../util';
 import { WR_DECK } from '../../client-models';
 import { DeckCreateFromRows, DeckCreateFromRowsVariables } from './gqlTypes/DeckCreateFromRows';
 
-import { withRouter, RouteComponentProps } from 'react-router';
-
 import styled, { StyledComponent } from 'styled-components';
 
 import Main from '../../ui/layout/Main';
-import Fieldset from '../../ui/form/Fieldset';
-import TextInput from '../../ui/form/TextInput';
+import Fieldset from '../../ui/Fieldset';
+import TextInput from '../../ui/TextInput';
 import { Button } from '../../ui/Button';
-import HDivider from '../../ui/HDivider';
+import HDivider from '../../ui-components/HDivider';
 
 const DECK_CREATE_FROM_ROWS_MUTATION = gql`
 ${WR_DECK}
@@ -45,93 +45,90 @@ enum DraggedFileStatus {
   VALID,
 }
 
-type Props = RouteComponentProps;
-
 const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  margin: ${({ theme }) => theme.space[3]};
+display: flex;
+flex-direction: column;
+flex-grow: 1;
+margin: ${({ theme }) => theme.space[3]};
 `;
 
 const StyledTextInput = styled(TextInput)`
-  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
-  width: 100%;
+margin: 0 0 ${({ theme }) => theme.space[3]} 0;
+width: 100%;
 `;
 
 const DropDiv = styled.div`
-  margin: 0;
-  padding: ${({ theme }) => theme.space[3]};
-  border: 1px solid ${({ theme }) => theme.colors.edge};
-  border-radius: 8px;
-  flex-grow: 1;
-  min-height: 33vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+margin: 0;
+padding: ${({ theme }) => theme.space[3]};
+border: 1px solid ${({ theme }) => theme.color.edge};
+border-radius: 8px;
+flex-grow: 1;
+min-height: 33vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
 
-  :hover {
-    border: 1px solid ${({ theme }) => theme.colors.darkEdge};
-  }
+:hover {
+  border: 1px solid ${({ theme }) => theme.color.darkEdge};
+}
 `;
 
 const DividerDiv = styled.div`
-  display: flex;
-  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
-  flex-direction: column;
-  width: 75%;
-  align-items: stretch;
+display: flex;
+margin: 0 0 ${({ theme }) => theme.space[3]} 0;
+flex-direction: column;
+width: 75%;
+align-items: stretch;
 `;
 
 const DropDivP = styled.p`
-  text-align: center;
-  margin: ${({ theme }) => theme.space[3]} 0;
+text-align: center;
+margin: ${({ theme }) => theme.space[3]} 0;
 `;
 
 const DropDivLabel = styled.label`
-  display: block;
-  text-align: center;
-  width: 100%;
-  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
+display: block;
+text-align: center;
+width: 100%;
+margin: 0 0 ${({ theme }) => theme.space[3]} 0;
 `;
 
 const DropDivPBold = styled(DropDivP)`
-  font-weight: bold;
-  font-size: 125%;
+font-weight: bold;
+font-size: 125%;
 `;
 
 const FileInput = styled.input`
-  position: absolute;
-  border: 0;
-  padding: 0;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
+position: absolute;
+border: 0;
+padding: 0;
+height: 1px;
+width: 1px;
+overflow: hidden;
+clip: rect(0,0,0,0);
 `;
 
 const StyledFieldset = styled(Fieldset)`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: ${({ theme }) => theme.space[4]};
-  width: 67%;
-  &.hidden {
-    display: none;
-  }
+display: flex;
+flex-direction: column;
+align-items: center;
+margin: ${({ theme }) => theme.space[4]};
+width: 67%;
+&.hidden {
+  display: none;
+}
 `;
 
 const StyledButton = styled(Button)`
-  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
 `;
 
 const FileInputLabel = StyledButton as StyledComponent<'label', any, {}, never>;
 
 const csvExtension = /\.csv$/i;
 
-const WrUploadDeck: FC<Props> = (props: Props) => {
-  const { history } = props;
+const WrUploadDeck = ({ history }: RouteComponentProps) => {
   const [rows, setRows] = useState<string[][] | null>(null);
   const [manualName, setManualName] = useState<boolean>(false);
   const [nameInput, setNameInput] = useState<string>('');

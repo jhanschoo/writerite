@@ -2,7 +2,7 @@
 /* eslint-disable */
 // This file was automatically generated and should not be edited.
 
-import { IRoomConfigInput, RwRoomMessageContentType } from "./../../../../gqlGlobalTypes";
+import { IRoomConfigInput, RwRoomMessageContentType } from "./../../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL mutation operation: RoomCreate

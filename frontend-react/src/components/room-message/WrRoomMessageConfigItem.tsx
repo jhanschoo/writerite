@@ -12,7 +12,7 @@ interface Props {
 const MessageItem = styled(Item)`
 display: flex;
 flex-direction: column;
-background: ${({ theme }) => theme.colors.heterogBg};
+background: ${({ theme }) => theme.color.heterogBg};
 border-radius: 4px;
 margin: ${({ theme }) => theme.space[1]} 0;
 padding: 0 ${({ theme }) => theme.space[2]};

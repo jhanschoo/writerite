@@ -1,11 +1,11 @@
-import React, { FC } from 'react';
+import React from 'react';
 
 import styled from 'styled-components';
 
 const BrandText = styled.span`
-  font-weight: 400;
-  font-size: 125%;
-  font-family: "Yeseva One", serif;
+font-weight: 400;
+font-size: 125%;
+font-family: "Yeseva One", serif;
 `;
 
 interface Props {
@@ -14,8 +14,7 @@ interface Props {
   suffix?: string;
 }
 
-const WrBrandText: FC<Props> = (props: Props) => {
-  const { prefix, short, suffix } = props;
+const WrBrandText = ({ prefix, short, suffix }: Props) => {
   return (
     <BrandText>
       {prefix}{short ? 'Wr' : 'WriteRite'}{suffix}

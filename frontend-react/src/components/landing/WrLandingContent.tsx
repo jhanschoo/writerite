@@ -7,41 +7,42 @@ import WrBrandText from '../brand/WrBrandText';
 import WrSignin from '../signin/WrSignin';
 
 const HeroHeader = styled.header`
-  display: flex;
-  width: 60%;
-  min-height: 33vh;
-  justify-content: center;
-  align-items: center;
-  padding: 0 ${({ theme }) => theme.space[4]};
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    width: 100%;
-  }
+display: flex;
+width: 60%;
+min-height: 33vh;
+justify-content: center;
+align-items: center;
+padding: 0 ${({ theme }) => theme.space[4]};
+@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+  width: 100%;
+}
 `;
 
 const Aside = styled.aside`
-  display: flex;
-  width: 40%;
-  min-height: 33vh;
-  justify-content: center;
-  align-items: center;
-  padding: 0 ${({ theme }) => theme.space[3]};
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    width: 100%;
-  }
+display: flex;
+width: 40%;
+min-height: 33vh;
+justify-content: center;
+align-items: center;
+padding: 0 ${({ theme }) => theme.space[3]};
+@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+  width: 100%;
+}
 `;
 
 const HeroHeading = styled.h1`
-  font-size: 300%;
-  text-align: center;
+font-size: 300%;
+text-align: center;
 
-  @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
-    font-size: 150%;
-  }
+@media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
+  font-size: 150%;
+}
 `;
 
 const Article = styled.article`
-  display: flex;
-  flex-wrap: wrap;
+display: flex;
+flex-wrap: wrap;
+margin: ${({ theme }) => theme.space[3]} 0 0 0;
 `;
 
 const WrLandingContent = () => (

@@ -10,6 +10,17 @@ import styled from 'styled-components';
 import { BorderlessButton } from '../../ui/Button';
 import NavBarItem from '../../ui/navbar/NavBarItem';
 
+const HideableNavBarItem = styled(NavBarItem)`
+padding: ${({ theme }) => theme.space[2]};
+display: none;
+@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+  display: flex;
+  &.hidden {
+    display: none;
+  }
+}
+`;
+
 interface DispatchProps {
   createShow: () => SidebarAction;
   createHide: () => SidebarAction;
@@ -22,20 +33,8 @@ interface StateProps {
 
 type Props = StateProps & DispatchProps;
 
-const HideableNavBarItem = styled(NavBarItem)`
-  padding: ${({ theme }) => theme.space[2]};
-  display: none;
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    display: flex;
-    &.hidden {
-      display: none;
-    }
-  }
-`;
-
-const WrHamburger = (props: Props) => {
-  // tslint:disable-next-line: no-shadowed-variable
-  const { num, hidden, createShow, createHide } = props;
+// tslint:disable-next-line: no-shadowed-variable
+const WrHamburger = ({ num, hidden, createShow, createHide }: Props) => {
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (hidden) {
       createShow();

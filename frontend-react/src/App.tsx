@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import {
   Switch, Route, Redirect, withRouter, RouteComponentProps,
 } from 'react-router';
@@ -21,8 +21,7 @@ interface StateProps {
 type Props = StateProps & RouteComponentProps;
 
 // tslint:disable-next-line: variable-name
-const App: FC<StateProps & RouteComponentProps> = (props: Props) => {
-  const { user } = props;
+const App = ({ user }: Props) => {
   return (
     <ViewportContainer>
       <Switch>

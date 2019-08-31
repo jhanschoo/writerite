@@ -1,5 +1,4 @@
-import React, { useState, FC, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
-import { Plus } from 'react-feather';
+import React, { useState, ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
@@ -8,8 +7,8 @@ import { WR_CARD } from '../../client-models';
 import { CardsCreate, CardsCreateVariables } from './gqlTypes/CardsCreate';
 
 import styled from 'styled-components';
-import { AuxillaryButton } from '../../ui/Button';
-import TextInput from '../../ui/form/TextInput';
+import { BorderlessButton } from '../../ui/Button';
+import TextInput from '../../ui/TextInput';
 
 const CARDS_CREATE_MUTATION = gql`
 ${WR_CARD}
@@ -35,26 +34,30 @@ mutation CardsCreate(
 `;
 
 const CenteredFlex = styled.div`
-  align-self: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[3]};
-  border-radius: 4px;
+align-self: center;
+display: flex;
+align-items: baseline;
+justify-content: center;
+padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[3]};
+border: 1px solid ${({ theme }) => theme.edge[1]};
+margin: 0 0 ${({ theme }) => theme.space[1]} 0;
 `;
 
 const StyledTextInput = styled(TextInput)`
-  margin: 0 ${({ theme }) => theme.space[2]};
-  flex-grow: 0;
-  width: 4rem;
+margin: 0 ${({ theme }) => theme.space[2]};
+flex-grow: 0;
+width: 4rem;
+`;
+
+const StyledButton = styled(BorderlessButton)`
+padding: ${({ theme }) => theme.space[1]};
 `;
 
 interface Props {
   deckId: string;
 }
 
-const WrNewCardPrompt: FC<Props> = (props: Props) => {
-  const { deckId } = props;
+const WrNewCardPrompt = ({ deckId }: Props) => {
   const [multiplicity, setMultiplicity] = useState(1);
   const resetMultiplicity = () => setMultiplicity(1);
   const [mutate, { loading }] = useMutation<CardsCreate, CardsCreateVariables>(
@@ -100,12 +103,12 @@ const WrNewCardPrompt: FC<Props> = (props: Props) => {
         onKeyDown={handleKeyDown}
         disabled={loading}
       />
-      new cards to the deck&emsp;
-      <AuxillaryButton
+      new cards to the deck.&emsp;
+      <StyledButton
         onClick={handleClick}
         disabled={loading}
-      ><Plus size={16} />
-      </AuxillaryButton>
+      >Add
+      </StyledButton>
     </CenteredFlex>
   );
 };

@@ -23,13 +23,13 @@ query InRooms {
 `;
 
 const FlexSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.space[1]};
+display: flex;
+flex-direction: column;
+margin-bottom: ${({ theme }) => theme.space[1]};
 `;
 
 const PaddedItem = styled(Item)`
-  padding: ${({ theme }) => theme.space[2]}
+padding: ${({ theme }) => theme.space[2]}
 `;
 
 const WrInRooms = () => {

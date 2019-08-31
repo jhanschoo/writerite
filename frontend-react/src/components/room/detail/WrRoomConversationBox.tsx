@@ -13,16 +13,15 @@ padding: 0 ${({ theme }) => theme.space[2]};
 
 // https://github.com/philipwalton/flexbugs/issues/53
 const Spacer = styled(Item)`
-  display: flex;
-  flex-grow: 1;
+display: flex;
+flex-grow: 1;
 `;
 
 interface Props {
   children: ReactNode;
 }
 
-const WrRoomConversationBox = (props: Props) => {
-  const { children } = props;
+const WrRoomConversationBox = ({ children }: Props) => {
   const [fixToBottom, setFixToBottom] = useState(true);
   const conversationEl = useRef<HTMLUListElement>(null);
   useLayoutEffect(() => {

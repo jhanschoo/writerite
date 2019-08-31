@@ -10,12 +10,37 @@ import { DeckDelete, DeckDeleteVariables } from './gqlTypes/DeckDelete';
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/Button';
-import TextInput from '../../../ui/form/TextInput';
+import TextInput from '../../../ui/TextInput';
 
 const DECK_DELETE_MUTATION = gql`
 mutation DeckDelete($id: ID!) {
   rwDeckDelete(id: $id)
 }
+`;
+
+const StyledForm = styled.form`
+display: flex;
+flex-direction: column;
+align-items: center;
+`;
+
+const StyledTextInput = styled(TextInput)`
+margin: ${({ theme }) => theme.space[1]} 0;
+width: 100%;
+`;
+
+const StyledPanel = styled.div`
+padding:
+  0
+  ${({ theme }) => theme.space[3]}
+  ${({ theme }) => theme.space[3]}
+  ${({ theme }) => theme.space[3]};
+text-align: center;
+`;
+
+const StyledButton = styled(Button)`
+margin-top: ${({ theme }) => theme.space[2]};
+padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
 `;
 
 interface OwnProps {
@@ -25,34 +50,7 @@ interface OwnProps {
 
 type Props = RouteComponentProps & OwnProps;
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const StyledTextInput = styled(TextInput)`
-  margin: ${({ theme }) => theme.space[1]} 0;
-  width: 100%;
-`;
-
-const StyledPanel = styled.div`
-  padding:
-    0
-    ${({ theme }) => theme.space[3]}
-    ${({ theme }) => theme.space[3]}
-    ${({ theme }) => theme.space[3]};
-  text-align: center;
-`;
-
-const StyledButton = styled(Button)`
-  margin-top: ${({ theme }) => theme.space[2]};
-  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
-`;
-
-const WrDeckDetailDeletePrompt = (props: Props) => {
-  const { disabled, history } = props;
-  const { id, name } = props.deck;
+const WrDeckDetailDeletePrompt = ({ disabled, history, deck: { id, name } }: Props) => {
   const [deletePromptInput, setDeletePromptInput] = useState('');
   const handleDeleteCompleted = () => {
     history.push('/deck');

@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 
 import {
   withRouter, RouteComponentProps,
@@ -16,9 +16,7 @@ interface OwnProps {
 
 type Props = OwnProps & RouteComponentProps<{ deckId: string }>;
 
-const WrCardsList: FC<Props> = (props: Props) => {
-  const { cards, promptLang, answerLang } = props;
-  const { deckId } = props.match.params;
+const WrCardsList = ({ cards, promptLang, answerLang, match: { params: { deckId } } }: Props) => {
   const formattedCards = cards.map((card) => (
     <WrCardItem key={card.id} card={card} deckId={deckId} promptLang={promptLang} answerLang={answerLang} />
   ));

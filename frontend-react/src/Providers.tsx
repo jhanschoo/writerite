@@ -16,7 +16,7 @@ interface Props {
   children?: ReactNode;
 }
 
-const Providers = (props: Props) => {
+const Providers = ({ children }: Props) => {
   const [cacheReady, setCacheReady] = useState(false);
   if (!cacheReady) {
     persistedCache.then(() => {
@@ -29,7 +29,7 @@ const Providers = (props: Props) => {
       <ApolloProvider client={client}>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
-            {props.children}
+            {children}
           </BrowserRouter>
         </ThemeProvider>
       </ApolloProvider>

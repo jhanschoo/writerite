@@ -3,22 +3,22 @@ import { Search } from 'react-feather';
 
 import styled from 'styled-components';
 import { MinimalButton } from '../../../ui/Button';
-import Fieldset from '../../../ui/form/Fieldset';
-import { MinimalTextInput } from '../../../ui/form/TextInput';
+import Fieldset from '../../../ui/Fieldset';
+import { MinimalTextInput } from '../../../ui/TextInput';
 
 const UppercaseLegend = styled.legend`
-  text-transform: uppercase;
+text-transform: uppercase;
 `;
 
 const FlexContainer = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
+display: flex;
+width: 100%;
+align-items: center;
 `;
 
 const SearchboxTextInput = styled(MinimalTextInput)`
-  flex-grow: 1;
-  padding: 0;
+flex-grow: 1;
+padding: 0;
 `;
 
 const initialName = '';

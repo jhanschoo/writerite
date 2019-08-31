@@ -9,10 +9,9 @@ import { DeckEdit, DeckEditVariables } from './gqlTypes/DeckEdit';
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/Button';
-import TextInput from '../../../ui/form/TextInput';
+import TextInput from '../../../ui/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
-
 
 const DECK_EDIT_MUTATION = gql`
 ${WR_DECK}
@@ -35,55 +34,53 @@ mutation DeckEdit(
 }
 `;
 
+const StyledForm = styled.form`
+display: flex;
+flex-direction: column;
+align-items: center;
+`;
+
+const StyledPanel = styled.div`
+padding:
+  0
+  ${({ theme }) => theme.space[3]}
+  ${({ theme }) => theme.space[3]}
+  ${({ theme }) => theme.space[3]};
+text-align: center;
+`;
+
+const StyledList = styled(List)`
+flex-direction: column;
+align-self: stretch;
+`;
+
+const StyledItem = styled(Item)`
+flex-direction: column;
+align-items: flex-start;
+padding: ${({ theme }) => theme.space[1]} 0;
+`;
+
+const StyledLabel = styled.label`
+font-size: 87.5%;
+padding: 0 ${({ theme }) => theme.space[2]};
+`;
+
+const StyledTextInput = styled(TextInput)`
+margin: ${({ theme }) => theme.space[1]} 0;
+width: 100%;
+`;
+
+const StyledButton = styled(Button)`
+margin-top: ${({ theme }) => theme.space[2]};
+padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+`;
+
 interface Props {
   deck: WrDeckDetail;
   disabled?: boolean;
 }
 
-const StyledForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-
-const StyledPanel = styled.div`
-  padding:
-    0
-    ${({ theme }) => theme.space[3]}
-    ${({ theme }) => theme.space[3]}
-    ${({ theme }) => theme.space[3]};
-  text-align: center;
-`;
-
-const StyledList = styled(List)`
-  flex-direction: column;
-  align-self: stretch;
-`;
-
-const StyledItem = styled(Item)`
-  flex-direction: column;
-  align-items: flex-start;
-  padding: ${({ theme }) => theme.space[1]} 0;
-`;
-
-const StyledLabel = styled.label`
-  font-size: 87.5%;
-  padding: 0 ${({ theme }) => theme.space[2]};
-`;
-
-const StyledTextInput = styled(TextInput)`
-  margin: ${({ theme }) => theme.space[1]} 0;
-  width: 100%;
-`;
-
-const StyledButton = styled(Button)`
-  margin-top: ${({ theme }) => theme.space[2]};
-  padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
-`;
-
-const WrDetailSettings = (props: Props) => {
-  const { disabled } = props;
-  const { id, name, nameLang, promptLang, answerLang } = props.deck;
+const WrDetailSettings = ({ disabled, deck: { id, name, nameLang, promptLang, answerLang } }: Props) => {
   const [nameInput, setNameInput] = useState(name);
   const [nameLangInput, setNameLangInput] = useState(nameLang);
   const [promptLangInput, setPromptLangInput] = useState(promptLang);

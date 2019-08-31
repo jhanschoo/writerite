@@ -2,30 +2,30 @@ import React, { useState, useRef } from 'react';
 import { Filter } from 'react-feather';
 
 import styled from 'styled-components';
-import Fieldset from '../../../ui/form/Fieldset';
+import Fieldset from '../../../ui/Fieldset';
 import { MinimalButton } from '../../../ui/Button';
-import { MinimalTextInput } from '../../../ui/form/TextInput';
+import { MinimalTextInput } from '../../../ui/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
-import { OwnDecks_rwOwnDecks } from './gqlTypes/OwnDecks';
+import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
 
 const initialFilter = '';
 
 const FlexContainer = styled.div`
-  display: flex;
-  width: 100%;
-  align-items: center;
+display: flex;
+width: 100%;
+align-items: center;
 `;
 
 const StyledItem = styled(Item)`
-  margin: 2px 0;
+margin: 2px 0;
 `;
 
 const StyledTextInput = styled(MinimalTextInput)`
-  flex-grow: 1;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+flex-grow: 1;
+padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
 `;
 
 interface Content {
@@ -34,7 +34,7 @@ interface Content {
 }
 
 interface Props {
-  decks: readonly OwnDecks_rwOwnDecks[];
+  decks: readonly WrDeck[];
 }
 
 // TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
@@ -59,7 +59,7 @@ const WrDeckList = ({ decks }: Props) => {
         <em>There are no decks matching your filter.</em>
       </StyledItem>
     )]
-    : filteredDecks.map((deck: OwnDecks_rwOwnDecks) => (
+    : filteredDecks.map((deck) => (
         <StyledItem key={deck.id}>
           <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.nameLang || undefined}>
             {deck.name}

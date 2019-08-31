@@ -1,7 +1,7 @@
-// Tachyons colors
+// Tachyons color
 // TODO: translate to variables for rgb
 const black = '#000';
-const brightYellow = '#FF0';
+const highlight = '#FFFF00';
 const nearBlack = '#111';
 const darkGray = '#333';
 const midGray = '#555';
@@ -38,20 +38,23 @@ const washedGreen = '#E8FDF5';
 const washedYellow = '#FFFCEB';
 const washedRed = '#FFDFDF';
 
+const fg0 = black;
 const fg1 = nearBlack;
-const fg2 = gray;
+const fg2 = darkGray;
+const fg3 = midGray;
+const fg4 = gray;
+const fg5 = silver;
 const bg0 = white;
 const bg1 = nearWhite;
 const bg2 = lightGray;
-const inputBg = bg0;
+const bg3 = moonGray;
+const bg4 = lightSilver;
 const homogBg = bg0;
 const heterogBg = bg2;
 const primary = orange;
-const disabled = moonGray;
+const deemphasizedFg = gray;
 const darkEdge = fg1;
-const edge = silver;
 const lightEdge = lightSilver;
-const activeEdge = lightBlue;
 const shadow = moonGray;
 const activeShadow = lightBlue;
 const error = red;
@@ -62,27 +65,54 @@ const darken = 'rgba(0, 0, 0, 0.125)';
 
 export const breakpoints = [ '40rem', '52rem', '64rem' ];
 
+export const fgbg = [
+  `color: ${darkGray}; background: ${white};`,
+  `color: ${darkGray}; background: ${nearWhite};`,
+  `color: ${darkGray}; background: ${lightGray};`,
+  `color: ${darkGray}; background: ${moonGray};`,
+  `color: ${darkGray}; background: ${lightSilver};`,
+  `color: ${darkGray}; background: ${silver};`,
+];
+
+export const bgfg = [
+  `color: ${lightGray}; background: ${black};`,
+  `color: ${lightGray}; background: ${nearBlack};`,
+  `color: ${lightGray}; background: ${darkGray};`,
+  `color: ${lightGray}; background: ${midGray};`,
+  `color: ${lightGray}; background: ${gray};`,
+];
+
+export const edge = [transparent, darkGray, lightGray];
+
 // TODO: organize space according to whether they are fixed (for organisms)
 //   or variable (for molecules and below)
 const theme = {
   breakpoints,
   space: [ 0, '0.25rem', '0.5rem', '1rem', '2rem', '4rem', '8rem', '16rem', '32rem' ],
-  colors: {
+  scale: ['0.875rem', '1rem', '1.25rem', '1.5rem', '2.25rem', '3rem', '5rem', '6rem'],
+  fgbg,
+  bgfg,
+  edge,
+  color: {
+    fg0,
     fg1,
     fg2,
+    fg3,
+    fg4,
+    fg5,
     bg0,
     bg1,
     bg2,
-    inputBg,
+    bg3,
+    bg4,
     homogBg,
     heterogBg,
     primary,
-    disabled,
+    deemphasizedFg,
     darkEdge,
-    edge,
+    edge: fg3,
     lightEdge,
     error,
-    activeEdge,
     shadow,
     activeShadow,
     googleRed,
@@ -90,7 +120,7 @@ const theme = {
     transparent,
     darken,
     black,
-    brightYellow,
+    highlight,
     nearBlack,
     darkGray,
     midGray,

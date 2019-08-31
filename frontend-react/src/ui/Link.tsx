@@ -2,31 +2,17 @@ import styled from 'styled-components';
 import { NavLink as rrLink } from 'react-router-dom';
 
 const Link = styled(rrLink)`
-  display: flex;
-  text-decoration: none;
-  border: 1px solid ${({ theme }) => theme.colors.transparent};
-  border-radius: 4px;
-  align-items: center;
-  cursor: pointer;
-  padding: ${({ theme }) => theme.space[2]};
-  color: ${({ theme }) => theme.colors.fg1};
+display: flex;
+text-decoration: none;
+align-items: center;
+cursor: pointer;
+padding: 0;
+color: inherit;
+font-weight: bold;
 
-  :hover {
-    border-color: ${({ theme }) => theme.colors.lightEdge};
-  }
-
-  :disabled {
-    color: ${({ theme }) => theme.colors.disabled};
-  }
-
-  &.active {
-    border-color: ${({ theme }) => theme.colors.lightEdge};
-    background: ${({ theme }) => theme.colors.bg1};
-
-    :hover {
-      border-color: ${({ theme }) => theme.colors.edge};
-    }
-  }
+&.active, :hover {
+  ${({ theme }) => theme.bgfg[2]}
+}
 `;
 
 export default Link;

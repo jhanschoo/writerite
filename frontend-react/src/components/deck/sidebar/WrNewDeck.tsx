@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Plus } from 'react-feather';
 
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
@@ -9,8 +8,8 @@ import { DeckCreate, DeckCreateVariables } from './gqlTypes/DeckCreate';
 
 import styled from 'styled-components';
 import { MinimalButton } from '../../../ui/Button';
-import Fieldset from '../../../ui/form/Fieldset';
-import { MinimalTextInput } from '../../../ui/form/TextInput';
+import Fieldset from '../../../ui/Fieldset';
+import { MinimalTextInput } from '../../../ui/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
@@ -38,22 +37,22 @@ mutation DeckCreate(
 const initialName = '';
 
 const FlexSection = styled.section`
-  display: flex;
-  flex-direction: column;
-  margin-bottom: ${({ theme }) => theme.space[1]};
+display: flex;
+flex-direction: column;
+margin-bottom: ${({ theme }) => theme.space[1]};
 `;
 
 const StyledList = styled(List)`
-  flex-direction: column;
+flex-direction: column;
 `;
 
 const StyledItem = styled(Item)`
-  margin: 1px 0;
+margin: 1px 0;
 `;
 
 const StyledTextInput = styled(MinimalTextInput)`
-  flex-grow: 1;
-  padding: 0 ${({ theme }) => theme.space[1]};
+flex-grow: 1;
+padding: 0 ${({ theme }) => theme.space[1]};
 `;
 
 const WrNewDeck = () => {
@@ -97,7 +96,7 @@ const WrNewDeck = () => {
                   type="submit"
                   disabled={name === '' || loading}
                 >
-                  <Plus size={14} />
+                  Add
                 </MinimalButton>
               </StyledItem>
               <StyledItem>

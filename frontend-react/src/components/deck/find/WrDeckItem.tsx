@@ -10,13 +10,13 @@ interface DeckItemProps {
 const styledDiv: ThemedStyledFunction<'div', any, DeckItemProps, never> = styled.div;
 
 const WrDeckItem = styledDiv`
-  grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
-  padding: ${({ theme }) => theme.space[3]};
-  border: 1px solid ${({ theme }) => theme.colors.darkEdge};
-  border-radius: 4px;
-  :hover {
-    cursor: ${({ interactive }) => interactive ? 'pointer' : 'auto'};
-  }
+grid-column: ${({ gridColumn }) => gridColumn || 'auto'};
+padding: ${({ theme }) => theme.space[3]};
+border: 1px solid ${({ theme }) => theme.color.darkEdge};
+border-radius: 4px;
+:hover {
+  cursor: ${({ interactive }) => interactive ? 'pointer' : 'auto'};
+}
 `;
 
 export default WrDeckItem;

@@ -8,7 +8,7 @@ import { RoomDetail, RoomDetailVariables } from './gqlTypes/RoomDetail';
 
 import styled from 'styled-components';
 import Main from '../../../ui/layout/Main';
-import HDivider from '../../../ui/HDivider';
+import HDivider from '../../../ui-components/HDivider';
 
 import { withRouter, RouteComponentProps } from 'react-router';
 
@@ -32,23 +32,21 @@ query RoomDetail(
 `;
 
 const CenteredP = styled.p`
-  text-align: center;
+text-align: center;
 `;
 
 const Header = styled.header`
-  display: flex;
-  flex-direction: column;
-  padding: ${({ theme }) => theme.space[3]} 0;
+display: flex;
+flex-direction: column;
+padding: ${({ theme }) => theme.space[3]} 0;
 `;
 
 const RoomHeading = styled.h3`
-  margin: 0;
-  font-size: 112.5%;
+margin: 0;
+font-size: 112.5%;
 `;
 
-const WrRoomDetailComponent = (props: RouteComponentProps<{ roomId: string }>) => {
-  const { match } = props;
-  const { roomId } = match.params;
+const WrRoomDetailComponent = ({ match: { params: { roomId } } }: RouteComponentProps<{ roomId: string }>) => {
   const {
     subscribeToMore, loading, error, data,
   } = useQuery<RoomDetail, RoomDetailVariables>(ROOM_DETAIL_QUERY, {

@@ -5,12 +5,8 @@ import { WrRoomMessage } from '../../client-models/gqlTypes/WrRoomMessage';
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
 
-interface Props {
-  message: WrRoomMessage;
-}
-
 const MessageItem = styled(Item)`
-background: ${({ theme }) => theme.colors.heterogBg};
+background: ${({ theme }) => theme.color.heterogBg};
 border-radius: 4px;
 margin: ${({ theme }) => theme.space[1]} 0;
 padding: 0 ${({ theme }) => theme.space[2]};
@@ -36,8 +32,11 @@ margin: 0;
 padding: ${({ theme }) => theme.space[2]} 0;
 `;
 
-const WrRoomMessageTextItem = (props: Props) => {
-  const { message } = props;
+interface Props {
+  message: WrRoomMessage;
+}
+
+const WrRoomMessageTextItem = ({ message }: Props) => {
   const header = message.sender ? (
     <CommentHeader>
       <CommentAuthor>{message.sender.email}</CommentAuthor>

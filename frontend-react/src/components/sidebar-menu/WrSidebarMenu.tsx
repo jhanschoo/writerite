@@ -8,18 +8,18 @@ import styled from 'styled-components';
 import SidebarMenu from '../../ui/sidebar-menu/SidebarMenu';
 
 const ResponsiveSidebarMenu = styled(SidebarMenu)`
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    position: relative;
-    background: ${({ theme }) => theme.colors.bg2};
-    left: -100%;
-    grid-area: 2 / 1 / 3 / 12;
-    z-index: 50;
-    transition: left 0.125s linear;
+@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+  position: relative;
+  background: ${({ theme }) => theme.color.bg2};
+  left: -100%;
+  grid-area: 2 / 1 / 3 / 12;
+  z-index: 50;
+  transition: left 0.125s linear;
 
-    &.unhidden {
-      left: 0;
-    }
+  &.unhidden {
+    left: 0;
   }
+}
 `;
 
 interface DispatchProps {
@@ -37,9 +37,8 @@ interface OwnProps {
 
 type Props = StateProps & DispatchProps & OwnProps;
 
-const WrSidebarMenu = (props: Props) => {
   // tslint:disable-next-line: no-shadowed-variable
-  const { createRegister, createDeregister, hidden } = props;
+const WrSidebarMenu = ({ createRegister, createDeregister, hidden, children }: Props) => {
   const [hasRegistered, setRegistered] = useState(false);
   useEffect(() => {
     setRegistered(true);
@@ -52,7 +51,7 @@ const WrSidebarMenu = (props: Props) => {
   }, [hasRegistered, createRegister, createDeregister]);
   return (
     <ResponsiveSidebarMenu as="nav" className={hidden ? undefined : 'unhidden'}>
-      {props.children}
+      {children}
     </ResponsiveSidebarMenu>
   );
 };

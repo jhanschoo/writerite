@@ -9,8 +9,7 @@ interface Props {
   readonly room?: WrRoomDetail;
 }
 
-const WrRoomSidebar = (props: Props) => {
-  const { room } = props;
+const WrRoomSidebar = ({ room }: Props) => {
   // TODO: remove this once list of rooms refactored out of sidebar
   //   into own page.
   if (!room) {

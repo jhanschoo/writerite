@@ -9,7 +9,7 @@ import { WrCard } from '../../client-models/gqlTypes/WrCard';
 import { CardEditVariables, CardEdit } from './gqlTypes/CardEdit';
 
 import styled, { StyledComponent } from 'styled-components';
-import TextInput from '../../ui/form/TextInput';
+import TextInput from '../../ui/TextInput';
 import { Button, BorderlessButton } from '../../ui/Button';
 
 const CARD_EDIT_MUTATION = gql`
@@ -35,6 +35,112 @@ mutation CardEdit(
 }
 `;
 
+const StyledFrom = styled.form`
+display: flex;
+flex-direction: column;
+`;
+
+const CardFieldset = styled.fieldset`
+display: flex;
+flex-direction: column;
+width: 100%;
+padding: 0;
+margin: 0;
+border: none;
+`;
+
+// style mirrored by LowercaseLegend
+const LowercaseLabel = styled.label`
+font-weight: normal;
+font-size: 75%;
+text-transform: lowercase;
+margin: 0;
+padding: 0;
+`;
+
+const StyledTextInput = styled(TextInput)`
+margin: ${({ theme }) => theme.space[1]} 0;
+width: 100%;
+`;
+
+const AnswersFieldset = styled.fieldset`
+display: flex;
+flex-wrap: wrap;
+width: 100%;
+padding: 0;
+margin: 0;
+border: none;
+`;
+
+// style mirrors LowercaseLabel
+const LowercaseLegend = styled.legend`
+font-weight: normal;
+font-size: 75%;
+text-transform: lowercase;
+margin: 0;
+padding: 0;
+width: 100%;
+`;
+
+const NewAcceptedAnswerDiv = styled.div`
+display: flex;
+align-items: center;
+margin: ${({ theme }) => theme.space[1]} 0;
+padding: ${({ theme }) => theme.space[1]};
+border: 1px solid ${({ theme }) => theme.edge[1]};
+width: 100%;
+`;
+
+const NewAcceptedAnswerTextInput = styled(StyledTextInput)`
+height: ${({ theme }) => theme.space[3]};
+font-size: 75%;
+padding: 0 ${({ theme }) => theme.space[1]};
+margin: 0 ${({ theme }) => theme.space[1]};
+`;
+
+const AnswersDisplayDiv = styled.div`
+display: flex;
+flex-wrap: wrap;
+align-items: center;
+margin: 0 -${({ theme }) => theme.space[1]};
+`;
+
+const AnswersP = styled.p`
+display: flex;
+align-items: center;
+margin: ${({ theme }) => theme.space[1]};
+padding: ${({ theme }) => theme.space[1]};
+border: 1px solid ${({ theme }) => theme.edge[1]};
+font-size: 75%;
+`;
+
+const NewAcceptedAnswerButton = styled(BorderlessButton)`
+margin: ${({ theme }) => theme.space[1]};
+padding: ${({ theme }) => theme.space[1]};
+text-transform: lowercase;
+`;
+
+const DeleteAnswerButton = styled(BorderlessButton)`
+margin-left: 2em;
+padding: 0 ${({ theme }) => theme.space[1]};
+text-transform: lowercase;
+`;
+
+const SubmitDiv = styled.div`
+display: flex;
+justify-content: center;
+`;
+
+const CancelButton = styled(BorderlessButton)`
+padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+margin: ${({ theme }) => theme.space[1]};
+`;
+
+const SubmitButton = styled(Button)`
+padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+margin: ${({ theme }) => theme.space[1]};
+`;
+
 interface Props {
   toggleEdit: () => void;
   promptLang: string;
@@ -42,103 +148,9 @@ interface Props {
   card: WrCard;
 }
 
-const StyledFrom = styled.form`
-  display: flex;
-  flex-direction: column;
-`;
-
-const CardFieldset = styled.fieldset`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  border: none;
-`;
-
-const LowercaseLabel = styled.label`
-  font-weight: normal;
-  font-size: 75%;
-  text-transform: lowercase;
-  margin: 0;
-  padding: 0 ${({ theme }) => theme.space[2]};
-  color: ${({ theme }) => theme.colors.fg2};
-`;
-
-const StyledTextInput = styled(TextInput)`
-  margin: ${({ theme }) => theme.space[1]} 0;
-  width: 100%;
-`;
-
-const AnswersFieldset = styled.fieldset`
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  padding: 0;
-  margin: 0;
-  border: none;
-`;
-
-const LowercaseLegend = styled(LowercaseLabel)`
-  width: 100%;
-` as StyledComponent<'legend', any, {}, never>;
-
-const NewAcceptedAnswerDiv = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: ${({ theme }) => theme.space[1]};
-  padding: ${({ theme }) => theme.space[1]};
-  border-radius: 2px;
-  background: ${({ theme }) => theme.colors.bg0};
-  width: 100%;
-`;
-
-const NewAcceptedAnswerSubdiv = styled.div`
-  display: flex;
-`;
-
-const AnswersDisplayDiv = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-`;
-
-const AnswersP = styled.p`
-  display: flex;
-  margin: ${({ theme }) => theme.space[1]};
-  padding: ${({ theme }) => theme.space[1]};
-  border-radius: 2px;
-  background: ${({ theme }) => theme.colors.bg0};
-  font-size: 75%;
-`;
-
-const PlusButton = styled(BorderlessButton)`
-  margin: ${({ theme }) => theme.space[1]};
-  padding: ${({ theme }) => theme.space[1]};
-`;
-
-const DeleteAnswerButton = styled(BorderlessButton)`
-  margin-left: 2em;
-`;
-
-const SubmitDiv = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
-const CancelButton = styled(BorderlessButton)`
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
-  margin: ${({ theme }) => theme.space[1]};
-`;
-
-const SubmitButton = styled(Button)`
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
-  margin: ${({ theme }) => theme.space[1]};
-`;
-
-const WrCardItemEdit = (props: Props) => {
-  const { toggleEdit, promptLang, answerLang } = props;
-  const { id, prompt, fullAnswer, sortKey, answers } = props.card;
+const WrCardItemEdit = ({
+    toggleEdit, promptLang, answerLang, card: { id, prompt, fullAnswer, sortKey, answers },
+  }: Props) => {
   const [promptInput, setPromptInput] = useState(prompt);
   const [fullAnswerInput, setFullAnswerInput] = useState(fullAnswer);
   const [newAnswerInput, setNewAnswerInput] = useState('');
@@ -193,10 +205,9 @@ const WrCardItemEdit = (props: Props) => {
     <AnswersP key={i}>
       {answer}
       <DeleteAnswerButton
-        aria-label="Delete"
         onClick={handleAnswersDelete(i)}
       >
-        <X size={12} />
+        Delete
       </DeleteAnswerButton>
     </AnswersP>
   ));
@@ -244,18 +255,16 @@ const WrCardItemEdit = (props: Props) => {
         <LowercaseLegend as="legend">Accepted Answers</LowercaseLegend>
         <NewAcceptedAnswerDiv>
           <LowercaseLabel htmlFor={newAnswerId}>Add a new accepted answer</LowercaseLabel>
-          <NewAcceptedAnswerSubdiv>
-            <StyledTextInput
-              id={newAnswerId}
-              value={newAnswerInput}
-              onChange={handleNewAnswerChange}
-              onKeyDown={handleNewAnswerKeyDown}
-              disabled={loading}
-            />
-            <PlusButton onClick={handleAddNewAnswer}>
-              <Plus size={16} />
-            </PlusButton>
-          </NewAcceptedAnswerSubdiv>
+          <NewAcceptedAnswerTextInput
+            id={newAnswerId}
+            value={newAnswerInput}
+            onChange={handleNewAnswerChange}
+            onKeyDown={handleNewAnswerKeyDown}
+            disabled={loading}
+          />
+          <NewAcceptedAnswerButton onClick={handleAddNewAnswer}>
+            Add
+          </NewAcceptedAnswerButton>
         </NewAcceptedAnswerDiv>
         <AnswersDisplayDiv>
           {formattedAnswers}

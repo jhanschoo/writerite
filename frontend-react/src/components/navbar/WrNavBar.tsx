@@ -1,5 +1,4 @@
 import React from 'react';
-import { Layers, Play, Activity, Feather } from 'react-feather';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
@@ -8,7 +7,7 @@ import { createSignout, SigninAction } from '../signin/actions';
 import { restartWsConnection } from '../../apolloClient';
 import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 
-import styled, { withTheme } from 'styled-components';
+import styled from 'styled-components';
 import Link from '../../ui/Link';
 import { BorderlessButton } from '../../ui/Button';
 import NavBar from '../../ui/navbar/NavBar';
@@ -19,47 +18,52 @@ import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
 
 const BrandHeading = styled.h3`
-  margin: 0;
+margin: 0;
 `;
 
 const StyledNavBar = styled(NavBar)`
-  margin: 0 0 ${({ theme }) => theme.space[3]} 0;
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    font-size: 75%;
-  }
+margin: 0;
+@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+  font-size: 75%;
+}
 `;
 
 const BrandNavBarItem = styled(NavBarItem)`
-  padding: ${({ theme }) => theme.space[2]};
+padding: ${({ theme }) => theme.space[2]};
 `;
 
 const NavBarListRight = styled(NavBarList)`
-  justify-content: flex-end;
+justify-content: flex-end;
 `;
 
 const PageLink = styled(Link)`
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    padding: ${({ theme }) => theme.space[1]};
-  }
-  @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
-    padding: ${({ theme }) => theme.space[0]};
-  }
+padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
 `;
 
 const SignoutButton = styled(BorderlessButton)`
-  padding: ${({ theme }) => theme.space[2]};
-  @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-    padding: ${({ theme }) => theme.space[1]};
-  }
-  @media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
-    padding: ${({ theme }) => theme.space[0]};
-  }
+padding: ${({ theme }) => theme.space[2]};
 `;
 
 const BrandLink = styled(Link)`
-  padding: 0;
-  border: none;
+padding: 0;
+border: none;
+background: none;
+
+&.active, :hover {
+  background: none;
+  color: inherit;
+}
 `;
+
+const renderLoggedOut = () => {
+  return (
+    <NavBarItem>
+      <PageLink to="/signin" exact={true}>
+        Sign in
+      </PageLink>
+    </NavBarItem>
+  );
+};
 
 interface DispatchProps {
   createSignout: () => SigninAction;
@@ -69,29 +73,10 @@ interface StateProps {
   user: WrUserStub | null;
 }
 
-interface ThemeProps {
-  theme: any;
-}
+type Props = StateProps & DispatchProps;
 
-type Props = StateProps & DispatchProps & ThemeProps;
-
-const renderLoggedOut = (props: Props) => {
-  const { theme } = props;
-  const mq = window.matchMedia(`(max-width: ${theme.breakpoints[1]})`);
-  return (
-    <NavBarItem>
-      <PageLink to="/signin" exact={true}>
-        <Feather size={mq.matches ? 18 : 24} />
-        Sign in
-      </PageLink>
-    </NavBarItem>
-  );
-};
-
-const renderLoggedIn = (props: Props) => {
-  // tslint:disable-next-line: no-shadowed-variable
-  const { createSignout, theme, user } = props;
-  const mq = window.matchMedia(`(max-width: ${theme.breakpoints[1]})`);
+// tslint:disable-next-line: no-shadowed-variable
+const renderLoggedIn = ({ createSignout, user }: Props) => {
   if (!user) {
     return null;
   }
@@ -103,25 +88,21 @@ const renderLoggedIn = (props: Props) => {
     <>
       <NavBarItem>
         <PageLink to="/deck">
-          <Layers size={mq.matches ? 18 : 24} />
           Decks
         </PageLink>
       </NavBarItem>
       <NavBarItem>
         <PageLink to="/room">
-          <Play size={mq.matches ? 18 : 24} />
           Rooms
         </PageLink>
       </NavBarItem>
       <NavBarItem>
         <PageLink to="/stats">
-          <Activity size={mq.matches ? 18 : 24} />
           Stats
         </PageLink>
       </NavBarItem>
       <NavBarItem>
         <SignoutButton onClick={signoutAndRestartWs}>
-          <Feather size={mq.matches ? 18 : 24} />
           Sign out
         </SignoutButton>
       </NavBarItem>
@@ -143,7 +124,7 @@ const WrNavBar = (props: Props)  => {
       </BrandNavBarItem>
     </NavBarList>
     <NavBarListRight>
-      {renderLoggedIn(props) || renderLoggedOut(props)}
+      {renderLoggedIn(props) || renderLoggedOut()}
     </NavBarListRight>
   </StyledNavBar>
   );
@@ -158,4 +139,4 @@ const mapDispatchToProps: DispatchProps = {
   createSignout,
 };
 
-export default withTheme(connect<StateProps, DispatchProps, ThemeProps>(mapStateToProps, mapDispatchToProps)(WrNavBar));
+export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(WrNavBar);

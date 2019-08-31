@@ -18,13 +18,12 @@ import { Signin, SigninVariables } from './gqlTypes/Signin';
 
 import styled from 'styled-components';
 import { breakpoints } from '../../theme';
-import HDivider from '../../ui/HDivider';
+import HDivider from '../../ui-components/HDivider';
 import Button, { AnchorButton } from '../../ui/Button';
-import TextInput from '../../ui/form/TextInput';
-import Fieldset from '../../ui/form/Fieldset';
+import TextInput from '../../ui/TextInput';
+import Fieldset from '../../ui/Fieldset';
 
 import { withRouter, RouteComponentProps } from 'react-router';
-
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;
@@ -51,17 +50,6 @@ mutation Signin(
 }
 `;
 
-export interface UserAndToken {
-  readonly token: string;
-  readonly user: WrUserStub;
-}
-
-interface DispatchProps {
-  readonly createSignin: (data: UserAndToken | null) => SigninAction;
-}
-
-type Props = DispatchProps & RouteComponentProps;
-
 interface FormValues {
   email: string;
   name: string;
@@ -72,88 +60,86 @@ interface FormValues {
 }
 
 const GoogleButton = styled(Button)`
-  width: 100%;
-  margin: 0 0 ${({ theme }) => theme.space[2]} 0;
-  padding: ${({ theme }) => theme.space[2]};
-  border-color: ${({ theme }) => theme.colors.googleRed};
-  color: ${({ theme }) => theme.colors.googleRed};
+width: 100%;
+margin: 0 0 ${({ theme }) => theme.space[2]} 0;
+padding: ${({ theme }) => theme.space[2]};
+border-color: ${({ theme }) => theme.color.googleRed};
+color: ${({ theme }) => theme.color.googleRed};
 
-  :hover, :focus {
-    border: 1px solid ${({ theme }) => theme.colors.googleRed};
-    color: ${({ theme }) => theme.colors.bg1};
-    background: ${({ theme }) => theme.colors.googleRed};
-    outline: none;
-  }
+:hover, :focus {
+  border: 1px solid ${({ theme }) => theme.color.googleRed};
+  color: ${({ theme }) => theme.color.bg1};
+  background: ${({ theme }) => theme.color.googleRed};
+  outline: none;
+}
 `;
 
 const FacebookButton = styled(Button)`
-  width: 100%;
-  margin: 0 0 ${({ theme }) => theme.space[2]} 0;
-  padding: ${({ theme }) => theme.space[2]};
-  border-color: ${({ theme }) => theme.colors.facebookBlue};
-  color: ${({ theme }) => theme.colors.facebookBlue};
+width: 100%;
+margin: 0 0 ${({ theme }) => theme.space[2]} 0;
+padding: ${({ theme }) => theme.space[2]};
+border-color: ${({ theme }) => theme.color.facebookBlue};
+color: ${({ theme }) => theme.color.facebookBlue};
 
-  :hover, :focus {
-    border: 1px solid ${({ theme }) => theme.colors.facebookBlue};
-    color: ${({ theme }) => theme.colors.bg1};
-    background: ${({ theme }) => theme.colors.facebookBlue};
-    outline: none;
-  }
+:hover, :focus {
+  border: 1px solid ${({ theme }) => theme.color.facebookBlue};
+  color: ${({ theme }) => theme.color.bg1};
+  background: ${({ theme }) => theme.color.facebookBlue};
+  outline: none;
+}
 `;
 
 const LocalSigninButton = styled(Button)`
-  width: 100%;
-  margin: ${({ theme }) => theme.space[2]} 0;
-  padding: ${({ theme }) => theme.space[2]};
+width: 100%;
+margin: ${({ theme }) => theme.space[2]} 0;
+padding: ${({ theme }) => theme.space[2]};
 `;
 
 const SigninBox = styled.div`
-  padding: ${({ theme }) => theme.space[3]};
-  border: 1px solid ${({ theme }) => theme.colors.lightEdge};
-  background: ${({ theme }) => theme.colors.bg1};
-  border-radius: 4px;
+padding: ${({ theme }) => theme.space[3]};
+${({ theme }) => theme.fgbg[2]};
 `;
 
 const TextCenteredDiv = styled.div`
-  text-align: center;
+text-align: center;
 `;
 
 const InlineBlockDiv = styled.div`
-  display: inline-block;
+display: inline-block;
 `;
 
 const FieldsetWithMargin = styled(Fieldset)`
-  margin: ${({ theme }) => theme.space[1]} 0;
+margin: ${({ theme }) => theme.space[1]} 0;
 
-  &.hidden {
-    display: none;
-  }
+&.hidden {
+  display: none;
+}
 `;
 
 const StyledLabel = styled.label`
-  padding: 0 ${({ theme }) => theme.space[2]};
-  font-size: 87.5%;
+padding: 0 ${({ theme }) => theme.space[2]};
+font-size: 87.5%;
 `;
 
 const FlowTextInput = styled(TextInput)`
-  width: 100%;
-  margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+width: 100%;
+margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
 `;
 
 const ErrorMessage = styled.p`
-  display: flex;
-  font-size: 75%;
-  margin: 0;
-  padding: 0 ${({ theme }) => theme.space[2]};
-  color: ${({ theme }) => theme.colors.error};
+display: flex;
+font-size: 75%;
+margin: 0;
+padding: 0 ${({ theme }) => theme.space[2]};
+color: ${({ theme }) => theme.color.error};
 `;
 
 const SmallMessage = styled.p`
-  display: flex;
-  font-size: 75%;
-  margin: 0;
-  padding: 0 ${({ theme }) => theme.space[2]};
-  align-items: baseline;
+display: flex;
+font-size: 87.5%;
+margin: 0;
+padding: 0 ${({ theme }) => theme.space[2]};
+align-items: baseline;
 `;
 
 const formSchema = yup.object().shape({
@@ -187,9 +173,19 @@ const formInitialValues: FormValues = {
   isSignup: true,
 };
 
-const WrSignin = (props: Props) => {
-  // tslint:disable-next-line: no-shadowed-variable
-  const { createSignin, history } = props;
+export interface UserAndToken {
+  readonly token: string;
+  readonly user: WrUserStub;
+}
+
+interface DispatchProps {
+  readonly createSignin: (data: UserAndToken | null) => SigninAction;
+}
+
+type Props = DispatchProps & RouteComponentProps;
+
+// tslint:disable-next-line: no-shadowed-variable
+const WrSignin = ({ createSignin, history }: Props) => {
   const [isSignup, setSignup] = useState(formInitialValues.isSignup);
   const [thirdPartySigninUnderway, setThirdPartySigninUnderway] = useState(false);
   let recaptchaCallback = (_gRecaptchaResponse: string): void => {

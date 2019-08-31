@@ -8,7 +8,7 @@ import { RoomMessageCreate, RoomMessageCreateVariables } from './gqlTypes/RoomMe
 import { RwRoomMessageContentType } from '../../../gqlGlobalTypes';
 
 import styled from 'styled-components';
-import TextInput from '../../../ui/form/TextInput';
+import TextInput from '../../../ui/TextInput';
 import { BorderlessButton } from '../../../ui/Button';
 
 import { WR_ROOM_MESSAGE } from '../../../client-models';
@@ -30,27 +30,26 @@ mutation RoomMessageCreate(
 }
 `;
 
+const InputBox = styled.form`
+display: flex;
+padding: ${({ theme }) => theme.space[2]};
+align-items: center;
+`;
+
+const StyledTextInput = styled(TextInput)`
+flex-grow: 1;
+`;
+
+const StyledButton = styled(BorderlessButton)`
+padding: ${({ theme }) => theme.space[1]};
+margin: ${({ theme }) => theme.space[1]};
+`;
+
 interface Props {
   roomId: string;
 }
 
-const InputBox = styled.form`
-  display: flex;
-  padding: ${({ theme }) => theme.space[2]};
-  align-items: center;
-`;
-
-const StyledTextInput = styled(TextInput)`
-  flex-grow: 1;
-`;
-
-const StyledButton = styled(BorderlessButton)`
-  padding: ${({ theme }) => theme.space[1]};
-  margin: ${({ theme }) => theme.space[1]};
-`;
-
-const WrRoomDetailInput = (props: Props) => {
-  const { roomId } = props;
+const WrRoomDetailInput = ({ roomId }: Props) => {
   const [contentInput, setContentInput] = useState('');
   const [
     mutate, { loading },

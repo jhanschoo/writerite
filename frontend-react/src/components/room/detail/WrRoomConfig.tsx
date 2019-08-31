@@ -12,8 +12,8 @@ import { RoomUpdateConfig, RoomUpdateConfigVariables } from './gqlTypes/RoomUpda
 
 import styled from 'styled-components';
 import { Button } from '../../../ui/Button';
-import TextInput from '../../../ui/form/TextInput';
-import HDivider from '../../../ui/HDivider';
+import TextInput from '../../../ui/TextInput';
+import HDivider from '../../../ui-components/HDivider';
 
 const ROOM_UPDATE_CONFIG_MUTATION = gql`
 ${WR_ROOM_STUB}
@@ -30,6 +30,29 @@ mutation RoomUpdateConfig(
 }
 `;
 
+const StyledForm = styled.form``;
+
+const StyledTextInput = styled(TextInput)``;
+
+const StyledHeader = styled.h4`
+text-transform: uppercase;
+font-size: 100%;
+font-weight: bold;
+margin: 0;
+padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+`;
+
+const StyledButton = styled(Button)`
+display: inline-block;
+font-weight: normal;
+margin-left: ${({ theme }) => theme.space[2]};
+padding: ${({ theme }) => theme.space[1]};
+`;
+
+const Field = styled.div`
+padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+`;
+
 interface StateProps {
   id?: string;
 }
@@ -38,33 +61,9 @@ interface OwnProps {
   room: WrRoomDetail;
 }
 
-const StyledForm = styled.form``;
-
-const StyledTextInput = styled(TextInput)``;
-
-const StyledHeader = styled.h4`
-  text-transform: uppercase;
-  font-size: 100%;
-  font-weight: bold;
-  margin: 0;
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
-`;
-
-const StyledButton = styled(Button)`
-  display: inline-block;
-  font-weight: normal;
-  margin-left: ${({ theme }) => theme.space[2]};
-  padding: ${({ theme }) => theme.space[1]};
-`;
-
-const Field = styled.div`
-  padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
-`;
-
 type Props = StateProps & OwnProps;
 
-const WrRoomConfig = (props: Props) => {
-  const { id, room } = props;
+const WrRoomConfig = ({ id, room }: Props) => {
   const [roundLengthInput, setRoundLength] = useState<string>('20');
   const [
     mutate, { loading },
