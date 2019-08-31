@@ -14,6 +14,15 @@ export interface WrDeck_owner {
   readonly roles: ReadonlyArray<string>;
 }
 
+export interface WrDeck_subdecks {
+  readonly __typename: "RwDeck";
+  readonly id: string;
+  readonly name: string;
+  readonly nameLang: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+}
+
 export interface WrDeck_cards {
   readonly __typename: "RwCard";
   readonly id: string;
@@ -33,5 +42,6 @@ export interface WrDeck {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly owner: WrDeck_owner;
+  readonly subdecks: ReadonlyArray<WrDeck_subdecks>;
   readonly cards: ReadonlyArray<WrDeck_cards>;
 }
