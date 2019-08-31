@@ -2,6 +2,8 @@
 
 # Run in in writerite/wright-node/
 
+set -e
+
 NODE_ENV="development"
 if [[ -n "$1" ]]
 then

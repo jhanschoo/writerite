@@ -105,6 +105,22 @@ export const SDeck = {
       where: { id },
     }));
   },
+  addSubdeck: async (prisma: Prisma, id: string, subdeckId: string): Promise<ISDeck> => {
+    return await SDeck.fromPDeck(await prisma.updatePDeck({
+      data: {
+        subdecks: { connect: { id: subdeckId } },
+      },
+      where: { id },
+    }));
+  },
+  addSubdecks: async (prisma: Prisma, id: string, subdeckIds: string[]): Promise<ISDeck> => {
+    return await SDeck.fromPDeck(await prisma.updatePDeck({
+      data: {
+        subdecks: { connect: subdeckIds.map((subdeckId) => ({ id: subdeckId })) },
+      },
+      where: { id },
+    }));
+  },
   delete: async (prisma: Prisma, id: string): Promise<string> => {
     const pDeck = await prisma.deletePDeck({ id });
     return pDeck.id;
@@ -144,6 +160,10 @@ export const RwDeck = {
     RwDeck.fromSDeck(prisma, await SDeck.createFromRows(prisma, params)),
   edit: async (prisma: Prisma, params: IRwDeckEditParams) =>
     RwDeck.fromSDeck(prisma, await SDeck.edit(prisma, params)),
+  addSubdeck: async (prisma: Prisma, id: string, subdeckId: string) =>
+    RwDeck.fromSDeck(prisma, await SDeck.addSubdeck(prisma, id, subdeckId)),
+  addSubdecks: async (prisma: Prisma, id: string, subdeckIds: string[]) =>
+    RwDeck.fromSDeck(prisma, await SDeck.addSubdecks(prisma, id, subdeckIds)),
   delete: SDeck.delete,
 };
 

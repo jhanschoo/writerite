@@ -72,6 +72,25 @@ const rwDeckEdit: IFieldResolver<any, IContext, {
   return models.RwDeck.fromSDeck(prisma, sDeck);
 };
 
+const rwDeckAddSubdeck: IFieldResolver<any, IContext, {
+  id: string,
+  subdeckId: string,
+}> = async (
+  _parent, { id, subdeckId }, { models, sub, prisma, pubsub },
+): Promise<IRwDeck | null> => {
+  if (!sub) {
+    throw rwAuthenticationError();
+  }
+  if (!await prisma.$exists.pDeck({ id, owner: { id: sub.id } })) {
+    return null;
+  }
+  const sDeck = await models.SDeck.addSubdeck(prisma, id, subdeckId);
+  const sDeckUpdate: IUpdatedUpdate<ISDeck> = { updated: sDeck };
+  pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
+  pubsub.publish(rwDeckTopic(sDeck.id), sDeckUpdate);
+  return models.RwDeck.fromSDeck(prisma, sDeck);
+};
+
 const rwDeckDelete: IFieldResolver<any, IContext, {
   id: string,
 }> = async (
@@ -93,5 +112,5 @@ const rwDeckDelete: IFieldResolver<any, IContext, {
 };
 
 export const rwDeckMutation: IResolverObject<any, IContext, any> = {
-  rwDeckCreate, rwDeckCreateFromRows, rwDeckEdit, rwDeckDelete,
+  rwDeckCreate, rwDeckCreateFromRows, rwDeckEdit, rwDeckAddSubdeck, rwDeckDelete,
 };

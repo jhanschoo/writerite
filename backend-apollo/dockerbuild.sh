@@ -2,6 +2,8 @@
 
 # Run in writerite/backend-apollo/
 
+set -e
+
 NODE_ENV="development"
 if [[ -n "$1" ]]
 then

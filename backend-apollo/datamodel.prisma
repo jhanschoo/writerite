@@ -47,6 +47,7 @@ type PDeck {
   promptLang: String!
   answerLang: String!
   owner: PUser! @relation(link: INLINE)
+  subdecks: [PDeck!]! @relation(name: "PDeckContainingPDeckSubdecks" link: TABLE)
   cards: [PCard!]! @relation(onDelete: CASCADE)
   published: Boolean! @default(value: false)
   createdAt: DateTime! @createdAt

@@ -2,6 +2,10 @@
 # https://github.com/graphql/graphql-js/issues/922\
 #scalar Upload
 
+directive @subscriptionsTriggered(
+  signatures: [String!]!
+) on FIELD_DEFINITION
+
 enum RwRoomMessageContentType {
   TEXT
   CONFIG
@@ -44,7 +48,9 @@ type Mutation {
     nameLang: String
     promptLang: String
     answerLang: String
-  ): RwDeck
+  ): RwDeck @subscriptionsTriggered(
+    signatures: ["rwOwnDecksUpdates<deck's owner>", "rwDeckTopic(<deck's id>)"]
+  )
   rwDeckCreateFromRows(
     name: String
     description: String
@@ -52,7 +58,9 @@ type Mutation {
     promptLang: String
     answerLang: String
     rows: [[String!]!]!
-  ): RwDeck
+  ): RwDeck @subscriptionsTriggered(
+    signatures: ["rwOwnDecksUpdates<deck's owner's id>", "rwDeckTopic(<deck's id>)"]
+  )
   rwDeckEdit(
     id: ID!
     name: String
@@ -60,8 +68,15 @@ type Mutation {
     nameLang: String
     promptLang: String
     answerLang: String
-  ): RwDeck
-  rwDeckDelete(id: ID!): ID
+  ): RwDeck @subscriptionsTriggered(
+    signatures: ["rwOwnDecksUpdates<deck's owner's id>", "rwDeckTopic(<deck's id>)"]
+  )
+  rwDeckAddSubdeck(id: ID!, subdeckId: ID!): RwDeck @subscriptionsTriggered(
+    signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
+  )
+  rwDeckDelete(id: ID!): ID @subscriptionsTriggered(
+    signatures: ["rwOwnDecksUpdates<deck's owner>", "rwDeckTopic(<deck's id>)"]
+  )
   # Card
   rwCardCreate(
     deckId: ID!
@@ -70,7 +85,9 @@ type Mutation {
     answers: [String!]
     sortKey: String
     template: Boolean
-  ): RwCard
+  ): RwCard @subscriptionsTriggered(
+    signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
+  )
   rwCardsCreate(
     deckId: ID!
     multiplicity: Int!
@@ -79,7 +96,9 @@ type Mutation {
     answers: [String!]
     sortKey: String
     template: Boolean
-  ): [RwCard!]
+  ): [RwCard!] @subscriptionsTriggered(
+    signatures: ["rwCardsUpdatesOfDeck(<cards' deck's id>)"]
+  )
   rwCardEdit(
     id: ID!
     prompt: String
@@ -87,19 +106,34 @@ type Mutation {
     answers: [String!]
     sortKey: String
     template: Boolean
-  ): RwCard
-  rwCardDelete(id: ID!): ID
+  ): RwCard @subscriptionsTriggered(
+    signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
+  )
+  rwCardDelete(id: ID!): ID @subscriptionsTriggered(
+    signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
+  )
   # Room
-  rwRoomCreate(config: IRoomConfigInput!): RwRoom
-  rwRoomUpdateConfig(id: ID! config: IRoomConfigInput!): RwRoom
-  rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom
-  rwRoomDeactivate(id: ID!): RwRoom
+  rwRoomCreate(config: IRoomConfigInput!): RwRoom @subscriptionsTriggered(
+    signatures: ["rwRoomUpdates(<room's id>)"]
+  )
+  rwRoomUpdateConfig(id: ID! config: IRoomConfigInput!): RwRoom @subscriptionsTriggered(
+    signatures: ["rwRoomUpdates(<room's id>)"]
+  )
+  rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom @subscriptionsTriggered(
+    signatures: ["rwRoomUpdates(<room's id>)"]
+  )
+  rwRoomDeactivate(id: ID!): RwRoom @subscriptionsTriggered(
+    signatures: ["rwRoomUpdates(<room's id>)"]
+  )
+
   # RoomMessage
   rwRoomMessageCreate(
     roomId: ID!
     content: String!
     contentType: RwRoomMessageContentType!
-  ): RwRoomMessage
+  ): RwRoomMessage @subscriptionsTriggered(
+    signatures: ["rwRoomMessagesUpdatesOfRoom(<room's id>)"]
+  )
 }
 
 type Subscription {
