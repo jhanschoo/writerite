@@ -34,7 +34,7 @@ const rwDeckCreateFromRows: IFieldResolver<any, IContext, {
   answerLang?: string,
   rows: string[][],
 }> = async (
-  _parent, { ...params }, { models, sub, prisma, pubsub },
+  _parent, params, { models, sub, prisma, pubsub },
 ): Promise<IRwDeck | null> => {
   if (!sub) {
     throw rwAuthenticationError();
@@ -62,6 +62,9 @@ const rwDeckEdit: IFieldResolver<any, IContext, {
   if (!sub) {
     throw rwAuthenticationError();
   }
+  if (!await prisma.$exists.pDeck({ id, owner: { id: sub.id } })) {
+    return null;
+  }
   const sDeck = await models.SDeck.edit(prisma, { ...params, id });
   const sDeckUpdate: IUpdatedUpdate<ISDeck> = { updated: sDeck };
   pubsub.publish(rwOwnDecksTopicFromOwner(sub.id), sDeckUpdate);
@@ -78,6 +81,9 @@ const rwDeckDelete: IFieldResolver<any, IContext, {
 ): Promise<string | null> => {
   if (!sub) {
     throw rwAuthenticationError();
+  }
+  if (!await prisma.$exists.pDeck({ id, owner: { id: sub.id } })) {
+    return null;
   }
   const deletedId = await models.SDeck.delete(prisma, id);
   const sDeckUpdate: IDeletedUpdate<PDeck> = { deletedId };
