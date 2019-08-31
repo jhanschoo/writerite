@@ -1,15 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Filter } from 'react-feather';
 
 import styled from 'styled-components';
 import Fieldset from '../../../ui/Fieldset';
-import { MinimalButton } from '../../../ui/Button';
 import { MinimalTextInput } from '../../../ui/TextInput';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuLink from '../../../ui/sidebar-menu/SidebarMenuLink';
 
 import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
+import HDivider from '../../../ui-components/HDivider';
 
 const initialFilter = '';
 
@@ -25,13 +24,8 @@ margin: 2px 0;
 
 const StyledTextInput = styled(MinimalTextInput)`
 flex-grow: 1;
-padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[2]};
+padding: ${({ theme }) => theme.space[1]};
 `;
-
-interface Content {
-  id: string;
-  el: JSX.Element;
-}
 
 interface Props {
   decks: readonly WrDeck[];
@@ -41,12 +35,6 @@ interface Props {
 const WrDeckList = ({ decks }: Props) => {
   const [ filter, setFilter ] = useState(initialFilter);
   const inputEl = useRef<HTMLInputElement>(null);
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (inputEl.current) {
-      setFilter(inputEl.current.value);
-    }
-  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
   };
@@ -68,26 +56,17 @@ const WrDeckList = ({ decks }: Props) => {
     ));
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <Fieldset>
-          <FlexContainer>
-            <StyledTextInput
-              type="text"
-              aria-label="Filter"
-              placeholder="Filter..."
-              value={filter}
-              onChange={handleChange}
-              ref={inputEl}
-            />
-            <MinimalButton
-              type="submit"
-              disabled={filter === ''}
-            >
-              <Filter size={14} />
-            </MinimalButton>
-          </FlexContainer>
-        </Fieldset>
-      </form>
+      <FlexContainer>
+        <StyledTextInput
+          type="text"
+          aria-label="Filter"
+          placeholder="Filter..."
+          value={filter}
+          onChange={handleChange}
+          ref={inputEl}
+        />
+      </FlexContainer>
+      <HDivider />
       <List>
         {contents}
       </List>

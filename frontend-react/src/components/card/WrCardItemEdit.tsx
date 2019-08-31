@@ -1,5 +1,4 @@
 import React, { useState, ChangeEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
-import { Plus, X } from 'react-feather';
 
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
@@ -8,7 +7,7 @@ import { WR_CARD } from '../../client-models';
 import { WrCard } from '../../client-models/gqlTypes/WrCard';
 import { CardEditVariables, CardEdit } from './gqlTypes/CardEdit';
 
-import styled, { StyledComponent } from 'styled-components';
+import styled from 'styled-components';
 import TextInput from '../../ui/TextInput';
 import { Button, BorderlessButton } from '../../ui/Button';
 
