@@ -144,6 +144,8 @@ export const RwDeck = {
       return pCards.map((pCard) => RwCard.fromPCard(prisma, pCard));
     },
     subdecks: async () => {
+      // NOTE: fluent API is used instead of where constraints due to
+      //   Prisma Client API limitation (i.e. no backrelations) https://github.com/prisma/prisma/pull/2515
       const pDecks = await prisma.pDeck({ id: sDeck.id }).subdecks();
       return pDecks.map((pDeck) => RwDeck.fromPDeck(prisma, pDeck));
     }
