@@ -8,6 +8,9 @@ ${WR_DECK}
 ${WR_CARD}
 fragment WrDeckDetail on RwDeck {
   ...WrDeck
+  subdecks {
+    ...WrDeck
+  }
   cards {
     ...WrCard
   }

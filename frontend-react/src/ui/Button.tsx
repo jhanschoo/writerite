@@ -14,7 +14,7 @@ outline: none;
 cursor: pointer;
 ${({ theme }) => theme.fgbg[1]}
 
-&.active, :hover {
+&.active, :hover, :active, :hover:active {
   ${({ theme }) => theme.bgfg[1]}
 }
 `;
@@ -34,7 +34,7 @@ outline: none;
 cursor: pointer;
 color: inherit;
 
-&.active, :hover {
+&.active, :hover, :active, :hover:active {
   ${({ theme }) => theme.bgfg[2]}
 }
 `;

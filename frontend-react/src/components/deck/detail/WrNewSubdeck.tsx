@@ -10,6 +10,7 @@ import { BorderlessButton } from '../../../ui/Button';
 import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import WrNewSubdeckItem from './WrNewSubdeckItem';
+import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 
 const OuterDiv = styled.div`
 display: flex;
@@ -37,13 +38,18 @@ const StyledButton = styled(BorderlessButton)`
 padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
 `;
 
-const WrNewSubdeck = () => {
+interface Props {
+  deck: WrDeckDetail;
+}
+
+const WrNewSubdeck = ({ deck: { id, subdecks } }: Props) => {
   const [active, setActive] = useState(false);
   const {
     loading, data,
   } = useQuery<OwnDecks>(OWN_DECKS_QUERY, {
     onError: printApolloError,
   });
+  const subdeckIds = subdecks.map((deck) => deck.id);
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setActive(!active);
@@ -52,8 +58,8 @@ const WrNewSubdeck = () => {
     ? (<Item>Fetching Decks...</Item>)
     : (data.rwOwnDecks.length === 0)
     ? (<Item>You have no decks.</Item>)
-    : data.rwOwnDecks.map((deck) => (
-      <WrNewSubdeckItem deck={deck} key={deck.id}/>
+    : data.rwOwnDecks.filter((deck) => deck.id !== id && !subdeckIds.includes(deck.id)).map((deck) => (
+      <WrNewSubdeckItem id={id} deck={deck} key={deck.id}/>
     ));
   const optionalList = active && (<StyledList>{optionalListItems}</StyledList>);
   return (

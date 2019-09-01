@@ -1,12 +1,28 @@
 import React, { MouseEvent } from 'react';
 import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
 
+import gql from 'graphql-tag';
+import { useMutation } from '@apollo/react-hooks';
+import { printApolloError } from '../../../util';
+import { WR_DECK_STUB } from '../../../client-models/WrDeckStub';
+import { DeckAddSubdeck, DeckAddSubdeckVariables } from './gqlTypes/DeckAddSubdeck';
+
 import styled from 'styled-components';
 import Item from '../../../ui/list/Item';
 import { BorderlessButton } from '../../../ui/Button';
 
+const DECK_ADD_SUBDECK_MUTATION = gql`
+${WR_DECK_STUB}
+mutation DeckAddSubdeck($id: ID!, $subdeckId: ID!) {
+  rwDeckAddSubdeck(id: $id, subdeckId: $subdeckId) {
+    ...WrDeckStub
+  }
+}
+`;
+
 const StyledDeckButton = styled(BorderlessButton)`
 padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+margin: ${({ theme }) => theme.space[2]};
 ${({ theme }) => theme.fgbg[4]}
 
 &.active, :hover {
@@ -15,14 +31,27 @@ ${({ theme }) => theme.fgbg[4]}
 `;
 
 interface Props {
+  id: string;
   deck: WrDeck;
 }
 
-const WrNewSubdeckItem = ({ deck: { name, nameLang } }: Props) => {
+const WrNewSubdeckItem = ({ id, deck: { id: subdeckId, name, nameLang } }: Props) => {
+  const [mutate] = useMutation<DeckAddSubdeck, DeckAddSubdeckVariables>(
+    DECK_ADD_SUBDECK_MUTATION, {
+      onError: printApolloError,
+    },
+  );
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    mutate({
+      variables: { id, subdeckId },
+    });
+  };
   return (
     <Item>
       <StyledDeckButton
         lang={nameLang}
+        onClick={handleClick}
       >
         {name}
       </StyledDeckButton>

@@ -74,6 +74,9 @@ type Mutation {
   rwDeckAddSubdeck(id: ID!, subdeckId: ID!): RwDeck @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
   )
+  rwDeckRemoveSubdeck(id: ID!, subdeckId: ID!): RwDeck @subscriptionsTriggered(
+    signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
+  )
   rwDeckDelete(id: ID!): ID @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<deck's owner>", "rwDeckTopic(<deck's id>)"]
   )

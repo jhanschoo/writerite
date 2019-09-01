@@ -17,6 +17,7 @@ import HDivider from '../../../ui-components/HDivider';
 import WrDeckDetailSH from './WrDeckDetailSH';
 import WrDeckDetailHeader from './WrDeckDetailHeader';
 import WrNewSubdeck from './WrNewSubdeck';
+import WrSubdecksList from './WrSubdecksList';
 
 const DECK_DETAIL_QUERY = gql`
 ${WR_DECK_DETAIL}
@@ -66,7 +67,8 @@ const WrDeckDetailComponent = ({ match: { params: { deckId } } }: RouteComponent
       <WrDeckDetailSH subscribeToMore={subscribeToMore} deckId={deckId} />
       <WrDeckDetailHeader deck={deck} />
       <HDivider>{templates.length} Sub-Decks</HDivider>
-      <WrNewSubdeck />
+      <WrNewSubdeck deck={deck} />
+      <WrSubdecksList deck={deck} />
       <HDivider>{templates.length} Template Cards</HDivider>
       <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />
       <HDivider>{cards.length} Cards</HDivider>
