@@ -13,10 +13,10 @@ const ENVVARS = [
   'REDIS_PORT',
 ];
 
-ENVVARS.forEach((varname) => {
+for (const varname of ENVVARS) {
   if (!process.env[varname]) {
     throw new Error(`configuration value ${varname} not found`);
   }
-});
+}
 
 export default process.env;

@@ -28,7 +28,7 @@ export const quizServer = (channel: string, rounds: Round[]): Promise<void> => {
       queue(thunkRound(0));
     };
     const messageListener = (_channel: string, message: string) => {
-      // safeMessageHandler is shared, so we retain a reference to
+      // wrappedMessageHandler is shared, so we retain a reference to
       // the current handler upon invocation, so its identity does
       // not change when it is finally invoked. Ultimately this
       // means that some messages received before the next round

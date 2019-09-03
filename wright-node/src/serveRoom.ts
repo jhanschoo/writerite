@@ -4,6 +4,8 @@ import {
   WR_DECK_DETAIL, WR_ROOM_MESSAGE,
 } from './client-models';
 import { RwRoomMessageContentType } from './gqlGlobalTypes';
+import { WrDeckDetail } from './client-models/gqlTypes/WrDeckDetail';
+import { WrCard } from './client-models/gqlTypes/WrCard';
 import { WrRoomStub_config } from './client-models/gqlTypes/WrRoomStub';
 import { DeckDetail, DeckDetailVariables } from './gqlTypes/DeckDetail';
 import { MessageCreate, MessageCreateVariables } from './gqlTypes/MessageCreate';
@@ -82,6 +84,23 @@ export const serveRoom = async (id: string, config: WrRoomStub_config) => {
   if (!data.rwDeck) {
     throw new Error('Unable to obtain room info');
   }
+
+  // accumulate subdecks
+  const deckQueue: WrDeckDetail[] = [data.rwDeck];
+  const accumulatedDecks: { [key: string]: WrDeckDetail } = {};
+  const cards: WrCard[] = [];
+  while (deckQueue.length !== 0) {
+    const deck = deckQueue.pop() as WrDeckDetail;
+    cards.push(...deck.cards);
+    accumulatedDecks[deck.id] = deck;
+    for (const subdeck of deck.subdecks) {
+      const { data: { rwDeck: subdeckDetail } } = await getDeck(subdeck.id);
+      if (subdeckDetail) {
+        deckQueue.push(subdeckDetail);
+      }
+    }
+  }
+
   const sendMessage = sendMessageFactory(id);
   let delay = 2000;
   const rounds: Round[] = [async () => {
@@ -117,22 +136,24 @@ export const serveRoom = async (id: string, config: WrRoomStub_config) => {
     );
     return {};
   }];
-  data.rwDeck.cards.forEach((card) => rounds.push(async () => {
-    await sendMessage(RwRoomMessageContentType.TEXT, `Prompt: ${card.prompt}`);
-    return {
-      delay, messageHandler: async (message: string) => {
-        const messageObj = JSON.parse(message);
-        if (messageObj.type !== 'MESSAGE') {
+  for (const card of cards) {
+    rounds.push(async () => {
+      await sendMessage(RwRoomMessageContentType.TEXT, `Prompt: ${card.prompt}`);
+      return {
+        delay, messageHandler: async (message: string) => {
+          const messageObj = JSON.parse(message);
+          if (messageObj.type !== 'MESSAGE') {
+            return { delay: null };
+          }
+          const { content } = messageObj;
+          if (content === card.fullAnswer || card.answers.includes(content)) {
+            await sendMessage(RwRoomMessageContentType.TEXT, 'You got it!');
+          }
           return { delay: null };
-        }
-        const { content } = messageObj;
-        if (content === card.fullAnswer || card.answers.includes(content)) {
-          await sendMessage(RwRoomMessageContentType.TEXT, 'You got it!');
-        }
-        return { delay: null };
-      },
-    };
-  }));
+        },
+      };
+    });
+  }
   quizServer(ROOM_CHANNEL, rounds.reverse()).then(async () => {
     await sendMessage(RwRoomMessageContentType.TEXT, 'Done serving deck!');
   }, (reason) => {

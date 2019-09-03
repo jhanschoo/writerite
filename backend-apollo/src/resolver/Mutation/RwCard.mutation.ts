@@ -56,10 +56,10 @@ const rwCardsCreate: IFieldResolver<any, IContext, {
   const sCards = await models.SCard.createMany(prisma, multiplicity, {
     ...params, deckId,
   });
-  sCards.forEach((sCard) => {
+  for (const sCard of sCards) {
     const sCardUpdate: ICreatedUpdate<ISCard> = { created: sCard };
     pubsub.publish(rwCardsTopicFromRwDeck(deckId), sCardUpdate);
-  });
+  }
   return sCards.map((sCard) => models.RwCard.fromSCard(prisma, sCard));
 };
 

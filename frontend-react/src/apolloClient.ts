@@ -118,12 +118,12 @@ export const restartWsConnection = (): void => {
   wsClient.connect();
 
   // Push all current operations to the new connection
-  Object.keys(operations).forEach((id) => {
+  for (const id of Object.keys(operations)) {
     // @ts-ignore
     wsClient.sendMessage(
       id,
       MessageTypes.GQL_START,
       operations[id].options,
     );
-  });
+  }
 };

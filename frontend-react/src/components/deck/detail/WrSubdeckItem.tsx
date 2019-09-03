@@ -2,10 +2,13 @@ import React, { MouseEvent } from 'react';
 
 import {withRouter, RouteComponentProps } from 'react-router';
 
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
+import { WR_DECK_STUB } from '../../../client-models/WrDeckStub';
 import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
+import { DeckRemoveSubdeck, DeckRemoveSubdeckVariables } from './gqlTypes/DeckRemoveSubdeck';
 
 import styled from 'styled-components';
 import List from '../../../ui/list/List';
@@ -14,6 +17,14 @@ import Link from '../../../ui/Link';
 import HDivider from '../../../ui-components/HDivider';
 import { BorderlessButton } from '../../../ui/Button';
 
+const DECK_REMOVE_SUBDECK_MUTATION = gql`
+${WR_DECK_STUB}
+mutation DeckRemoveSubdeck($id: ID!, $subdeckId: ID!) {
+  rwDeckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
+    ...WrDeckStub
+  }
+}
+`;
 
 const StyledItem = styled(Item)`
 flex-direction: column;
@@ -80,30 +91,41 @@ interface OwnProps {
 
 type Props = OwnProps;
 
-const WrSubdeckItem = ({ deck, subdeck }: Props) => {
+const WrSubdeckItem = ({ deck: { id }, subdeck: { id: subdeckId, name, subdecks, cards } }: Props) => {
+  const [mutate] = useMutation<DeckRemoveSubdeck, DeckRemoveSubdeckVariables>(
+    DECK_REMOVE_SUBDECK_MUTATION, {
+      onError: printApolloError,
+    },
+  );
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    mutate({
+      variables: { id, subdeckId },
+    });
+  };
   return (
-    <StyledItem key={subdeck.id}>
+    <StyledItem key={subdeckId}>
       <DeckSummaryBox>
-        <DeckTitle>{subdeck.name}</DeckTitle>
+        <DeckTitle>{name}</DeckTitle>
         <HDividerDiv><HDivider/></HDividerDiv>
         <DeckStatisticsList>
           <Item>
-            {subdeck.subdecks.length} Sub-Decks
+            {subdecks.length} Sub-Decks
           </Item>
           <Item>
-            {subdeck.cards.filter((card) => card.template).length} Template Cards
+            {cards.filter((card) => card.template).length} Template Cards
           </Item>
           <Item>
-            {subdeck.cards.filter((card) => !card.template).length} Cards
+            {cards.filter((card) => !card.template).length} Cards
           </Item>
         </DeckStatisticsList>
         <HDividerDiv><HDivider/></HDividerDiv>
         <ActionsList>
           <ActionItem>
-            <StyledLink to={`/deck/${subdeck.id}`}>View</StyledLink>
+            <StyledLink to={`/deck/${subdeckId}`}>View</StyledLink>
           </ActionItem>
           <ActionItem>
-            <StyledButton>Remove</StyledButton>
+            <StyledButton onClick={handleClick}>Remove</StyledButton>
           </ActionItem>
         </ActionsList>
       </DeckSummaryBox>
