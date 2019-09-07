@@ -1,7 +1,8 @@
 import React, { useState, ReactNode } from 'react';
 
 import { Provider } from 'react-redux';
-import { store } from './store';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store, persistor } from './store';
 
 import { ApolloProvider } from '@apollo/react-hooks';
 import { client } from './apolloClient';
@@ -26,13 +27,15 @@ const Providers = ({ children }: Props) => {
   }
   return (
     <Provider store={store}>
-      <ApolloProvider client={client}>
-        <ThemeProvider theme={theme}>
-          <BrowserRouter>
-            {children}
-          </BrowserRouter>
-        </ThemeProvider>
-      </ApolloProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <ApolloProvider client={client}>
+          <ThemeProvider theme={theme}>
+            <BrowserRouter>
+              {children}
+            </BrowserRouter>
+          </ThemeProvider>
+        </ApolloProvider>
+      </PersistGate>
     </Provider>
   );
 };
