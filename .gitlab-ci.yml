@@ -5,3 +5,5 @@ build-backend-apollo:
   stage: build
   script:
     - docker info
+  services:
+    - docker:19.03.2-dind
