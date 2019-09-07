@@ -1,6 +1,7 @@
 default:
-  image: node:latest
+  image: docker:19.03.2
 
 build-backend-apollo:
+  stage: build
   script:
     - docker info
