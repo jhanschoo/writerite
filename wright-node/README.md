@@ -1,6 +1,6 @@
-# @writerite/acolyte-node
+# @writerite/wright-node
 
-Worker servicing chat in `@writerite/backend-yoga` as a chatroom bot. Check `kubernetes/core/writerite-acolyte-node.deployment.yaml` for deployment configuration alongside `kubernetes/core/writerite-backend-yoga.deployment.yaml`.
+Worker servicing chat in `@writerite/backend-yoga` as a chatroom bot. Check `kubernetes/core/writerite-wright-node.deployment.yaml` for deployment configuration alongside `kubernetes/core/writerite-backend-yoga.deployment.yaml`.
 
 ## Stack summary
 

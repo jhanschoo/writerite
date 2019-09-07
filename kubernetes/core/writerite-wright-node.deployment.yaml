@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: writerite-acolyte-node
+  name: writerite-wright-node
 spec:
   selector:
     matchLabels:
-      app: writerite-acolyte-node
+      app: writerite-wright-node
       env: production
       tier: backend
   template:
     metadata:
       labels:
-        app: writerite-acolyte-node
+        app: writerite-wright-node
         env: production
         tier: backend
     spec:
@@ -23,8 +23,8 @@ spec:
           value: redis
         - name: REDIS_PORT
           value: "6379"
-        image: jhanschoo/writerite-acolyte-node:1.0.0
-        name: writerite-acolyte-node
+        image: jhanschoo/writerite-wright-node:1.0.0
+        name: writerite-wright-node
         ports:
         - containerPort: 4000
         resources:
