@@ -54,14 +54,6 @@ export const updateMapFactory = <T, U>(
   };
 };
 
-export const isCurrentUser = (o: any): o is ICurrentUser => {
-  return o && o.id && typeof o.id === 'string'
-    && o.email && o.email === 'string'
-    && o.roles && o.roles instanceof Array && o.roles.every((r: any) => {
-      return r === Roles.admin || r === Roles.user;
-    });
-};
-
 const EC_KEYPAIR = (
   new KJUR.crypto.ECDSA({ curve: 'secp256r1' })
 ).generateKeyPairHex();

@@ -43,7 +43,6 @@ export type IUpload = Promise<IFileUpload>;
 
 export interface ICurrentUser {
   id: string;
-  email: string;
   roles: Roles[];
 }
 

@@ -1,7 +1,5 @@
 import React, { MouseEvent } from 'react';
 
-import {withRouter, RouteComponentProps } from 'react-router';
-
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';

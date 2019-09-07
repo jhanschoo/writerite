@@ -5,7 +5,7 @@ import {
 import * as yup from 'yup';
 
 import { connect } from 'react-redux';
-import { SigninAction, createSignin } from './actions';
+import { AuthorizationAction, createSignin } from './actions';
 import { WrState } from '../../store';
 
 import gql from 'graphql-tag';
@@ -179,7 +179,7 @@ export interface UserAndToken {
 }
 
 interface DispatchProps {
-  readonly createSignin: (data: UserAndToken | null) => SigninAction;
+  readonly createSignin: (data: UserAndToken | null) => AuthorizationAction;
 }
 
 type Props = DispatchProps & RouteComponentProps;
@@ -219,8 +219,9 @@ const WrSignin = ({ createSignin, history }: Props) => {
     },
   );
 
-  const handleGoogleSignin = async (): Promise<void> => {
-    await setThirdPartySigninUnderway(true);
+  const handleGoogleSignin = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setThirdPartySigninUnderway(true);
     const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
     return googleAuth.signIn().then((googleUser: any) => {
       return mutate({
@@ -233,8 +234,9 @@ const WrSignin = ({ createSignin, history }: Props) => {
       }).catch(() => setThirdPartySigninUnderway(false));
     }, () => setThirdPartySigninUnderway(false));
   };
-  const handleFacebookSignin = async (): Promise<void> => {
-    await setThirdPartySigninUnderway(true);
+  const handleFacebookSignin = async (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setThirdPartySigninUnderway(true);
     return (await FBDeferred).login(async (loginResponse: any) => {
       const { authResponse } = loginResponse;
       if (authResponse) {
@@ -270,7 +272,8 @@ const WrSignin = ({ createSignin, history }: Props) => {
     });
   };
 
-  const handleDevelopmentSignin = () => {
+  const handleDevelopmentSignin = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     return mutate({
       variables: {
         email: 'abc@123.xyz',
@@ -293,8 +296,8 @@ const WrSignin = ({ createSignin, history }: Props) => {
       touched,
     } = formikProps;
     const handleToggleSignin = (e: MouseEvent<HTMLButtonElement>) => {
-      const newIsSignup = !isSignup;
       e.preventDefault();
+      const newIsSignup = !isSignup;
       setSignup(!isSignup);
       setFieldTouched('isSignup');
       setFieldValue('isSignup', newIsSignup);

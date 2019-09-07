@@ -13,6 +13,11 @@ export interface IRwUser extends ISUser {
   decks: AFunResTo<IRwDeck[]>;
 }
 
+export interface IRwUserEditParams {
+  id: string;
+  name?: string;
+}
+
 // tslint:disable-next-line: variable-name
 export const SUser = {
   fromPUser: (pUser: PUser): ISUser => pUser,
@@ -25,6 +30,17 @@ export const SUser = {
       orderBy: 'email_ASC',
     });
     return pUsers.map(SUser.fromPUser);
+  },
+  edit: async (prisma: Prisma, {
+    id, name,
+  }: IRwUserEditParams): Promise<ISUser> => {
+    const pUser = await prisma.updatePUser({
+      data: {
+        name,
+      },
+      where: { id },
+    });
+    return SUser.fromPUser(pUser);
   },
 };
 
@@ -48,6 +64,9 @@ export const RwUser = {
     return sUsers.map(
       (sUser) => RwUser.fromSUser(prisma, sUser),
     );
+  },
+  edit: async (prisma: Prisma, params: IRwUserEditParams): Promise<IRwUser> => {
+    return RwUser.fromSUser(prisma, await SUser.edit(prisma, params));
   },
 };
 

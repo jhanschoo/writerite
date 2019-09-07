@@ -13,15 +13,17 @@ export const initialState: SigninState = {
 export const signin = (
   state: SigninState = initialState, action: AuthorizationAction,
 ): SigninState => {
-  const { type, data } = action;
-  switch (type) {
+  switch (action.type) {
     case ActionTypes.SIGNIN:
-      if (data === null) {
+      if (action.data === null) {
         client.resetStore();
       }
-      return Object.assign({}, state, {
-        data,
-      });
+      return { ...state, data: action.data };
+    case ActionTypes.USER_EDIT:
+      if (state.data === null) {
+        return state;
+      }
+      return Object.assign({}, { ...state, data: { ...state.data, user: action.user } });
     default:
       return state;
   }

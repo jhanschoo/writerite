@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 import { WrState } from '../../store';
-import { createSignout, SigninAction } from '../signin/actions';
+import { createSignout, AuthorizationAction } from '../signin/actions';
 
 import { restartWsConnection } from '../../apolloClient';
 import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
@@ -66,7 +66,7 @@ const renderLoggedOut = () => {
 };
 
 interface DispatchProps {
-  createSignout: () => SigninAction;
+  createSignout: () => AuthorizationAction;
 }
 
 interface StateProps {
@@ -99,6 +99,11 @@ const renderLoggedIn = ({ createSignout, user }: Props) => {
       <NavBarItem>
         <PageLink to="/stats">
           Stats
+        </PageLink>
+      </NavBarItem>
+      <NavBarItem>
+        <PageLink to="/user">
+          Account
         </PageLink>
       </NavBarItem>
       <NavBarItem>

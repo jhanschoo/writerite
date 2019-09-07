@@ -9,6 +9,7 @@ import { WrState } from './store';
 import { WrUserStub } from './client-models/gqlTypes/WrUserStub';
 
 import WrLandingView from './components/landing/WrLandingView';
+import WrUserView from './components/user/WrUserView';
 import WrSigninView from './components/signin/WrSigninView';
 import WrDeckView from './components/deck/WrDeckView';
 import WrRoomView from './components/room/WrRoomView';
@@ -26,6 +27,7 @@ const App = ({ user }: Props) => {
     <ViewportContainer>
       <Switch>
         <Route path="/" exact={true} component={WrLandingView} />
+        {user && <Route path="/user" component={WrUserView} />}
         {user && <Route path="/deck" component={WrDeckView} />}
         {user && <Route path="/room" component={WrRoomView} />}
         <Route path="/signin" exact={true} component={WrSigninView} />

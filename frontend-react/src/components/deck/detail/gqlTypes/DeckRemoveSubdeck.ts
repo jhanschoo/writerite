@@ -6,7 +6,7 @@
 // GraphQL mutation operation: DeckRemoveSubdeck
 // ====================================================
 
-export interface DeckRemoveSubdeck_rwDeckAddSubdeck {
+export interface DeckRemoveSubdeck_rwDeckRemoveSubdeck {
   readonly __typename: "RwDeck";
   readonly id: string;
   readonly name: string;
@@ -16,7 +16,7 @@ export interface DeckRemoveSubdeck_rwDeckAddSubdeck {
 }
 
 export interface DeckRemoveSubdeck {
-  readonly rwDeckAddSubdeck: DeckRemoveSubdeck_rwDeckAddSubdeck | null;
+  readonly rwDeckRemoveSubdeck: DeckRemoveSubdeck_rwDeckRemoveSubdeck | null;
 }
 
 export interface DeckRemoveSubdeckVariables {
