@@ -43,7 +43,7 @@
     "start:test": "NODE_ENV=testing node dist/index.js",
     "start:production": "NODE_ENV=production node dist/index.js",
     "test": "jest --runInBand",
-    "copymodels": "cp -R ../client-models/ src/",
+    "copymodels": "cp -R ../client-models src/",
     "codegen": "npm run copymodels && apollo client:codegen --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --target=typescript gqlTypes"
   }
 }

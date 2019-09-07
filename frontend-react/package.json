@@ -67,7 +67,7 @@
     "test": "rescripts test",
     "test:debug": "rescripts --inspect-brk test --runInBand",
     "eject": "rescripts eject",
-    "copymodels": "cp -R ../client-models/ src/",
+    "copymodels": "cp -R ../client-models src/",
     "codegen": "npm run copymodels && apollo client:codegen --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --target=typescript gqlTypes",
     "download-schema": "apollo client:download-schema src/schema.json"
   },
