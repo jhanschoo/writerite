@@ -2,7 +2,6 @@ default:
   image: docker:19.03.2
 
 variables:
-  DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
 
