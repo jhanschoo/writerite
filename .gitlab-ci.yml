@@ -18,7 +18,7 @@ variables:
 build-backend-apollo:
   stage: build
   script:
-    - apk add --update nodejs nodejs-npm zsh
+    - apk add --update nodejs npm zsh python3
     - zsh backend-apollo/ci.sh
   services:
     - docker:19.03.2-dind
