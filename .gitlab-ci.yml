@@ -17,8 +17,11 @@ variables:
         password: postgres
 build-backend-apollo:
   stage: build
+  variables:
+    DOCKER_NETWORK_ID: build-$CI_JOB_ID
   script:
-    - ping postgres
+    - echo $PRISMA_CONFIG
+    - echo $DOCKER_NETWORK_ID
     # - docker run -p 4466:4466 -p 5432:5432 -e PRISMA_CONFIG prismagraphql/prisma:1.34
     - apk add --update nodejs npm zsh python2 make gcc ping
     - cd backend-apollo
