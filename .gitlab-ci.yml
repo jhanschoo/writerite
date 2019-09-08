@@ -2,6 +2,7 @@ default:
   image: docker:19.03
 
 variables:
+  # secret configured in UI/API: ENGINE_API_KEY
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
   POSTGRES_USER: prisma
@@ -15,12 +16,14 @@ variables:
         port: 5432
         user: $POSTGRES_USER
         password: $POSTGRES_PASSWORD
+  # note: docker hostname refers to the docker host with image docker:dind
   PRISMA_ENDPOINT: http://docker:4466/writerite/build
 build-backend-apollo:
   stage: build
   variables:
     DOCKER_NETWORK_ID: build-$CI_JOB_ID
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker network create $DOCKER_NETWORK_ID
     - docker run --name postgres -d -e POSTGRES_USER -e POSTGRES_PASSWORD --network=$DOCKER_NETWORK_ID postgres:11.5-alpine
     - docker run --name prisma -d -e PRISMA_CONFIG --network=$DOCKER_NETWORK_ID -p 4466:4466 prismagraphql/prisma:1.34
