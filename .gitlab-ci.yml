@@ -4,13 +4,23 @@ default:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
-
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+  PRISMA_CONFIG: |
+    port: 4466
+    databases:
+      default:
+        connector: postgres
+        host: postgres
+        port: 5432
+        user: prisma
+        password: prisma
 build-backend-apollo:
   stage: build
   script:
     - apk add --update nodejs nodejs-npm zsh
-    - docker info
+    - zsh backend-apollo/ci.sh
   services:
     - docker:19.03.2-dind
     - prismagraphql/prisma:1.34
-    - postgres:11.2
+    - postgres:11.5

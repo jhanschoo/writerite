@@ -53,7 +53,7 @@ services:
             user: prisma
             password: prisma
   postgres:
-    image: postgres:11.2
+    image: postgres:11.5
     restart: always
     stop_grace_period: 1m
     ports:
