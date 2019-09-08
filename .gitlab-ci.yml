@@ -27,7 +27,7 @@ build-backend-apollo:
     - docker exec prisma apk add curl
     - apk add curl
     - sleep 10
-    - docker port
+    - docker port prisma
     - docker exec prisma curl http://localhost:4466/management
     - curl http://127.0.0.1:4466/management
     # - apk add --update nodejs npm zsh python2 make g++
