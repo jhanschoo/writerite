@@ -19,8 +19,8 @@ build-backend-apollo:
   stage: build
   script:
     - apk add --update nodejs npm zsh python2
-    - echo "$PRISMA_CONFIG"
-    # - zsh backend-apollo/ci.sh
+    #- docker run -p 4466:4466 -e "$PRISMA_CONFIG" prismagraphql/prisma:1.34
+    - zsh backend-apollo/ci.sh
   # note that prisma cannot be run as a service due to
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
   services:
