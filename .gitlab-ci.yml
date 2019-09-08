@@ -18,8 +18,8 @@ variables:
 build-backend-apollo:
   stage: build
   script:
-    - docker run -p 5432:5432 -e "POSTGRES_USER=$POSTGRES_USER" -e "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" prismagraphql/prisma:1.34
-    - docker run -p 4466:4466 -e "PRISMA_CONFIG=$PRISMA_CONFIG" prismagraphql/prisma:1.34
+    - docker run -p 5432:5432 -e POSTGRES_USER -e POSTGRES_PASSWORD postgres:11.5
+    - docker run -p 4466:4466 -e PRISMA_CONFIG prismagraphql/prisma:1.34
     - apk add --update nodejs npm zsh python2 make gcc
     - cd backend-apollo
     - ls
