@@ -27,7 +27,7 @@ build-backend-apollo:
     - apk add --update nodejs npm zsh python2 make g++
     - cd backend-apollo
     - npm install
-    - zsh dockerbuild.sh
+    - sh dockerbuild.sh build
   # note that prisma cannot be run as a service due to
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
   services:

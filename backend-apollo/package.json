@@ -46,7 +46,7 @@
     "typescript-tslint-plugin": "^0.5.4"
   },
   "scripts": {
-    "build": "bash build.sh",
+    "build": "sh build.sh",
     "start": "node dist/src/index.js",
     "test": "jest --runInBand",
     "version": "node --version"

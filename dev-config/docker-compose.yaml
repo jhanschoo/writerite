@@ -27,6 +27,7 @@ services:
     env_file: .env
     environment:
       PRISMA_ENDPOINT: http://prisma:4466/writerite/development
+      ENGINE_SCHEMA_TAG: development
       REDIS_HOST: redis
       REDIS_PORT: '6379'
       CERT_FILE: /run/secrets/https_cert
