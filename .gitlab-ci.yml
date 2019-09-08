@@ -11,16 +11,16 @@ variables:
     databases:
       default:
         connector: postgres
-        host: localhost
+        host: postgres
         port: 5432
         user: postgres
         password: postgres
 build-backend-apollo:
   stage: build
   script:
-    - docker run -d -p 5432:5432 -e POSTGRES_USER -e POSTGRES_PASSWORD postgres:11.5
-    - docker run -p 4466:4466 -p 5432:5432 -e PRISMA_CONFIG prismagraphql/prisma:1.34
-    - apk add --update nodejs npm zsh python2 make gcc
+    - ping postgres
+    # - docker run -p 4466:4466 -p 5432:5432 -e PRISMA_CONFIG prismagraphql/prisma:1.34
+    - apk add --update nodejs npm zsh python2 make gcc ping
     - cd backend-apollo
     - ls
     - npm install
@@ -28,4 +28,4 @@ build-backend-apollo:
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
   services:
     - docker:19.03.2-dind
-    # - postgres:11.5
+    - postgres:11.5
