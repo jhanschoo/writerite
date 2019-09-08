@@ -25,7 +25,7 @@ then
   SUFFIX=""
 fi
 echo "$IMAGE_NAME"
-if [ -n "$IMAGE_NAME" ]
+if [ -z "$IMAGE_NAME" ]
 then
   IMAGE_NAME="jhanschoo/writerite-backend-apollo"
 fi
@@ -33,6 +33,5 @@ fi
 npm run build
 
 TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="$NODE_ENV" .
 docker push "$TAGGED_IMAGE_NAME"

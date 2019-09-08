@@ -24,6 +24,7 @@ build-backend-apollo:
     DOCKER_NETWORK_ID: build-$CI_JOB_ID
     IMAGE_NAME: $CI_REGISTRY_IMAGE/backend-apollo
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker network create $DOCKER_NETWORK_ID
     - docker run --name postgres -d -e POSTGRES_USER -e POSTGRES_PASSWORD --network=$DOCKER_NETWORK_ID postgres:11.5-alpine
     - docker run --name prisma -d -e PRISMA_CONFIG --network=$DOCKER_NETWORK_ID -p 4466:4466 prismagraphql/prisma:1.34
