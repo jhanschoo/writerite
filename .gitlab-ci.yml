@@ -22,6 +22,7 @@ build-backend-apollo:
   stage: build
   variables:
     DOCKER_NETWORK_ID: build-$CI_JOB_ID
+    IMAGE_NAME: $CI_REGISTRY/writerite/writerite/backend-apollo
   script:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker network create $DOCKER_NETWORK_ID

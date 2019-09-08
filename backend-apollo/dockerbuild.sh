@@ -16,17 +16,21 @@ export NODE_ENV
 
 PACKAGE_VERSION=$(node -pe "require('./package.json').version")
 SUFFIX="-$NODE_ENV"
-if [[ "$SUFFIX" = "-development" ]]
+if [ "$SUFFIX" = "-development" ]
 then
   SUFFIX="-dev1"
 fi
-if [[ "$SUFFIX" = "-production" ]]
+if [ "$SUFFIX" = "-production" ]
 then
   SUFFIX=""
+fi
+if [ -n "$IMAGE_NAME" ]
+then
+  IMAGE_NAME="jhanschoo/writerite-backend-apollo"
 fi
 
 npm run build
 
-IMAGE_NAME="jhanschoo/writerite-backend-apollo:$PACKAGE_VERSION$SUFFIX"
-docker build -t "$IMAGE_NAME" --build-arg node_env="$NODE_ENV" .
-docker push "$IMAGE_NAME"
+TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
+docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="$NODE_ENV" .
+docker push "$TAGGED_IMAGE_NAME"
