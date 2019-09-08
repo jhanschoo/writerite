@@ -15,6 +15,7 @@ variables:
         port: 5432
         user: $POSTGRES_USER
         password: $POSTGRES_PASSWORD
+  PRISMA_ENDPOINT: http://localhost:4466/writerite/build
 build-backend-apollo:
   stage: build
   variables:
@@ -25,9 +26,8 @@ build-backend-apollo:
     - docker run --name prisma -d -e PRISMA_CONFIG --network=$DOCKER_NETWORK_ID -p 4466:4466 prismagraphql/prisma:1.34
     - apk add --update nodejs npm zsh python2 make g++
     - cd backend-apollo
-    - which node
     - npm install
-    - npx prisma init --endpoint http://localhost:4466
+    - zsh dockerbuild.sh
   # note that prisma cannot be run as a service due to
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
   services:

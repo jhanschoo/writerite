@@ -1,7 +1,14 @@
+# .env environment file should define
+# ENGINE_API_KEY
+# GOOGLE_CLIENT_ID
+# GOOGLE_CLIENT_SECRET
+# FACEBOOK_APP_ID
+# FACEBOOK_APP_SECRET
+# RECAPTCHA_SECRET
 version: '3.7'
 services:
   wright-node:
-    image: jhanschoo/writerite-wright-node:1.0.0-dev2
+    image: jhanschoo/writerite-wright-node:0.1.0-dev1
     restart: always
     env_file: .env
     environment:
@@ -13,15 +20,13 @@ services:
     secrets:
       - https_ca_cert
   backend-apollo:
-    image: jhanschoo/writerite-backend-apollo:1.0.0-dev1
+    image: jhanschoo/writerite-backend-apollo:0.1.0-dev1
     restart: always
     ports:
       - '4000:4000'
     env_file: .env
     environment:
-      ENGINE_API_KEY: service:writerite:QKWx_SWe7yDr4yzAqOeSPw
-      PRISMA_ENDPOINT: http://prisma:4466/writerite/production
-      PRISMA_MANAGEMENT_API_SECRET: writerite-prisma
+      PRISMA_ENDPOINT: http://prisma:4466/writerite/development
       REDIS_HOST: redis
       REDIS_PORT: '6379'
       CERT_FILE: /run/secrets/https_cert
@@ -30,7 +35,7 @@ services:
       - https_cert
       - https_key
   redis:
-    image: redis:5.0.4
+    image: redis:5.0.5-alpine
     restart: always
     stop_grace_period: 1m
     ports:
@@ -44,16 +49,17 @@ services:
     environment:
       PRISMA_CONFIG: |
         port: 4466
-        managementApiSecret: writerite-prisma
         databases:
           default:
             connector: postgres
             host: postgres
-            port: 5432
             user: prisma
             password: prisma
+            rawAccess: true
+            port: 5432
+            migrations: true
   postgres:
-    image: postgres:11.5
+    image: postgres:11.5-alpine
     restart: always
     stop_grace_period: 1m
     ports:
@@ -61,7 +67,6 @@ services:
     environment:
       POSTGRES_USER: prisma
       POSTGRES_PASSWORD: prisma
-      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - postgres:/var/lib/postgresql/data
 volumes:

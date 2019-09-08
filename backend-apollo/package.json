@@ -1,6 +1,6 @@
 {
   "name": "@writerite/backend-apollo",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Apollo GraphQL implementation of WriteRite backend",
   "main": "dist/index.js",
   "repository": "https://gitlab.com/writerite/writerite",
@@ -46,11 +46,9 @@
     "typescript-tslint-plugin": "^0.5.4"
   },
   "scripts": {
-    "build": "npm run prismadeploy && tsc",
+    "build": "bash build.sh",
     "start": "node dist/src/index.js",
     "test": "jest --runInBand",
-    "version": "node --version",
-    "prismadeploy": "PRISMA_ENDPOINT=\"http://localhost:4466/writerite/production\" PRISMA_MANAGEMENT_API_SECRET=\"writerite-prisma\" prisma deploy",
-    "prismareset": "PRISMA_ENDPOINT=\"http://localhost:4466/writerite/production\" PRISMA_MANAGEMENT_API_SECRET=\"writerite-prisma\" prisma reset --force"
+    "version": "node --version"
   }
 }
