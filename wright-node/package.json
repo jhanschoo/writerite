@@ -1,6 +1,6 @@
 {
   "name": "@writerite/wright-node",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "node implementation of WriteRite wright (i.e. bot)",
   "main": "dist/index.js",
   "repository": "https://gitlab.com/writerite/writerite",
@@ -38,12 +38,9 @@
     "typescript-tslint-plugin": "^0.5.4"
   },
   "scripts": {
-    "build": "npm run codegen && tsc",
+    "build": "sh build.sh",
     "start:dev": "NODE_ENV=development node dist/index.js",
-    "start:test": "NODE_ENV=testing node dist/index.js",
-    "start:production": "NODE_ENV=production node dist/index.js",
-    "test": "jest --runInBand",
-    "copymodels": "cp -R ../client-models src/",
-    "codegen": "npm run copymodels && apollo client:codegen --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --target=typescript gqlTypes"
+    "start": "node dist/index.js",
+    "test": "jest --runInBand"
   }
 }

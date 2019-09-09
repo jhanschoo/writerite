@@ -24,7 +24,6 @@ if [ "$SUFFIX" = "-production" ]
 then
   SUFFIX=""
 fi
-echo "$IMAGE_NAME"
 if [ -z "$IMAGE_NAME" ]
 then
   IMAGE_NAME="jhanschoo/writerite-backend-apollo"
