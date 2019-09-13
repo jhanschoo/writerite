@@ -65,7 +65,7 @@ deploy:
     - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
     - BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
-    - WRIGHT_NODE_IMAGE"$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
+    - WRIGHT_NODE_IMAGE="$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
     - docker pull "$BACKEND_APOLLO_IMAGE-build"
     - docker tag "$BACKEND_APOLLO_IMAGE-build" "$BACKEND_APOLLO_IMAGE"
     - docker push "$BACKEND_APOLLO_IMAGE"
