@@ -60,7 +60,8 @@ before_script:
 deploy:
   stage: deploy
   script:
-    - apk add --update nodejs kubernetes
+    - apk add --update nodejs
+    - apk add --update kubernetes --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
     - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
     - BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
