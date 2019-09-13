@@ -24,37 +24,37 @@ variables:
   # note: docker hostname refers to the docker host with image docker:dind
   PRISMA_ENDPOINT: http://docker:4466/writerite/build
 
-build-backend-apollo:
-  stage: build-servers
-  variables:
-    DOCKER_NETWORK_ID: build-$CI_JOB_ID
-    IMAGE_NAME: $CI_REGISTRY_IMAGE/backend-apollo
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker network create $DOCKER_NETWORK_ID
-    - docker run --name postgres -d -e POSTGRES_USER -e POSTGRES_PASSWORD --network=$DOCKER_NETWORK_ID postgres:11.5-alpine
-    - docker run --name prisma -d -e PRISMA_CONFIG --network=$DOCKER_NETWORK_ID -p 4466:4466 prismagraphql/prisma:1.34
-    - apk add --update nodejs npm zsh python2 make g++
-    - cd backend-apollo
-    - npm install
-    - sh dockerbuild.sh build
-  # note that prisma cannot be run as a service due to
-  # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
-  services:
-    - docker:19.03-dind
+# build-backend-apollo:
+#   stage: build-servers
+#   variables:
+#     DOCKER_NETWORK_ID: build-$CI_JOB_ID
+#     IMAGE_NAME: $CI_REGISTRY_IMAGE/backend-apollo
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - docker network create $DOCKER_NETWORK_ID
+#     - docker run --name postgres -d -e POSTGRES_USER -e POSTGRES_PASSWORD --network=$DOCKER_NETWORK_ID postgres:11.5-alpine
+#     - docker run --name prisma -d -e PRISMA_CONFIG --network=$DOCKER_NETWORK_ID -p 4466:4466 prismagraphql/prisma:1.34
+#     - apk add --update nodejs npm zsh python2 make g++
+#     - cd backend-apollo
+#     - npm install
+#     - sh dockerbuild.sh build
+#   # note that prisma cannot be run as a service due to
+#   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
+#   services:
+#     - docker:19.03-dind
 
-build-wright-node:
-  stage: build-clients
-  variables:
-    IMAGE_NAME: $CI_REGISTRY_IMAGE/wright-node
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - apk add --update nodejs npm zsh python2 make g++
-    - cd wright-node
-    - npm install
-    - sh dockerbuild.sh build
-  services:
-    - docker:19.03-dind
+# build-wright-node:
+#   stage: build-clients
+#   variables:
+#     IMAGE_NAME: $CI_REGISTRY_IMAGE/wright-node
+#   script:
+#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#     - apk add --update nodejs npm zsh python2 make g++
+#     - cd wright-node
+#     - npm install
+#     - sh dockerbuild.sh build
+#   services:
+#     - docker:19.03-dind
 
 deploy:
   stage: deploy
