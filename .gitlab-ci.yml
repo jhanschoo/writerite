@@ -72,7 +72,7 @@ deploy:
     - docker pull "$WRIGHT_NODE_IMAGE-build"
     - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
     - docker push "$WRIGHT_NODE_IMAGE"
-    - kubectl get deploy --namespace gitlab-managed-apps
+    - kubectl get deploy
     # - echo KUBE_INGRESS_BASE_DOMAIN $KUBE_INGRESS_BASE_DOMAIN
     # - echo KUBE_URL $KUBE_URL
     # - echo KUBE_TOKEN $KUBE_TOKEN
