@@ -60,7 +60,7 @@ before_script:
 deploy:
   stage: deploy
   script:
-    - apk add --update nodejs
+    - apk add --update nodejs sed
     - apk add --update kubernetes --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
     - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
@@ -73,6 +73,7 @@ deploy:
     - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
     - docker push "$WRIGHT_NODE_IMAGE"
     - kubectl get deploy
+    - kubectl apply -f kubernetes/core/postgres.pvc.yaml
     # - echo KUBE_INGRESS_BASE_DOMAIN $KUBE_INGRESS_BASE_DOMAIN
     # - echo KUBE_URL $KUBE_URL
     # - echo KUBE_TOKEN $KUBE_TOKEN
