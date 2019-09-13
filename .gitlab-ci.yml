@@ -24,13 +24,15 @@ variables:
   # note: docker hostname refers to the docker host with image docker:dind
   PRISMA_ENDPOINT: http://docker:4466/writerite/build
 
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
 # build-backend-apollo:
 #   stage: build-servers
 #   variables:
 #     DOCKER_NETWORK_ID: build-$CI_JOB_ID
 #     IMAGE_NAME: $CI_REGISTRY_IMAGE/backend-apollo
 #   script:
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 #     - docker network create $DOCKER_NETWORK_ID
 #     - docker run --name postgres -d -e POSTGRES_USER -e POSTGRES_PASSWORD --network=$DOCKER_NETWORK_ID postgres:11.5-alpine
 #     - docker run --name prisma -d -e PRISMA_CONFIG --network=$DOCKER_NETWORK_ID -p 4466:4466 prismagraphql/prisma:1.34
@@ -48,7 +50,6 @@ variables:
 #   variables:
 #     IMAGE_NAME: $CI_REGISTRY_IMAGE/wright-node
 #   script:
-#     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 #     - apk add --update nodejs npm zsh python2 make g++
 #     - cd wright-node
 #     - npm install
@@ -59,22 +60,24 @@ variables:
 deploy:
   stage: deploy
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - apk add --update nodejs
+    - apk add --update nodejs kubernetes
     - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
-    - docker pull "$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION-build"
-    - docker tag "$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION-build" "$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
-    - docker push "$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
-    - docker pull "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION-build"
-    - docker tag "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION-build" "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
-    - docker push "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
-    - echo KUBE_INGRESS_BASE_DOMAIN $KUBE_INGRESS_BASE_DOMAIN
-    - echo KUBE_URL $KUBE_URL
-    - echo KUBE_TOKEN $KUBE_TOKEN
-    - echo KUBE_NAMESPACE $KUBE_NAMESPACE
-    - echo KUBE_CA_PEM_FILE $KUBE_CA_PEM_FILE
-    - echo KUBECONFIG $KUBECONFIG
+    - BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
+    - WRIGHT_NODE_IMAGE"$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
+    - docker pull "$BACKEND_APOLLO_IMAGE-build"
+    - docker tag "$BACKEND_APOLLO_IMAGE-build" "$BACKEND_APOLLO_IMAGE"
+    - docker push "$BACKEND_APOLLO_IMAGE"
+    - docker pull "$WRIGHT_NODE_IMAGE-build"
+    - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
+    - docker push "$WRIGHT_NODE_IMAGE"
+    - kubectl get deploy --namespace gitlab-managed-apps
+    # - echo KUBE_INGRESS_BASE_DOMAIN $KUBE_INGRESS_BASE_DOMAIN
+    # - echo KUBE_URL $KUBE_URL
+    # - echo KUBE_TOKEN $KUBE_TOKEN
+    # - echo KUBE_NAMESPACE $KUBE_NAMESPACE
+    # - echo KUBE_CA_PEM_FILE $KUBE_CA_PEM_FILE
+    # - echo KUBECONFIG $KUBECONFIG
   environment:
     name: production
     url: https://ritewrite.site
