@@ -2,8 +2,8 @@ default:
   image: docker:19.03
 
 stages:
-  # - build-servers
-  # - build-clients
+  # - build_servers
+  # - build_clients
   - deploy
 
 variables:
@@ -27,8 +27,8 @@ variables:
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-# build-backend-apollo:
-#   stage: build-servers
+# build_backend-apollo:
+#   stage: build_servers
 #   variables:
 #     DOCKER_NETWORK_ID: build-$CI_JOB_ID
 #     IMAGE_NAME: $CI_REGISTRY_IMAGE/backend-apollo
@@ -40,13 +40,14 @@ before_script:
 #     - cd backend-apollo
 #     - npm install
 #     - sh dockerbuild.sh build
+#     - echo "IMPORTANT: make sure that the versions for backend-apollo and its dependencies in the deployment scripts are updated."
 #   # note that prisma cannot be run as a service due to
 #   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
 #   services:
 #     - docker:19.03-dind
 
-# build-wright-node:
-#   stage: build-clients
+# build_wright-node:
+#   stage: build_clients
 #   variables:
 #     IMAGE_NAME: $CI_REGISTRY_IMAGE/wright-node
 #   script:
@@ -54,10 +55,11 @@ before_script:
 #     - cd wright-node
 #     - npm install
 #     - sh dockerbuild.sh build
+#     - echo "IMPORTANT: make sure that the versions for wright-node and its dependencies in the deployment scripts are updated."
 #   services:
 #     - docker:19.03-dind
 
-deploy:
+deploy_ritewrite:
   stage: deploy
   script:
     - apk add --update nodejs sed
@@ -74,15 +76,16 @@ deploy:
     - docker push "$WRIGHT_NODE_IMAGE"
     - kubectl get deploy
     - kubectl apply -f kubernetes/core/postgres.pvc.yaml
-    # - echo KUBE_INGRESS_BASE_DOMAIN $KUBE_INGRESS_BASE_DOMAIN
-    # - echo KUBE_URL $KUBE_URL
-    # - echo KUBE_TOKEN $KUBE_TOKEN
-    # - echo KUBE_NAMESPACE $KUBE_NAMESPACE
-    # - echo KUBE_CA_PEM_FILE $KUBE_CA_PEM_FILE
-    # - echo KUBECONFIG $KUBECONFIG
+    - kubectl apply -f kubernetes/core/postgres.deployment.yaml
+    - kubectl apply -f kubernetes/core/postgres.service.yaml
+    - kubectl apply -f kubernetes/core/prisma.deployment.yaml
+    - kubectl apply -f kubernetes/core/prisma.service.yaml
+    - kubectl apply -f kubernetes/core/redis.deployment.yaml
+    - kubectl apply -f kubernetes/core/redis.service.yaml
   environment:
     name: production
     url: https://ritewrite.site
+  when: manual
   # only:
   #   - master
   services:

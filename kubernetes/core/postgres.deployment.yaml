@@ -24,8 +24,8 @@ spec:
         - name: POSTGRES_USER
           value: prisma
         - name: PGDATA
-          value: /var/lib/postgresql/data/pgdata
-        image: postgres:11.2
+          value: /var/lib/postgresql/data
+        image: postgres:11.5-alpine
         name: postgres
         ports:
         - containerPort: 5432
