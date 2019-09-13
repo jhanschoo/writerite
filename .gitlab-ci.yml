@@ -65,3 +65,5 @@ deploy:
     - echo $BACKEND_APOLLO_PACKAGE_VERSION
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('backend-apollo/package.json').version")
     - echo $WRIGHT_NODE_PACKAGE_VERSION
+  services:
+    - docker:19.03-dind
