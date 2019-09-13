@@ -69,5 +69,16 @@ deploy:
     - docker pull "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION-build"
     - docker tag "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION-build" "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
     - docker push "$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
+    - echo KUBE_INGRESS_BASE_DOMAIN $KUBE_INGRESS_BASE_DOMAIN
+    - echo KUBE_URL $KUBE_URL
+    - echo KUBE_TOKEN $KUBE_TOKEN
+    - echo KUBE_NAMESPACE $KUBE_NAMESPACE
+    - echo KUBE_CA_PEM_FILE $KUBE_CA_PEM_FILE
+    - echo KUBECONFIG $KUBECONFIG
+  environment:
+    name: production
+    url: https://ritewrite.site
+  # only:
+  #   - master
   services:
     - docker:19.03-dind
