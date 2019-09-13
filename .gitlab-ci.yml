@@ -2,8 +2,9 @@ default:
   image: docker:19.03
 
 stages:
-  - build-servers
-  - build-clients
+  # - build-servers
+  # - build-clients
+  - deploy
 
 variables:
   # secret configured in UI/API: ENGINE_API_KEY
@@ -22,6 +23,7 @@ variables:
         password: $POSTGRES_PASSWORD
   # note: docker hostname refers to the docker host with image docker:dind
   PRISMA_ENDPOINT: http://docker:4466/writerite/build
+
 build-backend-apollo:
   stage: build-servers
   variables:
@@ -40,6 +42,7 @@ build-backend-apollo:
   # https://gitlab.com/gitlab-org/gitlab-runner/issues/1042
   services:
     - docker:19.03-dind
+
 build-wright-node:
   stage: build-clients
   variables:
@@ -52,3 +55,13 @@ build-wright-node:
     - sh dockerbuild.sh build
   services:
     - docker:19.03-dind
+
+deploy:
+  stage: deploy
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - apk add --update nodejs
+    - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('backend-apollo/package.json').version")
+    - echo $BACKEND_APOLLO_PACKAGE_VERSION
+    - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('backend-apollo/package.json').version")
+    - echo $WRIGHT_NODE_PACKAGE_VERSION
