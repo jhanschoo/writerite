@@ -76,14 +76,6 @@ deploy_ritewrite:
     - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
     - docker push "$WRIGHT_NODE_IMAGE"
     - kubectl get deploy
-    - kubectl apply -f kubernetes/core/postgres.pvc.yaml
-    - kubectl delete -f kubernetes/core/redis.service.yaml
-    - kubectl delete -f kubernetes/core/redis.deployment.yaml
-    - kubectl delete -f kubernetes/core/prisma.service.yaml
-    - kubectl delete -f kubernetes/core/prisma.deployment.yaml
-    - kubectl delete -f kubernetes/core/postgres.service.yaml
-    - kubectl delete -f kubernetes/core/postgres.deployment.yaml
-    - kubectl delete -f kubernetes/core/postgres.pvc.yaml
   environment:
     name: production
     url: https://ritewrite.site
