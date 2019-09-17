@@ -19,8 +19,8 @@ spec:
       - env:
         - name: PRISMA_ENDPOINT
           value: http://prisma:4466/writerite/production
-        - name: PRISMA_MANAGEMENT_API_SECRET
-          value: writerite-prisma
+        - name: ENGINE_SCHEMA_TAG
+          value: production
         - name: GOOGLE_CLIENT_ID
           valueFrom:
             secretKeyRef:
@@ -55,7 +55,7 @@ spec:
           value: redis
         - name: REDIS_PORT
           value: "6379"
-        image: jhanschoo/writerite-backend-yoga:1.3.4-dev8
+        image: jhanschoo/writerite-backend-apollo:0.1.0
         name: writerite-backend-yoga
         ports:
         - containerPort: 4000

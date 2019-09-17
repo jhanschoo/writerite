@@ -7,9 +7,10 @@ stages:
   - deploy
 
 variables:
-  # secret configured in UI/API: ENGINE_API_KEY
+  # secret configured in UI/API: K8S_SECRET_ENGINE_API_KEY
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
+  ENGINE_API_KEY: $K8S_SECRET_ENGINE_API_KEY
   POSTGRES_USER: prisma
   POSTGRES_PASSWORD: prisma
   PRISMA_CONFIG: |
@@ -76,12 +77,13 @@ deploy_ritewrite:
     - docker push "$WRIGHT_NODE_IMAGE"
     - kubectl get deploy
     - kubectl apply -f kubernetes/core/postgres.pvc.yaml
-    - kubectl apply -f kubernetes/core/postgres.deployment.yaml
-    - kubectl apply -f kubernetes/core/postgres.service.yaml
-    - kubectl apply -f kubernetes/core/prisma.deployment.yaml
-    - kubectl apply -f kubernetes/core/prisma.service.yaml
-    - kubectl apply -f kubernetes/core/redis.deployment.yaml
-    - kubectl apply -f kubernetes/core/redis.service.yaml
+    - kubectl delete -f kubernetes/core/redis.service.yaml
+    - kubectl delete -f kubernetes/core/redis.deployment.yaml
+    - kubectl delete -f kubernetes/core/prisma.service.yaml
+    - kubectl delete -f kubernetes/core/prisma.deployment.yaml
+    - kubectl delete -f kubernetes/core/postgres.service.yaml
+    - kubectl delete -f kubernetes/core/postgres.deployment.yaml
+    - kubectl delete -f kubernetes/core/postgres.pvc.yaml
   environment:
     name: production
     url: https://ritewrite.site
