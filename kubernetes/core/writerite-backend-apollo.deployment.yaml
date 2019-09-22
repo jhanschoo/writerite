@@ -1,17 +1,17 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: writerite-backend-yoga
+  name: writerite-backend-apollo
 spec:
   selector:
     matchLabels:
-      app: writerite-backend-yoga
+      app: writerite-backend-apollo
       env: production
       tier: backend
   template:
     metadata:
       labels:
-        app: writerite-backend-yoga
+        app: writerite-backend-apollo
         env: production
         tier: backend
     spec:
@@ -21,34 +21,40 @@ spec:
           value: http://prisma:4466/writerite/production
         - name: ENGINE_SCHEMA_TAG
           value: production
+        - name: ENGINE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: writerite-backend-apollo
+              key: engineApiKey
+              optional: false
         - name: GOOGLE_CLIENT_ID
           valueFrom:
             secretKeyRef:
-              name: writerite-oauth2-app-credentials-production
+              name: writerite-backend-apollo
               key: googleClientID
               optional: false
         - name: GOOGLE_CLIENT_SECRET
           valueFrom:
             secretKeyRef:
-              name: writerite-oauth2-app-credentials-production
+              name: writerite-backend-apollo
               key: googleClientSecret
               optional: false
         - name: FACEBOOK_APP_ID
           valueFrom:
             secretKeyRef:
-              name: writerite-oauth2-app-credentials-production
+              name: writerite-backend-apollo
               key: facebookAppID
               optional: false
         - name: FACEBOOK_APP_SECRET
           valueFrom:
             secretKeyRef:
-              name: writerite-oauth2-app-credentials-production
+              name: writerite-backend-apollo
               key: facebookAppSecret
               optional: false
         - name: RECAPTCHA_SECRET
           valueFrom:
             secretKeyRef:
-              name: writerite-oauth2-app-credentials-production
+              name: writerite-backend-apollo
               key: recaptchaSecret
               optional: false
         - name: REDIS_HOST
@@ -56,7 +62,7 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         image: jhanschoo/writerite-backend-apollo:0.1.0
-        name: writerite-backend-yoga
+        name: writerite-backend-apollo
         ports:
         - containerPort: 4000
         resources:

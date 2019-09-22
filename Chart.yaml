@@ -1,9 +1,0 @@
-apiVersion: v1
-name: ritewrite
-version: 0.1.0
-description: WriteRite API service
-home: https://gitlab.com/writerite/writerite
-maintainers:
-  - name: Johannes Choo
-    email: jhanschoo@gmail.com
-    url: https://gitlab.com/jhanschoo

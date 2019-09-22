@@ -7,7 +7,10 @@ stages:
   - deploy
 
 variables:
-  # secret configured in UI/API: K8S_SECRET_ENGINE_API_KEY
+  # secrets configured in UI/API:
+  # - K8S_SECRET_ENGINE_API_KEY
+  # - KUBERNETES_VERSION
+  # - HELM_VERSION
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: "/certs"
   ENGINE_API_KEY: $K8S_SECRET_ENGINE_API_KEY
@@ -64,17 +67,21 @@ deploy_ritewrite:
   stage: deploy
   script:
     - apk add --update nodejs sed
-    - apk add --update kubernetes --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
     - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
     - BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
     - WRIGHT_NODE_IMAGE="$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
-    - docker pull "$BACKEND_APOLLO_IMAGE-build"
-    - docker tag "$BACKEND_APOLLO_IMAGE-build" "$BACKEND_APOLLO_IMAGE"
-    - docker push "$BACKEND_APOLLO_IMAGE"
-    - docker pull "$WRIGHT_NODE_IMAGE-build"
-    - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
-    - docker push "$WRIGHT_NODE_IMAGE"
+    # - docker pull "$BACKEND_APOLLO_IMAGE-build"
+    # - docker tag "$BACKEND_APOLLO_IMAGE-build" "$BACKEND_APOLLO_IMAGE"
+    # - docker push "$BACKEND_APOLLO_IMAGE"
+    # - docker pull "$WRIGHT_NODE_IMAGE-build"
+    # - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
+    # - docker push "$WRIGHT_NODE_IMAGE"
+    - curl -LO https://storage.googleapis.com/kubernetes-release/release/v$KUBERNETES_VERSION/bin/linux/amd64/kubectl
+    - chmod +x kubectl
+    - mv kubectl /usr/bin
+    - curl -L https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz | tar zx
+    - chmod +x 
     - kubectl get deploy
   environment:
     name: production
