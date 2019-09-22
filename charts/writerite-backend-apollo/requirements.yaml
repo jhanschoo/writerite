@@ -1,0 +1,16 @@
+dependencies:
+  - name: postgresql
+    version: ^6.3.9
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    import-values:
+      - postgresql
+  - name: prisma
+    version: ^1.2.1
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    import-values:
+      - prisma
+  - name: redis
+    version: ^9.1.11
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    import-values:
+      - redis
