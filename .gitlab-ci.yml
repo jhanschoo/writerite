@@ -88,10 +88,13 @@ deploy_ritewrite:
     - mv linux-amd64/helm /usr/bin/
     - mv linux-amd64/tiller /usr/bin/
     # check_kube_domain
-    - test -z "$KUBE_INGRESS_BASE_DOMAIN"
+    - echo "$KUBE_INGRESS_BASE_DOMAIN"
+    - test -n "$KUBE_INGRESS_BASE_DOMAIN"
+    # download_chart
+    - helm init --client-only
+    - helm repo add ${AUTO_DEVOPS_CHART_REPOSITORY_NAME:-gitlab} ${AUTO_DEVOPS_CHART_REPOSITORY:-https://charts.gitlab.io} ${AUTO_DEVOPS_CHART_REPOSITORY_USERNAME:+"--username" "$AUTO_DEVOPS_CHART_REPOSITORY_USERNAME"} ${AUTO_DEVOPS_CHART_REPOSITORY_PASSWORD:+"--password" "$AUTO_DEVOPS_CHART_REPOSITORY_PASSWORD"}
     # ensure_namespace
     - kubectl get namespace "$KUBE_NAMESPACE"
-    - "false"
     - helm install --dry-run --debug charts/ritewrite
   environment:
     name: production
