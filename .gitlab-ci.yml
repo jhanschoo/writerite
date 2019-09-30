@@ -93,6 +93,8 @@ deploy_ritewrite:
     # download_chart
     - helm init --client-only
     - helm repo add ${AUTO_DEVOPS_CHART_REPOSITORY_NAME:-gitlab} ${AUTO_DEVOPS_CHART_REPOSITORY:-https://charts.gitlab.io} ${AUTO_DEVOPS_CHART_REPOSITORY_USERNAME:+"--username" "$AUTO_DEVOPS_CHART_REPOSITORY_USERNAME"} ${AUTO_DEVOPS_CHART_REPOSITORY_PASSWORD:+"--password" "$AUTO_DEVOPS_CHART_REPOSITORY_PASSWORD"}
+    - helm dependency update charts/ritewrite/
+    - helm dependency build charts/ritewrite/
     # ensure_namespace
     - kubectl get namespace "$KUBE_NAMESPACE"
     - helm install --dry-run --debug charts/ritewrite
