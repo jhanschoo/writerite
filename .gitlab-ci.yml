@@ -27,8 +27,6 @@ variables:
         password: $POSTGRES_PASSWORD
   # note: docker hostname refers to the docker host with image docker:dind
   PRISMA_ENDPOINT: http://docker:4466/writerite/build
-  TILLER_NAMESPACE: $KUBE_NAMESPACE
-  HELM_HOST: localhost:44134
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
@@ -70,11 +68,11 @@ before_script:
 deploy_ritewrite:
   stage: deploy
   script:
-    - apk add --update nodejs curl sed
-    - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
-    - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
-    - BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
-    - WRIGHT_NODE_IMAGE="$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
+    - apk add --update nodejs curl sed bash
+    - export BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
+    - export WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
+    - export BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
+    - export WRIGHT_NODE_IMAGE="$CI_REGISTRY_IMAGE/wright-node:$WRIGHT_NODE_PACKAGE_VERSION"
     # - docker pull "$BACKEND_APOLLO_IMAGE-build"
     # - docker tag "$BACKEND_APOLLO_IMAGE-build" "$BACKEND_APOLLO_IMAGE"
     # - docker push "$BACKEND_APOLLO_IMAGE"
@@ -89,28 +87,7 @@ deploy_ritewrite:
     - curl -L https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz | tar zx
     - mv linux-amd64/helm /usr/bin/
     - mv linux-amd64/tiller /usr/bin/
-    # check_kube_domain
-    - echo "$KUBE_INGRESS_BASE_DOMAIN"
-    - test -n "$KUBE_INGRESS_BASE_DOMAIN"
-    # download_chart
-    - helm init --client-only
-    - helm repo add ${AUTO_DEVOPS_CHART_REPOSITORY_NAME:-gitlab} ${AUTO_DEVOPS_CHART_REPOSITORY:-https://charts.gitlab.io} ${AUTO_DEVOPS_CHART_REPOSITORY_USERNAME:+"--username" "$AUTO_DEVOPS_CHART_REPOSITORY_USERNAME"} ${AUTO_DEVOPS_CHART_REPOSITORY_PASSWORD:+"--password" "$AUTO_DEVOPS_CHART_REPOSITORY_PASSWORD"}
-    - helm dependency update charts/ritewrite/
-    - helm dependency build charts/ritewrite/
-    # ensure_namespace
-    - kubectl get namespace "$KUBE_NAMESPACE"
-    # initialize_tiller
-    - nohup tiller -listen ${HELM_HOST} -alsologtostderr >/dev/null 2>&1 &
-    - echo "Tiller is listening on ${HELM_HOST}"
-    - helm version --debug
-    # deploy
-    - percentage="${2:-100}"
-    - name="$RELEASE_NAME"
-    - track="${1-stable}"
-    - test "$track" = "stable" || name="$name-$track"
-    - echo "$name"
-
-    - helm install --dry-run --debug charts/ritewrite
+    - bash ci/deploy.sh
   environment:
     name: production
     url: https://ritewrite.site
