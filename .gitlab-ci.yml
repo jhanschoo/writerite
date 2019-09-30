@@ -77,13 +77,15 @@ deploy_ritewrite:
     # - docker pull "$WRIGHT_NODE_IMAGE-build"
     # - docker tag "$WRIGHT_NODE_IMAGE-build" "$WRIGHT_NODE_IMAGE"
     # - docker push "$WRIGHT_NODE_IMAGE"
+    # TODO: verify kubectl binary
     - curl -LO https://storage.googleapis.com/kubernetes-release/release/v$KUBERNETES_VERSION/bin/linux/amd64/kubectl
     - chmod +x kubectl
     - mv kubectl /usr/bin
+    # TODO: verify helm package
     - curl -L https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz | tar zx
     - mv linux-amd64/helm /usr/bin/
     - mv linux-amd64/tiller /usr/bin/
-    - kubectl get deploy
+    - khelm install --dry-run --debug charts/ritewrite
   environment:
     name: production
     url: https://ritewrite.site
