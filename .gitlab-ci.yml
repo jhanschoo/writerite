@@ -88,10 +88,10 @@ deploy_ritewrite:
     - mv linux-amd64/helm /usr/bin/
     - mv linux-amd64/tiller /usr/bin/
     # check_kube_domain
-    - [ -z "$KUBE_INGRESS_BASE_DOMAIN" ]
+    - test -z "$KUBE_INGRESS_BASE_DOMAIN"
     # ensure_namespace
     - kubectl get namespace "$KUBE_NAMESPACE"
-    - false
+    - "false"
     - helm install --dry-run --debug charts/ritewrite
   environment:
     name: production
