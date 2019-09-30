@@ -63,6 +63,8 @@ before_script:
 #   services:
 #     - docker:19.03-dind
 
+# c.f. https://gitlab.com/gitlab-org/gitlab/blob/master/lib/gitlab/ci/templates/Jobs/Deploy.gitlab-ci.yml
+# c.f. https://gitlab.com/gitlab-org/cluster-integration/auto-deploy-image/blob/master/src/bin/auto-deploy
 deploy_ritewrite:
   stage: deploy
   script:
@@ -85,9 +87,11 @@ deploy_ritewrite:
     - curl -L https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz | tar zx
     - mv linux-amd64/helm /usr/bin/
     - mv linux-amd64/tiller /usr/bin/
-    - echo "$KUBE_INGRESS_BASE_DOMAIN"
-    - echo "$KUBE_NAMESPACE"
+    # check_kube_domain
+    - [ -z "$KUBE_INGRESS_BASE_DOMAIN" ]
+    # ensure_namespace
     - kubectl get namespace "$KUBE_NAMESPACE"
+    - false
     - helm install --dry-run --debug charts/ritewrite
   environment:
     name: production
