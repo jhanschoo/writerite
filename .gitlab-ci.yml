@@ -85,7 +85,10 @@ deploy_ritewrite:
     - curl -L https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz | tar zx
     - mv linux-amd64/helm /usr/bin/
     - mv linux-amd64/tiller /usr/bin/
-    - khelm install --dry-run --debug charts/ritewrite
+    - echo "$KUBE_INGRESS_BASE_DOMAIN"
+    - echo "$KUBE_NAMESPACE"
+    - kubectl get namespace "$KUBE_NAMESPACE"
+    - helm install --dry-run --debug charts/ritewrite
   environment:
     name: production
     url: https://ritewrite.site
