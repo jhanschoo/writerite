@@ -100,9 +100,16 @@ deploy_ritewrite:
     # ensure_namespace
     - kubectl get namespace "$KUBE_NAMESPACE"
     # initialize_tiller
-    - nohup tiller -listen localhost:44134 -alsologtostderr >/dev/null 2>&1 &
-    - echo "Tiller is listening on localhost:44134"
+    - nohup tiller -listen ${HELM_HOST} -alsologtostderr >/dev/null 2>&1 &
+    - echo "Tiller is listening on ${HELM_HOST}"
     - helm version --debug
+    # deploy
+    - percentage="${2:-100}"
+    - name="$RELEASE_NAME"
+    - track="${1-stable}"
+    - test "$track" = "stable" || name="$name-$track"
+    - echo "$name"
+
     - helm install --dry-run --debug charts/ritewrite
   environment:
     name: production
