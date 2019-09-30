@@ -27,6 +27,8 @@ variables:
         password: $POSTGRES_PASSWORD
   # note: docker hostname refers to the docker host with image docker:dind
   PRISMA_ENDPOINT: http://docker:4466/writerite/build
+  TILLER_NAMESPACE: $KUBE_NAMESPACE
+  HELM_HOST: localhost:44134
 
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
