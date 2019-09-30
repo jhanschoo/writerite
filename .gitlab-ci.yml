@@ -66,7 +66,7 @@ before_script:
 deploy_ritewrite:
   stage: deploy
   script:
-    - apk add --update nodejs sed
+    - apk add --update nodejs curl sed
     - BACKEND_APOLLO_PACKAGE_VERSION=$(node -pe "require('./backend-apollo/package.json').version")
     - WRIGHT_NODE_PACKAGE_VERSION=$(node -pe "require('./wright-node/package.json').version")
     - BACKEND_APOLLO_IMAGE="$CI_REGISTRY_IMAGE/backend-apollo:$BACKEND_APOLLO_PACKAGE_VERSION"
@@ -81,7 +81,8 @@ deploy_ritewrite:
     - chmod +x kubectl
     - mv kubectl /usr/bin
     - curl -L https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz | tar zx
-    - chmod +x 
+    - mv linux-amd64/helm /usr/bin/
+    - mv linux-amd64/tiller /usr/bin/
     - kubectl get deploy
   environment:
     name: production
