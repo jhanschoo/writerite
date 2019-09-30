@@ -97,6 +97,10 @@ deploy_ritewrite:
     - helm dependency build charts/ritewrite/
     # ensure_namespace
     - kubectl get namespace "$KUBE_NAMESPACE"
+    # initialize_tiller
+    - nohup tiller -listen ${HELM_HOST} -alsologtostderr >/dev/null 2>&1 &
+    - echo "Tiller is listening on ${HELM_HOST}"
+    - helm version --debug
     - helm install --dry-run --debug charts/ritewrite
   environment:
     name: production
