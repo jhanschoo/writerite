@@ -23,5 +23,5 @@ publish_api:
   image: node
   before_script: []
   script:
-    - cd backend_apollo
+    - cd backend-apollo
     - ls
