@@ -2,13 +2,15 @@ default:
   image: docker:19.03
 
 stages:
-  - publish_api
-  - build_services
-  - build_clients
+  - check-versions
+  - publish-api-dev
+  - build-services
+  - build-clients
   # - deploy
 
 variables:
   # secrets configured in UI/API:
+  # - APOLLO_KEY
   # - K8S_SECRET_ENGINE_API_KEY
   # - KUBERNETES_VERSION
   # - HELM_VERSION
@@ -18,10 +20,11 @@ variables:
 before_script:
   - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
-publish_api:
-  stage: publish_api
+publish-api-dev:
+  stage: publish-api-dev
   image: node
   before_script: []
   script:
     - cd backend-apollo
     - ls
+    - npx apollo service:push --graph=writerite-2020-04-24 --variant=tmp --localSchemaFile=schema.graphql
