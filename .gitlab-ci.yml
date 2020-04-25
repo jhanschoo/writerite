@@ -1,0 +1,27 @@
+default:
+  image: docker:19.03
+
+stages:
+  - publish_api
+  - build_services
+  - build_clients
+  # - deploy
+
+variables:
+  # secrets configured in UI/API:
+  # - K8S_SECRET_ENGINE_API_KEY
+  # - KUBERNETES_VERSION
+  # - HELM_VERSION
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: "/certs"
+
+before_script:
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+publish_api:
+  stage: publish_api
+  image: node
+  before_script: []
+  script:
+    - cd backend_apollo
+    - ls

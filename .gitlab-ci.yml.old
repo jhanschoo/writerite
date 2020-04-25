@@ -4,7 +4,7 @@ default:
 stages:
   # - build_servers
   # - build_clients
-  - deploy
+  # - deploy
 
 variables:
   # secrets configured in UI/API:
