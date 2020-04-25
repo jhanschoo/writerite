@@ -21,7 +21,6 @@ import { getClaims, generateJWT } from './util';
 
 const {
   NODE_ENV,
-  ENGINE_API_KEY,
   REDIS_HOST,
   REDIS_PORT,
   CERT_FILE,
@@ -33,7 +32,7 @@ const {
 const redisOptions = {
   host: REDIS_HOST || '127.0.0.1',
   port: (REDIS_PORT) ? parseInt(REDIS_PORT , 10) : 6379,
-  retryStrategy: (times: number) => {
+  retryStrategy: (times: number): number => {
     const delay = Math.min(times * 50, 2000);
     return delay;
   },
@@ -46,7 +45,7 @@ const pubsub = new RedisPubSub({
 
 const redisClient = new Redis({ ...redisOptions, db: 1 });
 redisClient.on('error', (err) => {
-  // tslint:disable-next-line: no-console
+  // eslint-disable-next-line no-console
   console.error(`redisClient error: ${err}`);
 });
 
@@ -56,7 +55,7 @@ const wrightJWT = generateJWT({
   roles: ['wright'],
 });
 
-const writeJWT = () => {
+const writeJWT = (): void => {
   redisClient.set('writerite:wright:jwt', wrightJWT)
     .then(() => setTimeout(writeJWT, 60000));
 };
@@ -74,7 +73,7 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const apollo = new ApolloServer({
   schema,
-  context: (ctx) => {
+  context: (ctx): object => {
     return {
       sub: getClaims(ctx),
       models,
@@ -91,7 +90,7 @@ apollo.applyMiddleware({
   app,
   cors: {
     origin: NODE_ENV === 'production'
-      ? 'https://writerite.site'
+      ? 'https://app.writerite.site'
       : 'https://localhost:3000',
     credentials: true,
   },
@@ -104,12 +103,10 @@ const server = (CERT_FILE && KEY_FILE)
   }, app.callback())
   : http.createServer(app.callback());
 
-// https://github.com/DefinitelyTyped/DefinitelyTyped/pull/33764
-// @ts-ignore
 apollo.installSubscriptionHandlers(server);
 
 server.listen({ port: 4000 }, () => {
-  // tslint:disable-next-line no-console
+  // eslint-disable-next-line no-console
   console.log(`🚀 Server ready at http${
     (CERT_FILE && KEY_FILE) ? 's' : ''
   }://localhost:${4000}${apollo.graphqlPath} in environment ${NODE_ENV}`);

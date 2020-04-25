@@ -1,5 +1,5 @@
 module.exports = {
   service: {
-    localSchemaFile: 'schema.graphql'
+    name: "writerite-2020-04-24"
   }
-};
+}
