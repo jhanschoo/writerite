@@ -26,5 +26,4 @@ publish-api-dev:
   before_script: []
   script:
     - cd backend-apollo
-    - npm i -g apollo
-    - apollo service:push --graph=writerite-2020-04-24 --key=$APOLLO_KEY --variant=tmp --localSchemaFile=schema.graphql
+    - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
