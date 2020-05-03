@@ -1,45 +1,80 @@
 import bcrypt from 'bcrypt';
-import KJUR from 'jsrsasign';
+import { KJUR, hextob64 } from 'jsrsasign';
 import randomWords from 'random-words';
 import { AuthenticationError, ApolloError } from 'apollo-server-koa';
 
-import { ICurrentUser, Roles, IUpdate } from './types';
-import { Prisma, prisma } from '../generated/prisma-client';
+import { Update, ResTo, FunResTo, AFunResTo, CurrentUser } from './types';
 
 const SALT_ROUNDS = 10;
 
-export const randomThreeWords = () => {
+export const REDUCER_DEPTH = process.env.REDUCER_DEPTH ? parseInt(process.env.REDUCER_DEPTH, 10) : 3;
+if (isNaN(REDUCER_DEPTH) || REDUCER_DEPTH < 1) {
+  throw Error('envvar REDUCER_DEPTH needs to be unset or a positive integer');
+}
+
+export const isSomeFunResTo = <T>(field: ResTo<T>): field is (FunResTo<Exclude<T, Function>> | AFunResTo<Exclude<T, Function>>) => {
+  return (typeof field === 'function');
+}
+
+export const resolve = async <T>(field: ResTo<T>): Promise<Exclude<T, Function>> => {
+  if (isSomeFunResTo(field)) {
+    return await Promise.resolve(field());
+  } else {
+    return await Promise.resolve(field);
+  }
+}
+
+export const throwIfUndefined = async <T,>(p: Promise<T>): Promise<Exclude<T, undefined>> => {
+  const t = await p;
+  if (t === undefined) {
+    throw Error('Undefined value found where not expected.');
+  } else {
+    return t as Exclude<T, undefined>;
+  }
+}
+
+export const liftArrayPromiseDefined = async <T,>(ps: Promise<T>[]): Promise<Exclude<T, undefined>[]> => {
+  const rs: Exclude<T, undefined>[] = [];
+  for (const p of ps) {
+    const v = await p;
+    if (v !== undefined) {
+      rs.push(v as Exclude<T, undefined>);
+    }
+  }
+  return rs;
+}
+
+export const randomThreeWords = (): string => {
   return randomWords({
     exactly: 1, wordsPerString: 3, separator: '-',
   })[0] as string;
 };
 
-export const rwAuthenticationError = () => {
+export const rwAuthenticationError = (): AuthenticationError => {
   return new AuthenticationError('writerite: valid JWT not present');
 };
 
-export const rwNotFoundError = (obj?: string) => {
+export const rwNotFoundError = (obj?: string): ApolloError => {
   return new ApolloError(`writerite: no ${obj || 'object'} was found that the client has access to`);
 };
 
-export const rwGuardPrismaNullError = <T>(obj: T | null) => {
+export const rwGuardPrismaNullError = <T>(obj: T | null): T => {
   if (obj === null) {
     throw new ApolloError('writerite: prisma operation not successful');
   }
   return obj;
 };
 
-export const throwIfDevel = (e: Error) => {
+export const throwIfDevel = (e: Error): void => {
   if (process.env.NODE_ENV === 'development') {
     throw e;
   }
-  return null;
 };
 
 export const updateMapFactory = <T, U>(
-  rwFromS: (prisma: Prisma, pObj: T) => U,
+  rwFromS: (prisma: Prisma, pObj: T) => U,``
 ): (pObjPayload: IUpdate<T>) => IUpdate<U> => {
-  return (pObjPayload: IUpdate<T>) => {
+  return (pObjPayload: IUpdate<T>): IUpdate<U> => {
     if ('created' in pObjPayload) {
       return {
         created: rwFromS(prisma, pObjPayload.created),
@@ -66,21 +101,21 @@ const PRIVATE_KEY = new KJUR.crypto.ECDSA(
   { curve: 'secp256r1', prv: EC_KEYPAIR.ecprvhex },
 );
 
-export const comparePassword = async (plain: string, hashed: string) => {
+export const comparePassword = async (plain: string, hashed: string): Promise<boolean> => {
   return bcrypt.compare(plain, hashed);
 };
 
-export const hashPassword = async (plain: string) => {
+export const hashPassword = async (plain: string): Promise<string> => {
   return bcrypt.hash(plain, SALT_ROUNDS);
 };
 
-export const generateB64UUID = () => {
+export const generateB64UUID = (): string => {
   const uuid = KJUR.crypto.Util.getRandomHexOfNbits(128);
-  const b64uuid = KJUR.hextob64(uuid);
+  const b64uuid = hextob64(uuid);
   return b64uuid;
 };
 
-export const generateJWT = (sub: any, persist = false) => {
+export const generateJWT = (sub: any, persist = false): string => {
   const timeNow = KJUR.jws.IntDate.get('now');
   const expiryTime = KJUR.jws.IntDate.get(
     persist ? 'now + 1year' : 'now + 1day',
@@ -104,7 +139,7 @@ export const generateJWT = (sub: any, persist = false) => {
   return jwt;
 };
 
-export const getClaims = (ctx: any): ICurrentUser | undefined => {
+export const getClaims = (ctx: any): CurrentUser | undefined => {
   let authorization = null;
   if (ctx.ctx && ctx.ctx.get) {
     authorization = ctx.ctx.get('Authorization');

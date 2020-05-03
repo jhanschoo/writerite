@@ -6,28 +6,28 @@ directive @subscriptionsTriggered(
   signatures: [String!]!
 ) on FIELD_DEFINITION
 
-enum RwRoomMessageContentType {
+enum WrRoomMessageContentType {
   TEXT
   CONFIG
 }
 
 type Query {
   _empty: String
-  # RwUser
-  rwUser(id: ID!): RwUser
-  rwUsers: [RwUser!]
-  # RwDeck
-  rwDeck(id: ID!): RwDeck
-  rwOwnDecks: [RwDeck!]
-  # RwCard
-  rwCard(id: ID!): RwCard
-  rwCardsOfDeck(deckId: ID!): [RwCard!]
-  # RwRoom
-  rwRoom(id: ID!): RwRoom
-  rwInRooms: [RwRoom!]
-  # RwRoomMessage
-  rwRoomMessage(id: ID!): RwRoomMessage
-  rwRoomMessagesOfRoom(roomId: ID!): [RwRoomMessage!]
+  # WrUser
+  wrUser(id: ID!): WrUser
+  wrUsers: [WrUser!]
+  # WrDeck
+  wrDeck(id: ID!): WrDeck
+  wrOwnDecks: [WrDeck!]
+  # WrCard
+  wrCard(id: ID!): WrCard
+  wrCardsOfDeck(deckId: ID!): [WrCard!]
+  # WrRoom
+  wrRoom(id: ID!): WrRoom
+  wrInRooms: [WrRoom!]
+  # WrRoomMessage
+  wrRoomMessage(id: ID!): WrRoomMessage
+  wrRoomMessagesOfRoom(roomId: ID!): [WrRoomMessage!]
 }
 
 type Mutation {
@@ -41,10 +41,10 @@ type Mutation {
     authorizer: String!
     identifier: String!
     persist: Boolean
-  ): RwAuthResponse
+  ): WrAuthResponse
 
   # User
-  rwUserEdit(name: String!): RwUser
+  rwUserEdit(name: String!): WrUser
 
   # Deck
   rwDeckCreate(
@@ -53,7 +53,7 @@ type Mutation {
     nameLang: String
     promptLang: String
     answerLang: String
-  ): RwDeck @subscriptionsTriggered(
+  ): WrDeck @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<deck's owner>", "rwDeckTopic(<deck's id>)"]
   )
   rwDeckCreateFromRows(
@@ -63,7 +63,7 @@ type Mutation {
     promptLang: String
     answerLang: String
     rows: [[String!]!]!
-  ): RwDeck @subscriptionsTriggered(
+  ): WrDeck @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<deck's owner's id>", "rwDeckTopic(<deck's id>)"]
   )
   rwDeckEdit(
@@ -73,13 +73,13 @@ type Mutation {
     nameLang: String
     promptLang: String
     answerLang: String
-  ): RwDeck @subscriptionsTriggered(
+  ): WrDeck @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<deck's owner's id>", "rwDeckTopic(<deck's id>)"]
   )
-  rwDeckAddSubdeck(id: ID!, subdeckId: ID!): RwDeck @subscriptionsTriggered(
+  rwDeckAddSubdeck(id: ID!, subdeckId: ID!): WrDeck @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
   )
-  rwDeckRemoveSubdeck(id: ID!, subdeckId: ID!): RwDeck @subscriptionsTriggered(
+  rwDeckRemoveSubdeck(id: ID!, subdeckId: ID!): WrDeck @subscriptionsTriggered(
     signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
   )
   rwDeckDelete(id: ID!): ID @subscriptionsTriggered(
@@ -93,7 +93,7 @@ type Mutation {
     answers: [String!]
     sortKey: String
     template: Boolean
-  ): RwCard @subscriptionsTriggered(
+  ): WrCard @subscriptionsTriggered(
     signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
   )
   rwCardsCreate(
@@ -104,7 +104,7 @@ type Mutation {
     answers: [String!]
     sortKey: String
     template: Boolean
-  ): [RwCard!] @subscriptionsTriggered(
+  ): [WrCard!] @subscriptionsTriggered(
     signatures: ["rwCardsUpdatesOfDeck(<cards' deck's id>)"]
   )
   rwCardEdit(
@@ -114,23 +114,23 @@ type Mutation {
     answers: [String!]
     sortKey: String
     template: Boolean
-  ): RwCard @subscriptionsTriggered(
+  ): WrCard @subscriptionsTriggered(
     signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
   )
   rwCardDelete(id: ID!): ID @subscriptionsTriggered(
     signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
   )
   # Room
-  rwRoomCreate(config: IRoomConfigInput!): RwRoom @subscriptionsTriggered(
+  rwRoomCreate(config: IRoomConfigInput!): WrRoom @subscriptionsTriggered(
     signatures: ["rwRoomUpdates(<room's id>)"]
   )
-  rwRoomUpdateConfig(id: ID! config: IRoomConfigInput!): RwRoom @subscriptionsTriggered(
+  rwRoomUpdateConfig(id: ID! config: IRoomConfigInput!): WrRoom @subscriptionsTriggered(
     signatures: ["rwRoomUpdates(<room's id>)"]
   )
-  rwRoomAddOccupant(id: ID! occupantId: ID!): RwRoom @subscriptionsTriggered(
+  rwRoomAddOccupant(id: ID! occupantId: ID!): WrRoom @subscriptionsTriggered(
     signatures: ["rwRoomUpdates(<room's id>)"]
   )
-  rwRoomDeactivate(id: ID!): RwRoom @subscriptionsTriggered(
+  rwRoomDeactivate(id: ID!): WrRoom @subscriptionsTriggered(
     signatures: ["rwRoomUpdates(<room's id>)"]
   )
 
@@ -138,8 +138,8 @@ type Mutation {
   rwRoomMessageCreate(
     roomId: ID!
     content: String!
-    contentType: RwRoomMessageContentType!
-  ): RwRoomMessage @subscriptionsTriggered(
+    contentType: WrRoomMessageContentType!
+  ): WrRoomMessage @subscriptionsTriggered(
     signatures: ["rwRoomMessagesUpdatesOfRoom(<room's id>)"]
   )
 }
@@ -147,99 +147,99 @@ type Mutation {
 type Subscription {
   _empty: String
   # Deck
-  rwOwnDecksUpdates: RwDeckUpdate!
-  rwDeckUpdates(id: ID!): RwDeckUpdate!
+  rwOwnDecksUpdates: WrDeckUpdate!
+  rwDeckUpdates(id: ID!): WrDeckUpdate!
   # Card
-  rwCardsUpdatesOfDeck(deckId: ID!): RwCardUpdate!
+  rwCardsUpdatesOfDeck(deckId: ID!): WrCardUpdate!
   # Room
-  rwRoomUpdates(id: ID!): RwRoomUpdate!
+  rwRoomUpdates(id: ID!): WrRoomUpdate!
   # RoomMessage
-  rwRoomMessagesUpdatesOfRoom(roomId: ID!): RwRoomMessageUpdate!
+  rwRoomMessagesUpdatesOfRoom(roomId: ID!): WrRoomMessageUpdate!
 }
 
-type RwDeckCreated { created: RwDeck }
-type RwDeckUpdated { updated: RwDeck }
-type RwDeckDeleted { deletedId: ID }
-union RwDeckUpdate = RwDeckCreated | RwDeckUpdated | RwDeckDeleted
+type WrDeckCreated { created: WrDeck }
+type WrDeckUpdated { updated: WrDeck }
+type WrDeckDeleted { deletedId: ID }
+union WrDeckUpdate = WrDeckCreated | WrDeckUpdated | WrDeckDeleted
 
-type RwCardCreated { created: RwCard }
-type RwCardUpdated { updated: RwCard }
-type RwCardDeleted { deletedId: ID }
-union RwCardUpdate = RwCardCreated | RwCardUpdated | RwCardDeleted
+type WrCardCreated { created: WrCard }
+type WrCardUpdated { updated: WrCard }
+type WrCardDeleted { deletedId: ID }
+union WrCardUpdate = WrCardCreated | WrCardUpdated | WrCardDeleted
 
-type RwRoomMessageCreated { created: RwRoomMessage }
-type RwRoomMessageUpdated { updated: RwRoomMessage }
-type RwRoomMessageDeleted { deletedId: ID }
-union RwRoomMessageUpdate = RwRoomMessageCreated | RwRoomMessageUpdated | RwRoomMessageDeleted
+type WrRoomMessageCreated { created: WrRoomMessage }
+type WrRoomMessageUpdated { updated: WrRoomMessage }
+type WrRoomMessageDeleted { deletedId: ID }
+union WrRoomMessageUpdate = WrRoomMessageCreated | WrRoomMessageUpdated | WrRoomMessageDeleted
 
-type RwRoomCreated { created: RwRoom }
-type RwRoomUpdated { updated: RwRoom }
-type RwRoomDeleted { deletedId: ID }
-union RwRoomUpdate = RwRoomCreated | RwRoomUpdated | RwRoomDeleted
+type WrRoomCreated { created: WrRoom }
+type WrRoomUpdated { updated: WrRoom }
+type WrRoomDeleted { deletedId: ID }
+union WrRoomUpdate = WrRoomCreated | WrRoomUpdated | WrRoomDeleted
 
-# RwDeck
+# WrDeck
 
-type RwDeck {
+type WrDeck {
   id: ID!
   name: String!
   description: String!
   nameLang: String!
   promptLang: String!
   answerLang: String!
-  owner: RwUser!
-  subdecks: [RwDeck!]!
-  cards: [RwCard!]!
+  owner: WrUser!
+  subdecks: [WrDeck!]!
+  cards: [WrCard!]!
 }
 
-# RwCard
+# WrCard
 
-type RwCard {
+type WrCard {
   id: ID!
   prompt: String!
   fullAnswer: String!
   answers: [String!]!
   sortKey: String!
-  deck: RwDeck!
+  deck: WrDeck!
   editedAt: String!
   template: Boolean!
 }
 
-# RwRoom
+# WrRoom
 
-type RwRoom {
+type WrRoom {
   id: ID!
   inactive: Boolean!
   config: IRoomConfig!
-  owner: RwUser!
-  occupants: [RwUser!]!
-  messages: [RwRoomMessage!]!
+  owner: WrUser!
+  occupants: [WrUser!]!
+  messages: [WrRoomMessage!]!
 }
 
-# RwRoomMessage
+# WrRoomMessage
 
-type RwRoomMessage {
+type WrRoomMessage {
   id: ID!
   content: String!
-  contentType: RwRoomMessageContentType!
-  sender: RwUser
-  room: RwRoom
+  contentType: WrRoomMessageContentType!
+  sender: WrUser
+  room: WrRoom
 }
 
-# RwAuthorization
+# WrAuthorization
 
-type RwAuthResponse {
-  user: RwUser!
+type WrAuthResponse {
+  user: WrUser!
   token: String!
 }
 
-# RwUser
+# WrUser
 
-type RwUser {
+type WrUser {
   id: ID!
   email: String!
   name: String
   roles: [String!]!
-  decks: [RwDeck!]!
+  decks: [WrDeck!]!
 }
 
 # IRoomConfig

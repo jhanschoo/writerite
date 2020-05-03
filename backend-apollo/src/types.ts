@@ -1,65 +1,65 @@
-import { Redis } from 'ioredis';
-import { PubSubEngine } from 'apollo-server-koa';
+import { Redis } from "ioredis";
+import { PubSubEngine } from "apollo-server-koa";
 
-import { Prisma } from '../generated/prisma-client';
-import { IModels } from './model';
-import { Readable } from 'stream';
+import { Readable } from "stream";
 
-export type AFunResTo<TReturn> = (() => Promise<TReturn>);
+export type AFunResTo<T> = (() => Promise<T>);
 
-export interface IModel<T> {
-  [key: string]: (...args: any[]) => null | T | T[] | string | boolean | Promise<null | T | T[] | string | boolean>;
-}
+export type FunResTo<T> = (() => T);
 
-export interface IContext {
-  sub?: ICurrentUser;
-  models: IModels;
-  prisma: Prisma;
+export type ResTo<T> = Exclude<T, Function> | FunResTo<Exclude<T, Function>> | AFunResTo<Exclude<T, Function>>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type RecordOfKeys<T extends any> = { [P in T[number]]: unknown; };
+export type Concrete<T> = { [P in keyof T]-?: Exclude<T[P], Function>; };
+
+export interface WrContext {
+  sub?: CurrentUser;
   pubsub: PubSubEngine;
   redisClient: Redis;
 }
 
 export enum AuthorizerType {
-  GOOGLE = 'GOOGLE',
-  FACEBOOK = 'FACEBOOK',
-  LOCAL = 'LOCAL',
-  DEVELOPMENT = 'DEVELOPMENT',
+  GOOGLE = "GOOGLE",
+  FACEBOOK = "FACEBOOK",
+  LOCAL = "LOCAL",
+  DEVELOPMENT = "DEVELOPMENT",
 }
 
 export enum Roles {
-  user = 'user',
-  admin = 'admin',
-  wright = 'wright',
+  user = "user",
+  admin = "admin",
+  wright = "wright",
 }
 
-export interface IFileUpload {
+export interface FileUpload {
   filename: string;
   mimetype: string;
   encoding: string;
   createReadStream: () => Readable;
 }
 
-export type IUpload = Promise<IFileUpload>;
+export type Upload = Promise<FileUpload>;
 
-export interface ICurrentUser {
+export interface CurrentUser {
   id: string;
   roles: Roles[];
 }
 
-export interface ICreatedUpdate<T> {
+export interface CreatedUpdate<T> {
   created: T;
 }
 
-export interface IUpdatedUpdate<T> {
+export interface UpdatedUpdate<T> {
   updated: T;
 }
 
-export interface IDeletedUpdate<T> {
+export interface DeletedUpdate<T> {
   deletedId: string;
 }
 
-export type IUpdate<T> =
-  | ICreatedUpdate<T>
-  | IUpdatedUpdate<T>
-  | IDeletedUpdate<T>
-  ;
+export type Update<T> =
+  | CreatedUpdate<T>
+  | UpdatedUpdate<T>
+  | DeletedUpdate<T>;
+
