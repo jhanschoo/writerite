@@ -1,12 +1,19 @@
 import { SQLDataSource } from "datasource-sql";
 
-import { WR_D_USER, WR_USER_COLS, WrDUser, WrUserDataSource, WrUserEditParams } from "./WrUser";
-import { WR_DECK_COLS, WR_D_DECK, WrDDeck, WrDeckCreateFromRowsParams, WrDeckCreateParams, WrDeckDataSource, WrDeckEditParams } from "./WrDeck";
-import { WR_CARD_COLS, WR_D_CARD, WrCardCreateParams, WrCardDataSource, WrCardEditParams, WrDCard } from "./WrCard";
-import { WR_D_SUBDECK_REL, WR_SUBDECK_REL_COLS, WrDSubdeckRel, WrSubdeckRelCreateParams, WrSubdeckRelDataSource, WrSubdeckRelKeyParams } from "./WrSubdeckRel";
-import { WR_D_ROOM, WR_ROOM_COLS, WrDRoom, WrRoomCreateParams, WrRoomDataSource, WrRoomEditParams } from "./WrRoom";
-import { WR_CHAT_MSG_COLS, WR_D_CHAT_MSG, WrChatMsgCreateParams, WrChatMsgDataSource, WrDChatMsg } from "./WrChatMsg";
-import { WR_D_OCCUPANCY_REL, WR_OCCUPANCY_REL_COLS, WrDOccupancyRel, WrOccupancyRelCreateParams, WrOccupancyRelDataSource, WrOccupancyRelKeyParams } from "./WrOccupancyRel";
+import { WR_D_USER, WR_USER_COLS, WrDUser } from "./WrUser";
+import type { WrUserDataSource, WrUserEditParams } from "./WrUserDataSource";
+import { WR_DECK_COLS, WR_D_DECK, WrDDeck } from "./WrDeck";
+import type { WrDeckCreateFromRowsParams, WrDeckCreateParams, WrDeckDataSource, WrDeckEditParams } from "./WrDeckDataSource";
+import { WR_CARD_COLS, WR_D_CARD, WrDCard } from "./WrCard";
+import type { WrCardCreateParams, WrCardDataSource, WrCardEditParams } from "./WrCardDataSource";
+import { WR_D_SUBDECK_REL, WR_SUBDECK_REL_COLS, WrDSubdeckRel } from "./WrSubdeckRel";
+import type { WrSubdeckRelCreateParams, WrSubdeckRelDataSource, WrSubdeckRelKeyParams } from "./WrSubdeckRelDataSource";
+import { WR_D_ROOM, WR_ROOM_COLS, WrDRoom } from "./WrRoom";
+import type { WrRoomCreateParams, WrRoomDataSource, WrRoomEditParams } from "./WrRoomDataSource";
+import { WR_CHAT_MSG_COLS, WR_D_CHAT_MSG, WrDChatMsg } from "./WrChatMsg";
+import type { WrChatMsgCreateParams, WrChatMsgDataSource } from "./WrChatMsgDataSource";
+import { WR_D_OCCUPANCY_REL, WR_OCCUPANCY_REL_COLS, WrDOccupancyRel } from "./WrOccupancyRel";
+import type { WrOccupancyRelCreateParams, WrOccupancyRelDataSource, WrOccupancyRelKeyParams } from "./WrOccupancyRelDataSource";
 
 
 /*
@@ -33,11 +40,11 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
 
   // WrUserDataSource<WrDUser>
 
-  getWrUser(id: string): Promise<WrDUser | undefined> {
-    return this.db<WrDUser>(WR_D_USER)
+  async getWrUser(id: string): Promise<WrDUser | null> {
+    return await this.db<WrDUser>(WR_D_USER)
       .select(...WR_USER_COLS)
       .where({ id })
-      .first();
+      .first() ?? null;
   }
 
   getWrUsersFromName(name: string): Promise<WrDUser[]> {
@@ -46,11 +53,11 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where({ name });
   }
 
-  getWrUserFromEmail(email: string): Promise<WrDUser | undefined> {
-    return this.db<WrDUser>(WR_D_USER)
+  async getWrUserFromEmail(email: string): Promise<WrDUser | null> {
+    return await this.db<WrDUser>(WR_D_USER)
       .select(...WR_USER_COLS)
       .where({ email })
-      .first();
+      .first() ?? null;
   }
 
   getWrUsersFromOccupiedRoomId(roomId: string): Promise<WrDUser[]> {
@@ -61,21 +68,21 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where(`${WR_D_OCCUPANCY_REL}.roomId`, roomId);
   }
 
-  editWrUser({ id, ...params }: WrUserEditParams): Promise<WrDUser | undefined> {
-    return this.db<WrDUser>(WR_D_USER)
+  async editWrUser({ id, ...params }: WrUserEditParams): Promise<WrDUser | null> {
+    return await this.db<WrDUser>(WR_D_USER)
       .where({ id })
       .update(params)
       .returning(WR_USER_COLS)
-      .first();
+      .first() ?? null;
   }
 
   // WrDeckDataSource<WrDDeck>
 
-  getWrDeck(id: string): Promise<WrDDeck | undefined> {
-    return this.db<WrDDeck>(WR_D_DECK)
+  async getWrDeck(id: string): Promise<WrDDeck | null> {
+    return await this.db<WrDDeck>(WR_D_DECK)
       .select(...WR_DECK_COLS)
       .where({ id })
-      .first();
+      .first() ?? null;
   }
 
   getWrDecksFromOwnerId(ownerId: string): Promise<WrDDeck[]> {
@@ -100,56 +107,55 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where(`${WR_D_SUBDECK_REL}.childId`, childId);
   }
 
-  createWrDeck(params: WrDeckCreateParams): Promise<WrDDeck | undefined> {
-    return this.db<WrDDeck>(WR_D_DECK)
+  async createWrDeck(params: WrDeckCreateParams): Promise<WrDDeck | null> {
+    return await this.db<WrDDeck>(WR_D_DECK)
       .insert(params)
       .returning(WR_DECK_COLS)
-      .first();
+      .first() ?? null;
   }
 
-  async createWrDeckFromRows({ rows, ...params }: WrDeckCreateFromRowsParams): Promise<WrDDeck | undefined> {
+  createWrDeckFromRows({ rows, ...params }: WrDeckCreateFromRowsParams): Promise<WrDDeck | null> {
     const [PROMPT_COL, FULL_ANSWER_COL, ANSWERS_COL_START] = [0, 1, 2];
-    const deck = await this.db<WrDDeck>(WR_D_DECK)
-      .insert(params)
-      .returning(WR_DECK_COLS)
-      .first();
-    if (deck !== undefined) {
-      await this.db<WrDCard>(WR_D_CARD)
-        .insert(rows.map((row): WrCardCreateParams => ({
-          deckId: deck.id,
-          prompt: row[PROMPT_COL],
-          fullAnswer: row[FULL_ANSWER_COL],
-          answers: row.slice(ANSWERS_COL_START),
-        })));
-    }
-    return deck;
+    return this.knex.transaction(async (trx) => {
+      const deck = await trx<WrDDeck>(WR_D_DECK)
+        .insert(params)
+        .returning(WR_DECK_COLS)
+        .first() ?? null;
+      if (deck !== null) {
+        await trx(WR_D_CARD)
+          .insert(rows.map((row): WrCardCreateParams => ({
+            deckId: deck.id,
+            prompt: row[PROMPT_COL],
+            fullAnswer: row[FULL_ANSWER_COL],
+            answers: row.slice(ANSWERS_COL_START),
+          })));
+      }
+      return deck;
+    });
   }
 
-  editWrDeck({ id, ...params }: WrDeckEditParams): Promise<WrDDeck | undefined> {
-    return this.db<WrDDeck>(WR_D_DECK)
+  async editWrDeck({ id, ...params }: WrDeckEditParams): Promise<WrDDeck | null> {
+    return await this.db<WrDDeck>(WR_D_DECK)
       .where({ id })
       .update(params)
       .returning(WR_DECK_COLS)
-      .first();
+      .first() ?? null;
   }
 
   async deleteWrDeck(id: string): Promise<string> {
-    const n = await this.db<WrDDeck>(WR_D_DECK)
+    await this.db<WrDDeck>(WR_D_DECK)
       .where({ id })
       .del();
-    if (n !== 1) {
-      throw new Error(`deleting a WrDDeck but ${n} were deleted`);
-    }
     return id;
   }
 
   // WrCardDataSource<WrDCard>
 
-  getWrCard(id: string): Promise<WrDCard | undefined> {
-    return this.db<WrDCard>(WR_D_CARD)
+  async getWrCard(id: string): Promise<WrDCard | null> {
+    return await this.db<WrDCard>(WR_D_CARD)
       .select(...WR_CARD_COLS)
       .where({ id })
-      .first();
+      .first() ?? null;
   }
 
   getWrCardsFromDeckId(deckId: string): Promise<WrDCard[]> {
@@ -158,11 +164,11 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where({ deckId });
   }
 
-  createWrCard(params: WrCardCreateParams): Promise<WrDCard | undefined> {
-    return this.db<WrDCard>(WR_D_CARD)
+  async createWrCard(params: WrCardCreateParams): Promise<WrDCard | null> {
+    return await this.db<WrDCard>(WR_D_CARD)
       .insert(params)
       .returning(WR_CARD_COLS)
-      .first();
+      .first() ?? null;
   }
 
   createWrCards(params: WrCardCreateParams[]): Promise<WrDCard[]> {
@@ -171,32 +177,29 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .returning(WR_CARD_COLS);
   }
 
-  editWrCard({ id, prompt, fullAnswer, answers, sortKey, template }: WrCardEditParams): Promise<WrDCard | undefined> {
-    return this.db<WrDCard>(WR_D_CARD)
+  async editWrCard({ id, prompt, fullAnswer, answers, sortKey, template }: WrCardEditParams): Promise<WrDCard | null> {
+    return await this.db<WrDCard>(WR_D_CARD)
       .where({ id })
       .update({
         prompt, fullAnswer, answers, sortKey, template,
       })
       .returning(WR_CARD_COLS)
-      .first();
+      .first() ?? null;
   }
 
   async deleteWrCard(id: string): Promise<string> {
-    const n = await this.db<WrDCard>(WR_D_CARD)
+    await this.db<WrDCard>(WR_D_CARD)
       .where({ id })
       .del();
-    if (n !== 1) {
-      throw new Error(`deleting a WrDCard but ${n} were deleted`);
-    }
     return id;
   }
 
   // WrRoomDataSource<WrDRoom>
-  getWrRoom(id: string): Promise<WrDRoom | undefined> {
-    return this.db<WrDRoom>(WR_D_ROOM)
+  async getWrRoom(id: string): Promise<WrDRoom | null> {
+    return await this.db<WrDRoom>(WR_D_ROOM)
       .select(...WR_ROOM_COLS)
       .where({ id })
-      .first();
+      .first() ?? null;
   }
 
   getWrRoomsFromOwnerId(ownerId: string): Promise<WrDRoom[]> {
@@ -213,54 +216,60 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where(`${WR_D_SUBDECK_REL}.occupantId`, occupantId);
   }
 
-  createWrRoom({ ownerId, config }: WrRoomCreateParams): Promise<WrDRoom | undefined> {
-    return this.db<WrDRoom>(WR_D_ROOM)
-      .insert({
-        ownerId,
-        config: JSON.stringify(config),
-      })
-      .returning(WR_ROOM_COLS)
-      .first();
+  async createWrRoom({ ownerId, config }: WrRoomCreateParams): Promise<WrDRoom | null> {
+    return this.knex.transaction(async (trx) => {
+      const room = await trx<WrDRoom>(WR_D_ROOM)
+        .insert({
+          ownerId,
+          config: JSON.stringify(config),
+        })
+        .returning(WR_ROOM_COLS)
+        .first() ?? null;
+      if (room !== null) {
+        await trx<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
+          .insert({
+            roomId: room.id,
+            occupantId: ownerId,
+          });
+      }
+      return room;
+    });
   }
 
-  editWrRoom({ id, config }: WrRoomEditParams): Promise<WrDRoom | undefined> {
-    return this.db<WrDRoom>(WR_D_ROOM)
+  async editWrRoom({ id, config }: WrRoomEditParams): Promise<WrDRoom | null> {
+    return await this.db<WrDRoom>(WR_D_ROOM)
       .where({ id })
       .update({
         config: JSON.stringify(config),
       })
       .returning(WR_ROOM_COLS)
-      .first();
+      .first() ?? null;
   }
 
   async deleteWrRoom(id: string): Promise<string> {
-    const n = await this.db<WrDRoom>(WR_D_ROOM)
+    await this.db<WrDRoom>(WR_D_ROOM)
       .where({ id })
       .del();
-    if (n !== 1) {
-      throw new Error(`deleting a WrDRoom but ${n} were deleted`);
-    }
     return id;
   }
 
   // WrChatMsgDataSource<WrDChatMsg>
 
-  getWrChatMsg(id: string): Promise<WrDChatMsg | undefined> {
-    return this.db<WrDChatMsg>(WR_D_CHAT_MSG)
+  async getWrChatMsg(id: string): Promise<WrDChatMsg | null> {
+    return await this.db<WrDChatMsg>(WR_D_CHAT_MSG)
       .select(...WR_CHAT_MSG_COLS)
       .where({ id })
-      .first();
+      .first() ?? null;
   }
 
   getWrChatMsgsFromRoomId(roomId: string): Promise<WrDChatMsg[]> {
     return this.db<WrDChatMsg>(WR_D_CHAT_MSG)
       .select(...WR_CHAT_MSG_COLS)
       .where({ roomId });
-
   }
 
-  createWrChatMsg({ roomId, senderId, content, contentType }: WrChatMsgCreateParams): Promise<WrDChatMsg | undefined> {
-    return this.db<WrDChatMsg>(WR_D_CHAT_MSG)
+  async createWrChatMsg({ roomId, senderId, content, contentType }: WrChatMsgCreateParams): Promise<WrDChatMsg | null> {
+    return await this.db<WrDChatMsg>(WR_D_CHAT_MSG)
       .insert({
         roomId,
         senderId,
@@ -268,25 +277,22 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
         contentType,
       })
       .returning(WR_CHAT_MSG_COLS)
-      .first();
+      .first() ?? null;
   }
 
   async deleteWrChatMsg(id: string): Promise<string> {
-    const n = await this.db<WrDChatMsg>(WR_D_CHAT_MSG)
+    await this.db<WrDChatMsg>(WR_D_CHAT_MSG)
       .where({ id })
       .del();
-    if (n !== 1) {
-      throw new Error(`deleting a WrDChatMsg but ${n} were deleted`);
-    }
     return id;
   }
 
   // WrOccupancyRelDataSource<WrDOccupancyRel>
-  getWrOccupancyRel(params: WrOccupancyRelKeyParams): Promise<WrDOccupancyRel | undefined> {
-    return this.db<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
+  async getWrOccupancyRel(params: WrOccupancyRelKeyParams): Promise<WrDOccupancyRel | null> {
+    return await this.db<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
       .select(...WR_OCCUPANCY_REL_COLS)
       .where(params)
-      .first();
+      .first() ?? null;
   }
 
   getWrOccupancyRelsFromRoomId(roomId: string): Promise<WrDOccupancyRel[]> {
@@ -301,34 +307,31 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where({ occupantId });
   }
 
-  createWrOccupancyRel({ roomId, occupantId }: WrOccupancyRelCreateParams): Promise<WrDOccupancyRel | undefined> {
-    return this.db<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
+  async createWrOccupancyRel({ roomId, occupantId }: WrOccupancyRelCreateParams): Promise<WrDOccupancyRel | null> {
+    return await this.db<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
       .insert({
         roomId,
         occupantId,
       })
       .returning(WR_OCCUPANCY_REL_COLS)
-      .first();
+      .first() ?? null;
   }
 
   async deleteWrOccupancyRel({ roomId, occupantId }: WrOccupancyRelKeyParams): Promise<WrOccupancyRelKeyParams> {
     // explicit destructuring and restructuring for robustness
     const keys = { roomId, occupantId };
-    const n = await this.db<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
+    await this.db<WrDOccupancyRel>(WR_D_OCCUPANCY_REL)
       .where(keys)
       .del();
-    if (n !== 1) {
-      throw new Error(`deleting a WrDOccupancyRel but ${n} were deleted`);
-    }
     return keys;
   }
 
   // WrSubdeckRelDataSource<WrDSubdeckRel>
-  getWrSubdeckRel(params: WrSubdeckRelKeyParams): Promise<WrDSubdeckRel | undefined> {
-    return this.db<WrDSubdeckRel>(WR_D_SUBDECK_REL)
+  async getWrSubdeckRel(params: WrSubdeckRelKeyParams): Promise<WrDSubdeckRel | null> {
+    return await this.db<WrDSubdeckRel>(WR_D_SUBDECK_REL)
       .select(...WR_SUBDECK_REL_COLS)
       .where(params)
-      .first();
+      .first() ?? null;
   }
 
   getWrSubdeckRelsFromParentId(parentId: string): Promise<WrDSubdeckRel[]> {
@@ -343,25 +346,22 @@ export class WrDDataSource<TContext = any, TRecord extends {} = any, TResult = a
       .where({ childId });
   }
 
-  createWrSubdeckRel({ parentId, childId }: WrSubdeckRelCreateParams): Promise<WrDSubdeckRel | undefined> {
-    return this.db<WrDSubdeckRel>(WR_D_SUBDECK_REL)
+  async createWrSubdeckRel({ parentId, childId }: WrSubdeckRelCreateParams): Promise<WrDSubdeckRel | null> {
+    return await this.db<WrDSubdeckRel>(WR_D_SUBDECK_REL)
       .insert({
         parentId,
         childId,
       })
       .returning(WR_SUBDECK_REL_COLS)
-      .first();
+      .first() ?? null;
   }
 
   async deleteWrSubdeckRel({ parentId, childId }: WrSubdeckRelKeyParams): Promise<WrSubdeckRelKeyParams> {
     // explicit destructuring and restructuring for robustness
     const keys = { parentId, childId };
-    const n = await this.db<WrDSubdeckRel>(WR_D_SUBDECK_REL)
+    await this.db<WrDSubdeckRel>(WR_D_SUBDECK_REL)
       .where(keys)
       .del();
-    if (n !== 1) {
-      throw new Error(`deleting a WrDSubdeckRel but ${n} were deleted`);
-    }
     return keys;
   }
 }

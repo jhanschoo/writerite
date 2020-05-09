@@ -2,12 +2,16 @@ import { Redis } from "ioredis";
 import { PubSubEngine } from "apollo-server-koa";
 
 import { Readable } from "stream";
+import { WrDataSource } from "./datasource/WrDataSource";
 
 export type AFunResTo<T> = (() => Promise<T>);
 
 export type FunResTo<T> = (() => T);
 
 export type ResTo<T> = Exclude<T, Function> | FunResTo<Exclude<T, Function>> | AFunResTo<Exclude<T, Function>>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Returns<T> = ((...args: any[]) => T);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RecordOfKeys<T extends any> = { [P in T[number]]: unknown; };
@@ -17,6 +21,9 @@ export interface WrContext {
   sub?: CurrentUser;
   pubsub: PubSubEngine;
   redisClient: Redis;
+  dataSources: {
+    wrDS: WrDataSource<WrContext>;
+  };
 }
 
 export enum AuthorizerType {

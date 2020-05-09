@@ -1,4 +1,4 @@
-import { Concrete, RecordOfKeys } from "../types";
+import type { Concrete, RecordOfKeys } from "../types";
 
 export const WR_CHAT_MSG_COLS = [
   "id",
@@ -10,7 +10,12 @@ export const WR_CHAT_MSG_COLS = [
   "updatedAt",
 ] as const;
 
-export enum WrChatMsgContentType {
+/*
+ * migrate to enums once
+ * https://github.com/microsoft/TypeScript/issues/17592
+ * is resolved
+ */
+export enum WrBChatMsgContentType {
   TEXT = "TEXT",
   CONFIG = "CONFIG",
 }
@@ -21,7 +26,7 @@ export interface WrBChatMsg {
   roomId?: string;
   senderId?: string | null;
   content?: string;
-  contentType?: WrChatMsgContentType;
+  contentType?: keyof typeof WrBChatMsgContentType;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -40,18 +45,4 @@ export function isWrDChatMsg(bChatMsg: WrBChatMsg): bChatMsg is WrDChatMsg {
     }
   }
   return true;
-}
-
-export interface WrChatMsgCreateParams {
-  roomId: string;
-  senderId?: string;
-  content: string;
-  contentType: WrChatMsgContentType;
-}
-
-export interface WrChatMsgDataSource<TChatMsg extends WrBChatMsg=WrBChatMsg> {
-  getWrChatMsg(id: string): Promise<TChatMsg | undefined>;
-  getWrChatMsgsFromRoomId(roomId: string): Promise<TChatMsg[]>;
-  createWrChatMsg(params: WrChatMsgCreateParams): Promise<TChatMsg | undefined>;
-  deleteWrChatMsg(id: string): Promise<string>;
 }

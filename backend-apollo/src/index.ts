@@ -11,10 +11,9 @@ import Koa from "koa";
 import helmet from "koa-helmet";
 
 import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-koa";
-import type { DataSource } from "apollo-datasource";
 
 import { WrDDataSource } from "./db-datasource/WrDDataSource";
-import { WrRDataSource } from "./r-datasource/WrRDataSource";
+import { WrDataSource } from "./datasource/WrDataSource";
 
 import resolvers from "./resolver";
 
@@ -45,7 +44,7 @@ const knexConfig = {
   debug: NODE_ENV !== "production",
 };
 
-const wrRDS = new WrRDataSource(new WrDDataSource(knexConfig));
+const wrDS = new WrDataSource(new WrDDataSource(knexConfig));
 
 // Initialize redis connection
 
@@ -101,7 +100,7 @@ const apollo = new ApolloServer({
     pubsub,
     redisClient,
   }),
-  dataSources: (): { wrRDS: DataSource<WrContext> } => ({ wrRDS }),
+  dataSources: (): { wrDS: WrDataSource<WrContext> } => ({ wrDS }),
   mocks: NODE_ENV === "frontend-testing",
   debug: NODE_ENV !== "production",
 });

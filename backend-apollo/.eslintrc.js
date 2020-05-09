@@ -16,6 +16,9 @@ module.exports = {
         "tsconfigRootDir": __dirname,
         "project": "tsconfig.json",
     },
+    "ignorePatterns": [
+        "generated/"
+    ],
     "settings": {
         "jsdoc": {
             "mode": "typescript",
@@ -91,7 +94,6 @@ module.exports = {
         "key-spacing": "warn",
         "@typescript-eslint/keyword-spacing": "warn",
         "linebreak-style": "warn",
-        "lines-around-comment": "warn",
         "lines-between-class-members": "warn",
         "max-classes-per-file": "warn",
         "multiline-comment-style": "warn",
@@ -145,6 +147,10 @@ module.exports = {
         "no-unmodified-loop-condition": "warn",
         "no-unneeded-ternary": "warn",
         "@typescript-eslint/no-unused-expressions": "warn",
+        "@typescript-eslint/no-unused-vars": ["warn", {
+            "args": "all",
+            "argsIgnorePattern": "^_"
+        }],
         // "no-useless-backreference": "warn",
         "no-useless-call": "warn",
         "no-useless-catch": "warn",

@@ -1,10 +1,10 @@
-import { IFieldResolver, IResolverObject } from 'apollo-server-koa';
+import { IFieldResolver, IResolverObject } from "apollo-server-koa";
 
-import { IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from '../../types';
+import { IContext, IUpdatedUpdate, ICreatedUpdate, IDeletedUpdate } from "../../types";
 
-import { rwCardsTopicFromRwDeck } from '../Subscription/RwCard.subscription';
-import { rwAuthenticationError, rwNotFoundError } from '../../util';
-import { ISCard, IRwCard } from '../../model/RwCard';
+import { rwCardsTopicFromRwDeck } from "../Subscription/RwCard.subscription";
+import { rwAuthenticationError, rwNotFoundError } from "../../util";
+import { ISCard, IRwCard } from "../../model/RwCard";
 
 // Mutation resolvers
 
@@ -24,7 +24,7 @@ const rwCardCreate: IFieldResolver<any, IContext, {
     throw rwAuthenticationError();
   }
   if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
-    throw rwNotFoundError('deck');
+    throw rwNotFoundError("deck");
   }
   const sCard = await models.SCard.create(prisma, {
     ...params, deckId,
@@ -51,7 +51,7 @@ const rwCardsCreate: IFieldResolver<any, IContext, {
     throw rwAuthenticationError();
   }
   if (!await prisma.$exists.pDeck({ id: deckId, owner: { id: sub.id } })) {
-    throw rwNotFoundError('deck');
+    throw rwNotFoundError("deck");
   }
   const sCards = await models.SCard.createMany(prisma, multiplicity, {
     ...params, deckId,
@@ -84,7 +84,7 @@ const rwCardEdit: IFieldResolver<any, IContext, {
       owner: { id: sub.id },
     },
   })) {
-    throw rwNotFoundError('card');
+    throw rwNotFoundError("card");
   }
   const sCard = await models.SCard.edit(prisma, {
     ...params, id,
@@ -106,7 +106,7 @@ const rwCardDelete: IFieldResolver<any, IContext, { id: string }> = async (
     where: { cards_some: { id }, owner: { id: sub.id } },
   });
   if (pDecks.length !== 1) {
-    throw rwNotFoundError('card');
+    throw rwNotFoundError("card");
   }
   const deletedId = await models.SCard.delete(prisma, id);
   const sCardUpdate: IDeletedUpdate<ISCard> = { deletedId };

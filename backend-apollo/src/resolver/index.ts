@@ -1,12 +1,12 @@
 import { IResolvers, IResolverObject } from 'apollo-server-koa';
 
-import Query from './Query';
+import { Query } from "./query";
 import Mutation from './Mutation';
 import Subscription from './Subscription';
-import { IContext } from '../types';
+import { WrContext } from '../types';
 import { unionTypeResolvers } from './unions';
 
-const resolvers: IResolverObject<any, IContext, any> = {
+const resolvers: IResolverObject<unknown, WrContext> = {
   Query,
   Mutation,
   Subscription,
@@ -14,4 +14,4 @@ const resolvers: IResolverObject<any, IContext, any> = {
   // Note: Upload resolver automatically added by apollo-server
 };
 
-export default (resolvers as IResolvers<any, IContext>);
+export default resolvers as IResolvers<unknown, WrContext>;

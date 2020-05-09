@@ -1,4 +1,4 @@
-import { Concrete, RecordOfKeys } from "../types";
+import type { Concrete, RecordOfKeys } from "../types";
 
 export const WR_OCCUPANCY_REL_COLS = [
   "roomId",
@@ -29,19 +29,4 @@ export function isWrDOccupancyRel(bOccupancyRel: WrBOccupancyRel): bOccupancyRel
     }
   }
   return true;
-}
-
-export interface WrOccupancyRelKeyParams {
-  roomId: string;
-  occupantId: string;
-}
-
-export type WrOccupancyRelCreateParams = WrOccupancyRelKeyParams;
-
-export interface WrOccupancyRelDataSource<TOccupancyRel extends WrBOccupancyRel=WrBOccupancyRel> {
-  getWrOccupancyRel(params: WrOccupancyRelKeyParams): Promise<TOccupancyRel | undefined>;
-  getWrOccupancyRelsFromRoomId(roomId: string): Promise<TOccupancyRel[]>;
-  getWrOccupancyRelsFromOccupantId(occupantId: string): Promise<TOccupancyRel[]>;
-  createWrOccupancyRel(params: WrOccupancyRelCreateParams): Promise<TOccupancyRel | undefined>;
-  deleteWrOccupancyRel(params: WrOccupancyRelKeyParams): Promise<WrOccupancyRelKeyParams>;
 }

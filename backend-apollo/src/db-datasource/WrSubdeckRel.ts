@@ -1,4 +1,4 @@
-import { Concrete, RecordOfKeys } from "../types";
+import type { Concrete, RecordOfKeys } from "../types";
 
 export const WR_SUBDECK_REL_COLS = [
   "parentId",
@@ -29,19 +29,4 @@ export function isWrDSubdeckRel(bSubdeckRel: WrBSubdeckRel): bSubdeckRel is WrDS
     }
   }
   return true;
-}
-
-export interface WrSubdeckRelKeyParams {
-  parentId: string;
-  childId: string;
-}
-
-export type WrSubdeckRelCreateParams = WrSubdeckRelKeyParams;
-
-export interface WrSubdeckRelDataSource<TSubdeckRel extends WrBSubdeckRel=WrBSubdeckRel> {
-  getWrSubdeckRel(params: WrSubdeckRelKeyParams): Promise<TSubdeckRel | undefined>;
-  getWrSubdeckRelsFromParentId(parentId: string): Promise<TSubdeckRel[]>;
-  getWrSubdeckRelsFromChildId(childId: string): Promise<TSubdeckRel[]>;
-  createWrSubdeckRel(params: WrSubdeckRelCreateParams): Promise<TSubdeckRel | undefined>;
-  deleteWrSubdeckRel(params: WrSubdeckRelKeyParams): Promise<WrSubdeckRelKeyParams>;
 }

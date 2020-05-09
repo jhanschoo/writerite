@@ -1,13 +1,13 @@
-import { Concrete, RecordOfKeys } from "../types";
+import type { Concrete, RecordOfKeys } from "../types";
 
 export const WR_USER_COLS = [
   "id",
   "email",
+  "roles",
   "name",
   "passwordHash",
   "googleId",
   "facebookId",
-  "roles",
   "createdAt",
   "updatedAt",
 ] as const;
@@ -16,11 +16,11 @@ export const WR_B_USER = "WrBUser" as const;
 export interface WrBUser {
   id: string;
   email?: string;
+  roles?: string[];
   name?: string | null;
   passwordHash?: string | null;
   googleId?: string | null;
   facebookId?: string | null;
-  roles?: string[];
   createdAt?: string;
   updatedAt?: string;
 }
@@ -39,17 +39,4 @@ export function isWrDUser(bUser: WrBUser): bUser is WrDUser {
     }
   }
   return true;
-}
-
-export interface WrUserEditParams {
-  id: string;
-  name?: string;
-}
-
-export interface WrUserDataSource<TUser extends WrBUser=WrBUser> {
-  getWrUser(id: string): Promise<TUser | undefined>;
-  getWrUsersFromName(name: string): Promise<TUser[]>;
-  getWrUserFromEmail(email: string): Promise<TUser | undefined>;
-  getWrUsersFromOccupiedRoomId(roomId: string): Promise<TUser[]>;
-  editWrUser(params: WrUserEditParams): Promise<TUser | undefined>;
 }
