@@ -1,1 +1,1 @@
-declare module 'random-words';
+declare module "random-words";

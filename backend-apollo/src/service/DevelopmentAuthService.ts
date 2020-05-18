@@ -1,11 +1,11 @@
-import { LocalAuthService } from './LocalAuthService';
+import { LocalAuthService } from "./LocalAuthService";
 
 export class DevelopmentAuthService extends LocalAuthService {
 
-  protected async verify(_token: string) {
-    if (process.env.NODE_ENV === 'development') {
-      return Promise.resolve('true');
+  protected verify(_token: string): Promise<string | null> {
+    if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "testing") {
+      return Promise.resolve("dev");
     }
-    return Promise.resolve(undefined);
+    return Promise.resolve(null);
   }
 }

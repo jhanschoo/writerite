@@ -1,17 +1,28 @@
-import { IResolvers, IResolverObject } from 'apollo-server-koa';
+import { IResolvers } from "apollo-server-koa";
+import { GraphQLDateTime as DateTime } from "graphql-iso-date";
 
-import { Query } from "./query";
-import Mutation from './Mutation';
-import Subscription from './Subscription';
-import { WrContext } from '../types';
-import { unionTypeResolvers } from './unions';
+import { Query } from "./Query";
+import { Mutation } from "./Mutation";
+import { Subscription } from "./Subscription";
+import { WrContext } from "../types";
+import { User } from "./User";
+import { Deck } from "./Deck";
+import { Card } from "./Card";
+import { Room } from "./Room";
+import { ChatMsg } from "./ChatMsg";
 
-const resolvers: IResolverObject<unknown, WrContext> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const resolvers: IResolvers<any, WrContext> = {
   Query,
   Mutation,
   Subscription,
-  ...unionTypeResolvers,
+  User,
+  Deck,
+  Card,
+  Room,
+  ChatMsg,
+  DateTime,
   // Note: Upload resolver automatically added by apollo-server
 };
 
-export default resolvers as IResolvers<unknown, WrContext>;
+export default resolvers;

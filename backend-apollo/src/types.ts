@@ -1,29 +1,40 @@
 import { Redis } from "ioredis";
-import { PubSubEngine } from "apollo-server-koa";
+import { MergeInfo, PubSubEngine } from "apollo-server-koa";
 
 import { Readable } from "stream";
-import { WrDataSource } from "./datasource/WrDataSource";
+import { PrismaClient } from "@prisma/client";
+import { GraphQLResolveInfo } from "graphql";
+import { Context } from "koa";
+import { ExecutionParams } from "subscriptions-transport-ws";
 
-export type AFunResTo<T> = (() => Promise<T>);
-
-export type FunResTo<T> = (() => T);
-
-export type ResTo<T> = Exclude<T, Function> | FunResTo<Exclude<T, Function>> | AFunResTo<Exclude<T, Function>>;
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Returns<T> = ((...args: any[]) => T);
+// c.f. graphql-tools/dist/Interfaces.d.ts
+export type FieldResolver<
+  TSource,
+  TContext,
+  TArgs = Record<string, unknown>,
+  TReturn = unknown,
+> = (
+  source: TSource,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo & { mergeInfo: MergeInfo }
+) => TReturn | Promise<TReturn>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RecordOfKeys<T extends any> = { [P in T[number]]: unknown; };
 export type Concrete<T> = { [P in keyof T]-?: Exclude<T[P], Function>; };
 
-export interface WrContext {
+export interface IntegrationContext {
+  ctx?: Context;
+  connection?: ExecutionParams<{ Authorization?: string }>;
+}
+
+export interface WrContext extends IntegrationContext {
+  fetchDepth: number;
   sub?: CurrentUser;
+  prisma: PrismaClient;
   pubsub: PubSubEngine;
   redisClient: Redis;
-  dataSources: {
-    wrDS: WrDataSource<WrContext>;
-  };
 }
 
 export enum AuthorizerType {
@@ -50,23 +61,19 @@ export type Upload = Promise<FileUpload>;
 
 export interface CurrentUser {
   id: string;
+  email: string;
   roles: Roles[];
 }
 
-export interface CreatedUpdate<T> {
-  created: T;
+export enum UpdateType {
+  CREATED = "CREATED",
+  EDITED = "EDITED",
+  DELETED = "DELETED",
 }
 
-export interface UpdatedUpdate<T> {
-  updated: T;
+export interface Update<T> {
+  type: UpdateType;
+  data: T | null;
 }
 
-export interface DeletedUpdate<T> {
-  deletedId: string;
-}
-
-export type Update<T> =
-  | CreatedUpdate<T>
-  | UpdatedUpdate<T>
-  | DeletedUpdate<T>;
-
+export type SubscriptionIterator<T> = AsyncIterator<Update<T>>;

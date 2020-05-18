@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource postgresql {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Card {
+  answers    String[]
+  createdAt  DateTime @default(now())
+  deckId     String
+  editedAt   DateTime @default(now())
+  fullAnswer String   @default("")
+  id         String   @default(dbgenerated()) @id
+  prompt     String   @default("")
+  sortKey    String   @default("")
+  template   Boolean  @default(false)
+  updatedAt  DateTime @default(now()) @updatedAt
+  deck       Deck     @relation(fields: [deckId], references: [id])
+}
+
+model ChatMsg {
+  content   Json     @default(dbgenerated())
+  createdAt DateTime @default(now())
+  id        String   @default(dbgenerated()) @id
+  roomId    String
+  senderId  String?
+  updatedAt DateTime @default(now()) @updatedAt
+  room      Room     @relation(fields: [roomId], references: [id])
+  sender    User?    @relation(fields: [senderId], references: [id])
+}
+
+model Deck {
+  answerLang  String    @default("")
+  createdAt   DateTime  @default(now())
+  description String    @default("")
+  id          String    @default(dbgenerated()) @id
+  name        String    @default("")
+  ownerId     String
+  promptLang  String    @default("")
+  published   Boolean   @default(false)
+  updatedAt   DateTime  @default(now()) @updatedAt
+  owner       User      @relation(fields: [ownerId], references: [id])
+  cards       Card[]
+  subdecks    Subdeck[] @relation("DeckTo_Subdeck_A")
+  parentDeck  Subdeck[] @relation("DeckTo_Subdeck_B")
+}
+
+model Room {
+  archived  Boolean    @default(false)
+  config    Json       @default(dbgenerated())
+  createdAt DateTime   @default(now())
+  id        String     @default(dbgenerated()) @id
+  ownerId   String
+  updatedAt DateTime   @default(now())
+  owner     User       @relation(fields: [ownerId], references: [id])
+  chatMsgs  ChatMsg[]
+  occupants Occupant[] @relation("RoomTo_Occupant")
+}
+
+model User {
+  createdAt      DateTime   @default(now())
+  email          String     @unique
+  facebookId     String?    @unique
+  googleId       String?    @unique
+  id             String     @default(dbgenerated()) @id
+  name           String?
+  passwordHash   String?
+  roles          String[]
+  updatedAt      DateTime   @default(now()) @updatedAt
+  sentChatMsgs   ChatMsg[]
+  decks          Deck[]
+  ownedRooms     Room[]
+  occupyingRooms Occupant[] @relation("UserTo_Occupant")
+}
+
+model Occupant {
+  A        String
+  B        String
+  room     Room   @relation("RoomTo_Occupant", fields: [A], references: [id])
+  occupant User   @relation("UserTo_Occupant", fields: [B], references: [id])
+
+  @@id([A, B])
+  @@index([B], name: "_Occupant_B_idx")
+  @@map("_Occupant")
+}
+
+model Subdeck {
+  A          String
+  B          String
+  parentDeck Deck   @relation("DeckTo_Subdeck_A", fields: [A], references: [id])
+  subdeck    Deck   @relation("DeckTo_Subdeck_B", fields: [B], references: [id])
+
+  @@id([A, B])
+  @@index([B], name: "_Subdeck_B_idx")
+  @@map("_Subdeck")
+}

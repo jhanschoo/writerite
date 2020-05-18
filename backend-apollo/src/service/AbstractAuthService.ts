@@ -1,11 +1,10 @@
-import { PUser, Prisma } from '../../generated/prisma-client';
-import { generateJWT } from '../util';
-import { IRwAuthResponse } from '../resolver/authorization';
-import { IModels } from '../model';
+import { generateJWT } from "../util";
+import { PrismaClient } from "@prisma/client";
+import { UserSS } from "../model/User";
+import { AuthResponseSS } from "../model/Authorization";
 
-export interface ISigninOptions {
-  models: IModels;
-  prisma: Prisma;
+export interface SigninOptions {
+  prisma: PrismaClient;
   email: string;
   name?: string;
   token: string;
@@ -14,21 +13,26 @@ export interface ISigninOptions {
 }
 
 export abstract class AbstractAuthService {
-  protected static async authResponseFromUser(
-    pUser: PUser, { models, prisma, persist = false }: {
-      models: IModels, prisma: Prisma, persist?: boolean,
-    },
-  ): Promise<IRwAuthResponse> {
-    const user = models.RwUser.fromPUser(prisma, pUser);
+  protected static authResponseFromUser({
+    user, persist = false,
+  }: {
+    user: UserSS | null;
+    persist?: boolean;
+  }): AuthResponseSS | null {
+    if (user === null) {
+      return null;
+    }
+    const { id, email, roles } = user;
     return {
       token: generateJWT({
-        id: pUser.id,
-        roles: pUser.roles,
+        id,
+        email,
+        roles,
       }, persist),
-      user,
     };
   }
 
-  public abstract async signin(options: ISigninOptions): Promise<any>;
-  protected abstract async verify(token: string): Promise<any>;
+  public abstract async signin(opts: SigninOptions): Promise<AuthResponseSS | null>;
+
+  protected abstract async verify(token: string): Promise<string | null>;
 }

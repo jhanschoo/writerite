@@ -12,39 +12,22 @@ import helmet from "koa-helmet";
 
 import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-koa";
 
-import { WrDDataSource } from "./db-datasource/WrDDataSource";
-import { WrDataSource } from "./datasource/WrDataSource";
+import { PrismaClient } from "@prisma/client";
 
 import resolvers from "./resolver";
 
-import type { WrContext } from "./types";
-import { generateJWT, getClaims } from "./util";
+import { FETCH_DEPTH, generateJWT, getClaims } from "./util";
+import { Roles, WrContext } from "./types";
 
 const {
   NODE_ENV,
-  POSTGRES_HOST,
-  POSTGRES_BACKEND_APOLLO_USER,
-  POSTGRES_BACKEND_APOLLO_PASSWORD,
-  POSTGRES_BACKEND_APOLLO_DATABASE,
   REDIS_HOST,
   REDIS_PORT,
   CERT_FILE,
   KEY_FILE,
 } = process.env;
 
-// Initialize db connection
-const knexConfig = {
-  client: "pg",
-  connection: {
-    host: POSTGRES_HOST,
-    user: POSTGRES_BACKEND_APOLLO_USER,
-    password: POSTGRES_BACKEND_APOLLO_PASSWORD,
-    database: POSTGRES_BACKEND_APOLLO_DATABASE,
-  },
-  debug: NODE_ENV !== "production",
-};
-
-const wrDS = new WrDataSource(new WrDDataSource(knexConfig));
+const prisma = new PrismaClient();
 
 // Initialize redis connection
 
@@ -71,7 +54,7 @@ redisClient.on("error", (err) => {
 const wrightJWT = generateJWT({
   id: "theWright",
   email: "wright@writerite.site",
-  roles: ["wright"],
+  roles: [Roles.wright],
 });
 
 function writeJWT(): void {
@@ -95,12 +78,14 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const apollo = new ApolloServer({
   schema,
-  context: (ctx): object => ({
+  context: (ctx): WrContext => ({
+    ctx,
+    fetchDepth: FETCH_DEPTH,
     sub: getClaims(ctx),
+    prisma,
     pubsub,
     redisClient,
   }),
-  dataSources: (): { wrDS: WrDataSource<WrContext> } => ({ wrDS }),
   mocks: NODE_ENV === "frontend-testing",
   debug: NODE_ENV !== "production",
 });
@@ -119,7 +104,9 @@ const server = CERT_FILE && KEY_FILE
   ? https.createServer({
     cert: fs.readFileSync(CERT_FILE),
     key: fs.readFileSync(KEY_FILE),
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   }, app.callback())
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   : http.createServer(app.callback());
 
 apollo.installSubscriptionHandlers(server);

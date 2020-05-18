@@ -1,196 +1,233 @@
 # TODO: refactor once graphql supports `extend`
 # https://github.com/graphql/graphql-js/issues/922\
 #scalar Upload
+scalar DateTime
 
 directive @subscriptionsTriggered(
   signatures: [String!]!
 ) on FIELD_DEFINITION
 
-enum WrChatMsgContentType {
+enum ChatMsgContentType {
   TEXT
   CONFIG
 }
 
+enum UpdateType {
+  CREATED
+  EDITED
+  DELETED
+}
+
 type Query {
-  _empty: String
-  # WrUser
-  wrUser(id: ID!): WrUser
-  # WrDeck
-  wrDeck(id: ID!): WrDeck
-  wrOwnDecks: [WrDeck]
-  # WrCard
-  wrCard(id: ID!): WrCard
-  wrCardsOfDeck(deckId: ID!): [WrCard]
-  # WrRoom
-  wrRoom(id: ID!): WrRoom
-  wrInRooms: [WrRoom]
-  # WrChatMsg
-  wrChatMsg(id: ID!): WrChatMsg
-  wrChatMsgsOfRoom(roomId: ID!): [WrChatMsg]
+  # User
+  user(id: ID!): User
+  # Deck
+  deck(id: ID!): Deck
+  ownDecks: [Deck]
+  # Card
+  card(id: ID!): Card
+  cardsOfDeck(deckId: ID!): [Card]
+  # Room
+  room(id: ID!): Room
+  occupiedRooms: [Room]
+  # ChatMsg
+  chatMsg(id: ID!): ChatMsg
+  chatMsgsOfRoom(roomId: ID!): [ChatMsg]
 }
 
 type Mutation {
-  _empty: String
-
   # Authorization
-  signin(opts: WrSigninOpts): WrAuthResponse
+  signin(
+    email: String!
+    name: String
+    token: String!
+    authorizer: String!
+    identifier: String!
+    persist: Boolean
+  ): AuthResponse
 
   # User
-  wrUserEdit(name: String!): WrUser
+  userEdit(name: String): User
 
   # Deck
-  wrDeckCreate(
-    opts: WrDeckCreateOpts!
-  ): WrDeck @subscriptionsTriggered(
-    signatures: ["rwOwnDecksUpdates<deck's owner>", "rwDeckTopic(<deck's id>)"]
+  deckCreate(
+    name: String
+    description: String
+    promptLang: String
+    answerLang: String
+    published: Boolean
+  ): Deck @subscriptionsTriggered(
+    signatures: ["ownDecksUpdates"]
   )
-  wrDeckCreateFromRows(
-    opts: WrDeckCreateOpts! rows: [[String!]!]!
-  ): WrDeck @subscriptionsTriggered(
-    signatures: ["rwOwnDecksUpdates<deck's owner's id>", "rwDeckTopic(<deck's id>)"]
+
+  deckCreateFromRows(
+    name: String
+    description: String
+    promptLang: String
+    answerLang: String
+    published: Boolean
+    rows: [[String!]!]!
+  ): Deck @subscriptionsTriggered(
+    signatures: ["ownDecksUpdates"]
   )
-  wrDeckEdit(
-    opts: WrDeckEditOpts!
-  ): WrDeck @subscriptionsTriggered(
-    signatures: ["rwOwnDecksUpdates<deck's owner's id>", "rwDeckTopic(<deck's id>)"]
-  )
-  wrDeckAddSubdeck(
-    id: ID! subdeckId: ID!
-  ): WrDeck @subscriptionsTriggered(
-    signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
-  )
-  wrDeckRemoveSubdeck(
-    id: ID! subdeckId: ID!
-  ): WrDeck @subscriptionsTriggered(
-    signatures: ["rwOwnDecksUpdates<parent deck's owner>", "rwDeckTopic(<parent deck's id>)"]
-  )
-  wrDeckDelete(
+
+  deckEdit(
     id: ID!
-  ): ID @subscriptionsTriggered(
-    signatures: ["rwOwnDecksUpdates<deck's owner>", "rwDeckTopic(<deck's id>)"]
+    name: String
+    description: String
+    promptLang: String
+    answerLang: String
+    published: Boolean
+  ): Deck @subscriptionsTriggered(
+    signatures: ["ownDecksUpdates"]
+  )
+
+  deckAddSubdeck(
+    id: ID! subdeckId: ID!
+  ): Deck @subscriptionsTriggered(
+    signatures: ["ownDecksUpdates"]
+  )
+
+  deckRemoveSubdeck(
+    id: ID! subdeckId: ID!
+  ): Deck @subscriptionsTriggered(
+    signatures: ["ownDecksUpdates"]
+  )
+
+  deckDelete(
+    id: ID!
+  ): Deck @subscriptionsTriggered(
+    signatures: ["ownDecksUpdates"]
   )
 
   # Card
-  wrCardCreate(
-    opts: WrCardCreateOpts!
-  ): WrCard @subscriptionsTriggered(
-    signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
+  cardCreate(
+    deckId: ID!
+    prompt: String!
+    fullAnswer: String!
+    answers: [String]
+    sortKey: String
+    template: Boolean
+  ): Card @subscriptionsTriggered(
+    signatures: ["cardsOfDeckUpdates(deckId)"]
   )
-  wrCardsCreate(
-    opts: WrCardCreateOpts!
+
+  cardsCreate(
+    deckId: ID!
+    prompt: String!
+    fullAnswer: String!
+    answers: [String!]
+    sortKey: String
+    template: Boolean
     multiplicity: Int!
-  ): [WrCard] @subscriptionsTriggered(
-    signatures: ["rwCardsUpdatesOfDeck(<cards' deck's id>)"]
+  ): [Card] @subscriptionsTriggered(
+    signatures: ["cardsOfDeckUpdates(deckId)"]
   )
-  wrCardEdit(
-    opts: WrCardEditOpts!
-  ): WrCard @subscriptionsTriggered(
-    signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
-  )
-  wrCardDelete(
+
+  cardEdit(
     id: ID!
-  ): ID @subscriptionsTriggered(
-    signatures: ["rwCardsUpdatesOfDeck(<card's deck's id>)"]
+    prompt: String
+    fullAnswer: String
+    answers: [String!]
+    sortKey: String
+    template: Boolean
+  ): Card @subscriptionsTriggered(
+    signatures: ["cardsOfDeckUpdates(deckId)"]
+  )
+
+  cardDelete(
+    id: ID!
+  ): Card @subscriptionsTriggered(
+    signatures: ["cardsOfDeckUpdates(deckId)"]
   )
 
   # Room
-  wrRoomCreate(
-    config: WrRoomConfigInput!
-  ): WrRoom @subscriptionsTriggered(
-    signatures: ["rwRoomUpdates(<room's id>)"]
+  roomCreate(
+    config: RoomConfigInput!
+  ): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates(<id>)"]
   )
-  wrRoomUpdateConfig(
+  roomUpdateConfig(
     id: ID!
-    config: WrRoomConfigInput!
-  ): WrRoom @subscriptionsTriggered(
-    signatures: ["rwRoomUpdates(<room's id>)"]
+    config: RoomConfigInput!
+  ): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates(id)"]
   )
-  wrRoomAddOccupant(
+  roomAddOccupant(
     id: ID! occupantId: ID!
-  ): WrRoom @subscriptionsTriggered(
-    signatures: ["rwRoomUpdates(<room's id>)"]
+  ): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates(id)"]
   )
-  wrRoomArchive(
+  roomArchive(
     id: ID!
-  ): WrRoom @subscriptionsTriggered(
-    signatures: ["rwRoomUpdates(<room's id>)"]
+  ): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates(id)"]
   )
 
   # ChatMsg
-  wrChatMsgCreate(
-    opts: WrChatMsgCreateOpts
-  ): WrChatMsg @subscriptionsTriggered(
-    signatures: ["rwChatMsgUpdatesOfRoom(<room's id>)"]
+  # merge apis for different types if following RFC passes
+  # https://github.com/graphql/graphql-spec/blob/master/rfcs/InputUnion.md
+  chatMsgTextTypeCreate(
+    roomId: ID!
+    text: String!
+  ): ChatMsg @subscriptionsTriggered(
+    signatures: ["chatMsgsOfRoomUpdates(roomId)"]
+  )
+  chatMsgControlTypeCreate(
+    roomId: ID!
+    control: String!
+  ): ChatMsg @subscriptionsTriggered(
+    signatures: ["chatMsgsOfRoomUpdates(roomId)"]
   )
 }
 
 type Subscription {
-  _empty: String
   # Deck
-  rwOwnDecksUpdates: WrDeckUpdate!
-  rwDeckUpdates(id: ID!): WrDeckUpdate!
+  ownDecksUpdates: DeckUpdate
   # Card
-  rwCardsUpdatesOfDeck(deckId: ID!): WrCardUpdate!
+  cardsOfDeckUpdates(deckId: ID!): CardUpdate
   # Room
-  rwRoomUpdates(id: ID!): WrRoomUpdate!
+  roomUpdates(id: ID!): RoomUpdate
   # ChatMsg
-  rwChatMsgsUpdatesOfRoom(roomId: ID!): WrChatMsgUpdate!
+  chatMsgsOfRoomUpdates(roomId: ID!): ChatMsgUpdate
 }
 
-type WrDeckCreated { created: WrDeck }
-type WrDeckUpdated { updated: WrDeck }
-type WrDeckDeleted { deletedId: ID }
-union WrDeckUpdate = WrDeckCreated | WrDeckUpdated | WrDeckDeleted
+type DeckUpdate {
+  type: UpdateType!
+  data: Deck
+}
+type CardUpdate {
+  type: UpdateType!
+  data: Card
+}
 
-type WrCardCreated { created: WrCard }
-type WrCardUpdated { updated: WrCard }
-type WrCardDeleted { deletedId: ID }
-union WrCardUpdate = WrCardCreated | WrCardUpdated | WrCardDeleted
+type ChatMsgUpdate {
+  type: UpdateType!
+  data: ChatMsg
+}
 
-type WrChatMsgCreated { created: WrChatMsg }
-type WrChatMsgUpdated { updated: WrChatMsg }
-type WrChatMsgDeleted { deletedId: ID }
-union WrChatMsgUpdate = WrChatMsgCreated | WrChatMsgUpdated | WrChatMsgDeleted
+type RoomUpdate {
+  type: UpdateType!
+  data: ChatMsg
+}
 
-type WrRoomCreated { created: WrRoom }
-type WrRoomUpdated { updated: WrRoom }
-type WrRoomDeleted { deletedId: ID }
-union WrRoomUpdate = WrRoomCreated | WrRoomUpdated | WrRoomDeleted
+# User
 
-# WrUser
-
-type WrUser {
+type User {
   id: ID!
   email: String!
   roles: [String!]!
   name: String
 
   # R fields
-  decks: [WrDeck]!
-  ownedRooms: [WrRoom]!
-  occupiedRooms: [WrRoom]!
+  decks: [Deck]
+  ownedRooms: [Room]
+  occupiedRooms: [Room]
 }
 
-# WrDeck
+# Deck
 
-input WrDeckCreateOpts {
-  name: String
-  description: String
-  nameLang: String
-  promptLang: String
-  answerLang: String
-}
-
-input WrDeckEditOpts {
-  id: ID!
-  name: String
-  description: String
-  nameLang: String
-  promptLang: String
-  answerLang: String
-}
-
-type WrDeck {
+type Deck {
   id: ID!
   ownerId: ID!
   name: String!
@@ -200,107 +237,77 @@ type WrDeck {
   published: Boolean!
 
   # R fields
-  owner: WrUser
-  parents: [WrDeck]!
-  children: [WrDeck]!
-  cards: [WrCard]!
+  owner: User
+  parents: [Deck]
+  children: [Deck]
+  cards: [Card]
 }
 
-# WrCard
+# Card
 
-input WrCardCreateOpts {
-  deckId: ID!
-  prompt: String!
-  fullAnswer: String!
-  answers: [String!]
-  sortKey: String
-  template: Boolean
+input CardEditOpts {
 }
 
-input WrCardEditOpts {
-  id: ID!
-  prompt: String
-  fullAnswer: String
-  answers: [String!]
-  sortKey: String
-  template: Boolean
-}
-
-type WrCard {
+type Card {
   id: ID!
   deckId: ID!
   prompt: String!
   fullAnswer: String!
   answers: [String!]!
   sortKey: String!
-  editedAt: String!
+  editedAt: DateTime!
   template: Boolean!
 
-  deck: WrDeck
+  deck: Deck
 }
 
-# WrRoom
+# Room
 
-input WrRoomConfigInput {
+input RoomConfigInput {
   deckId: ID
   deckName: String
-  deckNameLang: String
   roundLength: Int
   clientDone: Boolean
 }
 
-type WrRoomConfig {
+type RoomConfig {
   deckId: ID
   deckName: String
-  deckNameLang: String
   roundLength: Int
   clientDone: Boolean
 }
 
-type WrRoom {
+type Room {
   id: ID!
   ownerId: ID!
   archived: Boolean!
+  config: RoomConfig!
+
+  # inactive is computed
   inactive: Boolean!
-  config: WrRoomConfig!
-
-  owner: WrUser
-  occupants: [WrUser]!
-  chatMsgs: [WrChatMsg]!
+  owner: User
+  occupants: [User]
+  chatMsgs: [ChatMsg]
 }
 
-# WrChatMsg
+# ChatMsg
 
-input WrChatMsgCreateOpts {
-  roomId: ID!
-  content: String!
-  contentType: WrChatMsgContentType!
-}
+# TODO: research input union type
+type ChatMsgContent
 
-type WrChatMsg {
+type ChatMsg {
   id: ID!
   roomId: ID!
   senderId: ID
-  content: String!
-  contentType: WrChatMsgContentType!
+  content: ChatMsgContent!
 
   # R Fields
-  sender: WrUser # Can be null w/o error
-  room: WrRoom
+  sender: User # Can be null w/o error
+  room: Room
 }
 
 # WrAuthorization
 
-input WrSigninOpts {
-  email: String!
-  name: String
-  token: String!
-  authorizer: String!
-  identifier: String!
-  persist: Boolean
-}
-
-type WrAuthResponse {
-  user: WrUser!
+type AuthResponse {
   token: String!
 }
