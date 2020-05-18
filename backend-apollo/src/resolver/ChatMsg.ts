@@ -4,7 +4,7 @@ import { IResolverObject } from "apollo-server-koa";
 import { FieldResolver, WrContext } from "../types";
 
 import { RoomSS } from "../model/Room";
-import { UserSS } from "../model/User";
+import { UserSS, userToSS } from "../model/User";
 import { ChatMsgSS } from "../model/ChatMsg";
 
 interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, object> {
@@ -21,11 +21,11 @@ interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, object> 
 }
 
 export const ChatMsg: ChatMsgResolver = {
-  sender({ senderId }, _args, { prisma }, _info) {
+  async sender({ senderId }, _args, { prisma }, _info) {
     if (!senderId) {
       return null;
     }
-    return prisma.user.findOne({ where: { id: senderId } });
+    return userToSS(await prisma.user.findOne({ where: { id: senderId } }));
   },
   room({ roomId }, _args, { prisma }, _info) {
     return prisma.room.findOne({ where: { id: roomId } });

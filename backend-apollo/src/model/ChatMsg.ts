@@ -1,26 +1,17 @@
 import { ChatMsg } from "@prisma/client";
 
-export interface ChatMsgTextContent {
-  type: "text";
-  text: string;
+export enum ChatMsgContentType {
+  TEXT = "TEXT",
+  CONFIG = "CONFIG",
 }
-
-export interface ChatMsgControlContent {
-  type: "control";
-  // control is a JSON string
-  control: string;
-}
-
-export type ChatMsgContent =
-  | ChatMsgTextContent
-  | ChatMsgControlContent;
 
 // ChatMsgStoredScalars
 export interface ChatMsgSS extends Partial<ChatMsg> {
   id: string;
   roomId: string;
   senderId: string | null;
-  content: ChatMsgContent;
+  type: ChatMsgContentType;
+  content: string;
 }
 
 export function chatMsgToSS(chatMsg: ChatMsg): ChatMsgSS;
@@ -29,9 +20,10 @@ export function chatMsgToSS(chatMsg: ChatMsg | null): ChatMsgSS | null {
   if (chatMsg === null) {
     return null;
   }
+  const { type } = chatMsg;
   return {
     ...chatMsg,
-    content: chatMsg.content as ChatMsgContent,
+    type: type as ChatMsgContentType,
   };
 }
 

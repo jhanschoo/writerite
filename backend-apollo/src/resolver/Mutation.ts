@@ -12,7 +12,7 @@ import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
 import { CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
 import { RoomConfigInput, RoomSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
-import { ChatMsgControlContent, ChatMsgSS, ChatMsgTextContent, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
+import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 
 const localAuth = new LocalAuthService();
 const googleAuth = new GoogleAuthService();
@@ -107,13 +107,10 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     id: string;
   }, RoomSS | null>;
 
-  chatMsgTextTypeCreate: FieldResolver<object, WrContext, {
+  chatMsgCreate: FieldResolver<object, WrContext, {
     roomId: string;
-    text: string;
-  }, ChatMsgSS | null>;
-  chatMsgControlTypeCreate: FieldResolver<object, WrContext, {
-    roomId: string;
-    control: string;
+    type: ChatMsgContentType;
+    content: string;
   }, ChatMsgSS | null>;
 }
 
@@ -513,9 +510,10 @@ export const Mutation: MutationResolver = {
     return room;
   },
 
-  async chatMsgTextTypeCreate(_parent, {
+  async chatMsgCreate(_parent, {
     roomId,
-    text,
+    type,
+    content,
   }, { sub, pubsub, prisma }, _info) {
     if (!sub) {
       return null;
@@ -524,43 +522,10 @@ export const Mutation: MutationResolver = {
     if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
       return null;
     }
-    const content: ChatMsgTextContent = {
-      type: "text",
-      text,
-    };
     const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
       data: {
         room: { connect: { id: roomId } },
-        content,
-        sender: isWright ? null : { connect: { id: sub.id } },
-      },
-    }));
-    const update: Update<ChatMsgSS> = {
-      type: UpdateType.CREATED,
-      data: chatMsg,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
-    return chatMsg;
-  },
-  async chatMsgControlTypeCreate(_parent, {
-    roomId,
-    control,
-  }, { sub, pubsub, prisma }, _info) {
-    if (!sub) {
-      return null;
-    }
-    const isWright = sub.roles.includes(Roles.wright);
-    if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
-      return null;
-    }
-    const content: ChatMsgControlContent = {
-      type: "control",
-      control,
-    };
-    const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
-      data: {
-        room: { connect: { id: roomId } },
+        type,
         content,
         sender: isWright ? null : { connect: { id: sub.id } },
       },

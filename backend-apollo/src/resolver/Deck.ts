@@ -3,7 +3,7 @@ import type { PrismaClient } from "@prisma/client";
 
 import type { FieldResolver, WrContext } from "../types";
 
-import type { UserSS } from "../model/User";
+import { UserSS, userToSS } from "../model/User";
 import type { DeckSS } from "../model/Deck";
 import type { CardSS } from "../model/Card";
 
@@ -29,8 +29,8 @@ interface DeckResolver extends IResolverObject<DeckSS, WrContext, object> {
 }
 
 export const Deck: DeckResolver = {
-  owner({ ownerId }, _args, { prisma }, _info) {
-    return prisma.user.findOne({ where: { id: ownerId } });
+  async owner({ ownerId }, _args, { prisma }, _info) {
+    return userToSS(await prisma.user.findOne({ where: { id: ownerId } }));
   },
   parents({ id }, _args, { prisma }, _info) {
     return prisma.deck.findMany({ where: { subdecks: { some: { B: id } } } });

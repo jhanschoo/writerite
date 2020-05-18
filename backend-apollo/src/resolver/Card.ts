@@ -1,5 +1,4 @@
 import { IResolverObject } from "apollo-server-koa";
-import { PrismaClient } from "@prisma/client";
 
 import { FieldResolver, WrContext } from "../types";
 

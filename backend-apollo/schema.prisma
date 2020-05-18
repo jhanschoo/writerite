@@ -22,11 +22,12 @@ model Card {
 }
 
 model ChatMsg {
-  content   Json     @default(dbgenerated())
+  content   String   @default("")
   createdAt DateTime @default(now())
   id        String   @default(dbgenerated()) @id
   roomId    String
   senderId  String?
+  type      String   @default("TEXT")
   updatedAt DateTime @default(now()) @updatedAt
   room      Room     @relation(fields: [roomId], references: [id])
   sender    User?    @relation(fields: [senderId], references: [id])

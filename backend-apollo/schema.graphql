@@ -167,15 +167,10 @@ type Mutation {
   # ChatMsg
   # merge apis for different types if following RFC passes
   # https://github.com/graphql/graphql-spec/blob/master/rfcs/InputUnion.md
-  chatMsgTextTypeCreate(
+  chatMsgCreate(
     roomId: ID!
-    text: String!
-  ): ChatMsg @subscriptionsTriggered(
-    signatures: ["chatMsgsOfRoomUpdates(roomId)"]
-  )
-  chatMsgControlTypeCreate(
-    roomId: ID!
-    control: String!
+    type: ChatMsgContentType!
+    content: String!
   ): ChatMsg @subscriptionsTriggered(
     signatures: ["chatMsgsOfRoomUpdates(roomId)"]
   )
@@ -245,9 +240,6 @@ type Deck {
 
 # Card
 
-input CardEditOpts {
-}
-
 type Card {
   id: ID!
   deckId: ID!
@@ -292,14 +284,12 @@ type Room {
 
 # ChatMsg
 
-# TODO: research input union type
-type ChatMsgContent
-
 type ChatMsg {
   id: ID!
   roomId: ID!
   senderId: ID
-  content: ChatMsgContent!
+  type: ChatMsgContentType!
+  content: String!
 
   # R Fields
   sender: User # Can be null w/o error
