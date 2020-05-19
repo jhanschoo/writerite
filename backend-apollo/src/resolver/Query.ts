@@ -2,11 +2,11 @@ import { IResolverObject } from "apollo-server-koa";
 
 import { FieldResolver, WrContext } from "../types";
 
-import { UserSS } from "../model/User";
+import { UserSS, userToSS } from "../model/User";
 import { DeckSS } from "../model/Deck";
 import { CardSS } from "../model/Card";
-import { RoomSS } from "../model/Room";
-import { ChatMsgSS, chatMsgToSS } from "../model/ChatMsg";
+import { RoomSS, userOccupiesRoom } from "../model/Room";
+import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 
 interface QueryResolver extends IResolverObject<object, WrContext> {
   user: FieldResolver<object, WrContext, { id: string }, UserSS | null>;
@@ -21,37 +21,79 @@ interface QueryResolver extends IResolverObject<object, WrContext> {
 }
 
 export const Query: QueryResolver = {
-  user(_parent, { id }, { prisma }, _info) {
-    return prisma.user.findOne({ where: { id } });
+  async user(_parent, { id }, { prisma }, _info) {
+    try {
+      return userToSS(await prisma.user.findOne({ where: { id } }));
+    } catch (e) {
+      return null;
+    }
   },
-  deck(_parent, { id }, { prisma }, _info) {
-    return prisma.deck.findOne({ where: { id } });
+  async deck(_parent, { id }, { prisma }, _info) {
+    try {
+      return await prisma.deck.findOne({ where: { id } });
+    } catch (e) {
+      return null;
+    }
   },
-  ownDecks(_parent, _args, { sub, prisma }, _info) {
+  async ownDecks(_parent, _args, { sub, prisma }, _info) {
     if (!sub) {
       return null;
     }
-    return prisma.deck.findMany({ where: { ownerId: sub.id } });
+    try {
+      return await prisma.deck.findMany({ where: { ownerId: sub.id } });
+    } catch (e) {
+      return null;
+    }
   },
-  card(_parent, { id }, { prisma }, _info) {
-    return prisma.card.findOne({ where: { id } });
+  async card(_parent, { id }, { prisma }, _info) {
+    try {
+      return await prisma.card.findOne({ where: { id } });
+    } catch (e) {
+      return null;
+    }
   },
-  cardsOfDeck(_parent, { deckId }, { prisma }, _info) {
-    return prisma.card.findMany({ where: { deckId } });
+  async cardsOfDeck(_parent, { deckId }, { prisma }, _info) {
+    try {
+      return await prisma.card.findMany({ where: { deckId } });
+    } catch (e) {
+      return null;
+    }
   },
-  room(_parent, { id }, { prisma }, _info) {
-    return prisma.room.findOne({ where: { id } });
+  async room(_parent, { id }, { prisma }, _info) {
+    try {
+      return await prisma.room.findOne({ where: { id } });
+    } catch (e) {
+      return null;
+    }
   },
-  occupiedRooms(_parent, _args, { sub, prisma }, _info) {
+  async occupiedRooms(_parent, _args, { sub, prisma }, _info) {
     if (!sub) {
       return null;
     }
-    return prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } });
+    try {
+      return await prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } });
+    } catch (e) {
+      return null;
+    }
   },
-  async chatMsg(_parent, { id }, { prisma }, _info) {
-    return chatMsgToSS(await prisma.chatMsg.findOne({ where: { id } }));
+  async chatMsg(_parent, { id }, { sub, prisma }, _info) {
+    try {
+      if (!sub || !await userSeesChatMsg({ prisma, userId: sub.id, chatMsgId: id })) {
+        return null;
+      }
+      return chatMsgToSS(await prisma.chatMsg.findOne({ where: { id } }));
+    } catch (e) {
+      return null;
+    }
   },
-  async chatMsgsOfRoom(_parent, { roomId }, { prisma }, _info) {
-    return (await prisma.chatMsg.findMany({ where: { roomId } })).map(chatMsgToSS);
+  async chatMsgsOfRoom(_parent, { roomId }, { sub, prisma }, _info) {
+    try {
+      if (!sub || !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
+        return null;
+      }
+      return (await prisma.chatMsg.findMany({ where: { roomId } })).map(chatMsgToSS);
+    } catch (e) {
+      return null;
+    }
   },
 };

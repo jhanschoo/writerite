@@ -1,4 +1,6 @@
 import { Deck, PrismaClient } from "@prisma/client";
+import { UserSS } from "./User";
+import { CardSS } from "./Card";
 
 // DeckStoredScalars
 export interface DeckSS extends Partial<Deck> {
@@ -9,6 +11,11 @@ export interface DeckSS extends Partial<Deck> {
   promptLang: string;
   answerLang: string;
   published: boolean;
+
+  owner?: UserSS | null;
+  parents?: (DeckSS | null)[] | null;
+  children?: (DeckSS | null)[] | null;
+  cards?: (CardSS | null)[] | null;
 }
 
 export function ownDecksTopic(userId: string): string {

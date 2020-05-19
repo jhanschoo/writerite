@@ -50,7 +50,8 @@ CREATE TABLE IF NOT EXISTS "ChatMsg" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "roomId" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
   "senderId" uuid REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
-  "content" jsonb DEFAULT '{}'::jsonb NOT NULL,
+  "type" text DEFAULT 'TEXT' NOT NULL,
+  "content" text DEFAULT '' NOT NULL,
   "createdAt" timestamp DEFAULT now() NOT NULL,
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );

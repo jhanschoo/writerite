@@ -4,6 +4,7 @@ import fetch from "node-fetch";
 import { AbstractAuthService, SigninOptions } from "./AbstractAuthService";
 import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
+import { userToSS } from "../model/User";
 
 const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;
 if (!FACEBOOK_APP_ID) {
@@ -34,19 +35,19 @@ export class FacebookAuthService extends AbstractAuthService {
     if (!facebookId || facebookId !== identifier) {
       throw new ApolloError("failed Facebook authentication");
     }
-    const user = await prisma.user.findOne({ where: { email } });
+    const user = userToSS(await prisma.user.findOne({ where: { email } }));
     if (user !== null) {
       if (facebookId !== user.facebookId) {
         throw new ApolloError("user already exists");
       }
       return FacebookAuthService.authResponseFromUser({ user, persist });
     }
-    const newUser = await prisma.user.create({ data: {
+    const newUser = userToSS(await prisma.user.create({ data: {
       email,
       name,
       facebookId,
       roles: { set: ["user"] },
-    } });
+    } }));
     return FacebookAuthService.authResponseFromUser({ user: newUser, persist });
   }
 

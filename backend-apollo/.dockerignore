@@ -7,11 +7,7 @@ npm-debug.log
 # local
 .env
 
-# deployment
-kubernetes*
-
 # development
-.vscode
-*.code-workspace
-generated
-src
+#.vscode
+#*.code-workspace
+#src

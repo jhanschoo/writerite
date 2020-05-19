@@ -1,4 +1,6 @@
-import { ChatMsg } from "@prisma/client";
+import { ChatMsg, PrismaClient } from "@prisma/client";
+import { UserSS } from "./User";
+import { RoomSS } from "./Room";
 
 export enum ChatMsgContentType {
   TEXT = "TEXT",
@@ -12,6 +14,26 @@ export interface ChatMsgSS extends Partial<ChatMsg> {
   senderId: string | null;
   type: ChatMsgContentType;
   content: string;
+
+  sender?: UserSS | null;
+  room?: RoomSS | null;
+}
+
+export async function userSeesChatMsg({ prisma, userId, chatMsgId }: {
+  prisma: PrismaClient;
+  userId?: string | null;
+  chatMsgId?: string | null;
+}): Promise<boolean> {
+  if (!userId || !chatMsgId) {
+    return false;
+  }
+  return await prisma.room.count({
+    where: {
+      occupants: { some: { B: userId } },
+      chatMsgs: { some: { id: chatMsgId } },
+    },
+    first: 1,
+  }) === 1;
 }
 
 export function chatMsgToSS(chatMsg: ChatMsg): ChatMsgSS;

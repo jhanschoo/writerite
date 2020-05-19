@@ -4,6 +4,7 @@ import { OAuth2Client } from "google-auth-library";
 import { AbstractAuthService, SigninOptions } from "./AbstractAuthService";
 import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
+import { userToSS } from "../model/User";
 
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 if (!GOOGLE_CLIENT_ID) {
@@ -22,19 +23,19 @@ export class GoogleAuthService extends AbstractAuthService {
     if (!googleId || googleId !== identifier) {
       throw new ApolloError("writerite: failed google authentication");
     }
-    const user = await prisma.user.findOne({ where: { email } });
+    const user = userToSS(await prisma.user.findOne({ where: { email } }));
     if (user !== null) {
       if (googleId !== user.googleId) {
         throw new ApolloError("writerite: user already exists");
       }
       return GoogleAuthService.authResponseFromUser({ user, persist });
     }
-    const newUser = await prisma.user.create({ data: {
+    const newUser = userToSS(await prisma.user.create({ data: {
       email,
       name,
       googleId,
       roles: { set: ["user"] },
-    } });
+    } }));
     return GoogleAuthService.authResponseFromUser({ user: newUser, persist });
   }
 

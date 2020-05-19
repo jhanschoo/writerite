@@ -1,4 +1,5 @@
 import { Card, PrismaClient } from "@prisma/client";
+import { DeckSS } from "./Deck";
 
 // CardStoredScalars
 export interface CardSS extends Partial<Card> {
@@ -12,6 +13,8 @@ export interface CardSS extends Partial<Card> {
   sortKey: string;
   editedAt: Date;
   template: boolean;
+
+  deck?: DeckSS | null;
 }
 
 export function cardsOfDeckTopic(userId: string, deckId: string): string {
@@ -25,12 +28,11 @@ export async function userOwnsCard({ prisma, userId, cardId }: {
   if (!userId || !cardId) {
     return false;
   }
-  return (await prisma.card.findMany({
-    select: { id: true },
+  return await prisma.card.count({
     where: {
       id: cardId,
       deck: { ownerId: userId },
     },
     first: 1,
-  })).length === 1;
+  }) === 1;
 }

@@ -1,10 +1,9 @@
 import { IResolverObject } from "apollo-server-koa";
-import { PrismaClient } from "@prisma/client";
 
 import { FieldResolver, WrContext } from "../types";
 
 import { RoomSS } from "../model/Room";
-import { UserSS } from "../model/User";
+import { UserSS, userToSS } from "../model/User";
 import { ChatMsgSS, chatMsgToSS } from "../model/ChatMsg";
 
 export interface RoomConfig {
@@ -35,11 +34,11 @@ export const Room: RoomResolver = {
   inactive({ archived }, _args, _ctx, _info) {
     return Promise.resolve(archived);
   },
-  owner({ ownerId }, _args, { prisma }, _info) {
-    return prisma.user.findOne({ where: { id: ownerId } });
+  async owner({ ownerId }, _args, { prisma }, _info) {
+    return userToSS(await prisma.user.findOne({ where: { id: ownerId } }));
   },
-  occupants({ id }, _args, { prisma }, _info) {
-    return prisma.user.findMany({ where: { occupyingRooms: { some: { A: id } } } });
+  async occupants({ id }, _args, { prisma }, _info) {
+    return (await prisma.user.findMany({ where: { occupyingRooms: { some: { A: id } } } })).map(userToSS);
   },
   async chatMsgs({ id }, _args, { prisma }, _info) {
     return (await prisma.chatMsg.findMany({ where: { roomId: id } }))

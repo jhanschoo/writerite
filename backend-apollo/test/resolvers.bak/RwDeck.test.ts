@@ -4,7 +4,7 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 import Redis from 'ioredis';
 
 import { prisma, PDeck, SUser } from '../generated/prisma-client';
-import { IRwContext } from '../src/types';
+import { IRwContext } from '../../src/types';
 
 import { rwDeckQuery } from '../src/resolver/Query/RwDeck.query';
 import { rwDeckMutation } from '../src/resolver/Mutation/RwDeck.mutation';

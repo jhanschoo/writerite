@@ -1,8 +1,8 @@
-import { GoogleAuthService } from '../src/service/GoogleAuthService';
-import { FacebookAuthService } from '../src/service/FacebookAuthService';
-import { LocalAuthService } from '../src/service/LocalAuthService';
+import { GoogleAuthService } from '../../src/service/GoogleAuthService';
+import { FacebookAuthService } from '../../src/service/FacebookAuthService';
+import { LocalAuthService } from '../../src/service/LocalAuthService';
 import { prisma } from '../generated/prisma-client';
-import { hashPassword } from '../src/util';
+import { hashPassword } from '../../src/util';
 
 const EMAIL_GOOGLE = 'abc.google@xyz';
 const EMAIL_FACEBOOK = 'abc.facebook@xyz';

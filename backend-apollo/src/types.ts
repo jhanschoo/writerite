@@ -20,10 +20,6 @@ export type FieldResolver<
   info: GraphQLResolveInfo & { mergeInfo: MergeInfo }
 ) => TReturn | Promise<TReturn>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type RecordOfKeys<T extends any> = { [P in T[number]]: unknown; };
-export type Concrete<T> = { [P in keyof T]-?: Exclude<T[P], Function>; };
-
 export interface IntegrationContext {
   ctx?: Context;
   connection?: ExecutionParams<{ Authorization?: string }>;

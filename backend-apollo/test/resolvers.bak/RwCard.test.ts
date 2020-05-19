@@ -7,8 +7,8 @@ import { rwCardQuery } from '../src/resolver/Query/RwCard.query';
 import { rwCardMutation } from '../src/resolver/Mutation/RwCard.mutation';
 import { rwCardSubscription } from '../src/resolver/Subscription/RwCard.subscription';
 import { prisma, PDeck, PUser, PCard } from '../generated/prisma-client';
-import { IRwContext } from '../src/types';
-import { resolveField } from '../src/util';
+import { IRwContext } from '../../src/types';
+import { resolveField } from '../../src/util';
 
 const { rwCard, rwCardsOfDeck } = rwCardQuery;
 const { rwCardCreate, rwCardEdit, rwCardDelete } = rwCardMutation;

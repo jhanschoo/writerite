@@ -1,4 +1,6 @@
-import { Room, PrismaClient } from "@prisma/client";
+import { PrismaClient, Room } from "@prisma/client";
+import { UserSS } from "./User";
+import { ChatMsgSS } from "./ChatMsg";
 
 export interface RoomConfigInput {
   deckId?: string | null;
@@ -21,6 +23,10 @@ export interface RoomSS extends Partial<Room> {
   ownerId: string;
   archived: boolean;
   config: RoomConfig;
+
+  owner?: UserSS | null;
+  occupants?: (UserSS | null)[] | null;
+  chatMsgs?: (ChatMsgSS | null)[] | null;
 }
 
 export function roomTopic(id: string): string {
