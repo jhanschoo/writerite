@@ -14,7 +14,7 @@ export interface RoomConfig {
   clientDone?: boolean;
 }
 
-interface RoomResolver extends IResolverObject<RoomSS, WrContext, object> {
+interface RoomResolver extends IResolverObject<RoomSS, WrContext, Record<string, unknown>> {
   // id uses default resolver
 
   // ownerId uses default resolver
@@ -23,12 +23,13 @@ interface RoomResolver extends IResolverObject<RoomSS, WrContext, object> {
 
   // config uses default resolver
 
-  inactive: FieldResolver<RoomSS, WrContext, object, boolean>;
-  owner: FieldResolver<RoomSS, WrContext, object, UserSS | null>;
-  occupants: FieldResolver<RoomSS, WrContext, object, (UserSS | null)[] | null>;
-  chatMsgs: FieldResolver<RoomSS, WrContext, object, (ChatMsgSS | null)[] | null>;
+  inactive: FieldResolver<RoomSS, WrContext, Record<string, unknown>, boolean>;
+  owner: FieldResolver<RoomSS, WrContext, Record<string, unknown>, UserSS | null>;
+  occupants: FieldResolver<RoomSS, WrContext, Record<string, unknown>, (UserSS | null)[] | null>;
+  chatMsgs: FieldResolver<RoomSS, WrContext, Record<string, unknown>, (ChatMsgSS | null)[] | null>;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Room: RoomResolver = {
   // TODO: implement outdatedness semantics in inactive field
   inactive({ archived }, _args, _ctx, _info) {

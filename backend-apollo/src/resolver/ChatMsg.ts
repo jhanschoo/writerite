@@ -7,7 +7,7 @@ import { RoomSS } from "../model/Room";
 import { UserSS, userToSS } from "../model/User";
 import { ChatMsgSS } from "../model/ChatMsg";
 
-interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, object> {
+interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, Record<string, unknown>> {
   // id uses default resolver
 
   // roomId uses default resolver
@@ -16,10 +16,11 @@ interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, object> 
 
   // content uses default resolver
 
-  sender: FieldResolver<ChatMsgSS, WrContext, object, UserSS | null>;
-  room: FieldResolver<ChatMsgSS, WrContext, object, RoomSS | null>;
+  sender: FieldResolver<ChatMsgSS, WrContext, Record<string, unknown>, UserSS | null>;
+  room: FieldResolver<ChatMsgSS, WrContext, Record<string, unknown>, RoomSS | null>;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const ChatMsg: ChatMsgResolver = {
   async sender({ senderId }, _args, { prisma }, _info) {
     if (!senderId) {

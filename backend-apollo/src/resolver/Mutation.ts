@@ -19,8 +19,8 @@ const googleAuth = new GoogleAuthService();
 const facebookAuth = new FacebookAuthService();
 const developmentAuth = new DevelopmentAuthService();
 
-interface MutationResolver extends IResolverObject<object, WrContext> {
-  signin: FieldResolver<object, WrContext, {
+interface MutationResolver extends IResolverObject<Record<string, unknown>, WrContext> {
+  signin: FieldResolver<Record<string, unknown>, WrContext, {
     email: string;
     name?: string | null;
     token: string;
@@ -28,15 +28,15 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     identifier: string;
     persist?: boolean | null;
   }, AuthResponseSS | null>;
-  userEdit: FieldResolver<object, WrContext, { name: string }, UserSS | null>;
-  deckCreate: FieldResolver<object, WrContext, {
+  userEdit: FieldResolver<Record<string, unknown>, WrContext, { name: string }, UserSS | null>;
+  deckCreate: FieldResolver<Record<string, unknown>, WrContext, {
     name?: string | null;
     description?: string | null;
     promptLang?: string | null;
     answerLang?: string | null;
     published?: boolean | null;
   }, DeckSS | null>;
-  deckCreateFromRows: FieldResolver<object, WrContext, {
+  deckCreateFromRows: FieldResolver<Record<string, unknown>, WrContext, {
     name?: string | null;
     description?: string | null;
     promptLang?: string | null;
@@ -44,7 +44,7 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     published?: boolean | null;
     rows: string[][];
   }, DeckSS | null>;
-  deckEdit: FieldResolver<object, WrContext, {
+  deckEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     name?: string | null;
     description?: string | null;
@@ -52,18 +52,18 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     answerLang?: string | null;
     published?: boolean | null;
   }, DeckSS | null>;
-  deckAddSubdeck: FieldResolver<object, WrContext, {
+  deckAddSubdeck: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     subdeckId: string;
   }, DeckSS | null>;
-  deckRemoveSubdeck: FieldResolver<object, WrContext, {
+  deckRemoveSubdeck: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     subdeckId: string;
   }, DeckSS | null>;
-  deckDelete: FieldResolver<object, WrContext, {
+  deckDelete: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, DeckSS | null>;
-  cardCreate: FieldResolver<object, WrContext, {
+  cardCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
     prompt: string;
     fullAnswer: string;
@@ -71,7 +71,7 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     sortKey?: string | null;
     template?: boolean | null;
   }, CardSS | null>;
-  cardsCreate: FieldResolver<object, WrContext, {
+  cardsCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
     prompt: string;
     fullAnswer: string;
@@ -80,7 +80,7 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     template?: boolean | null;
     multiplicity: number;
   }, (CardSS | null)[] | null>;
-  cardEdit: FieldResolver<object, WrContext, {
+  cardEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     prompt?: string | null;
     fullAnswer?: string | null;
@@ -88,32 +88,33 @@ interface MutationResolver extends IResolverObject<object, WrContext> {
     sortKey?: string | null;
     template?: boolean | null;
   }, CardSS | null>;
-  cardDelete: FieldResolver<object, WrContext, {
+  cardDelete: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, CardSS | null>;
 
-  roomCreate: FieldResolver<object, WrContext, {
+  roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
     config: RoomConfigInput;
   }, RoomSS | null>;
-  roomUpdateConfig: FieldResolver<object, WrContext, {
+  roomUpdateConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     config: RoomConfigInput;
   }, RoomSS | null>;
-  roomAddOccupant: FieldResolver<object, WrContext, {
+  roomAddOccupant: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     occupantId: string;
   }, RoomSS | null>;
-  roomArchive: FieldResolver<object, WrContext, {
+  roomArchive: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, RoomSS | null>;
 
-  chatMsgCreate: FieldResolver<object, WrContext, {
+  chatMsgCreate: FieldResolver<Record<string, unknown>, WrContext, {
     roomId: string;
     type: ChatMsgContentType;
     content: string;
   }, ChatMsgSS | null>;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Mutation: MutationResolver = {
   signin(_parent, {
     email,
@@ -262,6 +263,7 @@ export const Mutation: MutationResolver = {
       where: { id },
       data: {
         subdecks: { upsert: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           where: { A_B: { A: id, B: subdeckId } },
           update: {},
           create: { subdeck: { connect: { id: subdeckId } } },
@@ -287,6 +289,7 @@ export const Mutation: MutationResolver = {
       where: { id },
       data: {
         subdecks: { delete: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           A_B: { A: id, B: subdeckId },
         } },
       },
@@ -474,6 +477,7 @@ export const Mutation: MutationResolver = {
       data: {
         occupants: {
           upsert: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             where: { A_B: { A: id, B: occupantId } },
             update: {},
             create: { occupant: { connect: { id: occupantId } } },

@@ -8,17 +8,17 @@ import { RoomSS, roomTopic, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 
 interface SubscriptionFieldResolver<TArgs, TYield> {
-  subscribe: FieldResolver<object, WrContext, TArgs, AsyncIterator<TYield> | null>;
+  subscribe: FieldResolver<Record<string, unknown>, WrContext, TArgs, AsyncIterator<TYield> | null>;
 }
 
-interface SubscriptionResolver extends IResolverObject<object, WrContext> {
-  ownDecksUpdates: SubscriptionFieldResolver<object, Update<DeckSS>>;
+interface SubscriptionResolver extends IResolverObject<Record<string, unknown>, WrContext> {
+  ownDecksUpdates: SubscriptionFieldResolver<Record<string, unknown>, Update<DeckSS>>;
   cardsOfDeckUpdates: SubscriptionFieldResolver<{ deckId: string }, Update<CardSS>>;
   roomUpdates: SubscriptionFieldResolver<{ id: string }, Update<RoomSS>>;
   chatMsgsOfRoomUpdates: SubscriptionFieldResolver<{ roomId: string }, Update<ChatMsgSS>>;
 }
 
-const ownDecksUpdates: SubscriptionFieldResolver<object, Update<DeckSS>> = {
+const ownDecksUpdates: SubscriptionFieldResolver<Record<string, unknown>, Update<DeckSS>> = {
   subscribe(_parent, _args, { sub, pubsub }, _info) {
     if (!sub) {
       return null;
@@ -63,6 +63,7 @@ const chatMsgsOfRoomUpdates: SubscriptionFieldResolver<{ roomId: string }, Updat
 
 };
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Subscription: SubscriptionResolver = {
   ownDecksUpdates,
   cardsOfDeckUpdates,

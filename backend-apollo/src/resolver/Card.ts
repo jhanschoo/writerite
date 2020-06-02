@@ -5,7 +5,7 @@ import { FieldResolver, WrContext } from "../types";
 import { DeckSS } from "../model/Deck";
 import { CardSS } from "../model/Card";
 
-interface CardResolver extends IResolverObject<CardSS, WrContext, object> {
+interface CardResolver extends IResolverObject<CardSS, WrContext, Record<string, unknown>> {
   // id uses default resolver
 
   // deckId uses default resolver
@@ -22,9 +22,10 @@ interface CardResolver extends IResolverObject<CardSS, WrContext, object> {
 
   // template uses default resolver
 
-  deck: FieldResolver<CardSS, WrContext, object, DeckSS | null>;
+  deck: FieldResolver<CardSS, WrContext, Record<string, unknown>, DeckSS | null>;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Card: CardResolver = {
   deck(card, _args, { prisma }, _info) {
     return prisma.deck.findOne({ where: { id: card.deckId } });

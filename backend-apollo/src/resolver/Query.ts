@@ -8,18 +8,19 @@ import { CardSS } from "../model/Card";
 import { RoomSS, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 
-interface QueryResolver extends IResolverObject<object, WrContext> {
-  user: FieldResolver<object, WrContext, { id: string }, UserSS | null>;
-  deck: FieldResolver<object, WrContext, { id: string }, DeckSS | null>;
-  ownDecks: FieldResolver<object, WrContext, object, (DeckSS | null)[] | null>;
-  card: FieldResolver<object, WrContext, { id: string }, CardSS | null>;
-  cardsOfDeck: FieldResolver<object, WrContext, { deckId: string }, (CardSS | null)[] | null>;
-  room: FieldResolver<object, WrContext, { id: string }, RoomSS | null>;
-  occupiedRooms: FieldResolver<object, WrContext, object, (RoomSS | null)[] | null>;
-  chatMsg: FieldResolver<object, WrContext, { id: string }, ChatMsgSS | null>;
-  chatMsgsOfRoom: FieldResolver<object, WrContext, { roomId: string }, (ChatMsgSS | null)[] | null>;
+interface QueryResolver extends IResolverObject<Record<string, unknown>, WrContext> {
+  user: FieldResolver<Record<string, unknown>, WrContext, { id: string }, UserSS | null>;
+  deck: FieldResolver<Record<string, unknown>, WrContext, { id: string }, DeckSS | null>;
+  ownDecks: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
+  card: FieldResolver<Record<string, unknown>, WrContext, { id: string }, CardSS | null>;
+  cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
+  room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
+  occupiedRooms: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
+  chatMsg: FieldResolver<Record<string, unknown>, WrContext, { id: string }, ChatMsgSS | null>;
+  chatMsgsOfRoom: FieldResolver<Record<string, unknown>, WrContext, { roomId: string }, (ChatMsgSS | null)[] | null>;
 }
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const Query: QueryResolver = {
   async user(_parent, { id }, { prisma }, _info) {
     try {
@@ -71,6 +72,7 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       return await prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } });
     } catch (e) {
       return null;

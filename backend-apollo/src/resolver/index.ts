@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { IResolvers } from "apollo-server-koa";
 import { GraphQLDateTime as DateTime } from "graphql-iso-date";
 
