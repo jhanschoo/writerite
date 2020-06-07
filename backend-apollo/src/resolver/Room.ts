@@ -35,13 +35,23 @@ export const Room: RoomResolver = {
   inactive({ archived }, _args, _ctx, _info) {
     return Promise.resolve(archived);
   },
-  async owner({ ownerId }, _args, { prisma }, _info) {
+  async owner({ ownerId, owner }, _args, { prisma }, _info) {
+    if (owner !== undefined) {
+      return owner;
+    }
     return userToSS(await prisma.user.findOne({ where: { id: ownerId } }));
   },
-  async occupants({ id }, _args, { prisma }, _info) {
+  async occupants({ id, occupants }, _args, { prisma }, _info) {
+    if (occupants !== undefined) {
+      return occupants;
+    }
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     return (await prisma.user.findMany({ where: { occupyingRooms: { some: { A: id } } } })).map(userToSS);
   },
-  async chatMsgs({ id }, _args, { prisma }, _info) {
+  async chatMsgs({ id, chatMsgs }, _args, { prisma }, _info) {
+    if (chatMsgs !== undefined) {
+      return chatMsgs;
+    }
     return (await prisma.chatMsg.findMany({ where: { roomId: id } }))
       .map(chatMsgToSS);
   },

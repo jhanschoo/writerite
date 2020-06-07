@@ -1,5 +1,8 @@
 # TODO: refactor once graphql supports `extend`
 # https://github.com/graphql/graphql-js/issues/922\
+
+# Note: null in inputs are allowed only in update-style methods,
+#   meaning that the field should be nulled.
 #scalar Upload
 scalar DateTime
 
@@ -39,11 +42,11 @@ type Mutation {
   # Authorization
   signin(
     email: String!
-    name: String
+    name: String # non-null
     token: String!
     authorizer: String!
     identifier: String!
-    persist: Boolean
+    persist: Boolean # non-null
   ): AuthResponse
 
   # User
@@ -51,21 +54,21 @@ type Mutation {
 
   # Deck
   deckCreate(
-    name: String
-    description: String
-    promptLang: String
-    answerLang: String
-    published: Boolean
+    name: String # non-null
+    description: String # non-null
+    promptLang: String # non-null
+    answerLang: String # non-null
+    published: Boolean # non-null
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
   )
 
   deckCreateFromRows(
-    name: String
-    description: String
-    promptLang: String
-    answerLang: String
-    published: Boolean
+    name: String # non-null
+    description: String # non-null
+    promptLang: String # non-null
+    answerLang: String # non-null
+    published: Boolean # non-null
     rows: [[String!]!]!
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
@@ -73,11 +76,11 @@ type Mutation {
 
   deckEdit(
     id: ID!
-    name: String
-    description: String
-    promptLang: String
-    answerLang: String
-    published: Boolean
+    name: String # non-null
+    description: String # non-null
+    promptLang: String # non-null
+    answerLang: String # non-null
+    published: Boolean # non-null
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
   )
@@ -105,9 +108,9 @@ type Mutation {
     deckId: ID!
     prompt: String!
     fullAnswer: String!
-    answers: [String]
-    sortKey: String
-    template: Boolean
+    answers: [String] # non-null
+    sortKey: String # non-null
+    template: Boolean # non-null
   ): Card @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
@@ -116,9 +119,9 @@ type Mutation {
     deckId: ID!
     prompt: String!
     fullAnswer: String!
-    answers: [String!]
-    sortKey: String
-    template: Boolean
+    answers: [String!] # non-null
+    sortKey: String # non-null
+    template: Boolean # non-null
     multiplicity: Int!
   ): [Card] @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
@@ -126,11 +129,11 @@ type Mutation {
 
   cardEdit(
     id: ID!
-    prompt: String
-    fullAnswer: String
-    answers: [String!]
-    sortKey: String
-    template: Boolean
+    prompt: String # non-null
+    fullAnswer: String # non-null
+    answers: [String!] # non-null
+    sortKey: String # non-null
+    template: Boolean # non-null
   ): Card @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )

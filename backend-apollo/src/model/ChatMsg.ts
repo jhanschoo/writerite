@@ -1,9 +1,11 @@
-import { ChatMsg, PrismaClient } from "@prisma/client";
-import { UserSS } from "./User";
-import { RoomSS } from "./Room";
+import type { ChatMsg, PrismaClient } from "@prisma/client";
+import type { UserSS } from "./User";
+import type { RoomSS } from "./Room";
 
 export enum ChatMsgContentType {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   TEXT = "TEXT",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   CONFIG = "CONFIG",
 }
 
@@ -29,10 +31,10 @@ export async function userSeesChatMsg({ prisma, userId, chatMsgId }: {
   }
   return await prisma.room.count({
     where: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       occupants: { some: { B: userId } },
       chatMsgs: { some: { id: chatMsgId } },
     },
-    first: 1,
   }) === 1;
 }
 

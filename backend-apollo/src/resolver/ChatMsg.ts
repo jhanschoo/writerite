@@ -22,13 +22,19 @@ interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, Record<s
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const ChatMsg: ChatMsgResolver = {
-  async sender({ senderId }, _args, { prisma }, _info) {
+  async sender({ senderId, sender }, _args, { prisma }, _info) {
+    if (sender !== undefined) {
+      return sender;
+    }
     if (!senderId) {
       return null;
     }
     return userToSS(await prisma.user.findOne({ where: { id: senderId } }));
   },
-  room({ roomId }, _args, { prisma }, _info) {
+  room({ roomId, room }, _args, { prisma }, _info) {
+    if (room !== undefined) {
+      return room;
+    }
     return prisma.room.findOne({ where: { id: roomId } });
   },
 };

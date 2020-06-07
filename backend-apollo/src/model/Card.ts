@@ -1,5 +1,5 @@
-import { Card, PrismaClient } from "@prisma/client";
-import { DeckSS } from "./Deck";
+import type { Card, PrismaClient } from "@prisma/client";
+import type { DeckSS } from "./Deck";
 
 // CardStoredScalars
 export interface CardSS extends Partial<Card> {
@@ -33,6 +33,5 @@ export async function userOwnsCard({ prisma, userId, cardId }: {
       id: cardId,
       deck: { ownerId: userId },
     },
-    first: 1,
   }) === 1;
 }

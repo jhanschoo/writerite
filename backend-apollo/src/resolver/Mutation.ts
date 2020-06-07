@@ -11,8 +11,9 @@ import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
 import { CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
-import { RoomConfigInput, RoomSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
+import { RoomConfigInput, RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
+import { JsonObject } from "type-fest";
 
 const localAuth = new LocalAuthService();
 const googleAuth = new GoogleAuthService();
@@ -22,35 +23,35 @@ const developmentAuth = new DevelopmentAuthService();
 interface MutationResolver extends IResolverObject<Record<string, unknown>, WrContext> {
   signin: FieldResolver<Record<string, unknown>, WrContext, {
     email: string;
-    name?: string | null;
+    name?: string;
     token: string;
     authorizer: string;
     identifier: string;
-    persist?: boolean | null;
+    persist?: boolean;
   }, AuthResponseSS | null>;
   userEdit: FieldResolver<Record<string, unknown>, WrContext, { name: string }, UserSS | null>;
   deckCreate: FieldResolver<Record<string, unknown>, WrContext, {
-    name?: string | null;
-    description?: string | null;
-    promptLang?: string | null;
-    answerLang?: string | null;
-    published?: boolean | null;
+    name?: string;
+    description?: string;
+    promptLang?: string;
+    answerLang?: string;
+    published?: boolean;
   }, DeckSS | null>;
   deckCreateFromRows: FieldResolver<Record<string, unknown>, WrContext, {
-    name?: string | null;
-    description?: string | null;
-    promptLang?: string | null;
-    answerLang?: string | null;
-    published?: boolean | null;
+    name?: string;
+    description?: string;
+    promptLang?: string;
+    answerLang?: string;
+    published?: boolean;
     rows: string[][];
   }, DeckSS | null>;
   deckEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
-    name?: string | null;
-    description?: string | null;
-    promptLang?: string | null;
-    answerLang?: string | null;
-    published?: boolean | null;
+    name?: string;
+    description?: string;
+    promptLang?: string;
+    answerLang?: string;
+    published?: boolean;
   }, DeckSS | null>;
   deckAddSubdeck: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
@@ -67,37 +68,37 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     deckId: string;
     prompt: string;
     fullAnswer: string;
-    answers?: string[] | null;
-    sortKey?: string | null;
-    template?: boolean | null;
+    answers?: string[];
+    sortKey?: string;
+    template?: boolean;
   }, CardSS | null>;
   cardsCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
     prompt: string;
     fullAnswer: string;
-    answers?: string[] | null;
-    sortKey?: string | null;
-    template?: boolean | null;
+    answers?: string[];
+    sortKey?: string;
+    template?: boolean;
     multiplicity: number;
   }, (CardSS | null)[] | null>;
   cardEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
-    prompt?: string | null;
-    fullAnswer?: string | null;
-    answers?: string[] | null;
-    sortKey?: string | null;
-    template?: boolean | null;
+    prompt?: string;
+    fullAnswer?: string;
+    answers?: string[];
+    sortKey?: string;
+    template?: boolean;
   }, CardSS | null>;
   cardDelete: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, CardSS | null>;
 
   roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
-    config: RoomConfigInput;
+    config: RoomConfigInput & JsonObject;
   }, RoomSS | null>;
   roomUpdateConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
-    config: RoomConfigInput;
+    config: RoomConfigInput & JsonObject;
   }, RoomSS | null>;
   roomAddOccupant: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
@@ -137,27 +138,35 @@ export const Mutation: MutationResolver = {
       identifier,
       persist: normalizedPersist,
     };
-    switch (authorizer) {
-      case AuthorizerType.GOOGLE:
-        return googleAuth.signin(opts);
-      case AuthorizerType.FACEBOOK:
-        return facebookAuth.signin(opts);
-      case AuthorizerType.LOCAL:
-        return localAuth.signin(opts);
-      case AuthorizerType.DEVELOPMENT:
-        return developmentAuth.signin(opts);
-      default:
-        return null;
+    try {
+      switch (authorizer) {
+        case AuthorizerType.GOOGLE:
+          return googleAuth.signin(opts);
+        case AuthorizerType.FACEBOOK:
+          return facebookAuth.signin(opts);
+        case AuthorizerType.LOCAL:
+          return localAuth.signin(opts);
+        case AuthorizerType.DEVELOPMENT:
+          return developmentAuth.signin(opts);
+        default:
+          return null;
+      }
+    } catch (e) {
+      return null;
     }
   },
   async userEdit(_parent, { name }, { sub, prisma }, _info) {
     if (!sub) {
       return null;
     }
-    return userToSS(await prisma.user.update({
-      where: { id: sub.id },
-      data: { name },
-    }));
+    try {
+      return userToSS(await prisma.user.update({
+        where: { id: sub.id },
+        data: { name },
+      }));
+    } catch (e) {
+      return null;
+    }
   },
   async deckCreate(_parent, {
     name,
@@ -169,23 +178,27 @@ export const Mutation: MutationResolver = {
     if (!sub) {
       return null;
     }
-    const deck = await prisma.deck.create({
-      data: {
-        name,
-        description,
-        promptLang,
-        answerLang,
-        published,
-        owner: { connect: { id: sub.id } },
-      },
-    });
-    const update: Update<DeckSS> = {
-      type: UpdateType.CREATED,
-      data: deck,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return deck;
+    try {
+      const deck = await prisma.deck.create({
+        data: {
+          name,
+          description,
+          promptLang,
+          answerLang,
+          published,
+          owner: { connect: { id: sub.id } },
+        },
+      });
+      const update: Update<DeckSS> = {
+        type: UpdateType.CREATED,
+        data: deck,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return deck;
+    } catch (e) {
+      return null;
+    }
   },
   async deckCreateFromRows(_parent, {
     name,
@@ -198,30 +211,34 @@ export const Mutation: MutationResolver = {
     if (!sub) {
       return null;
     }
-    const deck = await prisma.deck.create({
-      data: {
-        name,
-        description,
-        promptLang,
-        answerLang,
-        published,
-        owner: { connect: { id: sub.id } },
-        cards: {
-          create: rows.map((row) => ({
-            prompt: row[0],
-            fullAnswer: row[1],
-            answers: { set: row.slice(2) },
-          })),
+    try {
+      const deck = await prisma.deck.create({
+        data: {
+          name,
+          description,
+          promptLang,
+          answerLang,
+          published,
+          owner: { connect: { id: sub.id } },
+          cards: {
+            create: rows.map((row) => ({
+              prompt: row[0],
+              fullAnswer: row[1],
+              answers: { set: row.slice(2) },
+            })),
+          },
         },
-      },
-    });
-    const update: Update<DeckSS> = {
-      type: UpdateType.CREATED,
-      data: deck,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return deck;
+      });
+      const update: Update<DeckSS> = {
+        type: UpdateType.CREATED,
+        data: deck,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return deck;
+    } catch (e) {
+      return null;
+    }
   },
   async deckEdit(_parent, {
     id,
@@ -231,91 +248,107 @@ export const Mutation: MutationResolver = {
     answerLang,
     published,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+        return null;
+      }
+      const deck = await prisma.deck.update({
+        where: { id },
+        data: {
+          name,
+          description,
+          promptLang,
+          answerLang,
+          published,
+        },
+      });
+      const update: Update<DeckSS> = {
+        type: UpdateType.EDITED,
+        data: deck,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return deck;
+    } catch (e) {
       return null;
     }
-    const deck = await prisma.deck.update({
-      where: { id },
-      data: {
-        name,
-        description,
-        promptLang,
-        answerLang,
-        published,
-      },
-    });
-    const update: Update<DeckSS> = {
-      type: UpdateType.EDITED,
-      data: deck,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return deck;
   },
   async deckAddSubdeck(_parent, {
     id,
     subdeckId,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+        return null;
+      }
+      const deck = await prisma.deck.update({
+        where: { id },
+        data: {
+          subdecks: { upsert: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+            where: { A_B: { A: id, B: subdeckId } },
+            update: {},
+            create: { subdeck: { connect: { id: subdeckId } } },
+          } },
+        },
+      });
+      const update: Update<DeckSS> = {
+        type: UpdateType.EDITED,
+        data: deck,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return deck;
+    } catch (e) {
       return null;
     }
-    const deck = await prisma.deck.update({
-      where: { id },
-      data: {
-        subdecks: { upsert: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          where: { A_B: { A: id, B: subdeckId } },
-          update: {},
-          create: { subdeck: { connect: { id: subdeckId } } },
-        } },
-      },
-    });
-    const update: Update<DeckSS> = {
-      type: UpdateType.EDITED,
-      data: deck,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return deck;
   },
   async deckRemoveSubdeck(_parent, {
     id,
     subdeckId,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+        return null;
+      }
+      const deck = await prisma.deck.update({
+        where: { id },
+        data: {
+          subdecks: { deleteMany: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+            A: id, B: subdeckId,
+          } },
+        },
+      });
+      const update: Update<DeckSS> = {
+        type: UpdateType.EDITED,
+        data: deck,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return deck;
+    } catch (e) {
       return null;
     }
-    const deck = await prisma.deck.update({
-      where: { id },
-      data: {
-        subdecks: { delete: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          A_B: { A: id, B: subdeckId },
-        } },
-      },
-    });
-    const update: Update<DeckSS> = {
-      type: UpdateType.EDITED,
-      data: deck,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return deck;
   },
   async deckDelete(_parent, {
     id,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
+        return null;
+      }
+      const deck = await prisma.deck.delete({ where: { id } });
+      const update: Update<DeckSS> = {
+        type: UpdateType.DELETED,
+        data: deck,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return deck;
+    } catch (e) {
       return null;
     }
-    const deck = await prisma.deck.delete({ where: { id } });
-    const update: Update<DeckSS> = {
-      type: UpdateType.DELETED,
-      data: deck,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return deck;
   },
   async cardCreate(_parent, {
     deckId,
@@ -325,24 +358,28 @@ export const Mutation: MutationResolver = {
     sortKey,
     template,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
+        return null;
+      }
+      const card = await prisma.card.create({ data: {
+        prompt,
+        fullAnswer,
+        answers: { set: answers ?? [] },
+        sortKey,
+        template,
+        deck: { connect: { id: deckId } },
+      } });
+      const update: Update<CardSS> = {
+        type: UpdateType.CREATED,
+        data: card,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return card;
+    } catch (e) {
       return null;
     }
-    const card = await prisma.card.create({ data: {
-      prompt,
-      fullAnswer,
-      answers: { set: answers },
-      sortKey,
-      template,
-      deck: { connect: { id: deckId } },
-    } });
-    const update: Update<CardSS> = {
-      type: UpdateType.CREATED,
-      data: card,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return card;
   },
   async cardsCreate(_parent, {
     deckId,
@@ -353,30 +390,34 @@ export const Mutation: MutationResolver = {
     template,
     multiplicity,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
+        return null;
+      }
+      const cardsPs: Promise<CardSS>[] = [];
+      for (let i = 0; i < multiplicity; ++i) {
+        cardsPs.push(prisma.card.create({ data: {
+          prompt,
+          fullAnswer,
+          answers: { set: answers ?? [] },
+          sortKey,
+          template,
+          deck: { connect: { id: deckId } },
+        } }));
+      }
+      const cards = await Promise.all(cardsPs);
+      const updates: Update<CardSS>[] = cards.map((card) => ({
+        type: UpdateType.CREATED,
+        data: card,
+      }));
+      updates.forEach((update) => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        pubsub.publish(cardsOfDeckTopic(sub.id, deckId), update);
+      });
+      return cards;
+    } catch (e) {
       return null;
     }
-    const cardsPs: Promise<CardSS>[] = [];
-    for (let i = 0; i < multiplicity; ++i) {
-      cardsPs.push(prisma.card.create({ data: {
-        prompt,
-        fullAnswer,
-        answers: { set: answers },
-        sortKey,
-        template,
-        deck: { connect: { id: deckId } },
-      } }));
-    }
-    const cards = await Promise.all(cardsPs);
-    const updates: Update<CardSS>[] = cards.map((card) => ({
-      type: UpdateType.CREATED,
-      data: card,
-    }));
-    updates.forEach((update) => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(cardsOfDeckTopic(sub.id, deckId), update);
-    });
-    return cards;
   },
   async cardEdit(_parent, {
     id,
@@ -386,43 +427,51 @@ export const Mutation: MutationResolver = {
     sortKey,
     template,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
+    try {
+      if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
+        return null;
+      }
+      const card = await prisma.card.update({
+        where: { id },
+        data: {
+          prompt,
+          fullAnswer,
+          answers: { set: answers },
+          sortKey,
+          template,
+        },
+      });
+      const update: Update<CardSS> = {
+        type: UpdateType.EDITED,
+        data: card,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return card;
+    } catch (e) {
       return null;
     }
-    const card = await prisma.card.update({
-      where: { id },
-      data: {
-        prompt,
-        fullAnswer,
-        answers: { set: answers },
-        sortKey,
-        template,
-      },
-    });
-    const update: Update<CardSS> = {
-      type: UpdateType.EDITED,
-      data: card,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return card;
   },
   async cardDelete(_parent, {
     id,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
+    try {
+      if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
+        return null;
+      }
+      const card = await prisma.card.delete({
+        where: { id },
+      });
+      const update: Update<CardSS> = {
+        type: UpdateType.DELETED,
+        data: card,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(ownDecksTopic(sub.id), update);
+      return card;
+    } catch (e) {
       return null;
     }
-    const card = await prisma.card.delete({
-      where: { id },
-    });
-    const update: Update<CardSS> = {
-      type: UpdateType.DELETED,
-      data: card,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(ownDecksTopic(sub.id), update);
-    return card;
   },
 
   async roomCreate(_parent, {
@@ -432,86 +481,111 @@ export const Mutation: MutationResolver = {
     if (!sub) {
       return null;
     }
-    const room = await prisma.room.create({
-      data: {
-        owner: { connect: { id: sub.id } },
-        config,
-        occupants: { create: { occupant: { connect: { id: sub.id } } } },
-      },
-    });
-    const update: Update<RoomSS> = {
-      type: UpdateType.DELETED,
-      data: room,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(roomTopic(room.id), update);
-    return room;
+    try {
+      const room = roomToSS(await prisma.room.create({
+        data: {
+          owner: { connect: { id: sub.id } },
+          config,
+          occupants: { create: { occupant: { connect: { id: sub.id } } } },
+        },
+      }));
+      const update: Update<RoomSS> = {
+        type: UpdateType.DELETED,
+        data: room,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(roomTopic(room.id), update);
+      return room;
+    } catch (e) {
+      return null;
+    }
   },
   async roomUpdateConfig(_parent, {
     id,
     config,
   }, { sub, pubsub, prisma }, _info) {
-    if (!sub || !await userOwnsRoom({ prisma, userId: sub.id, roomId: id })) {
+    try {
+      if (!sub || !await userOwnsRoom({ prisma, userId: sub.id, roomId: id })) {
+        return null;
+      }
+      const room = roomToSS(await prisma.room.update({
+        where: { id },
+        data: {
+          config,
+        },
+      }));
+      const update: Update<RoomSS> = {
+        type: UpdateType.EDITED,
+        data: room,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(roomTopic(id), update);
+      return room;
+    } catch (e) {
       return null;
     }
-    const room = await prisma.room.update({
-      where: { id },
-      data: {
-        config,
-      },
-    });
-    const update: Update<RoomSS> = {
-      type: UpdateType.EDITED,
-      data: room,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(roomTopic(id), update);
-    return room;
   },
   async roomAddOccupant(_parent, {
     id,
     occupantId,
-  }, { pubsub, prisma }, _info) {
-    const room = await prisma.room.update({
-      where: { id },
-      data: {
-        occupants: {
-          upsert: {
+  }, { sub, pubsub, prisma }, _info) {
+    try {
+      if (!sub ||
+        sub.id !== occupantId &&
+        !(await prisma.room.count({ where: {
+          id,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          occupants: { some: { B: sub.id } },
+        } }) === 1)) {
+        return null;
+      }
+      const room = roomToSS(await prisma.room.update({
+        where: { id },
+        data: {
+          occupants: {
+            upsert: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
-            where: { A_B: { A: id, B: occupantId } },
-            update: {},
-            create: { occupant: { connect: { id: occupantId } } },
+              where: { A_B: { A: id, B: occupantId } },
+              update: {},
+              create: { occupant: { connect: { id: occupantId } } },
+            },
           },
         },
-      },
-    });
-    const update: Update<RoomSS> = {
-      type: UpdateType.EDITED,
-      data: room,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(roomTopic(id), update);
-    return room;
+      }));
+      const update: Update<RoomSS> = {
+        type: UpdateType.EDITED,
+        data: room,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(roomTopic(id), update);
+      return room;
+    } catch (e) {
+      return null;
+    }
   },
   async roomArchive(_parent, {
     id,
   }, { sub, pubsub, prisma }, _info) {
-    if (!await userOwnsRoom({ prisma, userId: sub?.id, roomId: id })) {
+    try {
+      if (!await userOwnsRoom({ prisma, userId: sub?.id, roomId: id })) {
+        return null;
+      }
+      const room = roomToSS(await prisma.room.update({
+        where: { id },
+        data: {
+          archived: true,
+        },
+      }));
+      const update: Update<RoomSS> = {
+        type: UpdateType.EDITED,
+        data: room,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(roomTopic(id), update);
+      return room;
+    } catch (e) {
       return null;
     }
-    const room = await prisma.room.update({
-      where: { id },
-      data: {
-        archived: true,
-      },
-    });
-    const update: Update<RoomSS> = {
-      type: UpdateType.EDITED,
-      data: room,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(roomTopic(id), update);
-    return room;
   },
 
   async chatMsgCreate(_parent, {
@@ -523,23 +597,27 @@ export const Mutation: MutationResolver = {
       return null;
     }
     const isWright = sub.roles.includes(Roles.wright);
-    if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
+    try {
+      if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
+        return null;
+      }
+      const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
+        data: {
+          room: { connect: { id: roomId } },
+          type,
+          content,
+          sender: isWright ? null : { connect: { id: sub.id } },
+        },
+      }));
+      const update: Update<ChatMsgSS> = {
+        type: UpdateType.CREATED,
+        data: chatMsg,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
+      return chatMsg;
+    } catch (e) {
       return null;
     }
-    const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
-      data: {
-        room: { connect: { id: roomId } },
-        type,
-        content,
-        sender: isWright ? null : { connect: { id: sub.id } },
-      },
-    }));
-    const update: Update<ChatMsgSS> = {
-      type: UpdateType.CREATED,
-      data: chatMsg,
-    };
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
-    return chatMsg;
   },
 };

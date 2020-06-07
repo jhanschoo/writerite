@@ -1,6 +1,7 @@
-import { PrismaClient, Room } from "@prisma/client";
-import { UserSS } from "./User";
-import { ChatMsgSS } from "./ChatMsg";
+import type { PrismaClient, Room } from "@prisma/client";
+import type { JsonObject } from "type-fest";
+import type { UserSS } from "./User";
+import type { ChatMsgSS } from "./ChatMsg";
 
 export interface RoomConfigInput {
   deckId?: string | null;
@@ -22,7 +23,7 @@ export interface RoomSS extends Partial<Room> {
   id: string;
   ownerId: string;
   archived: boolean;
-  config: RoomConfig;
+  config: RoomConfig & JsonObject;
 
   owner?: UserSS | null;
   occupants?: (UserSS | null)[] | null;
@@ -41,14 +42,12 @@ export async function userOwnsRoom({ prisma, userId, roomId }: {
   if (!userId || !roomId) {
     return false;
   }
-  return (await prisma.room.findMany({
-    select: { id: true },
+  return await prisma.room.count({
     where: {
       id: roomId,
       ownerId: userId,
     },
-    first: 1,
-  })).length === 1;
+  }) === 1;
 }
 
 export async function userOccupiesRoom({ prisma, userId, roomId }: {
@@ -59,12 +58,24 @@ export async function userOccupiesRoom({ prisma, userId, roomId }: {
   if (!userId || !roomId) {
     return false;
   }
-  return (await prisma.room.findMany({
-    select: { id: true },
+  return await prisma.room.count({
     where: {
       id: roomId,
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       occupants: { some: { B: userId } },
     },
-    first: 1,
-  })).length === 1;
+  }) === 1;
+}
+
+export function roomToSS(room: Room): RoomSS;
+export function roomToSS(room: Room | null): RoomSS | null;
+export function roomToSS(room: Room | null): RoomSS | null {
+  if (room === null) {
+    return null;
+  }
+  const { config } = room;
+  return {
+    ...room,
+    config: config as RoomConfig & JsonObject,
+  };
 }

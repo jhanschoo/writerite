@@ -29,18 +29,30 @@ interface DeckResolver extends IResolverObject<DeckSS, WrContext, Record<string,
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const Deck: DeckResolver = {
-  async owner({ ownerId }, _args, { prisma }, _info) {
+  async owner({ ownerId, owner }, _args, { prisma }, _info) {
+    if (owner !== undefined) {
+      return owner;
+    }
     return userToSS(await prisma.user.findOne({ where: { id: ownerId } }));
   },
-  parents({ id }, _args, { prisma }, _info) {
+  parents({ id, parents }, _args, { prisma }, _info) {
+    if (parents !== undefined) {
+      return parents;
+    }
     // eslint-disable-next-line @typescript-eslint/naming-convention
     return prisma.deck.findMany({ where: { subdecks: { some: { B: id } } } });
   },
-  children({ id }, _args, { prisma }, _info) {
+  children({ id, children }, _args, { prisma }, _info) {
+    if (children !== undefined) {
+      return children;
+    }
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    return prisma.deck.findMany({ where: { subdecks: { some: { A: id } } } });
+    return prisma.deck.findMany({ where: { parentDeck: { some: { A: id } } } });
   },
-  cards({ id }, _args, { prisma }, _info) {
+  cards({ id, cards }, _args, { prisma }, _info) {
+    if (cards !== undefined) {
+      return cards;
+    }
     return prisma.card.findMany({ where: { deckId: id } });
   },
 };

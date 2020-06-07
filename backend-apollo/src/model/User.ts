@@ -1,7 +1,7 @@
-import { User } from "@prisma/client";
-import { Roles } from "../types";
-import { DeckSS } from "./Deck";
-import { RoomSS } from "./Room";
+import type { User } from "@prisma/client";
+import type { Roles } from "../types";
+import type { DeckSS } from "./Deck";
+import type { RoomSS } from "./Room";
 
 // UserStoredScalars
 export interface UserSS extends Partial<User> {

@@ -1,71 +1,67 @@
-import { generateJWT, getClaims, comparePassword, hashPassword, generateB64UUID } from '../src/util';
+import type { Context } from "koa";
+import type { CurrentUser, IntegrationContext } from "../src/types";
+import { comparePassword, generateB64UUID, generateJWT, getClaims, hashPassword } from "../src/util";
 
-describe('getClaims', () => {
-  test('getClaims returns null on bad context', () => {
+describe("getClaims", () => {
+  test("getClaims returns undefined on bad context", () => {
     expect.assertions(1);
-    expect(getClaims({})).toBeNull();
+    expect(getClaims({})).toBeUndefined();
   });
 
-  test(`getClaims copies sub if present in context without checking,
-    relying on JWT signature to vouch that it is well-formed`, () => {
-      expect.assertions(1);
-      const sub = { hello: 'world' };
-      expect(getClaims({ sub })).toEqual({ sub });
-    });
-
-  test('getClaims returns sub if sub has ICurrentUser shape', () => {
+  test("getClaims returns undefined on missing jwt", () => {
     expect.assertions(1);
-    const sub = { id: 'a', email: 'b', roles: [] };
-    expect(getClaims({ sub })).toHaveProperty('sub', sub);
+    const sub = { hello: "world" };
+    const ctx = { sub } as IntegrationContext;
+    expect(getClaims(ctx)).toBeUndefined();
   });
 
-  test('getClaims returns null if header not present', () => {
+  test("getClaims returns undefined if header not present", () => {
     expect.assertions(1);
-    const ctx = { request: { get: () => undefined } };
-    expect(getClaims(ctx)).toBeNull();
+    const ctx = { request: { get: () => undefined } } as IntegrationContext;
+    expect(getClaims(ctx)).toBeUndefined();
   });
 
-  test('getClaims returns null if Authorization header is malformed', () => {
+  test("getClaims returns undefined if Authorization header is malformed", () => {
     expect.assertions(1);
-    const ctx = { request: { get: () => 'abc' } };
-    expect(getClaims(ctx)).toBeNull();
+    const ctx = { ctx: { get: () => "abc" } as unknown as Context };
+    expect(getClaims(ctx)).toBeUndefined();
   });
 });
 
-describe('JWTs', () => {
-  test('generateJWT generates a JWT compatible with getClaims', () => {
+describe("JWTs", () => {
+  test("generateJWT generates a JWT compatible with getClaims", () => {
     expect.assertions(1);
-    const sub = { hello: 'world' };
+    const sub = { hello: "world" } as unknown as CurrentUser;
     const jwt = `Bearer ${generateJWT(sub)}`;
     expect(getClaims({
-      request: {
+      ctx: {
         get: (headerKey: string) => {
-          if (headerKey === 'Authorization') {
+          if (headerKey === "Authorization") {
             return jwt;
           }
         },
-      },
-    })).toHaveProperty('sub', sub);
+      } as unknown as Context,
+    })).toEqual(sub);
   });
 });
 
-describe('passwords', () => {
-  test('comparePassword fails on malformed', async () => {
+describe("passwords", () => {
+  test("comparePassword fails on malformed", async () => {
     expect.assertions(1);
-    const passwordResultP = await comparePassword('123', 'abc');
+    const passwordResultP = await comparePassword("123", "abc");
     expect(passwordResultP).toBe(false);
   });
 
-  test('hashPassword generates a hash compatible with comparePassword', async () => {
+  test("hashPassword generates a hash compatible with comparePassword", async () => {
     expect.assertions(1);
-    const hash = await hashPassword('12345');
-    const passwordResultP = await comparePassword('12345', hash);
+    const hash = await hashPassword("12345");
+    const passwordResultP = await comparePassword("12345", hash);
     expect(passwordResultP).toBe(true);
   });
 });
 
-describe('generateB64UUID', () => {
-  test('generateB64UUID generates distinct strings', () => {
+describe("generateB64UUID", () => {
+  test("generateB64UUID generates distinct strings", () => {
     expect.assertions(31 * 32 / 2);
     const a: string[] = [];
     for (let i = 0; i < 32; ++i) {

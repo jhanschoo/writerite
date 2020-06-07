@@ -20,11 +20,8 @@ import { FETCH_DEPTH, generateJWT, getClaims } from "./util";
 import { Roles, WrContext } from "./types";
 
 const {
-  NODE_ENV,
-  REDIS_HOST,
-  REDIS_PORT,
-  CERT_FILE,
-  KEY_FILE,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  NODE_ENV, REDIS_HOST, REDIS_PORT, CERT_FILE, KEY_FILE,
 } = process.env;
 
 const prisma = new PrismaClient();
@@ -48,7 +45,7 @@ const pubsub = new RedisPubSub({
 const redisClient = new Redis({ ...redisOptions, db: 1 });
 redisClient.on("error", (err) => {
   // eslint-disable-next-line no-console
-  console.error(`redisClient error: ${err}`);
+  console.error(`redisClient error: ${err as string}`);
 });
 
 const wrightJWT = generateJWT({
@@ -76,7 +73,7 @@ const typeDefs = gql(fs.readFileSync("schema.graphql", "utf8"));
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-const apollo = new ApolloServer({
+export const apollo = new ApolloServer({
   schema,
   context: (ctx): WrContext => ({
     ctx,
@@ -100,7 +97,7 @@ apollo.applyMiddleware({
   },
 });
 
-const server = CERT_FILE && KEY_FILE
+export const server = CERT_FILE && KEY_FILE
   ? https.createServer({
     cert: fs.readFileSync(CERT_FILE),
     key: fs.readFileSync(KEY_FILE),
@@ -115,5 +112,5 @@ server.listen({ port: 4000 }, () => {
   // eslint-disable-next-line no-console
   console.log(`🚀 Server ready at http${
     CERT_FILE && KEY_FILE ? "s" : ""
-  }://localhost:${4000}${apollo.graphqlPath} in environment ${NODE_ENV}`);
+  }://localhost:${4000}${apollo.graphqlPath} in environment ${NODE_ENV as string}`);
 });

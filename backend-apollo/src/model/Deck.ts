@@ -1,6 +1,6 @@
-import { Deck, PrismaClient } from "@prisma/client";
-import { UserSS } from "./User";
-import { CardSS } from "./Card";
+import type { Deck, PrismaClient } from "@prisma/client";
+import type { UserSS } from "./User";
+import type { CardSS } from "./Card";
 
 // DeckStoredScalars
 export interface DeckSS extends Partial<Deck> {
@@ -30,12 +30,10 @@ export async function userOwnsDeck({ prisma, userId, deckId }: {
   if (!userId || !deckId) {
     return false;
   }
-  return (await prisma.deck.findMany({
-    select: { id: true },
+  return await prisma.deck.count({
     where: {
       id: deckId,
       ownerId: userId,
     },
-    first: 1,
-  })).length === 1;
+  }) === 1;
 }

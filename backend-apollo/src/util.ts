@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import bcrypt from "bcrypt";
 import { KJUR, hextob64 } from "jsrsasign";
 import randomWords from "random-words";
@@ -62,7 +66,7 @@ export function generateJWT(sub: CurrentUser, persist = false): string {
 }
 
 export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
-  const authorization = ctx.ctx?.get("Authorization") ?? ctx.connection?.context?.Authorization ?? null;
+  const authorization = ctx.ctx?.get("Authorization") ?? ctx.connection?.context.Authorization ?? null;
   if (!authorization) {
     return;
   }
@@ -75,7 +79,7 @@ export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
         return sub;
       }
     } catch (e) {
-      // return undefined
+      // return undefined;
     }
   }
 }
