@@ -6,6 +6,7 @@ import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
 import { userToSS } from "../model/User";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
 if (!GOOGLE_CLIENT_ID) {
   throw new Error("GOOGLE_CLIENT_ID envvar not found!");

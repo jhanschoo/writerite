@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "../assertConfig";
 import fetch from "node-fetch";
 
@@ -6,6 +9,7 @@ import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
 import { userToSS } from "../model/User";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;
 if (!FACEBOOK_APP_ID) {
   throw new Error("FACEBOOK_APP_ID envvar not found!");
@@ -54,7 +58,7 @@ export class FacebookAuthService extends AbstractAuthService {
   protected async verify(token: string): Promise<string | null> {
     const VERIFY_URL = `https://graph.facebook.com/debug_token?input_token=${
       token
-    }&access_token=${FB_ACCESS_TOKEN}`;
+    }&access_token=${FB_ACCESS_TOKEN as string}`;
     try {
       const response = await fetch(VERIFY_URL);
       const json = await response.json();

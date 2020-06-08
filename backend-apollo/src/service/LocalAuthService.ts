@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import "../assertConfig";
 import fetch from "node-fetch";
 import FormData from "form-data";
@@ -8,6 +10,7 @@ import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
 import { userToSS } from "../model/User";
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const { RECAPTCHA_SECRET } = process.env;
 
 if (!RECAPTCHA_SECRET) {
