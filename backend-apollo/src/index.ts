@@ -7,7 +7,7 @@ import Redis from "ioredis";
 
 import { RedisPubSub } from "graphql-redis-subscriptions";
 
-import Koa from "koa";
+import Koa, { Context } from "koa";
 import helmet from "koa-helmet";
 
 import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-koa";
@@ -58,7 +58,7 @@ function writeJWT(): void {
   redisClient.set("writerite:wright:jwt", wrightJWT)
     .then(() => setTimeout(writeJWT, 60000))
     .catch((e) => {
-      throw new Error(`Unable to write writerite:wright:jwt : ${e}`);
+      throw new Error(`Unable to write writerite:wright:jwt : ${e as string}`);
     });
 }
 writeJWT();
@@ -76,7 +76,7 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 export const apollo = new ApolloServer({
   schema,
   context: (ctx): WrContext => ({
-    ctx,
+    ctx: ctx as Context,
     fetchDepth: FETCH_DEPTH,
     sub: getClaims(ctx),
     prisma,
