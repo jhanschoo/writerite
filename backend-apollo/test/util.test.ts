@@ -35,11 +35,7 @@ describe("JWTs", () => {
     const jwt = `Bearer ${generateJWT(sub)}`;
     expect(getClaims({
       ctx: {
-        get: (headerKey: string) => {
-          if (headerKey === "Authorization") {
-            return jwt;
-          }
-        },
+        get: (headerKey: string) => headerKey === "Authorization" ? jwt : undefined,
       } as unknown as Context,
     })).toEqual(sub);
   });

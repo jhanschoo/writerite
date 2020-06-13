@@ -3,7 +3,7 @@ import { IResolverObject } from "apollo-server-koa";
 
 import { FieldResolver, WrContext } from "../types";
 
-import { RoomSS } from "../model/Room";
+import { RoomSS, roomToSS } from "../model/Room";
 import { UserSS, userToSS } from "../model/User";
 import { ChatMsgSS } from "../model/ChatMsg";
 
@@ -31,10 +31,10 @@ export const ChatMsg: ChatMsgResolver = {
     }
     return userToSS(await prisma.user.findOne({ where: { id: senderId } }));
   },
-  room({ roomId, room }, _args, { prisma }, _info) {
+  async room({ roomId, room }, _args, { prisma }, _info) {
     if (room !== undefined) {
       return room;
     }
-    return prisma.room.findOne({ where: { id: roomId } });
+    return roomToSS(await prisma.room.findOne({ where: { id: roomId } }));
   },
 };

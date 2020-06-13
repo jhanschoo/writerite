@@ -10,19 +10,17 @@ import { RedisPubSub } from "graphql-redis-subscriptions";
 import Koa, { Context } from "koa";
 import helmet from "koa-helmet";
 
-import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-koa";
-
 import { PrismaClient } from "@prisma/client";
 
-import resolvers from "./resolver";
-
-import { FETCH_DEPTH, generateJWT, getClaims } from "./util";
-import { Roles, WrContext } from "./types";
+import { FETCH_DEPTH, generateJWT, getClaims, printError } from "./util";
+import { Roles } from "./types";
+import { createApollo } from "./apollo";
 
 const {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   NODE_ENV, REDIS_HOST, REDIS_PORT, CERT_FILE, KEY_FILE,
 } = process.env;
+let stopped = false;
 
 const prisma = new PrismaClient();
 
@@ -55,13 +53,18 @@ const wrightJWT = generateJWT({
 });
 
 function writeJWT(): void {
+  if (stopped) {
+    return;
+  }
   redisClient.set("writerite:wright:jwt", wrightJWT)
     .then(() => setTimeout(writeJWT, 60000))
     .catch((e) => {
       throw new Error(`Unable to write writerite:wright:jwt : ${e as string}`);
     });
 }
-writeJWT();
+if (NODE_ENV !== "test") {
+  writeJWT();
+}
 
 // Initialize express
 
@@ -69,23 +72,14 @@ const app = new Koa();
 
 app.use(helmet());
 
-const typeDefs = gql(fs.readFileSync("schema.graphql", "utf8"));
-
-const schema = makeExecutableSchema({ typeDefs, resolvers });
-
-export const apollo = new ApolloServer({
-  schema,
-  context: (ctx): WrContext => ({
-    ctx: ctx as Context,
-    fetchDepth: FETCH_DEPTH,
-    sub: getClaims(ctx),
-    prisma,
-    pubsub,
-    redisClient,
-  }),
-  mocks: NODE_ENV === "frontend-testing",
-  debug: NODE_ENV !== "production",
-});
+const apollo = createApollo((ctx) => ({
+  ctx: ctx as Context,
+  fetchDepth: FETCH_DEPTH,
+  sub: getClaims(ctx),
+  prisma,
+  pubsub,
+  redisClient,
+}));
 
 apollo.applyMiddleware({
   app,
@@ -114,3 +108,14 @@ server.listen({ port: 4000 }, () => {
     CERT_FILE && KEY_FILE ? "s" : ""
   }://localhost:${4000}${apollo.graphqlPath} in environment ${NODE_ENV as string}`);
 });
+
+export function stop(): void {
+  stopped = true;
+  server.removeAllListeners();
+  server.close(printError);
+  apollo.stop().catch(printError);
+  pubsub.close();
+  redisClient.removeAllListeners();
+  redisClient.disconnect();
+  prisma.disconnect().catch(printError);
+}

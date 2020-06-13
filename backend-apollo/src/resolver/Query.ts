@@ -5,7 +5,7 @@ import { FieldResolver, WrContext } from "../types";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS } from "../model/Deck";
 import { CardSS } from "../model/Card";
-import { RoomSS, userOccupiesRoom } from "../model/Room";
+import { RoomSS, userOccupiesRoom, roomToSS } from "../model/Room";
 import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 
 interface QueryResolver extends IResolverObject<Record<string, unknown>, WrContext> {
@@ -62,7 +62,7 @@ export const Query: QueryResolver = {
   },
   async room(_parent, { id }, { prisma }, _info) {
     try {
-      return await prisma.room.findOne({ where: { id } });
+      return roomToSS(await prisma.room.findOne({ where: { id } }));
     } catch (e) {
       return null;
     }
@@ -73,7 +73,7 @@ export const Query: QueryResolver = {
     }
     try {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      return await prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } });
+      return (await prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } })).map(roomToSS);
     } catch (e) {
       return null;
     }

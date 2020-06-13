@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return,
+  @typescript-eslint/no-unsafe-assignment,
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unsafe-member-access */
 import bcrypt from "bcrypt";
 import { KJUR, hextob64 } from "jsrsasign";
 import randomWords from "random-words";
@@ -82,4 +82,10 @@ export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
       // return undefined;
     }
   }
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+export function printError(e: any): void {
+  // eslint-disable-next-line no-console
+  console.error(e);
 }

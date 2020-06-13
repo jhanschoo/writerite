@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
-import { GraphQLResolveInfo } from "graphql";
-import { MergeInfo } from "apollo-server-koa";
+import type { GraphQLResolveInfo } from "graphql";
+import type { MergeInfo } from "apollo-server-koa";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import Redis, { Redis as RedisClient } from "ioredis";
 
-import { WrContext } from "../../src/types";
+import type { WrContext } from "../../src/types";
 import { Query } from "../../src/resolver/Query";
 import { UserSS, userToSS } from "../../src/model/User";
-import { DeckSS } from "../../src/model/Deck";
-import { CardSS } from "../../src/model/Card";
-import { RoomSS } from "../../src/model/Room";
+import type { DeckSS } from "../../src/model/Deck";
+import type { CardSS } from "../../src/model/Card";
+import { RoomSS, roomToSS } from "../../src/model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS } from "../../src/model/ChatMsg";
 
 let prisma: PrismaClient;
@@ -267,15 +267,15 @@ describe("Query resolvers", () => {
         name: DECK_NAME,
         owner: { connect: { id: USER.id } },
       } });
-      ROOM = await prisma.room.create({ data: {
+      ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: USER.id } },
         occupants: {
           create: [{ occupant: { connect: { id: USER.id } } }],
         },
-      } });
-      OTHER_ROOM = await prisma.room.create({ data: {
+      } }));
+      OTHER_ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: OTHER_USER.id } },
-      } });
+      } }));
     });
 
     afterEach(async () => {
@@ -341,13 +341,13 @@ describe("Query resolvers", () => {
       OTHER_USER = userToSS(await prisma.user.create({ data: {
         email: OTHER_EMAIL,
       } }));
-      ROOM = await prisma.room.create({ data: {
+      ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: USER.id } },
         occupants: {
           create: [{ occupant: { connect: { id: USER.id } } }],
         },
-      } });
-      NEXT_ROOM = await prisma.room.create({ data: {
+      } }));
+      NEXT_ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: USER.id } },
         occupants: {
           create: [
@@ -358,13 +358,13 @@ describe("Query resolvers", () => {
             },
           ],
         },
-      } });
-      OTHER_ROOM = await prisma.room.create({ data: {
+      } }));
+      OTHER_ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: OTHER_USER.id } },
         occupants: {
           create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
         },
-      } });
+      } }));
       CHAT_MSG = chatMsgToSS(await prisma.chatMsg.create({ data: {
         type: CONTENT_TYPE,
         content: CONTENT,

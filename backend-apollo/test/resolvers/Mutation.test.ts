@@ -1,17 +1,17 @@
 import { PrismaClient } from "@prisma/client";
-import { GraphQLResolveInfo } from "graphql";
-import { MergeInfo } from "apollo-server-koa";
+import type { GraphQLResolveInfo } from "graphql";
+import type { MergeInfo } from "apollo-server-koa";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import Redis, { Redis as RedisClient } from "ioredis";
 
-import { WrContext } from "../../src/types";
+import type { WrContext } from "../../src/types";
 import { Mutation } from "../../src/resolver/Mutation";
 import { Deck } from "../../src/resolver/Deck";
 import { Room } from "../../src/resolver/Room";
 import { User } from "../../src/resolver/User";
 import { UserSS, userToSS } from "../../src/model/User";
-import { DeckSS } from "../../src/model/Deck";
-import { CardSS } from "../../src/model/Card";
+import type { DeckSS } from "../../src/model/Deck";
+import type { CardSS } from "../../src/model/Card";
 import { RoomSS, roomToSS } from "../../src/model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS } from "../../src/model/ChatMsg";
 
