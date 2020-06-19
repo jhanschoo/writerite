@@ -15,16 +15,13 @@ variables:
   # - KUBERNETES_VERSION
   # - HELM_VERSION
   DOCKER_DRIVER: overlay2 
-  # Use TLS https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
-  #DOCKER_HOST: tcp://docker:2376
   DOCKER_TLS_CERTDIR: "/certs"
 
 services:
   - docker:19.03.11-dind
 
 before_script:
-  - docker info
-#  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 publish-api-dev:
   stage: publish-api-dev
