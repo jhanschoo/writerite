@@ -19,7 +19,11 @@ variables:
   #DOCKER_HOST: tcp://docker:2376
   DOCKER_TLS_CERTDIR: "/certs"
 
-#before_script:
+services:
+  - docker:19.03.11-dind
+
+before_script:
+  - docker info
 #  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
 publish-api-dev:
@@ -29,8 +33,7 @@ publish-api-dev:
   script:
     - cd backend-apollo
     - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
-  services:
-    - docker:19.03.11-dind
+  services: []
 
 
 build-backend-apollo:
@@ -58,3 +61,4 @@ deploy:
     - apt install -y helm kubectl
     - cd charts/writerite-backend
     - helm upgrade --reset-values writerite-backend .
+  services: []
