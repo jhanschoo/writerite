@@ -27,5 +27,5 @@ then
 fi
 
 TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="production" .
+docker build -t "$CI_REGISTRY/$TAGGED_IMAGE_NAME" --build-arg node_env="production" .
 docker push "$CI_REGISTRY/$TAGGED_IMAGE_NAME"
