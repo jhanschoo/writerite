@@ -10,6 +10,9 @@ dependencies:
   - name: postgresql
     version: ^8.10.6
     repository: https://charts.bitnami.com/bitnami
+  - name: redis
+    version: ^10.5.7
+    repository: https://charts.bitnami.com/bitnami
 
 # A chart can be either an 'application' or a 'library' chart.
 #
