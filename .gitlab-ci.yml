@@ -28,6 +28,14 @@ publish-api-dev:
     - cd backend-apollo
     - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
 
+
+build-backend-apollo:
+  stage: build
+  script:
+    - apk add --update nodejs
+    - cd backend-apollo
+    - sh dockerbuild.sh
+
 deploy:
   stage: deploy
   image: debian

@@ -1,11 +1,8 @@
 #!/usr/bin/env sh
 
 # Run in writerite/backend-apollo/
-# A .env file needs to be present with the following envvars defined:
-# PRISMA_ENDPOINT
-# ENGINE_API_KEY
 
-set -e
+set -ex
 
 NODE_ENV="development"
 if [ -n "$1" ]
@@ -26,11 +23,9 @@ then
 fi
 if [ -z "$IMAGE_NAME" ]
 then
-  IMAGE_NAME="jhanschoo/writerite-backend-apollo"
+  IMAGE_NAME="writerite/backend-apollo"
 fi
 
-npm run build
-
 TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="$NODE_ENV" .
+docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="production" .
 docker push "$TAGGED_IMAGE_NAME"
