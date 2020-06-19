@@ -23,7 +23,7 @@ then
 fi
 if [ -z "$IMAGE_NAME" ]
 then
-  IMAGE_NAME="writerite/backend-apollo"
+  IMAGE_NAME="writerite/writerite/backend-apollo"
 fi
 
 TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
