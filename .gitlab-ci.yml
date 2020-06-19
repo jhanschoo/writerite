@@ -44,4 +44,5 @@ deploy:
     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
     - apt update
     - apt install -y helm kubectl
-    - kubectl config view
+    - cd charts/writerite-backend
+    - helm install writerite-backend .
