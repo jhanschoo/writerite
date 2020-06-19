@@ -31,6 +31,9 @@ publish-api-dev:
 deploy:
   stage: deploy
   image: debian
+  environment:
+    name: production
+    url: https://api.writerite.site/
   before_script: []
   script:
     - apt update
@@ -41,9 +44,4 @@ deploy:
     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
     - apt update
     - apt install -y helm kubectl
-    - echo $KUBE_URL
-    - echo $KUBE_TOKEN
-    - echo $KUBE_NAMESPACE
-    - echo $KUBE_CA_PEM_FILE
-    - echo $KUBECONFIG
     - kubectl config view
