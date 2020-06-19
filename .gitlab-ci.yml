@@ -27,6 +27,8 @@ publish-api-dev:
   script:
     - cd backend-apollo
     - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
+  services:
+    - docker:19.03-dind
 
 
 build-backend-apollo:
