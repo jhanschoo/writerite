@@ -30,7 +30,7 @@ publish-api-dev:
 
 
 build-backend-apollo:
-  stage: build
+  stage: build-services
   script:
     - apk add --update nodejs
     - cd backend-apollo
