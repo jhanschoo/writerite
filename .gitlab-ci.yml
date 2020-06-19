@@ -45,4 +45,4 @@ deploy:
     - apt update
     - apt install -y helm kubectl
     - cd charts/writerite-backend
-    - helm install writerite-backend .
+    - helm upgrade --reset-values writerite-backend .
