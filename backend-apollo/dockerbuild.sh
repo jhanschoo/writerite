@@ -23,9 +23,9 @@ then
 fi
 if [ -z "$IMAGE_NAME" ]
 then
-  IMAGE_NAME="$CI_PROJECT_PATH_SLUG/backend-apollo"
+  IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo"
 fi
 
 TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-docker build -t "$CI_REGISTRY/$TAGGED_IMAGE_NAME" --build-arg node_env="production" .
-docker push "$CI_REGISTRY/$TAGGED_IMAGE_NAME"
+docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="production" .
+docker push "$TAGGED_IMAGE_NAME"

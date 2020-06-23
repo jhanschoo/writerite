@@ -4,7 +4,7 @@ default:
 stages:
   #- check-versions
   #- publish-api-dev
-  #- build-services
+  - build-services
   - build-charts
   #- build-clients
   #- deploy
@@ -38,12 +38,12 @@ before_script:
 #   services: []
 
 
-# build-backend-apollo:
-#   stage: build-services
-#   script:
-#     - apk add --update nodejs
-#     - cd backend-apollo
-#     - sh dockerbuild.sh
+build-backend-apollo:
+  stage: build-services
+  script:
+    - apk add --update nodejs
+    - cd backend-apollo
+    - sh dockerbuild.sh
 
 build-writerite-backend-apollo:
   stage: build-charts
