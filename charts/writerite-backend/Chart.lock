@@ -6,7 +6,7 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   version: 10.7.4
 - name: writerite-backend-apollo
-  repository: ""
-  version: ^0.1.0-dev1
-digest: sha256:4bebda489aa28075d440d60a6955da947676383fecbaeb30b15d55d2cf00ffce
-generated: "2020-06-24T00:21:57.695158572+08:00"
+  repository: file://../writerite-backend-apollo
+  version: 0.1.0-dev1
+digest: sha256:c733aa5ff64f31c22efb3a2a5fb14d297d09b8fd982c05f1cf09192a34884e21
+generated: "2020-06-24T01:19:10.468586656+08:00"

@@ -8,16 +8,18 @@ maintainers:
     url: https://gitlab.com/jhanschoo
 dependencies:
   - name: postgresql
-    version: ^8.10.6
+    version: ^8.10.7
     repository: https://charts.bitnami.com/bitnami
   - name: redis
-    version: ^10.7.3
+    version: ^10.7.4
     repository: https://charts.bitnami.com/bitnami
   - name: writerite-backend-apollo
     version: ^0.1.0-dev1
     # contrary to documentation, oci repositories not yet supported
     # https://github.com/helm/helm/pull/7613
     # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev1
+    # workaround
+    repository: file://../writerite-backend-apollo
 
 # A chart can be either an 'application' or a 'library' chart.
 #

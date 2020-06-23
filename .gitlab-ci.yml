@@ -83,12 +83,6 @@ build-writerite-backend:
     - helm repo update
     # contrary to documentation, oci repositories not yet supported
     # https://github.com/helm/helm/pull/7613
-    # begin workaround to pull writerite-backend-apollo
-    - cd charts
-    - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend-apollo:0.1.0-dev1"
-    - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend-apollo:0.1.0-dev1"
-    - cd ..
-    # end workaround
     - helm dependency build
     - tar -xf charts/postgresql* -C charts
     - rm charts/postgresql*.tgz
