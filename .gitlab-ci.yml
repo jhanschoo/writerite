@@ -5,6 +5,7 @@ stages:
   - check-versions
   - publish-api-dev
   - build-services
+  - build-charts
   - build-clients
   - deploy
 
@@ -19,12 +20,13 @@ variables:
   # - RECAPTCHA_SECRET
   DOCKER_DRIVER: overlay2 
   DOCKER_TLS_CERTDIR: "/certs"
+  HELM_EXPERIMENTAL_OCI: "1"
 
 services:
   - docker:19.03.11-dind
 
 before_script:
-  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
 
 publish-api-dev:
   stage: publish-api-dev
@@ -42,6 +44,24 @@ build-backend-apollo:
     - apk add --update nodejs
     - cd backend-apollo
     - sh dockerbuild.sh
+
+build-writerite-backend-apollo:
+  stage: build-charts
+  image: debian
+  before_script: []
+  script:
+    - apt update
+    - apt install -y curl gnupg apt-transport-https
+    - curl https://helm.baltorepo.com/organization/signing.asc | apt-key add -
+    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+    - echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee -a /etc/apt/sources.list.d/helm-stable-debian.list
+    - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+    - apt update
+    - apt install -y helm kubectl
+    - cd charts
+    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - helm chart save writerite-backend-apollo writerite-backend-apollo
+    - helm chart push writerite-backend-apollo
 
 deploy:
   stage: deploy
@@ -85,5 +105,5 @@ deploy:
           secret: "$RECAPTCHA_SECRET"
       EOF
     - cat values.yaml
-    #- helm upgrade -i --reset-values --set "postgresql.postgresqlPassword=$POSTGRESQL_PASSWORD" writerite-backend writerite-backend
+    #- helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
   services: []
