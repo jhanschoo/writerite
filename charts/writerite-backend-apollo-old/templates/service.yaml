@@ -3,13 +3,14 @@ kind: Service
 metadata:
   name: {{ include "writerite-backend-apollo.fullname" . }}
   labels:
-    {{- include "writerite-backend-apollo.labels" . | nindent 4 }}
+{{ include "writerite-backend-apollo.labels" . | indent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: http
+      targetPort: {{ .Values.service.targetPort }}
       protocol: TCP
       name: http
   selector:
-    {{- include "writerite-backend-apollo.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/name: {{ include "writerite-backend-apollo.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}

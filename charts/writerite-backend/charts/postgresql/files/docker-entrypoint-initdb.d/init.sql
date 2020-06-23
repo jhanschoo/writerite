@@ -55,22 +55,22 @@ CREATE TABLE IF NOT EXISTS "ChatMsg" (
   "createdAt" timestamp DEFAULT now() NOT NULL,
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
-COMMENT ON COLUMN "ChatMsg"."roomId" is 'message sent by a user being deleted should be deleted';
+COMMENT ON COLUMN "ChatMsg"."roomId" IS 'message sent by a user being deleted should be deleted';
 
 CREATE TABLE IF NOT EXISTS "_Subdeck" (
   "A" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
   "B" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY ("A", "B")
 );
-CREATE INDEX ON "_Subdeck" ("B");
-COMMENT ON COLUMN "_Subdeck"."A" is 'parentId';
-COMMENT ON COLUMN "_Subdeck"."B" is 'subdeckId';
+CREATE INDEX IF NOT EXISTS "_Subdeck_B_idx" ON "_Subdeck" ("B");
+COMMENT ON COLUMN "_Subdeck"."A" IS 'parentId';
+COMMENT ON COLUMN "_Subdeck"."B" IS 'subdeckId';
 
 CREATE TABLE IF NOT EXISTS "_Occupant" (
   "A" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
   "B" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY ("A", "B")
 );
-CREATE INDEX ON "_Occupant" ("B");
-COMMENT ON COLUMN "_Occupant"."A" is 'roomId';
-COMMENT ON COLUMN "_Occupant"."B" is 'occupantId';
+CREATE INDEX IF NOT EXISTS "_Occupant_B_idx" ON "_Occupant" ("B");
+COMMENT ON COLUMN "_Occupant"."A" IS 'roomId';
+COMMENT ON COLUMN "_Occupant"."B" IS 'occupantId';

@@ -8,3 +8,6 @@ redis:
   master:
     persistence:
       enabled: false
+  networkPolicy:
+    enabled: false
+  usePassword: false

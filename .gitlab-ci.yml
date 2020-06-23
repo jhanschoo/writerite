@@ -11,9 +11,12 @@ stages:
 variables:
   # secrets configured in UI/API:
   # - APOLLO_KEY
-  # - K8S_SECRET_ENGINE_API_KEY
-  # - KUBERNETES_VERSION
-  # - HELM_VERSION
+  # - POSTGRESQL_PASSWORD
+  # - FACEBOOK_APP_ID
+  # - FACEBOOK_APP_SECRET
+  # - GOOGLE_CLIENT_ID
+  # - GOOGLE_CLIENT_SECRET
+  # - RECAPTCHA_SECRET
   DOCKER_DRIVER: overlay2 
   DOCKER_TLS_CERTDIR: "/certs"
 
@@ -56,6 +59,31 @@ deploy:
     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
     - apt update
     - apt install -y helm kubectl
-    - cd charts/writerite-backend
-    - helm upgrade --reset-values writerite-backend .
+    - cd charts
+    - |-
+      cat << EOF > values.yaml
+      postgresql:
+        postgresqlPassword: "$POSTGRESQL_PASSWORD"
+      writerite-backend-apollo:
+        apolloKey: $APOLLO_KEY
+        database:
+          user: "postgres"
+          password: "$POSTGRESQL_PASSWORD"
+          host: "writerite-backend-postgresql"
+          port: "5432"
+          database: "postgres"
+        redis:
+          host: "writerite-backend-redis-master"
+          port: "6379"
+        googleClient:
+          id: "$GOOGLE_CLIENT_ID"
+          secret: "$GOOGLE_CLIENT_SECRET"
+        facebookApp:
+          id: "$FACEBOOK_APP_ID"
+          secret: "$FACEBOOK_APP_SECRET"
+        recaptcha:
+          secret: "$RECAPTCHA_SECRET"
+      EOF
+    - cat values.yaml
+    #- helm upgrade -i --reset-values --set "postgresql.postgresqlPassword=$POSTGRESQL_PASSWORD" writerite-backend writerite-backend
   services: []

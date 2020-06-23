@@ -4,13 +4,13 @@ dotenv.config();
 const ENVVARS = [
   "APOLLO_KEY",
   "DATABASE_URL",
+  "REDIS_HOST",
+  "REDIS_PORT",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
   "FACEBOOK_APP_ID",
   "FACEBOOK_APP_SECRET",
   "RECAPTCHA_SECRET",
-  "REDIS_HOST",
-  "REDIS_PORT",
 ];
 
 for (const varname of ENVVARS) {
