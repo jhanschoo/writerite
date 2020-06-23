@@ -15,7 +15,9 @@ dependencies:
     repository: https://charts.bitnami.com/bitnami
   - name: writerite-backend-apollo
     version: ^0.1.0-dev1
-    repository: https://registry.gitlab.com/writerite/writerite
+    # contrary to documentation, oci repositories not yet supported
+    # https://github.com/helm/helm/pull/7613
+    # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev1
 
 # A chart can be either an 'application' or a 'library' chart.
 #

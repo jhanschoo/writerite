@@ -78,13 +78,21 @@ build-writerite-backend:
     - apt update
     - apt install -y helm kubectl
     - cd charts/writerite-backend
+    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm repo add bitnami https://charts.bitnami.com/bitnami
     - helm repo update
+    # contrary to documentation, oci repositories not yet supported
+    # https://github.com/helm/helm/pull/7613
+    # begin workaround to pull writerite-backend-apollo
+    - cd charts
+    - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend-apollo:0.1.0-dev1"
+    - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend-apollo:0.1.0-dev1"
+    - cd ..
+    # end workaround
     - helm dependency build
     - tar -xf charts/postgresql* -C charts
     - rm charts/postgresql*.tgz
     - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
