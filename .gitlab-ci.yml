@@ -2,12 +2,12 @@ default:
   image: docker:19.03.11
 
 stages:
-  - check-versions
-  - publish-api-dev
-  - build-services
+  #- check-versions
+  #- publish-api-dev
+  #- build-services
   - build-charts
-  - build-clients
-  - deploy
+  #- build-clients
+  #- deploy
 
 variables:
   # secrets configured in UI/API:
@@ -59,8 +59,9 @@ build-writerite-backend-apollo:
     - apt update
     - apt install -y helm kubectl
     - cd charts
+    - echo "$CI_PROJECT_URL"
     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - helm chart save writerite-backend-apollo writerite-backend-apollo | tee stdout
+    - helm chart save writerite-backend-apollo "$CI_REGISTRY/$CI_PROJECT_PATH_SLUG/writerite-backend-apollo" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
 deploy:
