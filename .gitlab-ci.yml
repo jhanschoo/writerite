@@ -45,6 +45,29 @@ build-backend-apollo:
     - cd backend-apollo
     - sh dockerbuild.sh
 
+build-writerite-backend:
+  stage: build-charts
+  image: debian
+  before_script: []
+  script:
+    - apt update
+    - apt install -y curl gnupg apt-transport-https
+    - curl https://helm.baltorepo.com/organization/signing.asc | apt-key add -
+    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+    - echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee -a /etc/apt/sources.list.d/helm-stable-debian.list
+    - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+    - apt update
+    - apt install -y helm kubectl
+    - cd charts/writerite-backend
+    - helm dependency build
+    - tar -xf charts/postgresql* -C charts
+    - rm charts/postgresql*.tgz
+    - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
+    - cd ..
+    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - helm chart save writerite-backend "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
+    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+
 build-writerite-backend-apollo:
   stage: build-charts
   image: debian
