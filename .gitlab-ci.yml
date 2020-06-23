@@ -3,7 +3,7 @@ default:
 
 stages:
   #- check-versions
-  #- publish-api-dev
+  - publish-api-dev
   - build-services
   - build-meta
   #- build-clients
@@ -64,36 +64,9 @@ before_script:
 #     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend-apollo" | tee stdout
 #     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
-# build-writerite-backend:
-#   stage: build-meta
-#   image: debian
-#   before_script: []
-#   script:
-#     - apt update
-#     - apt install -y curl gnupg apt-transport-https
-#     - curl https://helm.baltorepo.com/organization/signing.asc | apt-key add -
-#     - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-#     - echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee -a /etc/apt/sources.list.d/helm-stable-debian.list
-#     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
-#     - apt update
-#     - apt install -y helm kubectl
-#     - cd charts/writerite-backend
-#     - helm repo add bitnami https://charts.bitnami.com/bitnami
-#     - helm repo update
-#     - helm dependency build
-#     - tar -xf charts/postgresql* -C charts
-#     - rm charts/postgresql*.tgz
-#     - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
-#     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-#     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
-#     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
-
-deploy:
-  stage: deploy
+build-writerite-backend:
+  stage: build-meta
   image: debian
-  environment:
-    name: production
-    url: https://api.writerite.site/
   before_script: []
   script:
     - apt update
@@ -104,33 +77,60 @@ deploy:
     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
     - apt update
     - apt install -y helm kubectl
-    - cd ci
+    - cd charts/writerite-backend
+    - helm repo add bitnami https://charts.bitnami.com/bitnami
+    - helm repo update
+    - helm dependency build
+    - tar -xf charts/postgresql* -C charts
+    - rm charts/postgresql*.tgz
+    - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
-    - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
-    - |-
-      cat << EOF > values.yaml
-      postgresql:
-        postgresqlPassword: "$POSTGRESQL_PASSWORD"
-      writerite-backend-apollo:
-        apolloKey: $APOLLO_KEY
-        database:
-          user: "postgres"
-          password: "$POSTGRESQL_PASSWORD"
-          host: "writerite-backend-postgresql"
-          port: "5432"
-          database: "postgres"
-        redis:
-          host: "writerite-backend-redis-master"
-          port: "6379"
-        googleClient:
-          id: "$GOOGLE_CLIENT_ID"
-          secret: "$GOOGLE_CLIENT_SECRET"
-        facebookApp:
-          id: "$FACEBOOK_APP_ID"
-          secret: "$FACEBOOK_APP_SECRET"
-        recaptcha:
-          secret: "$RECAPTCHA_SECRET"
-      EOF
-    - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
-  services: []
+    - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
+    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+
+# deploy:
+#   stage: deploy
+#   image: debian
+#   environment:
+#     name: production
+#     url: https://api.writerite.site/
+#   before_script: []
+#   script:
+#     - apt update
+#     - apt install -y curl gnupg apt-transport-https
+#     - curl https://helm.baltorepo.com/organization/signing.asc | apt-key add -
+#     - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+#     - echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee -a /etc/apt/sources.list.d/helm-stable-debian.list
+#     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
+#     - apt update
+#     - apt install -y helm kubectl
+#     - cd ci
+#     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
+#     - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
+#     - |-
+#       cat << EOF > values.yaml
+#       postgresql:
+#         postgresqlPassword: "$POSTGRESQL_PASSWORD"
+#       writerite-backend-apollo:
+#         apolloKey: $APOLLO_KEY
+#         database:
+#           user: "postgres"
+#           password: "$POSTGRESQL_PASSWORD"
+#           host: "writerite-backend-postgresql"
+#           port: "5432"
+#           database: "postgres"
+#         redis:
+#           host: "writerite-backend-redis-master"
+#           port: "6379"
+#         googleClient:
+#           id: "$GOOGLE_CLIENT_ID"
+#           secret: "$GOOGLE_CLIENT_SECRET"
+#         facebookApp:
+#           id: "$FACEBOOK_APP_ID"
+#           secret: "$FACEBOOK_APP_SECRET"
+#         recaptcha:
+#           secret: "$RECAPTCHA_SECRET"
+#       EOF
+#     - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
+#   services: []
