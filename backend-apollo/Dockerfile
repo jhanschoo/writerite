@@ -7,6 +7,5 @@ ARG node_env
 ENV NODE_ENV ${node_env}
 RUN npm install
 COPY . .
-RUN npx prisma generate
 RUN npx tsc
 CMD npm run start
