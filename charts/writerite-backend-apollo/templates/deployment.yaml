@@ -40,7 +40,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /.well-known/apollo/server-health
-              port: http
+              port: 4000
           # readinessProbe:
           #   httpGet:
           #     path: /
