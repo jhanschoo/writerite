@@ -82,7 +82,8 @@ deploy:
     url: https://api.writerite.site/
   before_script: []
   script:
-    - cd ci
+    - mkdir tmp
+    - cd tmp
     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
     - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
