@@ -71,8 +71,10 @@ build-writerite-backend:
   script:
     - apt update
     - apt install -y curl gnupg apt-transport-https
-    - curl https://helm.baltorepo.com/organization/signing.asc | apt-key add -
-    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+    - curl -s https://helm.baltorepo.com/organization/signing.asc | apt-key add -
+    - curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg > apt-key.gpg
+    - cat apt-key.gpg
+    - apt-key add apt-key.gpg
     - echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee -a /etc/apt/sources.list.d/helm-stable-debian.list
     - echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
     - apt update
