@@ -2,11 +2,11 @@ default:
   image: docker:19.03.11
 
 stages:
-  #- check-versions
+  - check-versions
   - publish-api-dev
   - build-services
   - build-meta
-  #- build-clients
+  - build-clients
   - deploy
 
 variables:
