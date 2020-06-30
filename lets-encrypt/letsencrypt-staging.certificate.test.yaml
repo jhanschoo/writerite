@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: letsencrypt-staging
+  namespace: writerite-10694983-production
+spec:
+  secretName: letsencrypt-staging-tls
+  issuerRef:
+    name: letsencrypt-staging
+  dnsNames:
+    - api.writerite.site
+    - "*.api.writerite.site"

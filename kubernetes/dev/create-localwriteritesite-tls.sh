@@ -1,1 +1,0 @@
-kubectl create secret tls localwriteritesite-tls --cert "../dev-config/pki/wr-dev.secp256r1.crt" --key "../dev-config/pki/wr-dev.secp256r1.private" --dry-run -o yaml | kubectl apply -f -
