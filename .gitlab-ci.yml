@@ -12,6 +12,8 @@ stages:
 variables:
   # secrets configured in UI/API:
   # - APOLLO_KEY
+  # - JWT_PRIVATE_KEY
+  # - JWT_PUBLIC_KEY
   # - POSTGRESQL_PASSWORD
   # - FACEBOOK_APP_ID
   # - FACEBOOK_APP_SECRET
@@ -93,6 +95,8 @@ deploy:
         postgresqlPassword: "$POSTGRESQL_PASSWORD"
       writerite-backend-apollo:
         apolloKey: "$APOLLO_KEY"
+        jwt:
+          publicKey: "$JWT_PUBLIC_KEY"
         database:
           user: "postgres"
           password: "$POSTGRESQL_PASSWORD"
