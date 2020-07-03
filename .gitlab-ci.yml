@@ -116,6 +116,5 @@ deploy:
         recaptcha:
           secret: "$RECAPTCHA_SECRET"
       EOF
-    - cat values.yaml
     - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
   services: []
