@@ -2,11 +2,11 @@ default:
   image: docker:19.03.11
 
 stages:
-  - check-versions
-  - publish-api-dev
-  - build-services
-  - build-meta
-  - build-clients
+  #- check-versions
+  #- publish-api-dev
+  #- build-services
+  #- build-meta
+  #- build-clients
   - deploy
 
 variables:
@@ -92,7 +92,7 @@ deploy:
       postgresql:
         postgresqlPassword: "$POSTGRESQL_PASSWORD"
       writerite-backend-apollo:
-        apolloKey: $APOLLO_KEY
+        apolloKey: "$APOLLO_KEY"
         jwt:
           privateKey: "$JWT_PRIVATE_KEY"
           publicKey: "$JWT_PUBLIC_KEY"
