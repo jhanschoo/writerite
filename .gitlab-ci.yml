@@ -29,50 +29,50 @@ services:
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
 
-publish-api-dev:
-  stage: publish-api-dev
-  image: node
-  before_script: []
-  script:
-    - cd backend-apollo
-    - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
-  services: []
+# publish-api-dev:
+#   stage: publish-api-dev
+#   image: node
+#   before_script: []
+#   script:
+#     - cd backend-apollo
+#     - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
+#   services: []
 
 
-build-backend-apollo:
-  stage: build-services
-  script:
-    - apk add --update nodejs
-    - cd backend-apollo
-    - sh dockerbuild.sh
+# build-backend-apollo:
+#   stage: build-services
+#   script:
+#     - apk add --update nodejs
+#     - cd backend-apollo
+#     - sh dockerbuild.sh
 
-build-writerite-backend-apollo:
-  stage: build-services
-  image: dtzar/helm-kubectl
-  before_script: []
-  script:
-    - cd charts/writerite-backend-apollo
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend-apollo" | tee stdout
-    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+# build-writerite-backend-apollo:
+#   stage: build-services
+#   image: dtzar/helm-kubectl
+#   before_script: []
+#   script:
+#     - cd charts/writerite-backend-apollo
+#     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend-apollo" | tee stdout
+#     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
-build-writerite-backend:
-  stage: build-meta
-  image: dtzar/helm-kubectl
-  before_script: []
-  script:
-    - cd charts/writerite-backend
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - helm repo add bitnami https://charts.bitnami.com/bitnami
-    - helm repo update
-    # contrary to documentation, oci repositories not yet supported
-    # https://github.com/helm/helm/pull/7613
-    - helm dependency build
-    - tar -xf charts/postgresql* -C charts
-    - rm charts/postgresql*.tgz
-    - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
-    - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
-    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+# build-writerite-backend:
+#   stage: build-meta
+#   image: dtzar/helm-kubectl
+#   before_script: []
+#   script:
+#     - cd charts/writerite-backend
+#     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - helm repo add bitnami https://charts.bitnami.com/bitnami
+#     - helm repo update
+#     # contrary to documentation, oci repositories not yet supported
+#     # https://github.com/helm/helm/pull/7613
+#     - helm dependency build
+#     - tar -xf charts/postgresql* -C charts
+#     - rm charts/postgresql*.tgz
+#     - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
+#     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
+#     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
 deploy:
   stage: deploy
