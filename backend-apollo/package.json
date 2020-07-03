@@ -54,6 +54,7 @@
     "ts-node": "^8.10.2"
   },
   "scripts": {
+    "build": "tsc",
     "codegen": "graphql-codegen --config codegen.yml",
     "start": "node dist/index.js",
     "test": "DATABASE_URL=\"postgresql://jhanschoo:jhanschoo@localhost:5432/jhanschoo_testing\" prisma generate && jest --runInBand",

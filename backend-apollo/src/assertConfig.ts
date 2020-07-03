@@ -3,6 +3,8 @@ dotenv.config();
 
 const ENVVARS = [
   "APOLLO_KEY",
+  "JWT_PRIVATE_KEY",
+  "JWT_PUBLIC_KEY",
   "DATABASE_URL",
   "REDIS_HOST",
   "REDIS_PORT",

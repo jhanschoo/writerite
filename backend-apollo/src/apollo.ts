@@ -1,3 +1,4 @@
+import "./assertConfig";
 import fs from "fs";
 
 import type { ContextFunction } from "apollo-server-core";

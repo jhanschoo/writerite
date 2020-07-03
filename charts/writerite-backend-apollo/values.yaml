@@ -23,6 +23,9 @@ database:
   host: ""
   port: ""
   database: ""
+jwt:
+  privateKey: ""
+  publicKey: ""
 redis:
   host: ""
   port: ""

@@ -2,8 +2,9 @@
   @typescript-eslint/no-unsafe-assignment,
   @typescript-eslint/no-unsafe-call,
   @typescript-eslint/no-unsafe-member-access */
+import "./assertConfig";
 import bcrypt from "bcrypt";
-import { KJUR, hextob64 } from "jsrsasign";
+import { KEYUTIL, KJUR, hextob64 } from "jsrsasign";
 import randomWords from "random-words";
 
 import { CurrentUser, IntegrationContext } from "./types";
@@ -21,13 +22,11 @@ export function randomThreeWords(): string {
   })[0] as string;
 }
 
-const EC_KEYPAIR =
-  new KJUR.crypto.ECDSA({ curve: "secp256r1" })
-    .generateKeyPairHex();
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } = process.env;
 
-const PUBLIC_KEY = new KJUR.crypto.ECDSA({ curve: "secp256r1", pub: EC_KEYPAIR.ecpubhex },);
-
-const PRIVATE_KEY = new KJUR.crypto.ECDSA({ curve: "secp256r1", prv: EC_KEYPAIR.ecprvhex },);
+const PRIVATE_KEY = KEYUTIL.getKey(JSON.parse(JWT_PRIVATE_KEY ?? "fail"));
+const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(JWT_PUBLIC_KEY ?? "fail"));
 
 export function comparePassword(plain: string, hashed: string): Promise<boolean> {
   return bcrypt.compare(plain, hashed);

@@ -1,3 +1,4 @@
+import "../assertConfig";
 import { LocalAuthService } from "./LocalAuthService";
 
 export class DevelopmentAuthService extends LocalAuthService {

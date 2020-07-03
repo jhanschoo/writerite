@@ -93,6 +93,9 @@ deploy:
         postgresqlPassword: "$POSTGRESQL_PASSWORD"
       writerite-backend-apollo:
         apolloKey: $APOLLO_KEY
+        jwt:
+          privateKey: "$JWT_PRIVATE_KEY"
+          publicKey: "$JWT_PUBLIC_KEY"
         database:
           user: "postgres"
           password: "$POSTGRESQL_PASSWORD"

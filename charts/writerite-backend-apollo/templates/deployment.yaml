@@ -54,6 +54,18 @@ spec:
                   name: {{ include "writerite-backend-apollo.fullname" . }}
                   key: apolloKey
                   optional: false
+            - name: JWT_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  key: jwtPrivateKey
+                  optional: false
+            - name: JWT_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  key: jwtPublicKey
+                  optional: false
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
