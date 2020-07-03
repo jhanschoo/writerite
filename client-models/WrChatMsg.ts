@@ -3,21 +3,18 @@ import { WR_USER_SCALARS } from './WrUserScalars';
 import { WR_ROOM_SCALARS } from './WrRoomScalars';
 import { WR_CHAT_MSG_SCALARS } from './WrChatMsgScalars';
 
-// tslint:disable-next-line: variable-name
-export const WR_ROOM = gql`
-${WR_ROOM_SCALARS}
-${WR_USER_SCALARS}
+export const WR_CHAT_MSG = gql`
 ${WR_CHAT_MSG_SCALARS}
-fragment WrRoom on Room {
-  ...WrRoomScalars
-  owner {
+${WR_USER_SCALARS}
+${WR_USER_SCALARS}
+${WR_ROOM_SCALARS}
+fragment WrChatMsg on ChatMsg {
+  ...WrChatMsgScalars
+  sender {
     ...WrUserScalars
   }
-  occupants {
-    ...WrUserScalars
-  }
-  chatMsgs {
-    ...WrChatMsgScalars
+  room {
+    ...WrRoomScalars
   }
 }
 `;

@@ -1,15 +1,15 @@
 import gql from 'graphql-tag';
 import { WR_ROOM } from './WrRoom';
-import { WR_ROOM_MESSAGE } from './WrRoomMessage';
+import { WR_CHAT_MSG } from './WrChatMsg';
 
 // tslint:disable-next-line: variable-name
 export const WR_ROOM_DETAIL = gql`
 ${WR_ROOM}
-${WR_ROOM_MESSAGE}
-fragment WrRoomDetail on RwRoom {
+${WR_CHAT_MSG}
+fragment WrRoomDetail on Room {
     ...WrRoom
-    messages {
-      ...WrRoomMessage
+    chatMsgs {
+      ...WrChatMsg
     }
 }
 `;
