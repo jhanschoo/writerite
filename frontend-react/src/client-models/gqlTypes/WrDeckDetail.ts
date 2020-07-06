@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -7,82 +8,116 @@
 // ====================================================
 
 export interface WrDeckDetail_owner {
-  readonly __typename: "RwUser";
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface WrDeckDetail_subdecks_owner {
-  readonly __typename: "RwUser";
+export interface WrDeckDetail_parents {
+  readonly __typename: "Deck";
   readonly id: string;
-  readonly email: string;
-  readonly name: string | null;
-  readonly roles: ReadonlyArray<string>;
-}
-
-export interface WrDeckDetail_subdecks_subdecks {
-  readonly __typename: "RwDeck";
-  readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
-export interface WrDeckDetail_subdecks_cards {
-  readonly __typename: "RwCard";
+export interface WrDeckDetail_children_owner {
+  readonly __typename: "User";
   readonly id: string;
+  readonly email: string;
+  readonly name: string | null;
+  readonly roles: ReadonlyArray<string>;
+}
+
+export interface WrDeckDetail_children_parents {
+  readonly __typename: "Deck";
+  readonly id: string;
+  readonly ownerId: string;
+  readonly name: string;
+  readonly description: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+  readonly published: boolean;
+}
+
+export interface WrDeckDetail_children_children {
+  readonly __typename: "Deck";
+  readonly id: string;
+  readonly ownerId: string;
+  readonly name: string;
+  readonly description: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+  readonly published: boolean;
+}
+
+export interface WrDeckDetail_children_cards {
+  readonly __typename: "Card";
+  readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
 }
 
-export interface WrDeckDetail_subdecks {
-  readonly __typename: "RwDeck";
+export interface WrDeckDetail_children {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
-  readonly owner: WrDeckDetail_subdecks_owner;
-  readonly subdecks: ReadonlyArray<WrDeckDetail_subdecks_subdecks>;
-  readonly cards: ReadonlyArray<WrDeckDetail_subdecks_cards>;
+  readonly published: boolean;
+  readonly owner: WrDeckDetail_children_owner | null;
+  readonly parents: ReadonlyArray<(WrDeckDetail_children_parents | null)> | null;
+  readonly children: ReadonlyArray<(WrDeckDetail_children_children | null)> | null;
+  readonly cards: ReadonlyArray<(WrDeckDetail_children_cards | null)> | null;
 }
 
 export interface WrDeckDetail_cards_deck {
-  readonly __typename: "RwDeck";
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
 export interface WrDeckDetail_cards {
-  readonly __typename: "RwCard";
+  readonly __typename: "Card";
   readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
-  readonly deck: WrDeckDetail_cards_deck;
+  readonly deck: WrDeckDetail_cards_deck | null;
 }
 
 export interface WrDeckDetail {
-  readonly __typename: "RwDeck";
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
-  readonly owner: WrDeckDetail_owner;
-  readonly subdecks: ReadonlyArray<WrDeckDetail_subdecks>;
-  readonly cards: ReadonlyArray<WrDeckDetail_cards>;
+  readonly published: boolean;
+  readonly owner: WrDeckDetail_owner | null;
+  readonly parents: ReadonlyArray<(WrDeckDetail_parents | null)> | null;
+  readonly children: ReadonlyArray<(WrDeckDetail_children | null)> | null;
+  readonly cards: ReadonlyArray<(WrDeckDetail_cards | null)> | null;
 }

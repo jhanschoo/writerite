@@ -1,13 +1,14 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL mutation operation: UserEdit
 // ====================================================
 
-export interface UserEdit_rwUserEdit {
-  readonly __typename: "RwUser";
+export interface UserEdit_userEdit {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
@@ -15,7 +16,7 @@ export interface UserEdit_rwUserEdit {
 }
 
 export interface UserEdit {
-  readonly rwUserEdit: UserEdit_rwUserEdit | null;
+  readonly userEdit: UserEdit_userEdit | null;
 }
 
 export interface UserEditVariables {

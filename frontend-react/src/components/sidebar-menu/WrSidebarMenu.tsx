@@ -1,11 +1,12 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { WrState } from '../../store';
 import { createRegister, createDeregister, SidebarAction } from './actions';
 
 import styled from 'styled-components';
 import SidebarMenu from '../../ui/sidebar-menu/SidebarMenu';
+import { Dispatch } from 'redux';
 
 const ResponsiveSidebarMenu = styled(SidebarMenu)`
 @media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
@@ -38,17 +39,18 @@ interface OwnProps {
 type Props = StateProps & DispatchProps & OwnProps;
 
   // tslint:disable-next-line: no-shadowed-variable
-const WrSidebarMenu = ({ createRegister, createDeregister, hidden, children }: Props) => {
+const WrSidebarMenu = ({ hidden, children }: Props) => {
+  const dispatch = useDispatch<Dispatch<SidebarAction>>();
   const [hasRegistered, setRegistered] = useState(false);
   useEffect(() => {
     setRegistered(true);
-    createRegister();
+    dispatch(createRegister());
 
     return () => {
       setRegistered(false);
-      createDeregister();
+      dispatch(createDeregister());
     };
-  }, [hasRegistered, createRegister, createDeregister]);
+  }, [hasRegistered, dispatch]);
   return (
     <ResponsiveSidebarMenu as="nav" className={hidden ? undefined : 'unhidden'}>
       {children}

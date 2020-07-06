@@ -4,7 +4,7 @@ import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_DECK_STUB } from '../../../client-models/WrDeckStub';
+import { WR_DECK_SCALARS } from '../../../client-models/WrDeckScalars';
 import { DeckAddSubdeck, DeckAddSubdeckVariables } from './gqlTypes/DeckAddSubdeck';
 
 import styled from 'styled-components';
@@ -12,10 +12,10 @@ import Item from '../../../ui/list/Item';
 import { BorderlessButton } from '../../../ui/Button';
 
 const DECK_ADD_SUBDECK_MUTATION = gql`
-${WR_DECK_STUB}
+${WR_DECK_SCALARS}
 mutation DeckAddSubdeck($id: ID!, $subdeckId: ID!) {
-  rwDeckAddSubdeck(id: $id, subdeckId: $subdeckId) {
-    ...WrDeckStub
+  deckAddSubdeck(id: $id, subdeckId: $subdeckId) {
+    ...WrDeckScalars
   }
 }
 `;
@@ -35,7 +35,7 @@ interface Props {
   deck: WrDeck;
 }
 
-const WrNewSubdeckItem = ({ id, deck: { id: subdeckId, name, nameLang } }: Props) => {
+const WrNewSubdeckItem = ({ id, deck: { id: subdeckId, name, promptLang } }: Props) => {
   const [mutate] = useMutation<DeckAddSubdeck, DeckAddSubdeckVariables>(
     DECK_ADD_SUBDECK_MUTATION, {
       onError: printApolloError,
@@ -50,7 +50,7 @@ const WrNewSubdeckItem = ({ id, deck: { id: subdeckId, name, nameLang } }: Props
   return (
     <Item>
       <StyledDeckButton
-        lang={nameLang}
+        lang={promptLang || undefined}
         onClick={handleClick}
       >
         {name}

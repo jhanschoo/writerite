@@ -3,17 +3,17 @@ import {
   Formik, FormikProps, FormikErrors, FormikTouched,
 } from 'formik';
 import * as yup from 'yup';
+import { KEYUTIL, KJUR } from "jsrsasign";
 
-import { connect } from 'react-redux';
-import { AuthorizationAction, createSignin } from './actions';
-import { WrState } from '../../store';
+import { CurrentUser } from '../../types';
+
+import { useDispatch } from 'react-redux';
+import { createSignin, SigninAction } from './actions';
 
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { restartWsConnection } from '../../apolloClient';
 import { printApolloError } from '../../util';
-import { WR_USER_STUB } from '../../client-models';
-import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
 import { Signin, SigninVariables } from './gqlTypes/Signin';
 
 import styled from 'styled-components';
@@ -23,14 +23,16 @@ import Button, { AnchorButton } from '../../ui/Button';
 import TextInput from '../../ui/TextInput';
 import Fieldset from '../../ui/Fieldset';
 
-import { withRouter, RouteComponentProps } from 'react-router';
+import { useHistory } from 'react-router';
+import { Dispatch } from 'redux';
 
 declare var gapiDeferred: Promise<any>;
 declare var grecaptchaDeferred: Promise<any>;
 declare var FBDeferred: Promise<any>;
 
+const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(process.env.REACT_APP_JWT_PUBLIC_KEY ?? "fail"));
+
 const SIGNIN_MUTATION = gql`
-${WR_USER_STUB}
 mutation Signin(
   $email: String! $name: String $token: String! $authorizer: String! $identifier: String!
   ) {
@@ -42,9 +44,6 @@ mutation Signin(
     identifier: $identifier
     persist: false
   ) {
-    user {
-      ...WrUserStub
-    }
     token
   }
 }
@@ -173,21 +172,11 @@ const formInitialValues: FormValues = {
   isSignup: true,
 };
 
-export interface UserAndToken {
-  readonly token: string;
-  readonly user: WrUserStub;
-}
-
-interface DispatchProps {
-  readonly createSignin: (data: UserAndToken | null) => AuthorizationAction;
-}
-
-type Props = DispatchProps & RouteComponentProps;
-
-// tslint:disable-next-line: no-shadowed-variable
-const WrSignin = ({ createSignin, history }: Props) => {
+const WrSignin = () => {
+  const history = useHistory();
+  const dispatch = useDispatch<Dispatch<SigninAction>>();
   const [isSignup, setSignup] = useState(formInitialValues.isSignup);
-  const [thirdPartySigninUnderway, setThirdPartySigninUnderway] = useState(false);
+  const [signinUnderway, setSigninUnderway] = useState(false);
   let recaptchaCallback = (_gRecaptchaResponse: string): void => {
     return;
   };
@@ -204,56 +193,62 @@ const WrSignin = ({ createSignin, history }: Props) => {
     }
   }, []);
   const handleSigninSuccess = ({ signin }: Signin) => {
-    createSignin(signin);
-    if (signin) {
+    const token = signin?.token;
+    if (token && KJUR.jws.JWS.verify(token, PUBLIC_KEY, ["ES256"])) {
+      const user = KJUR.jws.JWS.parse(token).payloadObj.sub as CurrentUser;
+      dispatch(createSignin({ token, user }))
+      createSignin({ token, user });
       restartWsConnection();
       history.push('/deck');
     } else {
-      setThirdPartySigninUnderway(false);
+      setSigninUnderway(false);
     }
   };
-  const [mutate, { loading }] = useMutation<Signin, SigninVariables>(
+  const [mutateSignin] = useMutation<Signin, SigninVariables>(
     SIGNIN_MUTATION, {
       onCompleted: handleSigninSuccess,
-      onError: printApolloError,
-    },
+      onError: (e) => {
+        setSigninUnderway(false);
+        printApolloError(e);
+      },
+    }
   );
 
   const handleGoogleSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setThirdPartySigninUnderway(true);
+    setSigninUnderway(true);
     const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
     return googleAuth.signIn().then((googleUser: any) => {
-      return mutate({
+      return mutateSignin({
         variables: {
           email: googleUser.getBasicProfile().getEmail(),
           token: googleUser.getAuthResponse().id_token,
           authorizer: 'GOOGLE',
           identifier: googleUser.getId(),
         },
-      }).catch(() => setThirdPartySigninUnderway(false));
-    }, () => setThirdPartySigninUnderway(false));
+      }).catch(() => setSigninUnderway(false));
+    }, () => setSigninUnderway(false));
   };
   const handleFacebookSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setThirdPartySigninUnderway(true);
+    setSigninUnderway(true);
     return (await FBDeferred).login(async (loginResponse: any) => {
       const { authResponse } = loginResponse;
       if (authResponse) {
         (await FBDeferred).api('/me', {
           fields: 'name,email',
         }, (apiResponse: any) => {
-          mutate({
+          mutateSignin({
             variables: {
               email: apiResponse.email,
               token: authResponse.accessToken,
               authorizer: 'FACEBOOK',
               identifier: authResponse.userID,
             },
-          }).catch(() => setThirdPartySigninUnderway(false));
+          }).catch(() => setSigninUnderway(false));
         });
       } else {
-        setThirdPartySigninUnderway(false);
+        setSigninUnderway(false);
       }
     }, {
         scope: 'public_profile,email',
@@ -261,7 +256,8 @@ const WrSignin = ({ createSignin, history }: Props) => {
   };
 
   const handleLocalSignin = (values: FormValues) => {
-    return mutate({
+    setSigninUnderway(true);
+    return mutateSignin({
       variables: {
         email: values.email,
         name: (values.name === '') ? undefined : values.name,
@@ -274,7 +270,8 @@ const WrSignin = ({ createSignin, history }: Props) => {
 
   const handleDevelopmentSignin = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    return mutate({
+    setSigninUnderway(true);
+    return mutateSignin({
       variables: {
         email: 'abc@123.xyz',
         token: '',
@@ -283,7 +280,7 @@ const WrSignin = ({ createSignin, history }: Props) => {
       },
     });
   };
-  const disabled = thirdPartySigninUnderway || loading;
+  const disabled = signinUnderway;
   const renderFields = (formikProps: FormikProps<FormValues>) => {
     const {
       handleSubmit,
@@ -442,14 +439,4 @@ const WrSignin = ({ createSignin, history }: Props) => {
   );
 };
 
-const mapStateToProps = null;
-
-const mapDispatchToProps: DispatchProps = {
-  createSignin,
-};
-
-export default withRouter(
-  connect<
-    {}, DispatchProps, RouteComponentProps, WrState
-  >(mapStateToProps, mapDispatchToProps)(WrSignin),
-);
+export default WrSignin;

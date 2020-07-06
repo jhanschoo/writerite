@@ -4,28 +4,28 @@ import { Send } from 'react-feather';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { RoomMessageCreate, RoomMessageCreateVariables } from './gqlTypes/RoomMessageCreate';
-import { RwRoomMessageContentType } from '../../../gqlGlobalTypes';
+import { ChatMsgCreate, ChatMsgCreateVariables } from './gqlTypes/ChatMsgCreate';
+import { ChatMsgContentType } from '../../../gqlGlobalTypes';
 
 import styled from 'styled-components';
 import TextInput from '../../../ui/TextInput';
 import { BorderlessButton } from '../../../ui/Button';
 
-import { WR_ROOM_MESSAGE } from '../../../client-models';
+import { WR_CHAT_MSG } from '../../../client-models';
 
-const ROOM_MESSAGE_CREATE_MUTATION = gql`
-${WR_ROOM_MESSAGE}
-mutation RoomMessageCreate(
+const CHAT_MSG_CREATE_MUTATION = gql`
+${WR_CHAT_MSG}
+mutation ChatMsgCreate(
   $roomId: ID!
+  $type: ChatMsgContentType!
   $content: String!
-  $contentType: RwRoomMessageContentType!
 ) {
-  rwRoomMessageCreate(
+  chatMsgCreate(
     roomId: $roomId
+    type: $type
     content: $content
-    contentType: $contentType
   ) {
-    ...WrRoomMessage
+    ...WrChatMsg
   }
 }
 `;
@@ -53,8 +53,8 @@ const WrRoomDetailInput = ({ roomId }: Props) => {
   const [contentInput, setContentInput] = useState('');
   const [
     mutate, { loading },
-  ] = useMutation<RoomMessageCreate, RoomMessageCreateVariables>(
-    ROOM_MESSAGE_CREATE_MUTATION, {
+  ] = useMutation<ChatMsgCreate, ChatMsgCreateVariables>(
+    CHAT_MSG_CREATE_MUTATION, {
       onError: printApolloError,
     },
   );
@@ -64,7 +64,7 @@ const WrRoomDetailInput = ({ roomId }: Props) => {
       variables: {
         roomId,
         content: contentInput,
-        contentType: RwRoomMessageContentType.TEXT,
+        type: ChatMsgContentType.TEXT,
       },
     }).then(() => setContentInput(''));
   };

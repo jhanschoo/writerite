@@ -1,33 +1,36 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
-import { IRoomConfigInput } from "./../../../../gqlGlobalTypes";
+import { RoomConfigInput } from "./../../../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL mutation operation: RoomUpdateConfig
 // ====================================================
 
-export interface RoomUpdateConfig_rwRoomUpdateConfig_config {
-  readonly __typename: "IRoomConfig";
+export interface RoomUpdateConfig_roomUpdateConfig_config {
+  readonly __typename: "RoomConfig";
   readonly deckId: string | null;
   readonly deckName: string | null;
-  readonly deckNameLang: string | null;
   readonly roundLength: number | null;
   readonly clientDone: boolean | null;
 }
 
-export interface RoomUpdateConfig_rwRoomUpdateConfig {
-  readonly __typename: "RwRoom";
+export interface RoomUpdateConfig_roomUpdateConfig {
+  readonly __typename: "Room";
   readonly id: string;
-  readonly config: RoomUpdateConfig_rwRoomUpdateConfig_config;
+  readonly ownerId: string;
+  readonly archived: boolean;
+  readonly inactive: boolean;
+  readonly config: RoomUpdateConfig_roomUpdateConfig_config;
 }
 
 export interface RoomUpdateConfig {
-  readonly rwRoomUpdateConfig: RoomUpdateConfig_rwRoomUpdateConfig | null;
+  readonly roomUpdateConfig: RoomUpdateConfig_roomUpdateConfig | null;
 }
 
 export interface RoomUpdateConfigVariables {
   readonly id: string;
-  readonly config: IRoomConfigInput;
+  readonly config: RoomConfigInput;
 }

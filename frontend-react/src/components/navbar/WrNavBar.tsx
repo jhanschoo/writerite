@@ -1,11 +1,11 @@
 import React from 'react';
 
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { WrState } from '../../store';
-import { createSignout, AuthorizationAction } from '../signin/actions';
+import { createSignout, SigninAction } from '../signin/actions';
 
 import { restartWsConnection } from '../../apolloClient';
-import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
+import { CurrentUser } from '../../types';
 
 import styled from 'styled-components';
 import Link from '../../ui/Link';
@@ -16,6 +16,7 @@ import NavBarList from '../../ui/navbar/NavBarList';
 
 import WrHamburger from './WrHamburger';
 import WrBrandText from '../brand/WrBrandText';
+import { Dispatch } from 'redux';
 
 const BrandHeading = styled.h3`
 margin: 0;
@@ -65,22 +66,12 @@ const renderLoggedOut = () => {
   );
 };
 
-interface DispatchProps {
-  createSignout: () => AuthorizationAction;
-}
-
-interface StateProps {
-  user: WrUserStub | null;
-}
-
-type Props = StateProps & DispatchProps;
-
-// tslint:disable-next-line: no-shadowed-variable
-const renderLoggedIn = ({ createSignout, user }: Props) => {
+const renderLoggedIn = (user: CurrentUser, dispatchSignout: () => SigninAction) => {
   if (!user) {
     return null;
   }
   const signoutAndRestartWs = () => {
+    dispatchSignout();
     createSignout();
     restartWsConnection();
   };
@@ -115,7 +106,10 @@ const renderLoggedIn = ({ createSignout, user }: Props) => {
   );
 };
 
-const WrNavBar = (props: Props)  => {
+const WrNavBar = ()  => {
+  const user = useSelector<WrState, CurrentUser | null>((state) => state?.signin?.session?.user ?? null);
+  const dispatch = useDispatch<Dispatch<SigninAction>>();
+  const dispatchSignout = () => dispatch(createSignout());
   return (
   <StyledNavBar>
     <NavBarList>
@@ -129,19 +123,10 @@ const WrNavBar = (props: Props)  => {
       </BrandNavBarItem>
     </NavBarList>
     <NavBarListRight>
-      {renderLoggedIn(props) || renderLoggedOut()}
+      {user ? renderLoggedIn(user, dispatchSignout) : renderLoggedOut()}
     </NavBarListRight>
   </StyledNavBar>
   );
 };
 
-const mapStateToProps = (state: WrState): StateProps => {
-  const user = (state.signin && state.signin.data && state.signin.data.user) || null;
-  return { user };
-};
-
-const mapDispatchToProps: DispatchProps = {
-  createSignout,
-};
-
-export default connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(WrNavBar);
+export default WrNavBar;

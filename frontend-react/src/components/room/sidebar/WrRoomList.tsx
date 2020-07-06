@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 import { Filter } from 'react-feather';
 
-import { WrRoomStub } from '../../../client-models/gqlTypes/WrRoomStub';
+import { WrRoomScalars } from '../../../client-models/gqlTypes/WrRoomScalars';
 
 import styled from 'styled-components';
 import Fieldset from '../../../ui/Fieldset';
@@ -35,7 +35,7 @@ interface Content {
 }
 
 // TODO: use https://codesandbox.io/embed/7mqy09jyq to implement auto height with hooks
-const WrRoomList = ({ rooms }: { rooms: WrRoomStub[] }) => {
+const WrRoomList = ({ rooms }: { rooms: WrRoomScalars[] }) => {
   const [ filter, setFilter ] = useState(initialFilter);
   const inputEl = useRef<HTMLInputElement>(null);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {

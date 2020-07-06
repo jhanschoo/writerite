@@ -3,7 +3,7 @@ import React, { MouseEvent } from 'react';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_DECK_STUB } from '../../../client-models/WrDeckStub';
+import { WR_DECK_SCALARS } from '../../../client-models/WrDeckScalars';
 import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
 import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
 import { DeckRemoveSubdeck, DeckRemoveSubdeckVariables } from './gqlTypes/DeckRemoveSubdeck';
@@ -16,10 +16,10 @@ import HDivider from '../../../ui-components/HDivider';
 import { BorderlessButton } from '../../../ui/Button';
 
 const DECK_REMOVE_SUBDECK_MUTATION = gql`
-${WR_DECK_STUB}
+${WR_DECK_SCALARS}
 mutation DeckRemoveSubdeck($id: ID!, $subdeckId: ID!) {
-  rwDeckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
-    ...WrDeckStub
+  deckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
+    ...WrDeckScalars
   }
 }
 `;
@@ -84,12 +84,12 @@ padding: ${({ theme }) => theme.space[1]};
 
 interface OwnProps {
   deck: WrDeckDetail;
-  subdeck: WrDeck;
+  child: WrDeck;
 }
 
 type Props = OwnProps;
 
-const WrSubdeckItem = ({ deck: { id }, subdeck: { id: subdeckId, name, subdecks, cards } }: Props) => {
+const WrSubdeckItem = ({ deck: { id }, child: { id: subdeckId, name, children, cards } }: Props) => {
   const [mutate] = useMutation<DeckRemoveSubdeck, DeckRemoveSubdeckVariables>(
     DECK_REMOVE_SUBDECK_MUTATION, {
       onError: printApolloError,
@@ -108,13 +108,13 @@ const WrSubdeckItem = ({ deck: { id }, subdeck: { id: subdeckId, name, subdecks,
         <HDividerDiv><HDivider/></HDividerDiv>
         <DeckStatisticsList>
           <Item>
-            {subdecks.length} Sub-Decks
+            {children?.length || 0} Sub-Decks
           </Item>
           <Item>
-            {cards.filter((card) => card.template).length} Template Cards
+            {cards?.filter((card) => card?.template).length || 0} Template Cards
           </Item>
           <Item>
-            {cards.filter((card) => !card.template).length} Cards
+            {cards?.filter((card) => card?.template === false).length || 0} Cards
           </Item>
         </DeckStatisticsList>
         <HDividerDiv><HDivider/></HDividerDiv>

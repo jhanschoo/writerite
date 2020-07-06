@@ -11,6 +11,7 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import WrNewSubdeckItem from './WrNewSubdeckItem';
 import { WrDeckDetail } from '../../../client-models/gqlTypes/WrDeckDetail';
+import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
 
 const OuterDiv = styled.div`
 display: flex;
@@ -42,23 +43,23 @@ interface Props {
   deck: WrDeckDetail;
 }
 
-const WrNewSubdeck = ({ deck: { id, subdecks } }: Props) => {
+const WrNewSubdeck = ({ deck: { id, children } }: Props) => {
   const [active, setActive] = useState(false);
   const {
     loading, data,
   } = useQuery<OwnDecks>(OWN_DECKS_QUERY, {
     onError: printApolloError,
   });
-  const subdeckIds = subdecks.map((deck) => deck.id);
+  const subdeckIds = children?.map((deck) => deck?.id) ?? [];
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setActive(!active);
   };
-  const optionalListItems = (loading || !data || (data.rwOwnDecks === null))
+  const optionalListItems = (loading || !data?.ownDecks)
     ? (<Item>Fetching Decks...</Item>)
-    : (data.rwOwnDecks.length === 0)
+    : (data.ownDecks.length === 0)
     ? (<Item>You have no decks.</Item>)
-    : data.rwOwnDecks.filter((deck) => deck.id !== id && !subdeckIds.includes(deck.id)).map((deck) => (
+    : data.ownDecks.filter<WrDeck>((deck): deck is WrDeck => (deck && deck.id !== id && !subdeckIds.includes(deck.id)) ?? false).map((deck) => (
       <WrNewSubdeckItem id={id} deck={deck} key={deck.id}/>
     ));
   const optionalList = active && (<StyledList>{optionalListItems}</StyledList>);

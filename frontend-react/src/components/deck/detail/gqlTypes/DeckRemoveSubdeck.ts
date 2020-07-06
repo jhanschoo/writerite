@@ -1,22 +1,25 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL mutation operation: DeckRemoveSubdeck
 // ====================================================
 
-export interface DeckRemoveSubdeck_rwDeckRemoveSubdeck {
-  readonly __typename: "RwDeck";
+export interface DeckRemoveSubdeck_deckRemoveSubdeck {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
 export interface DeckRemoveSubdeck {
-  readonly rwDeckRemoveSubdeck: DeckRemoveSubdeck_rwDeckRemoveSubdeck | null;
+  readonly deckRemoveSubdeck: DeckRemoveSubdeck_deckRemoveSubdeck | null;
 }
 
 export interface DeckRemoveSubdeckVariables {

@@ -1,23 +1,23 @@
 import gql from 'graphql-tag';
-import { WR_USER_STUB } from './WrUserStub';
-import { WR_ROOM_STUB } from './WrRoomStub';
-import { WR_ROOM_MESSAGE_STUB } from './WrRoomMessageStub';
+import { WR_USER_SCALARS } from './WrUserScalars';
+import { WR_ROOM_SCALARS } from './WrRoomScalars';
+import { WR_CHAT_MSG_SCALARS } from './WrChatMsgScalars';
 
 // tslint:disable-next-line: variable-name
 export const WR_ROOM = gql`
-${WR_ROOM_STUB}
-${WR_USER_STUB}
-${WR_ROOM_MESSAGE_STUB}
-fragment WrRoom on RwRoom {
-  ...WrRoomStub
+${WR_ROOM_SCALARS}
+${WR_USER_SCALARS}
+${WR_CHAT_MSG_SCALARS}
+fragment WrRoom on Room {
+  ...WrRoomScalars
   owner {
-    ...WrUserStub
+    ...WrUserScalars
   }
   occupants {
-    ...WrUserStub
+    ...WrUserScalars
   }
-  messages {
-    ...WrRoomMessageStub
+  chatMsgs {
+    ...WrChatMsgScalars
   }
 }
 `;

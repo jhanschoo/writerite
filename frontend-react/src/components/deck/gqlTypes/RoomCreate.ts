@@ -1,58 +1,63 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
-import { IRoomConfigInput, RwRoomMessageContentType } from "./../../../gqlGlobalTypes";
+import { RoomConfigInput, ChatMsgContentType } from "./../../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL mutation operation: RoomCreate
 // ====================================================
 
-export interface RoomCreate_rwRoomCreate_config {
-  readonly __typename: "IRoomConfig";
+export interface RoomCreate_roomCreate_config {
+  readonly __typename: "RoomConfig";
   readonly deckId: string | null;
   readonly deckName: string | null;
-  readonly deckNameLang: string | null;
   readonly roundLength: number | null;
   readonly clientDone: boolean | null;
 }
 
-export interface RoomCreate_rwRoomCreate_owner {
-  readonly __typename: "RwUser";
+export interface RoomCreate_roomCreate_owner {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface RoomCreate_rwRoomCreate_occupants {
-  readonly __typename: "RwUser";
+export interface RoomCreate_roomCreate_occupants {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface RoomCreate_rwRoomCreate_messages {
-  readonly __typename: "RwRoomMessage";
+export interface RoomCreate_roomCreate_chatMsgs {
+  readonly __typename: "ChatMsg";
   readonly id: string;
+  readonly roomId: string;
+  readonly senderId: string | null;
+  readonly type: ChatMsgContentType;
   readonly content: string;
-  readonly contentType: RwRoomMessageContentType;
 }
 
-export interface RoomCreate_rwRoomCreate {
-  readonly __typename: "RwRoom";
+export interface RoomCreate_roomCreate {
+  readonly __typename: "Room";
   readonly id: string;
-  readonly config: RoomCreate_rwRoomCreate_config;
-  readonly owner: RoomCreate_rwRoomCreate_owner;
-  readonly occupants: ReadonlyArray<RoomCreate_rwRoomCreate_occupants>;
-  readonly messages: ReadonlyArray<RoomCreate_rwRoomCreate_messages>;
+  readonly ownerId: string;
+  readonly archived: boolean;
+  readonly inactive: boolean;
+  readonly config: RoomCreate_roomCreate_config;
+  readonly owner: RoomCreate_roomCreate_owner | null;
+  readonly occupants: ReadonlyArray<(RoomCreate_roomCreate_occupants | null)> | null;
+  readonly chatMsgs: ReadonlyArray<(RoomCreate_roomCreate_chatMsgs | null)> | null;
 }
 
 export interface RoomCreate {
-  readonly rwRoomCreate: RoomCreate_rwRoomCreate | null;
+  readonly roomCreate: RoomCreate_roomCreate | null;
 }
 
 export interface RoomCreateVariables {
-  readonly config: IRoomConfigInput;
+  readonly config: RoomConfigInput;
 }

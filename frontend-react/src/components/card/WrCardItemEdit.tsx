@@ -21,7 +21,7 @@ mutation CardEdit(
   $answers: [String!],
   $template: Boolean,
 ) {
-  rwCardEdit(
+  cardEdit(
     id: $id,
     prompt: $prompt,
     fullAnswer: $fullAnswer,

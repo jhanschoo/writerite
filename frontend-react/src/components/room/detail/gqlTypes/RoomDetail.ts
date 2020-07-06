@@ -1,81 +1,88 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
-import { RwRoomMessageContentType } from "./../../../../gqlGlobalTypes";
+import { ChatMsgContentType } from "./../../../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL query operation: RoomDetail
 // ====================================================
 
-export interface RoomDetail_rwRoom_config {
-  readonly __typename: "IRoomConfig";
+export interface RoomDetail_room_config {
+  readonly __typename: "RoomConfig";
   readonly deckId: string | null;
   readonly deckName: string | null;
-  readonly deckNameLang: string | null;
   readonly roundLength: number | null;
   readonly clientDone: boolean | null;
 }
 
-export interface RoomDetail_rwRoom_owner {
-  readonly __typename: "RwUser";
+export interface RoomDetail_room_owner {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface RoomDetail_rwRoom_occupants {
-  readonly __typename: "RwUser";
+export interface RoomDetail_room_occupants {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface RoomDetail_rwRoom_messages_sender {
-  readonly __typename: "RwUser";
+export interface RoomDetail_room_chatMsgs_sender {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface RoomDetail_rwRoom_messages_room_config {
-  readonly __typename: "IRoomConfig";
+export interface RoomDetail_room_chatMsgs_room_config {
+  readonly __typename: "RoomConfig";
   readonly deckId: string | null;
   readonly deckName: string | null;
-  readonly deckNameLang: string | null;
   readonly roundLength: number | null;
   readonly clientDone: boolean | null;
 }
 
-export interface RoomDetail_rwRoom_messages_room {
-  readonly __typename: "RwRoom";
+export interface RoomDetail_room_chatMsgs_room {
+  readonly __typename: "Room";
   readonly id: string;
-  readonly config: RoomDetail_rwRoom_messages_room_config;
+  readonly ownerId: string;
+  readonly archived: boolean;
+  readonly inactive: boolean;
+  readonly config: RoomDetail_room_chatMsgs_room_config;
 }
 
-export interface RoomDetail_rwRoom_messages {
-  readonly __typename: "RwRoomMessage";
+export interface RoomDetail_room_chatMsgs {
+  readonly __typename: "ChatMsg";
   readonly id: string;
+  readonly roomId: string;
+  readonly senderId: string | null;
+  readonly type: ChatMsgContentType;
   readonly content: string;
-  readonly contentType: RwRoomMessageContentType;
-  readonly sender: RoomDetail_rwRoom_messages_sender | null;
-  readonly room: RoomDetail_rwRoom_messages_room | null;
+  readonly sender: RoomDetail_room_chatMsgs_sender | null;
+  readonly room: RoomDetail_room_chatMsgs_room | null;
 }
 
-export interface RoomDetail_rwRoom {
-  readonly __typename: "RwRoom";
+export interface RoomDetail_room {
+  readonly __typename: "Room";
   readonly id: string;
-  readonly config: RoomDetail_rwRoom_config;
-  readonly owner: RoomDetail_rwRoom_owner;
-  readonly occupants: ReadonlyArray<RoomDetail_rwRoom_occupants>;
-  readonly messages: ReadonlyArray<RoomDetail_rwRoom_messages>;
+  readonly ownerId: string;
+  readonly archived: boolean;
+  readonly inactive: boolean;
+  readonly config: RoomDetail_room_config;
+  readonly owner: RoomDetail_room_owner | null;
+  readonly occupants: ReadonlyArray<(RoomDetail_room_occupants | null)> | null;
+  readonly chatMsgs: ReadonlyArray<(RoomDetail_room_chatMsgs | null)> | null;
 }
 
 export interface RoomDetail {
-  readonly rwRoom: RoomDetail_rwRoom | null;
+  readonly room: RoomDetail_room | null;
 }
 
 export interface RoomDetailVariables {

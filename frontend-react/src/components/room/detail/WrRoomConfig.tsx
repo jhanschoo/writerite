@@ -1,12 +1,12 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { WrState } from '../../../store';
 
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_ROOM_STUB } from '../../../client-models';
+import { WR_ROOM_SCALARS } from '../../../client-models';
 import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 import { RoomUpdateConfig, RoomUpdateConfigVariables } from './gqlTypes/RoomUpdateConfig';
 
@@ -16,16 +16,16 @@ import TextInput from '../../../ui/TextInput';
 import HDivider from '../../../ui-components/HDivider';
 
 const ROOM_UPDATE_CONFIG_MUTATION = gql`
-${WR_ROOM_STUB}
+${WR_ROOM_SCALARS}
 mutation RoomUpdateConfig(
   $id: ID!
-  $config: IRoomConfigInput!
+  $config: RoomConfigInput!
 ) {
-  rwRoomUpdateConfig(
+  roomUpdateConfig(
     id: $id
     config: $config
   ) {
-    ...WrRoomStub
+    ...WrRoomScalars
   }
 }
 `;
@@ -53,17 +53,12 @@ const Field = styled.div`
 padding: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
 `;
 
-interface StateProps {
-  id?: string;
-}
-
-interface OwnProps {
+interface Props {
   room: WrRoomDetail;
 }
 
-type Props = StateProps & OwnProps;
-
-const WrRoomConfig = ({ id, room }: Props) => {
+const WrRoomConfig = ({ room }: Props) => {
+  const id = useSelector<WrState, string | null>((state) => state?.signin?.session?.user.id ?? null);
   const [roundLengthInput, setRoundLength] = useState<string>('20');
   const [
     mutate, { loading },
@@ -72,7 +67,7 @@ const WrRoomConfig = ({ id, room }: Props) => {
       onError: printApolloError,
     },
   );
-  if (room.config.clientDone || id !== room.owner.id) {
+  if (!id || room.config.clientDone || id !== room.owner?.id) {
     return null;
   }
 
@@ -118,11 +113,4 @@ const WrRoomConfig = ({ id, room }: Props) => {
   );
 };
 
-const mapStateToProps = (state: WrState): StateProps => {
-  const id = (state.signin && state.signin.data && state.signin.data.user.id) || undefined;
-  return { id };
-};
-
-const connectedWrRoomConfig = connect<StateProps, {}, OwnProps>(mapStateToProps)(WrRoomConfig);
-
-export default connectedWrRoomConfig;
+export default WrRoomConfig;

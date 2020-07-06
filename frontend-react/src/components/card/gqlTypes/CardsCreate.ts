@@ -1,34 +1,38 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL mutation operation: CardsCreate
 // ====================================================
 
-export interface CardsCreate_rwCardsCreate_deck {
-  readonly __typename: "RwDeck";
+export interface CardsCreate_cardsCreate_deck {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
-export interface CardsCreate_rwCardsCreate {
-  readonly __typename: "RwCard";
+export interface CardsCreate_cardsCreate {
+  readonly __typename: "Card";
   readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
-  readonly deck: CardsCreate_rwCardsCreate_deck;
+  readonly deck: CardsCreate_cardsCreate_deck | null;
 }
 
 export interface CardsCreate {
-  readonly rwCardsCreate: ReadonlyArray<CardsCreate_rwCardsCreate> | null;
+  readonly cardsCreate: ReadonlyArray<(CardsCreate_cardsCreate | null)> | null;
 }
 
 export interface CardsCreateVariables {

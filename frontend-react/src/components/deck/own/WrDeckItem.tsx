@@ -81,11 +81,11 @@ interface OwnProps {
 type Props = OwnProps & RouteComponentProps;
 
 const WrDeckItem = ({ deck, history }: Props) => {
-  const handleCompletedCreateRoom = (roomCreate: RoomCreate) => {
-    if (roomCreate === null || roomCreate.rwRoomCreate === null) {
+  const handleCompletedCreateRoom = ({ roomCreate }: RoomCreate) => {
+    if (!roomCreate) {
       return;
     }
-    history.push(`/room/${roomCreate.rwRoomCreate.id}`);
+    history.push(`/room/${roomCreate.id}`);
   };
   const [
     mutate,
@@ -102,7 +102,6 @@ const WrDeckItem = ({ deck, history }: Props) => {
         config: {
           deckId: deck.id,
           deckName: deck.name,
-          deckNameLang: deck.nameLang,
         },
       },
     });
@@ -114,13 +113,13 @@ const WrDeckItem = ({ deck, history }: Props) => {
         <HDividerDiv><HDivider/></HDividerDiv>
         <DeckStatisticsList>
           <Item>
-            {deck.subdecks.length} Sub-Decks
+            {deck.children?.length ?? 0} Sub-Decks
           </Item>
           <Item>
-            {deck.cards.filter((card) => card.template).length} Template Cards
+            {deck.cards?.filter((card) => card?.template).length ?? 0} Template Cards
           </Item>
           <Item>
-            {deck.cards.filter((card) => !card.template).length} Cards
+            {deck.cards?.filter((card) => card?.template === false).length ?? 0} Cards
           </Item>
         </DeckStatisticsList>
         <HDividerDiv><HDivider/></HDividerDiv>

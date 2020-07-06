@@ -1,26 +1,29 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL query operation: InRooms
 // ====================================================
 
-export interface InRooms_rwInRooms_config {
-  readonly __typename: "IRoomConfig";
+export interface InRooms_occupiedRooms_config {
+  readonly __typename: "RoomConfig";
   readonly deckId: string | null;
   readonly deckName: string | null;
-  readonly deckNameLang: string | null;
   readonly roundLength: number | null;
   readonly clientDone: boolean | null;
 }
 
-export interface InRooms_rwInRooms {
-  readonly __typename: "RwRoom";
+export interface InRooms_occupiedRooms {
+  readonly __typename: "Room";
   readonly id: string;
-  readonly config: InRooms_rwInRooms_config;
+  readonly ownerId: string;
+  readonly archived: boolean;
+  readonly inactive: boolean;
+  readonly config: InRooms_occupiedRooms_config;
 }
 
 export interface InRooms {
-  readonly rwInRooms: ReadonlyArray<InRooms_rwInRooms> | null;
+  readonly occupiedRooms: ReadonlyArray<(InRooms_occupiedRooms | null)> | null;
 }

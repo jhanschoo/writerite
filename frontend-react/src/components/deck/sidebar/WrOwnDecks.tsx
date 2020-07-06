@@ -10,8 +10,8 @@ import List from '../../../ui/list/List';
 import Item from '../../../ui/list/Item';
 import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 
-import WrOwnDecksSH from './WrOwnDecksSH';
 import WrDeckList from './WrDeckList';
+import { WrDeck } from '../../../client-models/gqlTypes/WrDeck';
 
 const FlexSection = styled.section`
 display: flex;
@@ -25,7 +25,7 @@ padding: ${({ theme }) => theme.space[2]}
 
 const WrOwnDecks = () => {
   const {
-    subscribeToMore, loading, error, data,
+    loading, error, data,
   } = useQuery<OwnDecks>(OWN_DECKS_QUERY, {
     onError: printApolloError,
   });
@@ -46,7 +46,8 @@ const WrOwnDecks = () => {
       </FlexSection>
     );
   }
-  if (!data || !data.rwOwnDecks) {
+  const decks = data?.ownDecks?.filter((deck): deck is WrDeck => !!deck);
+  if (!decks) {
     return (
       <FlexSection>
         <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
@@ -56,7 +57,7 @@ const WrOwnDecks = () => {
       </FlexSection>
     );
   }
-  if (data.rwOwnDecks.length === 0) {
+  if (decks.length === 0) {
     return (
       <FlexSection>
         <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
@@ -69,8 +70,7 @@ const WrOwnDecks = () => {
   return (
     <FlexSection>
       <SidebarMenuHeader>Your Decks</SidebarMenuHeader>
-      <WrOwnDecksSH subscribeToMore={subscribeToMore} />
-      <WrDeckList decks={data.rwOwnDecks} />
+      <WrDeckList decks={decks} />
     </FlexSection>
   );
 };

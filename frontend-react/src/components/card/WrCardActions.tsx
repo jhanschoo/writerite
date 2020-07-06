@@ -22,7 +22,7 @@ mutation CardCreate(
   $sortKey: String,
   $template: Boolean,
 ) {
-  rwCardCreate(
+  cardCreate(
     deckId: $deckId,
     prompt: $prompt,
     fullAnswer: $fullAnswer,
@@ -36,7 +36,9 @@ mutation CardCreate(
 
 const CARD_DELETE_MUTATION = gql`
 mutation CardDelete($id: ID!) {
-  rwCardDelete(id: $id)
+  cardDelete(id: $id) {
+    id
+  }
 }
 `;
 
@@ -71,7 +73,7 @@ const WrCardActions = ({ editActive, toggleEdit, deckId, card }: Props) => {
   const handleCardCreate = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     return cardCreate({
-      variables: { deckId, ...card },
+      variables: { ...card, deckId },
     });
   };
   const handleCardDelete = (e: MouseEvent<HTMLButtonElement>) => {

@@ -1,13 +1,13 @@
 import { client } from '../../apolloClient';
 import { ActionTypes, AuthorizationAction } from './actions';
-import { UserAndToken } from './WrSignin';
+import { CurrentUserAndToken } from '../../types';
 
 export interface SigninState {
-  data: UserAndToken | null;
+  session: CurrentUserAndToken | null;
 }
 
 export const initialState: SigninState = {
-  data: null,
+  session: null,
 };
 
 export const signin = (
@@ -15,15 +15,15 @@ export const signin = (
 ): SigninState => {
   switch (action.type) {
     case ActionTypes.SIGNIN:
-      if (action.data === null) {
+      if (action.session === null) {
         client.resetStore();
       }
-      return { ...state, data: action.data };
+      return { ...state, session: action.session };
     case ActionTypes.USER_EDIT:
-      if (state.data === null) {
+      if (state.session === null) {
         return state;
       }
-      return Object.assign({}, { ...state, data: { ...state.data, user: action.user } });
+      return Object.assign({}, { ...state, data: { ...state.session, user: action.user } });
     default:
       return state;
   }

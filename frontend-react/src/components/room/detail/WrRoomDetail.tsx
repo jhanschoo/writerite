@@ -10,22 +10,22 @@ import styled from 'styled-components';
 import Main from '../../../ui/layout/Main';
 import HDivider from '../../../ui-components/HDivider';
 
-import { withRouter, RouteComponentProps } from 'react-router';
+import { useParams } from 'react-router';
 
-import WrRoomDetailSH from './WrRoomDetailSH';
 import WrRoomDetailInput from './WrRoomDetailInput';
 import WrRoomConfig from './WrRoomConfig';
 import WrRoomSidebar from '../sidebar/WrRoomSidebar';
-import WrRoomMessageConfigItem from '../../room-message/WrRoomMessageConfigItem';
-import WrRoomMessageTextItem from '../../room-message/WrRoomMessageTextItem';
+import WrChatMsgConfigItem from '../../chat-msg/WrChatMsgConfigItem';
+import WrChatMsgTextItem from '../../chat-msg/WrChatMsgTextItem';
 import WrRoomConversationBox from './WrRoomConversationBox';
+import { WrChatMsg } from '../../../client-models/gqlTypes/WrChatMsg';
 
 const ROOM_DETAIL_QUERY = gql`
 ${WR_ROOM_DETAIL}
 query RoomDetail(
   $id: ID!
 ) {
-  rwRoom(id: $id) {
+  room(id: $id) {
     ...WrRoomDetail
   }
 }
@@ -46,9 +46,10 @@ margin: 0;
 font-size: 112.5%;
 `;
 
-const WrRoomDetailComponent = ({ match: { params: { roomId } } }: RouteComponentProps<{ roomId: string }>) => {
+const WrRoomDetailComponent = () => {
+  const { roomId } = useParams<{ roomId: string }>();
   const {
-    subscribeToMore, loading, error, data,
+    loading, error, data,
   } = useQuery<RoomDetail, RoomDetailVariables>(ROOM_DETAIL_QUERY, {
     variables: { id: roomId },
     onError: printApolloError,
@@ -73,33 +74,32 @@ const WrRoomDetailComponent = ({ match: { params: { roomId } } }: RouteComponent
       </>
     );
   }
-  if (!data || !data.rwRoom) {
+  if (!data?.room) {
     return (
       <CenteredP>
         Error retrieving room. Please try again later.
       </CenteredP>
     );
   }
-  const room = data.rwRoom;
+  const { room } = data;
   const { config } = room;
   let hasConfigMessage = false;
-  const formattedMessages = room.messages.map((message) => {
-    switch (message.contentType) {
+  const formattedMessages = room.chatMsgs?.filter((msg): msg is WrChatMsg => !!msg).map((msg) => {
+    switch (msg.type) {
       case 'CONFIG':
         hasConfigMessage = true;
-        return <WrRoomMessageConfigItem key={message.id} config={config} />;
+        return <WrChatMsgConfigItem key={msg.id} config={config} />;
     }
-    return <WrRoomMessageTextItem key={message.id} message={message} />;
+    return <WrChatMsgTextItem key={msg.id} message={msg} />;
   });
   return (
     <>
-      <WrRoomDetailSH subscribeToMore={subscribeToMore} roomId={room.id} />
       <WrRoomSidebar room={room} />
       <Main>
         <Header>
           <RoomHeading>
-            {room.owner.email} is hosting
-            <span lang={config.deckNameLang ? config.deckNameLang : undefined}>{config.deckName}</span>
+            {room.owner?.email || "ERROR"} is hosting
+            <span lang={undefined}>{config.deckName}</span>
           </RoomHeading>
         </Header>
         <HDivider />
@@ -114,4 +114,4 @@ const WrRoomDetailComponent = ({ match: { params: { roomId } } }: RouteComponent
   );
 };
 
-export default withRouter(WrRoomDetailComponent);
+export default WrRoomDetailComponent;

@@ -1,5 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
@@ -7,22 +8,25 @@
 // ====================================================
 
 export interface WrCard_deck {
-  readonly __typename: "RwDeck";
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
 export interface WrCard {
-  readonly __typename: "RwCard";
+  readonly __typename: "Card";
   readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
-  readonly deck: WrCard_deck;
+  readonly deck: WrCard_deck | null;
 }

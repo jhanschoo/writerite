@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { WrRoomMessage } from '../../client-models/gqlTypes/WrRoomMessage';
+import { WrChatMsg } from '../../client-models/gqlTypes/WrChatMsg';
 
 import styled from 'styled-components';
 import Item from '../../ui/list/Item';
@@ -33,7 +33,7 @@ padding: ${({ theme }) => theme.space[2]} 0;
 `;
 
 interface Props {
-  message: WrRoomMessage;
+  message: WrChatMsg;
 }
 
 const WrRoomMessageTextItem = ({ message }: Props) => {

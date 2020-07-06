@@ -7,8 +7,9 @@ import { createUserEdit } from '../signin/actions';
 import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { printApolloError } from '../../util';
-import { WR_USER_STUB } from '../../client-models';
+import { WR_USER_SCALARS } from '../../client-models';
 import { UserEdit, UserEditVariables } from './gqlTypes/UserEdit';
+import { CurrentUser } from '../../types';
 
 import styled from 'styled-components';
 import Main from '../../ui/layout/Main';
@@ -16,14 +17,13 @@ import { Button } from '../../ui/Button';
 import { TextInput } from '../../ui/TextInput';
 import Fieldset from '../../ui/Fieldset';
 
-const nameSelector = (state: WrState) =>
-  (state.signin && state.signin.data && state.signin.data.user.name) || '';
+const nameSelector = (state: WrState) => state?.signin?.session?.user?.name ?? '';
 
 const USER_EDIT_MUTATION = gql`
-${WR_USER_STUB}
+${WR_USER_SCALARS}
 mutation UserEdit($name: String!) {
-  rwUserEdit(name: $name) {
-    ...WrUserStub
+  userEdit(name: $name) {
+    ...WrUserScalars
   }
 }
 `;
@@ -58,8 +58,7 @@ const WrUserSettings = () => {
   const [nameInput, setNameInput] = useState(initialName);
   const [mutate] = useMutation<UserEdit, UserEditVariables>(USER_EDIT_MUTATION, {
     onError: printApolloError,
-    onCompleted: (data) =>
-      data.rwUserEdit && dispatch(createUserEdit(data.rwUserEdit)),
+    onCompleted: (data) => data.userEdit && dispatch(createUserEdit(data.userEdit as CurrentUser)),
   });
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

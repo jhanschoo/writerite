@@ -21,14 +21,12 @@ const DECK_CREATE_FROM_ROWS_MUTATION = gql`
 ${WR_DECK}
 mutation DeckCreateFromRows(
     $name: String
-    $nameLang: String
     $promptLang: String
     $answerLang: String
     $rows: [[String!]!]!
   ) {
-  rwDeckCreateFromRows(
+  deckCreateFromRows(
     name: $name
-    nameLang: $nameLang
     promptLang: $promptLang
     answerLang: $answerLang
     rows: $rows
@@ -162,7 +160,7 @@ const WrUploadDeck = ({ history }: RouteComponentProps) => {
     }
   };
   const setFile = (file: File) => {
-    Papa.parse(file, {
+    Papa.parse<string[]>(file, {
       skipEmptyLines: true,
       worker: true,
       complete: (({ data, errors }) => {
@@ -229,8 +227,8 @@ const WrUploadDeck = ({ history }: RouteComponentProps) => {
           rows,
         },
       }).then((res) => {
-        if (res && res.data && res.data.rwDeckCreateFromRows && res.data.rwDeckCreateFromRows.id) {
-          history.push(`/deck/${res.data.rwDeckCreateFromRows.id}`);
+        if (res?.data?.deckCreateFromRows?.id) {
+          history.push(`/deck/${res.data.deckCreateFromRows.id}`);
         }
       });
     }

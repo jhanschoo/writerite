@@ -1,94 +1,129 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL query operation: DeckDetail
 // ====================================================
 
-export interface DeckDetail_rwDeck_owner {
-  readonly __typename: "RwUser";
+export interface DeckDetail_deck_owner {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface DeckDetail_rwDeck_subdecks_owner {
-  readonly __typename: "RwUser";
+export interface DeckDetail_deck_parents {
+  readonly __typename: "Deck";
+  readonly id: string;
+  readonly ownerId: string;
+  readonly name: string;
+  readonly description: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+  readonly published: boolean;
+}
+
+export interface DeckDetail_deck_children_owner {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface DeckDetail_rwDeck_subdecks_subdecks {
-  readonly __typename: "RwDeck";
+export interface DeckDetail_deck_children_parents {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
-export interface DeckDetail_rwDeck_subdecks_cards {
-  readonly __typename: "RwCard";
+export interface DeckDetail_deck_children_children {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
+  readonly name: string;
+  readonly description: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+  readonly published: boolean;
+}
+
+export interface DeckDetail_deck_children_cards {
+  readonly __typename: "Card";
+  readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
 }
 
-export interface DeckDetail_rwDeck_subdecks {
-  readonly __typename: "RwDeck";
+export interface DeckDetail_deck_children {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
-  readonly owner: DeckDetail_rwDeck_subdecks_owner;
-  readonly subdecks: ReadonlyArray<DeckDetail_rwDeck_subdecks_subdecks>;
-  readonly cards: ReadonlyArray<DeckDetail_rwDeck_subdecks_cards>;
+  readonly published: boolean;
+  readonly owner: DeckDetail_deck_children_owner | null;
+  readonly parents: ReadonlyArray<(DeckDetail_deck_children_parents | null)> | null;
+  readonly children: ReadonlyArray<(DeckDetail_deck_children_children | null)> | null;
+  readonly cards: ReadonlyArray<(DeckDetail_deck_children_cards | null)> | null;
 }
 
-export interface DeckDetail_rwDeck_cards_deck {
-  readonly __typename: "RwDeck";
+export interface DeckDetail_deck_cards_deck {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
-export interface DeckDetail_rwDeck_cards {
-  readonly __typename: "RwCard";
+export interface DeckDetail_deck_cards {
+  readonly __typename: "Card";
   readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
-  readonly deck: DeckDetail_rwDeck_cards_deck;
+  readonly deck: DeckDetail_deck_cards_deck | null;
 }
 
-export interface DeckDetail_rwDeck {
-  readonly __typename: "RwDeck";
+export interface DeckDetail_deck {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
-  readonly owner: DeckDetail_rwDeck_owner;
-  readonly subdecks: ReadonlyArray<DeckDetail_rwDeck_subdecks>;
-  readonly cards: ReadonlyArray<DeckDetail_rwDeck_cards>;
+  readonly published: boolean;
+  readonly owner: DeckDetail_deck_owner | null;
+  readonly parents: ReadonlyArray<(DeckDetail_deck_parents | null)> | null;
+  readonly children: ReadonlyArray<(DeckDetail_deck_children | null)> | null;
+  readonly cards: ReadonlyArray<(DeckDetail_deck_cards | null)> | null;
 }
 
 export interface DeckDetail {
-  readonly rwDeck: DeckDetail_rwDeck | null;
+  readonly deck: DeckDetail_deck | null;
 }
 
 export interface DeckDetailVariables {

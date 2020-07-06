@@ -9,7 +9,7 @@ import { WrCard } from '../../client-models/gqlTypes/WrCard';
 import WrCardItem from './WrCardItem';
 
 interface OwnProps {
-  cards: WrCard[];
+  cards: (WrCard | null)[];
   promptLang: string;
   answerLang: string;
 }
@@ -17,9 +17,9 @@ interface OwnProps {
 type Props = OwnProps & RouteComponentProps<{ deckId: string }>;
 
 const WrCardsList = ({ cards, promptLang, answerLang, match: { params: { deckId } } }: Props) => {
-  const formattedCards = cards.map((card) => (
+  const formattedCards = cards.map((card) => card &&
     <WrCardItem key={card.id} card={card} deckId={deckId} promptLang={promptLang} answerLang={answerLang} />
-  ));
+  );
   return (
     <>
       {formattedCards}

@@ -4,7 +4,7 @@ import { WR_DECK, WR_ROOM } from '../../client-models';
 export const OWN_DECKS_QUERY = gql`
 ${WR_DECK}
 query OwnDecks {
-  rwOwnDecks {
+  ownDecks {
     ...WrDeck
   }
 }
@@ -13,19 +13,10 @@ query OwnDecks {
 export const OWN_DECKS_UPDATES_SUBSCRIPTION = gql`
 ${WR_DECK}
 subscription OwnDecksUpdates {
-  rwOwnDecksUpdates {
-    ... on RwDeckCreated {
-      created {
-        ...WrDeck
-      }
-    }
-    ... on RwDeckUpdated {
-      updated {
-        ...WrDeck
-      }
-    }
-    ... on RwDeckDeleted {
-      deletedId
+  ownDecksUpdates {
+    type
+    data {
+      ...WrDeck
     }
   }
 }
@@ -34,9 +25,9 @@ subscription OwnDecksUpdates {
 export const ROOM_CREATE_MUTATION = gql`
 ${WR_ROOM}
 mutation RoomCreate(
-  $config: IRoomConfigInput!
+  $config: RoomConfigInput!
 ) {
-  rwRoomCreate(
+  roomCreate(
     config: $config
   ) {
     ...WrRoom

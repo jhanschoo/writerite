@@ -3,6 +3,7 @@
     "target": "es5",
     "lib": [
       "dom",
+      "dom.iterable",
       "esnext"
     ],
     "allowJs": true,
@@ -13,17 +14,14 @@
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "plugins": [
-      { "name": "typescript-tslint-plugin" }
-    ],
+    // "noUnusedLocals": false,
+    // "noUnusedParameters": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve"
+    "jsx": "react"
   },
   "include": [
-    "src"
+    "src",
   ]
 }

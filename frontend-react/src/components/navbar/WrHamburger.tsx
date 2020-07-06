@@ -1,8 +1,9 @@
 import React, { MouseEvent } from 'react';
 import { Menu } from 'react-feather';
 
-import { connect } from 'react-redux';
-import { WrState } from '../../store';
+import type { Dispatch } from 'redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { WrState } from '../../store';
 import { initialState } from '../sidebar-menu/reducers';
 import { createShow, createHide, SidebarAction } from '../sidebar-menu/actions';
 
@@ -21,25 +22,14 @@ display: none;
 }
 `;
 
-interface DispatchProps {
-  createShow: () => SidebarAction;
-  createHide: () => SidebarAction;
-}
-
-interface StateProps {
-  num?: number;
-  hidden?: boolean;
-}
-
-type Props = StateProps & DispatchProps;
-
-// tslint:disable-next-line: no-shadowed-variable
-const WrHamburger = ({ num, hidden, createShow, createHide }: Props) => {
+const WrHamburger = () => {
+  const { num, hidden } = useSelector<WrState, { num?: number, hidden?: boolean }>((state) => state.sidebar ?? initialState);
+  const dispatch = useDispatch<Dispatch<SidebarAction>>();
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     if (hidden) {
-      createShow();
+      dispatch(createShow());
     } else {
-      createHide();
+      dispatch(createHide());
     }
   };
   const className = (num === 0) ? 'hidden' : undefined;
@@ -52,16 +42,4 @@ const WrHamburger = ({ num, hidden, createShow, createHide }: Props) => {
   );
 };
 
-const mapStateToProps = (state: WrState): StateProps => {
-  const { num, hidden } = state.sidebar || initialState;
-  return { num, hidden };
-};
-
-const mapDispatchToProps: DispatchProps = {
-  createShow,
-  createHide,
-};
-
-const connectedWrHamburger = connect<StateProps, DispatchProps>(mapStateToProps, mapDispatchToProps)(WrHamburger);
-
-export default connectedWrHamburger;
+export default WrHamburger;

@@ -1,22 +1,25 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: WrRoomStub
+// GraphQL fragment: WrRoomScalars
 // ====================================================
 
-export interface WrRoomStub_config {
-  readonly __typename: "IRoomConfig";
+export interface WrRoomScalars_config {
+  readonly __typename: "RoomConfig";
   readonly deckId: string | null;
   readonly deckName: string | null;
-  readonly deckNameLang: string | null;
   readonly roundLength: number | null;
   readonly clientDone: boolean | null;
 }
 
-export interface WrRoomStub {
-  readonly __typename: "RwRoom";
+export interface WrRoomScalars {
+  readonly __typename: "Room";
   readonly id: string;
-  readonly config: WrRoomStub_config;
+  readonly ownerId: string;
+  readonly archived: boolean;
+  readonly inactive: boolean;
+  readonly config: WrRoomScalars_config;
 }

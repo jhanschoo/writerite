@@ -3,8 +3,9 @@ import React from 'react';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { printApolloError } from '../../../util';
-import { WR_ROOM_STUB } from '../../../client-models';
-import { InRooms } from './gqlTypes/InRooms';
+import { WR_ROOM_SCALARS } from '../../../client-models';
+import { WrRoomScalars } from '../../../client-models/gqlTypes/WrRoomScalars';
+import { OccupiedRooms } from './gqlTypes/OccupiedRooms';
 
 import styled from 'styled-components';
 import List from '../../../ui/list/List';
@@ -14,10 +15,10 @@ import SidebarMenuHeader from '../../../ui/sidebar-menu/SidebarMenuHeader';
 import WrRoomList from './WrRoomList';
 
 const IN_ROOMS_QUERY = gql`
-${WR_ROOM_STUB}
-query InRooms {
-  rwInRooms {
-    ...WrRoomStub
+${WR_ROOM_SCALARS}
+query OccupiedRooms {
+  occupiedRooms {
+    ...WrRoomScalars
   }
 }
 `;
@@ -35,7 +36,7 @@ padding: ${({ theme }) => theme.space[2]}
 const WrInRooms = () => {
   const {
     loading, error, data,
-  } = useQuery<InRooms, object>(IN_ROOMS_QUERY, {
+  } = useQuery<OccupiedRooms, object>(IN_ROOMS_QUERY, {
     onError: printApolloError,
   });
   if (error) {
@@ -55,7 +56,7 @@ const WrInRooms = () => {
       </FlexSection>
     );
   }
-  if (!data || data.rwInRooms === undefined || !Array.isArray(data.rwInRooms)) {
+  if (!data?.occupiedRooms) {
     return (
       <FlexSection>
         <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
@@ -65,7 +66,8 @@ const WrInRooms = () => {
       </FlexSection>
     );
   }
-  if (data.rwInRooms.length === 0) {
+  const rooms = data.occupiedRooms.filter((room): room is WrRoomScalars => !!room)
+  if (rooms.length === 0) {
     return (
       <FlexSection>
         <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
@@ -78,7 +80,7 @@ const WrInRooms = () => {
   return (
     <FlexSection>
       <SidebarMenuHeader>Rooms you are in</SidebarMenuHeader>
-      <WrRoomList rooms={data.rwInRooms} />
+      <WrRoomList rooms={rooms} />
     </FlexSection>
   );
 };

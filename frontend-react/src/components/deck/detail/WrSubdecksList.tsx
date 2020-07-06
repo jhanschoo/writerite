@@ -17,9 +17,9 @@ interface Props {
 }
 
 const WrSubdecksList = ({ deck }: Props) => {
-  const styledDecks = deck.subdecks.map((subdeck) => (
-    <WrSubdeckItem key={subdeck.id} deck={deck} subdeck={subdeck} />
-  ));
+  const styledDecks = deck?.children?.map((child) => child &&
+    <WrSubdeckItem key={child.id} deck={deck} child={child} />
+  );
   return (
     <StyledList>
       {styledDecks}

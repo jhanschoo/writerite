@@ -20,7 +20,7 @@ mutation CardsCreate(
   $template: Boolean,
   $multiplicity: Int!
 ) {
-  rwCardsCreate(
+  cardsCreate(
     deckId: $deckId,
     prompt: $prompt,
     fullAnswer: $fullAnswer,

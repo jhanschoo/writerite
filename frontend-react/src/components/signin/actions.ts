@@ -1,5 +1,4 @@
-import { UserAndToken } from './WrSignin';
-import { WrUserStub } from '../../client-models/gqlTypes/WrUserStub';
+import { CurrentUser, CurrentUserAndToken } from '../../types';
 
 export enum ActionTypes {
   SIGNIN = 'SIGNIN',
@@ -8,31 +7,31 @@ export enum ActionTypes {
 
 export interface SigninAction {
   readonly type: ActionTypes.SIGNIN;
-  readonly data: UserAndToken | null;
+  readonly session: CurrentUserAndToken | null;
 }
 
 export interface UserEditAction {
   readonly type: ActionTypes.USER_EDIT;
-  readonly user: WrUserStub;
+  readonly user: CurrentUser;
 }
 
 export type AuthorizationAction = SigninAction | UserEditAction;
 
-export const createSignin = (data: UserAndToken | null): AuthorizationAction => {
+export const createSignin = (session: CurrentUserAndToken | null): SigninAction => {
   return {
     type: ActionTypes.SIGNIN,
-    data,
+    session,
   };
 };
 
-export const createSignout = (): AuthorizationAction => {
+export const createSignout = (): SigninAction => {
   return {
     type: ActionTypes.SIGNIN,
-    data: null,
+    session: null,
   };
 };
 
-export const createUserEdit = (user: WrUserStub): AuthorizationAction => {
+export const createUserEdit = (user: CurrentUser): UserEditAction => {
   return {
     type: ActionTypes.USER_EDIT,
     user,

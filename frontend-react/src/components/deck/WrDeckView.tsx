@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-  Switch, Route, Redirect, withRouter, RouteComponentProps,
-} from 'react-router';
+import { Switch, Route, Redirect, useRouteMatch, } from 'react-router';
 
 import WrNavBar from '../navbar/WrNavBar';
 import WrDeckSidebar from './sidebar/WrDeckSidebar';
@@ -11,7 +9,8 @@ import WrFindDecks from './find/WrFindDecks';
 import WrUploadDeck from './WrUploadDeck';
 import WrDeckDetail from './detail/WrDeckDetail';
 
-const WrDeckView = ({ match }: RouteComponentProps) => {
+const WrDeckView = () => {
+  const match = useRouteMatch();
   return (
     <>
       <WrNavBar />
@@ -27,4 +26,4 @@ const WrDeckView = ({ match }: RouteComponentProps) => {
   );
 };
 
-export default withRouter(WrDeckView);
+export default WrDeckView;

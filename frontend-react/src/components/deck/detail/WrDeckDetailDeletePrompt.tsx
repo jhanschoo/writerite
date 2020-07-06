@@ -14,7 +14,9 @@ import TextInput from '../../../ui/TextInput';
 
 const DECK_DELETE_MUTATION = gql`
 mutation DeckDelete($id: ID!) {
-  rwDeckDelete(id: $id)
+  deckDelete(id: $id) {
+    id
+  }
 }
 `;
 

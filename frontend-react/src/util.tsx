@@ -6,8 +6,7 @@ import { client } from './apolloClient';
 
 export const getAuth = () => {
   const storeState = store.getState();
-  const token = storeState.signin
-    && storeState.signin.data && storeState.signin.data.token;
+  const token = storeState?.signin?.session?.token;
   return token ? `Bearer ${token}` : '';
 };
 

@@ -1,16 +1,19 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL fragment: WrDeckStub
+// GraphQL fragment: WrDeckScalars
 // ====================================================
 
-export interface WrDeckStub {
-  readonly __typename: "RwDeck";
+export interface WrDeckScalars {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }

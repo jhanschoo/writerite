@@ -1,34 +1,38 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL mutation operation: CardEdit
 // ====================================================
 
-export interface CardEdit_rwCardEdit_deck {
-  readonly __typename: "RwDeck";
+export interface CardEdit_cardEdit_deck {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
-export interface CardEdit_rwCardEdit {
-  readonly __typename: "RwCard";
+export interface CardEdit_cardEdit {
+  readonly __typename: "Card";
   readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
-  readonly deck: CardEdit_rwCardEdit_deck;
+  readonly deck: CardEdit_cardEdit_deck | null;
 }
 
 export interface CardEdit {
-  readonly rwCardEdit: CardEdit_rwCardEdit | null;
+  readonly cardEdit: CardEdit_cardEdit | null;
 }
 
 export interface CardEditVariables {

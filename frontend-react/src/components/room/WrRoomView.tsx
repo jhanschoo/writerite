@@ -1,18 +1,18 @@
 import React from 'react';
 import {
-  Switch, Route, Redirect, withRouter, RouteComponentProps,
+  Switch, Route, Redirect, useRouteMatch,
 } from 'react-router';
 
 import WrNavBar from '../navbar/WrNavBar';
 import WrFindRoom from './search/WrFindRoom';
 import WrRoomDetail from './detail/WrRoomDetail';
 
-const WrDeckView = ({ match: { url } }: RouteComponentProps) => {
+const WrDeckView = () => {
+  const { url } = useRouteMatch();
   return (
     <>
       <WrNavBar />
       <Switch>
-        {/* <Route path={`${match.url}/search`} component={WrFindRoom} /> */}
         <Route path={`${url}/search`} component={WrFindRoom} />
         <Route path={`${url}/:roomId`} component={WrRoomDetail} />
         <Redirect to={`${url}/search`} />
@@ -21,4 +21,4 @@ const WrDeckView = ({ match: { url } }: RouteComponentProps) => {
   );
 };
 
-export default withRouter(WrDeckView);
+export default WrDeckView;

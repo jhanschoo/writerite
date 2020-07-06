@@ -73,11 +73,11 @@ type Props = OwnProps & RouteComponentProps;
 
 const WrDeckDetailHeader = ({ deck, history }: Props) => {
   const [activeAction, setActiveAction] = useState(ActiveAction.NONE);
-  const handleCompletedCreateRoom = (roomCreate: RoomCreate) => {
-    if (roomCreate === null || roomCreate.rwRoomCreate === null) {
+  const handleCompletedCreateRoom = ({ roomCreate }: RoomCreate) => {
+    if (!roomCreate) {
       return;
     }
-    history.push(`/room/${roomCreate.rwRoomCreate.id}`);
+    history.push(`/room/${roomCreate.id}`);
   };
   const [mutate] = useMutation<RoomCreate, RoomCreateVariables>(
       ROOM_CREATE_MUTATION, {
@@ -108,7 +108,6 @@ const WrDeckDetailHeader = ({ deck, history }: Props) => {
         config: {
           deckId: deck.id,
           deckName: deck.name,
-          deckNameLang: deck.nameLang,
         },
       },
     });

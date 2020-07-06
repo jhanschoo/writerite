@@ -19,13 +19,11 @@ const DECK_CREATE_MUTATION = gql`
 ${WR_DECK}
 mutation DeckCreate(
     $name: String
-    $nameLang: String
     $promptLang: String
     $answerLang: String
   ) {
-  rwDeckCreate(
+  deckCreate(
     name: $name
-    nameLang: $nameLang
     promptLang: $promptLang
     answerLang: $answerLang
   ) {

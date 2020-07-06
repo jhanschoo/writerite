@@ -1,15 +1,14 @@
 import gql from 'graphql-tag';
-import { WR_USER_STUB } from './WrUserStub';
-import { WR_DECK_STUB } from './WrDeckStub';
+import { WR_USER_SCALARS } from './WrUserScalars';
+import { WR_DECK_SCALARS } from './WrDeckScalars';
 
-// tslint:disable-next-line: variable-name
 export const WR_USER = gql`
-${WR_USER_STUB}
-${WR_DECK_STUB}
-fragment WrUser on RwUser {
-  ...WrUserStub
+${WR_USER_SCALARS}
+${WR_DECK_SCALARS}
+fragment WrUser on User {
+  ...WrUserScalars
   decks {
-    ...WrDeckStub
+    ...WrDeckScalars
   }
 }
 `;

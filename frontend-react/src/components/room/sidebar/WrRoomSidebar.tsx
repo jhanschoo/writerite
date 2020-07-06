@@ -3,7 +3,7 @@ import React from 'react';
 import { WrRoomDetail } from '../../../client-models/gqlTypes/WrRoomDetail';
 
 import WrSidebarMenu from '../../sidebar-menu/WrSidebarMenu';
-import WrInRooms from './WrInRooms';
+import WrOccupiedRooms from './WrOccupiedRooms';
 
 interface Props {
   readonly room?: WrRoomDetail;
@@ -15,13 +15,13 @@ const WrRoomSidebar = ({ room }: Props) => {
   if (!room) {
     return (
       <WrSidebarMenu>
-        <WrInRooms />
+        <WrOccupiedRooms />
       </WrSidebarMenu>
     );
   }
   return (
     <WrSidebarMenu>
-      <WrInRooms />
+      <WrOccupiedRooms />
     </WrSidebarMenu>
   );
 };

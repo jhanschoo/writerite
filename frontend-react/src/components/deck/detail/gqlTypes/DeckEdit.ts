@@ -1,59 +1,77 @@
 /* tslint:disable */
 /* eslint-disable */
+// @generated
 // This file was automatically generated and should not be edited.
 
 // ====================================================
 // GraphQL mutation operation: DeckEdit
 // ====================================================
 
-export interface DeckEdit_rwDeckEdit_owner {
-  readonly __typename: "RwUser";
+export interface DeckEdit_deckEdit_owner {
+  readonly __typename: "User";
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface DeckEdit_rwDeckEdit_subdecks {
-  readonly __typename: "RwDeck";
+export interface DeckEdit_deckEdit_parents {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
+  readonly published: boolean;
 }
 
-export interface DeckEdit_rwDeckEdit_cards {
-  readonly __typename: "RwCard";
+export interface DeckEdit_deckEdit_children {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
+  readonly name: string;
+  readonly description: string;
+  readonly promptLang: string;
+  readonly answerLang: string;
+  readonly published: boolean;
+}
+
+export interface DeckEdit_deckEdit_cards {
+  readonly __typename: "Card";
+  readonly id: string;
+  readonly deckId: string;
   readonly prompt: string;
   readonly fullAnswer: string;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
+  readonly editedAt: any;
   readonly template: boolean;
-  readonly editedAt: string;
 }
 
-export interface DeckEdit_rwDeckEdit {
-  readonly __typename: "RwDeck";
+export interface DeckEdit_deckEdit {
+  readonly __typename: "Deck";
   readonly id: string;
+  readonly ownerId: string;
   readonly name: string;
-  readonly nameLang: string;
+  readonly description: string;
   readonly promptLang: string;
   readonly answerLang: string;
-  readonly owner: DeckEdit_rwDeckEdit_owner;
-  readonly subdecks: ReadonlyArray<DeckEdit_rwDeckEdit_subdecks>;
-  readonly cards: ReadonlyArray<DeckEdit_rwDeckEdit_cards>;
+  readonly published: boolean;
+  readonly owner: DeckEdit_deckEdit_owner | null;
+  readonly parents: ReadonlyArray<(DeckEdit_deckEdit_parents | null)> | null;
+  readonly children: ReadonlyArray<(DeckEdit_deckEdit_children | null)> | null;
+  readonly cards: ReadonlyArray<(DeckEdit_deckEdit_cards | null)> | null;
 }
 
 export interface DeckEdit {
-  readonly rwDeckEdit: DeckEdit_rwDeckEdit | null;
+  readonly deckEdit: DeckEdit_deckEdit | null;
 }
 
 export interface DeckEditVariables {
   readonly id: string;
   readonly name?: string | null;
-  readonly nameLang?: string | null;
+  readonly description?: string | null;
   readonly promptLang?: string | null;
   readonly answerLang?: string | null;
 }

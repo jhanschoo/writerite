@@ -18,14 +18,14 @@ ${WR_DECK}
 mutation DeckEdit(
     $id: ID!
     $name: String
-    $nameLang: String
+    $description: String
     $promptLang: String
     $answerLang: String
   ) {
-  rwDeckEdit(
+  deckEdit(
     id: $id
     name: $name
-    nameLang: $nameLang
+    description: $description
     promptLang: $promptLang
     answerLang: $answerLang
   ) {
@@ -80,9 +80,8 @@ interface Props {
   disabled?: boolean;
 }
 
-const WrDetailSettings = ({ disabled, deck: { id, name, nameLang, promptLang, answerLang } }: Props) => {
+const WrDetailSettings = ({ disabled, deck: { id, name, promptLang, answerLang } }: Props) => {
   const [nameInput, setNameInput] = useState(name);
-  const [nameLangInput, setNameLangInput] = useState(nameLang);
   const [promptLangInput, setPromptLangInput] = useState(promptLang);
   const [answerLangInput, setAnswerLangInput] = useState(answerLang);
   const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(
@@ -96,7 +95,7 @@ const WrDetailSettings = ({ disabled, deck: { id, name, nameLang, promptLang, an
   };
   const resetState = () => {
     setNameInput(name);
-    setNameLangInput(nameLang);
+    setPromptLangInput(promptLang);
     setAnswerLangInput(answerLang);
   };
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -112,7 +111,6 @@ const WrDetailSettings = ({ disabled, deck: { id, name, nameLang, promptLang, an
       variables: {
         id,
         name: nameInput,
-        nameLang: nameLangInput,
         promptLang: promptLangInput,
         answerLang: answerLangInput,
       },
@@ -133,19 +131,6 @@ const WrDetailSettings = ({ disabled, deck: { id, name, nameLang, promptLang, an
               onChange={handleTextChange(setNameInput)}
               onKeyDown={handleKeyDown}
               disabled={disabled || loading}
-            />
-          </StyledItem>
-          <StyledItem>
-            <StyledLabel htmlFor="name-lang-input">
-            Deck name language code
-            </StyledLabel>
-            <StyledTextInput
-              type="text"
-              id="name-lang-input"
-              value={nameLangInput}
-              onChange={handleTextChange(setNameLangInput)}
-              onKeyDown={handleKeyDown}
-              disabled={loading}
             />
           </StyledItem>
           <StyledItem>

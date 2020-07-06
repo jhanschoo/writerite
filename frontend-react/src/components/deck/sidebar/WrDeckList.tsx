@@ -48,7 +48,7 @@ const WrDeckList = ({ decks }: Props) => {
     )]
     : filteredDecks.map((deck) => (
         <StyledItem key={deck.id}>
-          <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.nameLang || undefined}>
+          <SidebarMenuLink to={`/deck/${deck.id}`} lang={deck.promptLang || undefined}>
             {deck.name}
           </SidebarMenuLink>
         </StyledItem>

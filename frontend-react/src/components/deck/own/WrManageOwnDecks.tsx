@@ -18,22 +18,22 @@ flex-wrap: wrap;
 
 const WrManageOwnDecks = () => {
   const {
-    subscribeToMore, loading, error, data,
+    loading, error, data,
   } = useQuery<OwnDecks>(OWN_DECKS_QUERY, {
     onError: printApolloError,
   });
   if (error) {
     return (<Main/>);
   }
-  if (loading || !data || (data.rwOwnDecks === null)) {
+  if (loading || !data?.ownDecks) {
     return (<Main><p>Fetching decks...</p></Main>);
   }
-  if (data.rwOwnDecks.length === 0) {
+  if (data.ownDecks.length === 0) {
     return (<Main><p>You have no decks.</p></Main>);
   }
-  const styledDecks = data.rwOwnDecks.map((deck) => (
+  const styledDecks = data.ownDecks.map((deck) => deck &&
     <WrDeckItem deck={deck} key={deck.id}/>
-  ));
+  );
   return (
     <Main>
       <StyledList>
