@@ -50,6 +50,7 @@ const wrightJWT = generateJWT({
   id: "theWright",
   email: "wright@writerite.site",
   roles: [Roles.wright],
+  name: "The Wright",
 });
 
 function writeJWT(): void {

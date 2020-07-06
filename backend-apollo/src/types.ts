@@ -58,12 +58,16 @@ export type Upload = Promise<FileUpload>;
 export interface CurrentUser {
   id: string;
   email: string;
+  name: string | null;
   roles: Roles[];
 }
 
 export enum UpdateType {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   CREATED = "CREATED",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   EDITED = "EDITED",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   DELETED = "DELETED",
 }
 

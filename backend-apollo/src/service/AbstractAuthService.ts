@@ -22,12 +22,13 @@ export abstract class AbstractAuthService {
     if (user === null) {
       return null;
     }
-    const { id, email, roles } = user;
+    const { id, email, roles, name } = user;
     return {
       token: generateJWT({
         id,
         email,
         roles,
+        name,
       }, persist),
     };
   }
