@@ -5,8 +5,28 @@ import { FieldResolver, WrContext } from "../types";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS } from "../model/Deck";
 import { CardSS } from "../model/Card";
-import { RoomSS, userOccupiesRoom, roomToSS } from "../model/Room";
+import { RoomSS, roomToSS, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
+
+const DEFAULT_TAKE = 60;
+function cursorParams(cursor?: string | null, take?: number | null): {
+  cursor: { id: string },
+  skip: number,
+  take: number,
+} | {
+  take: number
+} {
+  if (cursor) {
+    return {
+      cursor: { id: cursor },
+      skip: 1,
+      take: (take ?? DEFAULT_TAKE) + 1,
+    };
+  }
+  return {
+    take: take ?? DEFAULT_TAKE,
+  };
+}
 
 interface QueryResolver extends IResolverObject<Record<string, unknown>, WrContext> {
   user: FieldResolver<Record<string, unknown>, WrContext, { id: string }, UserSS | null>;
@@ -55,7 +75,15 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return await prisma.deck.findMany({ where: { ownerId: sub.id } });
+      return await prisma.deck.findMany({
+        ...cursorParams(cursor, take),
+        where: {
+          ownerId: sub.id,
+          name: titleFilter ? {
+            contains: titleFilter,
+          } : undefined,
+        },
+      });
     } catch (e) {
       return null;
     }
@@ -65,7 +93,15 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return await prisma.deck.findMany({ where: { ownerId: sub.id } });
+      return await prisma.deck.findMany({
+        ...cursorParams(cursor, take),
+        where: {
+          ownerId: sub.id,
+          name: titleFilter ? {
+            contains: titleFilter,
+          } : undefined,
+        },
+      });
     } catch (e) {
       return null;
     }
@@ -75,7 +111,19 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return await prisma.deck.findMany({ where: { ownerId: sub.id } });
+      return await prisma.deck.findMany({
+        ...cursorParams(cursor, take),
+        where: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          OR: [
+            { ownerId: sub.id },
+            { published: true },
+          ],
+          name: titleFilter ? {
+            contains: titleFilter,
+          } : undefined,
+        },
+      });
     } catch (e) {
       return null;
     }

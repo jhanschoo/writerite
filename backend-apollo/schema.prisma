@@ -77,7 +77,21 @@ model User {
   occupyingRooms Occupant[] @relation("UserTo_Occupant")
 }
 
+model UserCardRecord {
+  cardId         String
+  correctRecord  DateTime[]
+  createdAt      DateTime   @default(now())
+  id             String     @default(dbgenerated()) @id
+  updatedAt      DateTime   @default(now()) @updatedAt
+  userId         String
+  card           Card       @relation(fields: [cardId], references: [id])
+  user           User       @relation(fields: [userId], references: [id])
+
+  @@unique([userId, cardId])
+}
+
 // no fields are actually nullable but they are written so as a workaround so that deletion cascades
+// This following issue is also a blocker for upgrading @prisma/cli @prisma/client from v2.1.3 to v2.2.0
 //See: https://github.com/prisma/prisma/issues/2057
 model Occupant {
   A        String?
@@ -91,6 +105,7 @@ model Occupant {
 }
 
 // no fields are actually nullable but they are written so as a workaround so that deletion cascades
+// This following issue is also a blocker for upgrading @prisma/cli @prisma/client from v2.1.3 to v2.2.0
 //See: https://github.com/prisma/prisma/issues/2057
 model Subdeck {
   A          String?
