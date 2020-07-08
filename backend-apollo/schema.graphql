@@ -26,7 +26,12 @@ type Query {
   user(id: ID!): User
   # Deck
   deck(id: ID!): Deck
-  ownDecks: [Deck]
+  # implicit limit of 60
+  ownedDecks(cursor: Int take: Int titleFilter: String): [Deck]
+  # implicit limit of 60; TODO: currently not supported
+  participatedDecks(cursor: Int take: Int titleFilter: String): [Deck]
+  # implicit limit of 60
+  visibleDecks(cursor: Int take: Int titleFilter: String): [Deck]
   # Card
   card(id: ID!): Card
   cardsOfDeck(deckId: ID!): [Card]

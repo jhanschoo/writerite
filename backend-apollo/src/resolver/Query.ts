@@ -11,7 +11,21 @@ import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 interface QueryResolver extends IResolverObject<Record<string, unknown>, WrContext> {
   user: FieldResolver<Record<string, unknown>, WrContext, { id: string }, UserSS | null>;
   deck: FieldResolver<Record<string, unknown>, WrContext, { id: string }, DeckSS | null>;
-  ownDecks: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
+  ownedDecks: FieldResolver<Record<string, unknown>, WrContext, {
+    cursor?: string | null,
+    take?: number | null,
+    titleFilter?: string | null,
+  }, (DeckSS | null)[] | null>;
+  participatedDecks: FieldResolver<Record<string, unknown>, WrContext, {
+    cursor?: string | null,
+    take?: number | null,
+    titleFilter?: string | null,
+  }, (DeckSS | null)[] | null>;
+  visibleDecks: FieldResolver<Record<string, unknown>, WrContext, {
+    cursor?: string | null,
+    take?: number | null,
+    titleFilter?: string | null,
+  }, (DeckSS | null)[] | null>;
   card: FieldResolver<Record<string, unknown>, WrContext, { id: string }, CardSS | null>;
   cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
   room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
@@ -36,7 +50,27 @@ export const Query: QueryResolver = {
       return null;
     }
   },
-  async ownDecks(_parent, _args, { sub, prisma }, _info) {
+  async ownedDecks(_parent, { cursor, take, titleFilter }, { sub, prisma }, _info) {
+    if (!sub) {
+      return null;
+    }
+    try {
+      return await prisma.deck.findMany({ where: { ownerId: sub.id } });
+    } catch (e) {
+      return null;
+    }
+  },
+  async participatedDecks(_parent, { cursor, take, titleFilter }, { sub, prisma }, _info) {
+    if (!sub) {
+      return null;
+    }
+    try {
+      return await prisma.deck.findMany({ where: { ownerId: sub.id } });
+    } catch (e) {
+      return null;
+    }
+  },
+  async visibleDecks(_parent, { cursor, take, titleFilter }, { sub, prisma }, _info) {
     if (!sub) {
       return null;
     }
