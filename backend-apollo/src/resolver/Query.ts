@@ -16,15 +16,16 @@ function cursorParams(cursor?: string | null, take?: number | null): {
 } | {
   take: number
 } {
+  const actualTake = Math.min(take ?? DEFAULT_TAKE, DEFAULT_TAKE);
   if (cursor) {
     return {
       cursor: { id: cursor },
       skip: 1,
-      take: (take ?? DEFAULT_TAKE) + 1,
+      take: actualTake + 1,
     };
   }
   return {
-    take: take ?? DEFAULT_TAKE,
+    take: actualTake,
   };
 }
 
