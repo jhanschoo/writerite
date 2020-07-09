@@ -11,14 +11,15 @@ model Card {
   answers    String[]
   createdAt  DateTime @default(now())
   deckId     String
-  editedAt   DateTime @default(now())
-  fullAnswer String   @default("")
-  id         String   @default(dbgenerated()) @id
-  prompt     String   @default("")
-  sortKey    String   @default("")
-  template   Boolean  @default(false)
-  updatedAt  DateTime @default(now()) @updatedAt
-  deck       Deck     @relation(fields: [deckId], references: [id])
+  editedAt   DateTime         @default(now())
+  fullAnswer String           @default("")
+  id         String           @default(dbgenerated()) @id
+  prompt     String           @default("")
+  sortKey    String           @default("")
+  template   Boolean          @default(false)
+  updatedAt  DateTime         @default(now()) @updatedAt
+  deck       Deck             @relation(fields: [deckId], references: [id])
+  records    UserCardRecord[]
 }
 
 model ChatMsg {
@@ -63,18 +64,19 @@ model Room {
 
 model User {
   createdAt      DateTime   @default(now())
-  email          String     @unique
-  facebookId     String?    @unique
-  googleId       String?    @unique
-  id             String     @default(dbgenerated()) @id
+  email          String           @unique
+  facebookId     String?          @unique
+  googleId       String?          @unique
+  id             String           @default(dbgenerated()) @id
   name           String?
   passwordHash   String?
   roles          String[]
-  updatedAt      DateTime   @default(now()) @updatedAt
+  updatedAt      DateTime         @default(now()) @updatedAt
   sentChatMsgs   ChatMsg[]
   decks          Deck[]
   ownedRooms     Room[]
-  occupyingRooms Occupant[] @relation("UserTo_Occupant")
+  occupyingRooms Occupant[]       @relation("UserTo_Occupant")
+  records        UserCardRecord[]
 }
 
 model UserCardRecord {

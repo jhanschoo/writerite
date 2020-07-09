@@ -75,7 +75,7 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return await prisma.deck.findMany({
+      const decks = await prisma.deck.findMany({
         ...cursorParams(cursor, take),
         where: {
           ownerId: sub.id,
@@ -83,7 +83,16 @@ export const Query: QueryResolver = {
             contains: titleFilter,
           } : undefined,
         },
+        include: {
+          owner: true,
+          cards: true,
+          subdecks: true,
+        },
       });
+      return decks.map((deck) => ({
+        ...deck,
+        owner: userToSS(deck.owner),
+      }));
     } catch (e) {
       return null;
     }
@@ -93,15 +102,28 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return await prisma.deck.findMany({
+      const decks = await prisma.deck.findMany({
         ...cursorParams(cursor, take),
         where: {
-          ownerId: sub.id,
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          OR: [
+            { ownerId: sub.id },
+            { cards: { some: { records: { some: { userId: sub.id } } } } },
+          ],
           name: titleFilter ? {
             contains: titleFilter,
           } : undefined,
         },
+        include: {
+          owner: true,
+          cards: true,
+          subdecks: true,
+        },
       });
+      return decks.map((deck) => ({
+        ...deck,
+        owner: userToSS(deck.owner),
+      }));
     } catch (e) {
       return null;
     }
@@ -111,19 +133,29 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return await prisma.deck.findMany({
+      const decks = await prisma.deck.findMany({
         ...cursorParams(cursor, take),
         where: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
           OR: [
             { ownerId: sub.id },
+            { cards: { some: { records: { some: { userId: sub.id } } } } },
             { published: true },
           ],
           name: titleFilter ? {
             contains: titleFilter,
           } : undefined,
         },
+        include: {
+          owner: true,
+          cards: true,
+          subdecks: true,
+        },
       });
+      return decks.map((deck) => ({
+        ...deck,
+        owner: userToSS(deck.owner),
+      }));
     } catch (e) {
       return null;
     }
