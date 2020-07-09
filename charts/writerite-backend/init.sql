@@ -37,6 +37,16 @@ CREATE TABLE IF NOT EXISTS "Card" (
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS "UserCardRecord" (
+  "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  "userId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
+  "cardId" uuid NOT NULL REFERENCES "Card" ON UPDATE CASCADE ON DELETE CASCADE,
+  "correctRecord" timestamp[] DEFAULT '{}' NOT NULL,
+  "createdAt" timestamp DEFAULT now() NOT NULL,
+  "updatedAt" timestamp DEFAULT now() NOT NULL,
+  UNIQUE ("userId", "cardId")
+);
+
 CREATE TABLE IF NOT EXISTS "Room" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "ownerId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
