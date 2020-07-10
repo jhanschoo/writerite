@@ -127,11 +127,11 @@ describe("Query resolvers", () => {
       });
     });
 
-    describe("Query.ownedDecks", () => {
+    describe("Query.decks", () => {
 
       test("it should return user's decks if they exist", async () => {
         expect.assertions(2);
-        const decks = await Query.ownedDecks({}, {}, {
+        const decks = await Query.decks({}, {}, {
           ...baseCtx, sub: USER,
         }, baseInfo);
         expect(decks).toHaveLength(1);

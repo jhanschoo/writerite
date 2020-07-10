@@ -9,6 +9,16 @@ import { RoomSS, roomToSS, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 
 const DEFAULT_TAKE = 60;
+
+enum DecksQueryScope {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  OWNED = "OWNED",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  PARTICIPATED = "PARTICIPATED",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  VISIBLE = "VISIBLE",
+}
+
 function cursorParams(cursor?: string | null, take?: number | null): {
   cursor: { id: string },
   skip: number,
@@ -32,20 +42,11 @@ function cursorParams(cursor?: string | null, take?: number | null): {
 interface QueryResolver extends IResolverObject<Record<string, unknown>, WrContext> {
   user: FieldResolver<Record<string, unknown>, WrContext, { id: string }, UserSS | null>;
   deck: FieldResolver<Record<string, unknown>, WrContext, { id: string }, DeckSS | null>;
-  ownedDecks: FieldResolver<Record<string, unknown>, WrContext, {
+  decks: FieldResolver<Record<string, unknown>, WrContext, {
     cursor?: string | null,
     take?: number | null,
     titleFilter?: string | null,
-  }, (DeckSS | null)[] | null>;
-  participatedDecks: FieldResolver<Record<string, unknown>, WrContext, {
-    cursor?: string | null,
-    take?: number | null,
-    titleFilter?: string | null,
-  }, (DeckSS | null)[] | null>;
-  visibleDecks: FieldResolver<Record<string, unknown>, WrContext, {
-    cursor?: string | null,
-    take?: number | null,
-    titleFilter?: string | null,
+    scope?: DecksQueryScope | null,
   }, (DeckSS | null)[] | null>;
   card: FieldResolver<Record<string, unknown>, WrContext, { id: string }, CardSS | null>;
   cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
@@ -71,78 +72,33 @@ export const Query: QueryResolver = {
       return null;
     }
   },
-  async ownedDecks(_parent, { cursor, take, titleFilter }, { sub, prisma }, _info) {
+  async decks(_parent, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) {
     if (!sub) {
       return null;
     }
     try {
-      const decks = await prisma.deck.findMany({
-        ...cursorParams(cursor, take),
-        where: {
-          ownerId: sub.id,
-          name: titleFilter ? {
-            contains: titleFilter,
-          } : undefined,
-        },
-        include: {
-          owner: true,
-          cards: true,
-          subdecks: true,
-        },
-      });
-      return decks.map((deck) => ({
-        ...deck,
-        owner: userToSS(deck.owner),
-      }));
-    } catch (e) {
-      return null;
-    }
-  },
-  async participatedDecks(_parent, { cursor, take, titleFilter }, { sub, prisma }, _info) {
-    if (!sub) {
-      return null;
-    }
-    try {
+      const OR = [
+        { ownerId: sub.id },
+        { cards: { some: { records: { some: { userId: sub.id } } } } },
+        { published: true },
+      ];
+      switch (scope) {
+        case DecksQueryScope.PARTICIPATED:
+          OR.length = 2;
+          break;
+        case DecksQueryScope.VISIBLE:
+          OR.length = 3;
+          break;
+        case DecksQueryScope.OWNED:
+          // falls through
+        default:
+          OR.length = 1;
+      }
       const decks = await prisma.deck.findMany({
         ...cursorParams(cursor, take),
         where: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
-          OR: [
-            { ownerId: sub.id },
-            { cards: { some: { records: { some: { userId: sub.id } } } } },
-          ],
-          name: titleFilter ? {
-            contains: titleFilter,
-          } : undefined,
-        },
-        include: {
-          owner: true,
-          cards: true,
-          subdecks: true,
-        },
-      });
-      return decks.map((deck) => ({
-        ...deck,
-        owner: userToSS(deck.owner),
-      }));
-    } catch (e) {
-      return null;
-    }
-  },
-  async visibleDecks(_parent, { cursor, take, titleFilter }, { sub, prisma }, _info) {
-    if (!sub) {
-      return null;
-    }
-    try {
-      const decks = await prisma.deck.findMany({
-        ...cursorParams(cursor, take),
-        where: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          OR: [
-            { ownerId: sub.id },
-            { cards: { some: { records: { some: { userId: sub.id } } } } },
-            { published: true },
-          ],
+          OR,
           name: titleFilter ? {
             contains: titleFilter,
           } : undefined,

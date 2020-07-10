@@ -21,17 +21,19 @@ enum UpdateType {
   DELETED
 }
 
+enum DecksQueryScope {
+  OWNED
+  PARTICIPATED
+  VISIBLE
+}
+
 type Query {
   # User
   user(id: ID!): User
   # Deck
   deck(id: ID!): Deck
   # implicit limit of 60
-  ownedDecks(cursor: ID take: Int titleFilter: String): [Deck]
-  # implicit limit of 60
-  participatedDecks(cursor: ID take: Int titleFilter: String): [Deck]
-  # implicit limit of 60
-  visibleDecks(cursor: ID take: Int titleFilter: String): [Deck]
+  decks(cursor: ID take: Int titleFilter: String scope: DecksQueryScope): [Deck]
   # Card
   card(id: ID!): Card
   cardsOfDeck(deckId: ID!): [Card]
