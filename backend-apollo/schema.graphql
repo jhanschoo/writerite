@@ -27,11 +27,11 @@ type Query {
   # Deck
   deck(id: ID!): Deck
   # implicit limit of 60
-  ownedDecks(cursor: Int take: Int titleFilter: String): [Deck]
+  ownedDecks(cursor: ID take: Int titleFilter: String): [Deck]
   # implicit limit of 60
-  participatedDecks(cursor: Int take: Int titleFilter: String): [Deck]
+  participatedDecks(cursor: ID take: Int titleFilter: String): [Deck]
   # implicit limit of 60
-  visibleDecks(cursor: Int take: Int titleFilter: String): [Deck]
+  visibleDecks(cursor: ID take: Int titleFilter: String): [Deck]
   # Card
   card(id: ID!): Card
   cardsOfDeck(deckId: ID!): [Card]
