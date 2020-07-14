@@ -38,12 +38,19 @@ model Deck {
   answerLang  String    @default("")
   createdAt   DateTime  @default(now())
   description String    @default("")
+  // editedAt represents the time the deck's content fields (i.e. not
+  // usedAt, not updatedAt), or one of its cards was last edited.
+  editedAt    DateTime  @default(now())
   id          String    @default(dbgenerated()) @id
   name        String    @default("")
   ownerId     String
   promptLang  String    @default("")
   published   Boolean   @default(false)
   updatedAt   DateTime  @default(now()) @updatedAt
+  // usedAt represents the time the deck was last served in a room, etc.
+  // unenforced constraint: usedAt > UserCardRecord.updatedAt,
+  //   for all UserCardRecords belonging to cards of this deck.
+  usedAt      DateTime  @default(now()) @updatedAt
   owner       User      @relation(fields: [ownerId], references: [id])
   cards       Card[]
   subdecks    Subdeck[] @relation("DeckTo_Subdeck_A")

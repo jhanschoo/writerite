@@ -109,6 +109,7 @@ describe("server", () => {
           mutation CreateDeck($name: String!) {
             deckCreate(name: $name) {
               name
+              editedAt
             }
           }
         `,

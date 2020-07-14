@@ -21,6 +21,10 @@ interface DeckResolver extends IResolverObject<DeckSS, WrContext, Record<string,
 
   // published uses default resolver
 
+  // usedAt uses plugin resolver
+
+  // editedAt uses plugin resolver
+
   owner: FieldResolver<DeckSS, WrContext, Record<string, unknown>, UserSS | null>;
   parents: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
   children: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;

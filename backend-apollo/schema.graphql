@@ -240,6 +240,8 @@ type Deck {
   promptLang: String!
   answerLang: String!
   published: Boolean!
+  usedAt: DateTime!
+  editedAt: DateTime!
 
   # R fields
   owner: User

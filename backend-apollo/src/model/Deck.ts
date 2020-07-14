@@ -11,6 +11,8 @@ export interface DeckSS extends Partial<Deck> {
   promptLang: string;
   answerLang: string;
   published: boolean;
+  usedAt: Date;
+  editedAt: Date;
 
   owner?: UserSS | null;
   parents?: (DeckSS | null)[] | null;
