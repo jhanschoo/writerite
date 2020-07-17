@@ -34,6 +34,7 @@ describe("server", () => {
   const authorizer = "DEVELOPMENT";
   const identifier = "password";
   const name = "deck name";
+  const description = { foo: "bar" };
   let jwt = "Bearer ";
   beforeEach(async () => {
     await prisma.subdeck.deleteMany({});
@@ -106,22 +107,28 @@ describe("server", () => {
       const { mutate } = createTestClient(apollo);
       const res = await mutate({
         mutation: gql`
-          mutation CreateDeck($name: String!) {
-            deckCreate(name: $name) {
+          mutation CreateDeck(
+            $name: String!
+            $description: JSONObject!
+          ) {
+            deckCreate(name: $name description: $description) {
               name
+              description
               editedAt
             }
           }
         `,
-        variables: { name },
+        variables: { name, description },
       });
       expect(res).toHaveProperty("data.deckCreate.name", name);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(res).toHaveProperty("data.deckCreate.description", description);
     } finally {
       await apollo.stop();
     }
   }
   test("it creates a user and deck with the appropriate mutations and queries", async () => {
-    expect.assertions(3);
+    expect.assertions(4);
     await deckTest();
   }, 15000);
   // test("it creates a user, deck, card, room, chatMsg with the appropriate mutations and queries", userTest);

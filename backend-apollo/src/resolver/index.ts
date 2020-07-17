@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { IResolvers } from "apollo-server-koa";
 import { GraphQLDateTime as DateTime } from "graphql-iso-date";
+import GraphQLJSON, { GraphQLJSONObject } from "graphql-type-json";
 
 import { Query } from "./Query";
 import { Mutation } from "./Mutation";
@@ -23,6 +24,8 @@ const resolvers: IResolvers<any, WrContext> = {
   Room,
   ChatMsg,
   DateTime,
+  JSON: GraphQLJSON,
+  JSONObject: GraphQLJSONObject,
   // Note: Upload resolver automatically added by apollo-server
 };
 

@@ -5,6 +5,8 @@
 #   meaning that the field should be nulled.
 #scalar Upload
 scalar DateTime
+scalar JSON
+scalar JSONObject
 
 directive @subscriptionsTriggered(
   signatures: [String!]!
@@ -62,7 +64,7 @@ type Mutation {
   # Deck
   deckCreate(
     name: String # non-null
-    description: String # non-null
+    description: JSONObject # non-null
     promptLang: String # non-null
     answerLang: String # non-null
     published: Boolean # non-null
@@ -72,7 +74,7 @@ type Mutation {
 
   deckCreateFromRows(
     name: String # non-null
-    description: String # non-null
+    description: JSONObject # non-null
     promptLang: String # non-null
     answerLang: String # non-null
     published: Boolean # non-null
@@ -84,7 +86,7 @@ type Mutation {
   deckEdit(
     id: ID!
     name: String # non-null
-    description: String # non-null
+    description: JSONObject # non-null
     promptLang: String # non-null
     answerLang: String # non-null
     published: Boolean # non-null
@@ -236,7 +238,7 @@ type Deck {
   id: ID!
   ownerId: ID!
   name: String!
-  description: String!
+  description: JSON!
   promptLang: String!
   answerLang: String!
   published: Boolean!

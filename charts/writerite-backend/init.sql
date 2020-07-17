@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS "Deck" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "ownerId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   "name" text DEFAULT '' NOT NULL,
-  "description" text DEFAULT '' NOT NULL,
+  "description" jsonb DEFAULT '{}'::jsonb NOT NULL,
   "promptLang" text DEFAULT '' NOT NULL,
   "answerLang" text DEFAULT '' NOT NULL,
   "published" boolean DEFAULT false NOT NULL,

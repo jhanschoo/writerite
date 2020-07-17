@@ -37,7 +37,9 @@ model ChatMsg {
 model Deck {
   answerLang  String    @default("")
   createdAt   DateTime  @default(now())
-  description String    @default("")
+  // I don't want to test if 'null'::jsonb works.
+  // Also interferes with optional.
+  description Json      @default("{}")
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
   editedAt    DateTime  @default(now())
@@ -98,6 +100,18 @@ model UserCardRecord {
 
   @@unique([userId, cardId])
 }
+
+// model UserDeckRecord {
+//   deckId         String
+//   createdAt      DateTime   @default(now())
+//   id             String     @default(dbgenerated()) @id
+//   updatedAt      DateTime   @default(now()) @updatedAt
+//   userId         String
+//   deck           Deck       @relation(fields: [deckId], references: [id])
+//   user           User       @relation(fields: [userId], references: [id])
+
+//   @@unique([userId, cardId])
+// }
 
 // no fields are actually nullable but they are written so as a workaround so that deletion cascades
 // This following issue is also a blocker for upgrading @prisma/cli @prisma/client from v2.1.3 to v2.2.0

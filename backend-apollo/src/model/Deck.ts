@@ -1,13 +1,14 @@
 import type { Deck, PrismaClient } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { CardSS } from "./Card";
+import { JsonValue } from "type-fest";
 
 // DeckStoredScalars
 export interface DeckSS extends Partial<Deck> {
   id: string;
   ownerId: string;
   name: string;
-  description: string;
+  description: JsonValue;
   promptLang: string;
   answerLang: string;
   published: boolean;
