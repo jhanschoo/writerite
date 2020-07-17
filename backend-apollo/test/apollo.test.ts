@@ -109,7 +109,7 @@ describe("server", () => {
         mutation: gql`
           mutation CreateDeck(
             $name: String!
-            $description: JSONObject!
+            $description: JsonObject!
           ) {
             deckCreate(name: $name description: $description) {
               name

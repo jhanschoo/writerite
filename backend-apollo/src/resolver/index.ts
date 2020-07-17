@@ -24,8 +24,8 @@ const resolvers: IResolvers<any, WrContext> = {
   Room,
   ChatMsg,
   DateTime,
-  JSON: GraphQLJSON,
-  JSONObject: GraphQLJSONObject,
+  Json: GraphQLJSON,
+  JsonObject: GraphQLJSONObject,
   // Note: Upload resolver automatically added by apollo-server
 };
 
