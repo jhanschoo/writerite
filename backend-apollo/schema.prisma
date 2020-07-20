@@ -101,17 +101,18 @@ model UserCardRecord {
   @@unique([userId, cardId])
 }
 
-// model UserDeckRecord {
-//   deckId         String
-//   createdAt      DateTime   @default(now())
-//   id             String     @default(dbgenerated()) @id
-//   updatedAt      DateTime   @default(now()) @updatedAt
-//   userId         String
-//   deck           Deck       @relation(fields: [deckId], references: [id])
-//   user           User       @relation(fields: [userId], references: [id])
+model UserDeckRecord {
+  deckId    String
+  notes     Json     @default("{}")
+  createdAt DateTime @default(now())
+  id        String   @default(dbgenerated()) @id
+  updatedAt DateTime @default(now()) @updatedAt
+  userId    String
+  deck      Deck     @relation(fields: [deckId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
-//   @@unique([userId, cardId])
-// }
+  @@unique([userId, deckId])
+}
 
 // no fields are actually nullable but they are written so as a workaround so that deletion cascades
 // This following issue is also a blocker for upgrading @prisma/cli @prisma/client from v2.1.3 to v2.2.0

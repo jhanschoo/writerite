@@ -9,5 +9,7 @@ fragment WrDeckScalars on Deck {
   promptLang
   answerLang
   published
+  usedAt
+  editedAt
 }
 `;

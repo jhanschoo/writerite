@@ -49,6 +49,16 @@ CREATE TABLE IF NOT EXISTS "UserCardRecord" (
   UNIQUE ("userId", "cardId")
 );
 
+CREATE TABLE IF NOT EXISTS "UserDeckRecord" (
+  "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  "userId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
+  "deckId" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
+  "notes" jsonb DEFAULT '{}'::jsonb NOT NULL,
+  "createdAt" timestamp DEFAULT now() NOT NULL,
+  "updatedAt" timestamp DEFAULT now() NOT NULL,
+  UNIQUE ("userId", "deckId")
+);
+
 CREATE TABLE IF NOT EXISTS "Room" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "ownerId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
