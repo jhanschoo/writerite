@@ -1,4 +1,5 @@
 import { IResolverObject } from "apollo-server-koa";
+import moment from "moment";
 
 import { AuthorizerType, FieldResolver, Roles, Update, UpdateType, WrContext } from "../types";
 
@@ -14,6 +15,8 @@ import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
 import { CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
 import { RoomConfigInput, RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
+import { UserDeckRecordSS } from "../model/UserDeckRecord";
+import { UserCardRecordSS } from "../model/UserCardRecord";
 
 const localAuth = new LocalAuthService();
 const googleAuth = new GoogleAuthService();
@@ -64,6 +67,10 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   deckDelete: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, DeckSS | null>;
+  ownDeckRecordSet: FieldResolver<Record<string, unknown>, WrContext, {
+    deckId: string;
+    notes: JsonObject;
+  }, UserDeckRecordSS | null>;
   cardCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
     prompt: string;
@@ -92,7 +99,10 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   cardDelete: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, CardSS | null>;
-
+  ownCardRecordSet: FieldResolver<Record<string, unknown>, WrContext, {
+    cardId: string;
+    correctRecord?: string[];
+  }, UserCardRecordSS | null>;
   roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
     config: RoomConfigInput & JsonObject;
   }, RoomSS | null>;
@@ -350,6 +360,33 @@ export const Mutation: MutationResolver = {
       return null;
     }
   },
+  async ownDeckRecordSet(_parent, {
+    deckId,
+    notes,
+  }, { sub, prisma }, _info) {
+    if (!sub) {
+      return null;
+    }
+    const { id } = sub;
+    try {
+      return await prisma.userDeckRecord.upsert({
+        where: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          userId_deckId: { userId: sub.id, deckId },
+        },
+        create: {
+          deck: { connect: { id: deckId } },
+          user: { connect: { id } },
+          notes,
+        },
+        update: {
+          notes,
+        },
+      });
+    } catch (e) {
+      return null;
+    }
+  },
   async cardCreate(_parent, {
     deckId,
     prompt,
@@ -469,6 +506,34 @@ export const Mutation: MutationResolver = {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       pubsub.publish(ownDecksTopic(sub.id), update);
       return card;
+    } catch (e) {
+      return null;
+    }
+  },
+  async ownCardRecordSet(_parent, {
+    cardId,
+    correctRecord,
+  }, { sub, prisma }, _info) {
+    if (!sub) {
+      return null;
+    }
+    const { id } = sub;
+    const correctRecordArr = correctRecord?.map((datetimeStr) => moment.utc(datetimeStr).toDate()) ?? [];
+    try {
+      return await prisma.userCardRecord.upsert({
+        where: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          userId_cardId: { userId: sub.id, cardId },
+        },
+        create: {
+          card: { connect: { id: cardId } },
+          user: { connect: { id } },
+          correctRecord: { set: correctRecordArr },
+        },
+        update: {
+          correctRecord: { set: correctRecordArr },
+        },
+      });
     } catch (e) {
       return null;
     }
