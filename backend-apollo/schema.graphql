@@ -36,9 +36,13 @@ type Query {
   deck(id: ID!): Deck
   # implicit limit of 60
   decks(cursor: ID take: Int titleFilter: String scope: DecksQueryScope): [Deck]
+  # UserDeckRecord
+  ownDeckRecord(deckId: ID!): UserDeckRecord
   # Card
   card(id: ID!): Card
   cardsOfDeck(deckId: ID!): [Card]
+  # UserCardRecord
+  ownCardRecord(cardId: ID!): UserCardRecord
   # Room
   room(id: ID!): Room
   occupiedRooms: [Room]

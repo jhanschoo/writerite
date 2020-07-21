@@ -7,6 +7,8 @@ import { DeckSS } from "../model/Deck";
 import { CardSS } from "../model/Card";
 import { RoomSS, roomToSS, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
+import { UserDeckRecordSS } from "../model/UserDeckRecord";
+import { UserCardRecordSS } from "../model/UserCardRecord";
 
 const DEFAULT_TAKE = 60;
 
@@ -48,8 +50,10 @@ interface QueryResolver extends IResolverObject<Record<string, unknown>, WrConte
     titleFilter?: string | null,
     scope?: DecksQueryScope | null,
   }, (DeckSS | null)[] | null>;
+  ownDeckRecord: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, UserDeckRecordSS | null>;
   card: FieldResolver<Record<string, unknown>, WrContext, { id: string }, CardSS | null>;
   cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
+  ownCardRecord: FieldResolver<Record<string, unknown>, WrContext, { cardId: string }, UserCardRecordSS | null>;
   room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
   occupiedRooms: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
   chatMsg: FieldResolver<Record<string, unknown>, WrContext, { id: string }, ChatMsgSS | null>;
@@ -117,6 +121,17 @@ export const Query: QueryResolver = {
       return null;
     }
   },
+  async ownDeckRecord(_parent, { deckId }, { prisma, sub }, _info) {
+    if (!sub) {
+      return null;
+    }
+    try {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      return await prisma.userDeckRecord.findOne({ where: { userId_deckId: { userId: sub.id, deckId } } });
+    } catch (e) {
+      return null;
+    }
+  },
   async card(_parent, { id }, { prisma }, _info) {
     try {
       return await prisma.card.findOne({ where: { id } });
@@ -127,6 +142,17 @@ export const Query: QueryResolver = {
   async cardsOfDeck(_parent, { deckId }, { prisma }, _info) {
     try {
       return await prisma.card.findMany({ where: { deckId } });
+    } catch (e) {
+      return null;
+    }
+  },
+  async ownCardRecord(_parent, { cardId }, { prisma, sub }, _info) {
+    if (!sub) {
+      return null;
+    }
+    try {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      return await prisma.userCardRecord.findOne({ where: { userId_cardId: { userId: sub.id, cardId } } });
     } catch (e) {
       return null;
     }
