@@ -12,7 +12,7 @@ directive @subscriptionsTriggered(
   signatures: [String!]!
 ) on FIELD_DEFINITION
 
-directive @nonNull on INPUT_FIELD_DEFINITION
+directive @nonNull on ARGUMENT_DEFINITION
 
 enum ChatMsgContentType {
   TEXT
