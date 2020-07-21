@@ -57,6 +57,7 @@ model Deck {
   cards       Card[]
   subdecks    Subdeck[] @relation("DeckTo_Subdeck_A")
   parentDeck  Subdeck[] @relation("DeckTo_Subdeck_B")
+  records     UserDeckRecord[]
 }
 
 model Room {
@@ -85,7 +86,8 @@ model User {
   decks          Deck[]
   ownedRooms     Room[]
   occupyingRooms Occupant[]       @relation("UserTo_Occupant")
-  records        UserCardRecord[]
+  cardRecords    UserCardRecord[]
+  deckRecords    UserDeckRecord[]
 }
 
 model UserCardRecord {

@@ -1,5 +1,4 @@
-import type { PrismaClient, Room } from "@prisma/client";
-import type { JsonObject } from "type-fest";
+import type { JsonObject, PrismaClient, Room } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { ChatMsgSS } from "./ChatMsg";
 
@@ -28,6 +27,9 @@ export interface RoomSS extends Partial<Room> {
   owner?: UserSS | null;
   occupants?: (UserSS | null)[] | null;
   chatMsgs?: (ChatMsgSS | null)[] | null;
+
+  // computed values
+  inactive?: boolean;
 }
 
 export function roomTopic(id: string): string {

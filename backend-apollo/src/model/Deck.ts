@@ -1,7 +1,7 @@
-import type { Deck, PrismaClient } from "@prisma/client";
+import type { Deck, JsonValue, PrismaClient } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { CardSS } from "./Card";
-import { JsonValue } from "type-fest";
+import { UserDeckRecordSS } from "./UserDeckRecord";
 
 // DeckStoredScalars
 export interface DeckSS extends Partial<Deck> {
@@ -19,6 +19,9 @@ export interface DeckSS extends Partial<Deck> {
   parents?: (DeckSS | null)[] | null;
   children?: (DeckSS | null)[] | null;
   cards?: (CardSS | null)[] | null;
+
+  // computed values
+  ownRecord?: UserDeckRecordSS | null;
 }
 
 export function ownDecksTopic(userId: string): string {

@@ -1,5 +1,6 @@
 import type { Card, PrismaClient } from "@prisma/client";
 import type { DeckSS } from "./Deck";
+import { UserCardRecordSS } from "./UserCardRecord";
 
 // CardStoredScalars
 export interface CardSS extends Partial<Card> {
@@ -15,6 +16,9 @@ export interface CardSS extends Partial<Card> {
   template: boolean;
 
   deck?: DeckSS | null;
+
+  // computed values
+  ownRecord?: UserCardRecordSS | null;
 }
 
 export function cardsOfDeckTopic(userId: string, deckId: string): string {

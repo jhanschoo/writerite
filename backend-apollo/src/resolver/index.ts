@@ -19,6 +19,10 @@ const resolvers: IResolvers<any, WrContext> = {
   Mutation,
   Subscription,
   User,
+  /*
+   * UserCardRecord, uses default resolver
+   * UserDeckRecord, uses default resolver
+   */
   Deck,
   Card,
   Room,

@@ -250,6 +250,13 @@ type Deck {
   parents: [Deck]
   children: [Deck]
   cards: [Card]
+  ownRecord: UserDeckRecord
+}
+
+type UserDeckRecord {
+  userId: ID!
+  deckId: ID!
+  notes: Json!
 }
 
 # Card
@@ -264,7 +271,15 @@ type Card {
   editedAt: DateTime!
   template: Boolean!
 
+  # R fields
   deck: Deck
+  ownRecord: UserCardRecord
+}
+
+type UserCardRecord {
+  userId: ID!
+  cardId: ID!
+  correctRecord: [DateTime]!
 }
 
 # Room

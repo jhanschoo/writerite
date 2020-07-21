@@ -23,7 +23,8 @@ interface UserResolver extends IResolverObject<UserSS, WrContext, Record<string,
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const User: UserResolver = {
   decks({ id, decks }, _args, { prisma, sub }, _info) {
-    if (!sub || id !== sub.id) {
+    const subId = sub?.id;
+    if (id !== subId) {
       return null;
     }
     if (decks !== undefined) {
@@ -32,7 +33,8 @@ export const User: UserResolver = {
     return prisma.deck.findMany({ where: { ownerId: id } });
   },
   async ownedRooms({ id, ownedRooms }, _args, { prisma, sub }, _info) {
-    if (!sub || id !== sub.id) {
+    const subId = sub?.id;
+    if (id !== subId) {
       return null;
     }
     if (ownedRooms !== undefined) {
@@ -41,7 +43,8 @@ export const User: UserResolver = {
     return (await prisma.room.findMany({ where: { ownerId: id } })).map(roomToSS);
   },
   async occupiedRooms({ id, occupiedRooms }, _args, { prisma, sub }, _info) {
-    if (!sub || id !== sub.id) {
+    const subId = sub?.id;
+    if (id !== subId) {
       return null;
     }
     if (occupiedRooms !== undefined) {

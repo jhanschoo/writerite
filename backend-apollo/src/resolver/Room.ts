@@ -32,7 +32,10 @@ interface RoomResolver extends IResolverObject<RoomSS, WrContext, Record<string,
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const Room: RoomResolver = {
   // TODO: implement outdatedness semantics in inactive field
-  inactive({ archived }, _args, _ctx, _info) {
+  inactive({ archived, inactive }, _args, _ctx, _info) {
+    if (inactive !== undefined) {
+      return inactive;
+    }
     return Promise.resolve(archived);
   },
   async owner({ ownerId, owner }, _args, { prisma }, _info) {

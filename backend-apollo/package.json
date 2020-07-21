@@ -40,7 +40,6 @@
     "node-fetch": "^2.6.0",
     "random-words": "^1.1.1",
     "subscriptions-transport-ws": "^0.9.17",
-    "type-fest": "^0.16.0",
     "typescript": "^3.9.7"
   },
   "devDependencies": {

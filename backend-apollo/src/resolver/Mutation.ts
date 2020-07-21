@@ -7,13 +7,13 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
+import { JsonObject } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
 import { CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
 import { RoomConfigInput, RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
-import { JsonObject } from "type-fest";
 
 const localAuth = new LocalAuthService();
 const googleAuth = new GoogleAuthService();

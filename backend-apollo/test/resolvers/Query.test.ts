@@ -142,6 +142,10 @@ describe("Query resolvers", () => {
     });
   });
 
+  describe.skip("UserDeckRecord fields", () => {
+    // noop
+  });
+
   describe("Card fields", () => {
     const EMAIL = "abc@xyz";
     const OTHER_EMAIL = "def@xyz";
@@ -236,6 +240,10 @@ describe("Query resolvers", () => {
         expect(cards).toBeNull();
       });
     });
+  });
+
+  describe.skip("UserCardRecord fields", () => {
+    // noop
   });
 
 
