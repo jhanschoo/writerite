@@ -42,6 +42,8 @@ model Deck {
   description Json      @default("{}")
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
+  // unenforced constraint: editedAt > UserCardRecord.updatedAt,
+  //   for all UserCardRecords belonging to cards of this deck.
   editedAt    DateTime  @default(now())
   id          String    @default(dbgenerated()) @id
   name        String    @default("")
@@ -49,7 +51,7 @@ model Deck {
   promptLang  String    @default("")
   published   Boolean   @default(false)
   updatedAt   DateTime  @default(now()) @updatedAt
-  // usedAt represents the time the deck was last served in a room, etc.
+  // usedAt represents the time the deck was last served in a room, or edited, etc.
   // unenforced constraint: usedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
   usedAt      DateTime  @default(now()) @updatedAt

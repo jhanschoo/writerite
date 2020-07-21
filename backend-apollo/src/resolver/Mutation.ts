@@ -1,5 +1,5 @@
 import { IResolverObject } from "apollo-server-koa";
-import moment from "moment";
+import moment, { now } from "moment";
 
 import { AuthorizerType, FieldResolver, Roles, Update, UpdateType, WrContext } from "../types";
 
@@ -262,6 +262,7 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
         return null;
       }
+      const dateNow = new Date();
       const deck = await prisma.deck.update({
         where: { id },
         data: {
@@ -270,6 +271,8 @@ export const Mutation: MutationResolver = {
           promptLang,
           answerLang,
           published,
+          editedAt: dateNow,
+          usedAt: dateNow,
         },
       });
       const update: Update<DeckSS> = {
@@ -291,6 +294,7 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
         return null;
       }
+      const dateNow = new Date();
       const deck = await prisma.deck.update({
         where: { id },
         data: {
@@ -300,6 +304,8 @@ export const Mutation: MutationResolver = {
             update: {},
             create: { subdeck: { connect: { id: subdeckId } } },
           } },
+          editedAt: dateNow,
+          usedAt: dateNow,
         },
       });
       const update: Update<DeckSS> = {
@@ -321,6 +327,7 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
         return null;
       }
+      const dateNow = new Date();
       const deck = await prisma.deck.update({
         where: { id },
         data: {
@@ -328,6 +335,8 @@ export const Mutation: MutationResolver = {
           // eslint-disable-next-line @typescript-eslint/naming-convention
             A: id, B: subdeckId,
           } },
+          editedAt: dateNow,
+          usedAt: dateNow,
         },
       });
       const update: Update<DeckSS> = {
@@ -399,6 +408,7 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
         return null;
       }
+      const dateNow = new Date();
       const card = await prisma.card.create({ data: {
         prompt,
         fullAnswer,
@@ -406,6 +416,11 @@ export const Mutation: MutationResolver = {
         sortKey,
         template,
         deck: { connect: { id: deckId } },
+      } });
+      // TODO: put in transaction
+      await prisma.deck.update({ where: { id: deckId }, data: {
+        editedAt: dateNow,
+        usedAt: dateNow,
       } });
       const update: Update<CardSS> = {
         type: UpdateType.CREATED,
@@ -431,6 +446,7 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
         return null;
       }
+      const dateNow = new Date();
       const cardsPs: Promise<CardSS>[] = [];
       for (let i = 0; i < multiplicity; ++i) {
         cardsPs.push(prisma.card.create({ data: {
@@ -443,6 +459,11 @@ export const Mutation: MutationResolver = {
         } }));
       }
       const cards = await Promise.all(cardsPs);
+      // TODO: put in transaction
+      await prisma.deck.update({ where: { id: deckId }, data: {
+        editedAt: dateNow,
+        usedAt: dateNow,
+      } });
       const updates: Update<CardSS>[] = cards.map((card) => ({
         type: UpdateType.CREATED,
         data: card,
@@ -468,6 +489,7 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
         return null;
       }
+      const dateNow = new Date();
       const card = await prisma.card.update({
         where: { id },
         data: {
@@ -478,6 +500,11 @@ export const Mutation: MutationResolver = {
           template,
         },
       });
+      // TODO: put in transaction
+      await prisma.deck.update({ where: { id: card.deckId }, data: {
+        editedAt: dateNow,
+        usedAt: dateNow,
+      } });
       const update: Update<CardSS> = {
         type: UpdateType.EDITED,
         data: card,
@@ -496,9 +523,15 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
         return null;
       }
+      const dateNow = new Date();
       const card = await prisma.card.delete({
         where: { id },
       });
+      // TODO: put in transaction
+      await prisma.deck.update({ where: { id: card.deckId }, data: {
+        editedAt: dateNow,
+        usedAt: dateNow,
+      } });
       const update: Update<CardSS> = {
         type: UpdateType.DELETED,
         data: card,
