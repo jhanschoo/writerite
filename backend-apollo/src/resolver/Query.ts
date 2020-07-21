@@ -69,9 +69,24 @@ export const Query: QueryResolver = {
       return null;
     }
   },
-  async deck(_parent, { id }, { prisma }, _info) {
+  async deck(_parent, { id }, { prisma, sub }, _info) {
+    if (!sub) {
+      return null;
+    }
     try {
-      return await prisma.deck.findOne({ where: { id } });
+      const OR = [
+        { ownerId: sub.id },
+        { cards: { some: { records: { some: { userId: sub.id } } } } },
+        { published: true },
+      ];
+      const decks = await prisma.deck.findMany({ where: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        OR, id,
+      } });
+      if (decks.length !== 1) {
+        return null;
+      }
+      return decks[0];
     } catch (e) {
       return null;
     }

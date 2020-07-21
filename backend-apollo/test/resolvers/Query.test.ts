@@ -101,10 +101,12 @@ describe("Query resolvers", () => {
       DECK = await prisma.deck.create({ data: {
         name: NAME,
         owner: { connect: { id: USER.id } },
+        published: true,
       } });
       OTHER_DECK = await prisma.deck.create({ data: {
         name: OTHER_NAME,
         owner: { connect: { id: OTHER_USER.id } },
+        published: true,
       } });
     });
 
@@ -120,9 +122,11 @@ describe("Query resolvers", () => {
         expect(await Query.deck({}, { id: "1234567" }, baseCtx, baseInfo)).toBeNull();
       });
 
-      test("it should return a deck if it exists", async () => {
+      test("it should return a deck if it exists and is published", async () => {
         expect.assertions(1);
-        const deck = await Query.deck({}, { id: DECK.id }, baseCtx, baseInfo);
+        const deck = await Query.deck({}, { id: DECK.id }, {
+          ...baseCtx, sub: USER,
+        }, baseInfo);
         expect(deck?.id).toBe(DECK.id);
       });
     });
