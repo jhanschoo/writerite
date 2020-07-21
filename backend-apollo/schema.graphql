@@ -12,6 +12,8 @@ directive @subscriptionsTriggered(
   signatures: [String!]!
 ) on FIELD_DEFINITION
 
+directive @nonNull on INPUT_FIELD_DEFINITION
+
 enum ChatMsgContentType {
   TEXT
   CONFIG
@@ -55,11 +57,11 @@ type Mutation {
   # Authorization
   signin(
     email: String!
-    name: String # non-null
+    name: String @nonNull
     token: String!
     authorizer: String!
     identifier: String!
-    persist: Boolean # non-null
+    persist: Boolean @nonNull
   ): AuthResponse
 
   # User
@@ -67,21 +69,21 @@ type Mutation {
 
   # Deck
   deckCreate(
-    name: String # non-null
-    description: JsonObject # non-null
-    promptLang: String # non-null
-    answerLang: String # non-null
-    published: Boolean # non-null
+    name: String @nonNull
+    description: JsonObject @nonNull
+    promptLang: String @nonNull
+    answerLang: String @nonNull
+    published: Boolean @nonNull
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
   )
 
   deckCreateFromRows(
-    name: String # non-null
-    description: JsonObject # non-null
-    promptLang: String # non-null
-    answerLang: String # non-null
-    published: Boolean # non-null
+    name: String @nonNull
+    description: JsonObject @nonNull
+    promptLang: String @nonNull
+    answerLang: String @nonNull
+    published: Boolean @nonNull
     rows: [[String!]!]!
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
@@ -89,11 +91,11 @@ type Mutation {
 
   deckEdit(
     id: ID!
-    name: String # non-null
-    description: JsonObject # non-null
-    promptLang: String # non-null
-    answerLang: String # non-null
-    published: Boolean # non-null
+    name: String @nonNull
+    description: JsonObject @nonNull
+    promptLang: String @nonNull
+    answerLang: String @nonNull
+    published: Boolean @nonNull
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
   )
@@ -116,14 +118,20 @@ type Mutation {
     signatures: ["ownDecksUpdates"]
   )
 
+  # UserDeckRecord
+  ownDeckRecordSet(
+    deckId: ID!
+    notes: JsonObject @nonNull
+  ): UserDeckRecord
+
   # Card
   cardCreate(
     deckId: ID!
     prompt: String!
     fullAnswer: String!
-    answers: [String] # non-null
-    sortKey: String # non-null
-    template: Boolean # non-null
+    answers: [String] @nonNull
+    sortKey: String @nonNull
+    template: Boolean @nonNull
   ): Card @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
@@ -132,9 +140,9 @@ type Mutation {
     deckId: ID!
     prompt: String!
     fullAnswer: String!
-    answers: [String!] # non-null
-    sortKey: String # non-null
-    template: Boolean # non-null
+    answers: [String!] @nonNull
+    sortKey: String @nonNull
+    template: Boolean @nonNull
     multiplicity: Int!
   ): [Card] @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
@@ -142,11 +150,11 @@ type Mutation {
 
   cardEdit(
     id: ID!
-    prompt: String # non-null
-    fullAnswer: String # non-null
-    answers: [String!] # non-null
-    sortKey: String # non-null
-    template: Boolean # non-null
+    prompt: String @nonNull
+    fullAnswer: String @nonNull
+    answers: [String!] @nonNull
+    sortKey: String @nonNull
+    template: Boolean @nonNull
   ): Card @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
@@ -156,6 +164,13 @@ type Mutation {
   ): Card @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
+
+  # UserCardRecord
+  ownCardRecordSet(
+    cardId: ID!
+    # ISO datetimes
+    correctRecord: [String!] @nonNull
+  ): UserCardRecord
 
   # Room
   roomCreate(
