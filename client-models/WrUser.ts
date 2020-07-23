@@ -1,6 +1,6 @@
-import gql from 'graphql-tag';
-import { WR_USER_SCALARS } from './WrUserScalars';
-import { WR_DECK_SCALARS } from './WrDeckScalars';
+import gql from "graphql-tag";
+import { WR_USER_SCALARS } from "./WrUserScalars";
+import { WR_DECK_SCALARS } from "./WrDeckScalars";
 
 export const WR_USER = gql`
 ${WR_USER_SCALARS}
