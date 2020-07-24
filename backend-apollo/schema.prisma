@@ -8,97 +8,109 @@ datasource postgresql {
 }
 
 model Card {
-  answers    String[]
-  createdAt  DateTime @default(now())
-  deckId     String
-  editedAt   DateTime         @default(now())
-  fullAnswer String           @default("")
   id         String           @default(dbgenerated()) @id
+  deckId     String
   prompt     String           @default("")
+  fullAnswer String           @default("")
+  answers    String[]
   sortKey    String           @default("")
   template   Boolean          @default(false)
-  updatedAt  DateTime         @default(now()) @updatedAt
+  editedAt   DateTime         @default(now())
   deck       Deck             @relation(fields: [deckId], references: [id])
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime         @default(now()) @updatedAt
+
   records    UserCardRecord[]
 }
 
 model ChatMsg {
-  content   String   @default("")
-  createdAt DateTime @default(now())
   id        String   @default(dbgenerated()) @id
   roomId    String
   senderId  String?
   type      String   @default("TEXT")
+  content   String   @default("")
+
+  createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
   room      Room     @relation(fields: [roomId], references: [id])
   sender    User?    @relation(fields: [senderId], references: [id])
 }
 
 model Deck {
-  answerLang  String    @default("")
-  createdAt   DateTime  @default(now())
+  id          String    @default(dbgenerated()) @id
+  ownerId     String
+  name        String    @default("")
   // I don't want to test if 'null'::jsonb works.
   // Also interferes with optional.
   description Json      @default("{}")
+  promptLang  String    @default("")
+  answerLang  String    @default("")
+  published   Boolean   @default(false)
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
   // unenforced constraint: editedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
   editedAt    DateTime  @default(now())
-  id          String    @default(dbgenerated()) @id
-  name        String    @default("")
-  ownerId     String
-  promptLang  String    @default("")
-  published   Boolean   @default(false)
-  updatedAt   DateTime  @default(now()) @updatedAt
   // usedAt represents the time the deck was last served in a room, or edited, etc.
   // unenforced constraint: usedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
   usedAt      DateTime  @default(now()) @updatedAt
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
   owner       User      @relation(fields: [ownerId], references: [id])
   cards       Card[]
   subdecks    Subdeck[] @relation("DeckTo_Subdeck_A")
-  parentDeck  Subdeck[] @relation("DeckTo_Subdeck_B")
+  parentDecks  Subdeck[] @relation("DeckTo_Subdeck_B")
   records     UserDeckRecord[]
 }
 
 model Room {
-  archived  Boolean    @default(false)
-  config    Json       @default(dbgenerated())
-  createdAt DateTime   @default(now())
   id        String     @default(dbgenerated()) @id
   ownerId   String
+  config    Json       @default(dbgenerated())
+  archived  Boolean    @default(false)
+
+  createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now())
+
   owner     User       @relation(fields: [ownerId], references: [id])
-  chatMsgs  ChatMsg[]
   occupants Occupant[] @relation("RoomTo_Occupant")
+  chatMsgs  ChatMsg[]
 }
 
 model User {
-  createdAt      DateTime   @default(now())
+  id             String           @default(dbgenerated()) @id
   email          String           @unique
   facebookId     String?          @unique
   googleId       String?          @unique
-  id             String           @default(dbgenerated()) @id
   name           String?
   passwordHash   String?
   roles          String[]
+
+  createdAt      DateTime   @default(now())
   updatedAt      DateTime         @default(now()) @updatedAt
-  sentChatMsgs   ChatMsg[]
+
   decks          Deck[]
   ownedRooms     Room[]
   occupyingRooms Occupant[]       @relation("UserTo_Occupant")
+  sentChatMsgs   ChatMsg[]
   cardRecords    UserCardRecord[]
   deckRecords    UserDeckRecord[]
 }
 
 model UserCardRecord {
+  id             String     @default(dbgenerated()) @id
+  userId         String
   cardId         String
   correctRecord  DateTime[]
+
   createdAt      DateTime   @default(now())
-  id             String     @default(dbgenerated()) @id
   updatedAt      DateTime   @default(now()) @updatedAt
-  userId         String
+
   card           Card       @relation(fields: [cardId], references: [id])
   user           User       @relation(fields: [userId], references: [id])
 
@@ -106,12 +118,14 @@ model UserCardRecord {
 }
 
 model UserDeckRecord {
+  id        String   @default(dbgenerated()) @id
+  userId    String
   deckId    String
   notes     Json     @default("{}")
+
   createdAt DateTime @default(now())
-  id        String   @default(dbgenerated()) @id
   updatedAt DateTime @default(now()) @updatedAt
-  userId    String
+
   deck      Deck     @relation(fields: [deckId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 

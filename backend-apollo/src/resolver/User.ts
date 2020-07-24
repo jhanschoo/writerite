@@ -9,15 +9,15 @@ interface UserResolver extends IResolverObject<UserSS, WrContext, Record<string,
 
   // email uses default resolver
 
-  // roles uses default resolver
-
   // name uses default resolver
+
+  // roles uses default resolver
 
   decks: FieldResolver<UserSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
 
   ownedRooms: FieldResolver<UserSS, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
 
-  occupiedRooms: FieldResolver<UserSS, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
+  occupyingRooms: FieldResolver<UserSS, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -42,13 +42,13 @@ export const User: UserResolver = {
     }
     return (await prisma.room.findMany({ where: { ownerId: id } })).map(roomToSS);
   },
-  async occupiedRooms({ id, occupiedRooms }, _args, { prisma, sub }, _info) {
+  async occupyingRooms({ id, occupyingRooms }, _args, { prisma, sub }, _info) {
     const subId = sub?.id;
     if (id !== subId) {
       return null;
     }
-    if (occupiedRooms !== undefined) {
-      return occupiedRooms;
+    if (occupyingRooms !== undefined) {
+      return occupyingRooms;
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
     return (await prisma.room.findMany({ where: { occupants: { some: { B: id } } } })).map(roomToSS);

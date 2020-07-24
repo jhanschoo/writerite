@@ -19,9 +19,9 @@ interface CardResolver extends IResolverObject<CardSS, WrContext, Record<string,
 
   // sortKey uses default resolver
 
-  // editedAt uses default resolver
-
   // template uses default resolver
+
+  // editedAt uses default resolver
 
   deck: FieldResolver<CardSS, WrContext, Record<string, unknown>, DeckSS | null>;
   ownRecord: FieldResolver<CardSS, WrContext, Record<string, unknown>, UserCardRecordSS | null>;

@@ -17,6 +17,9 @@ export interface ChatMsgSS extends Partial<ChatMsg> {
   type: ChatMsgContentType;
   content: string;
 
+  createdAt: Date;
+  updatedAt: Date;
+
   sender?: UserSS | null;
   room?: RoomSS | null;
 }

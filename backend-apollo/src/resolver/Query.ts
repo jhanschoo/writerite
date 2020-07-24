@@ -55,7 +55,7 @@ interface QueryResolver extends IResolverObject<Record<string, unknown>, WrConte
   cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
   ownCardRecord: FieldResolver<Record<string, unknown>, WrContext, { cardId: string }, UserCardRecordSS | null>;
   room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
-  occupiedRooms: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
+  occupyingRooms: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
   chatMsg: FieldResolver<Record<string, unknown>, WrContext, { id: string }, ChatMsgSS | null>;
   chatMsgsOfRoom: FieldResolver<Record<string, unknown>, WrContext, { roomId: string }, (ChatMsgSS | null)[] | null>;
 }
@@ -125,7 +125,6 @@ export const Query: QueryResolver = {
         include: {
           owner: true,
           cards: true,
-          subdecks: true,
         },
       });
       return decks.map((deck) => ({
@@ -179,7 +178,7 @@ export const Query: QueryResolver = {
       return null;
     }
   },
-  async occupiedRooms(_parent, _args, { sub, prisma }, _info) {
+  async occupyingRooms(_parent, _args, { sub, prisma }, _info) {
     if (!sub) {
       return null;
     }

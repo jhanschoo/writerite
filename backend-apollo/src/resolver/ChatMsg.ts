@@ -14,6 +14,8 @@ interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, Record<s
 
   // senderId uses default resolver
 
+  // type uses default resolver
+
   // content uses default resolver
 
   sender: FieldResolver<ChatMsgSS, WrContext, Record<string, unknown>, UserSS | null>;

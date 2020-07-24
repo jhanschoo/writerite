@@ -47,7 +47,7 @@ type Query {
   ownCardRecord(cardId: ID!): UserCardRecord
   # Room
   room(id: ID!): Room
-  occupiedRooms: [Room]
+  occupyingRooms: [Room]
   # ChatMsg
   chatMsg(id: ID!): ChatMsg
   chatMsgsOfRoom(roomId: ID!): [ChatMsg]
@@ -242,13 +242,13 @@ type RoomUpdate {
 type User {
   id: ID!
   email: String!
-  roles: [String!]!
   name: String
+  roles: [String!]!
 
   # R fields
   decks: [Deck]
   ownedRooms: [Room]
-  occupiedRooms: [Room]
+  occupyingRooms: [Room]
 }
 
 # Deck
@@ -261,13 +261,12 @@ type Deck {
   promptLang: String!
   answerLang: String!
   published: Boolean!
-  usedAt: DateTime!
   editedAt: DateTime!
+  usedAt: DateTime!
 
   # R fields
   owner: User
-  parents: [Deck]
-  children: [Deck]
+  subdecks: [Deck]
   cards: [Card]
   ownRecord: UserDeckRecord
 }
@@ -287,8 +286,8 @@ type Card {
   fullAnswer: String!
   answers: [String!]!
   sortKey: String!
-  editedAt: DateTime!
   template: Boolean!
+  editedAt: DateTime!
 
   # R fields
   deck: Deck
@@ -320,11 +319,10 @@ type RoomConfig {
 type Room {
   id: ID!
   ownerId: ID!
-  archived: Boolean!
   config: RoomConfig!
-
-  # inactive is computed
+  archived: Boolean!
   inactive: Boolean!
+
   owner: User
   occupants: [User]
   chatMsgs: [ChatMsg]

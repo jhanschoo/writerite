@@ -22,13 +22,12 @@ interface DeckResolver extends IResolverObject<DeckSS, WrContext, Record<string,
 
   // published uses default resolver
 
-  // usedAt uses plugin resolver
-
   // editedAt uses plugin resolver
 
+  // usedAt uses plugin resolver
+
   owner: FieldResolver<DeckSS, WrContext, Record<string, unknown>, UserSS | null>;
-  parents: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
-  children: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
+  subdecks: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
   cards: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (CardSS | null)[] | null>;
   ownRecord: FieldResolver<DeckSS, WrContext, Record<string, unknown>, UserDeckRecordSS | null>;
 }
@@ -41,19 +40,12 @@ export const Deck: DeckResolver = {
     }
     return userToSS(await prisma.user.findOne({ where: { id: ownerId } }));
   },
-  parents({ id, parents }, _args, { prisma }, _info) {
-    if (parents !== undefined) {
-      return parents;
+  subdecks({ id, subdecks }, _args, { prisma }, _info) {
+    if (subdecks !== undefined) {
+      return subdecks;
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    return prisma.deck.findMany({ where: { subdecks: { some: { B: id } } } });
-  },
-  children({ id, children }, _args, { prisma }, _info) {
-    if (children !== undefined) {
-      return children;
-    }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    return prisma.deck.findMany({ where: { parentDeck: { some: { A: id } } } });
+    return prisma.deck.findMany({ where: { parentDecks: { some: { A: id } } } });
   },
   cards({ id, cards }, _args, { prisma }, _info) {
     if (cards !== undefined) {

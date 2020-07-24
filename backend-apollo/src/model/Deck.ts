@@ -1,7 +1,7 @@
 import type { Deck, JsonValue, PrismaClient } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { CardSS } from "./Card";
-import { UserDeckRecordSS } from "./UserDeckRecord";
+import type { UserDeckRecordSS } from "./UserDeckRecord";
 
 // DeckStoredScalars
 export interface DeckSS extends Partial<Deck> {
@@ -12,13 +12,18 @@ export interface DeckSS extends Partial<Deck> {
   promptLang: string;
   answerLang: string;
   published: boolean;
-  usedAt: Date;
   editedAt: Date;
+  usedAt: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
 
   owner?: UserSS | null;
-  parents?: (DeckSS | null)[] | null;
-  children?: (DeckSS | null)[] | null;
+  subdecks?: (DeckSS | null)[] | null;
   cards?: (CardSS | null)[] | null;
+
+  // unexposed fields
+  parentDecks?: (DeckSS | null)[] | null;
 
   // computed values
   ownRecord?: UserDeckRecordSS | null;

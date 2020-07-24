@@ -1,6 +1,6 @@
 import type { Card, PrismaClient } from "@prisma/client";
 import type { DeckSS } from "./Deck";
-import { UserCardRecordSS } from "./UserCardRecord";
+import type { UserCardRecordSS } from "./UserCardRecord";
 
 // CardStoredScalars
 export interface CardSS extends Partial<Card> {
@@ -12,10 +12,14 @@ export interface CardSS extends Partial<Card> {
   answers: string[];
   // TODO: investigate how Prisma handles null elements in the array
   sortKey: string;
-  editedAt: Date;
   template: boolean;
+  editedAt: Date;
+
+  createdAt: Date;
+  updatedAt: Date;
 
   deck?: DeckSS | null;
+  records?: (UserCardRecordSS | null)[] | null;
 
   // computed values
   ownRecord?: UserCardRecordSS | null;

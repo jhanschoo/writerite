@@ -28,6 +28,15 @@ beforeAll(() => {
 });
 
 afterAll(async () => {
+  await prisma.subdeck.deleteMany({});
+  await prisma.occupant.deleteMany({});
+  await prisma.userCardRecord.deleteMany({});
+  await prisma.userDeckRecord.deleteMany({});
+  await prisma.chatMsg.deleteMany({});
+  await prisma.room.deleteMany({});
+  await prisma.card.deleteMany({});
+  await prisma.deck.deleteMany({});
+  await prisma.user.deleteMany({});
   pubsub.close();
   await redisClient.quit();
   await prisma.disconnect();
@@ -36,6 +45,8 @@ afterAll(async () => {
 beforeEach(async () => {
   await prisma.subdeck.deleteMany({});
   await prisma.occupant.deleteMany({});
+  await prisma.userCardRecord.deleteMany({});
+  await prisma.userDeckRecord.deleteMany({});
   await prisma.chatMsg.deleteMany({});
   await prisma.room.deleteMany({});
   await prisma.card.deleteMany({});
@@ -312,9 +323,9 @@ describe("Query resolvers", () => {
       });
     });
 
-    describe("Query.occupiedRooms", () => {
+    describe("Query.occupyingRooms", () => {
       test("it should return rooms one is occupying", async () => {
-        const rooms = await Query.occupiedRooms({}, {}, {
+        const rooms = await Query.occupyingRooms({}, {}, {
           ...baseCtx,
           sub: USER,
         }, baseInfo);

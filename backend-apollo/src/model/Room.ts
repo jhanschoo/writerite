@@ -12,7 +12,6 @@ export interface RoomConfigInput {
 export interface RoomConfig {
   deckId?: string;
   deckName?: string;
-  deckNameLang?: string;
   roundLength?: number;
   clientDone?: boolean;
 }
@@ -21,8 +20,11 @@ export interface RoomConfig {
 export interface RoomSS extends Partial<Room> {
   id: string;
   ownerId: string;
-  archived: boolean;
   config: RoomConfig & JsonObject;
+  archived: boolean;
+
+  createdAt: Date;
+  updatedAt: Date;
 
   owner?: UserSS | null;
   occupants?: (UserSS | null)[] | null;

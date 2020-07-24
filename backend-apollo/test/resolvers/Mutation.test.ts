@@ -31,6 +31,15 @@ beforeAll(() => {
 });
 
 afterAll(async () => {
+  await prisma.subdeck.deleteMany({});
+  await prisma.occupant.deleteMany({});
+  await prisma.userCardRecord.deleteMany({});
+  await prisma.userDeckRecord.deleteMany({});
+  await prisma.chatMsg.deleteMany({});
+  await prisma.room.deleteMany({});
+  await prisma.card.deleteMany({});
+  await prisma.deck.deleteMany({});
+  await prisma.user.deleteMany({});
   pubsub.close();
   await redisClient.quit();
   await prisma.disconnect();
@@ -39,6 +48,8 @@ afterAll(async () => {
 beforeEach(async () => {
   await prisma.subdeck.deleteMany({});
   await prisma.occupant.deleteMany({});
+  await prisma.userCardRecord.deleteMany({});
+  await prisma.userDeckRecord.deleteMany({});
   await prisma.chatMsg.deleteMany({});
   await prisma.room.deleteMany({});
   await prisma.card.deleteMany({});
@@ -268,7 +279,7 @@ describe("Mutation resolvers", () => {
 
     describe("Mutation.deckAddSubdeck", () => {
       test("It should add the subdeck if current user owns parent deck, returning the parent deck", async () => {
-        expect.assertions(7);
+        expect.assertions(5);
         expect(await prisma.subdeck.count({ where: {
           parentDeck: { id: DECK.id },
           subdeck: { id: OTHER_DECK.id },
@@ -281,7 +292,7 @@ describe("Mutation resolvers", () => {
         if (!deck) {
           return;
         }
-        const subdecks = await Deck.children(deck, {}, ctx, baseInfo);
+        const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(1);
         expect(subdecks).toEqual(expect.arrayContaining([
           expect.objectContaining({
@@ -295,13 +306,6 @@ describe("Mutation resolvers", () => {
         if (!subdeck) {
           return;
         }
-        const parentDecks = await Deck.parents(subdeck, {}, { ...baseCtx, sub: OTHER_USER }, baseInfo);
-        expect(parentDecks).toHaveLength(1);
-        expect(parentDecks).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: DECK.id,
-          }),
-        ]));
         expect(await prisma.subdeck.count({ where: {
           parentDeck: { id: DECK.id },
           subdeck: { id: OTHER_DECK.id },
@@ -309,7 +313,7 @@ describe("Mutation resolvers", () => {
       });
 
       test("It should do nothing if user owns parent deck, parent-subdeck relation already exists, returning the parent deck", async () => {
-        expect.assertions(7);
+        expect.assertions(5);
         const ctx = { ...baseCtx, sub: USER };
         await Mutation.deckAddSubdeck({}, {
           id: DECK.id, subdeckId: OTHER_DECK.id,
@@ -325,7 +329,7 @@ describe("Mutation resolvers", () => {
         if (!deck) {
           return;
         }
-        const subdecks = await Deck.children(deck, {}, ctx, baseInfo);
+        const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(1);
         expect(subdecks).toEqual(expect.arrayContaining([
           expect.objectContaining({
@@ -339,13 +343,6 @@ describe("Mutation resolvers", () => {
         if (!subdeck) {
           return;
         }
-        const parentDecks = await Deck.parents(subdeck, {}, { ...baseCtx, sub: OTHER_USER }, baseInfo);
-        expect(parentDecks).toHaveLength(1);
-        expect(parentDecks).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: DECK.id,
-          }),
-        ]));
         expect(await prisma.subdeck.count({ where: {
           parentDeck: { id: DECK.id },
           subdeck: { id: OTHER_DECK.id },
@@ -444,7 +441,7 @@ describe("Mutation resolvers", () => {
         if (!deck) {
           return;
         }
-        const subdecks = await Deck.children(deck, {}, ctx, baseInfo);
+        const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(0);
         expect(await prisma.subdeck.count({ where: {
           parentDeck: { id: DECK.id },
@@ -466,7 +463,7 @@ describe("Mutation resolvers", () => {
         if (!deck) {
           return;
         }
-        const subdecks = await Deck.children(deck, {}, ctx, baseInfo);
+        const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(0);
         expect(await prisma.subdeck.count({ where: {
           parentDeck: { id: DECK.id },
@@ -1127,9 +1124,9 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupiedRooms = await User.occupiedRooms(occupant, {}, { ...baseCtx, sub: THIRD_USER }, baseInfo);
-        expect(occupiedRooms).toHaveLength(1);
-        expect(occupiedRooms).toEqual(expect.arrayContaining([
+        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: THIRD_USER }, baseInfo);
+        expect(occupyingRooms).toHaveLength(1);
+        expect(occupyingRooms).toEqual(expect.arrayContaining([
           expect.objectContaining({
             id: ROOM.id,
           }),
@@ -1168,9 +1165,9 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupiedRooms = await User.occupiedRooms(occupant, {}, { ...baseCtx, sub: THIRD_USER }, baseInfo);
-        expect(occupiedRooms).toHaveLength(1);
-        expect(occupiedRooms).toEqual(expect.arrayContaining([
+        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: THIRD_USER }, baseInfo);
+        expect(occupyingRooms).toHaveLength(1);
+        expect(occupyingRooms).toEqual(expect.arrayContaining([
           expect.objectContaining({
             id: ROOM.id,
           }),
@@ -1209,9 +1206,9 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupiedRooms = await User.occupiedRooms(occupant, {}, { ...baseCtx, sub: USER }, baseInfo);
-        expect(occupiedRooms).toHaveLength(1);
-        expect(occupiedRooms).toEqual(expect.arrayContaining([
+        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: USER }, baseInfo);
+        expect(occupyingRooms).toHaveLength(1);
+        expect(occupyingRooms).toEqual(expect.arrayContaining([
           expect.objectContaining({
             id: ROOM.id,
           }),
@@ -1250,9 +1247,9 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupiedRooms = await User.occupiedRooms(occupant, {}, { ...baseCtx, sub: USER }, baseInfo);
-        expect(occupiedRooms).toHaveLength(1);
-        expect(occupiedRooms).toEqual(expect.arrayContaining([
+        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: USER }, baseInfo);
+        expect(occupyingRooms).toHaveLength(1);
+        expect(occupyingRooms).toEqual(expect.arrayContaining([
           expect.objectContaining({
             id: ROOM.id,
           }),
