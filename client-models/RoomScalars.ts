@@ -1,8 +1,7 @@
 import gql from "graphql-tag";
 
-// tslint:disable-next-line: variable-name
-export const WR_ROOM_SCALARS = gql`
-fragment WrRoomScalars on Room {
+export const ROOM_SCALARS = gql`
+fragment RoomScalars on Room {
   id
   ownerId
   archived

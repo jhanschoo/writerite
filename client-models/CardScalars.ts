@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
-export const WR_CARD_SCALARS = gql`
-fragment WrCardScalars on Card {
+export const CARD_SCALARS = gql`
+fragment CardScalars on Card {
   id
   deckId
   prompt

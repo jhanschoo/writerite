@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
-export const WR_CHAT_MSG_SCALARS = gql`
-fragment WrChatMsgScalars on ChatMsg {
+export const CHAT_MSG_SCALARS = gql`
+fragment ChatMsgScalars on ChatMsg {
   id
   roomId
   senderId

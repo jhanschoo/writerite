@@ -1,7 +1,7 @@
 import gql from "graphql-tag";
 
-export const WR_DECK_SCALARS = gql`
-fragment WrDeckScalars on Deck {
+export const DECK_SCALARS = gql`
+fragment DeckScalars on Deck {
   id
   ownerId
   name
