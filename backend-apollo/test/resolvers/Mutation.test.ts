@@ -766,6 +766,7 @@ describe("Mutation resolvers", () => {
     });
 
     describe.skip("Mutation.cardDelete", () => {
+      // TODO
     });
   });
 
