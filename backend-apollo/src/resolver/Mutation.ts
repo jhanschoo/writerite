@@ -1,5 +1,5 @@
 import { IResolverObject } from "apollo-server-koa";
-import moment, { now } from "moment";
+import moment from "moment";
 
 import { AuthorizerType, FieldResolver, Roles, Update, UpdateType, WrContext } from "../types";
 
@@ -12,7 +12,7 @@ import { JsonObject } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
-import { CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
+import { CardCreateInput, CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
 import { RoomConfigInput, RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
@@ -35,23 +35,16 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   userEdit: FieldResolver<Record<string, unknown>, WrContext, { name: string }, UserSS | null>;
   deckCreate: FieldResolver<Record<string, unknown>, WrContext, {
     name?: string;
-    description?: string;
+    description?: JsonObject;
     promptLang?: string;
     answerLang?: string;
     published?: boolean;
-  }, DeckSS | null>;
-  deckCreateFromRows: FieldResolver<Record<string, unknown>, WrContext, {
-    name?: string;
-    description?: string;
-    promptLang?: string;
-    answerLang?: string;
-    published?: boolean;
-    rows: string[][];
+    cards?: CardCreateInput[];
   }, DeckSS | null>;
   deckEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     name?: string;
-    description?: string;
+    description?: JsonObject;
     promptLang?: string;
     answerLang?: string;
     published?: boolean;
@@ -73,16 +66,16 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   }, UserDeckRecordSS | null>;
   cardCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
-    prompt: string;
-    fullAnswer: string;
+    prompt: JsonObject;
+    fullAnswer: JsonObject;
     answers?: string[];
     sortKey?: string;
     template?: boolean;
   }, CardSS | null>;
   cardsCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
-    prompt: string;
-    fullAnswer: string;
+    prompt: JsonObject;
+    fullAnswer: JsonObject;
     answers?: string[];
     sortKey?: string;
     template?: boolean;
@@ -90,8 +83,8 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   }, (CardSS | null)[] | null>;
   cardEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
-    prompt?: string;
-    fullAnswer?: string;
+    prompt?: JsonObject;
+    fullAnswer?: JsonObject;
     answers?: string[];
     sortKey?: string;
     template?: boolean;
@@ -184,44 +177,19 @@ export const Mutation: MutationResolver = {
     promptLang,
     answerLang,
     published,
+    cards,
   }, { sub, pubsub, prisma }, _info) {
     if (!sub) {
       return null;
     }
     try {
-      const deck = await prisma.deck.create({
-        data: {
-          name,
-          description,
-          promptLang,
-          answerLang,
-          published,
-          owner: { connect: { id: sub.id } },
-        },
-      });
-      const update: Update<DeckSS> = {
-        type: UpdateType.CREATED,
-        data: deck,
+      const cardsCreate = cards && {
+        create: cards.map(({ prompt, fullAnswer, answers }) => ({
+          prompt,
+          fullAnswer,
+          answers: { set: answers },
+        })),
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
-      return deck;
-    } catch (e) {
-      return null;
-    }
-  },
-  async deckCreateFromRows(_parent, {
-    name,
-    description,
-    promptLang,
-    answerLang,
-    published,
-    rows,
-  }, { sub, pubsub, prisma }, _info) {
-    if (!sub) {
-      return null;
-    }
-    try {
       const deck = await prisma.deck.create({
         data: {
           name,
@@ -230,13 +198,7 @@ export const Mutation: MutationResolver = {
           answerLang,
           published,
           owner: { connect: { id: sub.id } },
-          cards: {
-            create: rows.map((row) => ({
-              prompt: row[0],
-              fullAnswer: row[1],
-              answers: { set: row.slice(2) },
-            })),
-          },
+          cards: cardsCreate,
         },
       });
       const update: Update<DeckSS> = {

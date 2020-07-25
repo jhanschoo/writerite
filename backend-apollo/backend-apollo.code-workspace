@@ -2,6 +2,12 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../charts"
+		},
+		{
+			"path": "../lets-encrypt"
 		}
 	],
 	"settings": {

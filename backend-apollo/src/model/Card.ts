@@ -1,13 +1,21 @@
-import type { Card, PrismaClient } from "@prisma/client";
+import type { Card, JsonObject, JsonValue, PrismaClient } from "@prisma/client";
 import type { DeckSS } from "./Deck";
 import type { UserCardRecordSS } from "./UserCardRecord";
+
+export interface CardCreateInput {
+  prompt: JsonObject;
+  fullAnswer: JsonObject;
+  answers: string[];
+  sortKey?: string | null;
+  template?: boolean | null;
+}
 
 // CardStoredScalars
 export interface CardSS extends Partial<Card> {
   id: string;
   deckId: string;
-  prompt: string;
-  fullAnswer: string;
+  prompt: JsonValue;
+  fullAnswer: JsonValue;
   // note: graphQL return type for answers is (string | null)[] | null
   answers: string[];
   // TODO: investigate how Prisma handles null elements in the array

@@ -1,8 +1,6 @@
 # TODO: refactor once graphql supports `extend`
 # https://github.com/graphql/graphql-js/issues/922\
 
-# Note: null in inputs are allowed only in update-style methods,
-#   meaning that the field should be nulled.
 #scalar Upload
 scalar DateTime
 scalar Json
@@ -12,6 +10,11 @@ directive @subscriptionsTriggered(
   signatures: [String!]!
 ) on FIELD_DEFINITION
 
+# Note: null in inputs are allowed only in update-style methods,
+#   meaning that the field should be nulled.
+# The following directive on an optional argument specifies
+#   that it accepts omission of the argument, but it does
+#   not accept a null as the input value for the argument.
 directive @nonNull on ARGUMENT_DEFINITION
 
 enum ChatMsgContentType {
@@ -74,17 +77,7 @@ type Mutation {
     promptLang: String @nonNull
     answerLang: String @nonNull
     published: Boolean @nonNull
-  ): Deck @subscriptionsTriggered(
-    signatures: ["ownDecksUpdates"]
-  )
-
-  deckCreateFromRows(
-    name: String @nonNull
-    description: JsonObject @nonNull
-    promptLang: String @nonNull
-    answerLang: String @nonNull
-    published: Boolean @nonNull
-    rows: [[String!]!]!
+    cards: [CardCreateInput!] @nonNull
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
   )
@@ -127,8 +120,8 @@ type Mutation {
   # Card
   cardCreate(
     deckId: ID!
-    prompt: String!
-    fullAnswer: String!
+    prompt: JsonObject!
+    fullAnswer: JsonObject!
     answers: [String] @nonNull
     sortKey: String @nonNull
     template: Boolean @nonNull
@@ -138,8 +131,8 @@ type Mutation {
 
   cardsCreate(
     deckId: ID!
-    prompt: String!
-    fullAnswer: String!
+    prompt: JsonObject!
+    fullAnswer: JsonObject!
     answers: [String!] @nonNull
     sortKey: String @nonNull
     template: Boolean @nonNull
@@ -150,8 +143,8 @@ type Mutation {
 
   cardEdit(
     id: ID!
-    prompt: String @nonNull
-    fullAnswer: String @nonNull
+    prompt: JsonObject @nonNull
+    fullAnswer: JsonObject @nonNull
     answers: [String!] @nonNull
     sortKey: String @nonNull
     template: Boolean @nonNull
@@ -279,11 +272,19 @@ type UserDeckRecord {
 
 # Card
 
+input CardCreateInput {
+  prompt: JsonObject!
+  fullAnswer: JsonObject!
+  answers: [String!]!
+  sortKey: String
+  template: Boolean
+}
+
 type Card {
   id: ID!
   deckId: ID!
-  prompt: String!
-  fullAnswer: String!
+  prompt: Json!
+  fullAnswer: Json!
   answers: [String!]!
   sortKey: String!
   template: Boolean!

@@ -43,20 +43,24 @@
     "typescript": "^3.9.7"
   },
   "devDependencies": {
+    "@types/draft-js": "^0.10.43",
     "@types/jest": "^26.0.5",
     "@typescript-eslint/eslint-plugin": "^3.6.1",
     "@typescript-eslint/parser": "^3.6.1",
     "apollo-server-testing": "^2.16.0",
+    "draft-js": "^0.11.6",
     "eslint": "^7.5.0",
     "eslint-plugin-jsdoc": "^30.0.0",
     "jest": "^26.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
     "ts-jest": "^26.1.3",
     "ts-node": "^8.10.2"
   },
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "DATABASE_URL=\"postgresql://jhanschoo:jhanschoo@localhost:5432/jhanschoo_testing\" prisma generate && jest --runInBand",
+    "test": "DATABASE_URL=\"postgresql://jhanschoo:jhanschoo@localhost:5432/jhanschoo_testing\" prisma generate && npm run build && jest --runInBand",
     "version": "node --version"
   }
 }

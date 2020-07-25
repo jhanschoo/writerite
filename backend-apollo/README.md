@@ -1,27 +1,42 @@
-# @writerite/backend-yoga
+# @writerite/backend-apollo
 
 In development, create a `.env` file with the environment variables described below, to avoid tediously maintaining the environment variables.
-
-1. `npm install`
-2. `npx prisma deploy` (note that even with a `.env` file, wou need `PRISMA_ENDPOINT` to be set for this command to run.)
-3. `npm run start:dev`
 
 The following environment variables need to be set:
 
 * `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from Google's OpenID Connect
 * `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` from Facebook Login
 * `RECAPTCHA_SECRET` from ReCAPTCHA
-* `PRISMA_ENDPOINT` the uri describing the prisma backend.
+* `DATABASE_URL` set to the URL of a PostgreSQL database
+* `REDIS_HOST`, `REDIS_PORT` of a redis instance; the app uses dbs 1 and 2. Defaults to `127.0.0.1` and `6379` respectively.
+* `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY` JSON strings in JWK format respectively describing an ES256 private and public key pair.
+* `APOLLO_KEY` an API key to a project registered in Apollo studio
 
 The following environment variables may be set:
 
-* `REDIS_HOST`, `REDIS_PORT` of a redis instance; the app uses dbs 1 and 2. Defaults to `127.0.0.1` and `6379` respectively.
 * `CERT_FILE`, `KEY_FILE`; if both are present, the app serves as HTTPS and WSS.
+
+To run in development, execute:
+
+* `npm i`
+* `npm run build`
+* `NODE_ENV="development" npm run start`
 
 ## Notes
 
 * TODO: implement authorization-based visibility
 * Move key generation to redis
+
+## Models
+
+Four sets of models are specified.
+
+* The prisma schema abstracts the database schema.
+* The `SS` inferfaces specified in `models/` are subtypes of their respective types (projected to only scalar fields) specified in the prisma schema. They specify additional optional fields so that
+* The schema served by this app is a supertype of their respective `SS` interfaces. Finally,
+* The implicit model defined by the resolvers form a subtype of the `SS` interfaces, so that they are also a subtype of the schema.
+
+Hence once the `SS` interfaces are correct subtypes of the prisma schema, and the resolvers' implicit model (loosely speaking) returns `SS` types, an API that satisfies the app's schema is correctly served. Note that this doesn't mean that the API correctly serves the right objects, or that an object is served when expected where the field is optional. In addition, no such guarantees are given for input fields.
 
 ### Web server -- bot communication
 

@@ -1,8 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { JsonObject, PrismaClient } from "@prisma/client";
 import type { GraphQLResolveInfo } from "graphql";
 import type { MergeInfo } from "apollo-server-koa";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import Redis, { Redis as RedisClient } from "ioredis";
+import { ContentState, convertToRaw } from "draft-js";
 
 import type { WrContext } from "../../src/types";
 import { Mutation } from "../../src/resolver/Mutation";
@@ -21,6 +22,10 @@ let redisClient: RedisClient;
 let pubsub: RedisPubSub;
 let baseCtx: WrContext;
 let baseInfo: GraphQLResolveInfo & { mergeInfo: MergeInfo };
+
+function rawFromText(text: string) {
+  return convertToRaw(ContentState.createFromText(text)) as unknown as JsonObject;
+}
 
 beforeAll(() => {
   prisma = new PrismaClient();
@@ -107,14 +112,22 @@ describe("Mutation resolvers", () => {
     const NAME = "oldDeck";
     const OTHER_NAME = "otherDeck";
     const NEW_NAME = "newDeck";
-    const NEW_CARD_PROMPT_1 = "prompt1";
-    const NEW_CARD_FULL_ANSWER_1 = "answer1";
+    const NEW_CARD_PROMPT_1 = rawFromText("prompt1");
+    const NEW_CARD_FULL_ANSWER_1 = rawFromText("answer1");
     const NEW_CARD_OTHER_ANSWER_1 = "otherAnswer1";
-    const NEW_CARD_PROMPT_2 = "prompt2";
-    const NEW_CARD_FULL_ANSWER_2 = "answer2";
-    const NEW_ROWS = [
-      [NEW_CARD_PROMPT_1, NEW_CARD_FULL_ANSWER_1, NEW_CARD_OTHER_ANSWER_1],
-      [NEW_CARD_PROMPT_2, NEW_CARD_FULL_ANSWER_2],
+    const NEW_CARD_PROMPT_2 = rawFromText("prompt2");
+    const NEW_CARD_FULL_ANSWER_2 = rawFromText("answer2");
+    const NEW_CARDS = [
+      {
+        prompt: NEW_CARD_PROMPT_1,
+        fullAnswer: NEW_CARD_FULL_ANSWER_1,
+        answers: [NEW_CARD_OTHER_ANSWER_1],
+      },
+      {
+        prompt: NEW_CARD_PROMPT_2,
+        fullAnswer: NEW_CARD_FULL_ANSWER_2,
+        answers: [],
+      },
     ];
     let USER: UserSS;
     let OTHER_USER: UserSS;
@@ -179,9 +192,9 @@ describe("Mutation resolvers", () => {
       test("It should create a new deck owned by user and return it if logged in, with the appropriate cards", async () => {
         expect.assertions(8);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckCreateFromRows({}, {
+        const deck = await Mutation.deckCreate({}, {
           name: NEW_NAME,
-          rows: NEW_ROWS,
+          cards: NEW_CARDS,
         }, ctx, baseInfo);
         expect(deck).toHaveProperty("name", NEW_NAME);
         expect(deck).toHaveProperty("ownerId", USER.id);
@@ -222,9 +235,9 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(2);
         const deckCount = await prisma.deck.count({});
-        const deck = await Mutation.deckCreateFromRows({}, {
+        const deck = await Mutation.deckCreate({}, {
           name: NEW_NAME,
-          rows: NEW_ROWS,
+          cards: NEW_CARDS,
         }, baseCtx, baseInfo);
         expect(deck).toBeNull();
         expect(await prisma.deck.count({})).toBe(deckCount);
@@ -613,12 +626,12 @@ describe("Mutation resolvers", () => {
     const NEW_NAME = "newDeck";
     const PROMPT = "prompt";
     const FULL_ANSWER = "fullAnswer";
-    const NEXT_PROMPT = "prompt";
-    const NEXT_FULL_ANSWER = "fullAnswer";
-    const OTHER_PROMPT = "otherPrompt";
-    const OTHER_FULL_ANSWER = "otherFullAnswer";
-    const NEW_PROMPT = "newPrompt";
-    const NEW_FULL_ANSWER = "newFullAnswer";
+    const NEXT_PROMPT = rawFromText("prompt");
+    const NEXT_FULL_ANSWER = rawFromText("fullAnswer");
+    const OTHER_PROMPT = rawFromText("otherPrompt");
+    const OTHER_FULL_ANSWER = rawFromText("otherFullAnswer");
+    const NEW_PROMPT = rawFromText("newPrompt");
+    const NEW_FULL_ANSWER = rawFromText("newFullAnswer");
     let USER: UserSS;
     let OTHER_USER: UserSS;
     let DECK: DeckSS;
@@ -764,7 +777,7 @@ describe("Mutation resolvers", () => {
           expect(pCard).toHaveProperty("prompt", NEW_PROMPT);
           expect(pCard).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
         }
-        expect(await prisma.card.findMany({ where: { prompt: NEW_PROMPT } })).toHaveLength(3);
+        expect(await prisma.card.findMany({ where: { prompt: { equals: NEW_PROMPT } } })).toHaveLength(3);
       });
 
       test("It should do nothing and return null if user does not own specified deck", async () => {
@@ -842,7 +855,7 @@ describe("Mutation resolvers", () => {
           expect(pCard).toHaveProperty("prompt", NEW_PROMPT);
           expect(pCard).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
         }
-        expect(await prisma.card.findMany({ where: { prompt: NEW_PROMPT } })).toHaveLength(3);
+        expect(await prisma.card.findMany({ where: { prompt: { equals: NEW_PROMPT } } })).toHaveLength(3);
       });
 
       test("It should do nothing and return null if user does not own specified deck", async () => {
@@ -979,9 +992,7 @@ describe("Mutation resolvers", () => {
       OTHER_ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: OTHER_USER.id } },
         occupants: {
-          create: [
-            { occupant: { connect: { id: OTHER_USER.id } } },
-          ],
+          create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
         },
       } }));
     });

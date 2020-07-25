@@ -10,15 +10,15 @@ datasource postgresql {
 model Card {
   id         String           @default(dbgenerated()) @id
   deckId     String
-  prompt     String           @default("")
-  fullAnswer String           @default("")
+  prompt     Json             @default("")
+  fullAnswer Json             @default("")
   answers    String[]
   sortKey    String           @default("")
   template   Boolean          @default(false)
   editedAt   DateTime         @default(now())
   deck       Deck             @relation(fields: [deckId], references: [id])
 
-  createdAt  DateTime @default(now())
+  createdAt  DateTime         @default(now())
   updatedAt  DateTime         @default(now()) @updatedAt
 
   records    UserCardRecord[]
@@ -39,32 +39,32 @@ model ChatMsg {
 }
 
 model Deck {
-  id          String    @default(dbgenerated()) @id
+  id          String           @default(dbgenerated()) @id
   ownerId     String
-  name        String    @default("")
+  name        String           @default("")
   // I don't want to test if 'null'::jsonb works.
   // Also interferes with optional.
-  description Json      @default("{}")
-  promptLang  String    @default("")
-  answerLang  String    @default("")
-  published   Boolean   @default(false)
+  description Json             @default("{}")
+  promptLang  String           @default("")
+  answerLang  String           @default("")
+  published   Boolean          @default(false)
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
   // unenforced constraint: editedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
-  editedAt    DateTime  @default(now())
+  editedAt    DateTime         @default(now())
   // usedAt represents the time the deck was last served in a room, or edited, etc.
   // unenforced constraint: usedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
-  usedAt      DateTime  @default(now()) @updatedAt
+  usedAt      DateTime         @default(now()) @updatedAt
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @default(now()) @updatedAt
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @default(now()) @updatedAt
 
-  owner       User      @relation(fields: [ownerId], references: [id])
+  owner       User             @relation(fields: [ownerId], references: [id])
   cards       Card[]
-  subdecks    Subdeck[] @relation("DeckTo_Subdeck_A")
-  parentDecks  Subdeck[] @relation("DeckTo_Subdeck_B")
+  subdecks    Subdeck[]        @relation("DeckTo_Subdeck_A")
+  parentDecks Subdeck[]        @relation("DeckTo_Subdeck_B")
   records     UserDeckRecord[]
 }
 
@@ -91,7 +91,7 @@ model User {
   passwordHash   String?
   roles          String[]
 
-  createdAt      DateTime   @default(now())
+  createdAt      DateTime         @default(now())
   updatedAt      DateTime         @default(now()) @updatedAt
 
   decks          Deck[]
