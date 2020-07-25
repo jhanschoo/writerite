@@ -1,33 +1,34 @@
-import styled from 'styled-components';
+import { wrStyled } from "../theme";
 
+// eslint-disable-next-line no-warning-comments
 // TODO: make generic argument stricter in props that it accepts
-export const TextInput = styled.input`
+export const TextInput = wrStyled.input`
 font-size: 100%;
-height: ${({ theme }) => theme.space[4]};
-padding: 0 ${({ theme }) => theme.space[2]};
-border: 1px solid ${({ theme }) => theme.edge[1]};
-${({ theme }) => theme.fgbg[1]}
+height: ${({ theme: { space } }) => space[4]};
+padding: 0 ${({ theme: { space } }) => space[2]};
+border: 1px solid ${({ theme: { bg } }) => bg[3]};
+${({ theme: { fgbg, bg } }) => fgbg(bg[1])}
 
 :hover, :focus {
   outline: none;
 }
 
 &.error {
-  border-color: ${({ theme }) => theme.color.red};
+  border-color: ${({ theme: { color } }) => color.error};
 }
 
 &.valid {
-  border-color: ${({ theme }) => theme.color.green};
+  border-color: ${({ theme: { color } }) => color.valid};
 }
 `;
 
-export const MinimalTextInput = styled.input`
+export const MinimalTextInput = wrStyled.input`
 font-weight: inherit;
 font-size: inherit;
 font-family: inherit;
 color: inherit;
-height: ${({ theme }) => theme.space[4]};
-padding: 0 ${({ theme }) => theme.space[2]};
+height: ${({ theme: { space } }) => space[4]};
+padding: 0 ${({ theme: { space } }) => space[2]};
 border: none;
 background: none;
 

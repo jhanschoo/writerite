@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import { wrStyled } from "../../../theme";
 
-const Sidebar = styled.div`
+const Sidebar = wrStyled.div`
 grid-area: 2 / 2 / 3 / 5;
 display: flex;
 flex-direction: column;

@@ -1,8 +1,9 @@
-import styled from 'styled-components';
+import { wrStyled } from "../../theme";
 
-const NavBarList = styled.ul`
+const NavBarList = wrStyled.ul`
 display: flex;
-flex: 1 0 auto;
+flex-grow: 1;
+flex-wrap: wrap;
 list-style: none;
 align-items: center;
 margin: 0;

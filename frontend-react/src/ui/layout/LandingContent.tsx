@@ -1,6 +1,6 @@
-import styled from 'styled-components';
+import { wrStyled } from "../../theme";
 
-const LandingContent = styled.main`
+const LandingContent = wrStyled.main`
 grid-area: 2 / 2 / 3 / 14;
 overflow-y: auto;
 

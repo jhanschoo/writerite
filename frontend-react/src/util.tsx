@@ -1,21 +1,15 @@
-import md5 from 'md5';
+import md5 from "md5";
 
-import { store } from './store';
+import { store } from "./store";
 
-import { client } from './apolloClient';
+export const DEBOUNCE_DELAY = 5000;
 
-export const getAuth = () => {
+export const SERVER_FETCH_LIMIT = 60;
+
+export const getAuth = (): string => {
   const storeState = store.getState();
-  const token = storeState?.signin?.session?.token;
-  return token ? `Bearer ${token}` : '';
+  const token = storeState.signin?.session?.token;
+  return token ? `Bearer ${token}` : "";
 };
 
-export const emailToGravatarLink = (email: string) => {
-  return `https://www.gravatar.com/avatar/${md5(email.toLowerCase())}`;
-};
-
-export const printApolloError = (error: Error) => {
-  // tslint:disable-next-line: no-console
-  console.error(`Error communicating with server: ${error.message}`);
-  return client.resetStore();
-};
+export const emailToGravatarLink = (email: string): string => `https://www.gravatar.com/avatar/${md5(email.toLowerCase())}`;

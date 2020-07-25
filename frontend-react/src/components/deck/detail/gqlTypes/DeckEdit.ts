@@ -7,61 +7,17 @@
 // GraphQL mutation operation: DeckEdit
 // ====================================================
 
-export interface DeckEdit_deckEdit_owner {
-  readonly __typename: "User";
-  readonly id: string;
-  readonly email: string;
-  readonly name: string | null;
-  readonly roles: ReadonlyArray<string>;
-}
-
-export interface DeckEdit_deckEdit_parents {
-  readonly __typename: "Deck";
-  readonly id: string;
-  readonly ownerId: string;
-  readonly name: string;
-  readonly description: string;
-  readonly promptLang: string;
-  readonly answerLang: string;
-  readonly published: boolean;
-}
-
-export interface DeckEdit_deckEdit_children {
-  readonly __typename: "Deck";
-  readonly id: string;
-  readonly ownerId: string;
-  readonly name: string;
-  readonly description: string;
-  readonly promptLang: string;
-  readonly answerLang: string;
-  readonly published: boolean;
-}
-
-export interface DeckEdit_deckEdit_cards {
-  readonly __typename: "Card";
-  readonly id: string;
-  readonly deckId: string;
-  readonly prompt: string;
-  readonly fullAnswer: string;
-  readonly answers: ReadonlyArray<string>;
-  readonly sortKey: string;
-  readonly editedAt: any;
-  readonly template: boolean;
-}
-
 export interface DeckEdit_deckEdit {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: string;
+  readonly description: Json;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly owner: DeckEdit_deckEdit_owner | null;
-  readonly parents: ReadonlyArray<(DeckEdit_deckEdit_parents | null)> | null;
-  readonly children: ReadonlyArray<(DeckEdit_deckEdit_children | null)> | null;
-  readonly cards: ReadonlyArray<(DeckEdit_deckEdit_cards | null)> | null;
+  readonly usedAt: DateTime;
+  readonly editedAt: DateTime;
 }
 
 export interface DeckEdit {
@@ -69,9 +25,10 @@ export interface DeckEdit {
 }
 
 export interface DeckEditVariables {
-  readonly id: string;
+  readonly deckId: string;
   readonly name?: string | null;
-  readonly description?: string | null;
+  readonly description?: JsonObject | null;
   readonly promptLang?: string | null;
   readonly answerLang?: string | null;
+  readonly published?: boolean | null;
 }

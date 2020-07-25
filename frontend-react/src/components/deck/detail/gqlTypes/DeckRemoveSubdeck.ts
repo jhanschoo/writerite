@@ -7,15 +7,31 @@
 // GraphQL mutation operation: DeckRemoveSubdeck
 // ====================================================
 
+export interface DeckRemoveSubdeck_deckRemoveSubdeck_subdecks {
+  readonly __typename: "Deck";
+  readonly id: string;
+  readonly ownerId: string;
+  readonly name: string;
+  readonly description: Json;
+  readonly promptLang: string;
+  readonly answerLang: string;
+  readonly published: boolean;
+  readonly usedAt: DateTime;
+  readonly editedAt: DateTime;
+}
+
 export interface DeckRemoveSubdeck_deckRemoveSubdeck {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: string;
+  readonly description: Json;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly usedAt: DateTime;
+  readonly editedAt: DateTime;
+  readonly subdecks: ReadonlyArray<(DeckRemoveSubdeck_deckRemoveSubdeck_subdecks | null)> | null;
 }
 
 export interface DeckRemoveSubdeck {

@@ -12,10 +12,18 @@ export enum ChatMsgContentType {
   TEXT = "TEXT",
 }
 
-export enum UpdateType {
-  CREATED = "CREATED",
-  DELETED = "DELETED",
-  EDITED = "EDITED",
+export enum DecksQueryScope {
+  OWNED = "OWNED",
+  PARTICIPATED = "PARTICIPATED",
+  VISIBLE = "VISIBLE",
+}
+
+export interface CardCreateInput {
+  readonly prompt: JsonObject;
+  readonly fullAnswer: JsonObject;
+  readonly answers: ReadonlyArray<string>;
+  readonly sortKey?: string | null;
+  readonly template?: boolean | null;
 }
 
 export interface RoomConfigInput {

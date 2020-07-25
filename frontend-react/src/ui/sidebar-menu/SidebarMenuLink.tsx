@@ -1,9 +1,9 @@
-import styled from 'styled-components';
-import Link from '../Link';
+import { wrStyled } from "../../theme";
+import Link from "../Link";
 
-const SidebarMenuLink = styled(Link)`
+const SidebarMenuLink = wrStyled(Link)`
 width: 100%;
-padding: ${({ theme }) => theme.space[1]};
+padding: ${({ theme: { space } }) => space[1]};
 font-weight: normal;
 `;
 

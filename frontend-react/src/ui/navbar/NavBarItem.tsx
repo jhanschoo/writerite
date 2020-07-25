@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import { wrStyled } from "../../theme";
 
-const NavBarItem = styled.li`
+const NavBarItem = wrStyled.li`
 width: auto;
-padding: ${({ theme }) => theme.space[1]};
+padding: ${({ theme: { space } }) => space[1]};
 `;
 
 export default NavBarItem;

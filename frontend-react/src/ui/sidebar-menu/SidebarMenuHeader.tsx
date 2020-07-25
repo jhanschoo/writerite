@@ -1,11 +1,11 @@
-import styled from 'styled-components';
+import { wrStyled } from "../../theme";
 
-const SidebarMenuHeader = styled.h4`
+const SidebarMenuHeader = wrStyled.h4`
 text-transform: uppercase;
 font-size: 100%;
 font-weight: bold;
 margin: 0;
-padding: 0 0 ${({ theme }) => theme.space[1]} 0;
+padding: 0 0 ${({ theme: { space } }) => space[1]} 0;
 `;
 
 export default SidebarMenuHeader;

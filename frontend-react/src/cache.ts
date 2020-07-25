@@ -1,15 +1,32 @@
-import { InMemoryCache, /*IntrospectionFragmentMatcher*/ } from 'apollo-cache-inmemory';
-import { persistCache } from 'apollo-cache-persist';
-// import introspectionQueryResultData from './schema.json';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { InMemoryCache } from "@apollo/client";
+import { persistCache } from "apollo-cache-persist";
+import possibleTypes from "./possibleTypes.json";
 
-// const fragmentMatcher = new IntrospectionFragmentMatcher({ introspectionQueryResultData });
 
 export const cache = new InMemoryCache({
-  // fragmentMatcher,
+  possibleTypes,
+  typePolicies: {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    Deck: {
+      fields: {
+        subdecks: {
+          merge(_existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
 });
 
-export const persistedCache = persistCache({
+// https://github.com/apollographql/apollo-cache-persist/issues/317
+export const persistedCacheStatus = persistCache({
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   cache,
-  // @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   storage: window.localStorage,
 });
+

@@ -1,53 +1,63 @@
-import React from 'react';
+import React from "react";
 
-import styled from 'styled-components';
-import LandingContent from '../../ui/layout/LandingContent';
+import { wrStyled } from "../../theme";
+import LandingContent from "../../ui/layout/LandingContent";
 
-import WrBrandText from '../brand/WrBrandText';
-import WrSignin from '../signin/WrSignin';
+import WrBrandText from "../brand/WrBrandText";
+import WrSignin from "../signin/WrSignin";
 
-const HeroHeader = styled.header`
+const HeroHeader = wrStyled.header`
 display: flex;
 width: 60%;
 min-height: 33vh;
 justify-content: center;
 align-items: center;
-padding: 0 ${({ theme }) => theme.space[4]};
-@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+padding: 0 ${({ theme: { space } }) => space[4]};
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   width: 100%;
 }
 `;
 
-const Aside = styled.aside`
+const Aside = wrStyled.aside`
 display: flex;
 width: 40%;
 min-height: 33vh;
 justify-content: center;
 align-items: center;
-padding: 0 ${({ theme }) => theme.space[3]};
-@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+padding: 0 ${({ theme: { space } }) => space[3]};
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   width: 100%;
 }
 `;
 
-const HeroHeading = styled.h1`
+const HeroHeading = wrStyled.h1`
 font-size: 300%;
 text-align: center;
 
-@media (max-width: ${({ theme }) => theme.breakpoints[0]}) {
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[0]}) {
   font-size: 150%;
 }
 `;
 
-const Article = styled.article`
+const Article1 = wrStyled.article`
 display: flex;
 flex-wrap: wrap;
-margin: ${({ theme }) => theme.space[3]} 0 0 0;
+min-height: 67vh;
+margin: ${({ theme: { space } }) => space[3]} 0 0 0;
 `;
 
-const WrLandingContent = () => (
+const Footer = wrStyled.footer`
+display: flex;
+flex-wrap: wrap;
+min-height: 2em;
+width: 100%;
+margin: ${({ theme: { space } }) => space[3]} 0 0 0;
+// ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
+`;
+
+const WrLandingContent = (): JSX.Element =>
   <LandingContent>
-    <Article>
+    <Article1>
       <HeroHeader>
         <HeroHeading>
           <em>Study with supercharged flashcards on </em><WrBrandText suffix="." />
@@ -56,8 +66,7 @@ const WrLandingContent = () => (
       <Aside>
         <WrSignin />
       </Aside>
-    </Article>
-  </LandingContent>
-);
-
+    </Article1>
+    <Footer></Footer>
+  </LandingContent>;
 export default WrLandingContent;

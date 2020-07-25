@@ -1,81 +1,154 @@
-import React from 'react';
+import React, { useState } from "react";
+import type { RawDraftContentState } from "draft-js";
 
-import { useParams } from 'react-router';
+import { useParams } from "react-router";
 
-import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
-import { printApolloError } from '../../../util';
-import { WR_DECK_DETAIL } from '../../../client-models';
-import { WrCard } from '../../../client-models/gqlTypes/WrCard';
-import { DeckDetail, DeckDetailVariables  } from './gqlTypes/DeckDetail';
+import { useSelector } from "react-redux";
+import type { WrState } from "../../../store";
 
-import styled from 'styled-components';
-import Main from '../../../ui/layout/Main';
-import WrCardsList from '../../card/WrCardsList';
-import WrNewCardPrompt from '../../card/WrNewCardPrompt';
-import HDivider from '../../../ui-components/HDivider';
+import gql from "graphql-tag";
+import { useMutation, useQuery } from "@apollo/client";
+import { DECK_DETAIL, DECK_SCALARS } from "../../../client-models";
+import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
+import type { DeckDetail, DeckDetailVariables } from "./gqlTypes/DeckDetail";
+import type { DeckEdit, DeckEditVariables } from "./gqlTypes/DeckEdit";
 
-import WrDeckDetailHeader from './WrDeckDetailHeader';
-import WrNewSubdeck from './WrNewSubdeck';
-import WrSubdecksList from './WrSubdecksList';
+import { wrStyled } from "../../../theme";
+import Main from "../../../ui/layout/Main";
+import { MinimalLink } from "../../../ui/Link";
+
+import WrDeckDetailData from "./WrDeckDetailData";
+import WrDeckDetailDescription from "./WrDeckDetailDescription";
+import WrDeckDetailPersonalNotes from "./WrDeckDetailPersonalNotes";
+import WrDeckDetailSubdecks from "./WrDeckDetailSubdecks";
+import WrDeckDetailTemplatesAndCards from "./WrDeckDetailTemplatesAndCards";
 
 const DECK_DETAIL_QUERY = gql`
-${WR_DECK_DETAIL}
+${DECK_DETAIL}
 query DeckDetail($deckId: ID!) {
   deck(id: $deckId) {
-    ...WrDeckDetail
+    ...DeckDetail
   }
 }
 `;
 
-const CenteredP = styled.p`
-text-align: center;
+const DECK_EDIT_MUTATION = gql`
+${DECK_SCALARS}
+mutation DeckEdit(
+  $deckId: ID!
+  $name: String
+  $description: JsonObject
+  $promptLang: String
+  $answerLang: String
+  $published: Boolean
+) {
+  deckEdit(
+    id: $deckId
+    name: $name
+    description: $description
+    promptLang: $promptLang
+    answerLang: $answerLang
+    published: $published
+  ) {
+    ...DeckScalars
+  }
+}
 `;
 
-const WrDeckDetailComponent = () => {
+const BackLink = wrStyled(MinimalLink)`
+align-self: flex-start;
+font-weight: normal;
+font-size: ${({ theme: { scale } }) => scale[0]};
+margin: ${({ theme: { space } }) => `${space[1]} 0 ${space[3]} 0`};
+`;
+
+const StyledMain = wrStyled(Main)`
+padding: ${({ theme: { space } }) => `0 ${space[3]}`};
+`;
+
+const DeckDataBox = wrStyled.div`
+display: flex;
+flex-wrap: wrap;
+`;
+
+const NotesBox = wrStyled.div`
+width: 67%;
+display: flex;
+flex-direction: column;
+
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
+  width: 100%;
+}
+`;
+
+enum LastMutated {
+  TITLE,
+  DESCRIPTION,
+}
+
+const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
+  const [lastMutated, setLastMutated] = useState(LastMutated.TITLE);
+  const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
   const {
     loading, error, data,
   } = useQuery<DeckDetail, DeckDetailVariables>(DECK_DETAIL_QUERY, {
     variables: { deckId },
-    onError: printApolloError,
   });
+  const [mutate, { loading: mutationLoading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION);
   if (error) {
-    return (<Main/>);
+    return <Main/>;
   }
   if (loading) {
-    return (
-      <Main>
-        <CenteredP>
-          Retrieving deck...
-        </CenteredP>
-      </Main>
-    );
+    return <Main><p>Retrieving deck...</p></Main>;
   }
   if (!data?.deck) {
-    return (
-      <CenteredP>
-        Error retrieving deck. Please try again later.
-      </CenteredP>
-    );
+    return <Main><p>Error retrieving deck. Please try again later.</p></Main>;
   }
   const { deck } = data;
-  const { promptLang, answerLang } = deck;
-  const templates = deck.cards?.filter<WrCard>((card): card is WrCard => card?.template === true);
-  const cards = deck.cards?.filter<WrCard>((card): card is WrCard => card?.template === false);
+  const readOnly = deck.ownerId !== id;
+  const mutateWithVariables = (variables: Partial<DeckEditVariables>) => mutate({ variables: {
+    deckId,
+    name: deck.name,
+    ...variables,
+  } });
+  const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
+  // Note: component is keyed to force refresh on route change.
   return (
-    <Main>
-      <WrDeckDetailHeader deck={deck} />
-      <HDivider>{deck.children?.length || 0} Sub-Decks</HDivider>
-      <WrNewSubdeck deck={deck} />
-      <WrSubdecksList deck={deck} />
-      <HDivider>{templates?.length || 0} Template Cards</HDivider>
-      {templates && <WrCardsList cards={templates} promptLang={promptLang} answerLang={answerLang} />}
-      <HDivider>{cards?.length || 0} Cards</HDivider>
-      <WrNewCardPrompt deckId={deckId} />
-      {cards && <WrCardsList cards={cards} promptLang={promptLang} answerLang={answerLang} />}
-    </Main>
+    <StyledMain key={`${deckId}-WrDeckDetail`}>
+      <BackLink to="/deck/list">←back to Decks</BackLink>
+      <DeckDataBox>
+        <WrDeckDetailData
+          deck={deck}
+          mutateWithVariables={mutateWithVariables}
+          onMutation={() => setLastMutated(LastMutated.TITLE)}
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          saving={mutationLoading && lastMutated === LastMutated.TITLE}
+          readOnly={readOnly}
+        />
+        <NotesBox>
+          <WrDeckDetailDescription
+            description={deck.description as (RawDraftContentState | Record<string, unknown>)}
+            mutateWithVariables={mutateWithVariables}
+            onMutation={() => setLastMutated(LastMutated.DESCRIPTION)}
+            saving={mutationLoading && lastMutated === LastMutated.DESCRIPTION}
+            readOnly={readOnly}
+          />
+          <WrDeckDetailPersonalNotes
+            deckId={deck.id}
+          />
+        </NotesBox>
+      </DeckDataBox>
+      <WrDeckDetailSubdecks
+        deckId={deckId}
+        subdecks={subdecks}
+        readOnly={readOnly}
+      />
+      <WrDeckDetailTemplatesAndCards
+        deckId={deckId}
+      />
+    </StyledMain>
   );
 };
 
-export default WrDeckDetailComponent;
+export default WrDeckDetail;

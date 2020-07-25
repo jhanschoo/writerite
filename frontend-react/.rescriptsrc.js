@@ -38,8 +38,8 @@ module.exports = [{
     const babelLoaderPaths = getPaths(isBabelLoader, config);
     return edit((babelLoader) => {
       const plugins = babelLoader.options.plugins;
-      plugins.push("babel-plugin-styled-components");
-      plugins.push("babel-plugin-graphql-tag");
+      plugins.push("styled-components");
+      plugins.push("graphql-tag");
       return babelLoader;
     }, babelLoaderPaths, config);
   }

@@ -1,37 +1,63 @@
-import React, { useRef, useState, ChangeEvent, DragEvent, FormEvent } from 'react';
-import Papa from 'papaparse';
+// eslint-disable-next-line no-shadow
+import React, { ChangeEvent, DragEvent, FormEvent, MouseEvent, useRef, useState } from "react";
+import Papa from "papaparse";
+import { ContentState, convertToRaw } from "draft-js";
 
-import { withRouter, RouteComponentProps } from 'react-router';
+import { useHistory } from "react-router";
 
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
-import { printApolloError } from '../../util';
-import { WR_DECK } from '../../client-models';
-import { DeckCreateFromRows, DeckCreateFromRowsVariables } from './gqlTypes/DeckCreateFromRows';
+import gql from "graphql-tag";
+import { useMutation } from "@apollo/client";
+import { DECK_SCALARS } from "../../client-models";
+import { CardCreateInput } from "../../gqlGlobalTypes";
+import { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
+import { DeckCreateWithCards, DeckCreateWithCardsVariables } from "./gqlTypes/DeckCreateWithCards";
 
-import styled, { StyledComponent } from 'styled-components';
+import { StyledComponent } from "styled-components";
+import { WrTheme, wrStyled } from "../../theme";
 
-import Main from '../../ui/layout/Main';
-import Fieldset from '../../ui/Fieldset';
-import TextInput from '../../ui/TextInput';
-import { Button } from '../../ui/Button';
-import HDivider from '../../ui-components/HDivider';
+import Fieldset from "../../ui/Fieldset";
+import TextInput from "../../ui/TextInput";
+import { Button } from "../../ui/Button";
+import HDivider from "../../ui-components/HDivider";
 
-const DECK_CREATE_FROM_ROWS_MUTATION = gql`
-${WR_DECK}
-mutation DeckCreateFromRows(
+const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as JsonObject;
+
+const DECK_CREATE_WITH_CARDS = gql`
+${DECK_SCALARS}
+mutation DeckCreateWithCards(
     $name: String
     $promptLang: String
     $answerLang: String
-    $rows: [[String!]!]!
+    $cards: [CardCreateInput!]!
   ) {
-  deckCreateFromRows(
+  deckCreate(
     name: $name
     promptLang: $promptLang
     answerLang: $answerLang
-    rows: $rows
+    cards: $cards
   ) {
-    ...WrDeck
+    ...DeckScalars
+  }
+}
+`;
+
+const DECK_CREATE_MUTATION = gql`
+${DECK_SCALARS}
+mutation DeckCreate(
+  $name: String
+  $description: JsonObject
+  $promptLang: String
+  $answerLang: String
+  $published: Boolean
+) {
+  deckCreate(
+    name: $name
+    description: $description
+    promptLang: $promptLang
+    answerLang: $answerLang
+    published: $published
+  ) {
+    ...DeckScalars
   }
 }
 `;
@@ -43,22 +69,24 @@ enum DraggedFileStatus {
   VALID,
 }
 
-const StyledForm = styled.form`
+const StyledForm = wrStyled.form`
+min-width: 50vw;
+min-height: 75vh;
 display: flex;
 flex-direction: column;
 flex-grow: 1;
-margin: ${({ theme }) => theme.space[3]};
+margin: ${({ theme: { space } }) => space[3]};
 `;
 
-const StyledTextInput = styled(TextInput)`
-margin: 0 0 ${({ theme }) => theme.space[3]} 0;
+const StyledTextInput = wrStyled(TextInput)`
+margin: 0 0 ${({ theme: { space } }) => space[3]} 0;
 width: 100%;
 `;
 
-const DropDiv = styled.div`
+const DropDiv = wrStyled.div`
 margin: 0;
-padding: ${({ theme }) => theme.space[3]};
-border: 1px solid ${({ theme }) => theme.edge[1]};
+padding: ${({ theme: { space } }) => space[3]};
+border: 1px solid ${({ theme: { bg } }) => bg[3]};
 flex-grow: 1;
 min-height: 33vh;
 display: flex;
@@ -67,36 +95,36 @@ justify-content: center;
 align-items: center;
 
 &.active, :hover {
-  ${({ theme }) => theme.fgbg[1]}
+  ${({ theme: { fgbg, bg } }) => fgbg(bg[1])}
 }
 `;
 
-const DividerDiv = styled.div`
+const DividerDiv = wrStyled.div`
 display: flex;
-margin: 0 0 ${({ theme }) => theme.space[3]} 0;
+margin: 0 0 ${({ theme: { space } }) => space[3]} 0;
 flex-direction: column;
 width: 75%;
 align-items: stretch;
 `;
 
-const DropDivP = styled.p`
+const DropDivP = wrStyled.p`
 text-align: center;
-margin: ${({ theme }) => theme.space[3]} 0;
+margin: ${({ theme: { space } }) => space[3]} 0;
 `;
 
-const DropDivLabel = styled.label`
+const DropDivLabel = wrStyled.label`
 display: block;
 text-align: center;
 width: 100%;
-margin: 0 0 ${({ theme }) => theme.space[3]} 0;
+margin: 0 0 ${({ theme: { space } }) => space[3]} 0;
 `;
 
-const DropDivPBold = styled(DropDivP)`
+const DropDivPBold = wrStyled(DropDivP)`
 font-weight: bold;
 font-size: 125%;
 `;
 
-const FileInput = styled.input`
+const FileInput = wrStyled.input`
 position: absolute;
 border: 0;
 padding: 0;
@@ -106,82 +134,88 @@ overflow: hidden;
 clip: rect(0,0,0,0);
 `;
 
-const StyledFieldset = styled(Fieldset)`
+const StyledFieldset = wrStyled(Fieldset)`
 display: flex;
 flex-direction: column;
 align-items: center;
-margin: ${({ theme }) => theme.space[4]};
+margin: ${({ theme: { space } }) => space[4]};
 width: 67%;
 &.hidden {
   display: none;
 }
 `;
 
-const StyledButton = styled(Button)`
-padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+const StyledButton = wrStyled(Button)`
+padding: ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[3]};
 `;
 
-const FileInputLabel = StyledButton as StyledComponent<'label', any, {}, never>;
+const FileInputLabel = StyledButton as StyledComponent<"label", WrTheme, Record<string, unknown>, never>;
 
-const csvExtension = /\.csv$/i;
+const csvExtension = /\.csv$/ui;
 
-const WrUploadDeck = ({ history }: RouteComponentProps) => {
-  const [rows, setRows] = useState<string[][] | null>(null);
-  const [manualName, setManualName] = useState<boolean>(false);
-  const [nameInput, setNameInput] = useState<string>('');
+const WrUploadDeck = (): JSX.Element => {
+  // eslint-disable-next-line no-shadow
+  const history = useHistory();
+  const [cards, setCards] = useState<CardCreateInput[] | null>(null);
+  const [nameInput, setNameInput] = useState<string>("");
   const [filename, setFilename] = useState<string | null>(null);
   const [numEntered, setNumEntered] = useState<number>(0);
   const [draggedFileStatus, setDraggedFileStatus] = useState<DraggedFileStatus>(DraggedFileStatus.NONE);
+  const [isEmptyDeck, setIsEmptyDeck] = useState<boolean>(false);
   const dropDivEl = useRef<HTMLDivElement>(null);
-  const [
-    mutate, { loading },
-  ] = useMutation<DeckCreateFromRows, DeckCreateFromRowsVariables>(
-    DECK_CREATE_FROM_ROWS_MUTATION, {
-      onError: printApolloError,
-    },
-  );
-  const noFilenameMessage = (filename === null) ? (<DropDivP>no file selected</DropDivP>) : null;
+  const [mutateUpload, { loading: loadingUpload }] = useMutation<DeckCreateWithCards, DeckCreateWithCardsVariables>(DECK_CREATE_WITH_CARDS);
+  const [mutateCreate, { loading: loadingCreate }] = useMutation<DeckCreate, DeckCreateVariables>(DECK_CREATE_MUTATION);
+  const noFilenameMessage = filename === null && !isEmptyDeck ? <DropDivP>no file selected</DropDivP> : null;
   let dragStatusMessage = <DropDivPBold>drag a .csv file here</DropDivPBold>;
   switch (draggedFileStatus) {
     case DraggedFileStatus.MULTIPLE:
-        dragStatusMessage = <DropDivPBold>please drag just a single .csv file here</DropDivPBold>;
-        break;
+      dragStatusMessage = <DropDivPBold>please drag just a single .csv file here</DropDivPBold>;
+      break;
     case DraggedFileStatus.INVALID:
-        dragStatusMessage = <DropDivPBold>please drag a .csv file here</DropDivPBold>;
-        break;
+      dragStatusMessage = <DropDivPBold>please drag a .csv file here</DropDivPBold>;
+      break;
     case DraggedFileStatus.VALID:
-        dragStatusMessage = <DropDivPBold>drop file here</DropDivPBold>;
-        break;
+      dragStatusMessage = <DropDivPBold>drop file here</DropDivPBold>;
+      break;
+    case DraggedFileStatus.NONE:
+      // fallthrough
+    default:
+      break;
   }
   const handleSetFilename = (newFilename: string) => {
     setFilename(newFilename);
-    if (!manualName) {
-      setNameInput(newFilename.replace(csvExtension, ''));
-    }
+    setNameInput(newFilename.replace(csvExtension, ""));
   };
   const setFile = (file: File) => {
     Papa.parse<string[]>(file, {
       skipEmptyLines: true,
       worker: true,
-      complete: (({ data, errors }) => {
+      complete: ({ data, errors }) => {
         if (errors.length !== 0) {
-          // tslint:disable-next-line: no-console
+          // eslint-disable-next-line no-console
           console.error(errors);
         } else {
-          setRows(data);
+          setCards(data.map((row) => ({
+            prompt: rawFromText(row[0] ?? ""),
+            fullAnswer: rawFromText(row[1] ?? ""),
+            answers: row.slice(2),
+          })));
+          setIsEmptyDeck(false);
           handleSetFilename(file.name);
         }
-      }),
+      },
     });
   };
   const handleDragEnter = ({ dataTransfer }: DragEvent<HTMLDivElement>) => {
-    // numEntered ensures that entering/leaving due to child elements
-    // don't affect DraggedFileStatus state.
-    if (numEntered === 0 && dataTransfer.dropEffect === 'copy') {
+    /*
+     * numEntered ensures that entering/leaving due to child elements
+     * don't affect DraggedFileStatus state.
+     */
+    if (numEntered === 0 && dataTransfer.dropEffect === "copy") {
       if (dataTransfer.items.length > 1) {
         setDraggedFileStatus(DraggedFileStatus.MULTIPLE);
       } else if (dataTransfer.items.length === 1) {
-        if (dataTransfer.items[0].kind !== 'file') {
+        if (dataTransfer.items[0].kind !== "file") {
           setDraggedFileStatus(DraggedFileStatus.INVALID);
         } else {
           setDraggedFileStatus(DraggedFileStatus.VALID);
@@ -197,20 +231,23 @@ const WrUploadDeck = ({ history }: RouteComponentProps) => {
     setNumEntered(numEntered - 1);
   };
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-    // required alongside with preventDefault on drop event to prevent
-    // browser opening file on drop.
+    /*
+     * required alongside with preventDefault on drop event to prevent
+     * browser opening file on drop.
+     */
     e.preventDefault();
   };
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-    // required alongside with preventDefault on dragover event to
-    // prevent browser opening file on drop.
+    /*
+     * required alongside with preventDefault on dragover event to
+     * prevent browser opening file on drop.
+     */
     e.preventDefault();
     if (e.dataTransfer.files.length === 1) {
       setFile(e.dataTransfer.files[0]);
     }
   };
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setManualName(true);
     setNameInput(e.target.value);
   };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -218,62 +255,80 @@ const WrUploadDeck = ({ history }: RouteComponentProps) => {
       setFile(e.target.files[0]);
     }
   };
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleCreateEmpty = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (rows) {
-      mutate({
+    const res = await mutateCreate({ variables: {
+      name: "New Deck",
+      description: {},
+      promptLang: "",
+      answerLang: "",
+      published: false,
+    } });
+    const id = res.data?.deckCreate?.id;
+    if (id) {
+      history.push(`/deck/${id}/edit`);
+    }
+  };
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (cards) {
+      const res = await mutateUpload({
         variables: {
           name: nameInput,
-          rows,
+          cards,
         },
-      }).then((res) => {
-        if (res?.data?.deckCreateFromRows?.id) {
-          history.push(`/deck/${res.data.deckCreateFromRows.id}`);
-        }
       });
+      const id = res.data?.deckCreate?.id;
+      if (id) {
+        history.push(`/deck/${id}`);
+      }
     }
   };
   return (
-    <Main>
-      <StyledForm onSubmit={handleSubmit}>
-        <DropDiv
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
-          ref={dropDivEl}
-        >
-          {dragStatusMessage}
-          <DividerDiv>
-            <HDivider>OR</HDivider>
-          </DividerDiv>
-          <FileInput
-            type="file"
-            id="deck-upload-file-input"
-            required={true}
-            onChange={handleFileChange}
-            disabled={loading}
+    <StyledForm onSubmit={handleSubmit}>
+      <DropDiv
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        ref={dropDivEl}
+      >
+        {dragStatusMessage}
+        <DividerDiv>
+          <HDivider>OR</HDivider>
+        </DividerDiv>
+        <FileInput
+          type="file"
+          id="deck-upload-file-input"
+          required={true}
+          onChange={handleFileChange}
+          disabled={loadingUpload || loadingCreate}
+        />
+        <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
+        {noFilenameMessage}
+        <StyledFieldset className={filename === null ? "hidden" : undefined}>
+          <DropDivLabel htmlFor="upload-deck-name">
+            <strong>{filename}</strong> will be uploaded with name
+          </DropDivLabel>
+          <StyledTextInput
+            id="upload-deck-name"
+            value={nameInput}
+            onChange={handleNameChange}
+            className={filename === null ? "hidden" : undefined}
           />
-          <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
-          {noFilenameMessage}
-          <StyledFieldset className={(filename === null) ? 'hidden' : undefined}>
-            <DropDivLabel htmlFor="upload-deck-name">
-              <strong>{filename}</strong> will be uploaded with name
-            </DropDivLabel>
-            <StyledTextInput
-              id="upload-deck-name"
-              value={nameInput}
-              onChange={handleNameChange}
-              className={(filename === null) ? 'hidden' : undefined}
-            />
-            <StyledButton type="submit" disabled={!rows || loading}>
-              Upload
-            </StyledButton>
-          </StyledFieldset>
-        </DropDiv>
-      </StyledForm>
-    </Main>
+          <StyledButton type="submit" disabled={!cards || loadingUpload || loadingCreate}>
+          Upload
+          </StyledButton>
+        </StyledFieldset>
+        <DividerDiv>
+          <HDivider>OR</HDivider>
+        </DividerDiv>
+        <StyledButton onClick={handleCreateEmpty} disabled={loadingUpload || loadingCreate}>
+        Create an Empty Deck
+        </StyledButton>
+      </DropDiv>
+    </StyledForm>
   );
 };
 
-export default withRouter(WrUploadDeck);
+export default WrUploadDeck;

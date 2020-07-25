@@ -1,34 +1,34 @@
-import React, { useState, useEffect, MouseEvent } from 'react';
+/* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/unbound-method */
+// eslint-disable-next-line no-shadow
+import React, { MouseEvent, useEffect, useState } from "react";
 import {
-  Formik, FormikProps, FormikErrors, FormikTouched,
-} from 'formik';
-import * as yup from 'yup';
+  Formik, FormikErrors, FormikProps, FormikTouched,
+} from "formik";
+import * as yup from "yup";
 import { KEYUTIL, KJUR } from "jsrsasign";
 
-import { CurrentUser } from '../../types';
+import { CurrentUser } from "../../types";
 
-import { useDispatch } from 'react-redux';
-import { createSignin, SigninAction } from './actions';
+import { useDispatch } from "react-redux";
+import { SigninAction, createSignin } from "./actions";
 
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/react-hooks';
-import { restartWsConnection } from '../../apolloClient';
-import { printApolloError } from '../../util';
-import { Signin, SigninVariables } from './gqlTypes/Signin';
+import gql from "graphql-tag";
+import { useMutation } from "@apollo/client";
+import { restartWsConnection } from "../../apolloClient";
+import { Signin, SigninVariables } from "./gqlTypes/Signin";
 
-import styled from 'styled-components';
-import { breakpoints } from '../../theme';
-import HDivider from '../../ui-components/HDivider';
-import Button, { AnchorButton } from '../../ui/Button';
-import TextInput from '../../ui/TextInput';
-import Fieldset from '../../ui/Fieldset';
+import { breakpoints, wrStyled } from "../../theme";
+import HDivider from "../../ui-components/HDivider";
+import Button, { AnchorButton } from "../../ui/Button";
+import TextInput from "../../ui/TextInput";
+import Fieldset from "../../ui/Fieldset";
 
-import { useHistory } from 'react-router';
-import { Dispatch } from 'redux';
+import { useHistory } from "react-router";
+import { Dispatch } from "redux";
 
-declare var gapiDeferred: Promise<any>;
-declare var grecaptchaDeferred: Promise<any>;
-declare var FBDeferred: Promise<any>;
+declare let gapiDeferred: Promise<any> | undefined;
+declare let grecaptchaDeferred: Promise<any> | undefined;
+declare let FBDeferred: Promise<any> | undefined;
 
 const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(process.env.REACT_APP_JWT_PUBLIC_KEY ?? "fail"));
 
@@ -58,135 +58,137 @@ interface FormValues {
   isSignup: boolean;
 }
 
-const GoogleButton = styled(Button)`
+const GoogleButton = wrStyled(Button)`
 width: 100%;
-margin: 0 0 ${({ theme }) => theme.space[2]} 0;
-padding: ${({ theme }) => theme.space[2]};
-border-color: ${({ theme }) => theme.color.googleRed};
-color: ${({ theme }) => theme.color.googleRed};
+margin: 0 0 ${({ theme: { space } }) => space[2]} 0;
+padding: ${({ theme: { space } }) => space[2]};
+border-color: ${({ theme: { color } }) => color.googleRed};
+color: ${({ theme: { color } }) => color.googleRed};
 
 :hover, :focus {
-  border: 1px solid ${({ theme }) => theme.color.googleRed};
-  color: ${({ theme }) => theme.color.bg1};
-  background: ${({ theme }) => theme.color.googleRed};
+  border: 1px solid ${({ theme: { color } }) => color.googleRed};
+  color: ${({ theme: { bg } }) => bg[1]};
+  background: ${({ theme: { color } }) => color.googleRed};
   outline: none;
 }
 `;
 
-const FacebookButton = styled(Button)`
+const FacebookButton = wrStyled(Button)`
 width: 100%;
-margin: 0 0 ${({ theme }) => theme.space[2]} 0;
-padding: ${({ theme }) => theme.space[2]};
-border-color: ${({ theme }) => theme.color.facebookBlue};
-color: ${({ theme }) => theme.color.facebookBlue};
+margin: 0 0 ${({ theme: { space } }) => space[2]} 0;
+padding: ${({ theme: { space } }) => space[2]};
+border-color: ${({ theme: { color } }) => color.facebookBlue};
+color: ${({ theme: { color } }) => color.facebookBlue};
 
 :hover, :focus {
-  border: 1px solid ${({ theme }) => theme.color.facebookBlue};
-  color: ${({ theme }) => theme.color.bg1};
-  background: ${({ theme }) => theme.color.facebookBlue};
+  border: 1px solid ${({ theme: { color } }) => color.facebookBlue};
+  color: ${({ theme: { bg } }) => bg[1]};
+  background: ${({ theme: { color } }) => color.facebookBlue};
   outline: none;
 }
 `;
 
-const LocalSigninButton = styled(Button)`
+const LocalSigninButton = wrStyled(Button)`
 width: 100%;
-margin: ${({ theme }) => theme.space[2]} 0;
-padding: ${({ theme }) => theme.space[2]};
+margin: ${({ theme: { space } }) => space[2]} 0;
+padding: ${({ theme: { space } }) => space[2]};
 `;
 
-const SigninBox = styled.div`
-padding: ${({ theme }) => theme.space[3]};
-${({ theme }) => theme.fgbg[2]};
+const SigninBox = wrStyled.div`
+padding: ${({ theme: { space } }) => space[3]};
+${({ theme: { fgbg, bg } }) => fgbg(bg[2])};
 `;
 
-const TextCenteredDiv = styled.div`
+const TextCenteredDiv = wrStyled.div`
 text-align: center;
 `;
 
-const InlineBlockDiv = styled.div`
+const InlineBlockDiv = wrStyled.div`
 display: inline-block;
 `;
 
-const FieldsetWithMargin = styled(Fieldset)`
-margin: ${({ theme }) => theme.space[1]} 0;
+const FieldsetWithMargin = wrStyled(Fieldset)`
+margin: ${({ theme: { space } }) => space[1]} 0;
 
 &.hidden {
   display: none;
 }
 `;
 
-const StyledLabel = styled.label`
-padding: 0 ${({ theme }) => theme.space[2]};
+const StyledLabel = wrStyled.label`
+padding: 0 ${({ theme: { space } }) => space[2]};
 font-size: 87.5%;
 `;
 
-const FlowTextInput = styled(TextInput)`
+const FlowTextInput = wrStyled(TextInput)`
 width: 100%;
-margin: ${({ theme }) => theme.space[1]} ${({ theme }) => theme.space[0]};
+margin: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) => space[0]};
 `;
 
-const ErrorMessage = styled.p`
+const ErrorMessage = wrStyled.p`
 display: flex;
 font-size: 75%;
 margin: 0;
-padding: 0 ${({ theme }) => theme.space[2]};
-color: ${({ theme }) => theme.color.error};
+padding: 0 ${({ theme: { space } }) => space[2]};
+color: ${({ theme: { color } }) => color.error};
 `;
 
-const SmallMessage = styled.p`
+const SmallMessage = wrStyled.p`
 display: flex;
 font-size: 87.5%;
 margin: 0;
-padding: 0 ${({ theme }) => theme.space[2]};
+padding: 0 ${({ theme: { space } }) => space[2]};
 align-items: baseline;
 `;
 
 const formSchema = yup.object().shape({
   email: yup.string()
-    .required('Email is required')
-    .email('Please enter a valid email'),
+    .required("Email is required")
+    .email("Please enter a valid email"),
   name: yup.string(),
   password: yup.string()
-    .required('Password is required')
-    .when('isSignup', {
+    .required("Password is required")
+    .when("isSignup", {
       is: true,
       then: yup.string()
-        .oneOf([yup.ref('confirmPassword')], 'Passwords do not match'),
+        .oneOf([yup.ref("confirmPassword")], "Passwords do not match"),
     }),
   confirmPassword: yup.string(),
   recaptcha: yup.string()
-    .when('isSignup', {
+    .when("isSignup", {
       is: true,
       then: yup.string()
-        .required('Please verify that you are human'),
+        .required("Please verify that you are human"),
     }),
   isSignin: yup.boolean(),
 });
 
 const formInitialValues: FormValues = {
-  email: '',
-  name: '',
-  password: '',
-  confirmPassword: '',
-  recaptcha: '',
+  email: "",
+  name: "",
+  password: "",
+  confirmPassword: "",
+  recaptcha: "",
   isSignup: true,
 };
 
-const WrSignin = () => {
+const WrSignin = (): JSX.Element => {
+  // eslint-disable-next-line no-shadow
   const history = useHistory();
   const dispatch = useDispatch<Dispatch<SigninAction>>();
   const [isSignup, setSignup] = useState(formInitialValues.isSignup);
   const [signinUnderway, setSigninUnderway] = useState(false);
   let recaptchaCallback = (_gRecaptchaResponse: string): void => {
-    return;
+    // noop
   };
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${breakpoints[0]})`);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     if (grecaptchaDeferred) {
-      grecaptchaDeferred.then((grecaptcha) => {
-        grecaptcha.render('g-recaptcha', {
-          size: (mq.matches) ? 'compact' : 'normal',
-          sitekey: '6Lc2V3IUAAAAAFP-EiNvhlN533lN7F8TqJCEJmqX',
+      void grecaptchaDeferred.then((grecaptcha) => {
+        grecaptcha.render("g-recaptcha", {
+          size: mq.matches ? "compact" : "normal",
+          sitekey: "6Lc2V3IUAAAAAFP-EiNvhlN533lN7F8TqJCEJmqX",
           callback: recaptchaCallback,
         });
       });
@@ -196,38 +198,34 @@ const WrSignin = () => {
     const token = signin?.token;
     if (token && KJUR.jws.JWS.verify(token, PUBLIC_KEY, ["ES256"])) {
       const user = KJUR.jws.JWS.parse(token).payloadObj.sub as CurrentUser;
-      dispatch(createSignin({ token, user }))
+      dispatch(createSignin({ token, user }));
       createSignin({ token, user });
       restartWsConnection();
-      history.push('/deck');
+      history.push("/deck");
     } else {
       setSigninUnderway(false);
     }
   };
-  const [mutateSignin] = useMutation<Signin, SigninVariables>(
-    SIGNIN_MUTATION, {
-      onCompleted: handleSigninSuccess,
-      onError: (e) => {
-        setSigninUnderway(false);
-        printApolloError(e);
-      },
-    }
-  );
+  const [mutateSignin] = useMutation<Signin, SigninVariables>(SIGNIN_MUTATION, {
+    onCompleted: handleSigninSuccess,
+    onError: (e) => {
+      setSigninUnderway(false);
+    },
+  });
 
   const handleGoogleSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
     setSigninUnderway(true);
     const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
-    return googleAuth.signIn().then((googleUser: any) => {
-      return mutateSignin({
-        variables: {
-          email: googleUser.getBasicProfile().getEmail(),
-          token: googleUser.getAuthResponse().id_token,
-          authorizer: 'GOOGLE',
-          identifier: googleUser.getId(),
-        },
-      }).catch(() => setSigninUnderway(false));
-    }, () => setSigninUnderway(false));
+    return googleAuth.signIn().then((googleUser: any) => mutateSignin({
+      variables: {
+        email: googleUser.getBasicProfile().getEmail(),
+        token: googleUser.getAuthResponse().id_token,
+        authorizer: "GOOGLE",
+        identifier: googleUser.getId(),
+      },
+    }).catch(() => setSigninUnderway(false)), () => setSigninUnderway(false));
   };
   const handleFacebookSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -235,14 +233,14 @@ const WrSignin = () => {
     return (await FBDeferred).login(async (loginResponse: any) => {
       const { authResponse } = loginResponse;
       if (authResponse) {
-        (await FBDeferred).api('/me', {
-          fields: 'name,email',
+        (await FBDeferred).api("/me", {
+          fields: "name,email",
         }, (apiResponse: any) => {
           mutateSignin({
             variables: {
               email: apiResponse.email,
               token: authResponse.accessToken,
-              authorizer: 'FACEBOOK',
+              authorizer: "FACEBOOK",
               identifier: authResponse.userID,
             },
           }).catch(() => setSigninUnderway(false));
@@ -251,8 +249,8 @@ const WrSignin = () => {
         setSigninUnderway(false);
       }
     }, {
-        scope: 'public_profile,email',
-      });
+      scope: "public_profile,email",
+    });
   };
 
   const handleLocalSignin = (values: FormValues) => {
@@ -260,9 +258,9 @@ const WrSignin = () => {
     return mutateSignin({
       variables: {
         email: values.email,
-        name: (values.name === '') ? undefined : values.name,
+        name: values.name === "" ? undefined : values.name,
         token: values.recaptcha,
-        authorizer: 'LOCAL',
+        authorizer: "LOCAL",
         identifier: values.password,
       },
     });
@@ -273,10 +271,10 @@ const WrSignin = () => {
     setSigninUnderway(true);
     return mutateSignin({
       variables: {
-        email: 'abc@123.xyz',
-        token: '',
-        authorizer: 'DEVELOPMENT',
-        identifier: '123',
+        email: "abc@123.xyz",
+        token: "",
+        authorizer: "DEVELOPMENT",
+        identifier: "123",
       },
     });
   };
@@ -296,43 +294,35 @@ const WrSignin = () => {
       e.preventDefault();
       const newIsSignup = !isSignup;
       setSignup(!isSignup);
-      setFieldTouched('isSignup');
-      setFieldValue('isSignup', newIsSignup);
+      setFieldTouched("isSignup");
+      setFieldValue("isSignup", newIsSignup);
     };
     recaptchaCallback = (gRecaptchaResponse: string) => {
-      setFieldTouched('recaptcha');
-      setFieldValue('recaptcha', gRecaptchaResponse || '');
+      setFieldTouched("recaptcha");
+      setFieldValue("recaptcha", gRecaptchaResponse || "");
       return null;
     };
-    const showValid = (
-      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
-    ) => touched[key] && !errors[key];
-    const showError = (
-      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
-      ) => touched[key] && errors[key];
-    const passwordShowValid = (
+    const showValid = (key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>) => touched[key] && !errors[key];
+    const showError = (key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>) => touched[key] && errors[key];
+    const passwordShowValid =
       touched.password && touched.confirmPassword && !(
-        errors.password || errors.confirmPassword
-      ));
-    const passwordShowError = (
+        errors.password ?? errors.confirmPassword
+      );
+    const passwordShowError =
       touched.password && touched.confirmPassword && (
-        errors.password || errors.confirmPassword
-      ));
-    const maybeError = (
-      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>,
-    ) => showError(key) && (
+        errors.password ?? errors.confirmPassword
+      );
+    const maybeError = (key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>) => showError(key) &&
       <ErrorMessage>
         {errors[key]}
-      </ErrorMessage>
-    );
-    const formattedPasswordError = passwordShowError && (
+      </ErrorMessage>;
+    const formattedPasswordError = passwordShowError &&
       <ErrorMessage>
-        {errors.password || errors.confirmPassword}
-      </ErrorMessage>
-    );
-    const developmentSignin = (process.env.NODE_ENV !== 'development')
-        ? ''
-        : <AnchorButton onClick={handleDevelopmentSignin}>Development Login</AnchorButton>;
+        {errors.password ?? errors.confirmPassword}
+      </ErrorMessage>;
+    const developmentSignin = process.env.NODE_ENV !== "development"
+      ? ""
+      : <AnchorButton onClick={handleDevelopmentSignin}>Development Login</AnchorButton>;
     return (
       <form onSubmit={handleSubmit}>
         <FieldsetWithMargin>
@@ -345,11 +335,11 @@ const WrSignin = () => {
             id="email-input"
             // autocomplete={isSignup ? 'new-username' : 'current-username'}
             disabled={disabled}
-            className={showError('email') ? 'error' : (showValid('email') ? 'valid' : '')}
+            className={showError("email") ? "error" : showValid("email") ? "valid" : ""}
           />
-          {maybeError('email')}
+          {maybeError("email")}
         </FieldsetWithMargin>
-        <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+        <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
           <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
           <FlowTextInput
             onChange={handleChange}
@@ -359,9 +349,9 @@ const WrSignin = () => {
             id="name-input"
             // autocomplete={isSignup ? 'new-username' : 'current-username'}
             disabled={disabled}
-            className={showError('name') ? 'error' : (showValid('name') ? 'valid' : '')}
+            className={showError("name") ? "error" : showValid("name") ? "valid" : ""}
           />
-          {maybeError('name')}
+          {maybeError("name")}
         </FieldsetWithMargin>
         <FieldsetWithMargin>
           <StyledLabel htmlFor="password-input">Password</StyledLabel>
@@ -373,11 +363,11 @@ const WrSignin = () => {
             id="password-input"
             // autocomplete={isSignup ? 'new-password' : 'current-password'}
             disabled={disabled}
-            className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+            className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
           />
           {formattedPasswordError}
         </FieldsetWithMargin>
-        <FieldsetWithMargin className={isSignup ? undefined : 'hidden'}>
+        <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
           <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
           <FlowTextInput
             onChange={handleChange}
@@ -388,24 +378,24 @@ const WrSignin = () => {
             aria-label="Confirm Password"
             // autocomplete={isSignup ? 'new-password' : 'current-password'}
             disabled={disabled}
-            className={passwordShowError ? 'error' : (passwordShowValid ? 'valid' : '')}
+            className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
           />
         </FieldsetWithMargin>
         <Fieldset>
           <TextCenteredDiv>
             <InlineBlockDiv id="g-recaptcha" />
-            {maybeError('recaptcha')}
+            {maybeError("recaptcha")}
           </TextCenteredDiv>
         </Fieldset>
         <LocalSigninButton
           type="submit"
         >
-          {isSignup ? 'Sign up with Email and Password' : 'Login with Email and Password'}
+          {isSignup ? "Sign up with Email and Password" : "Login with Email and Password"}
         </LocalSigninButton>
         <SmallMessage>
-          {isSignup ? 'Existing user?\u00A0' : 'New user?\u00A0'}
+          {isSignup ? "Existing user?\u00A0" : "New user?\u00A0"}
           <AnchorButton onClick={handleToggleSignin}>
-            {isSignup ? 'Login' : 'Sign up'}
+            {isSignup ? "Login" : "Sign up"}
           </AnchorButton> {developmentSignin}
         </SmallMessage>
       </form>

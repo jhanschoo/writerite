@@ -1,31 +1,29 @@
-import React from 'react';
+import React from "react";
 
-import styled from 'styled-components';
-import LandingContent from '../../ui/layout/LandingContent';
+import { wrStyled } from "../../theme";
+import LandingContent from "../../ui/layout/LandingContent";
 
-import WrSignin from './WrSignin';
+import WrSignin from "./WrSignin";
 
-const StyledLandingContent = styled(LandingContent)`
-margin: ${({ theme }) => theme.space[3]} 0 0 0;
+const StyledLandingContent = wrStyled(LandingContent)`
+margin: ${({ theme: { space } }) => space[3]} 0 0 0;
 `;
 
-const SigninBox = styled.div`
+const SigninBox = wrStyled.div`
 display: flex;
 width: 40%;
 justify-content: center;
 align-items: center;
-padding: ${({ theme }) => theme.space[1]};
-@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+padding: ${({ theme: { space } }) => space[1]};
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   width: 100%;
 }
 `;
 
-const WrSigninContent = () => (
+const WrSigninContent = (): JSX.Element =>
   <StyledLandingContent as="article">
     <SigninBox>
       <WrSignin />
     </SigninBox>
-  </StyledLandingContent>
-);
-
+  </StyledLandingContent>;
 export default WrSigninContent;

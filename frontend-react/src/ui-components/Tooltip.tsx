@@ -1,18 +1,19 @@
-import React, { useState, ReactNode, MouseEvent } from 'react';
+// eslint-disable-next-line no-shadow
+import React, { MouseEvent, ReactNode, useState } from "react";
 
-import styled from 'styled-components';
+import { wrStyled } from "../theme";
 
 interface Props {
   children: ReactNode;
   content: ReactNode;
-  placement?: 'up' | 'down' | 'left' | 'right';
+  placement?: "up" | "down" | "left" | "right";
 }
 
-const Wrapper = styled.div`
+const Wrapper = wrStyled.div`
 position: relative;
 `;
 
-const Anchor = styled.div`
+const Anchor = wrStyled.div`
 position: absolute;
 display: flex;
 width: 0;
@@ -43,32 +44,32 @@ height: 0;
 }
 `;
 
-const TooltipDiv = styled.div`
+const TooltipDiv = wrStyled.div`
 position: absolute;
 &.down {
-  top: ${({ theme }) => theme.space[2]};
+  top: ${({ theme: { space } }) => space[2]};
 }
 &.up {
-  bottom: ${({ theme }) => theme.space[2]};
+  bottom: ${({ theme: { space } }) => space[2]};
 }
 &.left {
-  right: ${({ theme }) => theme.space[2]};
+  right: ${({ theme: { space } }) => space[2]};
 }
 &.right {
-  left: ${({ theme }) => theme.space[2]};
+  left: ${({ theme: { space } }) => space[2]};
 }
 `;
 
-const Tooltip = ({ children, content, placement = 'down' }: Props) => {
+const Tooltip = ({ children, content, placement = "down" }: Props): JSX.Element => {
   const [isHover, setIsHover] = useState(false);
-  const handleMouseEnter = (e: MouseEvent<HTMLElement>) => setIsHover(true);
-  const handleMouseLeave = (e: MouseEvent<HTMLElement>) => setIsHover(false);
+  const handleMouseEnter = (_e: MouseEvent<HTMLElement>) => setIsHover(true);
+  const handleMouseLeave = (_e: MouseEvent<HTMLElement>) => setIsHover(false);
   return (
     <Wrapper>
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         {children}
       </div>
-      <Anchor className={`${placement} ${isHover ? '' : 'hidden'}`}>
+      <Anchor className={`${placement} ${isHover ? "" : "hidden"}`}>
         <TooltipDiv className={placement}>
           {content}
         </TooltipDiv>

@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import { wrStyled } from "../theme";
 
 // https://bugs.chromium.org/p/chromium/issues/detail?id=375693
-const Fieldset = styled.div`
+const Fieldset = wrStyled.div`
 border: none;
 margin: 0;
 padding: 0;

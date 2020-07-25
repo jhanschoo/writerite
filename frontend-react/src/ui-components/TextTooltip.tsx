@@ -1,13 +1,12 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
-import styled from 'styled-components';
-import Tooltip from './Tooltip';
+import { wrStyled } from "../theme";
+import Tooltip from "./Tooltip";
 
-const Text = styled.p`
-background: ${({ theme }) => theme.color.fg2};
-color: ${({ theme }) => theme.color.bg1};
+const TooltipText = wrStyled.p`
+${({ theme: { bgfg, fg } }) => bgfg(fg[2])};
 margin: 0;
-padding: ${({ theme }) => theme.space[1]};
+padding: ${({ theme: { space } }) => space[1]};
 border-radius: 2px;
 font-size: 75%;
 `;
@@ -15,15 +14,11 @@ font-size: 75%;
 interface Props {
   children: ReactNode;
   text: ReactNode;
-  placement?: 'up' | 'down' | 'left' | 'right';
+  placement?: "up" | "down" | "left" | "right";
 }
 
-const TextTooltip = ({ children, text, placement }: Props) => {
-  return (
-    <Tooltip content={<Text>{text}</Text>} placement={placement}>
-      {children}
-    </Tooltip>
-  );
-};
-
+const TextTooltip = ({ children, text, placement }: Props): JSX.Element =>
+  <Tooltip content={<TooltipText>{text}</TooltipText>} placement={placement}>
+    {children}
+  </Tooltip>;
 export default TextTooltip;

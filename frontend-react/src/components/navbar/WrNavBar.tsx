@@ -1,51 +1,57 @@
-import React from 'react';
+import React from "react";
 
-import { useSelector, useDispatch } from 'react-redux';
-import { WrState } from '../../store';
-import { createSignout, SigninAction } from '../signin/actions';
+import { useDispatch, useSelector } from "react-redux";
+import { WrState } from "../../store";
+import { SigninAction, createSignout } from "../signin/actions";
 
-import { restartWsConnection } from '../../apolloClient';
-import { CurrentUser } from '../../types';
+import { restartWsConnection } from "../../apolloClient";
+import { CurrentUser } from "../../types";
 
-import styled from 'styled-components';
-import Link from '../../ui/Link';
-import { BorderlessButton } from '../../ui/Button';
-import NavBar from '../../ui/navbar/NavBar';
-import NavBarItem from '../../ui/navbar/NavBarItem';
-import NavBarList from '../../ui/navbar/NavBarList';
+import { wrStyled } from "../../theme";
+import Link from "../../ui/Link";
+import { BorderlessButton } from "../../ui/Button";
+import NavBar from "../../ui/navbar/NavBar";
+import NavBarItem from "../../ui/navbar/NavBarItem";
+import NavBarList from "../../ui/navbar/NavBarList";
 
-import WrHamburger from './WrHamburger';
-import WrBrandText from '../brand/WrBrandText';
-import { Dispatch } from 'redux';
+import WrBrandText from "../brand/WrBrandText";
+import { Dispatch } from "redux";
 
-const BrandHeading = styled.h3`
+const BrandHeading = wrStyled.h3`
 margin: 0;
 `;
 
-const StyledNavBar = styled(NavBar)`
+const StyledNavBar = wrStyled(NavBar)`
 margin: 0;
-@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
+flex-wrap: nowrap;
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   font-size: 75%;
 }
 `;
 
-const BrandNavBarItem = styled(NavBarItem)`
-padding: ${({ theme }) => theme.space[2]};
+const BrandNavBarItem = wrStyled(NavBarItem)`
+padding: ${({ theme: { space } }) => space[2]};
 `;
 
-const NavBarListRight = styled(NavBarList)`
+const NavBarListRight = wrStyled(NavBarList)`
 justify-content: flex-end;
 `;
 
-const PageLink = styled(Link)`
-padding: ${({ theme }) => theme.space[2]} ${({ theme }) => theme.space[3]};
+const PageLink = wrStyled(Link)`
+padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
+  padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
+}
 `;
 
-const SignoutButton = styled(BorderlessButton)`
-padding: ${({ theme }) => theme.space[2]};
+const SignoutButton = wrStyled(BorderlessButton)`
+padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
+  padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
+}
 `;
 
-const BrandLink = styled(Link)`
+const BrandLink = wrStyled(Link)`
 padding: 0;
 border: none;
 background: none;
@@ -56,20 +62,13 @@ background: none;
 }
 `;
 
-const renderLoggedOut = () => {
-  return (
-    <NavBarItem>
-      <PageLink to="/signin" exact={true}>
+const renderLoggedOut = () =>
+  <NavBarItem>
+    <PageLink to="/signin" exact={true}>
         Sign in
-      </PageLink>
-    </NavBarItem>
-  );
-};
-
-const renderLoggedIn = (user: CurrentUser, dispatchSignout: () => SigninAction) => {
-  if (!user) {
-    return null;
-  }
+    </PageLink>
+  </NavBarItem>;
+const renderLoggedIn = (dispatchSignout: () => SigninAction) => {
   const signoutAndRestartWs = () => {
     dispatchSignout();
     createSignout();
@@ -106,26 +105,25 @@ const renderLoggedIn = (user: CurrentUser, dispatchSignout: () => SigninAction) 
   );
 };
 
-const WrNavBar = ()  => {
-  const user = useSelector<WrState, CurrentUser | null>((state) => state?.signin?.session?.user ?? null);
+const WrNavBar = (): JSX.Element => {
+  const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);
   const dispatch = useDispatch<Dispatch<SigninAction>>();
   const dispatchSignout = () => dispatch(createSignout());
   return (
-  <StyledNavBar>
-    <NavBarList>
-      <WrHamburger />
-      <BrandNavBarItem>
-        <BrandLink to="/" activeClassName="">
-          <BrandHeading>
-            <WrBrandText short={true} />
-          </BrandHeading>
-        </BrandLink>
-      </BrandNavBarItem>
-    </NavBarList>
-    <NavBarListRight>
-      {user ? renderLoggedIn(user, dispatchSignout) : renderLoggedOut()}
-    </NavBarListRight>
-  </StyledNavBar>
+    <StyledNavBar>
+      <NavBarList>
+        <BrandNavBarItem>
+          <BrandLink to="/" activeClassName="">
+            <BrandHeading>
+              <WrBrandText short={true} />
+            </BrandHeading>
+          </BrandLink>
+        </BrandNavBarItem>
+      </NavBarList>
+      <NavBarListRight>
+        {user ? renderLoggedIn(dispatchSignout) : renderLoggedOut()}
+      </NavBarListRight>
+    </StyledNavBar>
   );
 };
 

@@ -1,17 +1,13 @@
-import styled from 'styled-components';
+import { wrStyled } from "../../theme";
 
-const Main = styled.main`
-grid-area: 2 / 5 / 3 / 14;
+const Main = wrStyled.main`
+grid-area: 2 / 2 / 3 / 14;
 align-items: stretch;
 overflow-y: auto;
 
-padding: 0 ${({ theme }) => theme.space[3]};
+padding: 0 ${({ theme: { space } }) => space[3]};
 display: flex;
 flex-direction: column;
-
-@media (max-width: ${({ theme }) => theme.breakpoints[1]}) {
-  grid-area: 2 / 2 / 3 / 14;
-}
 `;
 
 export default Main;

@@ -1,23 +1,23 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
 
-import styled, { ThemedStyledFunction } from 'styled-components';
+import { ThemedStyledFunction } from "styled-components";
+import { WrTheme, wrStyled } from "../theme";
 
-const styledSpacerDiv: ThemedStyledFunction<'div', any, { spacerColor?: string }, never> = styled.div;
+const styledSpacerDiv: ThemedStyledFunction<"div", WrTheme, { spacerColor?: string }, never> = wrStyled.div;
 
-const OuterBox = styled.div`
+const OuterBox = wrStyled.div`
 display: flex;
-flex-direction: row;
 align-items: center;
 `;
 
 const Spacer = styledSpacerDiv`
 width: 1px;
 flex-grow: 1;
-background: ${({ spacerColor, theme }) => spacerColor || theme.edge[1]};
+background: ${({ spacerColor, theme }) => spacerColor ?? theme.bg[3]};
 `;
 
-const TextBox = styled.div`
-margin: ${({ theme }) => theme.space[2]};
+const TextBox = wrStyled.div`
+margin: ${({ theme: { space } }) => space[2]};
 `;
 
 interface Props {
@@ -25,15 +25,14 @@ interface Props {
   children?: ReactNode;
 }
 
-const VDivider = ({ children, spacerColor }: Props) => {
-  const labelAndHalf = (
+const VDivider = ({ children, spacerColor }: Props): JSX.Element => {
+  const labelAndHalf =
     <>
       <TextBox>
-      {children}
+        {children}
       </TextBox>
       <Spacer spacerColor={spacerColor} />
-    </>
-  );
+    </>;
   return (
     <OuterBox>
       <Spacer spacerColor={spacerColor} />

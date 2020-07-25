@@ -8,7 +8,7 @@ export interface CurrentUser {
   readonly id: string;
   readonly email: string;
   readonly name: string | null;
-  readonly roles: ReadonlyArray<Roles>;
+  readonly roles: readonly Roles[];
 }
 
 export interface CurrentUserAndToken {
@@ -16,4 +16,5 @@ export interface CurrentUserAndToken {
   readonly user: CurrentUser;
 }
 
-export type FixRef<T extends { ref?: any }> = Omit<T, 'ref'> & { ref?: Exclude<T['ref'], string> };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FixRef<T extends { ref?: any }> = Omit<T, "ref"> & { ref?: Exclude<T["ref"], string> };

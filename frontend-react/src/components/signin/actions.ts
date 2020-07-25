@@ -1,8 +1,8 @@
-import { CurrentUser, CurrentUserAndToken } from '../../types';
+import { CurrentUser, CurrentUserAndToken } from "../../types";
 
 export enum ActionTypes {
-  SIGNIN = 'SIGNIN',
-  USER_EDIT = 'USER_EDIT',
+  SIGNIN = "SIGNIN",
+  USER_EDIT = "USER_EDIT",
 }
 
 export interface SigninAction {
@@ -17,23 +17,17 @@ export interface UserEditAction {
 
 export type AuthorizationAction = SigninAction | UserEditAction;
 
-export const createSignin = (session: CurrentUserAndToken | null): SigninAction => {
-  return {
-    type: ActionTypes.SIGNIN,
-    session,
-  };
-};
+export const createSignin = (session: CurrentUserAndToken | null): SigninAction => ({
+  type: ActionTypes.SIGNIN,
+  session,
+});
 
-export const createSignout = (): SigninAction => {
-  return {
-    type: ActionTypes.SIGNIN,
-    session: null,
-  };
-};
+export const createSignout = (): SigninAction => ({
+  type: ActionTypes.SIGNIN,
+  session: null,
+});
 
-export const createUserEdit = (user: CurrentUser): UserEditAction => {
-  return {
-    type: ActionTypes.USER_EDIT,
-    user,
-  };
-};
+export const createUserEdit = (user: CurrentUser): UserEditAction => ({
+  type: ActionTypes.USER_EDIT,
+  user,
+});

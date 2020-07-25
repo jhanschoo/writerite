@@ -16,11 +16,9 @@ module.exports = {
     ],
     "parserOptions": {
         "tsconfigRootDir": __dirname,
-        "project": "tsconfig.dev.json",
+        "project": "tsconfig.json",
     },
-    "ignorePatterns": [
-        "generated/"
-    ],
+    "ignorePatterns": [ ],
     "settings": {
         "jsdoc": {
             "mode": "typescript",
@@ -39,7 +37,28 @@ module.exports = {
         "@typescript-eslint/explicit-module-boundary-types": "warn",
         "@typescript-eslint/indent": ["warn", 2],
         "@typescript-eslint/member-ordering": "warn",
-        "@typescript-eslint/naming-convention": "warn",
+        "@typescript-eslint/naming-convention": ["warn",
+            {
+                selector: "default",
+                format: ["camelCase"],
+                leadingUnderscore: "allow",
+                trailingUnderscore: "allow",
+            },
+            {
+                selector: "variable",
+                format: ["camelCase", "PascalCase", "UPPER_CASE"],
+                leadingUnderscore: "allow",
+                trailingUnderscore: "allow",
+            },
+            {
+                selector: "typeLike",
+                format: ["PascalCase"],
+            },
+            {
+                selector: "enumMember",
+                format: ["camelCase", "UPPER_CASE"],
+            }
+        ],
         "@typescript-eslint/no-base-to-string": "warn",
         "@typescript-eslint/no-dynamic-delete": "warn",
         "@typescript-eslint/no-extra-non-null-assertion": "warn",
@@ -89,7 +108,6 @@ module.exports = {
         "@typescript-eslint/func-call-spacing": "warn",
         "function-paren-newline": "warn",
         "func-names": "warn",
-        "func-style": ["warn", "declaration"],
         "generator-star-spacing": ["warn", "after"],
         "grouped-accessor-pairs": ["warn", "getBeforeSet"],
         "guard-for-in": "warn",
@@ -164,7 +182,7 @@ module.exports = {
         "@typescript-eslint/no-useless-constructor": "warn",
         "no-useless-rename": "warn",
         "no-useless-return": "warn",
-        "no-void": "warn",
+        "no-void": ["warn", { "allowAsStatement": true }],
         "no-warning-comments": "warn",
         "no-whitespace-before-property": "warn",
         "object-curly-newline": ["warn", { "consistent": true }],

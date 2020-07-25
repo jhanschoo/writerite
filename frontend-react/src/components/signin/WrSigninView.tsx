@@ -1,13 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import WrNavBar from '../navbar/WrNavBar';
-import WrSigninContent from './WrSigninContent';
+import WrNavBar from "../navbar/WrNavBar";
+import WrSigninContent from "./WrSigninContent";
 
-const WrSigninView = () => (
+const WrSigninView = (): JSX.Element =>
   <>
     <WrNavBar />
     <WrSigninContent />
-  </>
-);
-
+  </>;
 export default WrSigninView;

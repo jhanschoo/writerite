@@ -1,10 +1,11 @@
-import styled from 'styled-components';
+import { wrStyled } from "../theme";
 
-export const Button = styled.button`
+export const Button = wrStyled.button`
 display: flex;
 justify-content: center;
 align-items: center;
-border: 1px solid ${({ theme }) => theme.edge[1]};
+background: none;
+border: 1px solid ${({ theme: { fg } }) => fg[3]};
 margin: 0;
 padding: 0;
 font-weight: bold;
@@ -12,14 +13,13 @@ font-size: inherit;
 font-family: inherit;
 outline: none;
 cursor: pointer;
-${({ theme }) => theme.fgbg[1]}
 
 &.active, :hover, :active, :hover:active {
-  ${({ theme }) => theme.bgfg[1]}
+  ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 }
 `;
 
-export const BorderlessButton = styled.button`
+export const BorderlessButton = wrStyled.button`
 display: flex;
 justify-content: center;
 align-items: center;
@@ -35,11 +35,11 @@ cursor: pointer;
 color: inherit;
 
 &.active, :hover, :active, :hover:active {
-  ${({ theme }) => theme.bgfg[2]}
+  ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 }
 `;
 
-export const AnchorButton = styled.button`
+export const AnchorButton = wrStyled.button`
 display: inline;
 background: none;
 border: none;
@@ -57,27 +57,7 @@ color: inherit;
 }
 `;
 
-export const AuxillaryButton = styled.button`
-display: flex;
-justify-content: center;
-align-items: center;
-background: none;
-border: none;
-margin: 0;
-padding: 0;
-font-weight: inherit;
-font-size: inherit;
-font-family: inherit;
-outline: none;
-color: ${({ theme }) => theme.color.fg2};
-
-:hover {
-  cursor: pointer;
-  color: ${({ theme }) => theme.color.fg1};
-}
-`;
-
-export const MinimalButton = styled.button`
+export const MinimalButton = wrStyled.button`
 display: flex;
 justify-content: center;
 align-items: center;
