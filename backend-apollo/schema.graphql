@@ -15,7 +15,7 @@ directive @subscriptionsTriggered(
 # The following directive on an optional argument specifies
 #   that it accepts omission of the argument, but it does
 #   not accept a null as the input value for the argument.
-directive @nonNull on ARGUMENT_DEFINITION
+directive @nonNull on ARGUMENT_DEFINITION | INPUT_FIELD_DEFINITION
 
 enum ChatMsgContentType {
   TEXT
@@ -120,24 +120,8 @@ type Mutation {
   # Card
   cardCreate(
     deckId: ID!
-    prompt: JsonObject!
-    fullAnswer: JsonObject!
-    answers: [String] @nonNull
-    sortKey: String @nonNull
-    template: Boolean @nonNull
+    card: CardCreateInput!
   ): Card @subscriptionsTriggered(
-    signatures: ["cardsOfDeckUpdates(deckId)"]
-  )
-
-  cardsCreate(
-    deckId: ID!
-    prompt: JsonObject!
-    fullAnswer: JsonObject!
-    answers: [String!] @nonNull
-    sortKey: String @nonNull
-    template: Boolean @nonNull
-    multiplicity: Int!
-  ): [Card] @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
 
@@ -276,8 +260,8 @@ input CardCreateInput {
   prompt: JsonObject!
   fullAnswer: JsonObject!
   answers: [String!]!
-  sortKey: String
-  template: Boolean
+  sortKey: String @nonNull
+  template: Boolean @nonNull
 }
 
 type Card {

@@ -66,21 +66,8 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   }, UserDeckRecordSS | null>;
   cardCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
-    prompt: JsonObject;
-    fullAnswer: JsonObject;
-    answers?: string[];
-    sortKey?: string;
-    template?: boolean;
+    card: CardCreateInput;
   }, CardSS | null>;
-  cardsCreate: FieldResolver<Record<string, unknown>, WrContext, {
-    deckId: string;
-    prompt: JsonObject;
-    fullAnswer: JsonObject;
-    answers?: string[];
-    sortKey?: string;
-    template?: boolean;
-    multiplicity: number;
-  }, (CardSS | null)[] | null>;
   cardEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     prompt?: JsonObject;
@@ -360,11 +347,9 @@ export const Mutation: MutationResolver = {
   },
   async cardCreate(_parent, {
     deckId,
-    prompt,
-    fullAnswer,
-    answers,
-    sortKey,
-    template,
+    card: {
+      prompt, fullAnswer, answers, sortKey, template,
+    },
   }, { sub, pubsub, prisma }, _info) {
     try {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
@@ -374,7 +359,7 @@ export const Mutation: MutationResolver = {
       const card = await prisma.card.create({ data: {
         prompt,
         fullAnswer,
-        answers: { set: answers ?? [] },
+        answers: { set: answers },
         sortKey,
         template,
         deck: { connect: { id: deckId } },
@@ -391,50 +376,6 @@ export const Mutation: MutationResolver = {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       pubsub.publish(ownDecksTopic(sub.id), update);
       return card;
-    } catch (e) {
-      return null;
-    }
-  },
-  async cardsCreate(_parent, {
-    deckId,
-    prompt,
-    fullAnswer,
-    answers,
-    sortKey,
-    template,
-    multiplicity,
-  }, { sub, pubsub, prisma }, _info) {
-    try {
-      if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
-        return null;
-      }
-      const dateNow = new Date();
-      const cardsPs: Promise<CardSS>[] = [];
-      for (let i = 0; i < multiplicity; ++i) {
-        cardsPs.push(prisma.card.create({ data: {
-          prompt,
-          fullAnswer,
-          answers: { set: answers ?? [] },
-          sortKey,
-          template,
-          deck: { connect: { id: deckId } },
-        } }));
-      }
-      const cards = await Promise.all(cardsPs);
-      // TODO: put in transaction
-      await prisma.deck.update({ where: { id: deckId }, data: {
-        editedAt: dateNow,
-        usedAt: dateNow,
-      } });
-      const updates: Update<CardSS>[] = cards.map((card) => ({
-        type: UpdateType.CREATED,
-        data: card,
-      }));
-      updates.forEach((update) => {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        pubsub.publish(cardsOfDeckTopic(sub.id, deckId), update);
-      });
-      return cards;
     } catch (e) {
       return null;
     }

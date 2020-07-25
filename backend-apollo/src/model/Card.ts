@@ -6,8 +6,8 @@ export interface CardCreateInput {
   prompt: JsonObject;
   fullAnswer: JsonObject;
   answers: string[];
-  sortKey?: string | null;
-  template?: boolean | null;
+  sortKey?: string;
+  template?: boolean;
 }
 
 // CardStoredScalars

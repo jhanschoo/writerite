@@ -688,8 +688,11 @@ describe("Mutation resolvers", () => {
         expect.assertions(6);
         const card = await Mutation.cardCreate({}, {
           deckId: DECK.id,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
+          card: {
+            prompt: NEW_PROMPT,
+            fullAnswer: NEW_FULL_ANSWER,
+            answers: [],
+          },
         }, {
           ...baseCtx,
           sub: USER,
@@ -711,8 +714,11 @@ describe("Mutation resolvers", () => {
         const cardCount = await prisma.card.count({});
         const card = await Mutation.cardCreate({}, {
           deckId: DECK.id,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
+          card: {
+            prompt: NEW_PROMPT,
+            fullAnswer: NEW_FULL_ANSWER,
+            answers: [],
+          },
         }, {
           ...baseCtx,
           sub: OTHER_USER,
@@ -726,8 +732,11 @@ describe("Mutation resolvers", () => {
         const cardCount = await prisma.card.count({});
         const card = await Mutation.cardCreate({}, {
           deckId: NIL_ID,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
+          card: {
+            prompt: NEW_PROMPT,
+            fullAnswer: NEW_FULL_ANSWER,
+            answers: [],
+          },
         }, {
           ...baseCtx,
           sub: USER,
@@ -741,208 +750,22 @@ describe("Mutation resolvers", () => {
         const cardCount = await prisma.card.count({});
         const card = await Mutation.cardCreate({}, {
           deckId: NIL_ID,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
+          card: {
+            prompt: NEW_PROMPT,
+            fullAnswer: NEW_FULL_ANSWER,
+            answers: [],
+          },
         }, baseCtx, baseInfo);
         expect(card).toBeNull();
         expect(await prisma.card.count({})).toBe(cardCount);
       });
     });
 
-    describe("Mutation.cardsCreate", () => {
-      test("It should create cards in specified current user-owned deck and return it", async () => {
-        expect.assertions(20);
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: DECK.id,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
-        expect(cards).toHaveLength(3);
-        if (!cards) {
-          return;
-        }
-        for (const card of cards) {
-          expect(card).toHaveProperty("deckId", DECK.id);
-          expect(card).toHaveProperty("prompt", NEW_PROMPT);
-          expect(card).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
-          if (!card) {
-            return;
-          }
-          const pCard = await prisma.card.findOne({ where: { id: card.id } });
-          expect(pCard).toHaveProperty("deckId", DECK.id);
-          expect(pCard).toHaveProperty("prompt", NEW_PROMPT);
-          expect(pCard).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
-        }
-        expect(await prisma.card.findMany({ where: { prompt: { equals: NEW_PROMPT } } })).toHaveLength(3);
-      });
-
-      test("It should do nothing and return null if user does not own specified deck", async () => {
-        expect.assertions(2);
-        const cardCount = await prisma.card.count({});
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: DECK.id,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, {
-          ...baseCtx,
-          sub: OTHER_USER,
-        }, baseInfo);
-        expect(cards).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-
-      test("It should do nothing and return null if deck does not exist", async () => {
-        expect.assertions(2);
-        const cardCount = await prisma.card.count({});
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: NIL_ID,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
-        expect(cards).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-
-      test("It should do nothing and return null if not logged in", async () => {
-        expect.assertions(2);
-        const cardCount = await prisma.card.count({});
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: NIL_ID,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, baseCtx, baseInfo);
-        expect(cards).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-    });
-
-    describe("Mutation.cardEdit", () => {
+    describe.skip("Mutation.cardEdit", () => {
       // TODO
-      test("It should create cards in specified current user-owned deck and return it", async () => {
-        expect.assertions(20);
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: DECK.id,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
-        expect(cards).toHaveLength(3);
-        if (!cards) {
-          return;
-        }
-        for (const card of cards) {
-          expect(card).toHaveProperty("deckId", DECK.id);
-          expect(card).toHaveProperty("prompt", NEW_PROMPT);
-          expect(card).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
-          if (!card) {
-            return;
-          }
-          const pCard = await prisma.card.findOne({ where: { id: card.id } });
-          expect(pCard).toHaveProperty("deckId", DECK.id);
-          expect(pCard).toHaveProperty("prompt", NEW_PROMPT);
-          expect(pCard).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
-        }
-        expect(await prisma.card.findMany({ where: { prompt: { equals: NEW_PROMPT } } })).toHaveLength(3);
-      });
-
-      test("It should do nothing and return null if user does not own specified deck", async () => {
-        expect.assertions(2);
-        const cardCount = await prisma.card.count({});
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: DECK.id,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, {
-          ...baseCtx,
-          sub: OTHER_USER,
-        }, baseInfo);
-        expect(cards).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-
-      test("It should do nothing and return null if deck does not exist", async () => {
-        expect.assertions(2);
-        const cardCount = await prisma.card.count({});
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: NIL_ID,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
-        expect(cards).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-
-      test("It should do nothing and return null if not logged in", async () => {
-        expect.assertions(2);
-        const cardCount = await prisma.card.count({});
-        const cards = await Mutation.cardsCreate({}, {
-          deckId: NIL_ID,
-          prompt: NEW_PROMPT,
-          fullAnswer: NEW_FULL_ANSWER,
-          multiplicity: 3,
-        }, baseCtx, baseInfo);
-        expect(cards).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
     });
 
-    describe("Mutation.cardDelete", () => {
-      test("It should delete a card in a deck that current user owns, and return its scalars", async () => {
-        expect.assertions(4);
-        const cardCount = await prisma.card.count({});
-        expect(cardCount).toBeGreaterThan(0);
-        const ctx = { ...baseCtx, sub: USER };
-        const card = await Mutation.cardDelete({}, { id: CARD.id }, ctx, baseInfo);
-        expect(card).toHaveProperty("id", CARD.id);
-        expect(card).toHaveProperty("prompt", CARD.prompt);
-        expect(await prisma.card.count({})).toBe(cardCount - 1);
-      });
-
-      test("It should not do anything, and return null if current user does not own the deck containing the card", async () => {
-        expect.assertions(3);
-        const cardCount = await prisma.deck.count({});
-        expect(cardCount).toBeGreaterThan(0);
-        const ctx = { ...baseCtx, sub: OTHER_USER };
-        const card = await Mutation.cardDelete({}, { id: CARD.id }, ctx, baseInfo);
-        expect(card).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-
-      test("It should not do anything, and return null if not logged in", async () => {
-        expect.assertions(3);
-        const cardCount = await prisma.deck.count({});
-        expect(cardCount).toBeGreaterThan(0);
-        const card = await Mutation.cardDelete({}, { id: CARD.id }, baseCtx, baseInfo);
-        expect(card).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
-
-      test("It should not do anything, and return null if card does not exist", async () => {
-        expect.assertions(3);
-        const cardCount = await prisma.deck.count({});
-        expect(cardCount).toBeGreaterThan(0);
-        const card = await Mutation.cardDelete({}, { id: NIL_ID }, baseCtx, baseInfo);
-        expect(card).toBeNull();
-        expect(await prisma.card.count({})).toBe(cardCount);
-      });
+    describe.skip("Mutation.cardDelete", () => {
     });
   });
 
