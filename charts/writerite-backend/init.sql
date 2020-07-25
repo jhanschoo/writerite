@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS "Deck" (
 CREATE TABLE IF NOT EXISTS "Card" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "deckId" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
-  "prompt" text DEFAULT '' NOT NULL,
-  "fullAnswer" text DEFAULT '' NOT NULL,
+  "prompt" jsonb DEFAULT '{}'::jsonb NOT NULL,
+  "fullAnswer" jsonb DEFAULT '{}'::jsonb NOT NULL,
   "answers" text[] DEFAULT '{}' NOT NULL,
   "sortKey" text DEFAULT '' NOT NULL,
   "editedAt" timestamp DEFAULT now() NOT NULL,
