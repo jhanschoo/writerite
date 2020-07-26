@@ -8,11 +8,11 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
-import { JsonObject } from "@prisma/client";
+import { JsonObject, Unit } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
-import { CardCreateInput, CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
+import { CardCreateInput, CardSS, userOwnsCard } from "../model/Card";
 import { RoomConfigInput, RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
@@ -67,6 +67,7 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   cardCreate: FieldResolver<Record<string, unknown>, WrContext, {
     deckId: string;
     card: CardCreateInput;
+    mainTemplate: boolean;
   }, CardSS | null>;
   cardEdit: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
@@ -75,7 +76,11 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     answers?: string[];
     sortKey?: string;
     template?: boolean;
+    mainTemplate?: boolean;
   }, CardSS | null>;
+  cardUnsetMainTemplate: FieldResolver<Record<string, unknown>, WrContext, {
+    deckId: string;
+  }, boolean | null>;
   cardDelete: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
   }, CardSS | null>;
@@ -348,21 +353,41 @@ export const Mutation: MutationResolver = {
   async cardCreate(_parent, {
     deckId,
     card: {
-      prompt, fullAnswer, answers, sortKey, template,
+      prompt,
+      fullAnswer,
+      answers,
+      sortKey,
+      template,
     },
+    mainTemplate,
   }, { sub, pubsub, prisma }, _info) {
     try {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
         return null;
       }
+      if (mainTemplate && template === false) {
+        return null;
+      }
       const dateNow = new Date();
+      if (mainTemplate) {
+        await prisma.card.updateMany({
+          where: {
+            default: Unit.UNIT,
+            deckId,
+          },
+          data: { default: null },
+        });
+      }
       const card = await prisma.card.create({ data: {
         prompt,
         fullAnswer,
         answers: { set: answers },
         sortKey,
-        template,
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        template: mainTemplate || template,
         deck: { connect: { id: deckId } },
+        default: mainTemplate ? Unit.UNIT : null,
+        editedAt: dateNow,
       } });
       // TODO: put in transaction
       await prisma.deck.update({ where: { id: deckId }, data: {
@@ -387,21 +412,35 @@ export const Mutation: MutationResolver = {
     answers,
     sortKey,
     template,
+    mainTemplate,
   }, { sub, pubsub, prisma }, _info) {
     try {
       if (!sub || !await userOwnsCard({ prisma, userId: sub.id, cardId: id })) {
         return null;
       }
+      if (mainTemplate && template === false) {
+        return null;
+      }
       const dateNow = new Date();
+      if (mainTemplate) {
+        await prisma.card.updateMany({
+          where: {
+            default: Unit.UNIT,
+            deck: { cards: { some: { id } } },
+          },
+          data: { default: null },
+        });
+      }
       const card = await prisma.card.update({
         where: { id },
         data: {
           prompt,
           fullAnswer,
-          answers: { set: answers },
+          answers: answers && { set: answers },
           sortKey,
-          template,
-          default: template === false ? null : undefined,
+          template: mainTemplate ? true : template,
+          default: mainTemplate ? Unit.UNIT : mainTemplate === false ? null : undefined,
+          editedAt: dateNow,
         },
       });
       // TODO: put in transaction
@@ -416,6 +455,31 @@ export const Mutation: MutationResolver = {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       pubsub.publish(ownDecksTopic(sub.id), update);
       return card;
+    } catch (e) {
+      return null;
+    }
+  },
+  async cardUnsetMainTemplate(_parent, { deckId }, { sub, prisma }, _info) {
+    try {
+      if (!sub || !await userOwnsDeck({ prisma, deckId, userId: sub.id })) {
+        return null;
+      }
+      const dateNow = new Date();
+      const { count } = await prisma.card.updateMany({
+        where: {
+          default: Unit.UNIT,
+          deckId,
+        },
+        data: { default: null },
+      });
+      if (count === 0) {
+        return false;
+      }
+      await prisma.deck.update({ where: { id: deckId }, data: {
+        editedAt: dateNow,
+        usedAt: dateNow,
+      } });
+      return true;
     } catch (e) {
       return null;
     }

@@ -31,6 +31,7 @@ export interface CardSS extends Partial<Card> {
   records?: (UserCardRecordSS | null)[] | null;
 
   // computed values
+  mainTemplate?: boolean;
   ownRecord?: UserCardRecordSS | null;
 }
 

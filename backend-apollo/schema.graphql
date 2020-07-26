@@ -125,6 +125,9 @@ type Mutation {
   cardCreate(
     deckId: ID!
     card: CardCreateInput!
+    # note that template is set to true if mainTemplate
+    # is set to true and template is unspecified
+    mainTemplate: Boolean! @nonNull
   ): Card @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
@@ -135,8 +138,19 @@ type Mutation {
     fullAnswer: JsonObject @nonNull
     answers: [String!] @nonNull
     sortKey: String @nonNull
+    # note that template is set to true if mainTemplate
+    # is set to true and template is unspecified
     template: Boolean @nonNull
+    mainTemplate: Boolean @nonNull
   ): Card @subscriptionsTriggered(
+    signatures: ["cardsOfDeckUpdates(deckId)"]
+  )
+
+  # unmarks the card currently set as the main template of the deck if it exists
+  # returns true if unset, false if noop, null if error
+  cardUnsetMainTemplate(
+    deckId: ID!
+  ): Boolean! @subscriptionsTriggered(
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
 
@@ -276,7 +290,7 @@ type Card {
   answers: [String!]!
   sortKey: String!
   template: Boolean!
-  default: Unit
+  mainTemplate: Boolean!
   editedAt: DateTime!
 
   # R fields

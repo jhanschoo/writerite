@@ -693,6 +693,7 @@ describe("Mutation resolvers", () => {
             fullAnswer: NEW_FULL_ANSWER,
             answers: [],
           },
+          mainTemplate: false,
         }, {
           ...baseCtx,
           sub: USER,
@@ -719,6 +720,7 @@ describe("Mutation resolvers", () => {
             fullAnswer: NEW_FULL_ANSWER,
             answers: [],
           },
+          mainTemplate: false,
         }, {
           ...baseCtx,
           sub: OTHER_USER,
@@ -737,6 +739,7 @@ describe("Mutation resolvers", () => {
             fullAnswer: NEW_FULL_ANSWER,
             answers: [],
           },
+          mainTemplate: false,
         }, {
           ...baseCtx,
           sub: USER,
@@ -755,6 +758,7 @@ describe("Mutation resolvers", () => {
             fullAnswer: NEW_FULL_ANSWER,
             answers: [],
           },
+          mainTemplate: false,
         }, baseCtx, baseInfo);
         expect(card).toBeNull();
         expect(await prisma.card.count({})).toBe(cardCount);
