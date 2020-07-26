@@ -1,6 +1,8 @@
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION "pgcrypto";
 
-CREATE TABLE IF NOT EXISTS "User" (
+CREATE TYPE "Unit" AS ENUM ('UNIT');
+
+CREATE TABLE "User" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "email" text NOT NULL UNIQUE,
   "passwordHash" text,
@@ -12,7 +14,7 @@ CREATE TABLE IF NOT EXISTS "User" (
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "Deck" (
+CREATE TABLE "Deck" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "ownerId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   "name" text DEFAULT '' NOT NULL,
@@ -26,7 +28,7 @@ CREATE TABLE IF NOT EXISTS "Deck" (
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "Card" (
+CREATE TABLE "Card" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "deckId" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
   "prompt" jsonb DEFAULT '{}'::jsonb NOT NULL,
@@ -35,11 +37,14 @@ CREATE TABLE IF NOT EXISTS "Card" (
   "sortKey" text DEFAULT '' NOT NULL,
   "editedAt" timestamp DEFAULT now() NOT NULL,
   "template" boolean DEFAULT false NOT NULL,
+  "default" "Unit",
   "createdAt" timestamp DEFAULT now() NOT NULL,
-  "updatedAt" timestamp DEFAULT now() NOT NULL
+  "updatedAt" timestamp DEFAULT now() NOT NULL,
+  UNIQUE ("deckId", "default"),
+  CHECK ("template" OR "default" IS NULL)
 );
 
-CREATE TABLE IF NOT EXISTS "UserCardRecord" (
+CREATE TABLE "UserCardRecord" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "userId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   "cardId" uuid NOT NULL REFERENCES "Card" ON UPDATE CASCADE ON DELETE CASCADE,
@@ -49,7 +54,7 @@ CREATE TABLE IF NOT EXISTS "UserCardRecord" (
   UNIQUE ("userId", "cardId")
 );
 
-CREATE TABLE IF NOT EXISTS "UserDeckRecord" (
+CREATE TABLE "UserDeckRecord" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "userId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   "deckId" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
@@ -59,7 +64,7 @@ CREATE TABLE IF NOT EXISTS "UserDeckRecord" (
   UNIQUE ("userId", "deckId")
 );
 
-CREATE TABLE IF NOT EXISTS "Room" (
+CREATE TABLE "Room" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "ownerId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   "archived" boolean DEFAULT false NOT NULL,
@@ -68,7 +73,7 @@ CREATE TABLE IF NOT EXISTS "Room" (
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS "ChatMsg" (
+CREATE TABLE "ChatMsg" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "roomId" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
   "senderId" uuid REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
@@ -79,20 +84,20 @@ CREATE TABLE IF NOT EXISTS "ChatMsg" (
 );
 COMMENT ON COLUMN "ChatMsg"."roomId" IS 'message sent by a user being deleted should be deleted';
 
-CREATE TABLE IF NOT EXISTS "_Subdeck" (
+CREATE TABLE "_Subdeck" (
   "A" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
   "B" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY ("A", "B")
 );
-CREATE INDEX IF NOT EXISTS "_Subdeck_B_idx" ON "_Subdeck" ("B");
+CREATE INDEX "_Subdeck_B_idx" ON "_Subdeck" ("B");
 COMMENT ON COLUMN "_Subdeck"."A" IS 'parentId';
 COMMENT ON COLUMN "_Subdeck"."B" IS 'subdeckId';
 
-CREATE TABLE IF NOT EXISTS "_Occupant" (
+CREATE TABLE "_Occupant" (
   "A" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
   "B" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY ("A", "B")
 );
-CREATE INDEX IF NOT EXISTS "_Occupant_B_idx" ON "_Occupant" ("B");
+CREATE INDEX "_Occupant_B_idx" ON "_Occupant" ("B");
 COMMENT ON COLUMN "_Occupant"."A" IS 'roomId';
 COMMENT ON COLUMN "_Occupant"."B" IS 'occupantId';

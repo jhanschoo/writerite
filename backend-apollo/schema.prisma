@@ -7,6 +7,10 @@ datasource postgresql {
   url      = env("DATABASE_URL")
 }
 
+enum Unit {
+  UNIT
+}
+
 model Card {
   id         String           @default(dbgenerated()) @id
   deckId     String
@@ -15,6 +19,7 @@ model Card {
   answers    String[]
   sortKey    String           @default("")
   template   Boolean          @default(false)
+  default    Unit?
   editedAt   DateTime         @default(now())
   deck       Deck             @relation(fields: [deckId], references: [id])
 
@@ -22,6 +27,9 @@ model Card {
   updatedAt  DateTime         @default(now()) @updatedAt
 
   records    UserCardRecord[]
+
+  @@unique([deckId, default])
+  // CHECK ("template" OR "default" IS NULL);
 }
 
 model ChatMsg {

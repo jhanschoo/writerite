@@ -401,6 +401,7 @@ export const Mutation: MutationResolver = {
           answers: { set: answers },
           sortKey,
           template,
+          default: template === false ? null : undefined,
         },
       });
       // TODO: put in transaction

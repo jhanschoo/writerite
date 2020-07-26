@@ -34,6 +34,10 @@ enum DecksQueryScope {
   VISIBLE
 }
 
+enum Unit {
+  UNIT
+}
+
 type Query {
   # User
   user(id: ID!): User
@@ -272,6 +276,7 @@ type Card {
   answers: [String!]!
   sortKey: String!
   template: Boolean!
+  default: Unit
   editedAt: DateTime!
 
   # R fields

@@ -1,4 +1,4 @@
-import type { Card, JsonObject, JsonValue, PrismaClient } from "@prisma/client";
+import type { Card, JsonObject, JsonValue, PrismaClient, Unit } from "@prisma/client";
 import type { DeckSS } from "./Deck";
 import type { UserCardRecordSS } from "./UserCardRecord";
 
@@ -21,6 +21,7 @@ export interface CardSS extends Partial<Card> {
   // TODO: investigate how Prisma handles null elements in the array
   sortKey: string;
   template: boolean;
+  default: Unit | null;
   editedAt: Date;
 
   createdAt: Date;
