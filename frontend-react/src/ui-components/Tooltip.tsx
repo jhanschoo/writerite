@@ -60,7 +60,7 @@ position: absolute;
 }
 `;
 
-const Tooltip = ({ children, content, placement = "down" }: Props): JSX.Element => {
+export const Tooltip = ({ children, content, placement = "down" }: Props): JSX.Element => {
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = (_e: MouseEvent<HTMLElement>) => setIsHover(true);
   const handleMouseLeave = (_e: MouseEvent<HTMLElement>) => setIsHover(false);
@@ -77,5 +77,3 @@ const Tooltip = ({ children, content, placement = "down" }: Props): JSX.Element 
     </Wrapper>
   );
 };
-
-export default Tooltip;

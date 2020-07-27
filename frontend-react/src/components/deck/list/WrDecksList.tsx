@@ -9,11 +9,7 @@ import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "../../../util";
 
 import { wrStyled } from "../../../theme";
-import { ModalBackground, ModalCloseButton, ModalContainer } from "../../../ui/Modal";
-import Main from "../../../ui/layout/Main";
-import { Item, List } from "../../../ui/List";
-import { BorderlessButton } from "../../../ui/Button";
-import TextInput from "../../../ui/TextInput";
+import { BorderlessButton, Item, List, Main, ModalBackground, ModalCloseButton, ModalContainer, TextInput } from "../../../ui";
 
 import WrDeckItem from "./WrDeckItem";
 import WrUploadDeck from "../WrUploadDeck";

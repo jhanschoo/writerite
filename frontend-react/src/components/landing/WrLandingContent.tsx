@@ -1,7 +1,7 @@
 import React from "react";
 
 import { wrStyled } from "../../theme";
-import LandingContent from "../../ui/layout/LandingContent";
+import { LandingContent } from "../../ui";
 
 import WrBrandText from "../brand/WrBrandText";
 import WrSignin from "../signin/WrSignin";

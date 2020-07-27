@@ -79,5 +79,3 @@ color: inherit;
   visibility: hidden;
 }
 `;
-
-export default Button;

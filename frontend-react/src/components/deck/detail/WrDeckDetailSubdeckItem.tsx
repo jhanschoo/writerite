@@ -6,9 +6,7 @@ import moment from "moment";
 import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 
 import { wrStyled } from "../../../theme";
-import { Item } from "../../../ui/List";
-import { MinimalLink } from "../../../ui/Link";
-import Button from "../../../ui/Button";
+import { Button, Item, MinimalLink } from "../../../ui";
 
 const StyledItem = wrStyled(Item)`
 flex-direction: column;

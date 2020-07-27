@@ -36,5 +36,3 @@ background: none;
   outline: none;
 }
 `;
-
-export default TextInput;

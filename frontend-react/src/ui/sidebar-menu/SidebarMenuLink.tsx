@@ -1,5 +1,5 @@
 import { wrStyled } from "../../theme";
-import Link from "../Link";
+import {Link} from "../Link";
 
 const SidebarMenuLink = wrStyled(Link)`
 width: 100%;

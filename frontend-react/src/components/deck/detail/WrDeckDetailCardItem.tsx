@@ -8,8 +8,7 @@ import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 import type { CardsOfDeck, CardsOfDeckVariables } from "../gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton } from "../../../ui/Button";
-import { Item, List } from "../../../ui/List";
+import { BorderlessButton, Item, List } from "../../../ui";
 import { emptyRawContext } from "../../../util";
 
 import NotesEditor from "../../editor/NotesEditor";

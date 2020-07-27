@@ -84,16 +84,30 @@ const WrDeckDetailData = ({
   readOnly,
 }: Props): JSX.Element => {
   const [currentTitle, setCurrentTitle] = useState(deck.name);
-  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION);
-  const [titleCallback] = useDebouncedCallback((newName: string) => {
-    if (!newName) {
+  const [debounceOngoing, setDebounceOngoing] = useState(false);
+  const mutateOpts = { variables: {
+    id: deck.id,
+    name: currentTitle,
+  } };
+  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
+    onCompleted(data) {
+      // no-op if debounce will trigger
+      if (debounceOngoing) {
+        return;
+      }
+      // debounce has fired in no-op before flight returned; we now fire a new mutation
+      if (data.deckEdit && currentTitle !== data.deckEdit.name) {
+        void mutate(mutateOpts);
+      }
+    },
+  });
+  const [titleCallback] = useDebouncedCallback(() => {
+    setDebounceOngoing(false);
+    // re: loading: no-op if a mutation is already in-flight
+    if (loading || currentTitle === deck.name || !currentTitle) {
       return;
     }
-    // Assumption: mutate calls are performed in-order
-    void mutate({ variables: {
-      id: deck.id,
-      name: newName,
-    } });
+    void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
   const handleChange = (newTitle: string) => {
     if (readOnly) {
@@ -101,12 +115,13 @@ const WrDeckDetailData = ({
     }
     const title = newTitle.trim();
     setCurrentTitle(title);
-    titleCallback(title);
+    setDebounceOngoing(true);
+    titleCallback();
   };
   const now = moment.utc();
   const deckTitleStatus = currentTitle === ""
     ? "invalid"
-    : deck.name !== currentTitle || loading
+    : loading || currentTitle !== deck.name
       ? "saving"
       : undefined;
   return (

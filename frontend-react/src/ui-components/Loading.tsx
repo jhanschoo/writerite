@@ -1,6 +1,6 @@
 import React from "react";
 import { wrStyled, WrTheme } from "../theme";
-import Spinner from "./Spinner";
+import { Spinner } from "./Spinner";
 
 const LoadingBackground = wrStyled.div`
 position: absolute;
@@ -25,7 +25,7 @@ interface Props {
   fontSize?: WrTheme["scale"][number];
 }
 
-const Loading = ({ fontSize }: Props): JSX.Element =>
+export const Loading = ({ fontSize }: Props): JSX.Element =>
   <LoadingBackground>
     <LoadingContent>
       <p style={{ fontSize, marginTop: 0 }}>Loading...</p>
@@ -36,5 +36,3 @@ const Loading = ({ fontSize }: Props): JSX.Element =>
       }} />
     </LoadingContent>
   </LoadingBackground>;
-
-export default Loading;

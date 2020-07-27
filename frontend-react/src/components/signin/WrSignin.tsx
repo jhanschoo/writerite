@@ -18,10 +18,8 @@ import { restartWsConnection } from "../../apolloClient";
 import { Signin, SigninVariables } from "./gqlTypes/Signin";
 
 import { breakpoints, wrStyled } from "../../theme";
-import HDivider from "../../ui-components/HDivider";
-import Button, { AnchorButton } from "../../ui/Button";
-import TextInput from "../../ui/TextInput";
-import Fieldset from "../../ui/Fieldset";
+import { AnchorButton, Button, Fieldset, TextInput } from "../../ui";
+import { HDivider } from "../../ui-components";
 
 import { useHistory } from "react-router";
 import { Dispatch } from "redux";
@@ -208,7 +206,7 @@ const WrSignin = (): JSX.Element => {
   };
   const [mutateSignin] = useMutation<Signin, SigninVariables>(SIGNIN_MUTATION, {
     onCompleted: handleSigninSuccess,
-    onError: (e) => {
+    onError: (_e) => {
       setSigninUnderway(false);
     },
   });

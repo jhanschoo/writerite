@@ -60,21 +60,40 @@ const WrDeckDetailDescription = ({
   readOnly,
 }: Props): JSX.Element => {
   const [currentDescription, setCurrentDescription] = useState(description);
-  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION);
-  const [descriptionCallback] = useDebouncedCallback((newDescription: RawDraftContentState) => {
-    void mutate({ variables: {
-      id: deckId,
-      description: newDescription as unknown as Record<string, unknown>,
-    } });
+  const [debounceOngoing, setDebounceOngoing] = useState(false);
+  const mutateOpts = { variables: {
+    id: deckId,
+    description: currentDescription as Record<string, unknown>,
+  } };
+  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
+    onCompleted(data) {
+      // no-op if debounce will trigger
+      if (debounceOngoing) {
+        return;
+      }
+      // debounce has fired a no-op before flight returned; we now fire a new mutation
+      if (data.deckEdit && !equal(currentDescription, data.deckEdit.description)) {
+        void mutate(mutateOpts);
+      }
+    },
+  });
+  const [descriptionCallback] = useDebouncedCallback(() => {
+    setDebounceOngoing(false);
+    // no-op if a mutation is already in-flight
+    if (loading || equal(currentDescription, description)) {
+      return;
+    }
+    void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
   const handleChange = (newDescription: RawDraftContentState) => {
     if (readOnly) {
       return;
     }
     setCurrentDescription(newDescription);
-    descriptionCallback(newDescription);
+    setDebounceOngoing(true);
+    descriptionCallback();
   };
-  const descriptionStatus = !equal(description, currentDescription) || loading
+  const descriptionStatus = loading || !equal(currentDescription, description)
     ? "saving"
     : undefined;
   return (

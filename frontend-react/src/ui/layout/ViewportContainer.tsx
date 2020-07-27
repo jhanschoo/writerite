@@ -1,6 +1,6 @@
 import { wrStyled } from "../../theme";
 
-const ViewportContainer = wrStyled.div`
+export const ViewportContainer = wrStyled.div`
 display: grid;
 z-index: 0;
 height: 100vh;
@@ -9,5 +9,3 @@ grid: max-content minmax(1rem, 1fr) / minmax(1rem, auto) repeat(12, minmax(1rem,
 place-content: start stretch;
 ${({ theme: { fgbg, bg } }) => fgbg(bg[3])};
 `;
-
-export default ViewportContainer;

@@ -1,7 +1,7 @@
 import { wrStyled } from "../theme";
 import { NavLink as rrLink } from "react-router-dom";
 
-const Link = wrStyled(rrLink)`
+export const Link = wrStyled(rrLink)`
 display: flex;
 text-decoration: none;
 align-items: center;
@@ -24,5 +24,3 @@ padding: 0;
 color: inherit;
 font-weight: bold;
 `;
-
-export default Link;

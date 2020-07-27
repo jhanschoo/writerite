@@ -8,11 +8,7 @@ import { restartWsConnection } from "../../apolloClient";
 import { CurrentUser } from "../../types";
 
 import { wrStyled } from "../../theme";
-import Link from "../../ui/Link";
-import { BorderlessButton } from "../../ui/Button";
-import NavBar from "../../ui/navbar/NavBar";
-import NavBarItem from "../../ui/navbar/NavBarItem";
-import NavBarList from "../../ui/navbar/NavBarList";
+import { BorderlessButton, Link, NavBar, NavBarItem, NavBarList } from "../../ui";
 
 import WrBrandText from "../brand/WrBrandText";
 import { Dispatch } from "redux";

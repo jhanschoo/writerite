@@ -6,9 +6,8 @@ import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 import type { CardsOfDeck, CardsOfDeckVariables } from "../gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton } from "../../../ui/Button";
-import Loading from "../../../ui-components/Loading";
-import { List } from "../../../ui/List";
+import { BorderlessButton, List } from "../../../ui";
+import { Loading } from "../../../ui-components";
 
 import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 import WrDeckDetailCardItem from "./WrDeckDetailCardItem";

@@ -8,8 +8,7 @@ import type { CardsOfDeck, CardsOfDeckVariables } from "../gqlTypes/CardsOfDeck"
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton } from "../../../ui/Button";
-import { Item, List } from "../../../ui/List";
+import { BorderlessButton, Item, List } from "../../../ui";
 
 import NotesEditor from "../../editor/NotesEditor";
 import { DEBOUNCE_DELAY } from "../../../util";
@@ -118,7 +117,7 @@ const WrDeckDetailMainTemplateItem = ({
             ...cardsOfDeckQuery,
             data: newCardsOfDeckData,
           });
-        } catch (e) {
+        } catch (_e) {
           // noop
         }
       }

@@ -8,10 +8,8 @@ import type { DeckAddSubdeck, DeckAddSubdeckVariables } from "./gqlTypes/DeckAdd
 import type { DeckRemoveSubdeck, DeckRemoveSubdeckVariables } from "./gqlTypes/DeckRemoveSubdeck";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton } from "../../../ui/Button";
-import { ModalBackground, ModalCloseButton, ModalContainer } from "../../../ui/Modal";
-import Loading from "../../../ui-components/Loading";
-import { List } from "../../../ui/List";
+import { BorderlessButton, List, ModalBackground, ModalCloseButton, ModalContainer } from "../../../ui";
+import { Loading } from "../../../ui-components";
 
 import WrDecksList from "../list/WrDecksList";
 import WrDeckDetailSubdeckItem from "./WrDeckDetailSubdeckItem";
@@ -115,7 +113,7 @@ const WrDeckDetailSubdecks = ({
   const [showNewModal, setShowNewModal] = useState(false);
   const [addMutate, { loading: addLoading }] = useMutation<DeckAddSubdeck, DeckAddSubdeckVariables>(DECK_ADD_SUBDECK_MUTATION);
   const [removeMutate, { loading: removeLoading }] = useMutation<DeckRemoveSubdeck, DeckRemoveSubdeckVariables>(DECK_REMOVE_SUBDECK_MUTATION);
-  const loading = addLoading ?? removeLoading;
+  const loading = addLoading || removeLoading;
   const handleShowNewModal = () => setShowNewModal(true);
   const handleHideNewModal = () => setShowNewModal(false);
   const handleAddSubdeck = (deck: DeckScalars) => addMutate({ variables: { id: deckId, subdeckId: deck.id } });

@@ -1,6 +1,6 @@
 import { wrStyled } from "../../theme";
 
-const NavBarList = wrStyled.ul`
+export const NavBarList = wrStyled.ul`
 display: flex;
 flex-grow: 1;
 flex-wrap: wrap;
@@ -9,5 +9,3 @@ align-items: center;
 margin: 0;
 padding: 0;
 `;
-
-export default NavBarList;

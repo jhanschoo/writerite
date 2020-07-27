@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 import { wrStyled } from "../theme";
-import Tooltip from "./Tooltip";
+import { Tooltip } from "./Tooltip";
 
 const TooltipText = wrStyled.p`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])};
@@ -17,8 +17,7 @@ interface Props {
   placement?: "up" | "down" | "left" | "right";
 }
 
-const TextTooltip = ({ children, text, placement }: Props): JSX.Element =>
+export const TextTooltip = ({ children, text, placement }: Props): JSX.Element =>
   <Tooltip content={<TooltipText>{text}</TooltipText>} placement={placement}>
     {children}
   </Tooltip>;
-export default TextTooltip;

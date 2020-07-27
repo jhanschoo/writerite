@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import type { RawDraftContentState } from "draft-js";
 
 import { useParams } from "react-router";
@@ -13,8 +13,7 @@ import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import type { DeckDetail, DeckDetailVariables } from "./gqlTypes/DeckDetail";
 
 import { wrStyled } from "../../../theme";
-import Main from "../../../ui/layout/Main";
-import { MinimalLink } from "../../../ui/Link";
+import { Main, MinimalLink } from "../../../ui";
 
 import WrDeckDetailData from "./WrDeckDetailData";
 import WrDeckDetailDescription from "./WrDeckDetailDescription";

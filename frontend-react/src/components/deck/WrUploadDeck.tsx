@@ -10,16 +10,14 @@ import { useMutation } from "@apollo/client";
 import { DECKS_QUERY } from "./sharedGql";
 import type { Decks, DecksVariables } from "./gqlTypes/Decks";
 import { DECK_SCALARS } from "../../client-models";
-import { CardCreateInput } from "../../gqlGlobalTypes";
+import { CardCreateInput, DecksQueryScope } from "../../gqlGlobalTypes";
 import type { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
 
 import { StyledComponent } from "styled-components";
 import { WrTheme, wrStyled } from "../../theme";
 
-import Fieldset from "../../ui/Fieldset";
-import TextInput from "../../ui/TextInput";
-import { Button } from "../../ui/Button";
-import HDivider from "../../ui-components/HDivider";
+import { Button, Fieldset, TextInput } from "../../ui";
+import { HDivider } from "../../ui-components";
 
 const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as JsonObject;
 
@@ -153,7 +151,7 @@ const WrUploadDeck = (): JSX.Element => {
       if (newDeck) {
         // update Decks query
         try {
-          const decksQuery = { query: DECKS_QUERY };
+          const decksQuery = { query: DECKS_QUERY, variables: { scope: DecksQueryScope.OWNED, titleFilter: "" } };
           const decksData = cache.readQuery<Decks, DecksVariables>(decksQuery);
           const newDecksData: Decks = {
             ...decksData ?? {},
@@ -164,7 +162,7 @@ const WrUploadDeck = (): JSX.Element => {
             data: newDecksData,
           });
         } catch (e) {
-          // noop
+          console.error(e);
         }
       }
     },

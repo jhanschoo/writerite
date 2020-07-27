@@ -25,7 +25,7 @@ interface Props {
   children?: ReactNode;
 }
 
-const VDivider = ({ children, spacerColor }: Props): JSX.Element => {
+export const VDivider = ({ children, spacerColor }: Props): JSX.Element => {
   const labelAndHalf =
     <>
       <TextBox>
@@ -40,5 +40,3 @@ const VDivider = ({ children, spacerColor }: Props): JSX.Element => {
     </OuterBox>
   );
 };
-
-export default VDivider;

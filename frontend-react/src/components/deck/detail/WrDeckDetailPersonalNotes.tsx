@@ -86,26 +86,39 @@ const WrDeckDetailPersonalNotes = ({
   } = useQuery<OwnDeckRecord, OwnDeckRecordVariables>(OWN_DECK_RECORD_QUERY, {
     variables: { deckId },
   });
-  const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSet, OwnDeckRecordSetVariables>(OWN_DECK_RECORD_SET_MUTATION);
   const notes = (data?.ownDeckRecord?.notes ?? {}) as RawDraftContentState | Record<string, unknown>;
   const [currentNotes, setCurrentNotes] = useState(notes);
-  const [debouncedNotes, setDebouncedNotes] = useState(notes);
-  const [notesCallback] = useDebouncedCallback(async (newNotes: RawDraftContentState) => {
-    if (equal(newNotes, debouncedNotes)) {
+  const [debounceOngoing, setDebounceOngoing] = useState(false);
+  const mutateOpts = { variables: {
+    deckId,
+    notes: currentNotes as Record<string, unknown>,
+  } };
+  const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSet, OwnDeckRecordSetVariables>(OWN_DECK_RECORD_SET_MUTATION, {
+    onCompleted(data) {
+      // no-op if debounce will trigger
+      if (debounceOngoing) {
+        return;
+      }
+      // debounce has fired a no-op before flight returned; we now fire a new mutation
+      if (data.ownDeckRecordSet && !equal(currentNotes, data.ownDeckRecordSet.notes)) {
+        void mutate(mutateOpts);
+      }
+    },
+  });
+  const [notesCallback] = useDebouncedCallback(() => {
+    setDebounceOngoing(false);
+    // no-op if a mutation is already in-flight
+    if (loadingMutation || currentNotes === notes) {
       return;
     }
-    setDebouncedNotes(newNotes);
-    // onMutation
-    await mutate({ variables: { deckId, notes: newNotes as unknown as Record<string, unknown> } });
+    void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
   const handleChange = (newNotes: RawDraftContentState) => {
-    if (equal(newNotes, currentNotes)) {
-      return;
-    }
     setCurrentNotes(newNotes);
-    notesCallback(newNotes);
+    setDebounceOngoing(true);
+    notesCallback();
   };
-  const notesStatus = currentNotes !== debouncedNotes || loadingMutation
+  const notesStatus = loadingMutation || !equal(currentNotes, notes)
     ? "saving"
     : undefined;
   return (

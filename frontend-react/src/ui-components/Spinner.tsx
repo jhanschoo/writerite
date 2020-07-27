@@ -44,7 +44,7 @@ interface Props {
   style?: CSSProperties;
 }
 
-const Spinner = ({ style }: Props): JSX.Element => {
+export const Spinner = ({ style }: Props): JSX.Element => {
   const background = style?.color;
   return (
     <SpinnerBox style={style}>
@@ -55,5 +55,3 @@ const Spinner = ({ style }: Props): JSX.Element => {
     </SpinnerBox>
   );
 };
-
-export default Spinner;

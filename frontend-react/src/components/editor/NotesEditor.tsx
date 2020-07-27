@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 
 import { wrStyled } from "../../theme";
-import { Item, List } from "../../ui/List";
-import { BorderlessButton } from "../../ui/Button";
+import { BorderlessButton, Item, List } from "../../ui";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 

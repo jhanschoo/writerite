@@ -12,7 +12,7 @@ import WrLandingView from "./components/landing/WrLandingView";
 import WrSigninView from "./components/signin/WrSigninView";
 import WrDeckView from "./components/deck/WrDeckView";
 // import WrRoomView from './components/room/WrRoomView';
-import ViewportContainer from "./ui/layout/ViewportContainer";
+import { ViewportContainer } from "./ui";
 
 const App = (): JSX.Element => {
   const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);
