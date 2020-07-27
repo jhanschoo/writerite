@@ -24,6 +24,7 @@ export interface CardsOfDeck_cardsOfDeck {
   readonly sortKey: string;
   readonly editedAt: DateTime;
   readonly template: boolean;
+  readonly mainTemplate: boolean;
   readonly ownRecord: CardsOfDeck_cardsOfDeck_ownRecord | null;
 }
 

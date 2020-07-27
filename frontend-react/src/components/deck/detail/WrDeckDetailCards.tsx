@@ -1,26 +1,39 @@
 import React, { useState } from "react";
 
-import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
-import { CARD_DETAIL } from "../../../client-models";
+import { CARDS_OF_DECK_QUERY } from "../sharedGql";
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
-import type { CardsOfDeck, CardsOfDeckVariables } from "./gqlTypes/CardsOfDeck";
+import type { CardsOfDeck, CardsOfDeckVariables } from "../gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "../../../theme";
 import { BorderlessButton } from "../../../ui/Button";
 import Loading from "../../../ui-components/Loading";
 import { List } from "../../../ui/List";
 
+import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 import WrDeckDetailCardItem from "./WrDeckDetailCardItem";
 
-const CARDS_OF_DECK_QUERY = gql`
-${CARD_DETAIL}
-query CardsOfDeck($deckId: ID!) {
-  cardsOfDeck(deckId: $deckId) {
-    ...CardDetail
-  }
-}
-`;
+const groupCards = (unsortedCards: readonly (CardDetail | null)[]): [CardDetail[], CardDetail[], CardDetail | null] => {
+  const templates: CardDetail[] = [];
+  const cards: CardDetail[] = [];
+  let mainTemplateCard = null;
+  unsortedCards.forEach((card) => {
+    if (!card) {
+      return;
+    }
+    const { template, mainTemplate } = card;
+    if (template) {
+      if (mainTemplate) {
+        mainTemplateCard = card;
+      } else {
+        templates.push(card);
+      }
+    } else {
+      cards.push(card);
+    }
+  });
+  return [cards, templates, mainTemplateCard];
+};
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -63,6 +76,11 @@ margin: ${({ theme: { space } }) => space[2]};
 padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
 `;
 
+const TemplateBox = wrStyled(List)`
+flex-direction: column;
+${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
+`;
+
 const SubdeckModalContent = wrStyled.div`
 `;
 
@@ -87,9 +105,7 @@ padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
 `;
 
 const StyledList = wrStyled(List)`
-flex-direction: row;
-flex-wrap: wrap;
-align-items: stretch;
+flex-direction: column;
 `;
 
 interface Props {
@@ -97,50 +113,34 @@ interface Props {
   readOnly?: boolean;
 }
 
-const WrDeckDetailTemplatesAndCards = ({
+const WrDeckDetailCards = ({
   deckId,
   readOnly,
 }: Props): JSX.Element => {
-  const [showNewModal, setShowNewModal] = useState(false);
+  const [showNewCardModal, setShowNewModal] = useState(false);
   const { loading, error, data } = useQuery<CardsOfDeck, CardsOfDeckVariables>(CARDS_OF_DECK_QUERY, {
     variables: { deckId },
   });
-  const templates = data?.cardsOfDeck?.filter((card): card is CardDetail => card?.template === true) ?? [];
-  const cards = data?.cardsOfDeck?.filter((card): card is CardDetail => card?.template === false) ?? [];
+  const [cards, templates, mainTemplate] = groupCards(data?.cardsOfDeck ?? []);
   const cardItems = cards.map((card) => <WrDeckDetailCardItem deckId={deckId} card={card} key={card.id} />);
   const handleShowNewModal = () => setShowNewModal(true);
   const handleHideNewModal = () => setShowNewModal(false);
   return (
-    <>
-      <StyledOuterBox>
-        <StyledInnerBox>
-          {loading && <Loading />}
-          <StyledHeader>
-            <h4>Templates</h4>
-          </StyledHeader>
-          <StyledContent>
-            <StyledList>
-              {null}
-            </StyledList>
-          </StyledContent>
-        </StyledInnerBox>
-      </StyledOuterBox>
-      <StyledOuterBox>
-        <StyledInnerBox>
-          {loading && <Loading />}
-          <StyledHeader>
-            <h4>Cards</h4>
-            {!readOnly && <AddCardButton onClick={handleShowNewModal}>Add Card...</AddCardButton>}
-          </StyledHeader>
-          <StyledContent>
-            <StyledList>
-              {cardItems}
-            </StyledList>
-          </StyledContent>
-        </StyledInnerBox>
-      </StyledOuterBox>
-    </>
+    <StyledOuterBox>
+      <StyledInnerBox>
+        {loading && <Loading />}
+        <StyledHeader>
+          <h4>Cards</h4>
+        </StyledHeader>
+        <StyledContent>
+          <StyledList>
+            {!readOnly && <WrDeckDetailMainTemplateItem deckId={deckId} card={null} key="empty-main-template" />}
+            {cardItems}
+          </StyledList>
+        </StyledContent>
+      </StyledInnerBox>
+    </StyledOuterBox>
   );
 };
 
-export default WrDeckDetailTemplatesAndCards;
+export default WrDeckDetailCards;

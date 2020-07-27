@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import moment from "moment";
 import { useDebouncedCallback } from "use-debounce";
 
+import { useMutation } from "@apollo/client";
+import { DECK_EDIT_MUTATION } from "../sharedGql";
 import { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
+import { DeckEdit, DeckEditVariables } from "../gqlTypes/DeckEdit";
 
 import { wrStyled } from "../../../theme";
 
 import { DEBOUNCE_DELAY } from "../../../util";
 import LineEditor from "../../editor/LineEditor";
-import { DeckEditVariables } from "./gqlTypes/DeckEdit";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -74,28 +76,24 @@ const isNonemptyString = (s: string) => Boolean(s.trim());
 
 interface Props {
   deck: DeckScalars;
-  onMutation: () => void;
-  mutateWithVariables: (variables: Partial<DeckEditVariables>) => void;
-  saving: boolean;
   readOnly: boolean;
 }
 
 const WrDeckDetailData = ({
   deck,
-  onMutation,
-  mutateWithVariables,
-  saving,
   readOnly,
 }: Props): JSX.Element => {
   const [currentTitle, setCurrentTitle] = useState(deck.name);
-  const [debouncedTitle, setDebouncedTitle] = useState(deck.name);
+  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION);
   const [titleCallback] = useDebouncedCallback((newName: string) => {
-    if (!newName || newName === debouncedTitle) {
+    if (!newName) {
       return;
     }
-    setDebouncedTitle(newName);
-    onMutation();
-    mutateWithVariables({ name: newName });
+    // Assumption: mutate calls are performed in-order
+    void mutate({ variables: {
+      id: deck.id,
+      name: newName,
+    } });
   }, DEBOUNCE_DELAY);
   const handleChange = (newTitle: string) => {
     if (readOnly) {
@@ -108,7 +106,7 @@ const WrDeckDetailData = ({
   const now = moment.utc();
   const deckTitleStatus = currentTitle === ""
     ? "invalid"
-    : currentTitle !== debouncedTitle || saving
+    : deck.name !== currentTitle || loading
       ? "saving"
       : undefined;
   return (

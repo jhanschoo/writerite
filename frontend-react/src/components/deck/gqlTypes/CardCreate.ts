@@ -3,18 +3,20 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { CardCreateInput } from "./../../../gqlGlobalTypes";
+
 // ====================================================
-// GraphQL fragment: CardDetail
+// GraphQL mutation operation: CardCreate
 // ====================================================
 
-export interface CardDetail_ownRecord {
+export interface CardCreate_cardCreate_ownRecord {
   readonly __typename: "UserCardRecord";
   readonly cardId: string;
   readonly userId: string;
   readonly correctRecord: ReadonlyArray<(DateTime | null)>;
 }
 
-export interface CardDetail {
+export interface CardCreate_cardCreate {
   readonly __typename: "Card";
   readonly id: string;
   readonly deckId: string;
@@ -25,5 +27,15 @@ export interface CardDetail {
   readonly editedAt: DateTime;
   readonly template: boolean;
   readonly mainTemplate: boolean;
-  readonly ownRecord: CardDetail_ownRecord | null;
+  readonly ownRecord: CardCreate_cardCreate_ownRecord | null;
+}
+
+export interface CardCreate {
+  readonly cardCreate: CardCreate_cardCreate | null;
+}
+
+export interface CardCreateVariables {
+  readonly deckId: string;
+  readonly card: CardCreateInput;
+  readonly mainTemplate: boolean;
 }

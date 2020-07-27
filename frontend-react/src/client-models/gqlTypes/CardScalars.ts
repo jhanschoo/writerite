@@ -17,4 +17,5 @@ export interface CardScalars {
   readonly sortKey: string;
   readonly editedAt: DateTime;
   readonly template: boolean;
+  readonly mainTemplate: boolean;
 }

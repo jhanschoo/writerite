@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React  from "react";
 import type { RawDraftContentState } from "draft-js";
 
 import { useParams } from "react-router";
@@ -7,11 +7,10 @@ import { useSelector } from "react-redux";
 import type { WrState } from "../../../store";
 
 import gql from "graphql-tag";
-import { useMutation, useQuery } from "@apollo/client";
-import { DECK_DETAIL, DECK_SCALARS } from "../../../client-models";
+import { useQuery } from "@apollo/client";
+import { DECK_DETAIL } from "../../../client-models";
 import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import type { DeckDetail, DeckDetailVariables } from "./gqlTypes/DeckDetail";
-import type { DeckEdit, DeckEditVariables } from "./gqlTypes/DeckEdit";
 
 import { wrStyled } from "../../../theme";
 import Main from "../../../ui/layout/Main";
@@ -21,36 +20,13 @@ import WrDeckDetailData from "./WrDeckDetailData";
 import WrDeckDetailDescription from "./WrDeckDetailDescription";
 import WrDeckDetailPersonalNotes from "./WrDeckDetailPersonalNotes";
 import WrDeckDetailSubdecks from "./WrDeckDetailSubdecks";
-import WrDeckDetailTemplatesAndCards from "./WrDeckDetailTemplatesAndCards";
+import WrDeckDetailCards from "./WrDeckDetailCards";
 
 const DECK_DETAIL_QUERY = gql`
 ${DECK_DETAIL}
 query DeckDetail($deckId: ID!) {
   deck(id: $deckId) {
     ...DeckDetail
-  }
-}
-`;
-
-const DECK_EDIT_MUTATION = gql`
-${DECK_SCALARS}
-mutation DeckEdit(
-  $deckId: ID!
-  $name: String
-  $description: JsonObject
-  $promptLang: String
-  $answerLang: String
-  $published: Boolean
-) {
-  deckEdit(
-    id: $deckId
-    name: $name
-    description: $description
-    promptLang: $promptLang
-    answerLang: $answerLang
-    published: $published
-  ) {
-    ...DeckScalars
   }
 }
 `;
@@ -81,21 +57,14 @@ flex-direction: column;
 }
 `;
 
-enum LastMutated {
-  TITLE,
-  DESCRIPTION,
-}
-
 const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
-  const [lastMutated, setLastMutated] = useState(LastMutated.TITLE);
   const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
   const {
     loading, error, data,
   } = useQuery<DeckDetail, DeckDetailVariables>(DECK_DETAIL_QUERY, {
     variables: { deckId },
   });
-  const [mutate, { loading: mutationLoading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION);
   if (error) {
     return <Main/>;
   }
@@ -107,11 +76,6 @@ const WrDeckDetail = (): JSX.Element => {
   }
   const { deck } = data;
   const readOnly = deck.ownerId !== id;
-  const mutateWithVariables = (variables: Partial<DeckEditVariables>) => mutate({ variables: {
-    deckId,
-    name: deck.name,
-    ...variables,
-  } });
   const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
   // Note: component is keyed to force refresh on route change.
   return (
@@ -120,18 +84,12 @@ const WrDeckDetail = (): JSX.Element => {
       <DeckDataBox>
         <WrDeckDetailData
           deck={deck}
-          mutateWithVariables={mutateWithVariables}
-          onMutation={() => setLastMutated(LastMutated.TITLE)}
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-          saving={mutationLoading && lastMutated === LastMutated.TITLE}
           readOnly={readOnly}
         />
         <NotesBox>
           <WrDeckDetailDescription
+            deckId={deck.id}
             description={deck.description as (RawDraftContentState | Record<string, unknown>)}
-            mutateWithVariables={mutateWithVariables}
-            onMutation={() => setLastMutated(LastMutated.DESCRIPTION)}
-            saving={mutationLoading && lastMutated === LastMutated.DESCRIPTION}
             readOnly={readOnly}
           />
           <WrDeckDetailPersonalNotes
@@ -144,7 +102,7 @@ const WrDeckDetail = (): JSX.Element => {
         subdecks={subdecks}
         readOnly={readOnly}
       />
-      <WrDeckDetailTemplatesAndCards
+      <WrDeckDetailCards
         deckId={deckId}
       />
     </StyledMain>

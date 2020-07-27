@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
 import { RawDraftContentState } from "draft-js";
+import { useDebouncedCallback } from "use-debounce";
 import equal from "fast-deep-equal/es6/react";
 
+import { useMutation } from "@apollo/client";
+import { DECK_EDIT_MUTATION } from "../sharedGql";
+import { DeckEdit, DeckEditVariables } from "../gqlTypes/DeckEdit";
 
 import { wrStyled } from "../../../theme";
 
 import { DEBOUNCE_DELAY } from "../../../util";
-import { DeckEditVariables } from "./gqlTypes/DeckEdit";
 import NotesEditor from "../../editor/NotesEditor";
 
 const StyledOuterBox = wrStyled.div`
@@ -47,38 +49,32 @@ padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
 `;
 
 interface Props {
+  deckId: string;
   description: RawDraftContentState | Record<string, unknown>;
-  onMutation: () => void;
-  mutateWithVariables: (variables: Partial<DeckEditVariables>) => void;
-  saving: boolean;
   readOnly?: boolean;
 }
 
 const WrDeckDetailDescription = ({
+  deckId,
   description,
-  onMutation,
-  mutateWithVariables,
-  saving,
   readOnly,
 }: Props): JSX.Element => {
   const [currentDescription, setCurrentDescription] = useState(description);
-  const [debouncedDescription, setDebouncedDescription] = useState(description);
+  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION);
   const [descriptionCallback] = useDebouncedCallback((newDescription: RawDraftContentState) => {
-    if (equal(newDescription, debouncedDescription)) {
-      return;
-    }
-    setDebouncedDescription(newDescription);
-    onMutation();
-    mutateWithVariables({ description: newDescription as unknown as Record<string, unknown> });
+    void mutate({ variables: {
+      id: deckId,
+      description: newDescription as unknown as Record<string, unknown>,
+    } });
   }, DEBOUNCE_DELAY);
   const handleChange = (newDescription: RawDraftContentState) => {
-    if (equal(newDescription, currentDescription)) {
+    if (readOnly) {
       return;
     }
     setCurrentDescription(newDescription);
     descriptionCallback(newDescription);
   };
-  const descriptionStatus = currentDescription !== debouncedDescription || saving
+  const descriptionStatus = !equal(description, currentDescription) || loading
     ? "saving"
     : undefined;
   return (
@@ -91,7 +87,7 @@ const WrDeckDetailDescription = ({
         <StyledContent>
           <NotesEditor
             initialContent={description}
-            placeholder="Enter a description..."
+            placeholder={readOnly ? "No description" : "Enter a description..."}
             onChange={handleChange}
             readOnly={readOnly}
           />

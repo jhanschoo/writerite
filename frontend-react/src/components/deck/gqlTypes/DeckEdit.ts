@@ -25,7 +25,7 @@ export interface DeckEdit {
 }
 
 export interface DeckEditVariables {
-  readonly deckId: string;
+  readonly id: string;
   readonly name?: string | null;
   readonly description?: JsonObject | null;
   readonly promptLang?: string | null;

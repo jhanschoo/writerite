@@ -2,10 +2,10 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { useQuery } from "@apollo/client";
+import { DECKS_QUERY } from "../sharedGql";
 import { DecksQueryScope } from "../../../gqlGlobalTypes";
-import { DECK_SCALARS } from "../../../client-models";
-import { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
-import { Decks, DecksVariables } from "./gqlTypes/Decks";
+import type { Decks, DecksVariables } from "../gqlTypes/Decks";
+import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "../../../util";
 
 import { wrStyled } from "../../../theme";
@@ -16,27 +16,7 @@ import { BorderlessButton } from "../../../ui/Button";
 import TextInput from "../../../ui/TextInput";
 
 import WrDeckItem from "./WrDeckItem";
-import gql from "graphql-tag";
 import WrUploadDeck from "../WrUploadDeck";
-
-export const DECKS_QUERY = gql`
-${DECK_SCALARS}
-query Decks(
-  $cursor: ID
-  $take: Int
-  $titleFilter: String
-  $scope: DecksQueryScope
-) {
-  decks(
-    cursor: $cursor
-    take: $take
-    titleFilter: $titleFilter
-    scope: $scope
-  ) {
-    ...DeckScalars
-  }
-}
-`;
 
 const Ribbon = wrStyled.section`
 display: flex;

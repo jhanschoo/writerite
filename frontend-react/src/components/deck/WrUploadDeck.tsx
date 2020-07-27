@@ -7,10 +7,11 @@ import { useHistory } from "react-router";
 
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
+import { DECKS_QUERY } from "./sharedGql";
+import type { Decks, DecksVariables } from "./gqlTypes/Decks";
 import { DECK_SCALARS } from "../../client-models";
 import { CardCreateInput } from "../../gqlGlobalTypes";
-import { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
-import { DeckCreateWithCards, DeckCreateWithCardsVariables } from "./gqlTypes/DeckCreateWithCards";
+import type { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
 
 import { StyledComponent } from "styled-components";
 import { WrTheme, wrStyled } from "../../theme";
@@ -22,25 +23,6 @@ import HDivider from "../../ui-components/HDivider";
 
 const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as JsonObject;
 
-const DECK_CREATE_WITH_CARDS = gql`
-${DECK_SCALARS}
-mutation DeckCreateWithCards(
-    $name: String
-    $promptLang: String
-    $answerLang: String
-    $cards: [CardCreateInput!]!
-  ) {
-  deckCreate(
-    name: $name
-    promptLang: $promptLang
-    answerLang: $answerLang
-    cards: $cards
-  ) {
-    ...DeckScalars
-  }
-}
-`;
-
 const DECK_CREATE_MUTATION = gql`
 ${DECK_SCALARS}
 mutation DeckCreate(
@@ -49,6 +31,7 @@ mutation DeckCreate(
   $promptLang: String
   $answerLang: String
   $published: Boolean
+  $cards: [CardCreateInput!]
 ) {
   deckCreate(
     name: $name
@@ -56,6 +39,7 @@ mutation DeckCreate(
     promptLang: $promptLang
     answerLang: $answerLang
     published: $published
+    cards: $cards
   ) {
     ...DeckScalars
   }
@@ -163,8 +147,28 @@ const WrUploadDeck = (): JSX.Element => {
   const [draggedFileStatus, setDraggedFileStatus] = useState<DraggedFileStatus>(DraggedFileStatus.NONE);
   const [isEmptyDeck, setIsEmptyDeck] = useState<boolean>(false);
   const dropDivEl = useRef<HTMLDivElement>(null);
-  const [mutateUpload, { loading: loadingUpload }] = useMutation<DeckCreateWithCards, DeckCreateWithCardsVariables>(DECK_CREATE_WITH_CARDS);
-  const [mutateCreate, { loading: loadingCreate }] = useMutation<DeckCreate, DeckCreateVariables>(DECK_CREATE_MUTATION);
+  const [mutate, { loading }] = useMutation<DeckCreate, DeckCreateVariables>(DECK_CREATE_MUTATION, {
+    update(cache, { data }) {
+      const newDeck = data?.deckCreate;
+      if (newDeck) {
+        // update Decks query
+        try {
+          const decksQuery = { query: DECKS_QUERY };
+          const decksData = cache.readQuery<Decks, DecksVariables>(decksQuery);
+          const newDecksData: Decks = {
+            ...decksData ?? {},
+            decks: [newDeck, ...decksData?.decks ?? []],
+          };
+          cache.writeQuery<Decks, DecksVariables>({
+            ...decksQuery,
+            data: newDecksData,
+          });
+        } catch (e) {
+          // noop
+        }
+      }
+    },
+  });
   const noFilenameMessage = filename === null && !isEmptyDeck ? <DropDivP>no file selected</DropDivP> : null;
   let dragStatusMessage = <DropDivPBold>drag a .csv file here</DropDivPBold>;
   switch (draggedFileStatus) {
@@ -257,7 +261,7 @@ const WrUploadDeck = (): JSX.Element => {
   };
   const handleCreateEmpty = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const res = await mutateCreate({ variables: {
+    const res = await mutate({ variables: {
       name: "New Deck",
       description: {},
       promptLang: "",
@@ -272,7 +276,7 @@ const WrUploadDeck = (): JSX.Element => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (cards) {
-      const res = await mutateUpload({
+      const res = await mutate({
         variables: {
           name: nameInput,
           cards,
@@ -302,7 +306,7 @@ const WrUploadDeck = (): JSX.Element => {
           id="deck-upload-file-input"
           required={true}
           onChange={handleFileChange}
-          disabled={loadingUpload || loadingCreate}
+          disabled={loading}
         />
         <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
         {noFilenameMessage}
@@ -316,14 +320,14 @@ const WrUploadDeck = (): JSX.Element => {
             onChange={handleNameChange}
             className={filename === null ? "hidden" : undefined}
           />
-          <StyledButton type="submit" disabled={!cards || loadingUpload || loadingCreate}>
+          <StyledButton type="submit" disabled={!cards || loading}>
           Upload
           </StyledButton>
         </StyledFieldset>
         <DividerDiv>
           <HDivider>OR</HDivider>
         </DividerDiv>
-        <StyledButton onClick={handleCreateEmpty} disabled={loadingUpload || loadingCreate}>
+        <StyledButton onClick={handleCreateEmpty} disabled={loading}>
         Create an Empty Deck
         </StyledButton>
       </DropDiv>

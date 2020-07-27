@@ -5,13 +5,6 @@ import { wrStyled } from "../../theme";
 import { Item, List } from "../../ui/List";
 import { BorderlessButton } from "../../ui/Button";
 
-interface Props {
-  initialContent: RawDraftContentState | Record<string, unknown>;
-  onChange: (rawDraftContentState: RawDraftContentState) => void;
-  placeholder?: EditorProps["placeholder"];
-  readOnly?: boolean;
-}
-
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 
 const activeIf = (active: boolean) => active ? "active" : undefined;
@@ -55,6 +48,13 @@ font-style: italic;
 const UnderlineButton = wrStyled(ToolbarButton)`
 text-decoration: underline;
 `;
+
+interface Props {
+  initialContent: RawDraftContentState | Record<string, unknown>;
+  onChange: (rawDraftContentState: RawDraftContentState) => void;
+  placeholder?: EditorProps["placeholder"];
+  readOnly?: boolean;
+}
 
 const NotesEditor = ({
   initialContent,

@@ -3,6 +3,8 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { CardCreateInput } from "./../../../gqlGlobalTypes";
+
 // ====================================================
 // GraphQL mutation operation: DeckCreate
 // ====================================================
@@ -30,4 +32,5 @@ export interface DeckCreateVariables {
   readonly promptLang?: string | null;
   readonly answerLang?: string | null;
   readonly published?: boolean | null;
+  readonly cards?: ReadonlyArray<CardCreateInput> | null;
 }
