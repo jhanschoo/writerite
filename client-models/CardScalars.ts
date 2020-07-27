@@ -10,5 +10,6 @@ fragment CardScalars on Card {
   sortKey
   editedAt
   template
+  mainTemplate
 }
 `;
