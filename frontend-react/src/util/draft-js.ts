@@ -9,6 +9,5 @@ export const emptyFields: CardFields = {
   answers: [],
 };
 
-export const pushRawContent = (
-  editorState: EditorState, raw: Record<string, unknown>, changeType: EditorChangeType,
-): EditorState => EditorState.push(editorState, convertFromRaw(raw as unknown as RawDraftContentState), changeType);
+export const pushRawContent = (editorState: EditorState, raw: Record<string, unknown>, changeType: EditorChangeType): EditorState =>
+  EditorState.push(editorState, convertFromRaw(raw as unknown as RawDraftContentState), changeType);

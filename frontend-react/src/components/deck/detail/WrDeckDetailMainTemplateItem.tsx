@@ -17,7 +17,7 @@ import { emptyFields, emptyRawContent, identity, pushRawContent } from "../../..
 import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import WrDeckDetailTemplateItem from "./WrDeckDetailTemplateItem";
-import AnswersEditor, { answersEditorStateFromStringArray } from "../../editor/AnswersEditor";
+import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, pushStringArray } from "../../editor/AnswersEditor";
 
 const StyledList = wrStyled(List)`
 flex-direction: column;
@@ -110,6 +110,7 @@ const WrDeckDetailMainTemplateItem = ({
   const [currentFields, setCurrentFields] = useState(initialFields);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
+  console.log(convertToRaw(answersEditorState.getCurrentContent()));
   const update: MutationUpdaterFn<CardCreate> = (cache, { data }) => {
     const newCard = data?.cardCreate;
     if (newCard) {
@@ -178,6 +179,7 @@ const WrDeckDetailMainTemplateItem = ({
     setCurrentFields(initialFields);
     setPromptEditorState(pushRawContent(pushRawContent(promptEditorState, emptyRawContent, "remove-range"), prompt as Record<string, unknown>, "insert-fragment"));
     setFullAnswerEditorState(pushRawContent(pushRawContent(fullAnswerEditorState, emptyRawContent, "remove-range"), fullAnswer as Record<string, unknown>, "insert-fragment"));
+    setAnswersEditorState(pushStringArray(pushRawContent(answersEditorState, emptyRawContent, "remove-range"), answers, "insert-fragment"));
   };
   const handleSave = () => {
     if (id) {
@@ -197,6 +199,7 @@ const WrDeckDetailMainTemplateItem = ({
     setCurrentFields(emptyFields);
     setPromptEditorState(pushRawContent(promptEditorState, emptyRawContent, "remove-range"));
     setFullAnswerEditorState(pushRawContent(fullAnswerEditorState, emptyRawContent, "remove-range"));
+    setAnswersEditorState(pushRawContent(answersEditorState, emptyRawContent, "remove-range"));
   };
   const handleChange = (newFields: Partial<Fields>) => setCurrentFields({ ...currentFields, ...newFields });
   const handlePromptChange = (nextEditorState: EditorState) => {
@@ -209,6 +212,10 @@ const WrDeckDetailMainTemplateItem = ({
     handleChange({
       fullAnswer: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>,
     });
+    return nextEditorState;
+  };
+  const handleAnswersChange = (nextEditorState: EditorState) => {
+    handleChange({ answers: answersEditorStateToStringArray(nextEditorState) });
     return nextEditorState;
   };
   const handleShowDeleteModal = () => setShowDeleteModal(true);
@@ -224,6 +231,7 @@ const WrDeckDetailMainTemplateItem = ({
     setCurrentFields(emptyFields);
     setPromptEditorState(pushRawContent(promptEditorState, emptyRawContent, "remove-range"));
     setFullAnswerEditorState(pushRawContent(fullAnswerEditorState, emptyRawContent, "remove-range"));
+    setAnswersEditorState(pushRawContent(answersEditorState, emptyRawContent, "remove-range"));
   };
   const loading = loadingCreate || loadingEdit || loadingDelete;
   const templateItems = templates.map((template) => <WrDeckDetailTemplateItem key={template.id} template={template} />);
@@ -263,14 +271,14 @@ const WrDeckDetailMainTemplateItem = ({
         answersContent={<AnswersEditor
           editorState={answersEditorState}
           setEditorState={setAnswersEditorState}
-          handleChange={identity}
+          handleChange={handleAnswersChange}
         />}
         footer={<FrontBackCardActionsList>
           <DeleteItem>
             <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
           </DeleteItem>
           <ActionsItem>
-            {/* Following button intentionally does not become disabled upon loading, since unnecescary */}
+            {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
             <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
           </ActionsItem>
           <ActionsItem>
