@@ -83,7 +83,8 @@ pages-test:
   script:
     - cd frontend-react
     - npm i
-    - npm run build
+    # TODO: remove CI=false
+    - CI=false npm run build
     - cd ..
     - mv frontend-react/build public
   artifacts:
