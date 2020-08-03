@@ -76,9 +76,10 @@ build-writerite-backend:
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
-build-frontend-react:
+pages-test:
   stage: build-clients
   image: node
+  before_script: []
   script:
     - cd frontend-react
     - npm i
