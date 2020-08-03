@@ -15,9 +15,11 @@ import { AnchorButton, Item, List } from "../../../ui";
 import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
 import { DEBOUNCE_DELAY } from "../../../util";
 
-import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 import type { CardFields } from "../../../types";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
+import { answersEditorStateToStringArray } from "../../editor/AnswersEditor";
+import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
+import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
@@ -45,10 +47,6 @@ const WrDeckDetailCardItem = ({
   const { id, editedAt, template, ownRecord, prompt, fullAnswer, answers } = card;
   const initialFields = { prompt, fullAnswer, answers } as CardFields;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [promptEditorState, setPromptEditorState] =
-    useState(notesEditorStateFromRaw(prompt as Record<string, unknown>));
-  const [fullAnswerEditorState, setFullAnswerEditorState] =
-    useState(notesEditorStateFromRaw(fullAnswer as Record<string, unknown>));
   const [currentFields, setCurrentFields] = useState(initialFields);
   const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
@@ -117,6 +115,10 @@ const WrDeckDetailCardItem = ({
     handleChange({ fullAnswer: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown> });
     return nextEditorState;
   };
+  const handleAnswersChange = (nextEditorState: EditorState) => {
+    handleChange({ answers: answersEditorStateToStringArray(nextEditorState) });
+    return nextEditorState;
+  };
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleHideDeleteModal = () => setShowDeleteModal(false);
   const handleDelete = () => {
@@ -140,21 +142,23 @@ const WrDeckDetailCardItem = ({
       />}
       <FrontBackCard
         status={saveStatus}
-        promptContent={<NotesEditor
-          editorState={promptEditorState}
-          setEditorState={setPromptEditorState}
+        promptContent={<SelfManagedNotesEditor
+          initialContent={prompt as Record<string, unknown>}
           placeholder={readOnly ? "Empty prompt" : "Write a prompt..."}
           handleChange={handlePromptChange}
           readOnly={disabled}
         />}
-        fullAnswerContent={<NotesEditor
-          editorState={fullAnswerEditorState}
-          setEditorState={setFullAnswerEditorState}
+        fullAnswerContent={<SelfManagedNotesEditor
+          initialContent={fullAnswer as Record<string, unknown>}
           placeholder={readOnly ? "Empty answer" : "Write an answer..."}
           handleChange={handleFullAnswerChange}
           readOnly={disabled}
         />}
-        answersContent={<>TODO</>}
+        answersContent={<SelfManagedAnswersEditor
+          initialContent={answers}
+          handleChange={handleAnswersChange}
+          readOnly={disabled}
+        />}
         footer={<FrontBackCardActionsList>
           <DeleteItem>
             <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>

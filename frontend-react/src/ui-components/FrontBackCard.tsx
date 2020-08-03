@@ -74,6 +74,7 @@ interface Props {
 }
 
 export const FrontBackCard = ({
+  // eslint-disable-next-line no-shadow
   status,
   header,
   promptContent,

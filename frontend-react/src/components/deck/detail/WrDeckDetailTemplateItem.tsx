@@ -13,6 +13,7 @@ import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components"
 import { identity } from "../../../util";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
+import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
@@ -91,6 +92,11 @@ const WrDeckDetailTemplateItem = ({
         fullAnswerContent={<SelfManagedNotesEditor
           initialContent={fullAnswer as Record<string, unknown>}
           placeholder="Empty answer"
+          handleChange={identity}
+          readOnly={true}
+        />}
+        answersContent={<SelfManagedAnswersEditor
+          initialContent={answers}
           handleChange={identity}
           readOnly={true}
         />}

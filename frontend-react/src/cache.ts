@@ -27,6 +27,10 @@ export const cache = new InMemoryCache({
         },
       },
     },
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    UserDeckRecord: {
+      keyFields: ["userId", "deckId"],
+    },
   },
 });
 

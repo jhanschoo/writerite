@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorChangeType, EditorState, convertToRaw } from "draft-js";
 
 import { MutationUpdaterFn, useMutation } from "@apollo/client";
 import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "../../sharedGql";
@@ -13,7 +13,7 @@ import { wrStyled } from "../../../theme";
 import { AnchorButton, BorderlessButton, Item, List } from "../../../ui";
 import { FrontBackCard, FrontBackCardActionsList, Modal } from "../../../ui-components";
 
-import { emptyFields, emptyRawContent, identity, pushRawContent } from "../../../util";
+import { emptyFields, emptyRawContent, pushRawContent } from "../../../util";
 import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import WrDeckDetailTemplateItem from "./WrDeckDetailTemplateItem";
@@ -91,6 +91,14 @@ interface Fields {
   answers: string[];
 }
 
+type FieldsEditorStates = [EditorState, EditorState, EditorState];
+type Pusher<T> = (state: EditorState, content: T, changeType: EditorChangeType) => EditorState;
+const pushEmptyStates = (states: FieldsEditorStates): FieldsEditorStates =>
+  states.map((state) => pushRawContent(state, emptyRawContent, "remove-range")) as FieldsEditorStates;
+const pushContent = <T, U, V>(states: FieldsEditorStates, pushers: [Pusher<T>, Pusher<U>, Pusher<V>], contents: [T, U, V]) =>
+  [null, null, null].map((_null, n: number) => pushers[n](states[n], contents[n] as T & U & V, "insert-fragment")) as FieldsEditorStates;
+const fieldPushers: [Pusher<Record<string, unknown>>, Pusher<Record<string, unknown>>, Pusher<readonly string[]>] = [pushRawContent, pushRawContent, pushStringArray];
+
 const WrDeckDetailMainTemplateItem = ({
   deckId,
   card,
@@ -104,13 +112,20 @@ const WrDeckDetailMainTemplateItem = ({
     ...emptyFields,
   };
   const initialFields = { prompt, fullAnswer, answers } as Fields;
-  const [promptEditorState, setPromptEditorState] = useState(notesEditorStateFromRaw(prompt as Record<string, unknown>));
-  const [fullAnswerEditorState, setFullAnswerEditorState] = useState(notesEditorStateFromRaw(fullAnswer as Record<string, unknown>));
-  const [answersEditorState, setAnswersEditorState] = useState(answersEditorStateFromStringArray(answers));
+  const [promptEditorState, setPromptEditorState] =
+    useState(notesEditorStateFromRaw(prompt as Record<string, unknown>));
+  const [fullAnswerEditorState, setFullAnswerEditorState] =
+    useState(notesEditorStateFromRaw(fullAnswer as Record<string, unknown>));
+  const [answersEditorState, setAnswersEditorState] =
+    useState(answersEditorStateFromStringArray(answers));
   const [currentFields, setCurrentFields] = useState(initialFields);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
-  console.log(convertToRaw(answersEditorState.getCurrentContent()));
+  const setEditorStates = ([promptState, fullAnswerState, answersState]: FieldsEditorStates) => {
+    setPromptEditorState(promptState);
+    setFullAnswerEditorState(fullAnswerState);
+    setAnswersEditorState(answersState);
+  };
   const update: MutationUpdaterFn<CardCreate> = (cache, { data }) => {
     const newCard = data?.cardCreate;
     if (newCard) {
@@ -177,9 +192,11 @@ const WrDeckDetailMainTemplateItem = ({
       mainTemplate: false,
     } });
     setCurrentFields(initialFields);
-    setPromptEditorState(pushRawContent(pushRawContent(promptEditorState, emptyRawContent, "remove-range"), prompt as Record<string, unknown>, "insert-fragment"));
-    setFullAnswerEditorState(pushRawContent(pushRawContent(fullAnswerEditorState, emptyRawContent, "remove-range"), fullAnswer as Record<string, unknown>, "insert-fragment"));
-    setAnswersEditorState(pushStringArray(pushRawContent(answersEditorState, emptyRawContent, "remove-range"), answers, "insert-fragment"));
+    setEditorStates(pushContent(
+      pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]),
+      fieldPushers,
+      [prompt as Record<string, unknown>, fullAnswer as Record<string, unknown>, answers],
+    ));
   };
   const handleSave = () => {
     if (id) {
@@ -197,9 +214,7 @@ const WrDeckDetailMainTemplateItem = ({
     }
     // note: id field is wrong value while creation in-flight, thus handleSave, handleFileAway are disabled till it resolves
     setCurrentFields(emptyFields);
-    setPromptEditorState(pushRawContent(promptEditorState, emptyRawContent, "remove-range"));
-    setFullAnswerEditorState(pushRawContent(fullAnswerEditorState, emptyRawContent, "remove-range"));
-    setAnswersEditorState(pushRawContent(answersEditorState, emptyRawContent, "remove-range"));
+    setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
   };
   const handleChange = (newFields: Partial<Fields>) => setCurrentFields({ ...currentFields, ...newFields });
   const handlePromptChange = (nextEditorState: EditorState) => {
@@ -229,9 +244,7 @@ const WrDeckDetailMainTemplateItem = ({
       } });
     }
     setCurrentFields(emptyFields);
-    setPromptEditorState(pushRawContent(promptEditorState, emptyRawContent, "remove-range"));
-    setFullAnswerEditorState(pushRawContent(fullAnswerEditorState, emptyRawContent, "remove-range"));
-    setAnswersEditorState(pushRawContent(answersEditorState, emptyRawContent, "remove-range"));
+    setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
   };
   const loading = loadingCreate || loadingEdit || loadingDelete;
   const templateItems = templates.map((template) => <WrDeckDetailTemplateItem key={template.id} template={template} />);

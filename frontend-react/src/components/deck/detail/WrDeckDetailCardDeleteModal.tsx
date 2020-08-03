@@ -7,6 +7,7 @@ import { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 import { emptyRawContent, identity } from "../../../util";
 import { FrontBackCard, FrontBackCardActionsList, Modal } from "../../../ui-components";
 import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
+import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
 
 const StyledDeletePrompt = wrStyled.div`
 display: flex;
@@ -50,7 +51,8 @@ const WrDeckDetailCardDeleteModal = ({
   handleClose, handleDelete, template, card,
 }: Props): JSX.Element =>{
   const {
-    prompt, fullAnswer, answers
+    // eslint-disable-next-line no-shadow
+    prompt, fullAnswer, answers,
   } = card ?? {
     prompt: emptyRawContent,
     fullAnswer: emptyRawContent,
@@ -74,7 +76,11 @@ const WrDeckDetailCardDeleteModal = ({
           handleChange={identity}
           readOnly={true}
         />}
-        answersContent="TODO"
+        answersContent={<SelfManagedAnswersEditor
+          initialContent={answers}
+          handleChange={identity}
+          readOnly={true}
+        />}
         footer={<FrontBackCardActionsList>
           <ActionsItem>
             <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>

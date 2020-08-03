@@ -8,15 +8,9 @@ const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record
 
 const activeIf = (active: boolean) => active ? "active" : undefined;
 
-const NotesBox = wrStyled.div`
-@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-  font-size: 75%;
-}
-`;
-
 const Toolbar = wrStyled(List)`
 width: 100%;
-display: flex;
+display: none;
 flex-wrap: wrap;
 margin: ${({ theme: { space } }) => `0 0 ${space[1]} 0`};
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
@@ -28,6 +22,17 @@ const ToolbarItem = wrStyled(Item)`
 margin: ${({ theme: { space } }) => `0 ${space[1]} 0 0`};
 :last-child {
   margin: 0;
+}
+`;
+
+const NotesBox = wrStyled.div`
+@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
+  font-size: 75%;
+}
+&.active, :active, :focus-within {
+  ${Toolbar} {
+    display: flex;
+  }
 }
 `;
 

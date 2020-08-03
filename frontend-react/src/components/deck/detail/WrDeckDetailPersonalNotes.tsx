@@ -83,15 +83,22 @@ const WrDeckDetailPersonalNotes = ({
 }: Props): JSX.Element => {
   const { loading, data } = useQuery<OwnDeckRecord, OwnDeckRecordVariables>(OWN_DECK_RECORD_QUERY, {
     variables: { deckId },
-    onCompleted: (newData) => setEditorState(notesEditorStateFromRaw((newData.ownDeckRecord?.notes as Record<string, unknown> | null) ?? {})),
+    onCompleted(newData) {
+      // synchronize editorState and currentNotes to data, for first fetch only
+      if (currentNotes === null && newData.ownDeckRecord) {
+        const notes = newData.ownDeckRecord.notes as Record<string, unknown>;
+        setCurrentNotes(notes);
+        setEditorState(notesEditorStateFromRaw(notes));
+      }
+    },
   });
   const notes = (data?.ownDeckRecord?.notes ?? {}) as Record<string, unknown>;
-  const [editorState, setEditorState] = useState(notesEditorStateFromRaw(notes));
-  const [currentNotes, setCurrentNotes] = useState(notes);
+  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [currentNotes, setCurrentNotes] = useState<Record<string, unknown> | null>(null);
   const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
     deckId,
-    notes: currentNotes,
+    notes: currentNotes ?? undefined,
   } };
   const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSet, OwnDeckRecordSetVariables>(OWN_DECK_RECORD_SET_MUTATION, {
     onCompleted(newData) {
