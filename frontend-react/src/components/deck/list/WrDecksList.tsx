@@ -2,9 +2,9 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { useQuery } from "@apollo/client";
-import { DECKS_QUERY } from "../sharedGql";
+import { DECKS_QUERY } from "../../sharedGql";
 import { DecksQueryScope } from "../../../gqlGlobalTypes";
-import type { Decks, DecksVariables } from "../gqlTypes/Decks";
+import type { Decks, DecksVariables } from "../../gqlTypes/Decks";
 import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "../../../util";
 

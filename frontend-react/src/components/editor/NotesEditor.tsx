@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
+import React, { Dispatch, SetStateAction } from "react";
+import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw } from "draft-js";
 
 import { wrStyled } from "../../theme";
 import { BorderlessButton, Item, List } from "../../ui";
@@ -18,17 +18,21 @@ const Toolbar = wrStyled(List)`
 width: 100%;
 display: flex;
 flex-wrap: wrap;
-margin: ${({ theme: { space } }) => `0 0 ${space[2]} 0`};
+margin: ${({ theme: { space } }) => `0 0 ${space[1]} 0`};
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   margin: ${({ theme: { space } }) => `0 0 ${space[1]} 0`};
 }
 `;
 
-const ToolbarItem = wrStyled(Item)``;
+const ToolbarItem = wrStyled(Item)`
+margin: ${({ theme: { space } }) => `0 ${space[1]} 0 0`};
+:last-child {
+  margin: 0;
+}
+`;
 
 const ToolbarButton = wrStyled(BorderlessButton)`
-padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
-margin: ${({ theme: { space } }) => space[1]};
+padding: ${({ theme: { space } }) => space[1]};
 color: ${({ theme: { fg } }) => fg[3]};
 font-weight: normal;
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
@@ -49,42 +53,47 @@ text-decoration: underline;
 `;
 
 interface Props {
-  initialContent: RawDraftContentState | Record<string, unknown>;
-  onChange: (rawDraftContentState: RawDraftContentState) => void;
+  editorState: EditorState;
+  setEditorState: Dispatch<SetStateAction<EditorState>>;
+  handleChange?: (newEditorState: EditorState) => EditorState | null;
   placeholder?: EditorProps["placeholder"];
   readOnly?: boolean;
 }
 
+export const notesEditorStateFromRaw = (c: Record<string, unknown> | null): EditorState => {
+  const emptyState = EditorState.createEmpty();
+  if (isEmpty(c ?? {})) {
+    return emptyState;
+  }
+  return EditorState.push(emptyState, convertFromRaw(c as unknown as RawDraftContentState), "insert-fragment");
+};
+
 const NotesEditor = ({
-  initialContent,
-  onChange,
+  editorState,
+  setEditorState,
+  handleChange,
   placeholder,
   readOnly,
 }: Props): JSX.Element => {
-  const [editorState, setEditorState] = useState(() => isEmpty(initialContent)
-    ? EditorState.createEmpty()
-    : EditorState.createWithContent(convertFromRaw(initialContent)));
   const currentStyle = editorState.getCurrentInlineStyle();
   const currentSelection = editorState.getSelection();
   const currentType = editorState.getCurrentContent().getBlockForKey(currentSelection.getStartKey()).getType();
-  // eslint-disable-next-line no-shadow
-  const handleChange = (editorState: EditorState) => {
-    setEditorState(editorState);
-    onChange(convertToRaw(editorState.getCurrentContent()));
+  const handleEditorChange = (nextEditorState: EditorState) => {
+    setEditorState(handleChange?.(nextEditorState) ?? nextEditorState);
   };
   const handleKeyCommand = (command: DraftEditorCommand, state: EditorState, _eventTimeStamp: number) => {
     const newState = RichUtils.handleKeyCommand(state, command);
     if (newState) {
-      handleChange(newState);
+      handleEditorChange(newState);
       return "handled";
     }
     return "not-handled";
   };
-  const handleBold = () => handleChange(RichUtils.toggleInlineStyle(editorState, "BOLD"));
-  const handleItalic = () => handleChange(RichUtils.toggleInlineStyle(editorState, "ITALIC"));
-  const handleUnderline = () => handleChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
-  const handleUnorderedList = () => handleChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
-  const handleOrderedList = () => handleChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
+  const handleBold = () => handleEditorChange(RichUtils.toggleInlineStyle(editorState, "BOLD"));
+  const handleItalic = () => handleEditorChange(RichUtils.toggleInlineStyle(editorState, "ITALIC"));
+  const handleUnderline = () => handleEditorChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
+  const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
+  const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
   return (
     <NotesBox>
@@ -99,7 +108,7 @@ const NotesEditor = ({
       }
       <Editor
         editorState={editorState}
-        onChange={handleChange}
+        onChange={handleEditorChange}
         placeholder={placeholder}
         handleKeyCommand={handleKeyCommand}
         readOnly={readOnly}

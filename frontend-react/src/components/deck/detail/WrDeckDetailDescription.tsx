@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { RawDraftContentState } from "draft-js";
+import { EditorState, convertToRaw } from "draft-js";
 import { useDebouncedCallback } from "use-debounce";
 import equal from "fast-deep-equal/es6/react";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION } from "../sharedGql";
-import { DeckEdit, DeckEditVariables } from "../gqlTypes/DeckEdit";
+import { DECK_EDIT_MUTATION } from "../../sharedGql";
+import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
 
 import { wrStyled } from "../../../theme";
 
 import { DEBOUNCE_DELAY } from "../../../util";
-import NotesEditor from "../../editor/NotesEditor";
+import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -50,7 +50,7 @@ padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
 
 interface Props {
   deckId: string;
-  description: RawDraftContentState | Record<string, unknown>;
+  description: Record<string, unknown>;
   readOnly?: boolean;
 }
 
@@ -59,16 +59,17 @@ const WrDeckDetailDescription = ({
   description,
   readOnly,
 }: Props): JSX.Element => {
+  const [editorState, setEditorState] = useState(notesEditorStateFromRaw(description));
   const [currentDescription, setCurrentDescription] = useState(description);
-  const [debounceOngoing, setDebounceOngoing] = useState(false);
+  const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
     id: deckId,
-    description: currentDescription as Record<string, unknown>,
+    description: currentDescription,
   } };
   const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
-      if (debounceOngoing) {
+      if (debouncing) {
         return;
       }
       // debounce has fired a no-op before flight returned; we now fire a new mutation
@@ -77,21 +78,19 @@ const WrDeckDetailDescription = ({
       }
     },
   });
-  const [descriptionCallback] = useDebouncedCallback(() => {
-    setDebounceOngoing(false);
+  const [debounce] = useDebouncedCallback(() => {
+    setDebouncing(false);
     // no-op if a mutation is already in-flight
     if (loading || equal(currentDescription, description)) {
       return;
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
-  const handleChange = (newDescription: RawDraftContentState) => {
-    if (readOnly) {
-      return;
-    }
-    setCurrentDescription(newDescription);
-    setDebounceOngoing(true);
-    descriptionCallback();
+  const handleChange = (nextEditorState: EditorState) => {
+    setCurrentDescription(convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>);
+    setDebouncing(true);
+    debounce();
+    return nextEditorState;
   };
   const descriptionStatus = loading || !equal(currentDescription, description)
     ? "saving"
@@ -105,9 +104,10 @@ const WrDeckDetailDescription = ({
         </StyledHeader>
         <StyledContent>
           <NotesEditor
-            initialContent={description}
+            editorState={editorState}
+            setEditorState={setEditorState}
+            handleChange={handleChange}
             placeholder={readOnly ? "No description" : "Enter a description..."}
-            onChange={handleChange}
             readOnly={readOnly}
           />
         </StyledContent>

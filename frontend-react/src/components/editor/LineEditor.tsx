@@ -1,56 +1,53 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { ContentState, Editor, EditorState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
 
+/*
+ * Note: due to issues with undoing, setEditorState on events coming
+ * from this component is controlled by this component; we cannot
+ * simply do a noop when an illegal change happens and delegate
+ * changing the editor state to parent component.
+ */
 interface Props {
-  initialString: string;
+  editorState: EditorState;
+  setEditorState: Dispatch<SetStateAction<EditorState>>;
   tag?: string;
-  onChange: (newString: string) => void;
-  /*
-   * Function returns true if undo is not triggered,
-   * false if undo is triggered.
-   */
-  filterOnBlur?: (newString: string) => boolean;
+  handleChange: (newEditorState: EditorState) => EditorState | null;
   readOnly?: boolean;
 }
 
-const LineEditor = (props: Props): JSX.Element => {
-  const {
-    initialString,
-    tag,
-    onChange,
-    filterOnBlur,
-    readOnly,
-  } = props;
+export const lineEditorStateFromString = (s: string): EditorState => {
+  const content = ContentState.createFromText(s);
+  if (content.getBlockMap().size <= 1) {
+    return EditorState.createWithContent(content);
+  }
+  return EditorState.createEmpty();
+};
+
+const LineEditor = ({
+  editorState,
+  setEditorState,
+  tag,
+  handleChange,
+  readOnly,
+}: Props): JSX.Element => {
   const element = tag ?? "div";
   // eslint-disable-next-line new-cap
   const blockRenderMap = Map({ unstyled: { element } });
-  const initialContent = ContentState.createFromText(initialString);
-  const [editorState, setEditorState] = useState(() =>
-    initialContent.getBlockMap().size === 1
-      ? EditorState.createWithContent(initialContent)
-      : EditorState.createEmpty());
-  const handleChange = (nextEditorState: EditorState) => {
+  const handleEditorChange = (nextEditorState: EditorState) => {
     const nextContent = nextEditorState.getCurrentContent();
     if (nextContent.getBlockMap().size <= 1) {
-      setEditorState(nextEditorState);
-      onChange(nextContent.getPlainText());
+      setEditorState(handleChange(nextEditorState) ?? EditorState.undo(nextEditorState));
     } else {
       setEditorState(EditorState.undo(nextEditorState));
     }
   };
-  const handleBlur = filterOnBlur ? () => {
-    if (!filterOnBlur(editorState.getCurrentContent().getPlainText())) {
-      setEditorState(EditorState.undo(editorState));
-    }
-  } : undefined;
   return (
     <Editor
       blockRenderMap={blockRenderMap}
       editorState={editorState}
-      onChange={handleChange}
-      onBlur={handleBlur}
+      onChange={handleEditorChange}
       readOnly={readOnly}
     />
   );

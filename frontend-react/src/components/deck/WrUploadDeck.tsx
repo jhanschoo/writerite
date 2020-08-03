@@ -7,8 +7,8 @@ import { useHistory } from "react-router";
 
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { DECKS_QUERY } from "./sharedGql";
-import type { Decks, DecksVariables } from "./gqlTypes/Decks";
+import { DECKS_QUERY } from "../sharedGql";
+import type { Decks, DecksVariables } from "../gqlTypes/Decks";
 import { DECK_SCALARS } from "../../client-models";
 import { CardCreateInput, DecksQueryScope } from "../../gqlGlobalTypes";
 import type { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";

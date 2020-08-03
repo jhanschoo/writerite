@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { RawDraftContentState } from "draft-js";
+import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
 
 import gql from "graphql-tag";
@@ -12,7 +12,7 @@ import { OwnDeckRecordSet, OwnDeckRecordSetVariables } from "./gqlTypes/OwnDeckR
 
 import { wrStyled } from "../../../theme";
 
-import NotesEditor from "../../editor/NotesEditor";
+import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 
 const OWN_DECK_RECORD_QUERY = gql`
 ${USER_DECK_RECORD_SCALARS}
@@ -81,42 +81,43 @@ interface Props {
 const WrDeckDetailPersonalNotes = ({
   deckId,
 }: Props): JSX.Element => {
-  const {
-    loading, data,
-  } = useQuery<OwnDeckRecord, OwnDeckRecordVariables>(OWN_DECK_RECORD_QUERY, {
+  const { loading, data } = useQuery<OwnDeckRecord, OwnDeckRecordVariables>(OWN_DECK_RECORD_QUERY, {
     variables: { deckId },
+    onCompleted: (newData) => setEditorState(notesEditorStateFromRaw((newData.ownDeckRecord?.notes as Record<string, unknown> | null) ?? {})),
   });
-  const notes = (data?.ownDeckRecord?.notes ?? {}) as RawDraftContentState | Record<string, unknown>;
+  const notes = (data?.ownDeckRecord?.notes ?? {}) as Record<string, unknown>;
+  const [editorState, setEditorState] = useState(notesEditorStateFromRaw(notes));
   const [currentNotes, setCurrentNotes] = useState(notes);
-  const [debounceOngoing, setDebounceOngoing] = useState(false);
+  const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
     deckId,
-    notes: currentNotes as Record<string, unknown>,
+    notes: currentNotes,
   } };
   const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSet, OwnDeckRecordSetVariables>(OWN_DECK_RECORD_SET_MUTATION, {
-    onCompleted(data) {
+    onCompleted(newData) {
       // no-op if debounce will trigger
-      if (debounceOngoing) {
+      if (debouncing) {
         return;
       }
       // debounce has fired a no-op before flight returned; we now fire a new mutation
-      if (data.ownDeckRecordSet && !equal(currentNotes, data.ownDeckRecordSet.notes)) {
+      if (newData.ownDeckRecordSet && !equal(currentNotes, newData.ownDeckRecordSet.notes)) {
         void mutate(mutateOpts);
       }
     },
   });
-  const [notesCallback] = useDebouncedCallback(() => {
-    setDebounceOngoing(false);
+  const [debounce] = useDebouncedCallback(() => {
+    setDebouncing(false);
     // no-op if a mutation is already in-flight
     if (loadingMutation || currentNotes === notes) {
       return;
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
-  const handleChange = (newNotes: RawDraftContentState) => {
-    setCurrentNotes(newNotes);
-    setDebounceOngoing(true);
-    notesCallback();
+  const handleChange = (nextEditorState: EditorState) => {
+    setCurrentNotes(convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>);
+    setDebouncing(true);
+    debounce();
+    return nextEditorState;
   };
   const notesStatus = loadingMutation || !equal(currentNotes, notes)
     ? "saving"
@@ -131,9 +132,10 @@ const WrDeckDetailPersonalNotes = ({
         {!loading &&
           <StyledContent>
             <NotesEditor
-              initialContent={notes}
+              editorState={editorState}
+              setEditorState={setEditorState}
+              handleChange={handleChange}
               placeholder="Enter a description..."
-              onChange={handleChange}
             />
           </StyledContent>
         }

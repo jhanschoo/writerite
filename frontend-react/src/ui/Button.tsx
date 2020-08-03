@@ -11,7 +11,6 @@ padding: 0;
 font-weight: bold;
 font-size: inherit;
 font-family: inherit;
-outline: none;
 cursor: pointer;
 
 &.active, :hover, :active, :hover:active {
@@ -30,7 +29,6 @@ padding: 0;
 font-weight: bold;
 font-size: inherit;
 font-family: inherit;
-outline: none;
 cursor: pointer;
 color: inherit;
 
@@ -48,7 +46,6 @@ padding: 0;
 font-weight: inherit;
 font-size: inherit;
 font-family: inherit;
-outline: none;
 text-decoration: underline;
 color: inherit;
 
@@ -68,7 +65,6 @@ padding: 0;
 font-weight: bold;
 font-size: inherit;
 font-family: inherit;
-outline: none;
 color: inherit;
 
 :hover {

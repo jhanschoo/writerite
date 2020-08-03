@@ -1,127 +1,166 @@
 import React, { useState } from "react";
-import { ContentState, RawDraftContentState, convertToRaw } from "draft-js";
+import { useDebouncedCallback } from "use-debounce";
+import { EditorState, convertToRaw } from "draft-js";
+import equal from "fast-deep-equal/es6/react";
 
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { CARD_DETAIL } from "../../../client-models";
+import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "../../sharedGql";
+import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
+import type { CardDelete, CardDeleteVariables } from "../../gqlTypes/CardDelete";
+import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
-import type { CardsOfDeck, CardsOfDeckVariables } from "../gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton, Item, List } from "../../../ui";
-import { emptyRawContext } from "../../../util";
+import { AnchorButton, Item, List } from "../../../ui";
+import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
+import { DEBOUNCE_DELAY } from "../../../util";
 
-import NotesEditor from "../../editor/NotesEditor";
+import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
+import type { CardFields } from "../../../types";
+import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
 `;
 
-const CardBox = wrStyled.div`
+const DeleteItem = wrStyled(Item)`
 display: flex;
-width: 100%;
+flex-grow: 1;
+justify-content: flex-start;
 `;
 
-const FrontBox = wrStyled.div`
-display: flex;
-flex-direction: column;
-width: 50%;
-@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-  width: 100%;
-}
-`;
-
-const BackBox = wrStyled.div`
-display: flex;
-flex-direction: column;
-width: 50%;
-@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-  width: 100%;
-}
-`;
-
-const StyledHeader = wrStyled.header`
-display: flex;
-align-items: baseline;
-padding: ${({ theme: { space } }) => `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
-
-h5 {
-  flex-grow: 1;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
-  margin: 0;
-}
-
-h6 {
-  flex-grow: 1;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
-  margin: 0;
-}
-`;
-
-const StyledContent = wrStyled.div`
-margin: ${({ theme: { space } }) => space[2]};
-padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
+const DeleteButton = wrStyled(AnchorButton)`
 `;
 
 interface Props {
   deckId: string;
-  card?: CardDetail;
+  card: CardDetail;
   readOnly?: boolean;
 }
 
 const WrDeckDetailCardItem = ({
-  deckId,
-  card,
-  readOnly,
+  deckId, card, readOnly,
 }: Props): JSX.Element => {
-  const {
-    id, prompt, fullAnswer, answers, editedAt, template, ownRecord
-  } = card ?? {
-    id: null,
-    prompt: emptyRawContext,
-    fullAnswer: emptyRawContext,
-    answers: [],
-    editedAt: null,
-    template: true,
-    ownRecord: null,
+  // eslint-disable-next-line no-shadow
+  const { id, editedAt, template, ownRecord, prompt, fullAnswer, answers } = card;
+  const initialFields = { prompt, fullAnswer, answers } as CardFields;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [promptEditorState, setPromptEditorState] =
+    useState(notesEditorStateFromRaw(prompt as Record<string, unknown>));
+  const [fullAnswerEditorState, setFullAnswerEditorState] =
+    useState(notesEditorStateFromRaw(fullAnswer as Record<string, unknown>));
+  const [currentFields, setCurrentFields] = useState(initialFields);
+  const [debouncing, setDebouncing] = useState(false);
+  const mutateOpts = { variables: {
+    id,
+    ...currentFields,
+  } };
+  const [mutate, { loading }] = useMutation<CardEdit, CardEditVariables>(CARD_EDIT_MUTATION, {
+    onCompleted(data) {
+      if (debouncing) {
+        return;
+      }
+      if (data.cardEdit) {
+        const { prompt, fullAnswer, answers } = data.cardEdit;
+        if (!equal(currentFields, { prompt, fullAnswer, answers })) {
+          void mutate(mutateOpts);
+        }
+      }
+    },
+  });
+  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDelete, CardDeleteVariables>(CARD_DELETE_MUTATION, {
+    update(cache, { data }) {
+      const deletedCard = data?.cardDelete;
+      if (deletedCard) {
+        // update CardsOfDeck query of the same deckId
+        try {
+          const cardsOfDeckQuery = {
+            query: CARDS_OF_DECK_QUERY,
+            variables: { deckId: deletedCard.deckId },
+          };
+          const cardsOfDeckData = cache.readQuery<CardsOfDeck, CardsOfDeckVariables>(cardsOfDeckQuery);
+          if (!cardsOfDeckData?.cardsOfDeck) {
+            return;
+          }
+          const newCardsOfDeckData: CardsOfDeck = {
+            ...cardsOfDeckData,
+            // eslint-disable-next-line no-shadow
+            cardsOfDeck: cardsOfDeckData.cardsOfDeck.filter((card) => card?.id !== deletedCard.id),
+          };
+          cache.writeQuery<CardsOfDeck, CardsOfDeckVariables>({
+            ...cardsOfDeckQuery,
+            data: newCardsOfDeckData,
+          });
+        } catch (_e) {
+          // noop
+        }
+      }
+    },
+  });
+  const [debounce] = useDebouncedCallback(() => {
+    setDebouncing(false);
+    if (loading || equal(currentFields, initialFields)) {
+      return;
+    }
+    void mutate(mutateOpts);
+  }, DEBOUNCE_DELAY);
+  const handleChange = (newFields: Partial<CardFields>) => {
+    setCurrentFields({ ...currentFields, ...newFields });
+    setDebouncing(true);
+    debounce();
   };
-  const editorReadOnly = readOnly ?? !card;
+  const handlePromptChange = (nextEditorState: EditorState) => {
+    handleChange({ prompt: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown> });
+    return nextEditorState;
+  };
+  const handleFullAnswerChange = (nextEditorState: EditorState) => {
+    handleChange({ fullAnswer: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown> });
+    return nextEditorState;
+  };
+  const handleShowDeleteModal = () => setShowDeleteModal(true);
+  const handleHideDeleteModal = () => setShowDeleteModal(false);
+  const handleDelete = () => {
+    if (id) {
+      void mutateDelete({ variables: {
+        id,
+      } });
+    }
+  };
+  const saveStatus = loading || !equal(currentFields, initialFields)
+    ? "saving"
+    : undefined;
+  const disabled = readOnly === true || loadingDelete;
   return (
     <StyledItem>
-      <CardBox>
-        <FrontBox>
-          <StyledHeader>
-            <h5>front</h5>
-          </StyledHeader>
-          <StyledContent>
-            <NotesEditor
-              initialContent={prompt as unknown as RawDraftContentState}
-              placeholder={editorReadOnly ? "Empty prompt" : "Write a prompt..."}
-              onChange={() => { return; }}
-              readOnly={editorReadOnly}
-            />
-          </StyledContent>
-          <StyledContent>
-            <p>hello world</p>
-          </StyledContent>
-        </FrontBox>
-        <BackBox>
-          <StyledHeader>
-            <h5>back</h5>
-          </StyledHeader>
-          <StyledContent>
-            <NotesEditor
-              initialContent={fullAnswer as unknown as RawDraftContentState}
-              placeholder={editorReadOnly ? "Empty answer" : "Write an answer..."}
-              onChange={() => { return; }}
-              readOnly={editorReadOnly}
-            />
-          </StyledContent>
-          <StyledHeader>
-            <h6>accepted answers</h6>
-          </StyledHeader>
-        </BackBox>
-      </CardBox>
+      {showDeleteModal && <WrDeckDetailCardDeleteModal
+        handleClose={handleHideDeleteModal}
+        handleDelete={handleDelete}
+        template={false}
+        card={card}
+      />}
+      <FrontBackCard
+        status={saveStatus}
+        promptContent={<NotesEditor
+          editorState={promptEditorState}
+          setEditorState={setPromptEditorState}
+          placeholder={readOnly ? "Empty prompt" : "Write a prompt..."}
+          handleChange={handlePromptChange}
+          readOnly={disabled}
+        />}
+        fullAnswerContent={<NotesEditor
+          editorState={fullAnswerEditorState}
+          setEditorState={setFullAnswerEditorState}
+          placeholder={readOnly ? "Empty answer" : "Write an answer..."}
+          handleChange={handleFullAnswerChange}
+          readOnly={disabled}
+        />}
+        answersContent={<>TODO</>}
+        footer={<FrontBackCardActionsList>
+          <DeleteItem>
+            <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>
+          </DeleteItem>
+        </FrontBackCardActionsList>}
+      />
     </StyledItem>
   );
 };

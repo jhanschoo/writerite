@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import moment from "moment";
 import { useDebouncedCallback } from "use-debounce";
+import { ContentState, EditorState } from "draft-js";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION } from "../sharedGql";
+import { DECK_EDIT_MUTATION } from "../../sharedGql";
 import { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
-import { DeckEdit, DeckEditVariables } from "../gqlTypes/DeckEdit";
+import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
 
 import { wrStyled } from "../../../theme";
 
 import { DEBOUNCE_DELAY } from "../../../util";
-import LineEditor from "../../editor/LineEditor";
+import LineEditor, { lineEditorStateFromString } from "../../editor/LineEditor";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -72,8 +73,6 @@ font-size: ${({ theme: { scale } }) => scale[0]};
 padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
 `;
 
-const isNonemptyString = (s: string) => Boolean(s.trim());
-
 interface Props {
   deck: DeckScalars;
   readOnly: boolean;
@@ -83,8 +82,9 @@ const WrDeckDetailData = ({
   deck,
   readOnly,
 }: Props): JSX.Element => {
+  const [editorState, setEditorState] = useState(lineEditorStateFromString(deck.name));
   const [currentTitle, setCurrentTitle] = useState(deck.name);
-  const [debounceOngoing, setDebounceOngoing] = useState(false);
+  const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
     id: deck.id,
     name: currentTitle,
@@ -92,7 +92,7 @@ const WrDeckDetailData = ({
   const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
-      if (debounceOngoing) {
+      if (debouncing) {
         return;
       }
       // debounce has fired in no-op before flight returned; we now fire a new mutation
@@ -101,25 +101,28 @@ const WrDeckDetailData = ({
       }
     },
   });
-  const [titleCallback] = useDebouncedCallback(() => {
-    setDebounceOngoing(false);
+  const [debounce] = useDebouncedCallback(() => {
+    setDebouncing(false);
     // re: loading: no-op if a mutation is already in-flight
     if (loading || currentTitle === deck.name || !currentTitle) {
       return;
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
-  const handleChange = (newTitle: string) => {
-    if (readOnly) {
-      return;
+  const handleChange = (newEditorState: EditorState) => {
+    const title = newEditorState.getCurrentContent().getPlainText().trim();
+    if (title) {
+      setCurrentTitle(title);
+      setDebouncing(true);
+      debounce();
+    } else if (!newEditorState.getSelection().getHasFocus()) {
+      // changed to empty string: set to single value if blurred
+      return EditorState.push(newEditorState, ContentState.createFromText(currentTitle), "insert-characters");
     }
-    const title = newTitle.trim();
-    setCurrentTitle(title);
-    setDebounceOngoing(true);
-    titleCallback();
+    return newEditorState;
   };
   const now = moment.utc();
-  const deckTitleStatus = currentTitle === ""
+  const deckTitleStatus = editorState.getCurrentContent().getPlainText().trim() === ""
     ? "invalid"
     : loading || currentTitle !== deck.name
       ? "saving"
@@ -130,9 +133,9 @@ const WrDeckDetailData = ({
         <StyledInnerBox>
           <StyledHeader>
             <LineEditor
-              initialString={deck.name}
-              onChange={handleChange}
-              filterOnBlur={isNonemptyString}
+              editorState={editorState}
+              setEditorState={setEditorState}
+              handleChange={handleChange}
               tag="h4"
               readOnly={readOnly}
             />

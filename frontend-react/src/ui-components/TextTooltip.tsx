@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { PropsWithChildren, ReactNode } from "react";
 
 import { wrStyled } from "../theme";
 import { Tooltip } from "./Tooltip";
@@ -12,12 +12,11 @@ font-size: 75%;
 `;
 
 interface Props {
-  children: ReactNode;
   text: ReactNode;
   placement?: "up" | "down" | "left" | "right";
 }
 
-export const TextTooltip = ({ children, text, placement }: Props): JSX.Element =>
+export const TextTooltip = ({ children, text, placement }: PropsWithChildren<Props>): JSX.Element =>
   <Tooltip content={<TooltipText>{text}</TooltipText>} placement={placement}>
     {children}
   </Tooltip>;

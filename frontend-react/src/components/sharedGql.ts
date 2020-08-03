@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, DECK_SCALARS, ROOM_SCALARS } from "../../client-models";
+import { CARD_DETAIL, DECK_SCALARS, ROOM_SCALARS, CARD_SCALARS } from "../client-models";
 
 export const DECKS_QUERY = gql`
 ${DECK_SCALARS}
@@ -65,6 +65,40 @@ mutation CardCreate(
     mainTemplate: $mainTemplate
   ) {
     ...CardDetail
+  }
+}
+`;
+
+export const CARD_EDIT_MUTATION = gql`
+${CARD_DETAIL}
+mutation CardEdit(
+  $id: ID!
+  $prompt: JsonObject
+  $fullAnswer: JsonObject
+  $answers: [String!]
+  $sortKey: String
+  $template: Boolean
+  $mainTemplate: Boolean
+) {
+  cardEdit(
+    id: $id
+    prompt: $prompt
+    fullAnswer: $fullAnswer
+    answers: $answers
+    sortKey: $sortKey
+    template: $template
+    mainTemplate: $mainTemplate
+  ) {
+    ...CardDetail
+  }
+}
+`;
+
+export const CARD_DELETE_MUTATION = gql`
+${CARD_SCALARS}
+mutation CardDelete($id: ID!) {
+  cardDelete(id: $id) {
+    ...CardScalars
   }
 }
 `;

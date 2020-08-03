@@ -16,5 +16,11 @@ export interface CurrentUserAndToken {
   readonly user: CurrentUser;
 }
 
+export interface CardFields {
+  readonly prompt: Record<string, unknown>;
+  readonly fullAnswer: Record<string, unknown>;
+  readonly answers: string[];
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type FixRef<T extends { ref?: any }> = Omit<T, "ref"> & { ref?: Exclude<T["ref"], string> };

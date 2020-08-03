@@ -1,5 +1,4 @@
 import React from "react";
-import type { RawDraftContentState } from "draft-js";
 
 import { useParams } from "react-router";
 
@@ -88,7 +87,7 @@ const WrDeckDetail = (): JSX.Element => {
         <NotesBox>
           <WrDeckDetailDescription
             deckId={deck.id}
-            description={deck.description as (RawDraftContentState | Record<string, unknown>)}
+            description={deck.description as Record<string, unknown>}
             readOnly={readOnly}
           />
           <WrDeckDetailPersonalNotes

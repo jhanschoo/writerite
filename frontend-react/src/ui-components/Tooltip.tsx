@@ -1,10 +1,9 @@
 // eslint-disable-next-line no-shadow
-import React, { MouseEvent, ReactNode, useState } from "react";
+import React, { MouseEvent, PropsWithChildren, ReactNode, useState } from "react";
 
 import { wrStyled } from "../theme";
 
 interface Props {
-  children: ReactNode;
   content: ReactNode;
   placement?: "up" | "down" | "left" | "right";
 }
@@ -60,7 +59,7 @@ position: absolute;
 }
 `;
 
-export const Tooltip = ({ children, content, placement = "down" }: Props): JSX.Element => {
+export const Tooltip = ({ children, content, placement = "down" }: PropsWithChildren<Props>): JSX.Element => {
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = (_e: MouseEvent<HTMLElement>) => setIsHover(true);
   const handleMouseLeave = (_e: MouseEvent<HTMLElement>) => setIsHover(false);

@@ -17,6 +17,16 @@ export const cache = new InMemoryCache({
         },
       },
     },
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    Query: {
+      fields: {
+        cardsOfDeck: {
+          merge(_existing, incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
   },
 });
 

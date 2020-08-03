@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useQuery } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY } from "../sharedGql";
+import { CARDS_OF_DECK_QUERY } from "../../sharedGql";
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
-import type { CardsOfDeck, CardsOfDeckVariables } from "../gqlTypes/CardsOfDeck";
+import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton, List } from "../../../ui";
+import { Item, List } from "../../../ui";
 import { Loading } from "../../../ui-components";
 
 import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
@@ -61,50 +61,22 @@ h4 {
 }
 `;
 
-const AddCardButton = wrStyled(BorderlessButton)`
-${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
-padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
-
-&.active, :hover, :active, :hover:active {
-  ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
-}
-`;
-
 const StyledContent = wrStyled.div`
 margin: ${({ theme: { space } }) => space[2]};
 padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
 `;
 
-const TemplateBox = wrStyled(List)`
-flex-direction: column;
-${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
-`;
-
-const SubdeckModalContent = wrStyled.div`
-`;
-
-const SubdeckModalTitle = wrStyled.h3`
-margin: 0;
-padding: ${({ theme: { space } }) => `${space[4]} ${space[4]} ${space[3]} ${space[4]}`};
-${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
-`;
-
-const SubdeckListBox = wrStyled.div`
-padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
-${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
-`;
-
-const AddSubdeckButton = wrStyled(BorderlessButton)`
-${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
-padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
-
-&.active, :hover, :active, :hover:active {
-  ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
-}
-`;
-
 const StyledList = wrStyled(List)`
 flex-direction: column;
+`;
+
+const StyledItem = wrStyled(Item)`
+width: 100%;
+`;
+
+const StyledEmptyMessage = wrStyled.p`
+margin: 0;
+padding: ${({ theme: { space } }) => space[3]};
 `;
 
 interface Props {
@@ -116,14 +88,11 @@ const WrDeckDetailCards = ({
   deckId,
   readOnly,
 }: Props): JSX.Element => {
-  const [showNewCardModal, setShowNewModal] = useState(false);
-  const { loading, error, data } = useQuery<CardsOfDeck, CardsOfDeckVariables>(CARDS_OF_DECK_QUERY, {
+  const { loading, data } = useQuery<CardsOfDeck, CardsOfDeckVariables>(CARDS_OF_DECK_QUERY, {
     variables: { deckId },
   });
   const [cards, templates, mainTemplate] = groupCards(data?.cardsOfDeck ?? []);
   const cardItems = cards.map((card) => <WrDeckDetailCardItem deckId={deckId} card={card} key={card.id} />);
-  const handleShowNewModal = () => setShowNewModal(true);
-  const handleHideNewModal = () => setShowNewModal(false);
   return (
     <StyledOuterBox>
       <StyledInnerBox>
@@ -133,7 +102,15 @@ const WrDeckDetailCards = ({
         </StyledHeader>
         <StyledContent>
           <StyledList>
-            {!readOnly && <WrDeckDetailMainTemplateItem deckId={deckId} card={null} key="empty-main-template" />}
+            {!readOnly && <WrDeckDetailMainTemplateItem
+              deckId={deckId}
+              card={mainTemplate}
+              key={mainTemplate?.id ?? "empty-main-template"}
+              templates={templates}
+            />}
+            {!cardItems.length && <StyledItem key="empty-message">
+              <StyledEmptyMessage>There are no cards to show.</StyledEmptyMessage>
+            </StyledItem>}
             {cardItems}
           </StyledList>
         </StyledContent>

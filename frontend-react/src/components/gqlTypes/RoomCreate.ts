@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { RoomConfigInput } from "./../../../gqlGlobalTypes";
+import { RoomConfigInput } from "./../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL mutation operation: RoomCreate
