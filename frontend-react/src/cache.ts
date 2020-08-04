@@ -25,6 +25,11 @@ export const cache = new InMemoryCache({
             return incoming;
           },
         },
+        decks: {
+          merge(_existing, incoming) {
+            return incoming;
+          },
+        },
       },
     },
     // eslint-disable-next-line @typescript-eslint/naming-convention

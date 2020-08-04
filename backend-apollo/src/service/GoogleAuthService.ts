@@ -15,7 +15,7 @@ if (!GOOGLE_CLIENT_SECRET) {
   throw new Error("GOOGLE_CLIENT_SECRET envvar not found!");
 }
 
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 
 export class GoogleAuthService extends AbstractAuthService {
 

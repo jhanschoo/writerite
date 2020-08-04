@@ -60,6 +60,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:dev": "tsc && node dist/index.js",
     "test": "DATABASE_URL=\"postgresql://jhanschoo:jhanschoo@localhost:5432/jhanschoo_testing\" prisma generate && npm run build && jest --runInBand",
     "version": "node --version"
   }
