@@ -23,7 +23,7 @@ variables:
   DOCKER_DRIVER: overlay2 
   DOCKER_TLS_CERTDIR: "/certs"
   HELM_EXPERIMENTAL_OCI: "1"
-  DEPLOY_VER: 0.1.0-dev1
+  DEPLOY_VER: 0.1.0-dev2
 
 services:
   - docker:19.03.11-dind
