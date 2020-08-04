@@ -23,7 +23,7 @@ export const store: WrStore = createStore(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/no-unsafe-call
-  window?.__REDUX_DEVTOOLS_EXTENSION__(),
+  window?.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
 );
 
 export const persistor = persistStore(store);
