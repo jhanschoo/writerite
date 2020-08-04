@@ -83,8 +83,9 @@ pages:
   before_script: []
   script:
     - cd frontend-react
-    - npm i
-    - CI=false npm run build
+    - mv .eslintrc.js.production .eslintrc.js
+    - NODE_ENV="production" npm i
+    - NODE_ENV="production" npm run build
     - cd ..
     - mv frontend-react/build public
   artifacts:
