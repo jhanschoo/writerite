@@ -86,7 +86,7 @@ apollo.applyMiddleware({
   app,
   cors: {
     origin: NODE_ENV === "production"
-      ? "https://app.writerite.site"
+      ? "https://writerite.site"
       : "https://localhost:3000",
     credentials: true,
   },
