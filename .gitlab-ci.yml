@@ -76,14 +76,14 @@ build-writerite-backend:
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
-pages-test:
+# TODO: remove CI=false and restrict to master branch
+pages:
   stage: build-clients
   image: node
   before_script: []
   script:
     - cd frontend-react
     - npm i
-    # TODO: remove CI=false
     - CI=false npm run build
     - cd ..
     - mv frontend-react/build public
