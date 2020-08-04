@@ -1,7 +1,7 @@
 import React from "react";
 
 import { wrStyled } from "../../../theme";
-import { BorderlessButton, Item, List } from "../../../ui";
+import { BorderlessButton, Item } from "../../../ui";
 import { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
 import { emptyRawContent, identity } from "../../../util";

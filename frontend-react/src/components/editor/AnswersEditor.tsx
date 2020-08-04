@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
-import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorState, Modifier, SelectionState, EditorChangeType } from "draft-js";
+import React, { Dispatch, SetStateAction } from "react";
+import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, SelectionState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
 

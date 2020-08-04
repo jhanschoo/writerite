@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { useDebouncedCallback } from "use-debounce";
 import { ContentState, EditorState } from "draft-js";
@@ -101,7 +101,7 @@ const WrDeckDetailData = ({
       }
     },
   });
-  const [debounce] = useDebouncedCallback(() => {
+  const [debounce,, call] = useDebouncedCallback(() => {
     setDebouncing(false);
     // re: loading: no-op if a mutation is already in-flight
     if (loading || currentTitle === deck.name || !currentTitle) {
@@ -109,6 +109,7 @@ const WrDeckDetailData = ({
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
+  useEffect(() => call, [call]);
   const handleChange = (newEditorState: EditorState) => {
     const title = newEditorState.getCurrentContent().getPlainText().trim();
     if (title) {

@@ -7,7 +7,7 @@ import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDe
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "../../../theme";
-import { AnchorButton, Item, List } from "../../../ui";
+import { AnchorButton, Item } from "../../../ui";
 import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
 
 import { identity } from "../../../util";

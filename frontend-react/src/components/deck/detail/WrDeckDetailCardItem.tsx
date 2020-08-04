@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
@@ -11,7 +11,7 @@ import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDe
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "../../../theme";
-import { AnchorButton, Item, List } from "../../../ui";
+import { AnchorButton, Item } from "../../../ui";
 import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
 import { DEBOUNCE_DELAY } from "../../../util";
 
@@ -44,7 +44,7 @@ const WrDeckDetailCardItem = ({
   deckId, card, readOnly,
 }: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow
-  const { id, editedAt, template, ownRecord, prompt, fullAnswer, answers } = card;
+  const { id, prompt, fullAnswer, answers } = card;
   const initialFields = { prompt, fullAnswer, answers } as CardFields;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentFields, setCurrentFields] = useState(initialFields);
@@ -95,13 +95,14 @@ const WrDeckDetailCardItem = ({
       }
     },
   });
-  const [debounce] = useDebouncedCallback(() => {
+  const [debounce,, call] = useDebouncedCallback(() => {
     setDebouncing(false);
     if (loading || equal(currentFields, initialFields)) {
       return;
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
+  useEffect(() => call, [call]);
   const handleChange = (newFields: Partial<CardFields>) => {
     setCurrentFields({ ...currentFields, ...newFields });
     setDebouncing(true);

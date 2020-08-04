@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { EditorState, convertToRaw } from "draft-js";
 import { useDebouncedCallback } from "use-debounce";
 import equal from "fast-deep-equal/es6/react";
@@ -78,7 +78,7 @@ const WrDeckDetailDescription = ({
       }
     },
   });
-  const [debounce] = useDebouncedCallback(() => {
+  const [debounce,, call] = useDebouncedCallback(() => {
     setDebouncing(false);
     // no-op if a mutation is already in-flight
     if (loading || equal(currentDescription, description)) {
@@ -86,6 +86,7 @@ const WrDeckDetailDescription = ({
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
+  useEffect(() => call, [call])
   const handleChange = (nextEditorState: EditorState) => {
     setCurrentDescription(convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>);
     setDebouncing(true);
