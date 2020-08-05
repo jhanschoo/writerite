@@ -20,6 +20,7 @@ export function createApollo(context: ContextFunction): ApolloServer {
     mocks: NODE_ENV === "frontend-testing",
     debug: NODE_ENV !== "production",
     engine: {
+      reportSchema: true,
       // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
       graphVariant: GRAPH_VARIANT || undefined,
     },
