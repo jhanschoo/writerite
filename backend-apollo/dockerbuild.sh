@@ -26,6 +26,17 @@ then
   IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo"
 fi
 
-TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="production" --build-arg graph_variant="$CI_COMMIT_REF_SLUG" .
-docker push "$TAGGED_IMAGE_NAME"
+IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
+CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
+
+docker pull "$CACHE_IMAGE_TAG" || true
+docker build \
+  --cache-from "$CACHE_IMAGE_TAG" \
+  --build-arg node_env="production" \
+  --build-arg graph_variant="$CI_COMMIT_REF_SLUG" \
+  --tag "$IMAGE_TAG" \
+  --tag "$CACHE_IMAGE_TAG" \
+  .
+
+docker push "$IMAGE_TAG"
+docker push "$CACHE_IMAGE_TAG"
