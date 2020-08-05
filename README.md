@@ -13,3 +13,10 @@
   the above altogether.
 
 Check `.gitlab-ci.yml` for an idea of how the project is deployed.
+
+## Checklist for pushing to master
+
+* explicit references to branches removed
+* dependencies aren't deprecated
+* project app versions are consistent
+* prod database schema and setup are consistent

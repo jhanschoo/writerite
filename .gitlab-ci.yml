@@ -33,7 +33,7 @@ before_script:
 
 publish-api-dev:
   stage: publish-api-dev
-  image: node
+  image: node:14.7
   before_script: []
   script:
     - cd backend-apollo
@@ -50,7 +50,7 @@ build-backend-apollo:
 
 build-writerite-backend-apollo:
   stage: build-services
-  image: dtzar/helm-kubectl
+  image: dtzar/helm-kubectl:3.2.1
   before_script: []
   script:
     - cd charts/writerite-backend-apollo
@@ -60,7 +60,7 @@ build-writerite-backend-apollo:
 
 build-writerite-backend:
   stage: build-meta
-  image: dtzar/helm-kubectl
+  image: dtzar/helm-kubectl:3.2.1
   before_script: []
   script:
     - cd charts/writerite-backend
@@ -93,7 +93,7 @@ pages:
 
 deploy:
   stage: deploy
-  image: dtzar/helm-kubectl
+  image: dtzar/helm-kubectl:3.2.1
   environment:
     name: production
     url: https://api.writerite.site/
