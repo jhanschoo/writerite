@@ -1,4 +1,4 @@
-FROM node
+FROM node:14.7
 EXPOSE 4000
 WORKDIR /usr/src/backend-apollo
 COPY package*.json ./
