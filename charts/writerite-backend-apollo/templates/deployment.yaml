@@ -112,7 +112,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "writerite-backend-apollo.fullname" . }}
-                  key: apolloKey
+                  key: recaptchaSecret
                   optional: false
               value: {{ .Values.recaptchaSecret | quote }}
       {{- with .Values.nodeSelector }}

@@ -14,10 +14,10 @@ dependencies:
     version: ^10.7.4
     repository: https://charts.bitnami.com/bitnami
   - name: writerite-backend-apollo
-    version: ^0.1.0-dev4
+    version: ^0.1.0-dev5
     # contrary to documentation, oci repositories not yet supported
     # https://github.com/helm/helm/pull/7613
-    # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev4
+    # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev5
     # workaround
     repository: file://../writerite-backend-apollo
 
@@ -34,7 +34,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.0-dev4
+version: 0.1.0-dev5
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
