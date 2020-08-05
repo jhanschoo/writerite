@@ -67,8 +67,8 @@
     "test:debug": "rescripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject",
     "copymodels": "cp -R ../client-models src/",
-    "codegen": "npm run copymodels && npx --ignore-existing apollo client:codegen -v revisit --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --target=typescript gqlTypes",
-    "download-schema": "npx --ignore-existing apollo client:download-schema -v revisit schema.json && node generatePossibleTypes.js"
+    "codegen": "npm run copymodels && npx --ignore-existing apollo client:codegen --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --target=typescript gqlTypes",
+    "download-schema": "npx --ignore-existing apollo client:download-schema schema.json && node generatePossibleTypes.js"
   },
   "browserslist": {
     "production": [
