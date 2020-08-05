@@ -33,6 +33,7 @@ services:
 
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY" || true
+  - npm ci --cache .npm --prefer-offline || true
 
 publish-api-graph:
   stage: publish-api-graph
@@ -58,7 +59,7 @@ pages:
     - if: '$CI_COMMIT_BRANCH == "master"'
   needs:
     - "publish-api-graph"
-  image: node
+  image: node:14.7
   script:
     - cd frontend-react
     - NODE_ENV="production" npm i
