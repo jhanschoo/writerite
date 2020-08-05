@@ -17,13 +17,13 @@ variables:
   # - POSTGRESQL_PASSWORD
   # - FACEBOOK_APP_ID
   # - FACEBOOK_APP_SECRET
-  # - GOOGLE_CLIENT_ID
-  # - GOOGLE_CLIENT_SECRET
+  # - GAPI_CLIENT_ID
+  # - GAPI_CLIENT_SECRET
   # - RECAPTCHA_SECRET
   DOCKER_DRIVER: overlay2 
   DOCKER_TLS_CERTDIR: "/certs"
   HELM_EXPERIMENTAL_OCI: "1"
-  DEPLOY_VER: 0.1.0-dev5
+  DEPLOY_VER: 0.1.0-dev6
 
 services:
   - docker:19.03.11-dind
@@ -122,9 +122,9 @@ deploy:
         redis:
           host: "writerite-backend-redis-master"
           port: "6379"
-        googleClient:
-          id: "$GOOGLE_CLIENT_ID"
-          secret: "$GOOGLE_CLIENT_SECRET"
+        gapiClient:
+          id: "$GAPI_CLIENT_ID"
+          secret: "$GAPI_CLIENT_SECRET"
         facebookApp:
           id: "$FACEBOOK_APP_ID"
           secret: "$FACEBOOK_APP_SECRET"

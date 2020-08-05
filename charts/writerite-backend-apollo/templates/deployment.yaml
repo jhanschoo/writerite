@@ -84,17 +84,17 @@ spec:
                   name: {{ include "writerite-backend-apollo.fullname" . }}
                   key: redisPort
                   optional: false
-            - name: GOOGLE_CLIENT_ID
+            - name: GAPI_CLIENT_ID
               valueFrom:
                 secretKeyRef:
                   name: {{ include "writerite-backend-apollo.fullname" . }}
-                  key: googleClientId
+                  key: gapiClientId
                   optional: false
-            - name: GOOGLE_CLIENT_SECRET
+            - name: GAPI_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
                   name: {{ include "writerite-backend-apollo.fullname" . }}
-                  key: googleClientSecret
+                  key: gapiClientSecret
                   optional: false
             - name: FACEBOOK_APP_ID
               valueFrom:

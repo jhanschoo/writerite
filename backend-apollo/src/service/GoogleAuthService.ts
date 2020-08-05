@@ -7,15 +7,15 @@ import { AuthResponseSS } from "../model/Authorization";
 import { userToSS } from "../model/User";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = process.env;
-if (!GOOGLE_CLIENT_ID) {
-  throw new Error("GOOGLE_CLIENT_ID envvar not found!");
+const { GAPI_CLIENT_ID, GAPI_CLIENT_SECRET } = process.env;
+if (!GAPI_CLIENT_ID) {
+  throw new Error("GAPI_CLIENT_ID envvar not found!");
 }
-if (!GOOGLE_CLIENT_SECRET) {
-  throw new Error("GOOGLE_CLIENT_SECRET envvar not found!");
+if (!GAPI_CLIENT_SECRET) {
+  throw new Error("GAPI_CLIENT_SECRET envvar not found!");
 }
 
-const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+const gapiClient = new OAuth2Client(GAPI_CLIENT_ID);
 
 export class GoogleAuthService extends AbstractAuthService {
 
@@ -42,9 +42,9 @@ export class GoogleAuthService extends AbstractAuthService {
 
   protected async verify(idToken: string): Promise<string | null> {
     try {
-      const ticket = await googleClient.verifyIdToken({
+      const ticket = await gapiClient.verifyIdToken({
         // TS limitation: coercion needed
-        audience: GOOGLE_CLIENT_ID as string,
+        audience: GAPI_CLIENT_ID as string,
         idToken,
       });
       return ticket.getPayload()?.sub ?? null;

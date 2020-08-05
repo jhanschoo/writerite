@@ -4,7 +4,7 @@ In development, create a `.env` file with the environment variables described be
 
 The following environment variables need to be set:
 
-* `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` from Google's OpenID Connect
+* `GAPI_CLIENT_ID` and `GAPI_CLIENT_SECRET` from Google's OpenID Connect
 * `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` from Facebook Login
 * `RECAPTCHA_SECRET` from ReCAPTCHA
 * `DATABASE_URL` set to the URL of a PostgreSQL database
