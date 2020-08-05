@@ -3,7 +3,7 @@ default:
 
 stages:
   - check-versions
-  - publish-api-dev
+  - publish-api-graph
   - build-services
   - build-meta
   - build-clients
@@ -31,8 +31,8 @@ services:
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
 
-publish-api-dev:
-  stage: publish-api-dev
+publish-api-graph:
+  stage: publish-api-graph
   image: node:14.7
   before_script: []
   script:
@@ -48,7 +48,23 @@ build-backend-apollo:
     - cd backend-apollo
     - sh dockerbuild.sh
 
-build-writerite-backend-apollo:
+pages:
+  stage: build-services
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+  image: node
+  before_script: []
+  script:
+    - cd frontend-react
+    - NODE_ENV="production" npm i
+    - NODE_ENV="production" npm run build
+    - cd ..
+    - mv frontend-react/build public
+  artifacts:
+    paths:
+      - public
+
+build-backend-apollo-chart:
   stage: build-services
   image: dtzar/helm-kubectl:3.2.1
   before_script: []
@@ -58,7 +74,7 @@ build-writerite-backend-apollo:
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend-apollo" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
-build-writerite-backend:
+build-backend-chart:
   stage: build-meta
   image: dtzar/helm-kubectl:3.2.1
   before_script: []
@@ -76,23 +92,10 @@ build-writerite-backend:
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
 
-# TODO: remove CI=false and restrict to master branch
-pages:
-  stage: build-clients
-  image: node
-  before_script: []
-  script:
-    - cd frontend-react
-    - NODE_ENV="production" npm i
-    - NODE_ENV="production" npm run build
-    - cd ..
-    - mv frontend-react/build public
-  artifacts:
-    paths:
-      - public
-
-deploy:
+deploy-backend:
   stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
   image: dtzar/helm-kubectl:3.2.1
   environment:
     name: production
