@@ -29,6 +29,7 @@ declare let grecaptchaDeferred: Promise<any> | undefined;
 declare let FBDeferred: Promise<any> | undefined;
 
 const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(process.env.REACT_APP_JWT_PUBLIC_KEY ?? "fail"));
+const RECAPTCHA_CLIENT_KEY = process.env.REACT_APP_RECAPTCHA_CLIENT_KEY;
 
 const SIGNIN_MUTATION = gql`
 mutation Signin(
@@ -186,7 +187,7 @@ const WrSignin = (): JSX.Element => {
       void grecaptchaDeferred.then((grecaptcha) => {
         grecaptcha.render("g-recaptcha", {
           size: mq.matches ? "compact" : "normal",
-          sitekey: "6Lc2V3IUAAAAAFP-EiNvhlN533lN7F8TqJCEJmqX",
+          sitekey: RECAPTCHA_CLIENT_KEY,
           callback: recaptchaCallback,
         });
       });
