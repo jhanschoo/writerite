@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-undef */
 (() => {
-  const createDeferred = () => {
+  const createDeferred = function () {
     let res = null;
-    const q = new Promise((resolve, reject) => {
+    const q = new Promise(function (resolve, reject) {
       res = resolve;
     });
     return [q, res];
@@ -29,7 +29,7 @@
   // will be called by Facebook vendor script
   window.fbAsyncInit = () => {
     const appId = document.querySelector("meta[name='fb-app_id']").getAttribute("content");
-    FB.init({ appId, version: 'v3.2' });
+    FB.init({ appId, version: 'v8.0' });
     fres(FB);
   }
 })();

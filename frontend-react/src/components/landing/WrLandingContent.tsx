@@ -31,7 +31,7 @@ padding: 0 ${({ theme: { space } }) => space[3]};
 `;
 
 const HeroHeading = wrStyled.h1`
-font-size: 200%;
+font-size: 300%;
 text-align: center;
 margin: 0;
 padding: ${({ theme: { space } }) => `0 0 12.5% 0`};

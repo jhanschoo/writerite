@@ -228,21 +228,23 @@ const WrSignin = (): JSX.Element => {
   const handleFacebookSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setSigninUnderway(true);
-    return (await FBDeferred).login(async (loginResponse: any) => {
+    return (await FBDeferred).login((loginResponse: any) => {
       const { authResponse } = loginResponse;
       if (authResponse) {
-        (await FBDeferred).api("/me", {
-          fields: "name,email",
-        }, (apiResponse: any) => {
-          mutateSignin({
-            variables: {
-              email: apiResponse.email,
-              token: authResponse.accessToken,
-              authorizer: "FACEBOOK",
-              identifier: authResponse.userID,
-            },
-          }).catch(() => setSigninUnderway(false));
-        });
+        void (async () => {
+          (await FBDeferred).api("/me", {
+            fields: "name,email",
+          }, (apiResponse: any) => {
+            mutateSignin({
+              variables: {
+                email: apiResponse.email,
+                token: authResponse.accessToken,
+                authorizer: "FACEBOOK",
+                identifier: authResponse.userID,
+              },
+            }).catch(() => setSigninUnderway(false));
+          });
+        })();
       } else {
         setSigninUnderway(false);
       }
