@@ -13,7 +13,7 @@ WriteRite service.
 
 1. `git clone` this repository
 2. Ensure that the following envvars are set (`.env` files are supported)
-   * `REACT_APP_GOOGLE_OAUTH2_CLIENT_ID` Client ID to the OAuth2 service of a GCS project.
+   * `REACT_APP_GAPI_CLIENT_ID` Client ID to the OAuth2 service of a GCS project.
    * `REACT_APP_FB_APP_ID` ID of a FB app.
    * `REACT_APP_GRAPHQL_HTTP` HTTP GraphQL endpoint of the backend.
    * `REACT_APP_GRAPHQL_WS` WebSocket GraphQL endpoint of the backend.
