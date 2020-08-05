@@ -1,8 +1,12 @@
 default:
   image: docker:19.03.11
 
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+
 stages:
-  - check-versions
   - publish-api-graph
   - build-projects
   - build-meta
@@ -28,13 +32,12 @@ services:
   - docker:19.03.11-dind
 
 before_script:
-  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY" || true
 
 publish-api-graph:
   stage: publish-api-graph
   needs: []
   image: node:14.7
-  before_script: []
   script:
     - cd backend-apollo
     - npx apollo service:push --graph=writerite-2020-04-24 --variant=$CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql
@@ -56,7 +59,6 @@ pages:
   needs:
     - "publish-api-graph"
   image: node
-  before_script: []
   script:
     - cd frontend-react
     - NODE_ENV="production" npm i
@@ -72,7 +74,6 @@ build-backend-apollo-chart:
   stage: build-projects
   needs: []
   image: dtzar/helm-kubectl:3.2.1
-  before_script: []
   script:
     - cd charts/writerite-backend-apollo
     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -85,7 +86,6 @@ build-backend-chart:
   needs:
     - "build-backend-apollo-chart"
   image: dtzar/helm-kubectl:3.2.1
-  before_script: []
   script:
     - cd charts/writerite-backend
     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
@@ -113,7 +113,6 @@ deploy-backend:
   environment:
     name: production
     url: https://api.writerite.site/
-  before_script: []
   script:
     - mkdir tmp
     - cd tmp
