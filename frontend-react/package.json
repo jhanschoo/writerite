@@ -20,6 +20,7 @@
     "@types/yup": "^0.29.4",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
+    "apollo": "^2.30.2",
     "apollo-cache-persist": "^0.1.1",
     "apollo-client": "^2.6.10",
     "apollo-link-context": "^1.0.20",
@@ -57,18 +58,20 @@
     "@testing-library/react": "^10.4.7",
     "@testing-library/user-event": "^12.1.0",
     "@types/jest": "^26.0.8",
-    "apollo": "^2.30.2",
     "react-test-renderer": "^16.13.1"
   },
   "scripts": {
     "start": "npm run codegen && npm run download-schema && rescripts start",
+    "start:dev": "npm run codegen:dev && npm run download-schema:dev && rescripts start",
     "build": "npm run codegen && npm run download-schema && rescripts build",
     "test": "rescripts test",
     "test:debug": "rescripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject",
     "copymodels": "cp -R ../client-models src/",
-    "codegen": "npm run copymodels && npx --ignore-existing apollo client:codegen --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --target=typescript gqlTypes",
-    "download-schema": "npx --ignore-existing apollo client:download-schema schema.json && node generatePossibleTypes.js"
+    "codegen": "npm run copymodels && apollo client:codegen -v $CI_COMMIT_REF_SLUG --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --target=typescript gqlTypes",
+    "codegen:dev": "npm run copymodels && apollo client:codegen -v $(git branch --show-current) --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --target=typescript gqlTypes",
+    "download-schema": "apollo client:download-schema -v $CI_COMMIT_REF_SLUG schema.json && node generatePossibleTypes.js",
+    "download-schema:dev": "apollo client:download-schema -v $(git branch --show-current) schema.json && node generatePossibleTypes.js"
   },
   "browserslist": {
     "production": [
