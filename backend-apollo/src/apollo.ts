@@ -7,7 +7,7 @@ import { ApolloServer, gql, makeExecutableSchema } from "apollo-server-koa";
 import resolvers from "./resolver";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const { NODE_ENV } = process.env;
+const { GRAPH_VARIANT, NODE_ENV } = process.env;
 
 const typeDefs = gql(fs.readFileSync("schema.graphql", "utf8"));
 
@@ -19,5 +19,9 @@ export function createApollo(context: ContextFunction): ApolloServer {
     context,
     mocks: NODE_ENV === "frontend-testing",
     debug: NODE_ENV !== "production",
+    engine: {
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      graphVariant: GRAPH_VARIANT || undefined,
+    },
   });
 }
