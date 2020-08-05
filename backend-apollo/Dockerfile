@@ -5,7 +5,7 @@ COPY package*.json ./
 COPY schema.prisma ./
 ARG node_env
 ENV NODE_ENV ${node_env}
-# prisma generate is performed here hooked to installation of @prisma/client
+# prisma generate happens here due to the postinstall hook of @prisma/client
 RUN npm install
 COPY . .
 RUN npx tsc
