@@ -12,12 +12,12 @@ export interface DeckEdit_deckEdit {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
 }
 
 export interface DeckEdit {
@@ -27,7 +27,7 @@ export interface DeckEdit {
 export interface DeckEditVariables {
   readonly id: string;
   readonly name?: string | null;
-  readonly description?: JsonObject | null;
+  readonly description?: GraphQLJSONObject | null;
   readonly promptLang?: string | null;
   readonly answerLang?: string | null;
   readonly published?: boolean | null;

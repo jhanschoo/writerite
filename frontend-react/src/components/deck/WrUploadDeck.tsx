@@ -19,13 +19,13 @@ import { WrTheme, wrStyled } from "../../theme";
 import { Button, Fieldset, TextInput } from "../../ui";
 import { HDivider } from "../../ui-components";
 
-const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as JsonObject;
+const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as GraphQLJSONObject;
 
 const DECK_CREATE_MUTATION = gql`
 ${DECK_SCALARS}
 mutation DeckCreate(
   $name: String
-  $description: JsonObject
+  $description: JSONObject
   $promptLang: String
   $answerLang: String
   $published: Boolean

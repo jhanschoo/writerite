@@ -11,5 +11,5 @@ export interface UserCardRecordScalars {
   readonly __typename: "UserCardRecord";
   readonly cardId: string;
   readonly userId: string;
-  readonly correctRecord: ReadonlyArray<(DateTime | null)>;
+  readonly correctRecord: ReadonlyArray<(GraphQLDateTime | null)>;
 }

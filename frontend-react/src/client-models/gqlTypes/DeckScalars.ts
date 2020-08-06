@@ -12,10 +12,10 @@ export interface DeckScalars {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
 }

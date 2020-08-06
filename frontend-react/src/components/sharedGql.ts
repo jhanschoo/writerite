@@ -25,7 +25,7 @@ ${DECK_SCALARS}
 mutation DeckEdit(
   $id: ID!
   $name: String
-  $description: JsonObject
+  $description: JSONObject
   $promptLang: String
   $answerLang: String
   $published: Boolean
@@ -73,8 +73,8 @@ export const CARD_EDIT_MUTATION = gql`
 ${CARD_DETAIL}
 mutation CardEdit(
   $id: ID!
-  $prompt: JsonObject
-  $fullAnswer: JsonObject
+  $prompt: JSONObject
+  $fullAnswer: JSONObject
   $answers: [String!]
   $sortKey: String
   $template: Boolean

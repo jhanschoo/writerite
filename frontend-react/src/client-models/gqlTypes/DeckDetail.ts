@@ -12,19 +12,19 @@ export interface DeckDetail_subdecks {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
 }
 
 export interface DeckDetail_ownRecord {
   readonly __typename: "UserDeckRecord";
   readonly deckId: string;
   readonly userId: string;
-  readonly notes: Json;
+  readonly notes: GraphQLJSON;
 }
 
 export interface DeckDetail {
@@ -32,12 +32,12 @@ export interface DeckDetail {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
   readonly subdecks: ReadonlyArray<(DeckDetail_subdecks | null)> | null;
   readonly ownRecord: DeckDetail_ownRecord | null;
 }

@@ -11,7 +11,7 @@ export interface OwnDeckRecord_ownDeckRecord {
   readonly __typename: "UserDeckRecord";
   readonly deckId: string;
   readonly userId: string;
-  readonly notes: Json;
+  readonly notes: GraphQLJSON;
 }
 
 export interface OwnDeckRecord {

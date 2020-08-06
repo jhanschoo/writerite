@@ -19,8 +19,8 @@ export enum DecksQueryScope {
 }
 
 export interface CardCreateInput {
-  readonly prompt: JsonObject;
-  readonly fullAnswer: JsonObject;
+  readonly prompt: GraphQLJSONObject;
+  readonly fullAnswer: GraphQLJSONObject;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey?: string | null;
   readonly template?: boolean | null;

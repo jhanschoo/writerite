@@ -11,11 +11,11 @@ export interface CardScalars {
   readonly __typename: "Card";
   readonly id: string;
   readonly deckId: string;
-  readonly prompt: Json;
-  readonly fullAnswer: Json;
+  readonly prompt: GraphQLJSON;
+  readonly fullAnswer: GraphQLJSON;
   readonly answers: ReadonlyArray<string>;
   readonly sortKey: string;
-  readonly editedAt: DateTime;
+  readonly editedAt: GraphQLDateTime;
   readonly template: boolean;
   readonly mainTemplate: boolean;
 }

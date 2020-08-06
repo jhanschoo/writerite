@@ -12,12 +12,12 @@ export interface DeckAddSubdeck_deckAddSubdeck_subdecks {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
 }
 
 export interface DeckAddSubdeck_deckAddSubdeck {
@@ -25,12 +25,12 @@ export interface DeckAddSubdeck_deckAddSubdeck {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
   readonly subdecks: ReadonlyArray<(DeckAddSubdeck_deckAddSubdeck_subdecks | null)> | null;
 }
 

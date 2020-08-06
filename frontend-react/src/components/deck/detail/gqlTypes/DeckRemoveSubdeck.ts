@@ -12,12 +12,12 @@ export interface DeckRemoveSubdeck_deckRemoveSubdeck_subdecks {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
 }
 
 export interface DeckRemoveSubdeck_deckRemoveSubdeck {
@@ -25,12 +25,12 @@ export interface DeckRemoveSubdeck_deckRemoveSubdeck {
   readonly id: string;
   readonly ownerId: string;
   readonly name: string;
-  readonly description: Json;
+  readonly description: GraphQLJSON;
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
-  readonly usedAt: DateTime;
-  readonly editedAt: DateTime;
+  readonly usedAt: GraphQLDateTime;
+  readonly editedAt: GraphQLDateTime;
   readonly subdecks: ReadonlyArray<(DeckRemoveSubdeck_deckRemoveSubdeck_subdecks | null)> | null;
 }
 

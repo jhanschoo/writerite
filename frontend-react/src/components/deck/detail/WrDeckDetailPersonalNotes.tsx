@@ -27,7 +27,7 @@ const OWN_DECK_RECORD_SET_MUTATION = gql`
 ${USER_DECK_RECORD_SCALARS}
 mutation OwnDeckRecordSet(
   $deckId: ID!
-  $notes: JsonObject
+  $notes: JSONObject
 ) {
   ownDeckRecordSet(
     deckId: $deckId
