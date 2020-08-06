@@ -1,13 +1,11 @@
-import React from 'react';
+import React from "react";
 
-import WrNavBar from '../navbar/WrNavBar';
-import WrLandingContent from './WrLandingContent';
+import WrNavBar from "../navbar/WrNavBar";
+import WrLandingContent from "./WrLandingContent";
 
-const WrLandingView = () => (
+const WrLandingView = (): JSX.Element =>
   <>
     <WrNavBar />
     <WrLandingContent />
-  </>
-);
-
+  </>;
 export default WrLandingView;
