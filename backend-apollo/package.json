@@ -62,7 +62,7 @@
     "start": "node dist/index.js",
     "start:dev": "tsc && node dist/index.js",
     "test": "DATABASE_URL=\"postgresql://jhanschoo:jhanschoo@localhost:5432/jhanschoo_testing\" prisma generate && npm run build && jest --runInBand",
-    "push-schema": "apollo service:push --graph=writerite-graph $CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql",
+    "push-schema": "apollo service:push --graph=writerite-graph -v $CI_COMMIT_REF_SLUG --localSchemaFile=schema.graphql",
     "push-schema:dev": "apollo service:push --graph=writerite-graph -v \"$(git branch --show-current)\" --localSchemaFile=schema.graphql",
     "version": "node --version"
   }
