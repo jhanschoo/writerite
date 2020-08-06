@@ -68,10 +68,10 @@
     "test:debug": "rescripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject",
     "copymodels": "cp -R ../client-models src/",
-    "codegen": "npm run copymodels && apollo client:codegen -v $CI_COMMIT_REF_SLUG --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes",
-    "codegen:dev": "npm run copymodels && apollo client:codegen -v $(git branch --show-current) --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes",
-    "download-schema": "apollo client:download-schema -v $CI_COMMIT_REF_SLUG schema.json && node generatePossibleTypes.js",
-    "download-schema:dev": "apollo client:download-schema -v $(git branch --show-current) schema.json && node generatePossibleTypes.js"
+    "codegen": "npm run copymodels && apollo client:codegen -v \"$CI_COMMIT_REF_SLUG\" --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes",
+    "codegen:dev": "npm run copymodels && apollo client:codegen -v \"$(git branch --show-current)\" --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes",
+    "download-schema": "apollo client:download-schema -v \"$CI_COMMIT_REF_SLUG\" schema.json && node generatePossibleTypes.js",
+    "download-schema:dev": "apollo client:download-schema -v \"$(git branch --show-current)\" schema.json && node generatePossibleTypes.js"
   },
   "browserslist": {
     "production": [
