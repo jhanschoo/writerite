@@ -3,8 +3,8 @@
 
 #scalar Upload
 scalar DateTime
-scalar Json
-scalar JsonObject
+scalar JSON
+scalar JSONObject
 
 directive @subscriptionsTriggered(
   signatures: [String!]!
@@ -77,7 +77,7 @@ type Mutation {
   # Deck
   deckCreate(
     name: String @nonNull
-    description: JsonObject @nonNull
+    description: JSONObject @nonNull
     promptLang: String @nonNull
     answerLang: String @nonNull
     published: Boolean @nonNull
@@ -89,7 +89,7 @@ type Mutation {
   deckEdit(
     id: ID!
     name: String @nonNull
-    description: JsonObject @nonNull
+    description: JSONObject @nonNull
     promptLang: String @nonNull
     answerLang: String @nonNull
     published: Boolean @nonNull
@@ -118,7 +118,7 @@ type Mutation {
   # UserDeckRecord
   ownDeckRecordSet(
     deckId: ID!
-    notes: JsonObject @nonNull
+    notes: JSONObject @nonNull
   ): UserDeckRecord
 
   # Card
@@ -134,8 +134,8 @@ type Mutation {
 
   cardEdit(
     id: ID!
-    prompt: JsonObject @nonNull
-    fullAnswer: JsonObject @nonNull
+    prompt: JSONObject @nonNull
+    fullAnswer: JSONObject @nonNull
     answers: [String!] @nonNull
     sortKey: String @nonNull
     # note that template is set to true if mainTemplate
@@ -252,7 +252,7 @@ type Deck {
   id: ID!
   ownerId: ID!
   name: String!
-  description: Json!
+  description: JSON!
   promptLang: String!
   answerLang: String!
   published: Boolean!
@@ -269,14 +269,14 @@ type Deck {
 type UserDeckRecord {
   userId: ID!
   deckId: ID!
-  notes: Json!
+  notes: JSON!
 }
 
 # Card
 
 input CardCreateInput {
-  prompt: JsonObject!
-  fullAnswer: JsonObject!
+  prompt: JSONObject!
+  fullAnswer: JSONObject!
   answers: [String!]!
   sortKey: String @nonNull
   template: Boolean @nonNull
@@ -285,8 +285,8 @@ input CardCreateInput {
 type Card {
   id: ID!
   deckId: ID!
-  prompt: Json!
-  fullAnswer: Json!
+  prompt: JSON!
+  fullAnswer: JSON!
   answers: [String!]!
   sortKey: String!
   template: Boolean!
