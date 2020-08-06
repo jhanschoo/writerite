@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, SelectionState } from "draft-js";
+import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, SelectionState, RawDraftContentState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
 
@@ -57,6 +57,43 @@ export const answersEditorStateToStringArray = (state: EditorState): string[] =>
 
 export const pushStringArray = (state: EditorState, ss: readonly string[], changeType: EditorChangeType): EditorState =>
   EditorState.push(state, convertFromStringArray(ss), changeType);
+
+export const rawToAnswer = (raw: Record<string, unknown>): string =>
+  (raw as unknown as RawDraftContentState)
+    .blocks.map((block) => block.text)
+    .join(" ")
+    .replace(/\n/ug, "")
+    .replace(/ +/ug, " ");
+
+export const prependAnswer = (state: EditorState, answer: string): EditorState => {
+  let content = state.getCurrentContent();
+  let key = content.getFirstBlock().getKey();
+  content = Modifier.splitBlock(
+    content,
+    new SelectionState({
+      anchorKey: key,
+      anchorOffset: 0,
+      focusKey: key,
+      focusOffset: 0,
+    }),
+  );
+  content = content.createEntity("ANSWER", "IMMUTABLE");
+  const entityKey = content.getLastCreatedEntityKey();
+  key = content.getFirstBlock().getKey();
+  content = Modifier.insertText(
+    content,
+    new SelectionState({
+      anchorKey: key,
+      anchorOffset: 0,
+      focusKey: key,
+      focusOffset: 0,
+    }),
+    answer,
+    undefined,
+    entityKey,
+  );
+  return EditorState.push(state, content, "insert-fragment");
+};
 
 const blockSelection = (block: ContentBlock): SelectionState => new SelectionState({
   anchorKey: block.getKey(),

@@ -17,7 +17,7 @@ import { emptyFields, emptyRawContent, pushRawContent } from "../../../util";
 import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import WrDeckDetailTemplateItem from "./WrDeckDetailTemplateItem";
-import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, pushStringArray } from "../../editor/AnswersEditor";
+import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "../../editor/AnswersEditor";
 
 const StyledList = wrStyled(List)`
 flex-direction: column;
@@ -246,6 +246,8 @@ const WrDeckDetailMainTemplateItem = ({
     setCurrentFields(emptyFields);
     setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
   };
+  const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
+  const addGeneratedAnswer = () => setAnswersEditorState(prependAnswer(answersEditorState, generatedAnswer));
   const loading = loadingCreate || loadingEdit || loadingDelete;
   const templateItems = templates.map((template) => <WrDeckDetailTemplateItem key={template.id} template={template} />);
   return (
@@ -275,12 +277,15 @@ const WrDeckDetailMainTemplateItem = ({
           handleChange={handlePromptChange}
           placeholder={"Empty prompt. Try writing something..."}
         />}
-        fullAnswerContent={<NotesEditor
-          editorState={fullAnswerEditorState}
-          setEditorState={setFullAnswerEditorState}
-          handleChange={handleFullAnswerChange}
-          placeholder={"Empty answer. Try writing something..."}
-        />}
+        fullAnswerContent={<>
+          <NotesEditor
+            editorState={fullAnswerEditorState}
+            setEditorState={setFullAnswerEditorState}
+            handleChange={handleFullAnswerChange}
+            placeholder={"Empty answer. Try writing something..."}
+          />
+          <SecondaryButton onClick={addGeneratedAnswer}>{`add generated: ${generatedAnswer}`}</SecondaryButton>
+        </>}
         answersContent={<AnswersEditor
           editorState={answersEditorState}
           setEditorState={setAnswersEditorState}

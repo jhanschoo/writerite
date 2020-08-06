@@ -101,7 +101,7 @@ export const FrontBackCard = ({
         {fullAnswerContent}
       </StyledContent>
       <StyledHeader>
-        <h6>other accepted answers</h6>
+        <h6>accepted answers</h6>
       </StyledHeader>
       <StyledContent>
         {answersContent}
