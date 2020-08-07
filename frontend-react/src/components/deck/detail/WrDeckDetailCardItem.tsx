@@ -11,15 +11,14 @@ import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDe
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "../../../theme";
-import { AnchorButton, Item } from "../../../ui";
+import { AnchorButton, BorderlessButton, Item } from "../../../ui";
 import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
 import { DEBOUNCE_DELAY } from "../../../util";
 
 import type { CardFields } from "../../../types";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import { answersEditorStateToStringArray } from "../../editor/AnswersEditor";
+import AnswersEditor, { answersEditorStateToStringArray, prependAnswer, rawToAnswer, answersEditorStateFromStringArray } from "../../editor/AnswersEditor";
 import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
-import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
@@ -29,6 +28,18 @@ const DeleteItem = wrStyled(Item)`
 display: flex;
 flex-grow: 1;
 justify-content: flex-start;
+`;
+
+const AddGeneratedAnswer = wrStyled(BorderlessButton)`
+${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
+padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
+margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
+`;
+
+const StyledAnswer = wrStyled.span`
+${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
+padding: ${({ theme: { space } }) => space[1]};
+font-weight: normal;
 `;
 
 const DeleteButton = wrStyled(AnchorButton)`
@@ -41,11 +52,13 @@ interface Props {
 }
 
 const WrDeckDetailCardItem = ({
-  deckId, card, readOnly,
+  card, readOnly,
 }: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow
   const { id, prompt, fullAnswer, answers } = card;
   const initialFields = { prompt, fullAnswer, answers } as CardFields;
+  const [answersEditorState, setAnswersEditorState] =
+    useState(answersEditorStateFromStringArray(answers));
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentFields, setCurrentFields] = useState(initialFields);
   const [debouncing, setDebouncing] = useState(false);
@@ -59,6 +72,7 @@ const WrDeckDetailCardItem = ({
         return;
       }
       if (data.cardEdit) {
+        // eslint-disable-next-line no-shadow
         const { prompt, fullAnswer, answers } = data.cardEdit;
         if (!equal(currentFields, { prompt, fullAnswer, answers })) {
           void mutate(mutateOpts);
@@ -95,7 +109,7 @@ const WrDeckDetailCardItem = ({
       }
     },
   });
-  const [debounce,, call] = useDebouncedCallback(() => {
+  const [debounce, , call] = useDebouncedCallback(() => {
     setDebouncing(false);
     if (loading || equal(currentFields, initialFields)) {
       return;
@@ -122,6 +136,8 @@ const WrDeckDetailCardItem = ({
   };
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleHideDeleteModal = () => setShowDeleteModal(false);
+  const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
+  const addGeneratedAnswer = () => setAnswersEditorState(prependAnswer(answersEditorState, generatedAnswer));
   const handleDelete = () => {
     if (id) {
       void mutateDelete({ variables: {
@@ -149,14 +165,20 @@ const WrDeckDetailCardItem = ({
           handleChange={handlePromptChange}
           readOnly={disabled}
         />}
+        beforeAnswersContent={!readOnly && generatedAnswer &&
+          <AddGeneratedAnswer onClick={addGeneratedAnswer}>
+            add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
+          </AddGeneratedAnswer>
+        }
         fullAnswerContent={<SelfManagedNotesEditor
           initialContent={fullAnswer as Record<string, unknown>}
           placeholder={readOnly ? "Empty answer" : "Write an answer..."}
           handleChange={handleFullAnswerChange}
           readOnly={disabled}
         />}
-        answersContent={<SelfManagedAnswersEditor
-          initialContent={answers}
+        answersContent={<AnswersEditor
+          editorState={answersEditorState}
+          setEditorState={setAnswersEditorState}
           handleChange={handleAnswersChange}
           readOnly={disabled}
         />}

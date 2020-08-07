@@ -74,7 +74,7 @@ margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 `;
 
 const SecondaryButton = wrStyled(BorderlessButton)`
-${({ theme: { fgbg, bg } }) => fgbg(bg[1])}
+${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 `;
@@ -243,6 +243,8 @@ const WrDeckDetailMainTemplateItem = ({
   const handleHideDeleteModal = () => setShowDeleteModal(false);
   const handleShowTemplatesModal = () => setShowTemplatesModal(true);
   const handleHideTemplatesModal = () => setShowTemplatesModal(false);
+  const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
+  const addGeneratedAnswer = () => setAnswersEditorState(prependAnswer(answersEditorState, generatedAnswer));
   const handleDelete = () => {
     if (id) {
       void mutateDelete({ variables: {
@@ -252,8 +254,6 @@ const WrDeckDetailMainTemplateItem = ({
     setCurrentFields(emptyFields);
     setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
   };
-  const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
-  const addGeneratedAnswer = () => setAnswersEditorState(prependAnswer(answersEditorState, generatedAnswer));
   const loading = loadingCreate || loadingEdit || loadingDelete;
   const templateItems = templates.map((template) => <WrDeckDetailTemplateItem key={template.id} template={template} />);
   return (
