@@ -18,6 +18,12 @@ export enum DecksQueryScope {
   VISIBLE = "VISIBLE",
 }
 
+export enum RoomState {
+  SERVED = "SERVED",
+  SERVING = "SERVING",
+  WAITING = "WAITING",
+}
+
 export interface CardCreateInput {
   readonly prompt: GraphQLJSONObject;
   readonly fullAnswer: GraphQLJSONObject;

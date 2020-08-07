@@ -4,6 +4,8 @@ export const ROOM_SCALARS = gql`
 fragment RoomScalars on Room {
   id
   ownerId
-  config
+  ownerConfig
+  internalConfig
+  state
 }
 `;

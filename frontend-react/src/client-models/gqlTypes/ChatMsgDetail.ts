@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { ChatMsgContentType } from "./../../gqlGlobalTypes";
+import { ChatMsgContentType, RoomState } from "./../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL fragment: ChatMsgDetail
@@ -21,7 +21,9 @@ export interface ChatMsgDetail_room {
   readonly __typename: "Room";
   readonly id: string;
   readonly ownerId: string;
-  readonly config: GraphQLJSONObject;
+  readonly ownerConfig: GraphQLJSONObject;
+  readonly internalConfig: GraphQLJSONObject;
+  readonly state: RoomState;
 }
 
 export interface ChatMsgDetail {

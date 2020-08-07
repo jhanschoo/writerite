@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { ChatMsgContentType } from "./../../gqlGlobalTypes";
+import { RoomState, ChatMsgContentType } from "./../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL fragment: Room
@@ -38,7 +38,9 @@ export interface Room {
   readonly __typename: "Room";
   readonly id: string;
   readonly ownerId: string;
-  readonly config: GraphQLJSONObject;
+  readonly ownerConfig: GraphQLJSONObject;
+  readonly internalConfig: GraphQLJSONObject;
+  readonly state: RoomState;
   readonly owner: Room_owner | null;
   readonly occupants: ReadonlyArray<(Room_occupants | null)> | null;
   readonly chatMsgs: ReadonlyArray<(Room_chatMsgs | null)> | null;
