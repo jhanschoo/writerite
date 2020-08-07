@@ -55,7 +55,8 @@ interface QueryResolver extends IResolverObject<Record<string, unknown>, WrConte
   cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
   ownCardRecord: FieldResolver<Record<string, unknown>, WrContext, { cardId: string }, UserCardRecordSS | null>;
   room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
-  occupyingRooms: FieldResolver<Record<string, unknown>, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  occupyingRooms: FieldResolver<Record<string, unknown>, WrContext, {}, (RoomSS | null)[] | null>;
   chatMsg: FieldResolver<Record<string, unknown>, WrContext, { id: string }, ChatMsgSS | null>;
   chatMsgsOfRoom: FieldResolver<Record<string, unknown>, WrContext, { roomId: string }, (ChatMsgSS | null)[] | null>;
 }

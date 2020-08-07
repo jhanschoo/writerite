@@ -836,100 +836,92 @@ describe("Mutation resolvers", () => {
       test("It should create a new room owned by current user and return it", async () => {
         expect.assertions(3);
         const roomCount = await prisma.room.count({});
-        const config = {
-          deckId: DECK.id,
-          deckName: DECK.name,
-        };
-        const room = await Mutation.roomCreate({}, { config }, {
+        const room = await Mutation.roomCreate({}, {}, {
           ...baseCtx,
           sub: USER,
         }, baseInfo);
-        expect(room).toHaveProperty("config", config);
+        expect(room).toHaveProperty("ownerConfig", {});
         if (!room) {
           return;
         }
         const pRoom = await prisma.room.findOne({ where: { id: room.id } });
-        expect(pRoom).toHaveProperty("config", config);
+        expect(pRoom).toHaveProperty("ownerConfig", {});
         expect(await prisma.room.count({})).toBe(roomCount + 1);
       });
 
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(2);
         const roomCount = await prisma.room.count({});
-        const config = {
-          deckId: DECK.id,
-          deckName: DECK.name,
-        };
-        const room = await Mutation.roomCreate({}, { config }, baseCtx, baseInfo);
+        const room = await Mutation.roomCreate({}, {}, baseCtx, baseInfo);
         expect(room).toBeNull();
         expect(await prisma.room.count({})).toBe(roomCount);
       });
     });
 
-    describe("Mutation.roomUpdateConfig", () => {
+    describe("Mutation.roomUpdateOwnerConfig", () => {
       test("It should edit a room owned by current user and return it", async () => {
         expect.assertions(4);
         const roomCount = await prisma.room.count({});
-        const config = {
+        const ownerConfig = {
           deckId: DECK.id,
           deckName: DECK.name,
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom1).not.toHaveProperty("config", config);
-        const room = await Mutation.roomUpdateConfig({}, {
+        expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
+        const room = await Mutation.roomUpdateOwnerConfig({}, {
           id: ROOM.id,
-          config,
+          ownerConfig,
         }, {
           ...baseCtx,
           sub: USER,
         }, baseInfo);
-        expect(room).toHaveProperty("config", config);
+        expect(room).toHaveProperty("ownerConfig", ownerConfig);
         if (!room) {
           return;
         }
         const pRoom2 = await prisma.room.findOne({ where: { id: room.id } });
-        expect(pRoom2).toHaveProperty("config", config);
+        expect(pRoom2).toHaveProperty("ownerConfig", ownerConfig);
         expect(await prisma.room.count({})).toBe(roomCount);
       });
 
       test("It should do nothing and return null if room is not owned by current user", async () => {
         expect.assertions(4);
         const roomCount = await prisma.room.count({});
-        const config = {
+        const ownerConfig = {
           deckId: DECK.id,
           deckName: DECK.name,
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom1).not.toHaveProperty("config", config);
-        const room = await Mutation.roomUpdateConfig({}, {
+        expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
+        const room = await Mutation.roomUpdateOwnerConfig({}, {
           id: ROOM.id,
-          config,
+          ownerConfig,
         }, {
           ...baseCtx,
           sub: OTHER_USER,
         }, baseInfo);
         expect(room).toBeNull();
         const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom2).not.toHaveProperty("config", config);
+        expect(pRoom2).not.toHaveProperty("ownerConfig", ownerConfig);
         expect(await prisma.room.count({})).toBe(roomCount);
       });
 
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(4);
         const roomCount = await prisma.room.count({});
-        const config = {
+        const ownerConfig = {
           deckId: DECK.id,
           deckName: DECK.name,
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom1).not.toHaveProperty("config", config);
-        const room = await Mutation.roomUpdateConfig({}, {
+        expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
+        const room = await Mutation.roomUpdateOwnerConfig({}, {
           id: ROOM.id,
-          config,
+          ownerConfig,
         }, baseCtx, baseInfo);
         expect(room).toBeNull();
         const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom2).not.toHaveProperty("config", config);
+        expect(pRoom2).not.toHaveProperty("ownerConfig", ownerConfig);
         expect(await prisma.room.count({})).toBe(roomCount);
       });
     });
@@ -1187,52 +1179,6 @@ describe("Mutation resolvers", () => {
         } })).toBe(occupantCount);
       });
 
-    });
-
-    describe("Mutation.roomArchive", () => {
-      test("It should edit a room owned by current user and return it", async () => {
-        expect.assertions(4);
-        const roomCount = await prisma.room.count({});
-        const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom1).toHaveProperty("archived", false);
-        const room = await Mutation.roomArchive({}, { id: ROOM.id }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
-        expect(room).toHaveProperty("archived", true);
-        const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom2).toHaveProperty("archived", true);
-        expect(await prisma.room.count({})).toBe(roomCount);
-      });
-
-      test("It should do nothing and return null if room is not owned by current user", async () => {
-        expect.assertions(4);
-        const roomCount = await prisma.room.count({});
-        const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom1).toHaveProperty("archived", false);
-        const room = await Mutation.roomArchive({}, { id: ROOM.id }, {
-          ...baseCtx,
-          sub: OTHER_USER,
-        }, baseInfo);
-        expect(room).toBeNull();
-        const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom2).toHaveProperty("archived", false);
-        expect(await prisma.room.count({})).toBe(roomCount);
-      });
-
-      test("It should do nothing and return null if not logged in", async () => {
-        expect.assertions(4);
-        const roomCount = await prisma.room.count({});
-        const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom1).toHaveProperty("archived", false);
-        const room = await Mutation.roomArchive({}, {
-          id: ROOM.id,
-        }, baseCtx, baseInfo);
-        expect(room).toBeNull();
-        const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
-        expect(pRoom2).toHaveProperty("archived", false);
-        expect(await prisma.room.count({})).toBe(roomCount);
-      });
     });
   });
 

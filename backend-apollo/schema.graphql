@@ -34,8 +34,10 @@ enum DecksQueryScope {
   VISIBLE
 }
 
-enum Unit {
-  UNIT
+enum RoomState {
+  WAITING
+  SERVING
+  SERVED
 }
 
 type Query {
@@ -168,15 +170,13 @@ type Mutation {
   ): UserCardRecord
 
   # Room
-  roomCreate(
-    config: JSONObject!
-  ): Room @subscriptionsTriggered(
+  roomCreate: Room @subscriptionsTriggered(
     signatures: ["roomUpdates(<id>)"]
   )
   # Only legal when room state is WAITING
-  roomUpdateConfig(
+  roomUpdateOwnerConfig(
     id: ID!
-    config: JSONObject!
+    ownerConfig: JSONObject!
   ): Room @subscriptionsTriggered(
     signatures: ["roomUpdates(id)"]
   )
@@ -306,7 +306,9 @@ type UserCardRecord {
 type Room {
   id: ID!
   ownerId: ID!
-  config: JSONObject!
+  ownerConfig: JSONObject!
+  internalConfig: JSONObject!
+  state: RoomState!
 
   owner: User
   occupants: [User]

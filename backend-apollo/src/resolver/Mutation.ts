@@ -88,12 +88,11 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     cardId: string;
     correctRecord?: string[];
   }, UserCardRecordSS | null>;
-  roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
-    config: JsonObject;
-  }, RoomSS | null>;
-  roomUpdateConfig: FieldResolver<Record<string, unknown>, WrContext, {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  roomCreate: FieldResolver<Record<string, unknown>, WrContext, {}, RoomSS | null>;
+  roomUpdateOwnerConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
-    config: JsonObject;
+    ownerConfig: JsonObject;
   }, RoomSS | null>;
   roomAddOccupant: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
@@ -537,9 +536,7 @@ export const Mutation: MutationResolver = {
     }
   },
 
-  async roomCreate(_parent, {
-    config,
-  }, { sub, pubsub, prisma }, _info) {
+  async roomCreate(_parent, _args, { sub, pubsub, prisma }, _info) {
     if (!sub) {
       return null;
     }
@@ -547,7 +544,6 @@ export const Mutation: MutationResolver = {
       const room = roomToSS(await prisma.room.create({
         data: {
           owner: { connect: { id: sub.id } },
-          config,
           occupants: { create: { occupant: { connect: { id: sub.id } } } },
         },
       }));
@@ -562,9 +558,9 @@ export const Mutation: MutationResolver = {
       return null;
     }
   },
-  async roomUpdateConfig(_parent, {
+  async roomUpdateOwnerConfig(_parent, {
     id,
-    config,
+    ownerConfig,
   }, { sub, pubsub, prisma }, _info) {
     try {
       if (!sub || !await userOwnsRoom({ prisma, userId: sub.id, roomId: id })) {
@@ -573,7 +569,7 @@ export const Mutation: MutationResolver = {
       const room = roomToSS(await prisma.room.update({
         where: { id },
         data: {
-          config,
+          ownerConfig,
         },
       }));
       const update: Update<RoomSS> = {

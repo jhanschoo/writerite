@@ -11,9 +11,11 @@ interface RoomResolver extends IResolverObject<RoomSS, WrContext, Record<string,
 
   // ownerId uses default resolver
 
-  // config uses default resolver
+  // ownerConfig uses default resolver
 
-  // archived uses default resolver
+  // internalConfig uses default resolver
+
+  // state uses default resolver
 
   owner: FieldResolver<RoomSS, WrContext, Record<string, unknown>, UserSS | null>;
   occupants: FieldResolver<RoomSS, WrContext, Record<string, unknown>, (UserSS | null)[] | null>;

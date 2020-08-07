@@ -2,6 +2,8 @@ CREATE EXTENSION "pgcrypto";
 
 CREATE TYPE "Unit" AS ENUM ('UNIT');
 
+CREATE TYPE "RoomState" AS ENUM ('WAITING', 'SERVING', 'SERVED');
+
 CREATE TABLE "User" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "email" text NOT NULL UNIQUE,
@@ -67,8 +69,9 @@ CREATE TABLE "UserDeckRecord" (
 CREATE TABLE "Room" (
   "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   "ownerId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
-  "archived" boolean DEFAULT false NOT NULL,
-  "config" jsonb DEFAULT '{}'::jsonb NOT NULL,
+  "ownerConfig" jsonb DEFAULT '{}'::jsonb NOT NULL,
+  "internalConfig" jsonb DEFAULT '{}'::jsonb NOT NULL,
+  "state" "RoomState" DEFAULT 'WAITING' NOT NULL,
   "createdAt" timestamp DEFAULT now() NOT NULL,
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );

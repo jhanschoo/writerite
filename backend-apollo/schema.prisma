@@ -11,6 +11,12 @@ enum Unit {
   UNIT
 }
 
+enum RoomState {
+  WAITING
+  SERVING
+  SERVED
+}
+
 model Card {
   id         String           @default(dbgenerated()) @id
   deckId     String
@@ -77,17 +83,18 @@ model Deck {
 }
 
 model Room {
-  id        String     @default(dbgenerated()) @id
-  ownerId   String
-  config    Json       @default(dbgenerated())
-  archived  Boolean    @default(false)
+  id             String     @default(dbgenerated()) @id
+  ownerId        String
+  ownerConfig    Json       @default("{}")
+  internalConfig Json       @default("{}")
+  state          RoomState  @default(WAITING)
 
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @default(now())
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @default(now())
 
-  owner     User       @relation(fields: [ownerId], references: [id])
-  occupants Occupant[] @relation("RoomTo_Occupant")
-  chatMsgs  ChatMsg[]
+  owner          User       @relation(fields: [ownerId], references: [id])
+  occupants      Occupant[] @relation("RoomTo_Occupant")
+  chatMsgs       ChatMsg[]
 }
 
 model User {

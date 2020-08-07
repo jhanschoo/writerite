@@ -1,4 +1,4 @@
-import type { JsonObject, PrismaClient, Room } from "@prisma/client";
+import type { JsonObject, PrismaClient, Room, RoomState } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { ChatMsgSS } from "./ChatMsg";
 
@@ -6,8 +6,9 @@ import type { ChatMsgSS } from "./ChatMsg";
 export interface RoomSS extends Partial<Room> {
   id: string;
   ownerId: string;
-  config: JsonObject;
-  archived: boolean;
+  ownerConfig: JsonObject;
+  internalConfig: JsonObject;
+  state: RoomState;
 
   createdAt: Date;
   updatedAt: Date;
@@ -60,8 +61,10 @@ export function roomToSS(room: Room | null): RoomSS | null {
   if (room === null) {
     return null;
   }
+  const { ownerConfig, internalConfig } = room;
   return {
     ...room,
-    config: room.config as JsonObject,
+    ownerConfig: ownerConfig as JsonObject,
+    internalConfig: internalConfig as JsonObject,
   };
 }
