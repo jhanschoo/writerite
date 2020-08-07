@@ -169,7 +169,7 @@ type Mutation {
 
   # Room
   roomCreate(
-    config: RoomConfigInput!
+    config: JSONObject!
   ): Room @subscriptionsTriggered(
     signatures: ["roomUpdates(<id>)"]
   )
