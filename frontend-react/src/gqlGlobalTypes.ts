@@ -26,13 +26,6 @@ export interface CardCreateInput {
   readonly template?: boolean | null;
 }
 
-export interface RoomConfigInput {
-  readonly deckId?: string | null;
-  readonly deckName?: string | null;
-  readonly roundLength?: number | null;
-  readonly clientDone?: boolean | null;
-}
-
 //==============================================================
 // END Enums and Input Objects
 //==============================================================

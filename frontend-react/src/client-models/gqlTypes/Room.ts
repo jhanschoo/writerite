@@ -9,14 +9,6 @@ import { ChatMsgContentType } from "./../../gqlGlobalTypes";
 // GraphQL fragment: Room
 // ====================================================
 
-export interface Room_config {
-  readonly __typename: "RoomConfig";
-  readonly deckId: string | null;
-  readonly deckName: string | null;
-  readonly roundLength: number | null;
-  readonly clientDone: boolean | null;
-}
-
 export interface Room_owner {
   readonly __typename: "User";
   readonly id: string;
@@ -46,9 +38,7 @@ export interface Room {
   readonly __typename: "Room";
   readonly id: string;
   readonly ownerId: string;
-  readonly archived: boolean;
-  readonly inactive: boolean;
-  readonly config: Room_config;
+  readonly config: GraphQLJSONObject;
   readonly owner: Room_owner | null;
   readonly occupants: ReadonlyArray<(Room_occupants | null)> | null;
   readonly chatMsgs: ReadonlyArray<(Room_chatMsgs | null)> | null;

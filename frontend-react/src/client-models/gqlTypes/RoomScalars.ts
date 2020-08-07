@@ -7,19 +7,9 @@
 // GraphQL fragment: RoomScalars
 // ====================================================
 
-export interface RoomScalars_config {
-  readonly __typename: "RoomConfig";
-  readonly deckId: string | null;
-  readonly deckName: string | null;
-  readonly roundLength: number | null;
-  readonly clientDone: boolean | null;
-}
-
 export interface RoomScalars {
   readonly __typename: "Room";
   readonly id: string;
   readonly ownerId: string;
-  readonly archived: boolean;
-  readonly inactive: boolean;
-  readonly config: RoomScalars_config;
+  readonly config: GraphQLJSONObject;
 }
