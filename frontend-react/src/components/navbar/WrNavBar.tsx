@@ -78,11 +78,6 @@ const renderLoggedIn = (dispatchSignout: () => SigninAction) => {
         </PageLink>
       </NavBarItem>
       <NavBarItem>
-        <PageLink to="/room">
-          Rooms
-        </PageLink>
-      </NavBarItem>
-      <NavBarItem>
         <SignoutButton onClick={signoutAndRestartWs}>
           Sign out
         </SignoutButton>
