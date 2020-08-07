@@ -6,14 +6,6 @@ import { RoomSS } from "../model/Room";
 import { UserSS, userToSS } from "../model/User";
 import { ChatMsgSS, chatMsgToSS } from "../model/ChatMsg";
 
-export interface RoomConfig {
-  deckId?: string;
-  deckName?: string;
-  deckNameLang?: string;
-  roundLength?: number;
-  clientDone?: boolean;
-}
-
 interface RoomResolver extends IResolverObject<RoomSS, WrContext, Record<string, unknown>> {
   // id uses default resolver
 
