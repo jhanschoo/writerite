@@ -79,6 +79,12 @@ padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 `;
 
+const StyledAnswer = wrStyled.span`
+${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
+padding: ${({ theme: { space } }) => space[1]};
+font-weight: normal;
+`;
+
 interface Props {
   deckId: string;
   card: CardDetail | null;
@@ -277,15 +283,17 @@ const WrDeckDetailMainTemplateItem = ({
           handleChange={handlePromptChange}
           placeholder={"Empty prompt. Try writing something..."}
         />}
-        fullAnswerContent={<>
-          <NotesEditor
-            editorState={fullAnswerEditorState}
-            setEditorState={setFullAnswerEditorState}
-            handleChange={handleFullAnswerChange}
-            placeholder={"Empty answer. Try writing something..."}
-          />
-          <SecondaryButton onClick={addGeneratedAnswer}>{`add generated: ${generatedAnswer}`}</SecondaryButton>
-        </>}
+        fullAnswerContent={<NotesEditor
+          editorState={fullAnswerEditorState}
+          setEditorState={setFullAnswerEditorState}
+          handleChange={handleFullAnswerChange}
+          placeholder={"Empty answer. Try writing something..."}
+        />}
+        beforeAnswersContent={generatedAnswer &&
+          <SecondaryButton onClick={addGeneratedAnswer}>
+            add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
+          </SecondaryButton>
+        }
         answersContent={<AnswersEditor
           editorState={answersEditorState}
           setEditorState={setAnswersEditorState}

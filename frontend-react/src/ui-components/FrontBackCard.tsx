@@ -69,6 +69,7 @@ interface Props {
   header?: ReactNode;
   promptContent?: ReactNode;
   fullAnswerContent?: ReactNode;
+  beforeAnswersContent?: ReactNode;
   answersContent?: ReactNode;
   footer?: ReactNode;
 }
@@ -79,6 +80,7 @@ export const FrontBackCard = ({
   header,
   promptContent,
   fullAnswerContent,
+  beforeAnswersContent,
   answersContent,
   footer,
 }: Props): JSX.Element =>
@@ -100,6 +102,7 @@ export const FrontBackCard = ({
       <StyledContent>
         {fullAnswerContent}
       </StyledContent>
+      {beforeAnswersContent && <StyledContent>{beforeAnswersContent}</StyledContent>}
       <StyledHeader>
         <h6>accepted answers</h6>
       </StyledHeader>
