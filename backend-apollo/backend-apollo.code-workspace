@@ -11,6 +11,11 @@
 		}
 	],
 	"settings": {
-		"typescript.tsdk": "./node_modules/typescript/lib"
+		"typescript.tsdk": "./node_modules/typescript/lib",
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/.hg/store/**": true
+		}
 	},
 }

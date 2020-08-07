@@ -2,25 +2,11 @@ import type { JsonObject, PrismaClient, Room } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { ChatMsgSS } from "./ChatMsg";
 
-export interface RoomConfigInput {
-  deckId?: string | null;
-  deckName?: string | null;
-  roundLength?: number | null;
-  clientDone?: boolean | null;
-}
-
-export interface RoomConfig {
-  deckId?: string;
-  deckName?: string;
-  roundLength?: number;
-  clientDone?: boolean;
-}
-
 // RoomStoredScalars
 export interface RoomSS extends Partial<Room> {
   id: string;
   ownerId: string;
-  config: RoomConfig & JsonObject;
+  config: JsonObject;
   archived: boolean;
 
   createdAt: Date;
@@ -29,9 +15,6 @@ export interface RoomSS extends Partial<Room> {
   owner?: UserSS | null;
   occupants?: (UserSS | null)[] | null;
   chatMsgs?: (ChatMsgSS | null)[] | null;
-
-  // computed values
-  inactive?: boolean;
 }
 
 export function roomTopic(id: string): string {
@@ -77,9 +60,8 @@ export function roomToSS(room: Room | null): RoomSS | null {
   if (room === null) {
     return null;
   }
-  const { config } = room;
   return {
     ...room,
-    config: config as RoomConfig & JsonObject,
+    config: room.config as JsonObject,
   };
 }

@@ -13,7 +13,7 @@ import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
 import { CardCreateInput, CardSS, userOwnsCard } from "../model/Card";
-import { RoomConfigInput, RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
+import { RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
 import { UserCardRecordSS } from "../model/UserCardRecord";
@@ -89,18 +89,15 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     correctRecord?: string[];
   }, UserCardRecordSS | null>;
   roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
-    config: RoomConfigInput & JsonObject;
+    config: JsonObject;
   }, RoomSS | null>;
   roomUpdateConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
-    config: RoomConfigInput & JsonObject;
+    config: JsonObject;
   }, RoomSS | null>;
   roomAddOccupant: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     occupantId: string;
-  }, RoomSS | null>;
-  roomArchive: FieldResolver<Record<string, unknown>, WrContext, {
-    id: string;
   }, RoomSS | null>;
 
   chatMsgCreate: FieldResolver<Record<string, unknown>, WrContext, {
@@ -543,7 +540,6 @@ export const Mutation: MutationResolver = {
   async roomCreate(_parent, {
     config,
   }, { sub, pubsub, prisma }, _info) {
-    // TODO: validate config, check if automatically validated
     if (!sub) {
       return null;
     }
@@ -616,30 +612,6 @@ export const Mutation: MutationResolver = {
               create: { occupant: { connect: { id: occupantId } } },
             },
           },
-        },
-      }));
-      const update: Update<RoomSS> = {
-        type: UpdateType.EDITED,
-        data: room,
-      };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(roomTopic(id), update);
-      return room;
-    } catch (e) {
-      return null;
-    }
-  },
-  async roomArchive(_parent, {
-    id,
-  }, { sub, pubsub, prisma }, _info) {
-    try {
-      if (!await userOwnsRoom({ prisma, userId: sub?.id, roomId: id })) {
-        return null;
-      }
-      const room = roomToSS(await prisma.room.update({
-        where: { id },
-        data: {
-          archived: true,
         },
       }));
       const update: Update<RoomSS> = {

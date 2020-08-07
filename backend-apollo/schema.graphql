@@ -173,19 +173,16 @@ type Mutation {
   ): Room @subscriptionsTriggered(
     signatures: ["roomUpdates(<id>)"]
   )
+  # Only legal when room state is WAITING
   roomUpdateConfig(
     id: ID!
-    config: RoomConfigInput!
+    config: JSONObject!
   ): Room @subscriptionsTriggered(
     signatures: ["roomUpdates(id)"]
   )
+  # Only legal when room state is WAITING
   roomAddOccupant(
     id: ID! occupantId: ID!
-  ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(id)"]
-  )
-  roomArchive(
-    id: ID!
   ): Room @subscriptionsTriggered(
     signatures: ["roomUpdates(id)"]
   )
@@ -306,26 +303,10 @@ type UserCardRecord {
 
 # Room
 
-input RoomConfigInput {
-  deckId: ID
-  deckName: String
-  roundLength: Int
-  clientDone: Boolean
-}
-
-type RoomConfig {
-  deckId: ID
-  deckName: String
-  roundLength: Int
-  clientDone: Boolean
-}
-
 type Room {
   id: ID!
   ownerId: ID!
-  config: RoomConfig!
-  archived: Boolean!
-  inactive: Boolean!
+  config: JSONObject!
 
   owner: User
   occupants: [User]
