@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { EditorState, convertToRaw } from "draft-js";
-import { useDebouncedCallback } from "use-debounce";
 import equal from "fast-deep-equal/es6/react";
+import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation } from "@apollo/client";
 import { DECK_EDIT_MUTATION } from "src/sharedGql";

@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
 import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
+import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation } from "@apollo/client";
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
+import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
 import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
-import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
-import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
 import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
-import { DEBOUNCE_DELAY } from "src/util";
 
+import { DEBOUNCE_DELAY } from "src/util";
 import type { CardFields } from "src/types";
-import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, rawToAnswer } from "src/components/editor/AnswersEditor";
 import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
+import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;

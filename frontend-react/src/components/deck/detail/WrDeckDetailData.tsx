@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
+import { ContentState, Editor, EditorState } from "draft-js";
 import moment from "moment";
 import { useDebouncedCallback } from "use-debounce";
-import { ContentState, Editor, EditorState } from "draft-js";
 
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
+import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
 import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "src/sharedGql";
-import { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
-import { DeckEdit, DeckEditVariables } from "src/gqlTypes/DeckEdit";
-import { RoomCreate } from "src/gqlTypes/RoomCreate";
+import type { DeckEdit, DeckEditVariables } from "src/gqlTypes/DeckEdit";
+import type { RoomCreate } from "src/gqlTypes/RoomCreate";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List } from "src/ui";

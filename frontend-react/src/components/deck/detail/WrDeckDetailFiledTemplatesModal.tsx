@@ -1,11 +1,12 @@
 import React from "react";
 
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
+
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
 import { Modal } from "src/ui-components";
 
 import WrDeckDetailTemplateItem from "./WrDeckDetailTemplateItem";
-import { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 const StyledList = wrStyled(List)`
 flex-direction: column;

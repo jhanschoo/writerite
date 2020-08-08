@@ -1,12 +1,14 @@
 import React, { useState } from "react";
+
 import { useHistory } from "react-router";
+
+import { RoomState } from "src/gqlGlobalTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List, NavBar, NavBarItem, NavBarList } from "src/ui";
 import { Modal } from "src/ui-components";
 
 import WrBrandText from "src/components/brand/WrBrandText";
-import { RoomState } from "src/gqlGlobalTypes";
 
 const BrandHeading = wrStyled.h3`
 margin: 0;

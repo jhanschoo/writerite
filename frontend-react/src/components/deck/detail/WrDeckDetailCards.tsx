@@ -1,15 +1,15 @@
 import React from "react";
 
 import { useQuery } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY } from "src/sharedGql";
 import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
+import { CARDS_OF_DECK_QUERY } from "src/sharedGql";
 import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
 
-import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 import WrDeckDetailCardItem from "./WrDeckDetailCardItem";
+import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 
 const groupCards = (unsortedCards: readonly (CardDetail | null)[]): [CardDetail[], CardDetail[], CardDetail | null] => {
   const templates: CardDetail[] = [];

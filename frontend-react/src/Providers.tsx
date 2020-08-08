@@ -4,14 +4,14 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./store";
 
+import { BrowserRouter } from "react-router-dom";
+
 import { ApolloProvider } from "@apollo/client";
 import { client } from "./apolloClient";
 import { persistedCacheStatus } from "./cache";
 
 import { ThemeProvider } from "styled-components";
 import theme from "./theme";
-
-import { BrowserRouter } from "react-router-dom";
 
 interface Props {
   children?: ReactNode;
@@ -28,13 +28,13 @@ const Providers = ({ children }: Props): JSX.Element => {
   return (
     <Provider store={store}>
       <PersistGate loading={loading} persistor={persistor}>
-        <ApolloProvider client={client}>
-          <ThemeProvider theme={theme}>
-            <BrowserRouter>
+        <BrowserRouter>
+          <ApolloProvider client={client}>
+            <ThemeProvider theme={theme}>
               {children}
-            </BrowserRouter>
-          </ThemeProvider>
-        </ApolloProvider>
+            </ThemeProvider>
+          </ApolloProvider>
+        </BrowserRouter>
       </PersistGate>
     </Provider>
   );

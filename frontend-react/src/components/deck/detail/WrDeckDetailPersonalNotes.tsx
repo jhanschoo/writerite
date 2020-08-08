@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
 import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
+import { useDebouncedCallback } from "use-debounce";
 
 import gql from "graphql-tag";
 import { useMutation, useQuery } from "@apollo/client";
-import { DEBOUNCE_DELAY } from "src/util";
 import { USER_DECK_RECORD_SCALARS } from "src/client-models";
 import { OwnDeckRecord, OwnDeckRecordVariables } from "./gqlTypes/OwnDeckRecord";
 import { OwnDeckRecordSet, OwnDeckRecordSetVariables } from "./gqlTypes/OwnDeckRecordSet";
 
 import { wrStyled } from "src/theme";
 
+import { DEBOUNCE_DELAY } from "src/util";
 import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
 
 const OWN_DECK_RECORD_QUERY = gql`

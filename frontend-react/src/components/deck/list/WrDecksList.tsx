@@ -2,17 +2,17 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { useQuery } from "@apollo/client";
-import { DECKS_QUERY } from "src/sharedGql";
-import { DecksQueryScope } from "src/gqlGlobalTypes";
-import type { Decks, DecksVariables } from "src/gqlTypes/Decks";
 import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
-import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "src/util";
+import { DecksQueryScope } from "src/gqlGlobalTypes";
+import { DECKS_QUERY } from "src/sharedGql";
+import type { Decks, DecksVariables } from "src/gqlTypes/Decks";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List, Main, ModalBackground, ModalCloseButton, ModalContainer, TextInput } from "src/ui";
 
-import WrDeckItem from "./WrDeckItem";
+import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "src/util";
 import WrUploadDeck from "../WrUploadDeck";
+import WrDeckItem from "./WrDeckItem";
 
 const Ribbon = wrStyled.section`
 display: flex;

@@ -1,7 +1,9 @@
-import { client } from "src/apolloClient";
-import { ActionTypes, AuthorizationAction } from "./actions";
-import { CurrentUserAndToken } from "src/types";
 import { Reducer } from "redux";
+import { ActionTypes, AuthorizationAction } from "./actions";
+
+import { client } from "src/apolloClient";
+
+import { CurrentUserAndToken } from "src/types";
 
 export interface SigninState {
   session: CurrentUserAndToken | null;

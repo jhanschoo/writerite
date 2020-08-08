@@ -1,21 +1,20 @@
 // eslint-disable-next-line no-shadow
 import React, { ChangeEvent, DragEvent, FormEvent, MouseEvent, useRef, useState } from "react";
-import Papa from "papaparse";
 import { ContentState, convertToRaw } from "draft-js";
+import Papa from "papaparse";
 
 import { useHistory } from "react-router";
 
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { DECKS_QUERY } from "src/sharedGql";
-import type { Decks, DecksVariables } from "src/gqlTypes/Decks";
 import { DECK_SCALARS } from "src/client-models";
 import { CardCreateInput, DecksQueryScope } from "src/gqlGlobalTypes";
+import { DECKS_QUERY } from "src/sharedGql";
+import type { Decks, DecksVariables } from "src/gqlTypes/Decks";
 import type { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
 
-import { StyledComponent } from "styled-components";
+import type { StyledComponent } from "styled-components";
 import { WrTheme, wrStyled } from "src/theme";
-
 import { Button, Fieldset, TextInput } from "src/ui";
 import { HDivider } from "src/ui-components";
 

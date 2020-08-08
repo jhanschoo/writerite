@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import NotesEditor, { notesEditorStateFromRaw } from "./NotesEditor";
 
 interface Props extends Omit<Parameters<typeof NotesEditor>[0], "editorState" | "setEditorState"> {

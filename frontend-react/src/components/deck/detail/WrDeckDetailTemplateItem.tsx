@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 
 import { useMutation } from "@apollo/client";
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
+import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
 import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
-import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
-import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
 import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
 
 import { identity } from "src/util";
-import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
+import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
+import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;

@@ -1,17 +1,18 @@
 import React from "react";
 
+import { Dispatch } from "redux";
+
 import { useDispatch, useSelector } from "react-redux";
 import { WrState } from "src/store";
 import { SigninAction, createSignout } from "src/components/signin/actions";
 
 import { restartWsConnection } from "src/apolloClient";
-import { CurrentUser } from "src/types";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Link, NavBar, NavBarItem, NavBarList } from "src/ui";
 
+import type { CurrentUser } from "src/types";
 import WrBrandText from "../brand/WrBrandText";
-import { Dispatch } from "redux";
 
 const BrandHeading = wrStyled.h3`
 margin: 0;

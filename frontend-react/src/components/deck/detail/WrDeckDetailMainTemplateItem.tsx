@@ -2,21 +2,21 @@ import React, { useState } from "react";
 import { EditorChangeType, EditorState, convertToRaw } from "draft-js";
 
 import { MutationUpdaterFn, useMutation } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
-import type { CardCreate, CardCreateVariables } from "src/gqlTypes/CardCreate";
-import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
-import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
-import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
+import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
+import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
+import type { CardCreate, CardCreateVariables } from "src/gqlTypes/CardCreate";
+import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
+import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
 import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
 
 import { emptyFields, emptyRawContent, pushRawContent } from "src/util";
+import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "src/components/editor/AnswersEditor";
 import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "src/components/editor/AnswersEditor";
 import WrDeckDetailFiledTemplatesModal from "./WrDeckDetailFiledTemplatesModal";
 
 const StyledItem = wrStyled(Item)`

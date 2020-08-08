@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 
-import { ThemedStyledFunction } from "styled-components";
+import type { ThemedStyledFunction } from "styled-components";
 import { WrTheme, wrStyled } from "src/theme";
 
 const styledSpacerDiv: ThemedStyledFunction<"div", WrTheme, { spacerColor?: string }, never> = wrStyled.div;

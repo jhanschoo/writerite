@@ -6,13 +6,13 @@ import {
 import { useSelector } from "react-redux";
 import { WrState } from "./store";
 
-import { CurrentUser } from "./types";
-
-import WrLandingView from "./components/landing/WrLandingView";
-import WrSigninView from "./components/signin/WrSigninView";
-import WrDeckView from "./components/deck/WrDeckView";
-import WrRoomView from "./components/room/WrRoomView";
 import { ViewportContainer } from "./ui";
+
+import type { CurrentUser } from "./types";
+import WrDeckView from "./components/deck/WrDeckView";
+import WrLandingView from "./components/landing/WrLandingView";
+import WrRoomView from "./components/room/WrRoomView";
+import WrSigninView from "./components/signin/WrSigninView";
 
 const App = (): JSX.Element => {
   const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);

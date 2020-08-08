@@ -3,7 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { rootReducer } from "./reducers";
 
-import { SigninState } from "./components/signin/reducers";
+import { SigninState } from "src/components/signin/reducers";
 
 export interface WrState {
   readonly signin?: SigninState;

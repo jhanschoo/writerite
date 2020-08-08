@@ -1,6 +1,7 @@
 import React, { PropsWithChildren, ReactNode } from "react";
 
 import { wrStyled } from "src/theme";
+
 import { Tooltip } from "./Tooltip";
 
 const TooltipText = wrStyled.p`

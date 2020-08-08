@@ -3,8 +3,8 @@ import React from "react";
 import { Redirect, Route, Switch, useRouteMatch } from "react-router";
 
 import WrNavBar from "src/components/navbar/WrNavBar";
-import WrDecksList from "./list/WrDecksList";
 import WrDeckDetail from "./detail/WrDeckDetail";
+import WrDecksList from "./list/WrDecksList";
 
 const WrDeckView = (): JSX.Element => {
   const match = useRouteMatch();

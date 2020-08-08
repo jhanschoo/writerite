@@ -1,8 +1,9 @@
 import React from "react";
-import { useParams } from "react-router";
 
 import { useSelector } from "react-redux";
 import type { WrState } from "src/store";
+
+import { useParams } from "react-router";
 
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
@@ -13,11 +14,11 @@ import type { DeckDetail, DeckDetailVariables } from "./gqlTypes/DeckDetail";
 import { wrStyled } from "src/theme";
 import { Main, MinimalLink } from "src/ui";
 
+import WrDeckDetailCards from "./WrDeckDetailCards";
 import WrDeckDetailData from "./WrDeckDetailData";
 import WrDeckDetailDescription from "./WrDeckDetailDescription";
 import WrDeckDetailPersonalNotes from "./WrDeckDetailPersonalNotes";
 import WrDeckDetailSubdecks from "./WrDeckDetailSubdecks";
-import WrDeckDetailCards from "./WrDeckDetailCards";
 
 const DECK_DETAIL_QUERY = gql`
 ${DECK_DETAIL}

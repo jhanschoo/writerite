@@ -1,13 +1,14 @@
 import React from "react";
 
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
+
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item } from "src/ui";
-import { CardDetail } from "src/client-models/gqlTypes/CardDetail";
+import { FrontBackCard, FrontBackCardActionsList, Modal } from "src/ui-components";
 
 import { emptyRawContent, identity } from "src/util";
-import { FrontBackCard, FrontBackCardActionsList, Modal } from "src/ui-components";
-import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
+import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
 
 const StyledDeletePrompt = wrStyled.div`
 display: flex;

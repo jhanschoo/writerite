@@ -1,5 +1,6 @@
-import { wrStyled } from "src/theme";
 import { NavLink as rrLink } from "react-router-dom";
+
+import { wrStyled } from "src/theme";
 
 export const Link = wrStyled(rrLink)`
 display: flex;
