@@ -104,7 +104,7 @@ build-backend-apollo-chart:
 build-backend-chart:
   stage: build-meta
   needs:
-    - "build-backend-apollo-chart"
+    - build-backend-apollo-chart
   image: dtzar/helm-kubectl:3.2.1
   script:
     - cd charts/writerite-backend
@@ -127,8 +127,9 @@ deploy-backend:
     - publish-api-graph
     - build-backend-apollo
     - build-backend-chart
+    - pages
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH == "master"
   image: dtzar/helm-kubectl:3.2.1
   environment:
     name: production
