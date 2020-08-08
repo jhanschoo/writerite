@@ -137,7 +137,11 @@ const WrDeckDetailCardItem = ({
   const handleShowDeleteModal = () => setShowDeleteModal(true);
   const handleHideDeleteModal = () => setShowDeleteModal(false);
   const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
-  const addGeneratedAnswer = () => setAnswersEditorState(prependAnswer(answersEditorState, generatedAnswer));
+  const addGeneratedAnswer = () => {
+    const nextAnswersEditorState = prependAnswer(answersEditorState, generatedAnswer);
+    setAnswersEditorState(nextAnswersEditorState);
+    handleAnswersChange(nextAnswersEditorState);
+  };
   const handleDelete = () => {
     if (id) {
       void mutateDelete({ variables: {

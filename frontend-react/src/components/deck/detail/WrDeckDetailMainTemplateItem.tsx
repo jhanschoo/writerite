@@ -192,6 +192,7 @@ const WrDeckDetailMainTemplateItem = ({
   const [mutateCreateTemplate, { loading: loadingCreate }] =
     useMutation<CardCreate, CardCreateVariables>(CARD_CREATE_MUTATION, { update });
   const handleAddCard = () => {
+    console.log(currentFields);
     void mutateAddCard({ variables: {
       deckId,
       card: currentFields,
@@ -244,7 +245,11 @@ const WrDeckDetailMainTemplateItem = ({
   const handleShowTemplatesModal = () => setShowTemplatesModal(true);
   const handleHideTemplatesModal = () => setShowTemplatesModal(false);
   const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
-  const addGeneratedAnswer = () => setAnswersEditorState(prependAnswer(answersEditorState, generatedAnswer));
+  const addGeneratedAnswer = () => {
+    const nextEditorState = prependAnswer(answersEditorState, generatedAnswer);
+    setAnswersEditorState(nextEditorState);
+    handleAnswersChange(nextEditorState);
+  };
   const handleDelete = () => {
     if (id) {
       void mutateDelete({ variables: {

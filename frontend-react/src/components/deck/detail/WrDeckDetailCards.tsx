@@ -7,7 +7,6 @@ import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDe
 
 import { wrStyled } from "../../../theme";
 import { Item, List } from "../../../ui";
-import { Loading } from "../../../ui-components";
 
 import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 import WrDeckDetailCardItem from "./WrDeckDetailCardItem";
