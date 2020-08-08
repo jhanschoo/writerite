@@ -9,6 +9,7 @@ import { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
 
 import { wrStyled } from "../../../theme";
+import { BorderlessButton, Item, List } from "../../../ui";
 
 import { DEBOUNCE_DELAY } from "../../../util";
 import LineEditor, { lineEditorStateFromString } from "../../editor/LineEditor";
@@ -36,7 +37,6 @@ flex-direction: column;
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   width: 100%;
 }
-
 `;
 
 const StyledHeader = wrStyled.header`
@@ -59,6 +59,34 @@ h4 {
   h4 {
     ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
   }
+}
+`;
+
+export const ActionsList = wrStyled(List)`
+flex-direction: row;
+flex-wrap: wrap;
+align-items: baseline;
+margin: ${({ theme: { space } }) => space[2]};
+`;
+
+const ActionsItem = wrStyled(Item)`
+flex-grow: 1;
+display: flex;
+margin: ${({ theme: { space } }) => ` 0 ${space[1]} ${space[1]}`};
+
+:last-child {
+  margin: ${({ theme: { space } }) => `0 0 ${space[3]} 0`};
+}
+`;
+
+const ActionsButton = wrStyled(BorderlessButton)`
+${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
+flex-grow: 1;
+display: flex;
+padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
+
+&.active, :hover, :active, :hover:active {
+  ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
 }
 `;
 
@@ -149,13 +177,14 @@ const WrDeckDetailData = ({
           </DeckStatistics>
         </StyledInnerBox>
       </StyledOuterBox>
-      <StyledOuterBox>
-        <StyledInnerBox>
-          <StyledHeader>
-            <h4>Actions Placeholder</h4>
-          </StyledHeader>
-        </StyledInnerBox>
-      </StyledOuterBox>
+      <ActionsList>
+        <ActionsItem>
+          <ActionsButton>Create Room</ActionsButton>
+        </ActionsItem>
+        <ActionsItem>
+          <ActionsButton>Delete Deck</ActionsButton>
+        </ActionsItem>
+      </ActionsList>
     </DeckInfoBox>
   );
 };

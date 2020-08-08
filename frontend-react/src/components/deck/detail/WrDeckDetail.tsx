@@ -64,20 +64,20 @@ const WrDeckDetail = (): JSX.Element => {
     variables: { deckId },
   });
   if (error) {
-    return <Main/>;
+    return <StyledMain/>;
   }
   if (loading) {
-    return <Main><p>Retrieving deck...</p></Main>;
+    return <StyledMain><p>Retrieving deck...</p></StyledMain>;
   }
   if (!data?.deck) {
-    return <Main><p>Error retrieving deck. Please try again later.</p></Main>;
+    return <StyledMain><p>Error retrieving deck. Please try again later.</p></StyledMain>;
   }
   const { deck } = data;
   const readOnly = deck.ownerId !== id;
   const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
   // Note: component is keyed to force refresh on route change.
   return (
-    <StyledMain key={`${deckId}-WrDeckDetail`}>
+    <StyledMain>
       <BackLink to="/deck/list">←back to Decks</BackLink>
       <DeckDataBox>
         <WrDeckDetailData
