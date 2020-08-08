@@ -13,7 +13,6 @@ import { BorderlessButton, Item, List } from "../../../ui";
 
 import { DEBOUNCE_DELAY } from "../../../util";
 import LineEditor, { lineEditorStateFromString } from "../../editor/LineEditor";
-import { Modal } from "../../../ui-components";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -110,7 +109,6 @@ const WrDeckDetailData = ({
   const [editorState, setEditorState] = useState(lineEditorStateFromString(deck.name));
   const [currentTitle, setCurrentTitle] = useState(deck.name);
   const [debouncing, setDebouncing] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const mutateOpts = { variables: {
     id: deck.id,
     name: currentTitle,
@@ -148,8 +146,6 @@ const WrDeckDetailData = ({
     }
     return newEditorState;
   };
-  const handleShowDeleteModal = () => setShowDeleteModal(true);
-  const handleHideDeleteModal = () => setShowDeleteModal(false);
   const now = moment.utc();
   const deckTitleStatus = editorState.getCurrentContent().getPlainText().trim() === ""
     ? "invalid"
@@ -158,8 +154,6 @@ const WrDeckDetailData = ({
       : undefined;
   return (
     <DeckInfoBox>
-      {showDeleteModal && <Modal handleClose={handleHideDeleteModal}>
-      </Modal>}
       <StyledOuterBox>
         <StyledInnerBox>
           <StyledHeader>
@@ -183,9 +177,6 @@ const WrDeckDetailData = ({
         <ActionsItem>
           <ActionsButton>Start Contest</ActionsButton>
         </ActionsItem>
-        {!readOnly && <ActionsItem>
-          <ActionsButton onClick={handleShowDeleteModal}>Delete Deck...</ActionsButton>
-        </ActionsItem>}
       </ActionsList>
     </DeckInfoBox>
   );
