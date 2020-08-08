@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, ForwardRefRenderFunction, SetStateAction, forwardRef } from "react";
 import { ContentState, Editor, EditorState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
@@ -25,13 +25,15 @@ export const lineEditorStateFromString = (s: string): EditorState => {
   return EditorState.createEmpty();
 };
 
+type Params = Parameters<ForwardRefRenderFunction<Editor, Props>>;
+
 const LineEditor = ({
   editorState,
   setEditorState,
   tag,
   handleChange,
   readOnly,
-}: Props): JSX.Element => {
+}: Params[0], ref: Params[1]): JSX.Element => {
   const element = tag ?? "div";
   // eslint-disable-next-line new-cap
   const blockRenderMap = Map({ unstyled: { element } });
@@ -49,8 +51,9 @@ const LineEditor = ({
       editorState={editorState}
       onChange={handleEditorChange}
       readOnly={readOnly}
+      ref={ref}
     />
   );
 };
 
-export default LineEditor;
+export default forwardRef<Editor, Props>(LineEditor);

@@ -86,7 +86,7 @@ const WrDeckDetailDescription = ({
     }
     void mutate(mutateOpts);
   }, DEBOUNCE_DELAY);
-  useEffect(() => call, [call])
+  useEffect(() => call, [call]);
   const handleChange = (nextEditorState: EditorState) => {
     setCurrentDescription(convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>);
     setDebouncing(true);
@@ -100,7 +100,7 @@ const WrDeckDetailDescription = ({
     <StyledOuterBox>
       <StyledInnerBox>
         <StyledHeader>
-          <h4>About This Deck</h4>
+          <h4>About this deck</h4>
           <DescriptionStatus>{descriptionStatus}</DescriptionStatus>
         </StyledHeader>
         <StyledContent>

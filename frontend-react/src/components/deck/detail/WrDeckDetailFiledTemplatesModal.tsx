@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { wrStyled } from "../../../theme";
 import { Item, List } from "../../../ui";

@@ -263,7 +263,7 @@ const WrDeckDetailMainTemplateItem = ({
       />}
       <FrontBackCard
         header={<StyledHeader>
-          <h4>current template</h4>
+          <h4>Current template</h4>
           <ShowTemplatesButton onClick={handleShowTemplatesModal}>Filed Templates</ShowTemplatesButton>
         </StyledHeader>}
         promptContent={<NotesEditor
@@ -297,7 +297,7 @@ const WrDeckDetailMainTemplateItem = ({
             <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
           </ActionsItem>
           <ActionsItem>
-            <SecondaryButton onClick={handleFileAway} disabled={loading}>File Away</SecondaryButton>
+            <SecondaryButton onClick={handleFileAway} disabled={loading}>File away</SecondaryButton>
           </ActionsItem>
           <ActionsItem>
             <AddCardButton onClick={handleAddCard} disabled={loading}>Save as Card</AddCardButton>

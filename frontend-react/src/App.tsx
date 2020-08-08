@@ -11,7 +11,7 @@ import { CurrentUser } from "./types";
 import WrLandingView from "./components/landing/WrLandingView";
 import WrSigninView from "./components/signin/WrSigninView";
 import WrDeckView from "./components/deck/WrDeckView";
-// import WrRoomView from './components/room/WrRoomView';
+import WrRoomView from "./components/room/WrRoomView";
 import { ViewportContainer } from "./ui";
 
 const App = (): JSX.Element => {
@@ -21,7 +21,7 @@ const App = (): JSX.Element => {
       <Switch>
         <Route path="/" exact={true} component={WrLandingView} />
         {user && <Route path="/deck" component={WrDeckView} />}
-        {/* {user && <Route path="/room" component={WrRoomView} />} */}
+        {user && <Route path="/room" component={WrRoomView} />}
         <Route path="/signin" exact={true} component={WrSigninView} />
         <Redirect to="/" />
       </Switch>

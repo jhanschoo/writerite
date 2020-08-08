@@ -21,7 +21,3 @@ export interface RoomCreate_roomCreate {
 export interface RoomCreate {
   readonly roomCreate: RoomCreate_roomCreate | null;
 }
-
-export interface RoomCreateVariables {
-  readonly config: GraphQLJSONObject;
-}

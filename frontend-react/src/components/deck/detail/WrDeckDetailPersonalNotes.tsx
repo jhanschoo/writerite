@@ -94,11 +94,11 @@ const WrDeckDetailPersonalNotes = ({
   });
   const notes = (data?.ownDeckRecord?.notes ?? {}) as Record<string, unknown>;
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [currentNotes, setCurrentNotes] = useState<Record<string, unknown> | null>(null);
+  const [currentNotes, setCurrentNotes] = useState<Record<string, unknown>>({});
   const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
     deckId,
-    notes: currentNotes ?? undefined,
+    notes: currentNotes,
   } };
   const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSet, OwnDeckRecordSetVariables>(OWN_DECK_RECORD_SET_MUTATION, {
     onCompleted(newData) {
@@ -134,7 +134,7 @@ const WrDeckDetailPersonalNotes = ({
     <StyledOuterBox>
       <StyledInnerBox>
         <StyledHeader>
-          <h4>Your Goals</h4>
+          <h4>Your goals</h4>
           <NotesStatus>{notesStatus}</NotesStatus>
         </StyledHeader>
         {!loading &&

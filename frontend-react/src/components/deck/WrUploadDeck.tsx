@@ -268,7 +268,7 @@ const WrUploadDeck = (): JSX.Element => {
     } });
     const id = res.data?.deckCreate?.id;
     if (id) {
-      history.push(`/deck/${id}/edit`);
+      history.push(`/deck/${id}`, { editTitle: true });
     }
   };
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

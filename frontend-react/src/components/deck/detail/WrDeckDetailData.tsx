@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import { useDebouncedCallback } from "use-debounce";
-import { ContentState, EditorState } from "draft-js";
+import { ContentState, EditorState, Editor } from "draft-js";
+
+import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION } from "../../sharedGql";
+import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "../../sharedGql";
 import { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
 import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
+import { RoomCreate } from "../../gqlTypes/RoomCreate";
 
 import { wrStyled } from "../../../theme";
 import { BorderlessButton, Item, List } from "../../../ui";
@@ -106,6 +109,18 @@ const WrDeckDetailData = ({
   deck,
   readOnly,
 }: Props): JSX.Element => {
+  // eslint-disable-next-line no-shadow
+  const history = useHistory<{ editTitle?: boolean, deckId?: string } | null>();
+  const { editTitle } = history.location.state ?? {};
+  const editorEl = useRef<Editor>(null);
+  useEffect(() => {
+    if (editTitle) {
+      editorEl.current?.focus();
+    }
+    if (history.location.state) {
+      history.replace(history.location.pathname, null);
+    }
+  }, [history, editTitle]);
   const [editorState, setEditorState] = useState(lineEditorStateFromString(deck.name));
   const [currentTitle, setCurrentTitle] = useState(deck.name);
   const [debouncing, setDebouncing] = useState(false);
@@ -113,7 +128,7 @@ const WrDeckDetailData = ({
     id: deck.id,
     name: currentTitle,
   } };
-  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
+  const [mutateEdit, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
       if (debouncing) {
@@ -121,7 +136,14 @@ const WrDeckDetailData = ({
       }
       // debounce has fired in no-op before flight returned; we now fire a new mutation
       if (data.deckEdit && currentTitle !== data.deckEdit.name) {
-        void mutate(mutateOpts);
+        void mutateEdit(mutateOpts);
+      }
+    },
+  });
+  const [mutateRoomCreate] = useMutation<RoomCreate>(ROOM_CREATE_MUTATION, {
+    onCompleted(data) {
+      if (data.roomCreate) {
+        history.push(`/room/${data.roomCreate.id}`, { deckId: deck.id });
       }
     },
   });
@@ -131,7 +153,7 @@ const WrDeckDetailData = ({
     if (loading || currentTitle === deck.name || !currentTitle) {
       return;
     }
-    void mutate(mutateOpts);
+    void mutateEdit(mutateOpts);
   }, DEBOUNCE_DELAY);
   useEffect(() => call, [call]);
   const handleChange = (newEditorState: EditorState) => {
@@ -146,6 +168,7 @@ const WrDeckDetailData = ({
     }
     return newEditorState;
   };
+  const handleCreateRoom = () => mutateRoomCreate();
   const now = moment.utc();
   const deckTitleStatus = editorState.getCurrentContent().getPlainText().trim() === ""
     ? "invalid"
@@ -163,6 +186,7 @@ const WrDeckDetailData = ({
               handleChange={handleChange}
               tag="h4"
               readOnly={readOnly}
+              ref={editorEl}
             />
             <DeckTitleStatus>{deckTitleStatus}</DeckTitleStatus>
           </StyledHeader>
@@ -175,7 +199,7 @@ const WrDeckDetailData = ({
       </StyledOuterBox>
       <ActionsList>
         <ActionsItem>
-          <ActionsButton>Start Contest</ActionsButton>
+          <ActionsButton onClick={handleCreateRoom}>Start Contest</ActionsButton>
         </ActionsItem>
       </ActionsList>
     </DeckInfoBox>
