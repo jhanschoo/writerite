@@ -88,7 +88,7 @@ const WrDeckDetailCards = ({
   deckId,
   readOnly,
 }: Props): JSX.Element => {
-  const { loading, data } = useQuery<CardsOfDeck, CardsOfDeckVariables>(CARDS_OF_DECK_QUERY, {
+  const { data } = useQuery<CardsOfDeck, CardsOfDeckVariables>(CARDS_OF_DECK_QUERY, {
     variables: { deckId },
   });
   const [cards, templates, mainTemplate] = groupCards(data?.cardsOfDeck ?? []);
@@ -96,7 +96,6 @@ const WrDeckDetailCards = ({
   return (
     <StyledOuterBox>
       <StyledInnerBox>
-        {loading && <Loading />}
         <StyledHeader>
           <h4>Cards</h4>
         </StyledHeader>

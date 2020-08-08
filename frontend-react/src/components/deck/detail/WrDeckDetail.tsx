@@ -58,26 +58,21 @@ flex-direction: column;
 const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
   const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
-  const {
-    loading, error, data,
-  } = useQuery<DeckDetail, DeckDetailVariables>(DECK_DETAIL_QUERY, {
+  const { error, data } = useQuery<DeckDetail, DeckDetailVariables>(DECK_DETAIL_QUERY, {
     variables: { deckId },
   });
   if (error) {
     return <StyledMain/>;
   }
-  if (loading) {
-    return <StyledMain><p>Retrieving deck...</p></StyledMain>;
-  }
   if (!data?.deck) {
-    return <StyledMain><p>Error retrieving deck. Please try again later.</p></StyledMain>;
+    return <StyledMain><p>Retrieving deck...</p></StyledMain>;
   }
   const { deck } = data;
   const readOnly = deck.ownerId !== id;
   const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
   // Note: component is keyed to force refresh on route change.
   return (
-    <StyledMain>
+    <StyledMain key={`${deck.id}-WrDeckDetail`}>
       <BackLink to="/deck/list">←back to Decks</BackLink>
       <DeckDataBox>
         <WrDeckDetailData

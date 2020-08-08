@@ -120,9 +120,11 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
     }
     setCursor(null);
   };
-  const {
-    loading, error, data, fetchMore,
-  } = useQuery<Decks, DecksVariables>(DECKS_QUERY, {
+  /*
+   * Do not indicate if loading since there are no mutations and
+   * stale data does not cause harm.
+   */
+  const { error, data, fetchMore } = useQuery<Decks, DecksVariables>(DECKS_QUERY, {
     variables: {
       titleFilter,
       scope: ownershipFilter,
@@ -206,7 +208,7 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
   if (error) {
     return renderWithList(null);
   }
-  if (loading || !data?.decks) {
+  if (!data?.decks) {
     return renderWithList(<p>Fetching decks...</p>);
   }
   const decks = data.decks
