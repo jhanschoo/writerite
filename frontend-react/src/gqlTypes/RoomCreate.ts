@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { RoomState } from "./../../gqlGlobalTypes";
+import { RoomState } from "./../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL mutation operation: RoomCreate

@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { EditorChangeType, EditorState, convertToRaw } from "draft-js";
 
 import { MutationUpdaterFn, useMutation } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "../../sharedGql";
-import type { CardCreate, CardCreateVariables } from "../../gqlTypes/CardCreate";
-import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
-import type { CardDelete, CardDeleteVariables } from "../../gqlTypes/CardDelete";
-import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
+import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
+import type { CardCreate, CardCreateVariables } from "src/gqlTypes/CardCreate";
+import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
+import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
+import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "src/theme";
@@ -14,9 +14,9 @@ import { AnchorButton, BorderlessButton, Item } from "src/ui";
 import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
 
 import { emptyFields, emptyRawContent, pushRawContent } from "src/util";
-import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
+import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "../../editor/AnswersEditor";
+import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "src/components/editor/AnswersEditor";
 import WrDeckDetailFiledTemplatesModal from "./WrDeckDetailFiledTemplatesModal";
 
 const StyledItem = wrStyled(Item)`

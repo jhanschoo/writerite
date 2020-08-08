@@ -6,16 +6,16 @@ import { ContentState, Editor, EditorState } from "draft-js";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "../../sharedGql";
+import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "src/sharedGql";
 import { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
-import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
-import { RoomCreate } from "../../gqlTypes/RoomCreate";
+import { DeckEdit, DeckEditVariables } from "src/gqlTypes/DeckEdit";
+import { RoomCreate } from "src/gqlTypes/RoomCreate";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List } from "src/ui";
 
 import { DEBOUNCE_DELAY } from "src/util";
-import LineEditor, { lineEditorStateFromString } from "../../editor/LineEditor";
+import LineEditor, { lineEditorStateFromString } from "src/components/editor/LineEditor";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;

@@ -1,9 +1,9 @@
 import React from "react";
 
 import { useQuery } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY } from "../../sharedGql";
+import { CARDS_OF_DECK_QUERY } from "src/sharedGql";
 import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
-import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
+import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";

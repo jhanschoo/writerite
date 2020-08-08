@@ -6,7 +6,7 @@ import { BorderlessButton, Item, List, NavBar, NavBarItem, NavBarList } from "sr
 import { Modal } from "src/ui-components";
 
 import WrBrandText from "../../brand/WrBrandText";
-import { RoomState } from "../../../gqlGlobalTypes";
+import { RoomState } from "src/gqlGlobalTypes";
 
 const BrandHeading = wrStyled.h3`
 margin: 0;

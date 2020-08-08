@@ -6,8 +6,8 @@ import { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 import { emptyRawContent, identity } from "src/util";
 import { FrontBackCard, FrontBackCardActionsList, Modal } from "src/ui-components";
-import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
-import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
+import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
+import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
 
 const StyledDeletePrompt = wrStyled.div`
 display: flex;

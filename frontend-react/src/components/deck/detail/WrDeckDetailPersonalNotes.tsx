@@ -12,7 +12,7 @@ import { OwnDeckRecordSet, OwnDeckRecordSetVariables } from "./gqlTypes/OwnDeckR
 
 import { wrStyled } from "src/theme";
 
-import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
+import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
 
 const OWN_DECK_RECORD_QUERY = gql`
 ${USER_DECK_RECORD_SCALARS}
@@ -85,7 +85,7 @@ const WrDeckDetailPersonalNotes = ({
     variables: { deckId },
     onCompleted(newData) {
       // synchronize editorState and currentNotes to data, for first fetch only
-      if (currentNotes === null && newData.ownDeckRecord) {
+      if (equal(currentNotes, {}) && newData.ownDeckRecord) {
         const notes = newData.ownDeckRecord.notes as Record<string, unknown>;
         setCurrentNotes(notes);
         setEditorState(notesEditorStateFromRaw(notes));

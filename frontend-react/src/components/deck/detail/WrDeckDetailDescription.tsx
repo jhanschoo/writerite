@@ -4,13 +4,13 @@ import { useDebouncedCallback } from "use-debounce";
 import equal from "fast-deep-equal/es6/react";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION } from "../../sharedGql";
-import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
+import { DECK_EDIT_MUTATION } from "src/sharedGql";
+import { DeckEdit, DeckEditVariables } from "src/gqlTypes/DeckEdit";
 
 import { wrStyled } from "src/theme";
 
 import { DEBOUNCE_DELAY } from "src/util";
-import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
+import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
 import { useMutation } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "../../sharedGql";
-import type { CardDelete, CardDeleteVariables } from "../../gqlTypes/CardDelete";
-import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
-import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
+import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
+import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
+import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
+import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
 import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "src/theme";
@@ -13,8 +13,8 @@ import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
 
 import { identity } from "src/util";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
-import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
+import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
+import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;

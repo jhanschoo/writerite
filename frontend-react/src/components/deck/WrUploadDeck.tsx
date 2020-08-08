@@ -7,10 +7,10 @@ import { useHistory } from "react-router";
 
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { DECKS_QUERY } from "../sharedGql";
-import type { Decks, DecksVariables } from "../gqlTypes/Decks";
+import { DECKS_QUERY } from "src/sharedGql";
+import type { Decks, DecksVariables } from "src/gqlTypes/Decks";
 import { DECK_SCALARS } from "src/client-models";
-import { CardCreateInput, DecksQueryScope } from "../../gqlGlobalTypes";
+import { CardCreateInput, DecksQueryScope } from "src/gqlGlobalTypes";
 import type { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
 
 import { StyledComponent } from "styled-components";
