@@ -1,5 +1,5 @@
 import { ContentState, EditorChangeType, EditorState, RawDraftContentState, convertFromRaw, convertToRaw } from "draft-js";
-import type { CardFields } from "../types";
+import type { CardFields } from "src/types";
 
 export const emptyRawContent = convertToRaw(ContentState.createFromText("")) as unknown as GraphQLJSONObject;
 

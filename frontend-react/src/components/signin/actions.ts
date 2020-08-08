@@ -1,4 +1,4 @@
-import { CurrentUser, CurrentUserAndToken } from "../../types";
+import { CurrentUser, CurrentUserAndToken } from "src/types";
 
 export enum ActionTypes {
   SIGNIN = "SIGNIN",

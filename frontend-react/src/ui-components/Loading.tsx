@@ -1,5 +1,5 @@
 import React from "react";
-import { wrStyled, WrTheme } from "src/theme";
+import { WrTheme, wrStyled } from "src/theme";
 import { Spinner } from "./Spinner";
 
 const LoadingBackground = wrStyled.div`

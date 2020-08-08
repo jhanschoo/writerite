@@ -1,6 +1,6 @@
 import React from "react";
 
-import WrNavBar from "../navbar/WrNavBar";
+import WrNavBar from "src/components/navbar/WrNavBar";
 import WrSigninContent from "./WrSigninContent";
 
 const WrSigninView = (): JSX.Element =>

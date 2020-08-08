@@ -3,8 +3,8 @@ import React from "react";
 import { wrStyled } from "src/theme";
 import { LandingContent } from "src/ui";
 
-import WrBrandText from "../brand/WrBrandText";
-import WrSignin from "../signin/WrSignin";
+import WrBrandText from "src/components/brand/WrBrandText";
+import WrSignin from "src/components/signin/WrSignin";
 
 const HeroHeader = wrStyled.header`
 display: flex;

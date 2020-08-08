@@ -2,10 +2,10 @@ import React from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 import { WrState } from "src/store";
-import { SigninAction, createSignout } from "../signin/actions";
+import { SigninAction, createSignout } from "src/components/signin/actions";
 
-import { restartWsConnection } from "../../apolloClient";
-import { CurrentUser } from "../../types";
+import { restartWsConnection } from "src/apolloClient";
+import { CurrentUser } from "src/types";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Link, NavBar, NavBarItem, NavBarList } from "src/ui";

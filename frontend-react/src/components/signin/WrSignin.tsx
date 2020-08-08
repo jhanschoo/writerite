@@ -7,14 +7,14 @@ import {
 import * as yup from "yup";
 import { KEYUTIL, KJUR } from "jsrsasign";
 
-import { CurrentUser } from "../../types";
+import { CurrentUser } from "src/types";
 
 import { useDispatch } from "react-redux";
 import { SigninAction, createSignin } from "./actions";
 
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { restartWsConnection } from "../../apolloClient";
+import { restartWsConnection } from "src/apolloClient";
 import { Signin, SigninVariables } from "./gqlTypes/Signin";
 
 import { breakpoints, wrStyled } from "src/theme";

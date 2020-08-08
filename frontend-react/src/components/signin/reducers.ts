@@ -1,6 +1,6 @@
-import { client } from "../../apolloClient";
+import { client } from "src/apolloClient";
 import { ActionTypes, AuthorizationAction } from "./actions";
-import { CurrentUserAndToken } from "../../types";
+import { CurrentUserAndToken } from "src/types";
 import { Reducer } from "redux";
 
 export interface SigninState {
