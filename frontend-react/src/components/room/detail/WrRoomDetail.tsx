@@ -9,7 +9,7 @@ const WrRoomDetail = (): JSX.Element => {
   const { deckId } = history.location.state ?? {};
   return <>
     <WrRoomNavBar />
-    <Main />
+    <Main>{deckId}</Main>
   </>;
 };
 
