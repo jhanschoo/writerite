@@ -13,6 +13,7 @@ import { BorderlessButton, Item, List } from "../../../ui";
 
 import { DEBOUNCE_DELAY } from "../../../util";
 import LineEditor, { lineEditorStateFromString } from "../../editor/LineEditor";
+import { Modal } from "../../../ui-components";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -66,17 +67,13 @@ export const ActionsList = wrStyled(List)`
 flex-direction: row;
 flex-wrap: wrap;
 align-items: baseline;
-margin: ${({ theme: { space } }) => space[2]};
+margin: ${({ theme: { space } }) => `0 ${space[1]} ${space[1]} ${space[1]}`};
 `;
 
 const ActionsItem = wrStyled(Item)`
 flex-grow: 1;
 display: flex;
-margin: ${({ theme: { space } }) => ` 0 ${space[1]} ${space[1]}`};
-
-:last-child {
-  margin: ${({ theme: { space } }) => `0 0 ${space[3]} 0`};
-}
+margin: ${({ theme: { space } }) => ` 0 ${space[1]} ${space[2]} ${space[1]}`};
 `;
 
 const ActionsButton = wrStyled(BorderlessButton)`
@@ -113,6 +110,7 @@ const WrDeckDetailData = ({
   const [editorState, setEditorState] = useState(lineEditorStateFromString(deck.name));
   const [currentTitle, setCurrentTitle] = useState(deck.name);
   const [debouncing, setDebouncing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const mutateOpts = { variables: {
     id: deck.id,
     name: currentTitle,
@@ -150,6 +148,8 @@ const WrDeckDetailData = ({
     }
     return newEditorState;
   };
+  const handleShowDeleteModal = () => setShowDeleteModal(true);
+  const handleHideDeleteModal = () => setShowDeleteModal(false);
   const now = moment.utc();
   const deckTitleStatus = editorState.getCurrentContent().getPlainText().trim() === ""
     ? "invalid"
@@ -158,6 +158,8 @@ const WrDeckDetailData = ({
       : undefined;
   return (
     <DeckInfoBox>
+      {showDeleteModal && <Modal handleClose={handleHideDeleteModal}>
+      </Modal>}
       <StyledOuterBox>
         <StyledInnerBox>
           <StyledHeader>
@@ -179,11 +181,11 @@ const WrDeckDetailData = ({
       </StyledOuterBox>
       <ActionsList>
         <ActionsItem>
-          <ActionsButton>Create Room</ActionsButton>
+          <ActionsButton>Start Contest</ActionsButton>
         </ActionsItem>
-        <ActionsItem>
-          <ActionsButton>Delete Deck</ActionsButton>
-        </ActionsItem>
+        {!readOnly && <ActionsItem>
+          <ActionsButton onClick={handleShowDeleteModal}>Delete Deck...</ActionsButton>
+        </ActionsItem>}
       </ActionsList>
     </DeckInfoBox>
   );

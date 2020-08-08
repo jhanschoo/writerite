@@ -10,24 +10,14 @@ import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDe
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
 import { wrStyled } from "../../../theme";
-import { AnchorButton, BorderlessButton, Item, List } from "../../../ui";
-import { FrontBackCard, FrontBackCardActionsList, Modal } from "../../../ui-components";
+import { AnchorButton, BorderlessButton, Item } from "../../../ui";
+import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
 
 import { emptyFields, emptyRawContent, pushRawContent } from "../../../util";
 import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import WrDeckDetailTemplateItem from "./WrDeckDetailTemplateItem";
 import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "../../editor/AnswersEditor";
-
-const StyledList = wrStyled(List)`
-flex-direction: column;
-min-width: 50vw;
-`;
-
-const StyledEmptyMessage = wrStyled.p`
-margin: 0;
-padding: ${({ theme: { space } }) => space[3]};
-`;
+import WrDeckDetailFiledTemplatesModal from "./WrDeckDetailFiledTemplatesModal";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
@@ -192,7 +182,6 @@ const WrDeckDetailMainTemplateItem = ({
   const [mutateCreateTemplate, { loading: loadingCreate }] =
     useMutation<CardCreate, CardCreateVariables>(CARD_CREATE_MUTATION, { update });
   const handleAddCard = () => {
-    console.log(currentFields);
     void mutateAddCard({ variables: {
       deckId,
       card: currentFields,
@@ -260,17 +249,12 @@ const WrDeckDetailMainTemplateItem = ({
     setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
   };
   const loading = loadingCreate || loadingEdit || loadingDelete;
-  const templateItems = templates.map((template) => <WrDeckDetailTemplateItem key={template.id} template={template} />);
   return (
     <StyledItem>
-      {showTemplatesModal && <Modal handleClose={handleHideTemplatesModal}>
-        <StyledList>
-          {!templateItems.length && <StyledItem key="empty-message">
-            <StyledEmptyMessage>There are no filed templates to show.</StyledEmptyMessage>
-          </StyledItem>}
-          {templateItems}
-        </StyledList>
-      </Modal>}
+      {showTemplatesModal && <WrDeckDetailFiledTemplatesModal
+        handleClose={handleHideTemplatesModal}
+        templates={templates}
+      />}
       {showDeleteModal && <WrDeckDetailCardDeleteModal
         handleClose={handleHideDeleteModal}
         handleDelete={handleDelete}

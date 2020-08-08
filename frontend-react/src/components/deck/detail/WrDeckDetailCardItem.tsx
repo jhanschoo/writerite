@@ -5,8 +5,8 @@ import equal from "fast-deep-equal/es6/react";
 
 import { useMutation } from "@apollo/client";
 import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "../../sharedGql";
-import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
 import type { CardDelete, CardDeleteVariables } from "../../gqlTypes/CardDelete";
+import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
 import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
 import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
 
@@ -22,6 +22,7 @@ import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
+border-bottom: 1px solid ${({ theme: { bg } }) => bg[3]};
 `;
 
 const DeleteItem = wrStyled(Item)`
