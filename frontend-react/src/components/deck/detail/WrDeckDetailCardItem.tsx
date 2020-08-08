@@ -17,7 +17,7 @@ import { DEBOUNCE_DELAY } from "../../../util";
 
 import type { CardFields } from "../../../types";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
-import AnswersEditor, { answersEditorStateToStringArray, prependAnswer, rawToAnswer, answersEditorStateFromStringArray } from "../../editor/AnswersEditor";
+import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, rawToAnswer } from "../../editor/AnswersEditor";
 import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
 
 const StyledItem = wrStyled(Item)`
