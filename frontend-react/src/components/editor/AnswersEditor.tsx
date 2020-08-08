@@ -3,7 +3,7 @@ import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor,
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
 
-import { wrStyled } from "../../theme";
+import { wrStyled } from "src/theme";
 
 const entityStrategy: DraftDecorator["strategy"] = (block, callback, _content) =>
   block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);

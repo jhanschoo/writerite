@@ -1,11 +1,11 @@
 import React from "react";
 
-import { wrStyled } from "../../../theme";
-import { Item, List } from "../../../ui";
-import { Modal } from "../../../ui-components";
+import { wrStyled } from "src/theme";
+import { Item, List } from "src/ui";
+import { Modal } from "src/ui-components";
 
 import WrDeckDetailTemplateItem from "./WrDeckDetailTemplateItem";
-import { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
+import { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
 const StyledList = wrStyled(List)`
 flex-direction: column;

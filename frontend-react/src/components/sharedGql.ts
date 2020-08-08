@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, DECK_SCALARS, ROOM_SCALARS, CARD_SCALARS } from "../client-models";
+import { CARD_DETAIL, DECK_SCALARS, ROOM_SCALARS, CARD_SCALARS } from "src/client-models";
 
 export const DECKS_QUERY = gql`
 ${DECK_SCALARS}

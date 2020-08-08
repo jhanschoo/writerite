@@ -1,4 +1,4 @@
-import { wrStyled } from "../theme";
+import { wrStyled } from "src/theme";
 import { NavLink as rrLink } from "react-router-dom";
 
 export const Link = wrStyled(rrLink)`

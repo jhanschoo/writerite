@@ -1,4 +1,4 @@
-import { wrStyled } from "../../theme";
+import { wrStyled } from "src/theme";
 
 export const NavBar = wrStyled.nav`
 display: flex;

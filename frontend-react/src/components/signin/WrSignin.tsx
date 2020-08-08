@@ -17,9 +17,9 @@ import { useMutation } from "@apollo/client";
 import { restartWsConnection } from "../../apolloClient";
 import { Signin, SigninVariables } from "./gqlTypes/Signin";
 
-import { breakpoints, wrStyled } from "../../theme";
-import { AnchorButton, Button, Fieldset, TextInput } from "../../ui";
-import { HDivider } from "../../ui-components";
+import { breakpoints, wrStyled } from "src/theme";
+import { AnchorButton, Button, Fieldset, TextInput } from "src/ui";
+import { HDivider } from "src/ui-components";
 
 import { useHistory } from "react-router";
 import { Dispatch } from "redux";

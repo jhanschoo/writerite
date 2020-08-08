@@ -57,9 +57,27 @@ build-backend-apollo:
 pages:
   stage: build-projects
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_COMMIT_BRANCH == "master"
   needs:
-    - "publish-api-graph"
+    - publish-api-graph
+  image: node:14.7
+  script:
+    - cd frontend-react
+    - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
+    - NODE_ENV="production" npm run build
+    - cd ..
+    - mv frontend-react/build public
+  services: []
+  artifacts:
+    paths:
+      - public
+
+build-pages:
+  stage: build-projects
+  rules:
+    - if: $CI_COMMIT_BRANCH != "master"
+  needs:
+    - publish-api-graph
   image: node:14.7
   script:
     - cd frontend-react

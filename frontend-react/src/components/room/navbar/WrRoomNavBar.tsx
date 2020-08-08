@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 
-import { wrStyled } from "../../../theme";
-import { BorderlessButton, Item, List, NavBar, NavBarItem, NavBarList } from "../../../ui";
-import { Modal } from "../../../ui-components";
+import { wrStyled } from "src/theme";
+import { BorderlessButton, Item, List, NavBar, NavBarItem, NavBarList } from "src/ui";
+import { Modal } from "src/ui-components";
 
 import WrBrandText from "../../brand/WrBrandText";
 import { RoomState } from "../../../gqlGlobalTypes";

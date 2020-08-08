@@ -1,4 +1,4 @@
-import { wrStyled } from "../../theme";
+import { wrStyled } from "src/theme";
 
 export const LandingContent = wrStyled.main`
 grid-area: 2 / 2 / 3 / 14;

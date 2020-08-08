@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-shadow
 import React, { MouseEvent, PropsWithChildren, ReactNode, useState } from "react";
 
-import { wrStyled } from "../theme";
+import { wrStyled } from "src/theme";
 
 interface Props {
   content: ReactNode;

@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import { wrStyled } from "../theme";
-import { List } from "../ui";
+import { wrStyled } from "src/theme";
+import { List } from "src/ui";
 
 export const FrontBackCardActionsList = wrStyled(List)`
 flex-direction: row;

@@ -2,11 +2,11 @@ import React from "react";
 
 import { useQuery } from "@apollo/client";
 import { CARDS_OF_DECK_QUERY } from "../../sharedGql";
-import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
 
-import { wrStyled } from "../../../theme";
-import { Item, List } from "../../../ui";
+import { wrStyled } from "src/theme";
+import { Item, List } from "src/ui";
 
 import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 import WrDeckDetailCardItem from "./WrDeckDetailCardItem";

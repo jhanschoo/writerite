@@ -1,6 +1,6 @@
 import React from "react";
 
-import { wrStyled } from "../../theme";
+import { wrStyled } from "src/theme";
 
 const BrandText = wrStyled.span`
 font-weight: 400;

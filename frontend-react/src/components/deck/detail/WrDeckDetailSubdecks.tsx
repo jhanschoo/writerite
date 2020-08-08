@@ -2,14 +2,14 @@ import React, { useState } from "react";
 
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { DECK_SCALARS } from "../../../client-models";
-import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
+import { DECK_SCALARS } from "src/client-models";
+import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
 import type { DeckAddSubdeck, DeckAddSubdeckVariables } from "./gqlTypes/DeckAddSubdeck";
 import type { DeckRemoveSubdeck, DeckRemoveSubdeckVariables } from "./gqlTypes/DeckRemoveSubdeck";
 
-import { wrStyled } from "../../../theme";
-import { BorderlessButton, List, ModalBackground, ModalCloseButton, ModalContainer } from "../../../ui";
-import { Loading } from "../../../ui-components";
+import { wrStyled } from "src/theme";
+import { BorderlessButton, List, ModalBackground, ModalCloseButton, ModalContainer } from "src/ui";
+import { Loading } from "src/ui-components";
 
 import WrDecksList from "../list/WrDecksList";
 import WrDeckDetailSubdeckItem from "./WrDeckDetailSubdeckItem";

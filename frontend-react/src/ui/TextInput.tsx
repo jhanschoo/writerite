@@ -1,4 +1,4 @@
-import { wrStyled } from "../theme";
+import { wrStyled } from "src/theme";
 
 // eslint-disable-next-line no-warning-comments
 // TODO: make generic argument stricter in props that it accepts

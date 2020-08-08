@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, SyntheticEvent } from "react";
 
-import { ModalBackground, ModalCloseButton, ModalContainer } from "../ui";
+import { ModalBackground, ModalCloseButton, ModalContainer } from "src/ui";
 
 interface Props {
   handleClose: () => void;

@@ -1,4 +1,4 @@
-import { wrStyled } from "../../theme";
+import { wrStyled } from "src/theme";
 import {Link} from "../Link";
 
 const SidebarMenuLink = wrStyled(Link)`

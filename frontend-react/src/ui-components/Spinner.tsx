@@ -1,6 +1,6 @@
 import React, { CSSProperties } from "react";
 
-import { wrStyled } from "../theme";
+import { wrStyled } from "src/theme";
 
 // aspect-ratio not really supported yet.
 const SpinnerBox = wrStyled.div`

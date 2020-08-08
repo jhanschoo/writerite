@@ -9,15 +9,15 @@ import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
 import { DECKS_QUERY } from "../sharedGql";
 import type { Decks, DecksVariables } from "../gqlTypes/Decks";
-import { DECK_SCALARS } from "../../client-models";
+import { DECK_SCALARS } from "src/client-models";
 import { CardCreateInput, DecksQueryScope } from "../../gqlGlobalTypes";
 import type { DeckCreate, DeckCreateVariables } from "./gqlTypes/DeckCreate";
 
 import { StyledComponent } from "styled-components";
-import { WrTheme, wrStyled } from "../../theme";
+import { WrTheme, wrStyled } from "src/theme";
 
-import { Button, Fieldset, TextInput } from "../../ui";
-import { HDivider } from "../../ui-components";
+import { Button, Fieldset, TextInput } from "src/ui";
+import { HDivider } from "src/ui-components";
 
 const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as GraphQLJSONObject;
 

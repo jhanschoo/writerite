@@ -1,4 +1,4 @@
-import { store } from "../store";
+import { store } from "src/store";
 
 export const getAuth = (): string => {
   const storeState = store.getState();

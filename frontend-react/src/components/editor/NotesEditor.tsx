@@ -1,8 +1,8 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw } from "draft-js";
 
-import { wrStyled } from "../../theme";
-import { BorderlessButton, Item, List } from "../../ui";
+import { wrStyled } from "src/theme";
+import { BorderlessButton, Item, List } from "src/ui";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 

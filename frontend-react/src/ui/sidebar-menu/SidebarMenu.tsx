@@ -1,4 +1,4 @@
-import { wrStyled } from "../../theme";
+import { wrStyled } from "src/theme";
 import { Sidebar } from "../layout/Sidebar";
 
 export const SidebarMenu = wrStyled(Sidebar)`

@@ -2,16 +2,16 @@ import React from "react";
 import { useParams } from "react-router";
 
 import { useSelector } from "react-redux";
-import type { WrState } from "../../../store";
+import type { WrState } from "src/store";
 
 import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
-import { DECK_DETAIL } from "../../../client-models";
-import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
+import { DECK_DETAIL } from "src/client-models";
+import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
 import type { DeckDetail, DeckDetailVariables } from "./gqlTypes/DeckDetail";
 
-import { wrStyled } from "../../../theme";
-import { Main, MinimalLink } from "../../../ui";
+import { wrStyled } from "src/theme";
+import { Main, MinimalLink } from "src/ui";
 
 import WrDeckDetailData from "./WrDeckDetailData";
 import WrDeckDetailDescription from "./WrDeckDetailDescription";

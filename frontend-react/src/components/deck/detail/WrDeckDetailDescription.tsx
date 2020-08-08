@@ -7,9 +7,9 @@ import { useMutation } from "@apollo/client";
 import { DECK_EDIT_MUTATION } from "../../sharedGql";
 import { DeckEdit, DeckEditVariables } from "../../gqlTypes/DeckEdit";
 
-import { wrStyled } from "../../../theme";
+import { wrStyled } from "src/theme";
 
-import { DEBOUNCE_DELAY } from "../../../util";
+import { DEBOUNCE_DELAY } from "src/util";
 import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 
 const StyledOuterBox = wrStyled.div`

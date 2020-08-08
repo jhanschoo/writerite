@@ -8,12 +8,12 @@ import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from ".
 import type { CardDelete, CardDeleteVariables } from "../../gqlTypes/CardDelete";
 import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
 import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
-import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
-import { wrStyled } from "../../../theme";
-import { AnchorButton, BorderlessButton, Item } from "../../../ui";
-import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
-import { DEBOUNCE_DELAY } from "../../../util";
+import { wrStyled } from "src/theme";
+import { AnchorButton, BorderlessButton, Item } from "src/ui";
+import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
+import { DEBOUNCE_DELAY } from "src/util";
 
 import type { CardFields } from "../../../types";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";

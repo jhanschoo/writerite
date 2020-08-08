@@ -5,11 +5,11 @@ import { useQuery } from "@apollo/client";
 import { DECKS_QUERY } from "../../sharedGql";
 import { DecksQueryScope } from "../../../gqlGlobalTypes";
 import type { Decks, DecksVariables } from "../../gqlTypes/Decks";
-import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
-import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "../../../util";
+import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
+import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "src/util";
 
-import { wrStyled } from "../../../theme";
-import { BorderlessButton, Item, List, Main, ModalBackground, ModalCloseButton, ModalContainer, TextInput } from "../../../ui";
+import { wrStyled } from "src/theme";
+import { BorderlessButton, Item, List, Main, ModalBackground, ModalCloseButton, ModalContainer, TextInput } from "src/ui";
 
 import WrDeckItem from "./WrDeckItem";
 import WrUploadDeck from "../WrUploadDeck";

@@ -1,11 +1,11 @@
 import React from "react";
 
-import { wrStyled } from "../../../theme";
-import { BorderlessButton, Item } from "../../../ui";
-import { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
+import { wrStyled } from "src/theme";
+import { BorderlessButton, Item } from "src/ui";
+import { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
-import { emptyRawContent, identity } from "../../../util";
-import { FrontBackCard, FrontBackCardActionsList, Modal } from "../../../ui-components";
+import { emptyRawContent, identity } from "src/util";
+import { FrontBackCard, FrontBackCardActionsList, Modal } from "src/ui-components";
 import SelfManagedNotesEditor from "../../editor/SelfManagedNotesEditor";
 import SelfManagedAnswersEditor from "../../editor/SelfManagedAnswersEditor";
 

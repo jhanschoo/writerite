@@ -1,4 +1,4 @@
-import { wrStyled } from "../theme";
+import { wrStyled } from "src/theme";
 
 export const Button = wrStyled.button`
 display: flex;

@@ -3,10 +3,10 @@
 import React, { MouseEvent } from "react";
 import moment from "moment";
 
-import type { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
+import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
 
-import { wrStyled } from "../../../theme";
-import { Button, Item, MinimalLink } from "../../../ui";
+import { wrStyled } from "src/theme";
+import { Button, Item, MinimalLink } from "src/ui";
 
 const StyledItem = wrStyled(Item)`
 flex-direction: column;

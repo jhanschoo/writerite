@@ -2,10 +2,10 @@
 import React from "react";
 import moment from "moment";
 
-import { DeckScalars } from "../../../client-models/gqlTypes/DeckScalars";
+import { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
 
-import { wrStyled } from "../../../theme";
-import { Item, MinimalButton, MinimalLink } from "../../../ui";
+import { wrStyled } from "src/theme";
+import { Item, MinimalButton, MinimalLink } from "src/ui";
 
 const StyledItem = wrStyled(Item)`
 flex-direction: column;

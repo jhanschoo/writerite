@@ -7,13 +7,13 @@ import type { CardCreate, CardCreateVariables } from "../../gqlTypes/CardCreate"
 import type { CardEdit, CardEditVariables } from "../../gqlTypes/CardEdit";
 import type { CardDelete, CardDeleteVariables } from "../../gqlTypes/CardDelete";
 import type { CardsOfDeck, CardsOfDeckVariables } from "../../gqlTypes/CardsOfDeck";
-import type { CardDetail } from "../../../client-models/gqlTypes/CardDetail";
+import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 
-import { wrStyled } from "../../../theme";
-import { AnchorButton, BorderlessButton, Item } from "../../../ui";
-import { FrontBackCard, FrontBackCardActionsList } from "../../../ui-components";
+import { wrStyled } from "src/theme";
+import { AnchorButton, BorderlessButton, Item } from "src/ui";
+import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
 
-import { emptyFields, emptyRawContent, pushRawContent } from "../../../util";
+import { emptyFields, emptyRawContent, pushRawContent } from "src/util";
 import NotesEditor, { notesEditorStateFromRaw } from "../../editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "../../editor/AnswersEditor";

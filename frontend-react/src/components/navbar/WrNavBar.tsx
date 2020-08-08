@@ -1,14 +1,14 @@
 import React from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { WrState } from "../../store";
+import { WrState } from "src/store";
 import { SigninAction, createSignout } from "../signin/actions";
 
 import { restartWsConnection } from "../../apolloClient";
 import { CurrentUser } from "../../types";
 
-import { wrStyled } from "../../theme";
-import { BorderlessButton, Link, NavBar, NavBarItem, NavBarList } from "../../ui";
+import { wrStyled } from "src/theme";
+import { BorderlessButton, Link, NavBar, NavBarItem, NavBarList } from "src/ui";
 
 import WrBrandText from "../brand/WrBrandText";
 import { Dispatch } from "redux";
