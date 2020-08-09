@@ -249,63 +249,61 @@ const WrDeckDetailMainTemplateItem = ({
     setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
   };
   const loading = loadingCreate || loadingEdit || loadingDelete;
-  return (
-    <StyledItem>
-      {showTemplatesModal && <WrDeckDetailFiledTemplatesModal
-        handleClose={handleHideTemplatesModal}
-        templates={templates}
+  return <StyledItem>
+    {showTemplatesModal && <WrDeckDetailFiledTemplatesModal
+      handleClose={handleHideTemplatesModal}
+      templates={templates}
+    />}
+    {showDeleteModal && <WrDeckDetailCardDeleteModal
+      handleClose={handleHideDeleteModal}
+      handleDelete={handleDelete}
+      template={true}
+      card={card}
+    />}
+    <FrontBackCard
+      header={<StyledHeader>
+        <h4>Current template</h4>
+        <ShowTemplatesButton onClick={handleShowTemplatesModal}>Filed Templates</ShowTemplatesButton>
+      </StyledHeader>}
+      promptContent={<NotesEditor
+        editorState={promptEditorState}
+        setEditorState={setPromptEditorState}
+        handleChange={handlePromptChange}
+        placeholder={"Empty prompt. Try writing something..."}
       />}
-      {showDeleteModal && <WrDeckDetailCardDeleteModal
-        handleClose={handleHideDeleteModal}
-        handleDelete={handleDelete}
-        template={true}
-        card={card}
+      fullAnswerContent={<NotesEditor
+        editorState={fullAnswerEditorState}
+        setEditorState={setFullAnswerEditorState}
+        handleChange={handleFullAnswerChange}
+        placeholder={"Empty answer. Try writing something..."}
       />}
-      <FrontBackCard
-        header={<StyledHeader>
-          <h4>Current template</h4>
-          <ShowTemplatesButton onClick={handleShowTemplatesModal}>Filed Templates</ShowTemplatesButton>
-        </StyledHeader>}
-        promptContent={<NotesEditor
-          editorState={promptEditorState}
-          setEditorState={setPromptEditorState}
-          handleChange={handlePromptChange}
-          placeholder={"Empty prompt. Try writing something..."}
-        />}
-        fullAnswerContent={<NotesEditor
-          editorState={fullAnswerEditorState}
-          setEditorState={setFullAnswerEditorState}
-          handleChange={handleFullAnswerChange}
-          placeholder={"Empty answer. Try writing something..."}
-        />}
-        beforeAnswersContent={generatedAnswer &&
-          <SecondaryButton onClick={addGeneratedAnswer}>
-            add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
-          </SecondaryButton>
-        }
-        answersContent={<AnswersEditor
-          editorState={answersEditorState}
-          setEditorState={setAnswersEditorState}
-          handleChange={handleAnswersChange}
-        />}
-        footer={<FrontBackCardActionsList>
-          <DeleteItem>
-            <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
-          </DeleteItem>
-          <ActionsItem>
-            {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
-            <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
-          </ActionsItem>
-          <ActionsItem>
-            <SecondaryButton onClick={handleFileAway} disabled={loading}>File away</SecondaryButton>
-          </ActionsItem>
-          <ActionsItem>
-            <AddCardButton onClick={handleAddCard} disabled={loading}>Save as Card</AddCardButton>
-          </ActionsItem>
-        </FrontBackCardActionsList>}
-      />
-    </StyledItem>
-  );
+      beforeAnswersContent={generatedAnswer &&
+        <SecondaryButton onClick={addGeneratedAnswer}>
+          add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
+        </SecondaryButton>
+      }
+      answersContent={<AnswersEditor
+        editorState={answersEditorState}
+        setEditorState={setAnswersEditorState}
+        handleChange={handleAnswersChange}
+      />}
+      footer={<FrontBackCardActionsList>
+        <DeleteItem>
+          <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
+        </DeleteItem>
+        <ActionsItem>
+          {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
+          <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
+        </ActionsItem>
+        <ActionsItem>
+          <SecondaryButton onClick={handleFileAway} disabled={loading}>File away</SecondaryButton>
+        </ActionsItem>
+        <ActionsItem>
+          <AddCardButton onClick={handleAddCard} disabled={loading}>Save as Card</AddCardButton>
+        </ActionsItem>
+      </FrontBackCardActionsList>}
+    />
+  </StyledItem>;
 };
 
 export default WrDeckDetailMainTemplateItem;

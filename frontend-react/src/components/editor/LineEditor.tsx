@@ -45,15 +45,13 @@ const LineEditor = ({
       setEditorState(EditorState.undo(nextEditorState));
     }
   };
-  return (
-    <Editor
-      blockRenderMap={blockRenderMap}
-      editorState={editorState}
-      onChange={handleEditorChange}
-      readOnly={readOnly}
-      ref={ref}
-    />
-  );
+  return <Editor
+    blockRenderMap={blockRenderMap}
+    editorState={editorState}
+    onChange={handleEditorChange}
+    readOnly={readOnly}
+    ref={ref}
+  />;
 };
 
 export default forwardRef<Editor, Props>(LineEditor);

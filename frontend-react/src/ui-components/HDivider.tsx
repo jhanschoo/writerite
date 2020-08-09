@@ -33,10 +33,8 @@ export const HDivider = ({ children, spacerColor }: Props): JSX.Element => {
       </TextBox>
       <Spacer spacerColor={spacerColor} />
     </>;
-  return (
-    <OuterBox>
-      <Spacer spacerColor={spacerColor} />
-      {children && labelAndHalf}
-    </OuterBox>
-  );
+  return <OuterBox>
+    <Spacer spacerColor={spacerColor} />
+    {children && labelAndHalf}
+  </OuterBox>;
 };

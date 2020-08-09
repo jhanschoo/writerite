@@ -325,110 +325,106 @@ const WrSignin = (): JSX.Element => {
     const developmentSignin = process.env.NODE_ENV !== "development"
       ? ""
       : <AnchorButton onClick={handleDevelopmentSignin}>Development Login</AnchorButton>;
-    return (
-      <form onSubmit={handleSubmit}>
-        <FieldsetWithMargin>
-          <StyledLabel htmlFor="email-input">Email</StyledLabel>
-          <FlowTextInput
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="email"
-            name="email"
-            id="email-input"
-            // autocomplete={isSignup ? 'new-username' : 'current-username'}
-            disabled={disabled}
-            className={showError("email") ? "error" : showValid("email") ? "valid" : ""}
-          />
-          {maybeError("email")}
-        </FieldsetWithMargin>
-        <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
-          <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
-          <FlowTextInput
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="text"
-            name="name"
-            id="name-input"
-            // autocomplete={isSignup ? 'new-username' : 'current-username'}
-            disabled={disabled}
-            className={showError("name") ? "error" : showValid("name") ? "valid" : ""}
-          />
-          {maybeError("name")}
-        </FieldsetWithMargin>
-        <FieldsetWithMargin>
-          <StyledLabel htmlFor="password-input">Password</StyledLabel>
-          <FlowTextInput
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="password"
-            name="password"
-            id="password-input"
-            // autocomplete={isSignup ? 'new-password' : 'current-password'}
-            disabled={disabled}
-            className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
-          />
-          {formattedPasswordError}
-        </FieldsetWithMargin>
-        <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
-          <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
-          <FlowTextInput
-            onChange={handleChange}
-            onBlur={handleBlur}
-            type="password"
-            name="confirmPassword"
-            id="confirm-password-input"
-            aria-label="Confirm Password"
-            // autocomplete={isSignup ? 'new-password' : 'current-password'}
-            disabled={disabled}
-            className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
-          />
-        </FieldsetWithMargin>
-        <Fieldset>
-          <TextCenteredDiv>
-            <InlineBlockDiv id="g-recaptcha" />
-            {maybeError("recaptcha")}
-          </TextCenteredDiv>
-        </Fieldset>
-        <LocalSigninButton
-          type="submit"
-        >
-          {isSignup ? "Sign up with Email and Password" : "Login with Email and Password"}
-        </LocalSigninButton>
-        <SmallMessage>
-          {isSignup ? "Existing user?\u00A0" : "New user?\u00A0"}
-          <AnchorButton onClick={handleToggleSignin}>
-            {isSignup ? "Login" : "Sign up"}
-          </AnchorButton> {developmentSignin}
-        </SmallMessage>
-      </form>
-    );
+    return <form onSubmit={handleSubmit}>
+      <FieldsetWithMargin>
+        <StyledLabel htmlFor="email-input">Email</StyledLabel>
+        <FlowTextInput
+          onChange={handleChange}
+          onBlur={handleBlur}
+          type="email"
+          name="email"
+          id="email-input"
+          // autocomplete={isSignup ? 'new-username' : 'current-username'}
+          disabled={disabled}
+          className={showError("email") ? "error" : showValid("email") ? "valid" : ""}
+        />
+        {maybeError("email")}
+      </FieldsetWithMargin>
+      <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
+        <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
+        <FlowTextInput
+          onChange={handleChange}
+          onBlur={handleBlur}
+          type="text"
+          name="name"
+          id="name-input"
+          // autocomplete={isSignup ? 'new-username' : 'current-username'}
+          disabled={disabled}
+          className={showError("name") ? "error" : showValid("name") ? "valid" : ""}
+        />
+        {maybeError("name")}
+      </FieldsetWithMargin>
+      <FieldsetWithMargin>
+        <StyledLabel htmlFor="password-input">Password</StyledLabel>
+        <FlowTextInput
+          onChange={handleChange}
+          onBlur={handleBlur}
+          type="password"
+          name="password"
+          id="password-input"
+          // autocomplete={isSignup ? 'new-password' : 'current-password'}
+          disabled={disabled}
+          className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
+        />
+        {formattedPasswordError}
+      </FieldsetWithMargin>
+      <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
+        <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
+        <FlowTextInput
+          onChange={handleChange}
+          onBlur={handleBlur}
+          type="password"
+          name="confirmPassword"
+          id="confirm-password-input"
+          aria-label="Confirm Password"
+          // autocomplete={isSignup ? 'new-password' : 'current-password'}
+          disabled={disabled}
+          className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
+        />
+      </FieldsetWithMargin>
+      <Fieldset>
+        <TextCenteredDiv>
+          <InlineBlockDiv id="g-recaptcha" />
+          {maybeError("recaptcha")}
+        </TextCenteredDiv>
+      </Fieldset>
+      <LocalSigninButton
+        type="submit"
+      >
+        {isSignup ? "Sign up with Email and Password" : "Login with Email and Password"}
+      </LocalSigninButton>
+      <SmallMessage>
+        {isSignup ? "Existing user?\u00A0" : "New user?\u00A0"}
+        <AnchorButton onClick={handleToggleSignin}>
+          {isSignup ? "Login" : "Sign up"}
+        </AnchorButton> {developmentSignin}
+      </SmallMessage>
+    </form>;
   };
-  return (
-    <SigninBox>
-      <GoogleButton
-        disabled={disabled}
-        onClick={handleGoogleSignin}
-      >
-        Sign in with Google
-      </GoogleButton>
-      <FacebookButton
-        disabled={disabled}
-        onClick={handleFacebookSignin}
-      >
-        Sign in with Facebook
-      </FacebookButton>
-      <HDivider>
-        OR
-      </HDivider>
-      <Formik
-        initialValues={formInitialValues}
-        onSubmit={handleLocalSignin}
-        validationSchema={formSchema}
-      >
-        {renderFields}
-      </Formik>
-    </SigninBox>
-  );
+  return <SigninBox>
+    <GoogleButton
+      disabled={disabled}
+      onClick={handleGoogleSignin}
+    >
+      Sign in with Google
+    </GoogleButton>
+    <FacebookButton
+      disabled={disabled}
+      onClick={handleFacebookSignin}
+    >
+      Sign in with Facebook
+    </FacebookButton>
+    <HDivider>
+      OR
+    </HDivider>
+    <Formik
+      initialValues={formInitialValues}
+      onSubmit={handleLocalSignin}
+      validationSchema={formSchema}
+    >
+      {renderFields}
+    </Formik>
+  </SigninBox>;
 };
 
 export default WrSignin;

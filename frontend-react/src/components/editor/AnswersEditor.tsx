@@ -414,17 +414,15 @@ const AnswersEditor = (props: Props): JSX.Element => {
     }
   };
 
-  return (
-    <Wrapper>
-      <Editor
-        blockRenderMap={blockRenderMap}
-        editorState={editorState}
-        onChange={handleEditorChange}
-        placeholder={placeholder}
-        readOnly={readOnly}
-      />
-    </Wrapper>
-  );
+  return <Wrapper>
+    <Editor
+      blockRenderMap={blockRenderMap}
+      editorState={editorState}
+      onChange={handleEditorChange}
+      placeholder={placeholder}
+      readOnly={readOnly}
+    />
+  </Wrapper>;
 };
 
 export default AnswersEditor;

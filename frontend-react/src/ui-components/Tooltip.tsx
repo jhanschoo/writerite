@@ -63,16 +63,14 @@ export const Tooltip = ({ children, content, placement = "down" }: PropsWithChil
   const [isHover, setIsHover] = useState(false);
   const handleMouseEnter = (_e: MouseEvent<HTMLElement>) => setIsHover(true);
   const handleMouseLeave = (_e: MouseEvent<HTMLElement>) => setIsHover(false);
-  return (
-    <Wrapper>
-      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {children}
-      </div>
-      <Anchor className={`${placement} ${isHover ? "" : "hidden"}`}>
-        <TooltipDiv className={placement}>
-          {content}
-        </TooltipDiv>
-      </Anchor>
-    </Wrapper>
-  );
+  return <Wrapper>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+      {children}
+    </div>
+    <Anchor className={`${placement} ${isHover ? "" : "hidden"}`}>
+      <TooltipDiv className={placement}>
+        {content}
+      </TooltipDiv>
+    </Anchor>
+  </Wrapper>;
 };

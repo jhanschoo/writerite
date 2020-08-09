@@ -1,16 +1,29 @@
 import React from "react";
-import { useHistory } from "react-router";
 
+import { wrStyled } from "src/theme";
 import { Main } from "src/ui";
+
 import WrRoomNavBar from "../navbar/WrRoomNavBar";
+import WrRoomDetailDash from "./WrRoomDetailDash";
+import WrRoomDetailInput from "./WrRoomDetailInput";
+
+const EventBox = wrStyled.div`
+max-height: 50vh;
+`;
+
+const ConversationBox = wrStyled.div`
+flex-grow: 1;
+flex-shrink: 1;
+`;
 
 const WrRoomDetail = (): JSX.Element => {
-  // eslint-disable-next-line no-shadow
-  const history = useHistory<{ deckId: string } | null>();
-  const { deckId } = history.location.state ?? {};
   return <>
     <WrRoomNavBar />
-    <Main>{deckId}</Main>
+    <Main>
+      <WrRoomDetailDash />
+      <ConversationBox />
+      <WrRoomDetailInput />
+    </Main>
   </>;
 };
 

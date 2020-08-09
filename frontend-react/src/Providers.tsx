@@ -25,19 +25,17 @@ const Providers = ({ children }: Props): JSX.Element => {
     void persistedCacheStatus.then(() => setCacheReady(true));
     return loading;
   }
-  return (
-    <Provider store={store}>
-      <PersistGate loading={loading} persistor={persistor}>
-        <BrowserRouter>
-          <ApolloProvider client={client}>
-            <ThemeProvider theme={theme}>
-              {children}
-            </ThemeProvider>
-          </ApolloProvider>
-        </BrowserRouter>
-      </PersistGate>
-    </Provider>
-  );
+  return <Provider store={store}>
+    <PersistGate loading={loading} persistor={persistor}>
+      <BrowserRouter>
+        <ApolloProvider client={client}>
+          <ThemeProvider theme={theme}>
+            {children}
+          </ThemeProvider>
+        </ApolloProvider>
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>;
 };
 
 export default Providers;

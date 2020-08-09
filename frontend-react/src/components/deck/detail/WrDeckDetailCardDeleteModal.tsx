@@ -59,40 +59,38 @@ const WrDeckDetailCardDeleteModal = ({
     fullAnswer: emptyRawContent,
     answers: [],
   };
-  return (
-    <Modal handleClose={handleClose}>
-      <FrontBackCard
-        header={<StyledDeletePrompt>
-          <p>Delete this{template ? " template" : " card"}?</p>
-        </StyledDeletePrompt>}
-        promptContent={<SelfManagedNotesEditor
-          initialContent={prompt as Record<string, unknown>}
-          placeholder="Empty"
-          handleChange={identity}
-          readOnly={true}
-        />}
-        fullAnswerContent={<SelfManagedNotesEditor
-          initialContent={fullAnswer as Record<string, unknown>}
-          placeholder="Empty"
-          handleChange={identity}
-          readOnly={true}
-        />}
-        answersContent={<SelfManagedAnswersEditor
-          initialContent={answers}
-          handleChange={identity}
-          readOnly={true}
-        />}
-        footer={<FrontBackCardActionsList>
-          <ActionsItem>
-            <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>
-          </ActionsItem>
-          <ActionsItem>
-            <DeleteCardButton onClick={handleDelete}>Delete</DeleteCardButton>
-          </ActionsItem>
-        </FrontBackCardActionsList>}
-      />
-    </Modal>
-  );
+  return <Modal handleClose={handleClose}>
+    <FrontBackCard
+      header={<StyledDeletePrompt>
+        <p>Delete this{template ? " template" : " card"}?</p>
+      </StyledDeletePrompt>}
+      promptContent={<SelfManagedNotesEditor
+        initialContent={prompt as Record<string, unknown>}
+        placeholder="Empty"
+        handleChange={identity}
+        readOnly={true}
+      />}
+      fullAnswerContent={<SelfManagedNotesEditor
+        initialContent={fullAnswer as Record<string, unknown>}
+        placeholder="Empty"
+        handleChange={identity}
+        readOnly={true}
+      />}
+      answersContent={<SelfManagedAnswersEditor
+        initialContent={answers}
+        handleChange={identity}
+        readOnly={true}
+      />}
+      footer={<FrontBackCardActionsList>
+        <ActionsItem>
+          <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>
+        </ActionsItem>
+        <ActionsItem>
+          <DeleteCardButton onClick={handleDelete}>Delete</DeleteCardButton>
+        </ActionsItem>
+      </FrontBackCardActionsList>}
+    />
+  </Modal>;
 };
 
 export default WrDeckDetailCardDeleteModal;

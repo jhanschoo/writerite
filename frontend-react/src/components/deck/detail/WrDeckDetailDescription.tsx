@@ -96,24 +96,22 @@ const WrDeckDetailDescription = ({
   const descriptionStatus = loading || !equal(currentDescription, description)
     ? "saving"
     : undefined;
-  return (
-    <StyledOuterBox>
-      <StyledInnerBox>
-        <StyledHeader>
-          <h4>About this deck</h4>
-          <DescriptionStatus>{descriptionStatus}</DescriptionStatus>
-        </StyledHeader>
-        <StyledContent>
-          <NotesEditor
-            editorState={editorState}
-            setEditorState={setEditorState}
-            handleChange={handleChange}
-            placeholder={readOnly ? "No description" : "Enter a description..."}
-            readOnly={readOnly}
-          />
-        </StyledContent>
-      </StyledInnerBox>
-    </StyledOuterBox>
-  );
+  return <StyledOuterBox>
+    <StyledInnerBox>
+      <StyledHeader>
+        <h4>About this deck</h4>
+        <DescriptionStatus>{descriptionStatus}</DescriptionStatus>
+      </StyledHeader>
+      <StyledContent>
+        <NotesEditor
+          editorState={editorState}
+          setEditorState={setEditorState}
+          handleChange={handleChange}
+          placeholder={readOnly ? "No description" : "Enter a description..."}
+          readOnly={readOnly}
+        />
+      </StyledContent>
+    </StyledInnerBox>
+  </StyledOuterBox>;
 };
 export default WrDeckDetailDescription;

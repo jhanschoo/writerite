@@ -285,51 +285,49 @@ const WrUploadDeck = (): JSX.Element => {
       }
     }
   };
-  return (
-    <StyledForm onSubmit={handleSubmit}>
-      <DropDiv
-        onDragEnter={handleDragEnter}
-        onDragLeave={handleDragLeave}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        ref={dropDivEl}
-      >
-        {dragStatusMessage}
-        <DividerDiv>
-          <HDivider>OR</HDivider>
-        </DividerDiv>
-        <FileInput
-          type="file"
-          id="deck-upload-file-input"
-          required={true}
-          onChange={handleFileChange}
-          disabled={loading}
+  return <StyledForm onSubmit={handleSubmit}>
+    <DropDiv
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+      ref={dropDivEl}
+    >
+      {dragStatusMessage}
+      <DividerDiv>
+        <HDivider>OR</HDivider>
+      </DividerDiv>
+      <FileInput
+        type="file"
+        id="deck-upload-file-input"
+        required={true}
+        onChange={handleFileChange}
+        disabled={loading}
+      />
+      <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
+      {noFilenameMessage}
+      <StyledFieldset className={filename === null ? "hidden" : undefined}>
+        <DropDivLabel htmlFor="upload-deck-name">
+          <strong>{filename}</strong> will be uploaded with name
+        </DropDivLabel>
+        <StyledTextInput
+          id="upload-deck-name"
+          value={nameInput}
+          onChange={handleNameChange}
+          className={filename === null ? "hidden" : undefined}
         />
-        <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
-        {noFilenameMessage}
-        <StyledFieldset className={filename === null ? "hidden" : undefined}>
-          <DropDivLabel htmlFor="upload-deck-name">
-            <strong>{filename}</strong> will be uploaded with name
-          </DropDivLabel>
-          <StyledTextInput
-            id="upload-deck-name"
-            value={nameInput}
-            onChange={handleNameChange}
-            className={filename === null ? "hidden" : undefined}
-          />
-          <StyledButton type="submit" disabled={!cards || loading}>
-          Upload
-          </StyledButton>
-        </StyledFieldset>
-        <DividerDiv>
-          <HDivider>OR</HDivider>
-        </DividerDiv>
-        <StyledButton onClick={handleCreateEmpty} disabled={loading}>
-        Create an Empty Deck
+        <StyledButton type="submit" disabled={!cards || loading}>
+        Upload
         </StyledButton>
-      </DropDiv>
-    </StyledForm>
-  );
+      </StyledFieldset>
+      <DividerDiv>
+        <HDivider>OR</HDivider>
+      </DividerDiv>
+      <StyledButton onClick={handleCreateEmpty} disabled={loading}>
+      Create an Empty Deck
+      </StyledButton>
+    </DropDiv>
+  </StyledForm>;
 };
 
 export default WrUploadDeck;

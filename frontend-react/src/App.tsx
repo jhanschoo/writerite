@@ -16,17 +16,15 @@ import WrSigninView from "./components/signin/WrSigninView";
 
 const App = (): JSX.Element => {
   const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);
-  return (
-    <ViewportContainer>
-      <Switch>
-        <Route path="/" exact={true} component={WrLandingView} />
-        {user && <Route path="/deck" component={WrDeckView} />}
-        {user && <Route path="/room" component={WrRoomView} />}
-        <Route path="/signin" exact={true} component={WrSigninView} />
-        <Redirect to="/" />
-      </Switch>
-    </ViewportContainer>
-  );
+  return <ViewportContainer>
+    <Switch>
+      <Route path="/" exact={true} component={WrLandingView} />
+      {user && <Route path="/deck" component={WrDeckView} />}
+      {user && <Route path="/room" component={WrRoomView} />}
+      <Route path="/signin" exact={true} component={WrSigninView} />
+      <Redirect to="/" />
+    </Switch>
+  </ViewportContainer>;
 };
 
 export default App;

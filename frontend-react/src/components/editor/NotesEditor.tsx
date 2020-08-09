@@ -100,26 +100,24 @@ const NotesEditor = ({
   const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
   const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
-  return (
-    <NotesBox>
-      {!readOnly &&
-        <Toolbar>
-          <ToolbarItem><BoldButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}>bold</BoldButton></ToolbarItem>
-          <ToolbarItem><ItalicButton onClick={handleItalic} className={activeIf(currentStyle.has("ITALIC"))}>italic</ItalicButton></ToolbarItem>
-          <ToolbarItem><UnderlineButton onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}>underline</UnderlineButton></ToolbarItem>
-          <ToolbarItem><ToolbarButton onClick={handleUnorderedList} className={activeIf(currentType === "unordered-list-item")}>• list</ToolbarButton></ToolbarItem>
-          <ToolbarItem><ToolbarButton onClick={handleOrderedList} className={activeIf(currentType === "ordered-list-item")}>1. list</ToolbarButton></ToolbarItem>
-        </Toolbar>
-      }
-      <Editor
-        editorState={editorState}
-        onChange={handleEditorChange}
-        placeholder={placeholder}
-        handleKeyCommand={handleKeyCommand}
-        readOnly={readOnly}
-      />
-    </NotesBox>
-  );
+  return <NotesBox>
+    {!readOnly &&
+      <Toolbar>
+        <ToolbarItem><BoldButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}>bold</BoldButton></ToolbarItem>
+        <ToolbarItem><ItalicButton onClick={handleItalic} className={activeIf(currentStyle.has("ITALIC"))}>italic</ItalicButton></ToolbarItem>
+        <ToolbarItem><UnderlineButton onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}>underline</UnderlineButton></ToolbarItem>
+        <ToolbarItem><ToolbarButton onClick={handleUnorderedList} className={activeIf(currentType === "unordered-list-item")}>• list</ToolbarButton></ToolbarItem>
+        <ToolbarItem><ToolbarButton onClick={handleOrderedList} className={activeIf(currentType === "ordered-list-item")}>1. list</ToolbarButton></ToolbarItem>
+      </Toolbar>
+    }
+    <Editor
+      editorState={editorState}
+      onChange={handleEditorChange}
+      placeholder={placeholder}
+      handleKeyCommand={handleKeyCommand}
+      readOnly={readOnly}
+    />
+  </NotesBox>;
 };
 
 export default NotesEditor;

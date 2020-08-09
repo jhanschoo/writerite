@@ -46,12 +46,10 @@ interface Props {
 
 export const Spinner = ({ style }: Props): JSX.Element => {
   const background = style?.color;
-  return (
-    <SpinnerBox style={style}>
-      <SpinnerTL style={{ background }} />
-      <SpinnerTR style={{ background }} />
-      <SpinnerBL style={{ background }} />
-      <SpinnerBR style={{ background }} />
-    </SpinnerBox>
-  );
+  return <SpinnerBox style={style}>
+    <SpinnerTL style={{ background }} />
+    <SpinnerTR style={{ background }} />
+    <SpinnerBL style={{ background }} />
+    <SpinnerBR style={{ background }} />
+  </SpinnerBox>;
 };

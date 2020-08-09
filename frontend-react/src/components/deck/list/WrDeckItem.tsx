@@ -83,18 +83,16 @@ const WrDeckItem = ({ deck, onClick }: Props): JSX.Element => {
         {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
       </DeckStatistics>
     </DeckSummaryBox>;
-  return (
-    <StyledItem key={deck.id}>
-      {onClick
-        ? <DeckSummaryButton onClick={() => onClick()}>
-          {box}
-        </DeckSummaryButton>
-        : <DeckSummaryLink to={`/deck/${deck.id}`}>
-          {box}
-        </DeckSummaryLink>
-      }
-    </StyledItem>
-  );
+  return <StyledItem key={deck.id}>
+    {onClick
+      ? <DeckSummaryButton onClick={() => onClick()}>
+        {box}
+      </DeckSummaryButton>
+      : <DeckSummaryLink to={`/deck/${deck.id}`}>
+        {box}
+      </DeckSummaryLink>
+    }
+  </StyledItem>;
 };
 
 export default WrDeckItem;

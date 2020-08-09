@@ -8,16 +8,14 @@ import WrDecksList from "./list/WrDecksList";
 
 const WrDeckView = (): JSX.Element => {
   const match = useRouteMatch();
-  return (
-    <>
-      <WrNavBar />
-      <Switch>
-        <Route path={`${match.url}/list`} component={WrDecksList} />
-        <Route path={`${match.url}/:deckId`} component={WrDeckDetail} />
-        <Redirect to={`${match.url}/list`} />
-      </Switch>
-    </>
-  );
+  return <>
+    <WrNavBar />
+    <Switch>
+      <Route path={`${match.url}/list`} component={WrDecksList} />
+      <Route path={`${match.url}/:deckId`} component={WrDeckDetail} />
+      <Redirect to={`${match.url}/list`} />
+    </Switch>
+  </>;
 };
 
 export default WrDeckView;

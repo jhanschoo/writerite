@@ -130,25 +130,23 @@ const WrDeckDetailPersonalNotes = ({
   const notesStatus = loadingMutation || !equal(currentNotes, notes)
     ? "saving"
     : undefined;
-  return (
-    <StyledOuterBox>
-      <StyledInnerBox>
-        <StyledHeader>
-          <h4>Your goals</h4>
-          <NotesStatus>{notesStatus}</NotesStatus>
-        </StyledHeader>
-        {!loading &&
-          <StyledContent>
-            <NotesEditor
-              editorState={editorState}
-              setEditorState={setEditorState}
-              handleChange={handleChange}
-              placeholder="Enter a description..."
-            />
-          </StyledContent>
-        }
-      </StyledInnerBox>
-    </StyledOuterBox>
-  );
+  return <StyledOuterBox>
+    <StyledInnerBox>
+      <StyledHeader>
+        <h4>Your goals</h4>
+        <NotesStatus>{notesStatus}</NotesStatus>
+      </StyledHeader>
+      {!loading &&
+        <StyledContent>
+          <NotesEditor
+            editorState={editorState}
+            setEditorState={setEditorState}
+            handleChange={handleChange}
+            placeholder="Enter a description..."
+          />
+        </StyledContent>
+      }
+    </StyledInnerBox>
+  </StyledOuterBox>;
 };
 export default WrDeckDetailPersonalNotes;

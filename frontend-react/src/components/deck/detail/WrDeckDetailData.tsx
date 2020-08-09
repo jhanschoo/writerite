@@ -175,35 +175,33 @@ const WrDeckDetailData = ({
     : loading || currentTitle !== deck.name
       ? "saving"
       : undefined;
-  return (
-    <DeckInfoBox>
-      <StyledOuterBox>
-        <StyledInnerBox>
-          <StyledHeader>
-            <LineEditor
-              editorState={editorState}
-              setEditorState={setEditorState}
-              handleChange={handleChange}
-              tag="h4"
-              readOnly={readOnly}
-              ref={editorEl}
-            />
-            <DeckTitleStatus>{deckTitleStatus}</DeckTitleStatus>
-          </StyledHeader>
-          <DeckStatistics>
-            {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
-            <br />
-            {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
-          </DeckStatistics>
-        </StyledInnerBox>
-      </StyledOuterBox>
-      <ActionsList>
-        <ActionsItem>
-          <ActionsButton onClick={handleCreateRoom}>Start Contest</ActionsButton>
-        </ActionsItem>
-      </ActionsList>
-    </DeckInfoBox>
-  );
+  return <DeckInfoBox>
+    <StyledOuterBox>
+      <StyledInnerBox>
+        <StyledHeader>
+          <LineEditor
+            editorState={editorState}
+            setEditorState={setEditorState}
+            handleChange={handleChange}
+            tag="h4"
+            readOnly={readOnly}
+            ref={editorEl}
+          />
+          <DeckTitleStatus>{deckTitleStatus}</DeckTitleStatus>
+        </StyledHeader>
+        <DeckStatistics>
+          {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
+          <br />
+          {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
+        </DeckStatistics>
+      </StyledInnerBox>
+    </StyledOuterBox>
+    <ActionsList>
+      <ActionsItem>
+        <ActionsButton onClick={handleCreateRoom}>Start Contest</ActionsButton>
+      </ActionsItem>
+    </ActionsList>
+  </DeckInfoBox>;
 };
 
 export default WrDeckDetailData;

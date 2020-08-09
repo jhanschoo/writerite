@@ -26,17 +26,14 @@ interface Props {
 }
 
 export const VDivider = ({ children, spacerColor }: Props): JSX.Element => {
-  const labelAndHalf =
-    <>
-      <TextBox>
-        {children}
-      </TextBox>
-      <Spacer spacerColor={spacerColor} />
-    </>;
-  return (
-    <OuterBox>
-      <Spacer spacerColor={spacerColor} />
-      {children && labelAndHalf}
-    </OuterBox>
-  );
+  const labelAndHalf = <>
+    <TextBox>
+      {children}
+    </TextBox>
+    <Spacer spacerColor={spacerColor} />
+  </>;
+  return <OuterBox>
+    <Spacer spacerColor={spacerColor} />
+    {children && labelAndHalf}
+  </OuterBox>;
 };

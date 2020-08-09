@@ -93,33 +93,31 @@ const WrRoomNavBar = ({ roomState }: Props): JSX.Element => {
       setShowExitModal(false);
     }
   };
-  return (
-    <StyledNavBar>
-      {showExitModal && <Modal handleClose={handleHideExitModal}>
-        <ModalBox>
-          <p>You are about to leave the room.{roomState === RoomState.SERVING && " You will forfeit if you do this!"} Do you still want to proceed?</p>
-          <ActionsList>
-            <ActionsItem><SecondaryButton onClick={handleHideExitModal}>No</SecondaryButton></ActionsItem>
-            <ActionsItem><ConfirmExitButton onClick={handleExit}>Yes</ConfirmExitButton></ActionsItem>
-          </ActionsList>
-        </ModalBox>
-      </Modal>}
-      <NavBarList>
-        <BrandNavBarItem>
-          <BrandHeading>
-            <WrBrandText short={true} />
-          </BrandHeading>
-        </BrandNavBarItem>
-      </NavBarList>
-      <NavBarListRight>
-        <NavBarItem>
-          <ExitButton onClick={handleShowExitModal}>
-            Leave Room
-          </ExitButton>
-        </NavBarItem>
-      </NavBarListRight>
-    </StyledNavBar>
-  );
+  return <StyledNavBar>
+    {showExitModal && <Modal handleClose={handleHideExitModal}>
+      <ModalBox>
+        <p>You are about to leave the room.{roomState === RoomState.SERVING && " You will forfeit if you do this!"} Do you still want to proceed?</p>
+        <ActionsList>
+          <ActionsItem><SecondaryButton onClick={handleHideExitModal}>No</SecondaryButton></ActionsItem>
+          <ActionsItem><ConfirmExitButton onClick={handleExit}>Yes</ConfirmExitButton></ActionsItem>
+        </ActionsList>
+      </ModalBox>
+    </Modal>}
+    <NavBarList>
+      <BrandNavBarItem>
+        <BrandHeading>
+          <WrBrandText short={true} />
+        </BrandHeading>
+      </BrandNavBarItem>
+    </NavBarList>
+    <NavBarListRight>
+      <NavBarItem>
+        <ExitButton onClick={handleShowExitModal}>
+          Leave Room...
+        </ExitButton>
+      </NavBarItem>
+    </NavBarListRight>
+  </StyledNavBar>;
 };
 
 export default WrRoomNavBar;

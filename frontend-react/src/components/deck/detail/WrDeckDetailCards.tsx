@@ -92,29 +92,27 @@ const WrDeckDetailCards = ({
   });
   const [cards, templates, mainTemplate] = groupCards(data?.cardsOfDeck ?? []);
   const cardItems = cards.map((card) => <WrDeckDetailCardItem deckId={deckId} card={card} key={card.id} />);
-  return (
-    <StyledOuterBox>
-      <StyledInnerBox>
-        <StyledHeader>
-          <h4>Cards</h4>
-        </StyledHeader>
-        <StyledContent>
-          <StyledList>
-            {!readOnly && <WrDeckDetailMainTemplateItem
-              deckId={deckId}
-              card={mainTemplate}
-              key={mainTemplate?.id ?? "empty-main-template"}
-              templates={templates}
-            />}
-            {!cardItems.length && <StyledItem key="empty-message">
-              <StyledEmptyMessage>There are no cards to show.</StyledEmptyMessage>
-            </StyledItem>}
-            {cardItems}
-          </StyledList>
-        </StyledContent>
-      </StyledInnerBox>
-    </StyledOuterBox>
-  );
+  return <StyledOuterBox>
+    <StyledInnerBox>
+      <StyledHeader>
+        <h4>Cards</h4>
+      </StyledHeader>
+      <StyledContent>
+        <StyledList>
+          {!readOnly && <WrDeckDetailMainTemplateItem
+            deckId={deckId}
+            card={mainTemplate}
+            key={mainTemplate?.id ?? "empty-main-template"}
+            templates={templates}
+          />}
+          {!cardItems.length && <StyledItem key="empty-message">
+            <StyledEmptyMessage>There are no cards to show.</StyledEmptyMessage>
+          </StyledItem>}
+          {cardItems}
+        </StyledList>
+      </StyledContent>
+    </StyledInnerBox>
+  </StyledOuterBox>;
 };
 
 export default WrDeckDetailCards;

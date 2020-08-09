@@ -71,35 +71,33 @@ const WrDeckDetail = (): JSX.Element => {
   const readOnly = deck.ownerId !== id;
   const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
   // Note: component is keyed to force refresh on route change.
-  return (
-    <StyledMain key={`${deck.id}-WrDeckDetail`}>
-      <BackLink to="/deck/list">←back to Decks</BackLink>
-      <DeckDataBox>
-        <WrDeckDetailData
-          deck={deck}
-          readOnly={readOnly}
-        />
-        <NotesBox>
-          <WrDeckDetailDescription
-            deckId={deck.id}
-            description={deck.description as Record<string, unknown>}
-            readOnly={readOnly}
-          />
-          <WrDeckDetailPersonalNotes
-            deckId={deck.id}
-          />
-        </NotesBox>
-      </DeckDataBox>
-      <WrDeckDetailSubdecks
-        deckId={deckId}
-        subdecks={subdecks}
+  return <StyledMain key={`${deck.id}-WrDeckDetail`}>
+    <BackLink to="/deck/list">←back to Decks</BackLink>
+    <DeckDataBox>
+      <WrDeckDetailData
+        deck={deck}
         readOnly={readOnly}
       />
-      <WrDeckDetailCards
-        deckId={deckId}
-      />
-    </StyledMain>
-  );
+      <NotesBox>
+        <WrDeckDetailDescription
+          deckId={deck.id}
+          description={deck.description as Record<string, unknown>}
+          readOnly={readOnly}
+        />
+        <WrDeckDetailPersonalNotes
+          deckId={deck.id}
+        />
+      </NotesBox>
+    </DeckDataBox>
+    <WrDeckDetailSubdecks
+      deckId={deckId}
+      subdecks={subdecks}
+      readOnly={readOnly}
+    />
+    <WrDeckDetailCards
+      deckId={deckId}
+    />
+  </StyledMain>;
 };
 
 export default WrDeckDetail;

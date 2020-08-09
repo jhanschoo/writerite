@@ -115,43 +115,41 @@ const WrDeckDetailTemplateItem = ({
     id,
     mainTemplate: true,
   } });
-  return (
-    <StyledItem key={template.id}>
-      {showDeleteModal && <WrDeckDetailCardDeleteModal
-        handleClose={handleHideDeleteModal}
-        handleDelete={handleDelete}
-        template={true}
-        card={template}
+  return <StyledItem key={template.id}>
+    {showDeleteModal && <WrDeckDetailCardDeleteModal
+      handleClose={handleHideDeleteModal}
+      handleDelete={handleDelete}
+      template={true}
+      card={template}
+    />}
+    <FrontBackCard
+      promptContent={<SelfManagedNotesEditor
+        initialContent={prompt as Record<string, unknown>}
+        placeholder="Empty prompt"
+        handleChange={identity}
+        readOnly={true}
       />}
-      <FrontBackCard
-        promptContent={<SelfManagedNotesEditor
-          initialContent={prompt as Record<string, unknown>}
-          placeholder="Empty prompt"
-          handleChange={identity}
-          readOnly={true}
-        />}
-        fullAnswerContent={<SelfManagedNotesEditor
-          initialContent={fullAnswer as Record<string, unknown>}
-          placeholder="Empty answer"
-          handleChange={identity}
-          readOnly={true}
-        />}
-        answersContent={<SelfManagedAnswersEditor
-          initialContent={answers}
-          handleChange={identity}
-          readOnly={true}
-        />}
-        footer={<FrontBackCardActionsList>
-          <DeleteItem>
-            <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
-          </DeleteItem>
-          <ActionsItem>
-            <SetTemplateButton onClick={handleSetTemplate} disabled={loading}>Use Template</SetTemplateButton>
-          </ActionsItem>
-        </FrontBackCardActionsList>}
-      />
-    </StyledItem>
-  );
+      fullAnswerContent={<SelfManagedNotesEditor
+        initialContent={fullAnswer as Record<string, unknown>}
+        placeholder="Empty answer"
+        handleChange={identity}
+        readOnly={true}
+      />}
+      answersContent={<SelfManagedAnswersEditor
+        initialContent={answers}
+        handleChange={identity}
+        readOnly={true}
+      />}
+      footer={<FrontBackCardActionsList>
+        <DeleteItem>
+          <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
+        </DeleteItem>
+        <ActionsItem>
+          <SetTemplateButton onClick={handleSetTemplate} disabled={loading}>Use Template</SetTemplateButton>
+        </ActionsItem>
+      </FrontBackCardActionsList>}
+    />
+  </StyledItem>;
 };
 
 export default WrDeckDetailTemplateItem;

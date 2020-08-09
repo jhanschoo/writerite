@@ -154,47 +154,45 @@ const WrDeckDetailCardItem = ({
     ? "saving"
     : undefined;
   const disabled = readOnly === true || loadingDelete;
-  return (
-    <StyledItem>
-      {showDeleteModal && <WrDeckDetailCardDeleteModal
-        handleClose={handleHideDeleteModal}
-        handleDelete={handleDelete}
-        template={false}
-        card={card}
+  return <StyledItem>
+    {showDeleteModal && <WrDeckDetailCardDeleteModal
+      handleClose={handleHideDeleteModal}
+      handleDelete={handleDelete}
+      template={false}
+      card={card}
+    />}
+    <FrontBackCard
+      status={saveStatus}
+      promptContent={<SelfManagedNotesEditor
+        initialContent={prompt as Record<string, unknown>}
+        placeholder={readOnly ? "Empty prompt" : "Write a prompt..."}
+        handleChange={handlePromptChange}
+        readOnly={disabled}
       />}
-      <FrontBackCard
-        status={saveStatus}
-        promptContent={<SelfManagedNotesEditor
-          initialContent={prompt as Record<string, unknown>}
-          placeholder={readOnly ? "Empty prompt" : "Write a prompt..."}
-          handleChange={handlePromptChange}
-          readOnly={disabled}
-        />}
-        beforeAnswersContent={!readOnly && generatedAnswer &&
-          <AddGeneratedAnswer onClick={addGeneratedAnswer}>
-            add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
-          </AddGeneratedAnswer>
-        }
-        fullAnswerContent={<SelfManagedNotesEditor
-          initialContent={fullAnswer as Record<string, unknown>}
-          placeholder={readOnly ? "Empty answer" : "Write an answer..."}
-          handleChange={handleFullAnswerChange}
-          readOnly={disabled}
-        />}
-        answersContent={<AnswersEditor
-          editorState={answersEditorState}
-          setEditorState={setAnswersEditorState}
-          handleChange={handleAnswersChange}
-          readOnly={disabled}
-        />}
-        footer={<FrontBackCardActionsList>
-          <DeleteItem>
-            <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>
-          </DeleteItem>
-        </FrontBackCardActionsList>}
-      />
-    </StyledItem>
-  );
+      beforeAnswersContent={!readOnly && generatedAnswer &&
+        <AddGeneratedAnswer onClick={addGeneratedAnswer}>
+          add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
+        </AddGeneratedAnswer>
+      }
+      fullAnswerContent={<SelfManagedNotesEditor
+        initialContent={fullAnswer as Record<string, unknown>}
+        placeholder={readOnly ? "Empty answer" : "Write an answer..."}
+        handleChange={handleFullAnswerChange}
+        readOnly={disabled}
+      />}
+      answersContent={<AnswersEditor
+        editorState={answersEditorState}
+        setEditorState={setAnswersEditorState}
+        handleChange={handleAnswersChange}
+        readOnly={disabled}
+      />}
+      footer={<FrontBackCardActionsList>
+        <DeleteItem>
+          <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>
+        </DeleteItem>
+      </FrontBackCardActionsList>}
+    />
+  </StyledItem>;
 };
 
 export default WrDeckDetailCardItem;

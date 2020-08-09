@@ -123,39 +123,37 @@ const WrDeckDetailSubdecks = ({
       onClick={() => removeMutate({ variables: { id: deckId, subdeckId: subdeck.id } })}
       key={subdeck.id}
     />);
-  return (
-    <StyledOuterBox>
-      <StyledInnerBox>
-        {loading && <Loading />}
-        <StyledHeader>
-          <h4>Subdecks</h4>
-          {!readOnly && <AddSubdeckButton onClick={handleShowNewModal}>Add Subdeck...</AddSubdeckButton>}
-        </StyledHeader>
-        {showNewModal &&
-          <ModalBackground onClick={handleHideNewModal}>
-            <ModalContainer onClick={(e) => e.stopPropagation()}>
-              <ModalCloseButton onClick={handleHideNewModal}>cancel</ModalCloseButton>
-              <SubdeckModalContent>
-                {loading && <Loading fontSize={"2.25rem"} />}
-                <SubdeckModalTitle>Choose a Subdeck to Add</SubdeckModalTitle>
-                <SubdeckListBox>
-                  <WrDecksList
-                    deckFilter={({ id }) => id !== deckId && subdecks.every((subdeck) => subdeck.id !== id)}
-                    onItemClick={handleAddSubdeck}
-                  />
-                </SubdeckListBox>
-              </SubdeckModalContent>
-            </ModalContainer>
-          </ModalBackground>
-        }
-        <StyledContent>
-          <StyledList>
-            {subdeckItems}
-          </StyledList>
-        </StyledContent>
-      </StyledInnerBox>
-    </StyledOuterBox>
-  );
+  return <StyledOuterBox>
+    <StyledInnerBox>
+      {loading && <Loading />}
+      <StyledHeader>
+        <h4>Subdecks</h4>
+        {!readOnly && <AddSubdeckButton onClick={handleShowNewModal}>Add Subdeck...</AddSubdeckButton>}
+      </StyledHeader>
+      {showNewModal &&
+        <ModalBackground onClick={handleHideNewModal}>
+          <ModalContainer onClick={(e) => e.stopPropagation()}>
+            <ModalCloseButton onClick={handleHideNewModal}>cancel</ModalCloseButton>
+            <SubdeckModalContent>
+              {loading && <Loading fontSize={"2.25rem"} />}
+              <SubdeckModalTitle>Choose a Subdeck to Add</SubdeckModalTitle>
+              <SubdeckListBox>
+                <WrDecksList
+                  deckFilter={({ id }) => id !== deckId && subdecks.every((subdeck) => subdeck.id !== id)}
+                  onItemClick={handleAddSubdeck}
+                />
+              </SubdeckListBox>
+            </SubdeckModalContent>
+          </ModalContainer>
+        </ModalBackground>
+      }
+      <StyledContent>
+        <StyledList>
+          {subdeckItems}
+        </StyledList>
+      </StyledContent>
+    </StyledInnerBox>
+  </StyledOuterBox>;
 };
 
 export default WrDeckDetailSubdecks;

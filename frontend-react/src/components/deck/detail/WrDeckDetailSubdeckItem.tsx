@@ -76,23 +76,21 @@ const WrDeckDetailSubdeckItem = ({ deck, onClick }: Props): JSX.Element => {
     e.preventDefault();
     onClick?.();
   };
-  return (
-    <StyledItem key={deck.id}>
-      <DeckSummaryLink to={`/deck/${deck.id}`}>
-        <DeckSummaryBox>
-          <DeckTitleBox>
-            <h4>{deck.name}</h4>
-            <RemoveSubdeckButton onClick={handleClick}>remove</RemoveSubdeckButton>
-          </DeckTitleBox>
-          <DeckStatistics>
-            {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
-            <br />
-            {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
-          </DeckStatistics>
-        </DeckSummaryBox>
-      </DeckSummaryLink>
-    </StyledItem>
-  );
+  return <StyledItem key={deck.id}>
+    <DeckSummaryLink to={`/deck/${deck.id}`}>
+      <DeckSummaryBox>
+        <DeckTitleBox>
+          <h4>{deck.name}</h4>
+          <RemoveSubdeckButton onClick={handleClick}>remove</RemoveSubdeckButton>
+        </DeckTitleBox>
+        <DeckStatistics>
+          {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
+          <br />
+          {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
+        </DeckStatistics>
+      </DeckSummaryBox>
+    </DeckSummaryLink>
+  </StyledItem>;
 };
 
 export default WrDeckDetailSubdeckItem;
