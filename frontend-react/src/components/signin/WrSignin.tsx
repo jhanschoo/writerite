@@ -16,7 +16,7 @@ import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
 import { restartWsConnection } from "src/apolloClient";
-import { SIGNIN_MUTATION } from "src/sharedGql";
+import { SIGNIN_MUTATION } from "src/gql";
 import { SigninMutation, SigninMutationVariables } from "src/gqlTypes";
 
 import { breakpoints, wrStyled } from "src/theme";

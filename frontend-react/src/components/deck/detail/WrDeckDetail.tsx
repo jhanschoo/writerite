@@ -6,7 +6,7 @@ import type { WrState } from "src/store";
 import { useParams } from "react-router";
 
 import { useQuery } from "@apollo/client";
-import { DECK_DETAIL_QUERY } from "src/sharedGql";
+import { DECK_DETAIL_QUERY } from "src/gql";
 import type { DeckDetailQuery, DeckDetailQueryVariables, DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

@@ -6,7 +6,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "src/sharedGql";
+import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "src/gql";
 import type { DeckEditMutation, DeckEditMutationVariables, DeckScalars, RoomCreateMutation, RoomCreateMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

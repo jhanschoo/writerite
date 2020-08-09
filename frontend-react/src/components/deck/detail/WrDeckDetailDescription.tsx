@@ -4,7 +4,7 @@ import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION } from "src/sharedGql";
+import { DECK_EDIT_MUTATION } from "src/gql";
 import { DeckEditMutation, DeckEditMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

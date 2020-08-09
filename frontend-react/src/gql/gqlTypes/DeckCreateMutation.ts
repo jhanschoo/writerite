@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { CardCreateInput } from "./../gqlGlobalTypes";
+import { CardCreateInput } from "./../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL mutation operation: DeckCreateMutation

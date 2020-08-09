@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { DecksQueryScope } from "./../gqlGlobalTypes";
+import { DecksQueryScope } from "./../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL query operation: DecksQuery

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { useMutation } from "@apollo/client";
-import { DECK_ADD_SUBDECK_MUTATION, DECK_REMOVE_SUBDECK_MUTATION } from "src/sharedGql";
+import { DECK_ADD_SUBDECK_MUTATION, DECK_REMOVE_SUBDECK_MUTATION } from "src/gql";
 import type { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

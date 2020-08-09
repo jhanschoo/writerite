@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { EditorChangeType, EditorState, convertToRaw } from "draft-js";
 
 import { MutationUpdaterFn, useMutation } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
+import { CARDS_OF_DECK_QUERY, CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/gql";
 import type { CardCreateMutation, CardCreateMutationVariables, CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables, CardsOfDeckQuery, CardsOfDeckQueryVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

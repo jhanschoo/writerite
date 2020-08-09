@@ -4,7 +4,7 @@ import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation, useQuery } from "@apollo/client";
-import { OWN_DECK_RECORD_QUERY, OWN_DECK_RECORD_SET_MUTATION } from "src/sharedGql";
+import { OWN_DECK_RECORD_QUERY, OWN_DECK_RECORD_SET_MUTATION } from "src/gql";
 import { OwnDeckRecordQuery, OwnDeckRecordQueryVariables, OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

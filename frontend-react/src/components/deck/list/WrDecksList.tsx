@@ -2,7 +2,7 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { useQuery } from "@apollo/client";
-import { DECKS_QUERY } from "src/sharedGql";
+import { DECKS_QUERY } from "src/gql";
 import { DeckScalars, DecksQuery, DecksQueryScope, DecksQueryVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";

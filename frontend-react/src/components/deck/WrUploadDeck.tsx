@@ -6,7 +6,7 @@ import Papa from "papaparse";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECKS_QUERY, DECK_CREATE_MUTATION } from "src/sharedGql";
+import { DECKS_QUERY, DECK_CREATE_MUTATION } from "src/gql";
 import { CardCreateInput, DeckCreateMutation, DeckCreateMutationVariables, DecksQuery, DecksQueryScope, DecksQueryVariables } from "src/gqlTypes";
 
 import type { StyledComponent } from "styled-components";
