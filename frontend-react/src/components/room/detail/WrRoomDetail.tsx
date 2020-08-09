@@ -1,15 +1,13 @@
 import React from "react";
 
+import { useQuery } from "@apollo/client";
+
 import { wrStyled } from "src/theme";
 import { Main } from "src/ui";
 
 import WrRoomNavBar from "../navbar/WrRoomNavBar";
 import WrRoomDetailDash from "./WrRoomDetailDash";
 import WrRoomDetailInput from "./WrRoomDetailInput";
-
-const EventBox = wrStyled.div`
-max-height: 50vh;
-`;
 
 const ConversationBox = wrStyled.div`
 flex-grow: 1;

@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: DeckDetail
+// GraphQL query operation: DeckDetailQuery
 // ====================================================
 
-export interface DeckDetail_deck_subdecks {
+export interface DeckDetailQuery_deck_subdecks {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
@@ -20,14 +20,14 @@ export interface DeckDetail_deck_subdecks {
   readonly editedAt: GraphQLDateTime;
 }
 
-export interface DeckDetail_deck_ownRecord {
+export interface DeckDetailQuery_deck_ownRecord {
   readonly __typename: "UserDeckRecord";
   readonly deckId: string;
   readonly userId: string;
   readonly notes: GraphQLJSON;
 }
 
-export interface DeckDetail_deck {
+export interface DeckDetailQuery_deck {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
@@ -38,14 +38,14 @@ export interface DeckDetail_deck {
   readonly published: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
-  readonly subdecks: ReadonlyArray<(DeckDetail_deck_subdecks | null)> | null;
-  readonly ownRecord: DeckDetail_deck_ownRecord | null;
+  readonly subdecks: ReadonlyArray<(DeckDetailQuery_deck_subdecks | null)> | null;
+  readonly ownRecord: DeckDetailQuery_deck_ownRecord | null;
 }
 
-export interface DeckDetail {
-  readonly deck: DeckDetail_deck | null;
+export interface DeckDetailQuery {
+  readonly deck: DeckDetailQuery_deck | null;
 }
 
-export interface DeckDetailVariables {
+export interface DeckDetailQueryVariables {
   readonly deckId: string;
 }

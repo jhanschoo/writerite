@@ -6,10 +6,10 @@
 import { RoomState } from "./../gqlGlobalTypes";
 
 // ====================================================
-// GraphQL mutation operation: RoomCreate
+// GraphQL mutation operation: RoomCreateMutation
 // ====================================================
 
-export interface RoomCreate_roomCreate {
+export interface RoomCreateMutation_roomCreate {
   readonly __typename: "Room";
   readonly id: string;
   readonly ownerId: string;
@@ -18,6 +18,10 @@ export interface RoomCreate_roomCreate {
   readonly state: RoomState;
 }
 
-export interface RoomCreate {
-  readonly roomCreate: RoomCreate_roomCreate | null;
+export interface RoomCreateMutation {
+  readonly roomCreate: RoomCreateMutation_roomCreate | null;
+}
+
+export interface RoomCreateMutationVariables {
+  readonly ownerConfig?: GraphQLJSONObject | null;
 }

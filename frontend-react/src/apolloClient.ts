@@ -51,7 +51,7 @@ const logLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) =>
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-      console.error(`[GraphQL error]: Message: ${message}, Location: ${locations?.map((location) => `${location.column},${location.line}`).join(" ")}, Path: ${path?.join("|")}`));
+      console.error(`[GraphQL error]: Message: ${message}, Location: ${locations?.map((loc) => `${loc.column},${loc.line}`).join(" ")}, Path: ${path?.join("|")}`));
   }
   if (networkError) {
     // eslint-disable-next-line no-console

@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { DECK_SCALARS } from "src/client-models";
-import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
-import type { DeckAddSubdeck, DeckAddSubdeckVariables } from "./gqlTypes/DeckAddSubdeck";
-import type { DeckRemoveSubdeck, DeckRemoveSubdeckVariables } from "./gqlTypes/DeckRemoveSubdeck";
+import { DECK_ADD_SUBDECK_MUTATION, DECK_REMOVE_SUBDECK_MUTATION } from "src/sharedGql";
+import type { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, List, ModalBackground, ModalCloseButton, ModalContainer } from "src/ui";
@@ -13,30 +10,6 @@ import { Loading } from "src/ui-components";
 
 import WrDecksList from "../list/WrDecksList";
 import WrDeckDetailSubdeckItem from "./WrDeckDetailSubdeckItem";
-
-const DECK_ADD_SUBDECK_MUTATION = gql`
-${DECK_SCALARS}
-mutation DeckAddSubdeck($id: ID! $subdeckId: ID!) {
-  deckAddSubdeck(id: $id, subdeckId: $subdeckId) {
-    ...DeckScalars
-    subdecks {
-      ...DeckScalars
-    }
-  }
-}
-`;
-
-const DECK_REMOVE_SUBDECK_MUTATION = gql`
-${DECK_SCALARS}
-mutation DeckRemoveSubdeck($id: ID! $subdeckId: ID!) {
-  deckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
-    ...DeckScalars
-    subdecks {
-      ...DeckScalars
-    }
-  }
-}
-`;
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -111,8 +84,8 @@ const WrDeckDetailSubdecks = ({
   readOnly,
 }: Props): JSX.Element => {
   const [showNewModal, setShowNewModal] = useState(false);
-  const [addMutate, { loading: addLoading }] = useMutation<DeckAddSubdeck, DeckAddSubdeckVariables>(DECK_ADD_SUBDECK_MUTATION);
-  const [removeMutate, { loading: removeLoading }] = useMutation<DeckRemoveSubdeck, DeckRemoveSubdeckVariables>(DECK_REMOVE_SUBDECK_MUTATION);
+  const [addMutate, { loading: addLoading }] = useMutation<DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables>(DECK_ADD_SUBDECK_MUTATION);
+  const [removeMutate, { loading: removeLoading }] = useMutation<DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables>(DECK_REMOVE_SUBDECK_MUTATION);
   const loading = addLoading || removeLoading;
   const handleShowNewModal = () => setShowNewModal(true);
   const handleHideNewModal = () => setShowNewModal(false);

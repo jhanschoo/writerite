@@ -3,40 +3,14 @@ import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
-import gql from "graphql-tag";
 import { useMutation, useQuery } from "@apollo/client";
-import { USER_DECK_RECORD_SCALARS } from "src/client-models";
-import { OwnDeckRecord, OwnDeckRecordVariables } from "./gqlTypes/OwnDeckRecord";
-import { OwnDeckRecordSet, OwnDeckRecordSetVariables } from "./gqlTypes/OwnDeckRecordSet";
+import { OWN_DECK_RECORD_QUERY, OWN_DECK_RECORD_SET_MUTATION } from "src/sharedGql";
+import { OwnDeckRecordQuery, OwnDeckRecordQueryVariables, OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 
 import { DEBOUNCE_DELAY } from "src/util";
 import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
-
-const OWN_DECK_RECORD_QUERY = gql`
-${USER_DECK_RECORD_SCALARS}
-query OwnDeckRecord($deckId: ID!) {
-  ownDeckRecord(deckId: $deckId) {
-    ...UserDeckRecordScalars
-  }
-}
-`;
-
-const OWN_DECK_RECORD_SET_MUTATION = gql`
-${USER_DECK_RECORD_SCALARS}
-mutation OwnDeckRecordSet(
-  $deckId: ID!
-  $notes: JSONObject
-) {
-  ownDeckRecordSet(
-    deckId: $deckId
-    notes: $notes
-  ) {
-    ...UserDeckRecordScalars
-  }
-}
-`;
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -81,7 +55,7 @@ interface Props {
 const WrDeckDetailPersonalNotes = ({
   deckId,
 }: Props): JSX.Element => {
-  const { loading, data } = useQuery<OwnDeckRecord, OwnDeckRecordVariables>(OWN_DECK_RECORD_QUERY, {
+  const { loading, data } = useQuery<OwnDeckRecordQuery, OwnDeckRecordQueryVariables>(OWN_DECK_RECORD_QUERY, {
     variables: { deckId },
     onCompleted(newData) {
       // synchronize editorState and currentNotes to data, for first fetch only
@@ -100,7 +74,7 @@ const WrDeckDetailPersonalNotes = ({
     deckId,
     notes: currentNotes,
   } };
-  const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSet, OwnDeckRecordSetVariables>(OWN_DECK_RECORD_SET_MUTATION, {
+  const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables>(OWN_DECK_RECORD_SET_MUTATION, {
     onCompleted(newData) {
       // no-op if debounce will trigger
       if (debouncing) {

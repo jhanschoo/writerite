@@ -6,10 +6,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
 import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "src/sharedGql";
-import type { DeckEdit, DeckEditVariables } from "src/gqlTypes/DeckEdit";
-import type { RoomCreate } from "src/gqlTypes/RoomCreate";
+import type { DeckEditMutation, DeckEditMutationVariables, DeckScalars, RoomCreateMutation, RoomCreateMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List } from "src/ui";
@@ -128,7 +126,7 @@ const WrDeckDetailData = ({
     id: deck.id,
     name: currentTitle,
   } };
-  const [mutateEdit, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
+  const [mutateEdit, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
       if (debouncing) {
@@ -140,7 +138,7 @@ const WrDeckDetailData = ({
       }
     },
   });
-  const [mutateRoomCreate] = useMutation<RoomCreate>(ROOM_CREATE_MUTATION, {
+  const [mutateRoomCreate] = useMutation<RoomCreateMutation, RoomCreateMutationVariables>(ROOM_CREATE_MUTATION, {
     onCompleted(data) {
       if (data.roomCreate) {
         history.push(`/room/${data.roomCreate.id}`);

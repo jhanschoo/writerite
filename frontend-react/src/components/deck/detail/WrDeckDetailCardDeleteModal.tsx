@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
+import type { CardDetail } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item } from "src/ui";
@@ -50,7 +50,7 @@ interface Props {
 
 const WrDeckDetailCardDeleteModal = ({
   handleClose, handleDelete, template, card,
-}: Props): JSX.Element =>{
+}: Props): JSX.Element => {
   const {
     // eslint-disable-next-line no-shadow
     prompt, fullAnswer, answers,

@@ -4,20 +4,20 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: OwnDeckRecord
+// GraphQL query operation: OwnDeckRecordQuery
 // ====================================================
 
-export interface OwnDeckRecord_ownDeckRecord {
+export interface OwnDeckRecordQuery_ownDeckRecord {
   readonly __typename: "UserDeckRecord";
   readonly deckId: string;
   readonly userId: string;
   readonly notes: GraphQLJSON;
 }
 
-export interface OwnDeckRecord {
-  readonly ownDeckRecord: OwnDeckRecord_ownDeckRecord | null;
+export interface OwnDeckRecordQuery {
+  readonly ownDeckRecord: OwnDeckRecordQuery_ownDeckRecord | null;
 }
 
-export interface OwnDeckRecordVariables {
+export interface OwnDeckRecordQueryVariables {
   readonly deckId: string;
 }

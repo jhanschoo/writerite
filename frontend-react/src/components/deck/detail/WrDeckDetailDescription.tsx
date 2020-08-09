@@ -5,7 +5,7 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation } from "@apollo/client";
 import { DECK_EDIT_MUTATION } from "src/sharedGql";
-import { DeckEdit, DeckEditVariables } from "src/gqlTypes/DeckEdit";
+import { DeckEditMutation, DeckEditMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 
@@ -66,7 +66,7 @@ const WrDeckDetailDescription = ({
     id: deckId,
     description: currentDescription,
   } };
-  const [mutate, { loading }] = useMutation<DeckEdit, DeckEditVariables>(DECK_EDIT_MUTATION, {
+  const [mutate, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
       if (debouncing) {

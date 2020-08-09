@@ -4,17 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: CardsOfDeck
+// GraphQL mutation operation: CardDeleteMutation
 // ====================================================
 
-export interface CardsOfDeck_cardsOfDeck_ownRecord {
-  readonly __typename: "UserCardRecord";
-  readonly cardId: string;
-  readonly userId: string;
-  readonly correctRecord: ReadonlyArray<(GraphQLDateTime | null)>;
-}
-
-export interface CardsOfDeck_cardsOfDeck {
+export interface CardDeleteMutation_cardDelete {
   readonly __typename: "Card";
   readonly id: string;
   readonly deckId: string;
@@ -25,13 +18,12 @@ export interface CardsOfDeck_cardsOfDeck {
   readonly editedAt: GraphQLDateTime;
   readonly template: boolean;
   readonly mainTemplate: boolean;
-  readonly ownRecord: CardsOfDeck_cardsOfDeck_ownRecord | null;
 }
 
-export interface CardsOfDeck {
-  readonly cardsOfDeck: ReadonlyArray<(CardsOfDeck_cardsOfDeck | null)> | null;
+export interface CardDeleteMutation {
+  readonly cardDelete: CardDeleteMutation_cardDelete | null;
 }
 
-export interface CardsOfDeckVariables {
-  readonly deckId: string;
+export interface CardDeleteMutationVariables {
+  readonly id: string;
 }

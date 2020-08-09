@@ -3,7 +3,7 @@
 import React, { MouseEvent } from "react";
 import moment from "moment";
 
-import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
+import type { DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Button, Item, MinimalLink } from "src/ui";

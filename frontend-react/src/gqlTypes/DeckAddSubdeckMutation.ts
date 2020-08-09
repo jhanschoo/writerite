@@ -4,10 +4,10 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: DeckRemoveSubdeck
+// GraphQL mutation operation: DeckAddSubdeckMutation
 // ====================================================
 
-export interface DeckRemoveSubdeck_deckRemoveSubdeck_subdecks {
+export interface DeckAddSubdeckMutation_deckAddSubdeck_subdecks {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
@@ -20,7 +20,7 @@ export interface DeckRemoveSubdeck_deckRemoveSubdeck_subdecks {
   readonly editedAt: GraphQLDateTime;
 }
 
-export interface DeckRemoveSubdeck_deckRemoveSubdeck {
+export interface DeckAddSubdeckMutation_deckAddSubdeck {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
@@ -31,14 +31,14 @@ export interface DeckRemoveSubdeck_deckRemoveSubdeck {
   readonly published: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
-  readonly subdecks: ReadonlyArray<(DeckRemoveSubdeck_deckRemoveSubdeck_subdecks | null)> | null;
+  readonly subdecks: ReadonlyArray<(DeckAddSubdeckMutation_deckAddSubdeck_subdecks | null)> | null;
 }
 
-export interface DeckRemoveSubdeck {
-  readonly deckRemoveSubdeck: DeckRemoveSubdeck_deckRemoveSubdeck | null;
+export interface DeckAddSubdeckMutation {
+  readonly deckAddSubdeck: DeckAddSubdeckMutation_deckAddSubdeck | null;
 }
 
-export interface DeckRemoveSubdeckVariables {
+export interface DeckAddSubdeckMutationVariables {
   readonly id: string;
   readonly subdeckId: string;
 }

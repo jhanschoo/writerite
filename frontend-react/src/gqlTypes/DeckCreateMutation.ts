@@ -3,11 +3,13 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
+import { CardCreateInput } from "./../gqlGlobalTypes";
+
 // ====================================================
-// GraphQL mutation operation: DeckEdit
+// GraphQL mutation operation: DeckCreateMutation
 // ====================================================
 
-export interface DeckEdit_deckEdit {
+export interface DeckCreateMutation_deckCreate {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
@@ -20,15 +22,15 @@ export interface DeckEdit_deckEdit {
   readonly editedAt: GraphQLDateTime;
 }
 
-export interface DeckEdit {
-  readonly deckEdit: DeckEdit_deckEdit | null;
+export interface DeckCreateMutation {
+  readonly deckCreate: DeckCreateMutation_deckCreate | null;
 }
 
-export interface DeckEditVariables {
-  readonly id: string;
+export interface DeckCreateMutationVariables {
   readonly name?: string | null;
   readonly description?: GraphQLJSONObject | null;
   readonly promptLang?: string | null;
   readonly answerLang?: string | null;
   readonly published?: boolean | null;
+  readonly cards?: ReadonlyArray<CardCreateInput> | null;
 }

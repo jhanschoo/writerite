@@ -4,21 +4,21 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: OwnDeckRecordSet
+// GraphQL mutation operation: OwnDeckRecordSetMutation
 // ====================================================
 
-export interface OwnDeckRecordSet_ownDeckRecordSet {
+export interface OwnDeckRecordSetMutation_ownDeckRecordSet {
   readonly __typename: "UserDeckRecord";
   readonly deckId: string;
   readonly userId: string;
   readonly notes: GraphQLJSON;
 }
 
-export interface OwnDeckRecordSet {
-  readonly ownDeckRecordSet: OwnDeckRecordSet_ownDeckRecordSet | null;
+export interface OwnDeckRecordSetMutation {
+  readonly ownDeckRecordSet: OwnDeckRecordSetMutation_ownDeckRecordSet | null;
 }
 
-export interface OwnDeckRecordSetVariables {
+export interface OwnDeckRecordSetMutationVariables {
   readonly deckId: string;
   readonly notes?: GraphQLJSONObject | null;
 }

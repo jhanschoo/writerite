@@ -2,7 +2,7 @@
 import React from "react";
 import moment from "moment";
 
-import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
+import type { DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Item, MinimalButton, MinimalLink } from "src/ui";

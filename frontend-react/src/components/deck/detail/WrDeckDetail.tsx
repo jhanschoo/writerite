@@ -5,11 +5,9 @@ import type { WrState } from "src/store";
 
 import { useParams } from "react-router";
 
-import gql from "graphql-tag";
 import { useQuery } from "@apollo/client";
-import { DECK_DETAIL } from "src/client-models";
-import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
-import type { DeckDetail, DeckDetailVariables } from "./gqlTypes/DeckDetail";
+import { DECK_DETAIL_QUERY } from "src/sharedGql";
+import type { DeckDetailQuery, DeckDetailQueryVariables, DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Main, MinimalLink } from "src/ui";
@@ -19,15 +17,6 @@ import WrDeckDetailData from "./WrDeckDetailData";
 import WrDeckDetailDescription from "./WrDeckDetailDescription";
 import WrDeckDetailPersonalNotes from "./WrDeckDetailPersonalNotes";
 import WrDeckDetailSubdecks from "./WrDeckDetailSubdecks";
-
-const DECK_DETAIL_QUERY = gql`
-${DECK_DETAIL}
-query DeckDetail($deckId: ID!) {
-  deck(id: $deckId) {
-    ...DeckDetail
-  }
-}
-`;
 
 const BackLink = wrStyled(MinimalLink)`
 align-self: flex-start;
@@ -58,7 +47,7 @@ flex-direction: column;
 const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
   const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
-  const { error, data } = useQuery<DeckDetail, DeckDetailVariables>(DECK_DETAIL_QUERY, {
+  const { error, data } = useQuery<DeckDetailQuery, DeckDetailQueryVariables>(DECK_DETAIL_QUERY, {
     variables: { deckId },
   });
   if (error) {

@@ -14,10 +14,10 @@ import { SigninAction, createSignin } from "./actions";
 
 import { useHistory } from "react-router";
 
-import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
 import { restartWsConnection } from "src/apolloClient";
-import { Signin, SigninVariables } from "./gqlTypes/Signin";
+import { SIGNIN_MUTATION } from "src/sharedGql";
+import { SigninMutation, SigninMutationVariables } from "src/gqlTypes";
 
 import { breakpoints, wrStyled } from "src/theme";
 import { AnchorButton, Button, Fieldset, TextInput } from "src/ui";
@@ -31,23 +31,6 @@ declare let FBDeferred: Promise<any> | undefined;
 
 const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(process.env.REACT_APP_JWT_PUBLIC_KEY ?? "fail"));
 const RECAPTCHA_CLIENT_KEY = process.env.REACT_APP_RECAPTCHA_CLIENT_KEY;
-
-const SIGNIN_MUTATION = gql`
-mutation Signin(
-  $email: String! $name: String $token: String! $authorizer: String! $identifier: String!
-  ) {
-  signin(
-    email: $email
-    name: $name
-    token: $token
-    authorizer: $authorizer
-    identifier: $identifier
-    persist: false
-  ) {
-    token
-  }
-}
-`;
 
 interface FormValues {
   email: string;
@@ -194,7 +177,7 @@ const WrSignin = (): JSX.Element => {
       });
     }
   }, []);
-  const handleSigninSuccess = ({ signin }: Signin) => {
+  const handleSigninSuccess = ({ signin }: SigninMutation) => {
     const token = signin?.token;
     if (token && KJUR.jws.JWS.verify(token, PUBLIC_KEY, ["ES256"])) {
       const user = KJUR.jws.JWS.parse(token).payloadObj.sub as CurrentUser;
@@ -206,7 +189,7 @@ const WrSignin = (): JSX.Element => {
       setSigninUnderway(false);
     }
   };
-  const [mutateSignin] = useMutation<Signin, SigninVariables>(SIGNIN_MUTATION, {
+  const [mutateSignin] = useMutation<SigninMutation, SigninMutationVariables>(SIGNIN_MUTATION, {
     onCompleted: handleSigninSuccess,
     onError: (_e) => {
       setSigninUnderway(false);

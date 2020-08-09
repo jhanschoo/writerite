@@ -2,10 +2,8 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useDebounce } from "use-debounce";
 
 import { useQuery } from "@apollo/client";
-import type { DeckScalars } from "src/client-models/gqlTypes/DeckScalars";
-import { DecksQueryScope } from "src/gqlGlobalTypes";
 import { DECKS_QUERY } from "src/sharedGql";
-import type { Decks, DecksVariables } from "src/gqlTypes/Decks";
+import { DeckScalars, DecksQuery, DecksQueryScope, DecksQueryVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List, Main, ModalBackground, ModalCloseButton, ModalContainer, TextInput } from "src/ui";
@@ -112,7 +110,7 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
   const [titleFilter] = useDebounce(localTitleFilter, DEBOUNCE_DELAY);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
-  const updateCursor = (data: Decks | undefined) => {
+  const updateCursor = (data: DecksQuery | undefined) => {
     const decks = data?.decks?.filter((deck): deck is DeckScalars => deck !== null);
     if (decks?.length === SERVER_FETCH_LIMIT) {
       setCursor(decks[decks.length - 1]?.id);
@@ -124,7 +122,7 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
    * Do not indicate if loading since there are no mutations and
    * stale data does not cause harm.
    */
-  const { error, data, fetchMore } = useQuery<Decks, DecksVariables>(DECKS_QUERY, {
+  const { error, data, fetchMore } = useQuery<DecksQuery, DecksQueryVariables>(DECKS_QUERY, {
     variables: {
       titleFilter,
       scope: ownershipFilter,

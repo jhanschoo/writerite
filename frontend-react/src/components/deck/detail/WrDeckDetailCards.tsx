@@ -1,9 +1,8 @@
 import React from "react";
 
 import { useQuery } from "@apollo/client";
-import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 import { CARDS_OF_DECK_QUERY } from "src/sharedGql";
-import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
+import type { CardDetail, CardsOfDeckQuery, CardsOfDeckQueryVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
@@ -87,7 +86,7 @@ const WrDeckDetailCards = ({
   deckId,
   readOnly,
 }: Props): JSX.Element => {
-  const { data } = useQuery<CardsOfDeck, CardsOfDeckVariables>(CARDS_OF_DECK_QUERY, {
+  const { data } = useQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(CARDS_OF_DECK_QUERY, {
     variables: { deckId },
   });
   const [cards, templates, mainTemplate] = groupCards(data?.cardsOfDeck ?? []);

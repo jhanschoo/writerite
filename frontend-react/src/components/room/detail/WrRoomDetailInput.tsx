@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from "react";
 
 import { wrStyled } from "src/theme";
-import { TextInput, Button } from "src/ui";
+import { Button, TextInput } from "src/ui";
 
 const StyledForm = wrStyled.form`
 display: flex;

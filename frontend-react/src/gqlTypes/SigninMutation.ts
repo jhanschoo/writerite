@@ -4,19 +4,19 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: Signin
+// GraphQL mutation operation: SigninMutation
 // ====================================================
 
-export interface Signin_signin {
+export interface SigninMutation_signin {
   readonly __typename: "AuthResponse";
   readonly token: string;
 }
 
-export interface Signin {
-  readonly signin: Signin_signin | null;
+export interface SigninMutation {
+  readonly signin: SigninMutation_signin | null;
 }
 
-export interface SigninVariables {
+export interface SigninMutationVariables {
   readonly email: string;
   readonly name?: string | null;
   readonly token: string;

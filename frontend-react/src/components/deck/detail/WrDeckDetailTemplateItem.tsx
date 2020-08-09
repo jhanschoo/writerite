@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 
 import { useMutation } from "@apollo/client";
-import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
-import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
-import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
-import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
+import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables, CardsOfDeckQuery, CardsOfDeckQueryVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
@@ -51,7 +48,7 @@ const WrDeckDetailTemplateItem = ({
   } = template;
   // eslint-disable-next-line no-shadow
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDelete, CardDeleteVariables>(CARD_DELETE_MUTATION, {
+  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
     update(cache, { data }) {
       const deletedCard = data?.cardDelete;
       if (deletedCard) {
@@ -61,16 +58,16 @@ const WrDeckDetailTemplateItem = ({
             query: CARDS_OF_DECK_QUERY,
             variables: { deckId: deletedCard.deckId },
           };
-          const cardsOfDeckData = cache.readQuery<CardsOfDeck, CardsOfDeckVariables>(cardsOfDeckQuery);
+          const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
           if (!cardsOfDeckData?.cardsOfDeck) {
             return;
           }
-          const newCardsOfDeckData: CardsOfDeck = {
+          const newCardsOfDeckData: CardsOfDeckQuery = {
             ...cardsOfDeckData,
             // eslint-disable-next-line no-shadow
             cardsOfDeck: cardsOfDeckData.cardsOfDeck.filter((card) => card?.id !== deletedCard.id),
           };
-          cache.writeQuery<CardsOfDeck, CardsOfDeckVariables>({
+          cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
             ...cardsOfDeckQuery,
             data: newCardsOfDeckData,
           });
@@ -80,7 +77,7 @@ const WrDeckDetailTemplateItem = ({
       }
     },
   });
-  const [mutateEdit, { loading: loadingEdit }] = useMutation<CardEdit, CardEditVariables>(CARD_EDIT_MUTATION, {
+  const [mutateEdit, { loading: loadingEdit }] = useMutation<CardEditMutation, CardEditMutationVariables>(CARD_EDIT_MUTATION, {
     update(cache, { data }) {
       const newCard = data?.cardEdit;
       if (newCard) {
@@ -90,12 +87,12 @@ const WrDeckDetailTemplateItem = ({
             query: CARDS_OF_DECK_QUERY,
             variables: { deckId: newCard.deckId },
           };
-          const cardsOfDeckData = cache.readQuery<CardsOfDeck, CardsOfDeckVariables>(cardsOfDeckQuery);
-          const newCardsOfDeckData: CardsOfDeck = {
+          const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
+          const newCardsOfDeckData: CardsOfDeckQuery = {
             ...cardsOfDeckData ?? {},
             cardsOfDeck: (cardsOfDeckData?.cardsOfDeck ?? []).map((card) => card && { ...card, mainTemplate: card.id !== newCard.id }),
           };
-          cache.writeQuery<CardsOfDeck, CardsOfDeckVariables>({
+          cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
             ...cardsOfDeckQuery,
             data: newCardsOfDeckData,
           });

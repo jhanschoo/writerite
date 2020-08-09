@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import { useHistory } from "react-router";
 
-import { RoomState } from "src/gqlGlobalTypes";
+import { RoomState } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton, Item, List, NavBar, NavBarItem, NavBarList } from "src/ui";
@@ -82,6 +82,7 @@ interface Props {
 }
 
 const WrRoomNavBar = ({ roomState }: Props): JSX.Element => {
+  // eslint-disable-next-line no-shadow
   const history = useHistory();
   const [showExitModal, setShowExitModal] = useState(false);
   const handleExit = () => history.push("/deck/list");

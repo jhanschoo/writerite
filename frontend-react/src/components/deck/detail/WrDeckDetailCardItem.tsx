@@ -4,11 +4,8 @@ import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation } from "@apollo/client";
-import type { CardDetail } from "src/client-models/gqlTypes/CardDetail";
 import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/sharedGql";
-import type { CardsOfDeck, CardsOfDeckVariables } from "src/gqlTypes/CardsOfDeck";
-import type { CardDelete, CardDeleteVariables } from "src/gqlTypes/CardDelete";
-import type { CardEdit, CardEditVariables } from "src/gqlTypes/CardEdit";
+import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables, CardsOfDeckQuery, CardsOfDeckQueryVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
@@ -67,7 +64,7 @@ const WrDeckDetailCardItem = ({
     id,
     ...currentFields,
   } };
-  const [mutate, { loading }] = useMutation<CardEdit, CardEditVariables>(CARD_EDIT_MUTATION, {
+  const [mutate, { loading }] = useMutation<CardEditMutation, CardEditMutationVariables>(CARD_EDIT_MUTATION, {
     onCompleted(data) {
       if (debouncing) {
         return;
@@ -81,7 +78,7 @@ const WrDeckDetailCardItem = ({
       }
     },
   });
-  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDelete, CardDeleteVariables>(CARD_DELETE_MUTATION, {
+  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
     update(cache, { data }) {
       const deletedCard = data?.cardDelete;
       if (deletedCard) {
@@ -91,16 +88,16 @@ const WrDeckDetailCardItem = ({
             query: CARDS_OF_DECK_QUERY,
             variables: { deckId: deletedCard.deckId },
           };
-          const cardsOfDeckData = cache.readQuery<CardsOfDeck, CardsOfDeckVariables>(cardsOfDeckQuery);
+          const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
           if (!cardsOfDeckData?.cardsOfDeck) {
             return;
           }
-          const newCardsOfDeckData: CardsOfDeck = {
+          const newCardsOfDeckData: CardsOfDeckQuery = {
             ...cardsOfDeckData,
             // eslint-disable-next-line no-shadow
             cardsOfDeck: cardsOfDeckData.cardsOfDeck.filter((card) => card?.id !== deletedCard.id),
           };
-          cache.writeQuery<CardsOfDeck, CardsOfDeckVariables>({
+          cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
             ...cardsOfDeckQuery,
             data: newCardsOfDeckData,
           });

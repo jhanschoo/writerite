@@ -6,10 +6,10 @@
 import { DecksQueryScope } from "./../gqlGlobalTypes";
 
 // ====================================================
-// GraphQL query operation: Decks
+// GraphQL query operation: DecksQuery
 // ====================================================
 
-export interface Decks_decks {
+export interface DecksQuery_decks {
   readonly __typename: "Deck";
   readonly id: string;
   readonly ownerId: string;
@@ -22,11 +22,11 @@ export interface Decks_decks {
   readonly editedAt: GraphQLDateTime;
 }
 
-export interface Decks {
-  readonly decks: ReadonlyArray<(Decks_decks | null)> | null;
+export interface DecksQuery {
+  readonly decks: ReadonlyArray<(DecksQuery_decks | null)> | null;
 }
 
-export interface DecksVariables {
+export interface DecksQueryVariables {
   readonly cursor?: string | null;
   readonly take?: number | null;
   readonly titleFilter?: string | null;
