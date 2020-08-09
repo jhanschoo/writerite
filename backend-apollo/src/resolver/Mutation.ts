@@ -8,7 +8,7 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
-import { JsonObject, Unit } from "@prisma/client";
+import { JsonObject, Unit, RoomState } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
@@ -88,8 +88,9 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     cardId: string;
     correctRecord?: string[];
   }, UserCardRecordSS | null>;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  roomCreate: FieldResolver<Record<string, unknown>, WrContext, {}, RoomSS | null>;
+  roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
+    ownerConfig?: JsonObject;
+  }, RoomSS | null>;
   roomUpdateOwnerConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     ownerConfig: JsonObject;
@@ -536,7 +537,7 @@ export const Mutation: MutationResolver = {
     }
   },
 
-  async roomCreate(_parent, _args, { sub, pubsub, prisma }, _info) {
+  async roomCreate(_parent, { ownerConfig }, { sub, pubsub, prisma }, _info) {
     if (!sub) {
       return null;
     }
@@ -544,6 +545,7 @@ export const Mutation: MutationResolver = {
       const room = roomToSS(await prisma.room.create({
         data: {
           owner: { connect: { id: sub.id } },
+          ownerConfig,
           occupants: { create: { occupant: { connect: { id: sub.id } } } },
         },
       }));
@@ -563,7 +565,7 @@ export const Mutation: MutationResolver = {
     ownerConfig,
   }, { sub, pubsub, prisma }, _info) {
     try {
-      if (!sub || !await userOwnsRoom({ prisma, userId: sub.id, roomId: id })) {
+      if (!sub || !await userOwnsRoom({ prisma, where: { ownerId: sub.id, id, state: RoomState.WAITING } })) {
         return null;
       }
       const room = roomToSS(await prisma.room.update({
@@ -588,13 +590,12 @@ export const Mutation: MutationResolver = {
     occupantId,
   }, { sub, pubsub, prisma }, _info) {
     try {
-      if (!sub ||
-        sub.id !== occupantId &&
-        !(await prisma.room.count({ where: {
-          id,
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          occupants: { some: { B: sub.id } },
-        } }) === 1)) {
+      /*
+       * TODO: make room configurable to allow only owner to add people
+       * TODO: make room configurable to prevent adding self to a room
+       * TODO: implement an invite system
+       */
+      if (!sub || sub.id !== occupantId && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id } })) {
         return null;
       }
       const room = roomToSS(await prisma.room.update({
@@ -632,7 +633,7 @@ export const Mutation: MutationResolver = {
     }
     const isWright = sub.roles.includes(Roles.wright);
     try {
-      if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
+      if (!isWright && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
         return null;
       }
       const chatMsg = chatMsgToSS(await prisma.chatMsg.create({

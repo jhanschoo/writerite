@@ -170,7 +170,9 @@ type Mutation {
   ): UserCardRecord
 
   # Room
-  roomCreate: Room @subscriptionsTriggered(
+  roomCreate(
+    ownerConfig: JSONObject @nonNull
+  ): Room @subscriptionsTriggered(
     signatures: ["roomUpdates(<id>)"]
   )
   # Only legal when room state is WAITING

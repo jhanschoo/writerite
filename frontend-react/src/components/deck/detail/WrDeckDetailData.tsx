@@ -110,7 +110,7 @@ const WrDeckDetailData = ({
   readOnly,
 }: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow
-  const history = useHistory<{ editTitle?: boolean, deckId?: string } | null>();
+  const history = useHistory<{ editTitle: boolean } | null>();
   const { editTitle } = history.location.state ?? {};
   const editorEl = useRef<Editor>(null);
   useEffect(() => {
@@ -143,7 +143,7 @@ const WrDeckDetailData = ({
   const [mutateRoomCreate] = useMutation<RoomCreate>(ROOM_CREATE_MUTATION, {
     onCompleted(data) {
       if (data.roomCreate) {
-        history.push(`/room/${data.roomCreate.id}`, { deckId: deck.id });
+        history.push(`/room/${data.roomCreate.id}`);
       }
     },
   });
@@ -168,7 +168,7 @@ const WrDeckDetailData = ({
     }
     return newEditorState;
   };
-  const handleCreateRoom = () => mutateRoomCreate();
+  const handleCreateRoom = () => mutateRoomCreate({ variables: { ownerConfig: { deckId: deck.id } } });
   const now = moment.utc();
   const deckTitleStatus = editorState.getCurrentContent().getPlainText().trim() === ""
     ? "invalid"

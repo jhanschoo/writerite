@@ -1,4 +1,4 @@
-import type { JsonObject, PrismaClient, Room, RoomState } from "@prisma/client";
+import type { JsonObject, PrismaClient, Room, RoomState, RoomWhereInput } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { ChatMsgSS } from "./ChatMsg";
 
@@ -22,35 +22,33 @@ export function roomTopic(id: string): string {
   return `room::${id}`;
 }
 
-export async function userOwnsRoom({ prisma, userId, roomId }: {
+export async function userOwnsRoom({ prisma, where }: {
   prisma: PrismaClient;
-  userId?: string | null;
-  roomId?: string | null;
+  where?: RoomWhereInput;
 }): Promise<boolean> {
-  if (!userId || !roomId) {
+  const { id, ownerId } = where ?? {};
+  if (!ownerId || !id) {
     return false;
   }
   return await prisma.room.count({
-    where: {
-      id: roomId,
-      ownerId: userId,
-    },
+    where,
   }) === 1;
 }
 
-export async function userOccupiesRoom({ prisma, userId, roomId }: {
+export async function userOccupiesRoom({ prisma, occupantId, where }: {
   prisma: PrismaClient;
-  userId?: string | null;
-  roomId?: string | null;
+  occupantId?: string;
+  where?: RoomWhereInput;
 }): Promise<boolean> {
-  if (!userId || !roomId) {
+  const { id } = where ?? {};
+  if (!occupantId || !id) {
     return false;
   }
   return await prisma.room.count({
     where: {
-      id: roomId,
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      occupants: { some: { B: userId } },
+      occupants: occupantId ? { some: { B: occupantId } } : undefined,
+      ...where,
     },
   }) === 1;
 }

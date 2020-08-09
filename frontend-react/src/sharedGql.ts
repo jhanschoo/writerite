@@ -105,8 +105,8 @@ mutation CardDelete($id: ID!) {
 
 export const ROOM_CREATE_MUTATION = gql`
 ${ROOM_SCALARS}
-mutation RoomCreate {
-  roomCreate {
+mutation RoomCreate($ownerConfig: JSONObject) {
+  roomCreate(ownerConfig: $ownerConfig) {
     ...RoomScalars
   }
 }

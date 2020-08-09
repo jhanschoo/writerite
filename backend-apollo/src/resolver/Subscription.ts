@@ -42,7 +42,7 @@ const roomUpdates: SubscriptionFieldResolver<{ id: string }, Update<RoomSS>> = {
       return null;
     }
     const isWright = sub.roles.includes(Roles.wright);
-    if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId: id })) {
+    if (!isWright && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id } })) {
       return null;
     }
     return pubsub.asyncIterator<Update<RoomSS>>(roomTopic(id));
@@ -55,7 +55,7 @@ const chatMsgsOfRoomUpdates: SubscriptionFieldResolver<{ roomId: string }, Updat
       return null;
     }
     const isWright = sub.roles.includes(Roles.wright);
-    if (!isWright && !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
+    if (!isWright && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
       return null;
     }
     return pubsub.asyncIterator<Update<ChatMsgSS>>(chatMsgsOfRoomTopic(roomId));

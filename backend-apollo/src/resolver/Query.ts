@@ -202,7 +202,7 @@ export const Query: QueryResolver = {
   },
   async chatMsgsOfRoom(_parent, { roomId }, { sub, prisma }, _info) {
     try {
-      if (!sub || !await userOccupiesRoom({ prisma, userId: sub.id, roomId })) {
+      if (!sub || !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
         return null;
       }
       return (await prisma.chatMsg.findMany({ where: { roomId } })).map(chatMsgToSS);
