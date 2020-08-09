@@ -4,8 +4,8 @@ import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION } from "src/gql";
-import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables, CardsOfDeckQuery, CardsOfDeckQueryVariables } from "src/gqlTypes";
+import { CARD_DELETE_MUTATION, CARD_EDIT_MUTATION, cardDeleteMutationUpdate } from "src/gql";
+import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
@@ -79,33 +79,7 @@ const WrDeckDetailCardItem = ({
     },
   });
   const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
-    update(cache, { data }) {
-      const deletedCard = data?.cardDelete;
-      if (deletedCard) {
-        // update CardsOfDeck query of the same deckId
-        try {
-          const cardsOfDeckQuery = {
-            query: CARDS_OF_DECK_QUERY,
-            variables: { deckId: deletedCard.deckId },
-          };
-          const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
-          if (!cardsOfDeckData?.cardsOfDeck) {
-            return;
-          }
-          const newCardsOfDeckData: CardsOfDeckQuery = {
-            ...cardsOfDeckData,
-            // eslint-disable-next-line no-shadow
-            cardsOfDeck: cardsOfDeckData.cardsOfDeck.filter((card) => card?.id !== deletedCard.id),
-          };
-          cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
-            ...cardsOfDeckQuery,
-            data: newCardsOfDeckData,
-          });
-        } catch (_e) {
-          // noop
-        }
-      }
-    },
+    update: cardDeleteMutationUpdate,
   });
   const [debounce, , call] = useDebouncedCallback(() => {
     setDebouncing(false);

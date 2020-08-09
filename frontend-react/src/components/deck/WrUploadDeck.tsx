@@ -6,8 +6,8 @@ import Papa from "papaparse";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECKS_QUERY, DECK_CREATE_MUTATION } from "src/gql";
-import { CardCreateInput, DeckCreateMutation, DeckCreateMutationVariables, DecksQuery, DecksQueryScope, DecksQueryVariables } from "src/gqlTypes";
+import { DECK_CREATE_MUTATION, deckCreateMutationUpdate } from "src/gql";
+import { CardCreateInput, DeckCreateMutation, DeckCreateMutationVariables } from "src/gqlTypes";
 
 import type { StyledComponent } from "styled-components";
 import { WrTheme, wrStyled } from "src/theme";
@@ -118,26 +118,7 @@ const WrUploadDeck = (): JSX.Element => {
   const [isEmptyDeck, setIsEmptyDeck] = useState<boolean>(false);
   const dropDivEl = useRef<HTMLDivElement>(null);
   const [mutate, { loading }] = useMutation<DeckCreateMutation, DeckCreateMutationVariables>(DECK_CREATE_MUTATION, {
-    update(cache, { data }) {
-      const newDeck = data?.deckCreate;
-      if (newDeck) {
-        // update Decks query
-        try {
-          const decksQuery = { query: DECKS_QUERY, variables: { scope: DecksQueryScope.OWNED, titleFilter: "" } };
-          const decksData = cache.readQuery<DecksQuery, DecksQueryVariables>(decksQuery);
-          const newDecksData: DecksQuery = {
-            ...decksData ?? {},
-            decks: [newDeck, ...decksData?.decks ?? []],
-          };
-          cache.writeQuery<DecksQuery, DecksQueryVariables>({
-            ...decksQuery,
-            data: newDecksData,
-          });
-        } catch (e) {
-          // no-op
-        }
-      }
-    },
+    update: deckCreateMutationUpdate,
   });
   const noFilenameMessage = filename === null && !isEmptyDeck ? <DropDivP>no file selected</DropDivP> : null;
   let dragStatusMessage = <DropDivPBold>drag a .csv file here</DropDivPBold>;
