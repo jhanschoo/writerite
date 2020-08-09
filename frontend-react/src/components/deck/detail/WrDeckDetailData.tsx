@@ -6,7 +6,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION } from "src/gql";
+import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION, roomCreateMutationUpdate } from "src/gql";
 import type { DeckEditMutation, DeckEditMutationVariables, DeckScalars, RoomCreateMutation, RoomCreateMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
@@ -139,6 +139,7 @@ const WrDeckDetailData = ({
     },
   });
   const [mutateRoomCreate] = useMutation<RoomCreateMutation, RoomCreateMutationVariables>(ROOM_CREATE_MUTATION, {
+    update: roomCreateMutationUpdate,
     onCompleted(data) {
       if (data.roomCreate) {
         history.push(`/room/${data.roomCreate.id}`);

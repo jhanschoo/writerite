@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 import { CARD_DETAIL, CARD_SCALARS, DECK_SCALARS, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
-import { CardCreateMutation, CardDeleteMutation, CardEditMutation, CardsOfDeckQuery, CardsOfDeckQueryVariables, DeckCreateMutation, DecksQuery, DecksQueryScope, DecksQueryVariables } from "src/gqlTypes";
+import { CardCreateMutation, CardDeleteMutation, CardEditMutation, CardsOfDeckQuery, CardsOfDeckQueryVariables, DeckCreateMutation, DecksQuery, DecksQueryScope, DecksQueryVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables } from "src/gqlTypes";
 import { MutationUpdaterFn } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, DECKS_QUERY } from "src/gql";
+import { CARDS_OF_DECK_QUERY, DECKS_QUERY, ROOM_QUERY } from "src/gql";
 
 export const SIGNIN_MUTATION = gql`
 mutation SigninMutation(
@@ -156,6 +156,7 @@ mutation CardEditMutation(
   }
 }
 `;
+
 export const cardEditMutationUpdate: MutationUpdaterFn<CardEditMutation> = (cache, { data }) => {
   const newCard = data?.cardEdit;
   if (newCard?.mainTemplate) {
@@ -225,6 +226,19 @@ mutation RoomCreateMutation($ownerConfig: JSONObject) {
   }
 }
 `;
+
+export const roomCreateMutationUpdate: MutationUpdaterFn<RoomCreateMutation> = (cache, { data }) => {
+  const newRoom = data?.roomCreate;
+  if (newRoom) {
+    cache.writeQuery<RoomQuery, RoomQueryVariables>({
+      query: ROOM_QUERY,
+      variables: { id: newRoom.id },
+      data: {
+        room: newRoom,
+      },
+    });
+  }
+};
 
 export const OWN_DECK_RECORD_SET_MUTATION = gql`
 ${USER_DECK_RECORD_SCALARS}
