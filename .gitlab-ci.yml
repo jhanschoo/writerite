@@ -82,7 +82,7 @@ build-pages:
   script:
     - cd frontend-react
     - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
-    - NODE_ENV="production" npm run build
+    - NODE_ENV="production" CI="false" npm run build
     - cd ..
     - mv frontend-react/build public
   services: []

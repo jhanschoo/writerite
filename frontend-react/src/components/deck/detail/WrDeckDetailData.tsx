@@ -114,13 +114,13 @@ const WrDeckDetailData = ({
   const { editTitle } = history.location.state ?? {};
   const editorEl = useRef<Editor>(null);
   useEffect(() => {
-    if (editTitle) {
+    if (editTitle && readOnly) {
       editorEl.current?.focus();
     }
     if (history.location.state) {
       history.replace(history.location.pathname, null);
     }
-  }, [history, editTitle]);
+  }, [history, editTitle, readOnly]);
   const [editorState, setEditorState] = useState(lineEditorStateFromString(deck.name));
   const [currentTitle, setCurrentTitle] = useState(deck.name);
   const [debouncing, setDebouncing] = useState(false);
