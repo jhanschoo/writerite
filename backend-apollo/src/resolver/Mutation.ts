@@ -652,7 +652,7 @@ export const Mutation: MutationResolver = {
         data: chatMsg,
       };
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
+      pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates: update });
       return chatMsg;
     } catch (e) {
       return handleError(e);
@@ -680,7 +680,7 @@ export const Mutation: MutationResolver = {
         data: chatMsg,
       };
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
+      pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates: update });
       return chatMsg;
     } catch (e) {
       return handleError(e);

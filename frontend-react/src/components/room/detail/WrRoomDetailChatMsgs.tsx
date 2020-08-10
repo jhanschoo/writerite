@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { useQuery } from "@apollo/client";
-import { ChatMsgContentType, ChatMsgDetail, ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables } from "src/gqlTypes";
+import { ChatMsgContentType, ChatMsgDetail, ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables, ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
@@ -25,22 +25,20 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
     roomId,
   } });
   useEffect(() => {
-    subscribeToMore({
+    subscribeToMore<ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables>({
       document: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
       variables: { roomId },
-      updateQuery(prev, { subscriptionData: { data: { chatMsgsOfRoom } } }) {
+      updateQuery(prev, { subscriptionData: { data: { chatMsgsOfRoomUpdates } } }) {
         // TODO
-        console.log(chatMsgsOfRoom)
+        console.log(chatMsgsOfRoomUpdates);
         return prev;
       },
     });
   }, [roomId, subscribeToMore]);
   const msgs = data?.chatMsgsOfRoom?.filter((chatMsg): chatMsg is ChatMsgDetail => chatMsg?.type === ChatMsgContentType.TEXT);
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-  const msgItems = msgs?.map(({ id, content }) => <MsgItem key={id}>{`${content}`}
+  const msgItems = msgs?.map(({ id, sender, content }) => sender && <MsgItem key={id}>{`${sender.name || sender.email}: ${content}`}
   </MsgItem>);
-  // const msgItems = msgs?.map(({ id, sender, content }) => sender && <MsgItem key={id}>{`${sender.name || sender.email}: ${content}`}
-  // </MsgItem>);
   return <ConversationList>
     {msgItems}
   </ConversationList>;

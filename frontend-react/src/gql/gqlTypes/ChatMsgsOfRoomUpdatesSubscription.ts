@@ -6,10 +6,10 @@
 import { UpdateType, ChatMsgContentType } from "./../../gqlGlobalTypes";
 
 // ====================================================
-// GraphQL subscription operation: ChatMsgsOfRoomUpdates
+// GraphQL subscription operation: ChatMsgsOfRoomUpdatesSubscription
 // ====================================================
 
-export interface ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates_data_sender {
+export interface ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data_sender {
   readonly __typename: "User";
   readonly id: string;
   readonly email: string;
@@ -17,26 +17,26 @@ export interface ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates_data_sender {
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates_data {
+export interface ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data {
   readonly __typename: "ChatMsg";
   readonly id: string;
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: string;
-  readonly sender: ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates_data_sender | null;
+  readonly sender: ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data_sender | null;
 }
 
-export interface ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates {
+export interface ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates {
   readonly __typename: "ChatMsgUpdate";
   readonly type: UpdateType;
-  readonly data: ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates_data | null;
+  readonly data: ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data | null;
 }
 
-export interface ChatMsgsOfRoomUpdates {
-  readonly chatMsgsOfRoomUpdates: ChatMsgsOfRoomUpdates_chatMsgsOfRoomUpdates | null;
+export interface ChatMsgsOfRoomUpdatesSubscription {
+  readonly chatMsgsOfRoomUpdates: ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates | null;
 }
 
-export interface ChatMsgsOfRoomUpdatesVariables {
+export interface ChatMsgsOfRoomUpdatesSubscriptionVariables {
   readonly roomId: string;
 }
