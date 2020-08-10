@@ -199,6 +199,14 @@ type Mutation {
   ): ChatMsg @subscriptionsTriggered(
     signatures: ["chatMsgsOfRoomUpdates(roomId)"]
   )
+
+  chatMsgCreateInternal(
+    roomId: ID!
+    type: ChatMsgContentType!
+    content: String!
+  ): ChatMsg @subscriptionsTriggered(
+    signatures: ["chatMsgsOfRoomUpdates(roomId)"]
+  )
 }
 
 type Subscription {

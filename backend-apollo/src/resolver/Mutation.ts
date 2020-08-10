@@ -100,8 +100,12 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     id: string;
     occupantId: string;
   }, RoomSS | null>;
-
   chatMsgCreate: FieldResolver<Record<string, unknown>, WrContext, {
+    roomId: string;
+    type: ChatMsgContentType;
+    content: string;
+  }, ChatMsgSS | null>;
+  chatMsgCreateInternal: FieldResolver<Record<string, unknown>, WrContext, {
     roomId: string;
     type: ChatMsgContentType;
     content: string;
@@ -623,7 +627,6 @@ export const Mutation: MutationResolver = {
       return handleError(e);
     }
   },
-
   async chatMsgCreate(_parent, {
     roomId,
     type,
@@ -632,9 +635,8 @@ export const Mutation: MutationResolver = {
     if (!sub) {
       return null;
     }
-    const isWright = sub.roles.includes(Roles.wright);
     try {
-      if (!isWright && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
+      if (!await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
         return null;
       }
       const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
@@ -642,7 +644,35 @@ export const Mutation: MutationResolver = {
           room: { connect: { id: roomId } },
           type,
           content,
-          sender: isWright ? null : { connect: { id: sub.id } },
+          sender: { connect: { id: sub.id } },
+        },
+      }));
+      const update: Update<ChatMsgSS> = {
+        type: UpdateType.CREATED,
+        data: chatMsg,
+      };
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
+      return chatMsg;
+    } catch (e) {
+      return handleError(e);
+    }
+  },
+  async chatMsgCreateInternal(_parent, {
+    roomId,
+    type,
+    content,
+  }, { sub, pubsub, prisma }, _info) {
+    if (!sub?.roles.includes(Roles.wright)) {
+      return null;
+    }
+    try {
+      const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
+        data: {
+          room: { connect: { id: roomId } },
+          type,
+          content,
+          sender: null,
         },
       }));
       const update: Update<ChatMsgSS> = {
