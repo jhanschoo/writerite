@@ -1,5 +1,16 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, DECK_DETAIL, DECK_SCALARS, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
+import { CARD_DETAIL, DECK_DETAIL, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
+
+export const DECK_QUERY = gql`
+${DECK_SCALARS}
+query DeckQuery(
+  $id: ID!
+) {
+  deck(id: $id) {
+    ...DeckScalars
+  }
+}
+`;
 
 export const DECKS_QUERY = gql`
 ${DECK_SCALARS}
@@ -22,8 +33,8 @@ query DecksQuery(
 
 export const DECK_DETAIL_QUERY = gql`
 ${DECK_DETAIL}
-query DeckDetailQuery($deckId: ID!) {
-  deck(id: $deckId) {
+query DeckDetailQuery($id: ID!) {
+  deck(id: $id) {
     ...DeckDetail
   }
 }
@@ -43,6 +54,15 @@ ${ROOM_SCALARS}
 query RoomQuery($id: ID!) {
   room(id: $id) {
     ...RoomScalars
+  }
+}
+`;
+
+export const ROOM_DETAIL_QUERY = gql`
+${ROOM_DETAIL}
+query RoomDetailQuery($id: ID!) {
+  room(id: $id) {
+    ...RoomDetail
   }
 }
 `;

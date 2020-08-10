@@ -10,6 +10,5 @@
  * subscription witnessing an entity being created or deleted.
  */
 
-
 export * from "./queries";
 export * from "./mutations";

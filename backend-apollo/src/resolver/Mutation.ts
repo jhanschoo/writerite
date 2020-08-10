@@ -17,6 +17,7 @@ import { RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
 import { UserCardRecordSS } from "../model/UserCardRecord";
+import { handleError } from "../util";
 
 const localAuth = new LocalAuthService();
 const googleAuth = new GoogleAuthService();
@@ -144,7 +145,7 @@ export const Mutation: MutationResolver = {
           return null;
       }
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async userEdit(_parent, { name }, { sub, prisma }, _info) {
@@ -157,7 +158,7 @@ export const Mutation: MutationResolver = {
         data: { name },
       }));
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async deckCreate(_parent, {
@@ -198,7 +199,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return deck;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async deckEdit(_parent, {
@@ -234,7 +235,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return deck;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async deckAddSubdeck(_parent, {
@@ -267,7 +268,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return deck;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async deckRemoveSubdeck(_parent, {
@@ -298,7 +299,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return deck;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async deckDelete(_parent, {
@@ -317,7 +318,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return deck;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async ownDeckRecordSet(_parent, {
@@ -344,7 +345,7 @@ export const Mutation: MutationResolver = {
         },
       });
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async cardCreate(_parent, {
@@ -399,7 +400,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return card;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async cardEdit(_parent, {
@@ -453,7 +454,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return card;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async cardUnsetMainTemplate(_parent, { deckId }, { sub, prisma }, _info) {
@@ -478,7 +479,7 @@ export const Mutation: MutationResolver = {
       } });
       return true;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async cardDelete(_parent, {
@@ -505,7 +506,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(ownDecksTopic(sub.id), update);
       return card;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async ownCardRecordSet(_parent, {
@@ -533,7 +534,7 @@ export const Mutation: MutationResolver = {
         },
       });
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
 
@@ -557,7 +558,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(roomTopic(room.id), update);
       return room;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async roomUpdateOwnerConfig(_parent, {
@@ -582,7 +583,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(roomTopic(id), update);
       return room;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async roomAddOccupant(_parent, {
@@ -619,7 +620,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(roomTopic(id), update);
       return room;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
 
@@ -652,7 +653,7 @@ export const Mutation: MutationResolver = {
       pubsub.publish(chatMsgsOfRoomTopic(roomId), update);
       return chatMsg;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
 };

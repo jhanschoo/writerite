@@ -47,5 +47,5 @@ export interface DeckDetailQuery {
 }
 
 export interface DeckDetailQueryVariables {
-  readonly deckId: string;
+  readonly id: string;
 }

@@ -7,7 +7,7 @@ export const ROOM_DETAIL = gql`
 ${ROOM_SCALARS}
 ${USER_SCALARS}
 ${CHAT_MSG_SCALARS}
-fragment Room on Room {
+fragment RoomDetail on Room {
   ...RoomScalars
   owner {
     ...UserScalars

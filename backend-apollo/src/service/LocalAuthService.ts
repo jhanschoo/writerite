@@ -4,7 +4,7 @@ import "../assertConfig";
 import fetch from "node-fetch";
 import FormData from "form-data";
 
-import { comparePassword, hashPassword } from "../util";
+import { comparePassword, hashPassword, handleError } from "../util";
 import { AbstractAuthService, SigninOptions } from "./AbstractAuthService";
 import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
@@ -57,7 +57,7 @@ export class LocalAuthService extends AbstractAuthService {
       const json = await response.json();
       return json.success ? "success" : null;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
     return null;
   }

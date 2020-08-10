@@ -12,7 +12,7 @@ import helmet from "koa-helmet";
 
 import { PrismaClient } from "@prisma/client";
 
-import { FETCH_DEPTH, generateJWT, getClaims, printError } from "./util";
+import { FETCH_DEPTH, generateJWT, getClaims, handleError } from "./util";
 import { Roles } from "./types";
 import { createApollo } from "./apollo";
 
@@ -113,10 +113,10 @@ server.listen({ port: 4000 }, () => {
 export function stop(): void {
   stopped = true;
   server.removeAllListeners();
-  server.close(printError);
-  apollo.stop().catch(printError);
+  server.close(handleError);
+  apollo.stop().catch(handleError);
   pubsub.close();
   redisClient.removeAllListeners();
   redisClient.disconnect();
-  prisma.disconnect().catch(printError);
+  prisma.disconnect().catch(handleError);
 }

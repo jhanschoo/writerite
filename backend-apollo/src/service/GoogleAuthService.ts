@@ -5,6 +5,7 @@ import { AbstractAuthService, SigninOptions } from "./AbstractAuthService";
 import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
 import { userToSS } from "../model/User";
+import { handleError } from "../util";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { GAPI_CLIENT_ID, GAPI_CLIENT_SECRET } = process.env;
@@ -49,7 +50,7 @@ export class GoogleAuthService extends AbstractAuthService {
       });
       return ticket.getPayload()?.sub ?? null;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   }
 }

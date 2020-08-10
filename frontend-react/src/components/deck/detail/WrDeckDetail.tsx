@@ -48,7 +48,7 @@ const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
   const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
   const { error, data } = useQuery<DeckDetailQuery, DeckDetailQueryVariables>(DECK_DETAIL_QUERY, {
-    variables: { deckId },
+    variables: { id: deckId },
   });
   if (error) {
     return <StyledMain/>;

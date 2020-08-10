@@ -5,6 +5,7 @@ export * from "./ChatMsgScalars";
 export * from "./DeckDetail";
 export * from "./DeckScalars";
 export * from "./Room";
+export * from "./RoomDetail";
 export * from "./RoomScalars";
 export * from "./User";
 export * from "./UserCardRecordScalars";

@@ -8,6 +8,7 @@ import { AbstractAuthService, SigninOptions } from "./AbstractAuthService";
 import { ApolloError } from "apollo-server-koa";
 import { AuthResponseSS } from "../model/Authorization";
 import { userToSS } from "../model/User";
+import { handleError } from "../util";
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;
@@ -67,7 +68,7 @@ export class FacebookAuthService extends AbstractAuthService {
       }
       return null;
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   }
 }

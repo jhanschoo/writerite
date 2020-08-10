@@ -9,6 +9,7 @@ import { RoomSS, roomToSS, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
 import { UserCardRecordSS } from "../model/UserCardRecord";
+import { handleError } from "../util";
 
 const DEFAULT_TAKE = 60;
 
@@ -67,7 +68,7 @@ export const Query: QueryResolver = {
     try {
       return userToSS(await prisma.user.findOne({ where: { id } }));
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async deck(_parent, { id }, { prisma, sub }, _info) {
@@ -89,7 +90,7 @@ export const Query: QueryResolver = {
       }
       return decks[0];
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async decks(_parent, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) {
@@ -133,7 +134,7 @@ export const Query: QueryResolver = {
         owner: userToSS(deck.owner),
       }));
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async ownDeckRecord(_parent, { deckId }, { prisma, sub }, _info) {
@@ -144,21 +145,21 @@ export const Query: QueryResolver = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       return await prisma.userDeckRecord.findOne({ where: { userId_deckId: { userId: sub.id, deckId } } });
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async card(_parent, { id }, { prisma }, _info) {
     try {
       return await prisma.card.findOne({ where: { id } });
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async cardsOfDeck(_parent, { deckId }, { prisma }, _info) {
     try {
       return await prisma.card.findMany({ where: { deckId } });
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async ownCardRecord(_parent, { cardId }, { prisma, sub }, _info) {
@@ -169,14 +170,14 @@ export const Query: QueryResolver = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       return await prisma.userCardRecord.findOne({ where: { userId_cardId: { userId: sub.id, cardId } } });
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async room(_parent, { id }, { prisma }, _info) {
     try {
       return roomToSS(await prisma.room.findOne({ where: { id } }));
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async occupyingRooms(_parent, _args, { sub, prisma }, _info) {
@@ -187,7 +188,7 @@ export const Query: QueryResolver = {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       return (await prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } })).map(roomToSS);
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async chatMsg(_parent, { id }, { sub, prisma }, _info) {
@@ -197,7 +198,7 @@ export const Query: QueryResolver = {
       }
       return chatMsgToSS(await prisma.chatMsg.findOne({ where: { id } }));
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
   async chatMsgsOfRoom(_parent, { roomId }, { sub, prisma }, _info) {
@@ -207,7 +208,7 @@ export const Query: QueryResolver = {
       }
       return (await prisma.chatMsg.findMany({ where: { roomId } })).map(chatMsgToSS);
     } catch (e) {
-      return null;
+      return handleError(e);
     }
   },
 };

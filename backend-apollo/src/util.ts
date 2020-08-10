@@ -78,13 +78,18 @@ export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
         return sub;
       }
     } catch (e) {
-      // return undefined;
+      handleError(e);
+      return undefined;
     }
   }
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-export function printError(e: any): void {
-  // eslint-disable-next-line no-console
-  console.error(e);
+export function handleError(e: any): null {
+  if (process.env.NODE_ENV === "development") {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    throw e;
+  }
+  return null;
 }

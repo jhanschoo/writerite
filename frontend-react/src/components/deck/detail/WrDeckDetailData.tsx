@@ -15,22 +15,7 @@ import { BorderlessButton, Item, List } from "src/ui";
 import { DEBOUNCE_DELAY } from "src/util";
 import LineEditor, { lineEditorStateFromString } from "src/components/editor/LineEditor";
 
-const StyledOuterBox = wrStyled.div`
-flex-direction: column;
-align-items: stretch;
-width: 100%;
-`;
-
-const StyledInnerBox = wrStyled.article`
-display: flex;
-flex-direction: column;
-align-items: stretch;
-margin: 0 ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[3]} ${({ theme: { space } }) => space[2]};
-padding: 0;
-${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
-`;
-
-const DeckInfoBox = wrStyled.div`
+const DeckDataBox = wrStyled.div`
 width: 33%;
 display: flex;
 flex-direction: column;
@@ -38,6 +23,15 @@ flex-direction: column;
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   width: 100%;
 }
+`;
+
+const DeckInfoBox = wrStyled.article`
+display: flex;
+flex-direction: column;
+align-items: stretch;
+margin: 0 ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[3]} ${({ theme: { space } }) => space[2]};
+padding: 0;
+${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 `;
 
 const StyledHeader = wrStyled.header`
@@ -49,6 +43,7 @@ h4 {
   margin: 0;
   max-width: fit-content;
   padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+  ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 }
 
 .DraftEditor-root {
@@ -56,10 +51,6 @@ h4 {
   flex-shrink: 1;
   overflow: hidden;
   margin: 0;
-
-  h4 {
-    ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
-  }
 }
 `;
 
@@ -174,33 +165,31 @@ const WrDeckDetailData = ({
     : loading || currentTitle !== deck.name
       ? "saving"
       : undefined;
-  return <DeckInfoBox>
-    <StyledOuterBox>
-      <StyledInnerBox>
-        <StyledHeader>
-          <LineEditor
-            editorState={editorState}
-            setEditorState={setEditorState}
-            handleChange={handleChange}
-            tag="h4"
-            readOnly={readOnly}
-            ref={editorEl}
-          />
-          <DeckTitleStatus>{deckTitleStatus}</DeckTitleStatus>
-        </StyledHeader>
-        <DeckStatistics>
-          {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
-          <br />
-          {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
-        </DeckStatistics>
-      </StyledInnerBox>
-    </StyledOuterBox>
+  return <DeckDataBox>
+    <DeckInfoBox>
+      <StyledHeader>
+        <LineEditor
+          editorState={editorState}
+          setEditorState={setEditorState}
+          handleChange={handleChange}
+          tag="h4"
+          readOnly={readOnly}
+          ref={editorEl}
+        />
+        <DeckTitleStatus>{deckTitleStatus}</DeckTitleStatus>
+      </StyledHeader>
+      <DeckStatistics>
+        {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
+        <br />
+        {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
+      </DeckStatistics>
+    </DeckInfoBox>
     <ActionsList>
       <ActionsItem>
         <ActionsButton onClick={handleCreateRoom}>Start Contest</ActionsButton>
       </ActionsItem>
     </ActionsList>
-  </DeckInfoBox>;
+  </DeckDataBox>;
 };
 
 export default WrDeckDetailData;
