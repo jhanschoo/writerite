@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, DECK_DETAIL, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
+import { CARD_DETAIL, CHAT_MSG_DETAIL, DECK_DETAIL, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
 
 export const DECK_QUERY = gql`
 ${DECK_SCALARS}
@@ -63,6 +63,15 @@ ${ROOM_DETAIL}
 query RoomDetailQuery($id: ID!) {
   room(id: $id) {
     ...RoomDetail
+  }
+}
+`;
+
+export const CHAT_MSGS_OF_ROOM_QUERY = gql`
+${CHAT_MSG_DETAIL}
+query ChatMsgsOfRoomQuery($roomId: ID!) {
+  chatMsgsOfRoom(roomId: $roomId) {
+    ...ChatMsgDetail
   }
 }
 `;

@@ -8,7 +8,7 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
-import { JsonObject, Unit, RoomState } from "@prisma/client";
+import { JsonObject, RoomState, Unit } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";

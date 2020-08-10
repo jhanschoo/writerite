@@ -24,6 +24,12 @@ export enum RoomState {
   WAITING = "WAITING",
 }
 
+export enum UpdateType {
+  CREATED = "CREATED",
+  DELETED = "DELETED",
+  EDITED = "EDITED",
+}
+
 export interface CardCreateInput {
   readonly prompt: GraphQLJSONObject;
   readonly fullAnswer: GraphQLJSONObject;

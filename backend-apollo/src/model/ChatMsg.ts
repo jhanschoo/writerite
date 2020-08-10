@@ -55,5 +55,5 @@ export function chatMsgToSS(chatMsg: ChatMsg | null): ChatMsgSS | null {
 }
 
 export function chatMsgsOfRoomTopic(roomId: string): string {
-  return `chatMsg:room::${roomId}`;
+  return `chatMsg<room#${roomId}>`;
 }

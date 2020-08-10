@@ -6,10 +6,10 @@
 import { ChatMsgContentType } from "./../../gqlGlobalTypes";
 
 // ====================================================
-// GraphQL fragment: ChatMsgDetail
+// GraphQL query operation: ChatMsgsOfRoomQuery
 // ====================================================
 
-export interface ChatMsgDetail_sender {
+export interface ChatMsgsOfRoomQuery_chatMsgsOfRoom_sender {
   readonly __typename: "User";
   readonly id: string;
   readonly email: string;
@@ -17,12 +17,20 @@ export interface ChatMsgDetail_sender {
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface ChatMsgDetail {
+export interface ChatMsgsOfRoomQuery_chatMsgsOfRoom {
   readonly __typename: "ChatMsg";
   readonly id: string;
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: string;
-  readonly sender: ChatMsgDetail_sender | null;
+  readonly sender: ChatMsgsOfRoomQuery_chatMsgsOfRoom_sender | null;
+}
+
+export interface ChatMsgsOfRoomQuery {
+  readonly chatMsgsOfRoom: ReadonlyArray<(ChatMsgsOfRoomQuery_chatMsgsOfRoom | null)> | null;
+}
+
+export interface ChatMsgsOfRoomQueryVariables {
+  readonly roomId: string;
 }

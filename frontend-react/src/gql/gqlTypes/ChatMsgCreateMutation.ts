@@ -6,23 +6,24 @@
 import { ChatMsgContentType } from "./../../gqlGlobalTypes";
 
 // ====================================================
-// GraphQL fragment: ChatMsgDetail
+// GraphQL mutation operation: ChatMsgCreateMutation
 // ====================================================
 
-export interface ChatMsgDetail_sender {
-  readonly __typename: "User";
-  readonly id: string;
-  readonly email: string;
-  readonly name: string | null;
-  readonly roles: ReadonlyArray<string>;
-}
-
-export interface ChatMsgDetail {
+export interface ChatMsgCreateMutation_chatMsgCreate {
   readonly __typename: "ChatMsg";
   readonly id: string;
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: string;
-  readonly sender: ChatMsgDetail_sender | null;
+}
+
+export interface ChatMsgCreateMutation {
+  readonly chatMsgCreate: ChatMsgCreateMutation_chatMsgCreate | null;
+}
+
+export interface ChatMsgCreateMutationVariables {
+  readonly roomId: string;
+  readonly type: ChatMsgContentType;
+  readonly content: string;
 }

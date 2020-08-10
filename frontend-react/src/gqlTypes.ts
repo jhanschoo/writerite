@@ -5,6 +5,8 @@ export * from "src/gql/gqlTypes/CardCreateMutation";
 export * from "src/gql/gqlTypes/CardDeleteMutation";
 export * from "src/gql/gqlTypes/CardEditMutation";
 export * from "src/gql/gqlTypes/CardsOfDeckQuery";
+export * from "src/gql/gqlTypes/ChatMsgCreateMutation";
+export * from "src/gql/gqlTypes/ChatMsgsOfRoomQuery";
 export * from "src/gql/gqlTypes/DeckAddSubdeckMutation";
 export * from "src/gql/gqlTypes/DeckCreateMutation";
 export * from "src/gql/gqlTypes/DeckDetailQuery";

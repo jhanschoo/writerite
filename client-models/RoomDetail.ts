@@ -15,8 +15,5 @@ fragment RoomDetail on Room {
   occupants {
     ...UserScalars
   }
-  chatMsgs {
-    ...ChatMsgScalars
-  }
 }
 `;

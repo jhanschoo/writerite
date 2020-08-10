@@ -3,7 +3,7 @@
 // @generated
 // This file was automatically generated and should not be edited.
 
-import { RoomState, ChatMsgContentType } from "./../../gqlGlobalTypes";
+import { RoomState } from "./../../gqlGlobalTypes";
 
 // ====================================================
 // GraphQL query operation: RoomDetailQuery
@@ -25,15 +25,6 @@ export interface RoomDetailQuery_room_occupants {
   readonly roles: ReadonlyArray<string>;
 }
 
-export interface RoomDetailQuery_room_chatMsgs {
-  readonly __typename: "ChatMsg";
-  readonly id: string;
-  readonly roomId: string;
-  readonly senderId: string | null;
-  readonly type: ChatMsgContentType;
-  readonly content: string;
-}
-
 export interface RoomDetailQuery_room {
   readonly __typename: "Room";
   readonly id: string;
@@ -43,7 +34,6 @@ export interface RoomDetailQuery_room {
   readonly state: RoomState;
   readonly owner: RoomDetailQuery_room_owner | null;
   readonly occupants: ReadonlyArray<(RoomDetailQuery_room_occupants | null)> | null;
-  readonly chatMsgs: ReadonlyArray<(RoomDetailQuery_room_chatMsgs | null)> | null;
 }
 
 export interface RoomDetailQuery {

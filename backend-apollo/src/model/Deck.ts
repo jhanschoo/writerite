@@ -30,7 +30,7 @@ export interface DeckSS extends Partial<Deck> {
 }
 
 export function ownDecksTopic(userId: string): string {
-  return `deck:owner::${userId}`;
+  return `deck<owner#${userId}>`;
 }
 
 export async function userOwnsDeck({ prisma, userId, deckId }: {

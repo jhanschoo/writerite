@@ -35,9 +35,10 @@ export interface CardSS extends Partial<Card> {
   ownRecord?: UserCardRecordSS | null;
 }
 
-export function cardsOfDeckTopic(userId: string, deckId: string): string {
-  return `card:deck::${deckId}:deckOwner::${userId}`;
+export function cardsOfDeckTopic(deckId: string): string {
+  return `card<deck#${deckId}>`;
 }
+
 export async function userOwnsCard({ prisma, userId, cardId }: {
   prisma: PrismaClient;
   userId?: string | null;

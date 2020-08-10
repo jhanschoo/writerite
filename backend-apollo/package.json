@@ -51,6 +51,7 @@
     "draft-js": "^0.11.6",
     "eslint": "^7.5.0",
     "eslint-plugin-jsdoc": "^30.0.0",
+    "graphql-subscriptions": "^1.1.0",
     "jest": "^26.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

@@ -32,7 +32,7 @@ const cardsOfDeckUpdates: SubscriptionFieldResolver<{ deckId: string }, Update<C
     if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId })) {
       return null;
     }
-    return pubsub.asyncIterator<Update<CardSS>>(cardsOfDeckTopic(sub.id, deckId));
+    return pubsub.asyncIterator<Update<CardSS>>(cardsOfDeckTopic(deckId));
   },
 };
 
@@ -60,7 +60,6 @@ const chatMsgsOfRoomUpdates: SubscriptionFieldResolver<{ roomId: string }, Updat
     }
     return pubsub.asyncIterator<Update<ChatMsgSS>>(chatMsgsOfRoomTopic(roomId));
   },
-
 };
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

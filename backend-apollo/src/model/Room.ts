@@ -19,7 +19,7 @@ export interface RoomSS extends Partial<Room> {
 }
 
 export function roomTopic(id: string): string {
-  return `room::${id}`;
+  return `room#${id}`;
 }
 
 export async function userOwnsRoom({ prisma, where }: {

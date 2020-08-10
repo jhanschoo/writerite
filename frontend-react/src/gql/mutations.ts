@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, CARD_SCALARS, DECK_SCALARS, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
+import { CARD_DETAIL, CARD_SCALARS, CHAT_MSG_SCALARS, DECK_SCALARS, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
 import { CardCreateMutation, CardDeleteMutation, CardEditMutation, CardsOfDeckQuery, CardsOfDeckQueryVariables, DeckCreateMutation, DecksQuery, DecksQueryScope, DecksQueryVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables } from "src/gqlTypes";
 import { MutationUpdaterFn } from "@apollo/client";
 import { CARDS_OF_DECK_QUERY, DECKS_QUERY, ROOM_QUERY } from "src/gql";
@@ -95,11 +95,7 @@ mutation CardCreateMutation(
   $card: CardCreateInput!
   $mainTemplate: Boolean!
 ) {
-  cardCreate(
-    deckId: $deckId
-    card: $card
-    mainTemplate: $mainTemplate
-  ) {
+  cardCreate(deckId: $deckId, card: $card, mainTemplate: $mainTemplate) {
     ...CardDetail
   }
 }
@@ -239,6 +235,19 @@ export const roomCreateMutationUpdate: MutationUpdaterFn<RoomCreateMutation> = (
     });
   }
 };
+
+export const CHAT_MSG_CREATE_MUTATION = gql`
+${CHAT_MSG_SCALARS}
+mutation ChatMsgCreateMutation(
+  $roomId: ID!
+  $type: ChatMsgContentType!
+  $content: String!
+) {
+  chatMsgCreate(content: $content, roomId: $roomId, type: $type) {
+    ...ChatMsgScalars
+  }
+}
+`;
 
 export const OWN_DECK_RECORD_SET_MUTATION = gql`
 ${USER_DECK_RECORD_SCALARS}
