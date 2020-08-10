@@ -640,6 +640,9 @@ export const Mutation: MutationResolver = {
         return null;
       }
       const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
+        include: {
+          sender: true,
+        },
         data: {
           room: { connect: { id: roomId } },
           type,
