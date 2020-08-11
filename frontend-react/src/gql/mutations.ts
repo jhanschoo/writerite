@@ -236,6 +236,15 @@ export const roomCreateMutationUpdate: MutationUpdaterFn<RoomCreateMutation> = (
   }
 };
 
+export const ROOM_EDIT_OWNER_CONFIG_MUTATION = gql`
+${ROOM_SCALARS}
+mutation RoomEditOwnerConfigMutation($id: ID!, $ownerConfig: JSONObject!) {
+  roomEditOwnerConfig(id: $id, ownerConfig: $ownerConfig) {
+    ...RoomScalars
+  }
+}
+`;
+
 export const CHAT_MSG_CREATE_MUTATION = gql`
 ${CHAT_MSG_SCALARS}
 mutation ChatMsgCreateMutation(

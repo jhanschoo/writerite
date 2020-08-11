@@ -178,7 +178,7 @@ type Mutation {
     signatures: ["roomUpdates(<id>)", "roomsUpdates"]
   )
   # Only legal when room state is WAITING
-  roomUpdateOwnerConfig(
+  roomEditOwnerConfig(
     id: ID!
     ownerConfig: JSONObject!
   ): Room @subscriptionsTriggered(

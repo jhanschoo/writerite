@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { useQuery } from "@apollo/client";
-import { ChatMsgContentType, ChatMsgDetail, ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables, ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables } from "src/gqlTypes";
+import { ChatMsgContentType, ChatMsgDetail, ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables, ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables, UpdateType } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
@@ -29,9 +29,12 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
       document: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
       variables: { roomId },
       updateQuery(prev, { subscriptionData: { data: { chatMsgsOfRoomUpdates } } }) {
-        // TODO
-        console.log(chatMsgsOfRoomUpdates);
-        return prev;
+        switch (chatMsgsOfRoomUpdates?.type) {
+          case UpdateType.CREATED:
+            return { ...prev, chatMsgsOfRoom: [...prev.chatMsgsOfRoom ?? [], chatMsgsOfRoomUpdates.data] };
+          default:
+            return prev;
+        }
       },
     });
   }, [roomId, subscribeToMore]);

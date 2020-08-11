@@ -92,7 +92,7 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   roomCreate: FieldResolver<Record<string, unknown>, WrContext, {
     ownerConfig?: JsonObject;
   }, RoomSS | null>;
-  roomUpdateOwnerConfig: FieldResolver<Record<string, unknown>, WrContext, {
+  roomEditOwnerConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     ownerConfig: JsonObject;
   }, RoomSS | null>;
@@ -557,7 +557,7 @@ export const Mutation: MutationResolver = {
       return handleError(e);
     }
   },
-  async roomUpdateOwnerConfig(_parent, {
+  async roomEditOwnerConfig(_parent, {
     id,
     ownerConfig,
   }, { sub, pubsub, prisma }, _info) {

@@ -858,7 +858,7 @@ describe("Mutation resolvers", () => {
       });
     });
 
-    describe("Mutation.roomUpdateOwnerConfig", () => {
+    describe("Mutation.roomEditOwnerConfig", () => {
       test("It should edit a room owned by current user and return it", async () => {
         expect.assertions(4);
         const roomCount = await prisma.room.count({});
@@ -868,7 +868,7 @@ describe("Mutation resolvers", () => {
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
-        const room = await Mutation.roomUpdateOwnerConfig({}, {
+        const room = await Mutation.roomEditOwnerConfig({}, {
           id: ROOM.id,
           ownerConfig,
         }, {
@@ -893,7 +893,7 @@ describe("Mutation resolvers", () => {
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
-        const room = await Mutation.roomUpdateOwnerConfig({}, {
+        const room = await Mutation.roomEditOwnerConfig({}, {
           id: ROOM.id,
           ownerConfig,
         }, {
@@ -915,7 +915,7 @@ describe("Mutation resolvers", () => {
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
-        const room = await Mutation.roomUpdateOwnerConfig({}, {
+        const room = await Mutation.roomEditOwnerConfig({}, {
           id: ROOM.id,
           ownerConfig,
         }, baseCtx, baseInfo);

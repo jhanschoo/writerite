@@ -18,6 +18,7 @@ export * from "src/gql/gqlTypes/DecksQuery";
 export * from "src/gql/gqlTypes/OwnDeckRecordQuery";
 export * from "src/gql/gqlTypes/OwnDeckRecordSetMutation";
 export * from "src/gql/gqlTypes/RoomCreateMutation";
+export * from "src/gql/gqlTypes/RoomEditOwnerConfigMutation";
 export * from "src/gql/gqlTypes/RoomDetailQuery";
 export * from "src/gql/gqlTypes/RoomQuery";
 export * from "src/gql/gqlTypes/SigninMutation";

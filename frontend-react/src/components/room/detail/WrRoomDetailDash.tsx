@@ -1,11 +1,16 @@
 import React from "react";
 
-import { RoomDetail, UserScalars } from "src/gqlTypes";
+import { useSelector } from "react-redux";
+import { WrState } from "src/store";
+
+import { RoomDetail, RoomState, UserScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 
+import type { CurrentUser } from "src/types";
 import WrRoomDetailDeckInfo from "./WrRoomDetailDeckInfo";
 import WrRoomDetailOccupantsInfo from "./WrRoomDetailOccupantsInfo";
+import WrRoomDetailWaitingOwnerConfig from "./WrRoomDetailWaitingOwnerConfig";
 
 const DashBox = wrStyled.div`
 display: flex;
@@ -20,11 +25,14 @@ interface Props {
 }
 
 const WrRoomDetailDash = ({ room, deckId }: Props): JSX.Element => {
+  const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);
+  const isOwner = user?.id === room.ownerId;
   const { occupants } = room;
   const filteredOccupants = occupants?.filter((occupant): occupant is UserScalars => Boolean(occupant));
   return <DashBox>
     <WrRoomDetailDeckInfo deckId={deckId} />
     {filteredOccupants && <WrRoomDetailOccupantsInfo occupants={filteredOccupants} />}
+    {isOwner && room.state === RoomState.WAITING && <WrRoomDetailWaitingOwnerConfig room={room}/>}
   </DashBox>;
 };
 
