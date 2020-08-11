@@ -26,8 +26,7 @@ const FB_ACCESS_TOKEN_QUERY = `https://graph.facebook.com/oauth/access_token?cli
   FACEBOOK_APP_SECRET
 }&grant_type=client_credentials`;
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises
-(async (): Promise<void> => {
+void (async (): Promise<void> => {
   const response = await fetch(FB_ACCESS_TOKEN_QUERY);
   const json = await response.json();
   FB_ACCESS_TOKEN = json.access_token;

@@ -5,6 +5,7 @@ const ENVVARS = [
   'GRAPHQL_HTTP',
   'REDIS_HOST',
   'REDIS_PORT',
+  'WRIGHT_SECRET_JWT',
 ];
 
 for (const varname of ENVVARS) {

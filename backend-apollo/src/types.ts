@@ -1,4 +1,3 @@
-import { Redis } from "ioredis";
 import { MergeInfo, PubSubEngine } from "apollo-server-koa";
 
 import { Readable } from "stream";
@@ -30,7 +29,6 @@ export interface WrContext extends IntegrationContext {
   sub?: CurrentUser;
   prisma: PrismaClient;
   pubsub: PubSubEngine;
-  redisClient: Redis;
 }
 
 export enum AuthorizerType {

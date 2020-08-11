@@ -4,7 +4,7 @@ import { FieldResolver, Roles, Update, WrContext } from "../types";
 
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
 import { CardSS, cardsOfDeckTopic } from "../model/Card";
-import { RoomSS, roomTopic, userOccupiesRoom } from "../model/Room";
+import { RoomSS, roomTopic, roomsTopic, userOccupiesRoom } from "../model/Room";
 import { ChatMsgSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 
 interface SubscriptionFieldResolver<TArgs, TYield> {
@@ -14,6 +14,8 @@ interface SubscriptionFieldResolver<TArgs, TYield> {
 interface SubscriptionResolver extends IResolverObject<Record<string, unknown>, WrContext> {
   ownDecksUpdates: SubscriptionFieldResolver<Record<string, unknown>, Update<DeckSS>>;
   cardsOfDeckUpdates: SubscriptionFieldResolver<{ deckId: string }, Update<CardSS>>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  roomsUpdates: SubscriptionFieldResolver<{}, Update<RoomSS>>;
   roomUpdates: SubscriptionFieldResolver<{ id: string }, Update<RoomSS>>;
   chatMsgsOfRoomUpdates: SubscriptionFieldResolver<{ roomId: string }, Update<ChatMsgSS>>;
 }
@@ -33,6 +35,16 @@ const cardsOfDeckUpdates: SubscriptionFieldResolver<{ deckId: string }, Update<C
       return null;
     }
     return pubsub.asyncIterator<Update<CardSS>>(cardsOfDeckTopic(deckId));
+  },
+};
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+const roomsUpdates: SubscriptionFieldResolver<{}, Update<RoomSS>> = {
+  subscribe(_parent, _args, { sub, pubsub }, _info) {
+    if (!sub?.roles.includes(Roles.wright)) {
+      return null;
+    }
+    return pubsub.asyncIterator<Update<RoomSS>>(roomsTopic);
   },
 };
 
@@ -67,5 +79,6 @@ export const Subscription: SubscriptionResolver = {
   ownDecksUpdates,
   cardsOfDeckUpdates,
   roomUpdates,
+  roomsUpdates,
   chatMsgsOfRoomUpdates,
 };

@@ -12,8 +12,8 @@ import { JsonObject, RoomState, Unit } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
-import { CardCreateInput, CardSS, userOwnsCard } from "../model/Card";
-import { RoomSS, roomToSS, roomTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
+import { CardCreateInput, CardSS, cardsOfDeckTopic, userOwnsCard } from "../model/Card";
+import { RoomSS, roomToSS, roomTopic, roomsTopic, userOccupiesRoom, userOwnsRoom } from "../model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS, chatMsgsOfRoomTopic } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
 import { UserCardRecordSS } from "../model/UserCardRecord";
@@ -195,12 +195,11 @@ export const Mutation: MutationResolver = {
           cards: cardsCreate,
         },
       });
-      const update: Update<DeckSS> = {
+      const ownDecksUpdates: Update<DeckSS> = {
         type: UpdateType.CREATED,
         data: deck,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
       return handleError(e);
@@ -231,12 +230,11 @@ export const Mutation: MutationResolver = {
           usedAt: dateNow,
         },
       });
-      const update: Update<DeckSS> = {
+      const ownDecksUpdates: Update<DeckSS> = {
         type: UpdateType.EDITED,
         data: deck,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
       return handleError(e);
@@ -264,12 +262,11 @@ export const Mutation: MutationResolver = {
           usedAt: dateNow,
         },
       });
-      const update: Update<DeckSS> = {
+      const ownDecksUpdates: Update<DeckSS> = {
         type: UpdateType.EDITED,
         data: deck,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
       return handleError(e);
@@ -295,12 +292,11 @@ export const Mutation: MutationResolver = {
           usedAt: dateNow,
         },
       });
-      const update: Update<DeckSS> = {
+      const ownDecksUpdates: Update<DeckSS> = {
         type: UpdateType.EDITED,
         data: deck,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
       return handleError(e);
@@ -314,12 +310,11 @@ export const Mutation: MutationResolver = {
         return null;
       }
       const deck = await prisma.deck.delete({ where: { id } });
-      const update: Update<DeckSS> = {
+      const ownDecksUpdates: Update<DeckSS> = {
         type: UpdateType.DELETED,
         data: deck,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
       return handleError(e);
@@ -396,12 +391,11 @@ export const Mutation: MutationResolver = {
         editedAt: dateNow,
         usedAt: dateNow,
       } });
-      const update: Update<CardSS> = {
+      const cardsOfDeckUpdates: Update<CardSS> = {
         type: UpdateType.CREATED,
         data: card,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(cardsOfDeckTopic(deckId), { cardsOfDeckUpdates });
       return card;
     } catch (e) {
       return handleError(e);
@@ -450,12 +444,11 @@ export const Mutation: MutationResolver = {
         editedAt: dateNow,
         usedAt: dateNow,
       } });
-      const update: Update<CardSS> = {
+      const cardsOfDeckUpdates: Update<CardSS> = {
         type: UpdateType.EDITED,
         data: card,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(cardsOfDeckTopic(card.deckId), { cardsOfDeckUpdates });
       return card;
     } catch (e) {
       return handleError(e);
@@ -502,12 +495,11 @@ export const Mutation: MutationResolver = {
         editedAt: dateNow,
         usedAt: dateNow,
       } });
-      const update: Update<CardSS> = {
+      const cardsOfDeckUpdates: Update<CardSS> = {
         type: UpdateType.DELETED,
         data: card,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(ownDecksTopic(sub.id), update);
+      void pubsub.publish(cardsOfDeckTopic(card.deckId), { cardsOfDeckUpdates });
       return card;
     } catch (e) {
       return handleError(e);
@@ -558,8 +550,8 @@ export const Mutation: MutationResolver = {
         type: UpdateType.DELETED,
         data: room,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(roomTopic(room.id), update);
+      void pubsub.publish(roomsTopic, { roomsUpdates: update });
+      void pubsub.publish(roomTopic(room.id), { roomUpdates: update });
       return room;
     } catch (e) {
       return handleError(e);
@@ -583,8 +575,8 @@ export const Mutation: MutationResolver = {
         type: UpdateType.EDITED,
         data: room,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(roomTopic(id), update);
+      void pubsub.publish(roomsTopic, { roomsUpdates: update });
+      void pubsub.publish(roomTopic(id), { roomUpdates: update });
       return room;
     } catch (e) {
       return handleError(e);
@@ -620,8 +612,8 @@ export const Mutation: MutationResolver = {
         type: UpdateType.EDITED,
         data: room,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(roomTopic(id), update);
+      void pubsub.publish(roomsTopic, { roomUpdates: update });
+      void pubsub.publish(roomTopic(id), { roomsUpdates: update });
       return room;
     } catch (e) {
       return handleError(e);
@@ -650,12 +642,11 @@ export const Mutation: MutationResolver = {
           sender: { connect: { id: sub.id } },
         },
       }));
-      const update: Update<ChatMsgSS> = {
+      const chatMsgsOfRoomUpdates: Update<ChatMsgSS> = {
         type: UpdateType.CREATED,
         data: chatMsg,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates: update });
+      void pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates });
       return chatMsg;
     } catch (e) {
       return handleError(e);
@@ -678,12 +669,11 @@ export const Mutation: MutationResolver = {
           sender: null,
         },
       }));
-      const update: Update<ChatMsgSS> = {
+      const chatMsgsOfRoomUpdates: Update<ChatMsgSS> = {
         type: UpdateType.CREATED,
         data: chatMsg,
       };
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates: update });
+      void pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates });
       return chatMsg;
     } catch (e) {
       return handleError(e);

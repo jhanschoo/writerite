@@ -1,10 +1,6 @@
-import { createClient } from './redisClient';
+import "./assertConfig";
 import { SERVE_ROOM_CHANNEL, serveRoom } from './serveRoom';
 import { WrRoomStub_config } from './client-models/gqlTypes/WrRoomStub';
-
-const subscriberClient = createClient();
-
-subscriberClient.subscribe(SERVE_ROOM_CHANNEL);
 
 subscriberClient.on('message', (channel: string, message: string) => {
   try {

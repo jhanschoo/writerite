@@ -12,15 +12,13 @@ import helmet from "koa-helmet";
 
 import { PrismaClient } from "@prisma/client";
 
-import { FETCH_DEPTH, generateJWT, getClaims, handleError } from "./util";
-import { Roles } from "./types";
+import { FETCH_DEPTH, getClaims, handleError } from "./util";
 import { createApollo } from "./apollo";
 
 const {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   NODE_ENV, REDIS_HOST, REDIS_PORT, CERT_FILE, KEY_FILE,
 } = process.env;
-let stopped = false;
 
 const prisma = new PrismaClient();
 
@@ -40,33 +38,6 @@ const pubsub = new RedisPubSub({
   subscriber: new Redis({ ...redisOptions, db: 2 }),
 });
 
-const redisClient = new Redis({ ...redisOptions, db: 1 });
-redisClient.on("error", (err) => {
-  // eslint-disable-next-line no-console
-  console.error(`redisClient error: ${err as string}`);
-});
-
-const wrightJWT = generateJWT({
-  id: "theWright",
-  email: "wright@writerite.site",
-  roles: [Roles.wright],
-  name: "The Wright",
-});
-
-function writeJWT(): void {
-  if (stopped) {
-    return;
-  }
-  redisClient.set("writerite:wright:jwt", wrightJWT)
-    .then(() => setTimeout(writeJWT, 60000))
-    .catch((e) => {
-      throw new Error(`Unable to write writerite:wright:jwt : ${e as string}`);
-    });
-}
-if (NODE_ENV !== "test") {
-  writeJWT();
-}
-
 // Initialize express
 
 const app = new Koa();
@@ -79,7 +50,6 @@ const apollo = createApollo((ctx) => ({
   sub: getClaims(ctx),
   prisma,
   pubsub,
-  redisClient,
 }));
 
 apollo.applyMiddleware({
@@ -111,12 +81,9 @@ server.listen({ port: 4000 }, () => {
 });
 
 export function stop(): void {
-  stopped = true;
   server.removeAllListeners();
   server.close(handleError);
   apollo.stop().catch(handleError);
   pubsub.close();
-  redisClient.removeAllListeners();
-  redisClient.disconnect();
   prisma.disconnect().catch(handleError);
 }

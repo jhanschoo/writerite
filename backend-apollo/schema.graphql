@@ -131,6 +131,8 @@ type Mutation {
     # is set to true and template is unspecified
     mainTemplate: Boolean! @nonNull
   ): Card @subscriptionsTriggered(
+    # Bug: if mainTempate of another card became unset,
+    # subscription doesn't fire for that card
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
 
@@ -145,6 +147,8 @@ type Mutation {
     template: Boolean @nonNull
     mainTemplate: Boolean @nonNull
   ): Card @subscriptionsTriggered(
+    # Bug: if mainTempate of another card became unset,
+    # subscription doesn't fire for that card
     signatures: ["cardsOfDeckUpdates(deckId)"]
   )
 
@@ -152,9 +156,7 @@ type Mutation {
   # returns true if unset, false if noop, null if error
   cardUnsetMainTemplate(
     deckId: ID!
-  ): Boolean! @subscriptionsTriggered(
-    signatures: ["cardsOfDeckUpdates(deckId)"]
-  )
+  ): Boolean!
 
   cardDelete(
     id: ID!
@@ -173,20 +175,20 @@ type Mutation {
   roomCreate(
     ownerConfig: JSONObject @nonNull
   ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(<id>)"]
+    signatures: ["roomUpdates(<id>)", "roomsUpdates"]
   )
   # Only legal when room state is WAITING
   roomUpdateOwnerConfig(
     id: ID!
     ownerConfig: JSONObject!
   ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(id)"]
+    signatures: ["roomUpdates(id)", "roomsUpdates"]
   )
   # Only legal when room state is WAITING
   roomAddOccupant(
     id: ID! occupantId: ID!
   ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(id)"]
+    signatures: ["roomUpdates(id)", "roomsUpdates"]
   )
 
   # ChatMsg
@@ -216,6 +218,7 @@ type Subscription {
   cardsOfDeckUpdates(deckId: ID!): CardUpdate
   # Room
   roomUpdates(id: ID!): RoomUpdate
+  roomsUpdates: RoomUpdate
   # ChatMsg
   chatMsgsOfRoomUpdates(roomId: ID!): ChatMsgUpdate
 }

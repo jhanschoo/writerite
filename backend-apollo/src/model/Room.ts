@@ -18,6 +18,8 @@ export interface RoomSS extends Partial<Room> {
   chatMsgs?: (ChatMsgSS | null)[] | null;
 }
 
+export const roomsTopic = "rooms";
+
 export function roomTopic(id: string): string {
   return `room#${id}`;
 }
