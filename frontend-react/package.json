@@ -23,8 +23,6 @@
     "apollo": "^2.30.2",
     "apollo-cache-persist": "^0.1.1",
     "apollo-client": "^2.6.10",
-    "apollo-link-context": "^1.0.20",
-    "apollo-link-error": "^1.1.13",
     "babel-plugin-graphql-tag": "^3.0.0",
     "babel-plugin-styled-components": "^1.11.1",
     "deep-diff": "^1.0.2",
