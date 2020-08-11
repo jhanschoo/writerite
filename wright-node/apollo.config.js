@@ -1,7 +1,7 @@
 module.exports = {
   client: {
     service: {
-      name: 'writerite'
+      name: 'writerite-graph'
     }
   }
 };
