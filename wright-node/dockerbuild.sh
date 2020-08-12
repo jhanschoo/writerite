@@ -26,6 +26,8 @@ then
   IMAGE_NAME="$CI_REGISTRY_IMAGE/wright-node"
 fi
 
+cp -R ../client-models src/
+
 IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
 CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
 
