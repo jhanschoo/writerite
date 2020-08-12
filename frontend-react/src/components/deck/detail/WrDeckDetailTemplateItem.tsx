@@ -6,7 +6,7 @@ import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardE
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
-import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
+import { FrontBackCard, FrontBackCardButtonsBox } from "src/ui-components";
 
 import { identity } from "src/util";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
@@ -18,17 +18,14 @@ width: 100%;
 border-bottom: 1px solid ${({ theme: { bg } }) => bg[2]};
 `;
 
-const ActionsItem = wrStyled(Item)``;
-
-const DeleteItem = wrStyled(ActionsItem)`
-flex-grow: 1;
-justify-content: flex-start;
+const DeleteButton = wrStyled(AnchorButton)`
+margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 `;
 
 const SetTemplateButton = wrStyled(BorderlessButton)`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
-margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
+margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 
 &.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
@@ -89,14 +86,10 @@ const WrDeckDetailTemplateItem = ({
         handleChange={identity}
         readOnly={true}
       />}
-      footer={<FrontBackCardActionsList>
-        <DeleteItem>
-          <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
-        </DeleteItem>
-        <ActionsItem>
-          <SetTemplateButton onClick={handleSetTemplate} disabled={loading}>Use Template</SetTemplateButton>
-        </ActionsItem>
-      </FrontBackCardActionsList>}
+      footer={<FrontBackCardButtonsBox>
+        <DeleteButton onClick={handleShowDeleteModal} disabled={loading}>delete</DeleteButton>
+        <SetTemplateButton onClick={handleSetTemplate} disabled={loading}>Use Template</SetTemplateButton>
+      </FrontBackCardButtonsBox>}
     />
   </StyledItem>;
 };

@@ -7,7 +7,7 @@ import type { CardCreateMutation, CardCreateMutationVariables, CardDeleteMutatio
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
-import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
+import { FrontBackCard, FrontBackCardButtonsBox } from "src/ui-components";
 
 import { emptyFields, emptyRawContent, pushRawContent } from "src/util";
 import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "src/components/editor/AnswersEditor";
@@ -42,17 +42,10 @@ padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
 }
 `;
 
-const ActionsItem = wrStyled(Item)``;
-
-const DeleteItem = wrStyled(ActionsItem)`
-flex-grow: 1;
-justify-content: flex-start;
-`;
-
 const AddCardButton = wrStyled(BorderlessButton)`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
-margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
+margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 
 &.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
@@ -62,7 +55,11 @@ margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 const SecondaryButton = wrStyled(BorderlessButton)`
 ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
-margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
+margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
+`;
+
+const DeleteButton = wrStyled(AnchorButton)`
+margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 `;
 
 const StyledAnswer = wrStyled.span`
@@ -234,21 +231,13 @@ const WrDeckDetailMainTemplateItem = ({
         setEditorState={setAnswersEditorState}
         handleChange={handleAnswersChange}
       />}
-      footer={<FrontBackCardActionsList>
-        <DeleteItem>
-          <AnchorButton onClick={handleShowDeleteModal} disabled={loading}>delete</AnchorButton>
-        </DeleteItem>
-        <ActionsItem>
-          {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
-          <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
-        </ActionsItem>
-        <ActionsItem>
-          <SecondaryButton onClick={handleFileAway} disabled={loading}>File away</SecondaryButton>
-        </ActionsItem>
-        <ActionsItem>
-          <AddCardButton onClick={handleAddCard} disabled={loading}>Save as Card</AddCardButton>
-        </ActionsItem>
-      </FrontBackCardActionsList>}
+      footer={<FrontBackCardButtonsBox>
+        <DeleteButton onClick={handleShowDeleteModal} disabled={loading}>delete</DeleteButton>
+        {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
+        <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
+        <SecondaryButton onClick={handleFileAway} disabled={loading}>File away</SecondaryButton>
+        <AddCardButton onClick={handleAddCard} disabled={loading}>Save as Card</AddCardButton>
+      </FrontBackCardButtonsBox>}
     />
   </StyledItem>;
 };

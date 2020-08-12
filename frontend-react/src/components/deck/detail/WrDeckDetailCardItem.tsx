@@ -9,7 +9,7 @@ import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardE
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
-import { FrontBackCard, FrontBackCardActionsList } from "src/ui-components";
+import { FrontBackCard, FrontBackCardButtonsBox } from "src/ui-components";
 
 import { DEBOUNCE_DELAY } from "src/util";
 import type { CardFields } from "src/types";
@@ -20,12 +20,6 @@ import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 const StyledItem = wrStyled(Item)`
 width: 100%;
 border-bottom: 1px solid ${({ theme: { bg } }) => bg[3]};
-`;
-
-const DeleteItem = wrStyled(Item)`
-display: flex;
-flex-grow: 1;
-justify-content: flex-start;
 `;
 
 const AddGeneratedAnswer = wrStyled(BorderlessButton)`
@@ -157,11 +151,9 @@ const WrDeckDetailCardItem = ({
         handleChange={handleAnswersChange}
         readOnly={disabled}
       />}
-      footer={<FrontBackCardActionsList>
-        <DeleteItem>
-          <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>
-        </DeleteItem>
-      </FrontBackCardActionsList>}
+      footer={<FrontBackCardButtonsBox>
+        <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>
+      </FrontBackCardButtonsBox>}
     />
   </StyledItem>;
 };

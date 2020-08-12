@@ -1,16 +1,14 @@
 import React, { ReactNode } from "react";
 
 import { wrStyled } from "src/theme";
-import { List } from "src/ui";
 
-export const FrontBackCardActionsList = wrStyled(List)`
+export const FrontBackCardButtonsBox = wrStyled.div`
+flex-grow: 1;
+display: flex;
 flex-direction: row;
-flex-wrap: wrap;
-align-items: baseline;
 justify-content: flex-end;
-width: 100%;
-margin: ${({ theme: { space } }) => space[2]};
-padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[1]} ${space[3]}`};
+align-items: baseline;
+margin: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
 `;
 
 const CardBox = wrStyled.div`

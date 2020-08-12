@@ -3,8 +3,8 @@ import React from "react";
 import type { CardDetail } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
-import { BorderlessButton, Item } from "src/ui";
-import { FrontBackCard, FrontBackCardActionsList, Modal } from "src/ui-components";
+import { BorderlessButton } from "src/ui";
+import { FrontBackCard, FrontBackCardButtonsBox, Modal } from "src/ui-components";
 
 import { emptyRawContent, identity } from "src/util";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
@@ -23,12 +23,10 @@ p {
 }
 `;
 
-const ActionsItem = wrStyled(Item)``;
-
 const DeleteCardButton = wrStyled(BorderlessButton)`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
-margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
+margin: 0;
 
 &.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
@@ -38,7 +36,7 @@ margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 const SecondaryButton = wrStyled(BorderlessButton)`
 ${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
-margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
+margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 `;
 
 interface Props {
@@ -81,14 +79,10 @@ const WrDeckDetailCardDeleteModal = ({
         handleChange={identity}
         readOnly={true}
       />}
-      footer={<FrontBackCardActionsList>
-        <ActionsItem>
-          <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>
-        </ActionsItem>
-        <ActionsItem>
-          <DeleteCardButton onClick={handleDelete}>Delete</DeleteCardButton>
-        </ActionsItem>
-      </FrontBackCardActionsList>}
+      footer={<FrontBackCardButtonsBox>
+        <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>
+        <DeleteCardButton onClick={handleDelete}>Delete</DeleteCardButton>
+      </FrontBackCardButtonsBox>}
     />
   </Modal>;
 };
