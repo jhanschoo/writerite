@@ -36,10 +36,10 @@
   },
   "scripts": {
     "build": "npm run codegen && npm run download-schema && tsc",
-    "codegen": "npm run copymodels && apollo client:codegen -v \"$CI_COMMIT_REF_SLUG\" --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes && rmdir gqlTypes",
+    "codegen": "npm run copymodels && apollo client:codegen -v \"$GRAPH_VARIANT\" --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes && rmdir gqlTypes",
     "codegen:dev": "npm run copymodels && apollo client:codegen -v \"$(git branch --show-current)\" --useReadOnlyTypes --globalTypesFile=src/gqlGlobalTypes.ts --passthroughCustomScalars --customScalarsPrefix GraphQL --target=typescript gqlTypes && rmdir gqlTypes",
     "copymodels": "cp -R ../client-models src/",
-    "download-schema": "apollo client:download-schema -v \"$CI_COMMIT_REF_SLUG\" schema.json && node generatePossibleTypes.js",
+    "download-schema": "apollo client:download-schema -v \"$GRAPH_VARIANT\" schema.json && node generatePossibleTypes.js",
     "download-schema:dev": "apollo client:download-schema -v \"$(git branch --show-current)\" schema.json && node generatePossibleTypes.js",
     "start": "node dist/index.js",
     "start:dev": "npm run codegen && npm run download-schema && tsc && node dist/index.js",

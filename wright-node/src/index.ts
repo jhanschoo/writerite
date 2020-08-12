@@ -1,8 +1,6 @@
 import "./assertConfig";
 import { client } from "./apolloClient";
 
-import { USER_QUERY } from "./gql/queries";
-import { UserQuery, UserQueryVariables } from "./gql/gqlTypes/UserQuery";
 import { RoomsUpdatesSubscription } from "./gql/gqlTypes/RoomsUpdatesSubscription";
 import { ROOMS_UPDATES_SUBSCRIPTION } from "./gql/subscription";
 

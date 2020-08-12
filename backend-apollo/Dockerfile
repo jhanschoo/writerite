@@ -10,5 +10,5 @@ ENV GRAPH_VARIANT ${graph_variant}
 # prisma generate happens here due to the postinstall hook of @prisma/client
 RUN npm ci
 COPY . .
-RUN npx tsc
+RUN npm run build
 CMD npm run start

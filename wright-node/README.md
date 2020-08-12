@@ -1,22 +1,15 @@
 # @writerite/wright-node
 
-Worker servicing chat in `@writerite/backend-yoga` as a chatroom bot. Check `kubernetes/core/writerite-wright-node.deployment.yaml` for deployment configuration alongside `kubernetes/core/writerite-backend-yoga.deployment.yaml`.
+Worker servicing chat in `@writerite/backend-apollo` as a chatroom bot.
 
 ## Stack summary
 
 * Language: Typescript
 * Communication:
-  * Low-latency: Redis PubSub
-  * Sending to API server: GraphQL using Apollo Client
-  * Locks for async execution: async-lock
+  * GraphQL using Apollo Client
 * Deployment:
   * Containerization: Docker
   * Orchestration: Kubernetes
-
-## Config Communication
-
-* Config messages specify where to place the config message in chat.
-  they do not contain anything about the current config state.
 
 ## Quiz Round Framework API
 

@@ -1,8 +1,6 @@
 #!/usr/bin/env sh
 
 # Run in in writerite/wright-node/
-# A .env file needs to be present with the following envvars defined:
-# ENGINE_API_KEY
 
 set -e
 
@@ -25,11 +23,22 @@ then
 fi
 if [ -z "$IMAGE_NAME" ]
 then
-  IMAGE_NAME="jhanschoo/writerite-wright-node"
+  IMAGE_NAME="$CI_REGISTRY_IMAGE/wright-node"
 fi
+
+IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
+CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
 
 npm run build
 
-TAGGED_IMAGE_NAME="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-docker build -t "$TAGGED_IMAGE_NAME" --build-arg node_env="$NODE_ENV" .
-docker push "$TAGGED_IMAGE_NAME"
+docker pull "$CACHE_IMAGE_TAG" || true
+docker build \
+  --cache-from "$CACHE_IMAGE_TAG" \
+  --build-arg node_env="production" \
+  --build-arg graph_variant="$CI_COMMIT_REF_SLUG" \
+  --tag "$IMAGE_TAG" \
+  --tag "$CACHE_IMAGE_TAG" \
+  .
+
+docker push "$IMAGE_TAG"
+docker push "$CACHE_IMAGE_TAG"

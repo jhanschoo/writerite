@@ -1,14 +1,12 @@
 # generated
 node_modules
-
-# source
-src
+dist
 
 # logs
 npm-debug.log
 
 # local
-.env
+.env*
 
 # development
 .vscode
