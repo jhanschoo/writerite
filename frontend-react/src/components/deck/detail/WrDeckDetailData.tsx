@@ -54,23 +54,19 @@ h4 {
 }
 `;
 
-export const ActionsList = wrStyled(List)`
+export const ButtonsDiv = wrStyled.div`
+display: flex;
 flex-direction: row;
 flex-wrap: wrap;
 align-items: baseline;
 margin: ${({ theme: { space } }) => `0 ${space[1]} ${space[1]} ${space[1]}`};
 `;
 
-const ActionsItem = wrStyled(Item)`
-flex-grow: 1;
-display: flex;
-margin: ${({ theme: { space } }) => ` 0 ${space[1]} ${space[2]} ${space[1]}`};
-`;
-
-const ActionsButton = wrStyled(BorderlessButton)`
+const PrimaryButton = wrStyled(BorderlessButton)`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 flex-grow: 1;
 display: flex;
+margin: ${({ theme: { space } }) => ` 0 ${space[1]} ${space[2]} ${space[1]}`};
 padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
 
 &.active, :hover, :focus, :active {
@@ -184,11 +180,9 @@ const WrDeckDetailData = ({
         {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
       </DeckStatistics>
     </DeckInfoBox>
-    <ActionsList>
-      <ActionsItem>
-        <ActionsButton onClick={handleCreateRoom}>Start Contest</ActionsButton>
-      </ActionsItem>
-    </ActionsList>
+    <ButtonsDiv>
+      <PrimaryButton onClick={handleCreateRoom}>Start Contest</PrimaryButton>
+    </ButtonsDiv>
   </DeckDataBox>;
 };
 
