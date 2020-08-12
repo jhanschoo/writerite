@@ -239,7 +239,7 @@ type ChatMsgUpdate {
 
 type RoomUpdate {
   type: UpdateType!
-  data: ChatMsg
+  data: Room
 }
 
 # User

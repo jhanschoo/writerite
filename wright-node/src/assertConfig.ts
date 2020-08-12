@@ -1,11 +1,10 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 const ENVVARS = [
-  'GRAPHQL_HTTP',
-  'REDIS_HOST',
-  'REDIS_PORT',
-  'WRIGHT_SECRET_JWT',
+  "GRAPHQL_HTTP",
+  "GRAPHQL_WS",
+  "WRIGHT_SECRET_JWT",
 ];
 
 for (const varname of ENVVARS) {
