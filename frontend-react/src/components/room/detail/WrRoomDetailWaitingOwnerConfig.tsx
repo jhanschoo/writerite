@@ -46,7 +46,7 @@ const WrRoomDetailWaitingOwnerConfig = ({ room }: Props): JSX.Element => {
       <h3>Room Settings</h3>
     </ConfigBox>
     <StartButton onClick={handleClick}>
-      start
+      begin
     </StartButton>
   </>;
 };
