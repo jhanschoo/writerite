@@ -131,9 +131,13 @@ type Mutation {
     # is set to true and template is unspecified
     mainTemplate: Boolean! @nonNull
   ): Card @subscriptionsTriggered(
-    # Bug: if mainTempate of another card became unset,
-    # subscription doesn't fire for that card
-    signatures: ["cardsOfDeckUpdates(deckId)"]
+    # Note: if mainTempate of another card became unset,
+    # subscription doesn't fire for that card.
+    # clients subscribed to cardsOfDeckUpdates should
+    # infer that the mainTemplate field of another card becomes
+    # unset (if it does) from the mainTemplate field from
+    # the returned card becoming set
+    signatures: ["cardsOfDeckUpdates"]
   )
 
   cardEdit(
@@ -147,9 +151,13 @@ type Mutation {
     template: Boolean @nonNull
     mainTemplate: Boolean @nonNull
   ): Card @subscriptionsTriggered(
-    # Bug: if mainTempate of another card became unset,
-    # subscription doesn't fire for that card
-    signatures: ["cardsOfDeckUpdates(deckId)"]
+    # Note: if mainTempate of another card became unset,
+    # subscription doesn't fire for that card.
+    # clients subscribed to cardsOfDeckUpdates should
+    # infer that the mainTemplate field of another card becomes
+    # unset (if it does) from the mainTemplate field from
+    # the returned card becoming set
+    signatures: ["cardsOfDeckUpdates"]
   )
 
   # unmarks the card currently set as the main template of the deck if it exists
@@ -161,7 +169,7 @@ type Mutation {
   cardDelete(
     id: ID!
   ): Card @subscriptionsTriggered(
-    signatures: ["cardsOfDeckUpdates(deckId)"]
+    signatures: ["cardsOfDeckUpdates"]
   )
 
   # UserCardRecord
@@ -172,23 +180,19 @@ type Mutation {
   ): UserCardRecord
 
   # Room
-  roomCreate(
-    ownerConfig: JSONObject @nonNull
-  ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(<id>)", "roomsUpdates"]
+  roomCreate(ownerConfig: JSONObject @nonNull): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates", "roomsUpdates"]
   )
   # Only legal when room state is WAITING
   roomEditOwnerConfig(
     id: ID!
     ownerConfig: JSONObject!
   ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(id)", "roomsUpdates"]
+    signatures: ["roomUpdates", "roomsUpdates"]
   )
   # Only legal when room state is WAITING
-  roomAddOccupant(
-    id: ID! occupantId: ID!
-  ): Room @subscriptionsTriggered(
-    signatures: ["roomUpdates(id)", "roomsUpdates"]
+  roomAddOccupant(id: ID!, occupantId: ID!): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates", "roomsUpdates"]
   )
 
   # ChatMsg
@@ -199,7 +203,7 @@ type Mutation {
     type: ChatMsgContentType!
     content: String!
   ): ChatMsg @subscriptionsTriggered(
-    signatures: ["chatMsgsOfRoomUpdates(roomId)"]
+    signatures: ["chatMsgsOfRoomUpdates"]
   )
 
   chatMsgCreateInternal(
@@ -207,7 +211,7 @@ type Mutation {
     type: ChatMsgContentType!
     content: String!
   ): ChatMsg @subscriptionsTriggered(
-    signatures: ["chatMsgsOfRoomUpdates(roomId)"]
+    signatures: ["chatMsgsOfRoomUpdates"]
   )
 }
 
