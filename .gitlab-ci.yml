@@ -104,10 +104,20 @@ build-backend-apollo-chart:
   image: dtzar/helm-kubectl:3.2.1
   script:
     - cd charts/writerite-backend-apollo
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend-apollo" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
   services: []
+
+# build-wright-node-chart:
+#   stage: build-projects
+#   needs: []
+#   image: dtzar/helm-kubectl:3.2.1
+#   script:
+#     - cd charts/wright-node
+#     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-wright-node" | tee stdout
+#     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+#   services: []
 
 build-backend-chart:
   stage: build-meta
@@ -116,7 +126,6 @@ build-backend-chart:
   image: dtzar/helm-kubectl:3.2.1
   script:
     - cd charts/writerite-backend
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm repo add bitnami https://charts.bitnami.com/bitnami
     - helm repo update
     # contrary to documentation, oci repositories not yet supported
@@ -145,7 +154,6 @@ deploy-backend:
   script:
     - mkdir tmp
     - cd tmp
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
     - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
     - |-
