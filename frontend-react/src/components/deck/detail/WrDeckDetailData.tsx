@@ -10,7 +10,7 @@ import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION, roomCreateMutationUpdate } fr
 import type { DeckEditMutation, DeckEditMutationVariables, DeckScalars, RoomCreateMutation, RoomCreateMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
-import { BorderlessButton, Item, List } from "src/ui";
+import { BorderlessButton } from "src/ui";
 
 import { DEBOUNCE_DELAY } from "src/util";
 import LineEditor, { lineEditorStateFromString } from "src/components/editor/LineEditor";
