@@ -7,5 +7,5 @@ ENV NODE_ENV ${node_env}
 ENV GRAPH_VARIANT ${graph_variant}
 RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build:stage-2
 CMD npm run start

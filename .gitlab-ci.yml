@@ -50,7 +50,7 @@ build-wright-node:
   needs:
     - publish-api-graph
   script:
-    - apk add --update nodejs
+    - apk add --update nodejs npm
     - cd wright-node
     - sh dockerbuild.sh
 

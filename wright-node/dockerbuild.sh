@@ -26,7 +26,8 @@ then
   IMAGE_NAME="$CI_REGISTRY_IMAGE/wright-node"
 fi
 
-cp -R ../client-models src/
+NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
+npm run build:stage-1
 
 IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
 CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
