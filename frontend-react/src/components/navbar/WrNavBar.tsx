@@ -53,7 +53,7 @@ padding: 0;
 border: none;
 background: none;
 
-&.active, :hover {
+&.active, :hover, :focus, :active {
   background: none;
   color: inherit;
 }

@@ -13,7 +13,7 @@ font-size: inherit;
 font-family: inherit;
 cursor: pointer;
 
-&.active, :hover, :active, :hover:active {
+&.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 }
 `;
@@ -32,7 +32,7 @@ font-family: inherit;
 cursor: pointer;
 color: inherit;
 
-&.active, :hover, :active, :hover:active {
+&.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 }
 `;

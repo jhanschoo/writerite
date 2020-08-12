@@ -48,7 +48,7 @@ flex-direction: column;
 justify-content: center;
 align-items: center;
 
-&.active, :hover {
+&.active, :hover, :focus, :active {
   ${({ theme: { fgbg, bg } }) => fgbg(bg[1])}
 }
 `;

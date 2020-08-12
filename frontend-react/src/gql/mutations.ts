@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, CARD_SCALARS, CHAT_MSG_SCALARS, DECK_SCALARS, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
+import { CARD_DETAIL, CARD_SCALARS, CHAT_MSG_SCALARS, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
 import { CardCreateMutation, CardDeleteMutation, CardEditMutation, CardsOfDeckQuery, CardsOfDeckQueryVariables, DeckCreateMutation, DecksQuery, DecksQueryScope, DecksQueryVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables } from "src/gqlTypes";
 import { MutationUpdaterFn } from "@apollo/client";
 import { CARDS_OF_DECK_QUERY, DECKS_QUERY, ROOM_QUERY } from "src/gql";
@@ -241,6 +241,15 @@ ${ROOM_SCALARS}
 mutation RoomEditOwnerConfigMutation($id: ID!, $ownerConfig: JSONObject!) {
   roomEditOwnerConfig(id: $id, ownerConfig: $ownerConfig) {
     ...RoomScalars
+  }
+}
+`;
+
+export const ROOM_ADD_OCCUPANT_BY_EMAIL_MUTATION = gql`
+${ROOM_DETAIL}
+mutation RoomAddOccupantByEmailMutation($id: ID!, $email: String!) {
+  roomAddOccupantByEmail(id: $id, email: $email) {
+    ...RoomDetail
   }
 }
 `;

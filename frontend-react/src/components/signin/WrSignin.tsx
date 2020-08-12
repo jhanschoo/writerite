@@ -48,7 +48,7 @@ padding: ${({ theme: { space } }) => space[2]};
 border-color: ${({ theme: { color } }) => color.googleRed};
 color: ${({ theme: { color } }) => color.googleRed};
 
-:hover, :focus {
+&.active, :hover, :focus, :active {
   border: 1px solid ${({ theme: { color } }) => color.googleRed};
   color: ${({ theme: { bg } }) => bg[1]};
   background: ${({ theme: { color } }) => color.googleRed};
@@ -63,7 +63,7 @@ padding: ${({ theme: { space } }) => space[2]};
 border-color: ${({ theme: { color } }) => color.facebookBlue};
 color: ${({ theme: { color } }) => color.facebookBlue};
 
-:hover, :focus {
+&.active, :hover, :focus, :active {
   border: 1px solid ${({ theme: { color } }) => color.facebookBlue};
   color: ${({ theme: { bg } }) => bg[1]};
   background: ${({ theme: { color } }) => color.facebookBlue};

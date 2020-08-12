@@ -51,7 +51,7 @@ ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 
-&.active, :hover, :active, :hover:active {
+&.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
 }
 `;

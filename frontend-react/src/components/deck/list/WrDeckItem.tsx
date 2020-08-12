@@ -17,7 +17,7 @@ width: 33%;
 `;
 
 const DeckSummaryLink = wrStyled(MinimalLink)`
-&.active, :hover {
+&.active, :hover, :focus, :active {
   h4 {
     ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
   }
@@ -27,7 +27,7 @@ const DeckSummaryLink = wrStyled(MinimalLink)`
 const DeckSummaryButton = wrStyled(MinimalButton)`
 text-align: left;
 
-&.active, :hover {
+&.active, :hover, :focus, :active {
   h4 {
     ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
   }

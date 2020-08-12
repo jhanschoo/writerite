@@ -23,7 +23,7 @@ padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 `;
 
 const DeckSummaryLink = wrStyled(MinimalLink)`
-&.active, :hover {
+&.active, :hover, :focus, :active {
   h4 {
     ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
   }

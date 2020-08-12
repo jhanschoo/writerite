@@ -73,7 +73,7 @@ flex-grow: 1;
 display: flex;
 padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
 
-&.active, :hover, :active, :hover:active {
+&.active, :hover, :focus, :active {
   ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
 }
 `;

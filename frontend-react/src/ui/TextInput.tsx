@@ -9,7 +9,7 @@ padding: 0 ${({ theme: { space } }) => space[2]};
 border: 1px solid ${({ theme: { bg } }) => bg[3]};
 ${({ theme: { fgbg, bg } }) => fgbg(bg[1])}
 
-:hover, :focus {
+&.active, :hover, :focus, :active {
   outline: none;
 }
 
