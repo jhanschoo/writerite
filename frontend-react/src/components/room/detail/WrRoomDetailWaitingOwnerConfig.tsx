@@ -5,6 +5,7 @@ import { ROOM_EDIT_OWNER_CONFIG_MUTATION } from "src/gql";
 import { RoomDetail, RoomEditOwnerConfigMutation, RoomEditOwnerConfigMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
+import { BorderlessButton } from "src/ui";
 
 const ConfigBox = wrStyled.div`
 display: flex;
@@ -14,6 +15,16 @@ margin: ${({ theme: { space } }) => `0 ${space[3]} 0 0`};
 
 h3 {
   margin: ${({ theme: { space } }) => `${space[2]}`};
+}
+`;
+
+const StartButton = wrStyled(BorderlessButton)`
+flex-grow: 1;
+margin: ${({ theme: { space } }) => `${space[2]} 0 0 0`};
+${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
+
+&.active, :hover, :focus, :active {
+  ${({ theme: { bgfg, fg } }) => bgfg(fg[1])}
 }
 `;
 
@@ -34,7 +45,9 @@ const WrRoomDetailWaitingOwnerConfig = ({ room }: Props): JSX.Element => {
     <ConfigBox>
       <h3>Room Settings</h3>
     </ConfigBox>
-    <button onClick={handleClick}>start</button>
+    <StartButton onClick={handleClick}>
+      start
+    </StartButton>
   </>;
 };
 
