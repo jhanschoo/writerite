@@ -100,6 +100,10 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     id: string;
     occupantId: string;
   }, RoomSS | null>;
+  roomAddOccupantByEmail: FieldResolver<Record<string, unknown>, WrContext, {
+    id: string;
+    email: string;
+  }, RoomSS | null>;
   chatMsgCreate: FieldResolver<Record<string, unknown>, WrContext, {
     roomId: string;
     type: ChatMsgContentType;
@@ -604,6 +608,46 @@ export const Mutation: MutationResolver = {
               where: { A_B: { A: id, B: occupantId } },
               update: {},
               create: { occupant: { connect: { id: occupantId } } },
+            },
+          },
+        },
+      }));
+      const update: Update<RoomSS> = {
+        type: UpdateType.EDITED,
+        data: room,
+      };
+      void pubsub.publish(roomsTopic, { roomUpdates: update });
+      void pubsub.publish(roomTopic(id), { roomsUpdates: update });
+      return room;
+    } catch (e) {
+      return handleError(e);
+    }
+  },
+  /*
+   * Limitation: this is suspected to fail with null when occupant to
+   * add is already in the room.
+   */
+  async roomAddOccupantByEmail(_parent, {
+    id,
+    email,
+  }, { sub, pubsub, prisma }, _info) {
+    try {
+      /*
+       * TODO: make room configurable to allow only owner to add people
+       * TODO: make room configurable to prevent adding self to a room
+       * TODO: implement an invite system
+       */
+      if (!sub || sub.email !== email && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id } })) {
+        return null;
+      }
+      const room = roomToSS(await prisma.room.update({
+        where: { id },
+        data: {
+          occupants: {
+            create: {
+              occupant: {
+                connect: { email },
+              },
             },
           },
         },

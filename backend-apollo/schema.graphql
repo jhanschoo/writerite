@@ -194,6 +194,10 @@ type Mutation {
   roomAddOccupant(id: ID!, occupantId: ID!): Room @subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
   )
+  # Only legal when room state is WAITING
+  roomAddOccupantByEmail(id: ID!, email: String!): Room @subscriptionsTriggered(
+    signatures: ["roomUpdates", "roomsUpdates"]
+  )
 
   # ChatMsg
   # merge apis for different types if following RFC passes
