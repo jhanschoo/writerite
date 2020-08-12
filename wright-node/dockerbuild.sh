@@ -29,8 +29,6 @@ fi
 IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
 CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
 
-npm run build
-
 docker pull "$CACHE_IMAGE_TAG" || true
 docker build \
   --cache-from "$CACHE_IMAGE_TAG" \
