@@ -45,6 +45,14 @@ publish-api-graph:
     - npm run push-schema
   services: []
 
+build-wright-node:
+  stage: build-projects
+  needs:
+    - publish-api-graph
+  script:
+    - apk add --update nodejs
+    - cd wright-node
+    - sh dockerbuild.sh
 
 build-backend-apollo:
   stage: build-projects
