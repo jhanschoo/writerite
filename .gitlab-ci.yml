@@ -113,7 +113,7 @@ build-wright-node-chart:
   needs: []
   image: dtzar/helm-kubectl:3.3.0
   script:
-    - cd charts/wright-node
+    - cd charts/writerite-wright-node
     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-wright-node" | tee stdout
     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
