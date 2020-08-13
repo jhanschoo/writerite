@@ -123,6 +123,7 @@ build-backend-chart:
   stage: build-meta
   needs:
     - build-backend-apollo-chart
+    - build-wright-node-chart
   image: dtzar/helm-kubectl:3.3.0
   script:
     - cd charts/writerite-backend
@@ -143,6 +144,7 @@ deploy-backend:
   needs:
     - publish-api-graph
     - build-backend-apollo
+    - build-wright-node
     - build-backend-chart
     - pages
   rules:
@@ -163,8 +165,8 @@ deploy-backend:
       writerite-backend-apollo:
         apolloKey: "$APOLLO_KEY"
         jwt:
-          privateKey: '$JWT_PRIVATE_KEY'
-          publicKey: '$JWT_PUBLIC_KEY'
+          privateKey: "$JWT_PRIVATE_KEY"
+          publicKey: "$JWT_PUBLIC_KEY"
         database:
           user: "postgres"
           password: "$POSTGRESQL_PASSWORD"
@@ -182,6 +184,11 @@ deploy-backend:
           secret: "$FACEBOOK_APP_SECRET"
         recaptcha:
           secret: "$RECAPTCHA_SECRET"
+      writerite-wright-node:
+        graphql:
+          http: "http://writerite-backend-writerite-backend-apollo:4000/graphql"
+          ws: "ws://writerite-backend-writerite-backend-apollo:4000/graphql"
+        wrightSecretKey: "$WRIGHT_SECRET_JWT"
       EOF
     - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
   services: []
