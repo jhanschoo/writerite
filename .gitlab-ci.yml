@@ -141,12 +141,12 @@ before_script:
 
 deploy-backend:
   stage: deploy
-  needs:
-    - publish-api-graph
-    - build-backend-apollo
-    - build-wright-node
-    - build-backend-chart
-    - pages
+  # needs:
+  #   - publish-api-graph
+  #   - build-backend-apollo
+  #   - build-wright-node
+  #   - build-backend-chart
+  #   - pages
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
   image: dtzar/helm-kubectl:3.3.0
