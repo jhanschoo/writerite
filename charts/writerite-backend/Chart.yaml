@@ -20,6 +20,13 @@ dependencies:
     # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev.1
     # workaround
     repository: file://../writerite-backend-apollo
+  - name: writerite-wright-node
+    version: ^0.1.0-dev.1
+    # contrary to documentation, oci repositories not yet supported
+    # https://github.com/helm/helm/pull/7613
+    # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev.1
+    # workaround
+    repository: file://../writerite-wright-node
 
 # A chart can be either an 'application' or a 'library' chart.
 #
