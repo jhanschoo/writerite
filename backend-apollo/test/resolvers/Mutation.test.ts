@@ -2,7 +2,6 @@ import { JsonObject, PrismaClient } from "@prisma/client";
 import type { GraphQLResolveInfo } from "graphql";
 import type { MergeInfo } from "apollo-server-koa";
 import { RedisPubSub } from "graphql-redis-subscriptions";
-import Redis, { Redis as RedisClient } from "ioredis";
 import { ContentState, convertToRaw } from "draft-js";
 
 import type { WrContext } from "../../src/types";
@@ -15,10 +14,10 @@ import type { DeckSS } from "../../src/model/Deck";
 import type { CardSS } from "../../src/model/Card";
 import { RoomSS, roomToSS } from "../../src/model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS } from "../../src/model/ChatMsg";
+import { cascadingDelete } from "../testUtil";
 
 let prisma: PrismaClient;
 
-let redisClient: RedisClient;
 let pubsub: RedisPubSub;
 let baseCtx: WrContext;
 let baseInfo: GraphQLResolveInfo & { mergeInfo: MergeInfo };
@@ -29,38 +28,20 @@ function rawFromText(text: string) {
 
 beforeAll(() => {
   prisma = new PrismaClient();
-  redisClient = new Redis();
   pubsub = new RedisPubSub();
-  baseCtx = { prisma, fetchDepth: 3, pubsub, redisClient };
+  baseCtx = { prisma, fetchDepth: 3, pubsub };
   baseInfo = {} as GraphQLResolveInfo & { mergeInfo: MergeInfo };
 });
 
 afterAll(async () => {
-  await prisma.subdeck.deleteMany({});
-  await prisma.occupant.deleteMany({});
-  await prisma.userCardRecord.deleteMany({});
-  await prisma.userDeckRecord.deleteMany({});
-  await prisma.chatMsg.deleteMany({});
-  await prisma.room.deleteMany({});
-  await prisma.card.deleteMany({});
-  await prisma.deck.deleteMany({});
-  await prisma.user.deleteMany({});
-  pubsub.close();
-  await redisClient.quit();
-  await prisma.disconnect();
+  await cascadingDelete(prisma).user;
+  await Promise.all([
+    pubsub.close(),
+    prisma.$disconnect(),
+  ]);
 });
 
-beforeEach(async () => {
-  await prisma.subdeck.deleteMany({});
-  await prisma.occupant.deleteMany({});
-  await prisma.userCardRecord.deleteMany({});
-  await prisma.userDeckRecord.deleteMany({});
-  await prisma.chatMsg.deleteMany({});
-  await prisma.room.deleteMany({});
-  await prisma.card.deleteMany({});
-  await prisma.deck.deleteMany({});
-  await prisma.user.deleteMany({});
-});
+beforeEach(() => cascadingDelete(prisma).user);
 
 describe("Mutation resolvers", () => {
 
@@ -77,10 +58,6 @@ describe("Mutation resolvers", () => {
     beforeEach(async () => {
       USER = userToSS(await prisma.user.create({ data: { email: EMAIL } }));
       OTHER_USER = userToSS(await prisma.user.create({ data: { email: OTHER_EMAIL } }));
-    });
-
-    afterEach(async () => {
-      await prisma.user.deleteMany({});
     });
 
     describe("Mutation.userEdit", () => {
@@ -149,13 +126,6 @@ describe("Mutation resolvers", () => {
         name: OTHER_NAME,
         owner: { connect: { id: OTHER_USER.id } },
       } });
-    });
-
-    afterEach(async () => {
-      await prisma.subdeck.deleteMany({});
-      await prisma.card.deleteMany({});
-      await prisma.deck.deleteMany({});
-      await prisma.user.deleteMany({});
     });
 
     describe("Mutation.deckCreate", () => {
@@ -294,8 +264,8 @@ describe("Mutation resolvers", () => {
       test("It should add the subdeck if current user owns parent deck, returning the parent deck", async () => {
         expect.assertions(5);
         expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
+          parentDeckId: DECK.id,
+          subdeckId: OTHER_DECK.id,
         } })).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
         const deck = await Mutation.deckAddSubdeck({}, {
@@ -677,12 +647,6 @@ describe("Mutation resolvers", () => {
       } });
     });
 
-    afterEach(async () => {
-      await prisma.card.deleteMany({});
-      await prisma.deck.deleteMany({});
-      await prisma.user.deleteMany({});
-    });
-
     describe("Mutation.cardCreate", () => {
       test("It should create a card in specified current user-owned deck and return it", async () => {
         expect.assertions(6);
@@ -823,13 +787,6 @@ describe("Mutation resolvers", () => {
           create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
         },
       } }));
-    });
-
-    afterEach(async () => {
-      await prisma.occupant.deleteMany({});
-      await prisma.room.deleteMany({});
-      await prisma.deck.deleteMany({});
-      await prisma.user.deleteMany({});
     });
 
     describe("Mutation.roomCreate", () => {

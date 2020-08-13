@@ -44,8 +44,7 @@ export const Deck: DeckResolver = {
     if (subdecks !== undefined) {
       return subdecks;
     }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    return prisma.deck.findMany({ where: { parentDecks: { some: { A: id } } } });
+    return prisma.deck.findMany({ where: { parentDecks: { some: { parentDeckId: id } } } });
   },
   cards({ id, cards }, _args, { prisma }, _info) {
     if (cards !== undefined) {

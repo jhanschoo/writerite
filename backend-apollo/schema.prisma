@@ -77,9 +77,26 @@ model Deck {
 
   owner       User             @relation(fields: [ownerId], references: [id])
   cards       Card[]
-  subdecks    Subdeck[]        @relation("DeckTo_Subdeck_A")
-  parentDecks Subdeck[]        @relation("DeckTo_Subdeck_B")
+  subdecks    Subdeck[]        @relation("DeckTo_Subdeck_parentDeckId")
+  parentDecks Subdeck[]        @relation("DeckTo_Subdeck_subdeckId")
   records     UserDeckRecord[]
+}
+
+// no fields are actually nullable but they are written so as a workaround so that deletion cascades
+//See: https://github.com/prisma/prisma/issues/2057
+model Occupant {
+  id         String   @default(dbgenerated()) @id
+  roomId     String?
+  occupantId String?
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  room       Room?    @relation("RoomTo_Occupant", fields: [roomId], references: [id])
+  occupant   User?    @relation("UserTo_Occupant", fields: [occupantId], references: [id])
+
+  @@unique([roomId, occupantId])
+  @@index([occupantId], name: "Occupant_occupantId_idx")
 }
 
 model Room {
@@ -90,11 +107,28 @@ model Room {
   state          RoomState  @default(WAITING)
 
   createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @default(now())
+  updatedAt      DateTime   @default(now()) @updatedAt
 
   owner          User       @relation(fields: [ownerId], references: [id])
   occupants      Occupant[] @relation("RoomTo_Occupant")
   chatMsgs       ChatMsg[]
+}
+
+// no fields are actually nullable but they are written so as a workaround so that deletion cascades
+//See: https://github.com/prisma/prisma/issues/2057
+model Subdeck {
+  id           String   @default(dbgenerated()) @id
+  parentDeckId String?
+  subdeckId    String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  parentDeck   Deck?    @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id])
+  subdeck      Deck?    @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id])
+
+  @@unique([parentDeckId, subdeckId])
+  @@index([subdeckId], name: "Occupant_subdeckId_idx")
 }
 
 model User {
@@ -145,32 +179,4 @@ model UserDeckRecord {
   user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, deckId])
-}
-
-// no fields are actually nullable but they are written so as a workaround so that deletion cascades
-// This following issue is also a blocker for upgrading @prisma/cli @prisma/client from v2.1.3 to v2.2.0
-//See: https://github.com/prisma/prisma/issues/2057
-model Occupant {
-  A        String?
-  B        String?
-  room     Room?  @relation("RoomTo_Occupant", fields: [A], references: [id])
-  occupant User?  @relation("UserTo_Occupant", fields: [B], references: [id])
-
-  @@id([A, B])
-  @@index([B], name: "_Occupant_B_idx")
-  @@map("_Occupant")
-}
-
-// no fields are actually nullable but they are written so as a workaround so that deletion cascades
-// This following issue is also a blocker for upgrading @prisma/cli @prisma/client from v2.1.3 to v2.2.0
-//See: https://github.com/prisma/prisma/issues/2057
-model Subdeck {
-  A          String?
-  B          String?
-  parentDeck Deck?  @relation("DeckTo_Subdeck_A", fields: [A], references: [id])
-  subdeck    Deck?  @relation("DeckTo_Subdeck_B", fields: [B], references: [id])
-
-  @@id([A, B])
-  @@index([B], name: "_Subdeck_B_idx")
-  @@map("_Subdeck")
 }

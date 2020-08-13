@@ -34,8 +34,7 @@ export const Room: RoomResolver = {
     if (occupants !== undefined) {
       return occupants;
     }
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    return (await prisma.user.findMany({ where: { occupyingRooms: { some: { A: id } } } })).map(userToSS);
+    return (await prisma.user.findMany({ where: { occupyingRooms: { some: { roomId: id } } } })).map(userToSS);
   },
   async chatMsgs({ id, chatMsgs }, _args, { prisma }, _info) {
     if (chatMsgs !== undefined) {

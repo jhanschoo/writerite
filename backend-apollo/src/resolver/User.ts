@@ -51,6 +51,6 @@ export const User: UserResolver = {
       return occupyingRooms;
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    return (await prisma.room.findMany({ where: { occupants: { some: { B: id } } } })).map(roomToSS);
+    return (await prisma.room.findMany({ where: { occupants: { some: { occupantId: id } } } })).map(roomToSS);
   },
 };

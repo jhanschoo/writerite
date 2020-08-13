@@ -49,7 +49,7 @@ export async function userOccupiesRoom({ prisma, occupantId, where }: {
   return await prisma.room.count({
     where: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      occupants: occupantId ? { some: { B: occupantId } } : undefined,
+      occupants: occupantId ? { some: { occupantId } } : undefined,
       ...where,
     },
   }) === 1;

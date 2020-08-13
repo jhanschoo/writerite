@@ -85,22 +85,23 @@ CREATE TABLE "ChatMsg" (
   "createdAt" timestamp DEFAULT now() NOT NULL,
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
-COMMENT ON COLUMN "ChatMsg"."roomId" IS 'message sent by a user being deleted should be deleted';
 
-CREATE TABLE "_Subdeck" (
-  "A" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
-  "B" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
-  PRIMARY KEY ("A", "B")
+CREATE TABLE "Subdeck" (
+  "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  "parentDeckId" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
+  "subdeckId" uuid NOT NULL REFERENCES "Deck" ON UPDATE CASCADE ON DELETE CASCADE,
+  "createdAt" timestamp DEFAULT now() NOT NULL,
+  "updatedAt" timestamp DEFAULT now() NOT NULL,
+  UNIQUE ("parentDeckId", "subdeckId")
 );
-CREATE INDEX "_Subdeck_B_idx" ON "_Subdeck" ("B");
-COMMENT ON COLUMN "_Subdeck"."A" IS 'parentId';
-COMMENT ON COLUMN "_Subdeck"."B" IS 'subdeckId';
+CREATE INDEX "Subdeck_subdeckId_idx" ON "Subdeck" ("subdeckId");
 
-CREATE TABLE "_Occupant" (
-  "A" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
-  "B" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
-  PRIMARY KEY ("A", "B")
+CREATE TABLE "Occupant" (
+  "id" uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  "roomId" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
+  "occupantId" uuid NOT NULL REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
+  "createdAt" timestamp DEFAULT now() NOT NULL,
+  "updatedAt" timestamp DEFAULT now() NOT NULL,
+  UNIQUE ("roomId", "occupantId")
 );
-CREATE INDEX "_Occupant_B_idx" ON "_Occupant" ("B");
-COMMENT ON COLUMN "_Occupant"."A" IS 'roomId';
-COMMENT ON COLUMN "_Occupant"."B" IS 'occupantId';
+CREATE INDEX "Occupant_occupantId_idx" ON "Occupant" ("occupantId");

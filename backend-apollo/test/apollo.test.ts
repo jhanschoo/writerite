@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { RedisPubSub } from "graphql-redis-subscriptions";
-import Redis, { Redis as RedisClient } from "ioredis";
 import type { Context } from "koa";
 import { gql } from "apollo-server-koa";
 import type { ApolloServerBase } from "apollo-server-core";
@@ -10,22 +9,24 @@ import type { WrContext } from "../src/types";
 import { getClaims } from "../src/util";
 import { createApollo } from "../src/apollo";
 
+import { cascadingDelete } from "./testUtil";
+
 let prisma: PrismaClient;
-let redisClient: RedisClient;
 let pubsub: RedisPubSub;
 let baseCtx: WrContext;
 
 beforeAll(() => {
   prisma = new PrismaClient();
-  redisClient = new Redis();
   pubsub = new RedisPubSub();
-  baseCtx = { prisma, fetchDepth: 3, pubsub, redisClient };
+  baseCtx = { prisma, fetchDepth: 3, pubsub };
 });
 
 afterAll(async () => {
-  pubsub.close();
-  await redisClient.quit();
-  await prisma.disconnect();
+  await cascadingDelete(prisma).user;
+  await Promise.all([
+    pubsub.close(),
+    prisma.$disconnect(),
+  ]);
 });
 
 describe("server", () => {
@@ -36,24 +37,7 @@ describe("server", () => {
   const name = "deck name";
   const description = { foo: "bar" };
   let jwt = "Bearer ";
-  beforeEach(async () => {
-    await prisma.subdeck.deleteMany({});
-    await prisma.occupant.deleteMany({});
-    await prisma.chatMsg.deleteMany({});
-    await prisma.room.deleteMany({});
-    await prisma.card.deleteMany({});
-    await prisma.deck.deleteMany({});
-    await prisma.user.deleteMany({});
-  });
-  afterEach(async () => {
-    await prisma.subdeck.deleteMany({});
-    await prisma.occupant.deleteMany({});
-    await prisma.chatMsg.deleteMany({});
-    await prisma.room.deleteMany({});
-    await prisma.card.deleteMany({});
-    await prisma.deck.deleteMany({});
-    await prisma.user.deleteMany({});
-  });
+  beforeEach(() => cascadingDelete(prisma).user);
   async function userTest() {
     const apollo = createApollo((_ctx) => ({
       ...baseCtx,

@@ -185,8 +185,7 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      return (await prisma.room.findMany({ where: { occupants: { some: { B: sub.id } } } })).map(roomToSS);
+      return (await prisma.room.findMany({ where: { occupants: { some: { occupantId: sub.id } } } })).map(roomToSS);
     } catch (e) {
       return handleError(e);
     }

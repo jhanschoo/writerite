@@ -257,8 +257,8 @@ export const Mutation: MutationResolver = {
         where: { id },
         data: {
           subdecks: { upsert: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-            where: { A_B: { A: id, B: subdeckId } },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            where: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } },
             update: {},
             create: { subdeck: { connect: { id: subdeckId } } },
           } },
@@ -289,8 +289,8 @@ export const Mutation: MutationResolver = {
         where: { id },
         data: {
           subdecks: { deleteMany: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-            A: id, B: subdeckId,
+            parentDeckId: id,
+            subdeckId,
           } },
           editedAt: dateNow,
           usedAt: dateNow,
@@ -303,6 +303,8 @@ export const Mutation: MutationResolver = {
       void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
+      console.log("error")
+      console.log(e)
       return handleError(e);
     }
   },
@@ -313,6 +315,19 @@ export const Mutation: MutationResolver = {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
         return null;
       }
+      await prisma.userCardRecord.deleteMany({
+        where: { card: { deckId: id } },
+      });
+      await prisma.card.deleteMany({
+        where: { deckId: id },
+      });
+      await prisma.userDeckRecord.deleteMany({
+        where: { deckId: id },
+      });
+      await prisma.subdeck.deleteMany({
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        where: { OR: [{ parentDeckId: id }, { subdeckId: id }] },
+      });
       const deck = await prisma.deck.delete({ where: { id } });
       const ownDecksUpdates: Update<DeckSS> = {
         type: UpdateType.DELETED,
@@ -491,6 +506,9 @@ export const Mutation: MutationResolver = {
         return null;
       }
       const dateNow = new Date();
+      await prisma.userCardRecord.deleteMany({
+        where: { cardId: id },
+      });
       const card = await prisma.card.delete({
         where: { id },
       });
@@ -605,7 +623,7 @@ export const Mutation: MutationResolver = {
           occupants: {
             upsert: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
-              where: { A_B: { A: id, B: occupantId } },
+              where: { roomId_occupantId: { roomId: id, occupantId } },
               update: {},
               create: { occupant: { connect: { id: occupantId } } },
             },
@@ -710,7 +728,6 @@ export const Mutation: MutationResolver = {
           room: { connect: { id: roomId } },
           type,
           content,
-          sender: null,
         },
       }));
       const chatMsgsOfRoomUpdates: Update<ChatMsgSS> = {

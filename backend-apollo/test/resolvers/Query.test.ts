@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import type { GraphQLResolveInfo } from "graphql";
 import type { MergeInfo } from "apollo-server-koa";
 import { RedisPubSub } from "graphql-redis-subscriptions";
-import Redis, { Redis as RedisClient } from "ioredis";
 
 import type { WrContext } from "../../src/types";
 import { Query } from "../../src/resolver/Query";
@@ -12,47 +11,30 @@ import type { CardSS } from "../../src/model/Card";
 import { RoomSS, roomToSS } from "../../src/model/Room";
 import { ChatMsgContentType, ChatMsgSS, chatMsgToSS } from "../../src/model/ChatMsg";
 
+import { cascadingDelete } from "../testUtil";
+
 let prisma: PrismaClient;
 
-let redisClient: RedisClient;
 let pubsub: RedisPubSub;
 let baseCtx: WrContext;
 let baseInfo: GraphQLResolveInfo & { mergeInfo: MergeInfo };
 
 beforeAll(() => {
   prisma = new PrismaClient();
-  redisClient = new Redis();
   pubsub = new RedisPubSub();
-  baseCtx = { prisma, fetchDepth: 3, pubsub, redisClient };
+  baseCtx = { prisma, fetchDepth: 3, pubsub };
   baseInfo = {} as GraphQLResolveInfo & { mergeInfo: MergeInfo };
 });
 
 afterAll(async () => {
-  await prisma.subdeck.deleteMany({});
-  await prisma.occupant.deleteMany({});
-  await prisma.userCardRecord.deleteMany({});
-  await prisma.userDeckRecord.deleteMany({});
-  await prisma.chatMsg.deleteMany({});
-  await prisma.room.deleteMany({});
-  await prisma.card.deleteMany({});
-  await prisma.deck.deleteMany({});
-  await prisma.user.deleteMany({});
-  pubsub.close();
-  await redisClient.quit();
-  await prisma.disconnect();
+  await cascadingDelete(prisma).user;
+  await Promise.all([
+    pubsub.close(),
+    prisma.$disconnect(),
+  ]);
 });
 
-beforeEach(async () => {
-  await prisma.subdeck.deleteMany({});
-  await prisma.occupant.deleteMany({});
-  await prisma.userCardRecord.deleteMany({});
-  await prisma.userDeckRecord.deleteMany({});
-  await prisma.chatMsg.deleteMany({});
-  await prisma.room.deleteMany({});
-  await prisma.card.deleteMany({});
-  await prisma.deck.deleteMany({});
-  await prisma.user.deleteMany({});
-});
+beforeEach(() => cascadingDelete(prisma).user);
 
 describe("Query resolvers", () => {
 
@@ -66,10 +48,6 @@ describe("Query resolvers", () => {
     beforeEach(async () => {
       USER = userToSS(await prisma.user.create({ data: { email: EMAIL } }));
       OTHER_USER = userToSS(await prisma.user.create({ data: { email: OTHER_EMAIL } }));
-    });
-
-    afterEach(async () => {
-      await prisma.user.deleteMany({});
     });
 
     describe("Query.user", () => {
@@ -119,11 +97,6 @@ describe("Query resolvers", () => {
         owner: { connect: { id: OTHER_USER.id } },
         published: true,
       } });
-    });
-
-    afterEach(async () => {
-      await prisma.deck.deleteMany({});
-      await prisma.user.deleteMany({});
     });
 
     describe("Query.deck", () => {
@@ -222,12 +195,6 @@ describe("Query resolvers", () => {
       } });
     });
 
-    afterEach(async () => {
-      await prisma.card.deleteMany({});
-      await prisma.deck.deleteMany({});
-      await prisma.user.deleteMany({});
-    });
-
     describe("Query.card", () => {
       test("it should return cards having specified id if deck exists", async () => {
         expect.assertions(2);
@@ -299,13 +266,6 @@ describe("Query resolvers", () => {
       OTHER_ROOM = roomToSS(await prisma.room.create({ data: {
         owner: { connect: { id: OTHER_USER.id } },
       } }));
-    });
-
-    afterEach(async () => {
-      await prisma.occupant.deleteMany({});
-      await prisma.room.deleteMany({});
-      await prisma.deck.deleteMany({});
-      await prisma.user.deleteMany({});
     });
 
     describe("Query.room", () => {

@@ -35,7 +35,7 @@ export async function userSeesChatMsg({ prisma, userId, chatMsgId }: {
   return await prisma.room.count({
     where: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      occupants: { some: { B: userId } },
+      occupants: { some: { occupantId: userId } },
       chatMsgs: { some: { id: chatMsgId } },
     },
   }) === 1;
