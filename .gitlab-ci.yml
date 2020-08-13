@@ -165,8 +165,8 @@ deploy-backend:
       writerite-backend-apollo:
         apolloKey: "$APOLLO_KEY"
         jwt:
-          privateKey: "$JWT_PRIVATE_KEY"
-          publicKey: "$JWT_PUBLIC_KEY"
+          privateKey: '$JWT_PRIVATE_KEY'
+          publicKey: '$JWT_PUBLIC_KEY'
         database:
           user: "postgres"
           password: "$POSTGRESQL_PASSWORD"
@@ -190,6 +190,5 @@ deploy-backend:
           ws: "ws://writerite-backend-writerite-backend-apollo:4000/graphql"
         wrightSecretKey: "$WRIGHT_SECRET_JWT"
       EOF
-    - cat values.yaml
     - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
   services: []
