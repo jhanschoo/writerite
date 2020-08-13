@@ -114,7 +114,6 @@ spec:
                   name: {{ include "writerite-backend-apollo.fullname" . }}
                   key: recaptchaSecret
                   optional: false
-              value: {{ .Values.recaptchaSecret | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
