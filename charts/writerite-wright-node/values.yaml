@@ -8,7 +8,7 @@ image:
   repository: registry.gitlab.com/writerite/writerite/wright-node
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: 0.1.0-dev.1
+  tag: 0.1.0-dev.2
 
 imagePullSecrets: []
 nameOverride: ""
