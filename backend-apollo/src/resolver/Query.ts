@@ -10,6 +10,7 @@ import { ChatMsgSS, chatMsgToSS, userSeesChatMsg } from "../model/ChatMsg";
 import { UserDeckRecordSS } from "../model/UserDeckRecord";
 import { UserCardRecordSS } from "../model/UserCardRecord";
 import { handleError } from "../util";
+import { cardsUnderDeck } from "../compute/cardsUnderDeck";
 
 const DEFAULT_TAKE = 60;
 
@@ -54,6 +55,7 @@ interface QueryResolver extends IResolverObject<Record<string, unknown>, WrConte
   ownDeckRecord: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, UserDeckRecordSS | null>;
   card: FieldResolver<Record<string, unknown>, WrContext, { id: string }, CardSS | null>;
   cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
+  cardsUnderDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
   ownCardRecord: FieldResolver<Record<string, unknown>, WrContext, { cardId: string }, UserCardRecordSS | null>;
   room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -158,6 +160,13 @@ export const Query: QueryResolver = {
   async cardsOfDeck(_parent, { deckId }, { prisma }, _info) {
     try {
       return await prisma.card.findMany({ where: { deckId } });
+    } catch (e) {
+      return handleError(e);
+    }
+  },
+  async cardsUnderDeck(_parent, { deckId }, { prisma }, _info) {
+    try {
+      return await cardsUnderDeck({ id: deckId, prisma });
     } catch (e) {
       return handleError(e);
     }

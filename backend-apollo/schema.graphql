@@ -52,6 +52,7 @@ type Query {
   # Card
   card(id: ID!): Card
   cardsOfDeck(deckId: ID!): [Card]
+  cardsUnderDeck(deckId: ID!): [Card]
   # UserCardRecord
   ownCardRecord(cardId: ID!): UserCardRecord
   # Room
