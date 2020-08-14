@@ -77,7 +77,6 @@ const link = from([
 export const client = new ApolloClient({
   link,
   cache,
-  ssrForceFetchDelay: 100,
   connectToDevTools: process.env.NODE_ENV !== "production",
   defaultOptions: {
     watchQuery: {
