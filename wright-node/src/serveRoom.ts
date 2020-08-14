@@ -7,6 +7,7 @@ import { CardScalars } from "./client-models/gqlTypes/CardScalars";
 
 // Bug: cancel is not yet implemented
 export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void> => {
+  // Obtain required data
   const { data: roomData } = await client
     .query<RoomDetailQuery, RoomDetailQueryVariables>({
     query: ROOM_DETAIL_QUERY,
@@ -31,4 +32,6 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
   }
   const cards = cardsData.cardsUnderDeck
     .filter((card): card is CardScalars => Boolean(card));
+
+  // State change
 };

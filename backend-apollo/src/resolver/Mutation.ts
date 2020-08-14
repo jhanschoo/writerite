@@ -8,7 +8,7 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
-import { InputJsonValue, JsonObject, RoomState, Unit } from "@prisma/client";
+import { InputJsonValue, JsonObject, RoomState, Unit, Room } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
@@ -95,6 +95,10 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   roomEditOwnerConfig: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     ownerConfig: JsonObject;
+  }, RoomSS | null>;
+  roomSetState: FieldResolver<Record<string, unknown>, WrContext, {
+    id: string;
+    state: RoomState;
   }, RoomSS | null>;
   roomAddOccupant: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
@@ -593,6 +597,58 @@ export const Mutation: MutationResolver = {
       void pubsub.publish(roomsTopic, { roomsUpdates: update });
       void pubsub.publish(roomTopic(id), { roomUpdates: update });
       return room;
+    } catch (e) {
+      return handleError(e);
+    }
+  },
+  async roomSetState(_parent, {
+    id,
+    state,
+  }, { sub, pubsub, prisma }, _info) {
+    try {
+      if (!sub?.roles.includes(Roles.wright)) {
+        return null;
+      }
+      let room: Room | null;
+      switch (state) {
+        case RoomState.SERVING:
+          await prisma.room.updateMany({
+            where: { id, state: RoomState.WAITING },
+            data: { state: RoomState.SERVING },
+          });
+          room = await prisma.room.findOne({
+            where: { id },
+          });
+          if (room?.state !== RoomState.SERVING) {
+            return null;
+          }
+          break;
+        case RoomState.SERVED:
+          await prisma.room.updateMany({
+            where: { id, state: RoomState.SERVING },
+            data: { state: RoomState.SERVED },
+          });
+          room = await prisma.room.findOne({
+            where: { id },
+          });
+          if (room?.state !== RoomState.SERVED) {
+            return null;
+          }
+          break;
+        default:
+          room = null;
+      }
+      if (!room) {
+        return null;
+      }
+      const data = roomToSS(room);
+      const update: Update<RoomSS> = {
+        type: UpdateType.EDITED,
+        data,
+      };
+      void pubsub.publish(roomsTopic, { roomsUpdates: update });
+      void pubsub.publish(roomTopic(id), { roomUpdates: update });
+      return data;
     } catch (e) {
       return handleError(e);
     }

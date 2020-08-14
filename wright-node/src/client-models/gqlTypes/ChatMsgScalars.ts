@@ -15,5 +15,5 @@ export interface ChatMsgScalars {
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
-  readonly content: string;
+  readonly content: GraphQLJSON;
 }
