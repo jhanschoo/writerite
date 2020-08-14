@@ -43,7 +43,7 @@
     "download-schema": "apollo client:download-schema -v \"$CI_COMMIT_REF_SLUG\" schema.json && node generatePossibleTypes.js",
     "download-schema:dev": "apollo client:download-schema -v \"$(git branch --show-current)\" schema.json && node generatePossibleTypes.js",
     "start": "node dist/index.js",
-    "start:dev": "npm run codegen && npm run download-schema && tsc && node dist/index.js",
+    "start:dev": "npm run codegen:dev && npm run download-schema:dev && tsc && node dist/index.js",
     "test": "jest --runInBand"
   },
   "optionalDependencies": {

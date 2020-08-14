@@ -10,7 +10,12 @@ import { UpdateType, RoomState } from "./../../gqlGlobalTypes";
 // ====================================================
 
 export interface RoomsUpdatesSubscription_roomsUpdates_data {
-  readonly __typename: "ChatMsg";
+  readonly __typename: "Room";
+  readonly id: string;
+  readonly ownerId: string;
+  readonly ownerConfig: GraphQLJSONObject;
+  readonly internalConfig: GraphQLJSONObject;
+  readonly state: RoomState;
 }
 
 export interface RoomsUpdatesSubscription_roomsUpdates {

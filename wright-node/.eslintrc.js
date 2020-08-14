@@ -107,7 +107,6 @@ module.exports = {
         "@typescript-eslint/func-call-spacing": "warn",
         "function-paren-newline": "warn",
         "func-names": "warn",
-        "func-style": ["warn", "declaration"],
         "generator-star-spacing": ["warn", "after"],
         "grouped-accessor-pairs": ["warn", "getBeforeSet"],
         "guard-for-in": "warn",

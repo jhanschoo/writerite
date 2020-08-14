@@ -3,17 +3,49 @@ import { client } from "./apolloClient";
 
 import { RoomsUpdatesSubscription } from "./gql/gqlTypes/RoomsUpdatesSubscription";
 import { ROOMS_UPDATES_SUBSCRIPTION } from "./gql/subscription";
-import { USER_QUERY } from "./gql/queries";
-import { UserQuery, UserQueryVariables } from "./gql/gqlTypes/UserQuery";
+import { FetchResult } from "@apollo/client";
+import { RoomState, UpdateType } from "./gqlGlobalTypes";
 
-void client.query<UserQuery, UserQueryVariables>({
-  query: USER_QUERY,
-  variables: { id: "a0236142-0cb2-4c70-b32a-3ccca8f625b0" },
-})
-  .then((data) => console.log(data));
+import { serveRoom } from "./serveRoom";
+import { Ref } from "./types";
+
+const { GRAPHQL_WS } = process.env;
+
+const currentRooms = new Set<string>();
+
+// TODO: parametrize into envvar
+const TIME_LIMIT = 1000 * 60 * 60;
 
 void client.subscribe<RoomsUpdatesSubscription>({
   query: ROOMS_UPDATES_SUBSCRIPTION,
 }).subscribe({
-  next: console.log,
+  next: async ({ data }: FetchResult<RoomsUpdatesSubscription>) => {
+    if (!data?.roomsUpdates?.data?.ownerConfig.requestServing) {
+      return null;
+    }
+    const { type, data: { id, state } } = data.roomsUpdates;
+    // guard against repeated and invalid starts
+    if (![UpdateType.CREATED, UpdateType.DELETED].includes(type) || state !== RoomState.WAITING || currentRooms.has(id)) {
+      return null;
+    }
+    currentRooms.add(id);
+    const cancel: Ref<boolean> = [false];
+    const servedP = serveRoom(id, cancel);
+
+    /*
+     * simple-logic stanza to close rooms after
+     * timeout, self-correcting against failed
+     * state in case room logic is bugged.
+     */
+    setTimeout(() => {
+      if (currentRooms.has(id)) {
+        currentRooms.delete(id);
+        cancel[0] = true;
+      }
+    }, TIME_LIMIT);
+    await servedP;
+    currentRooms.delete(id);
+  },
 });
+// eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+console.log(`Subscribed to rooms from ${GRAPHQL_WS}`);

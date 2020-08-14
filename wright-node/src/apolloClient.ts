@@ -88,19 +88,17 @@ const link = from([
 export const client = new ApolloClient({
   link,
   cache,
-  ssrForceFetchDelay: 100,
   defaultOptions: {
     watchQuery: {
       errorPolicy: "all",
-      fetchPolicy: "no-cache",
+      fetchPolicy: "network-only",
     },
     query: {
       errorPolicy: "all",
-      fetchPolicy: "no-cache",
+      fetchPolicy: "network-only",
     },
     mutate: {
       errorPolicy: "all",
-      fetchPolicy: "no-cache",
     },
   },
 });
