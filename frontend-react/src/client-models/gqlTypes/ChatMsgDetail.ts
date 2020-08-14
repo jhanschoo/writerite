@@ -23,6 +23,6 @@ export interface ChatMsgDetail {
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
-  readonly content: string;
+  readonly content: GraphQLJSON;
   readonly sender: ChatMsgDetail_sender | null;
 }

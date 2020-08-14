@@ -8,6 +8,11 @@
 		}
 	],
 	"settings": {
-		"typescript.tsdk": "frontend-react/node_modules/typescript/lib"
+		"typescript.tsdk": "frontend-react/node_modules/typescript/lib",
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/.hg/store/**": true
+		}
 	}
 }

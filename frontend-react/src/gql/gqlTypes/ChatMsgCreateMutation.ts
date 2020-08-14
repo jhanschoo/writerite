@@ -15,7 +15,7 @@ export interface ChatMsgCreateMutation_chatMsgCreate {
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
-  readonly content: string;
+  readonly content: GraphQLJSON;
 }
 
 export interface ChatMsgCreateMutation {
@@ -25,5 +25,5 @@ export interface ChatMsgCreateMutation {
 export interface ChatMsgCreateMutationVariables {
   readonly roomId: string;
   readonly type: ChatMsgContentType;
-  readonly content: string;
+  readonly content: GraphQLJSON;
 }

@@ -1,4 +1,4 @@
-import type { ChatMsg, PrismaClient } from "@prisma/client";
+import type { ChatMsg, JsonValue, PrismaClient } from "@prisma/client";
 import type { UserSS } from "./User";
 import type { RoomSS } from "./Room";
 
@@ -15,7 +15,7 @@ export interface ChatMsgSS extends Partial<ChatMsg> {
   roomId: string;
   senderId: string | null;
   type: ChatMsgContentType;
-  content: string;
+  content: JsonValue;
 
   createdAt: Date;
   updatedAt: Date;

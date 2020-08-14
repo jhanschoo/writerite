@@ -259,7 +259,7 @@ ${CHAT_MSG_SCALARS}
 mutation ChatMsgCreateMutation(
   $roomId: ID!
   $type: ChatMsgContentType!
-  $content: String!
+  $content: JSON!
 ) {
   chatMsgCreate(content: $content, roomId: $roomId, type: $type) {
     ...ChatMsgScalars

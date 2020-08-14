@@ -23,7 +23,7 @@ export interface ChatMsgsOfRoomQuery_chatMsgsOfRoom {
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
-  readonly content: string;
+  readonly content: GraphQLJSON;
   readonly sender: ChatMsgsOfRoomQuery_chatMsgsOfRoom_sender | null;
 }
 

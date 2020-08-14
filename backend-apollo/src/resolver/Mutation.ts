@@ -8,7 +8,7 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
-import { JsonObject, RoomState, Unit } from "@prisma/client";
+import { InputJsonValue, JsonObject, RoomState, Unit } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
@@ -107,12 +107,7 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
   chatMsgCreate: FieldResolver<Record<string, unknown>, WrContext, {
     roomId: string;
     type: ChatMsgContentType;
-    content: string;
-  }, ChatMsgSS | null>;
-  chatMsgCreateInternal: FieldResolver<Record<string, unknown>, WrContext, {
-    roomId: string;
-    type: ChatMsgContentType;
-    content: string;
+    content: InputJsonValue;
   }, ChatMsgSS | null>;
 }
 
@@ -303,8 +298,6 @@ export const Mutation: MutationResolver = {
       void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
       return deck;
     } catch (e) {
-      console.log("error")
-      console.log(e)
       return handleError(e);
     }
   },
@@ -689,8 +682,9 @@ export const Mutation: MutationResolver = {
     if (!sub) {
       return null;
     }
+    const isWright = sub.roles.includes(Roles.wright);
     try {
-      if (!await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
+      if (!isWright && !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
         return null;
       }
       const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
@@ -701,33 +695,7 @@ export const Mutation: MutationResolver = {
           room: { connect: { id: roomId } },
           type,
           content,
-          sender: { connect: { id: sub.id } },
-        },
-      }));
-      const chatMsgsOfRoomUpdates: Update<ChatMsgSS> = {
-        type: UpdateType.CREATED,
-        data: chatMsg,
-      };
-      void pubsub.publish(chatMsgsOfRoomTopic(roomId), { chatMsgsOfRoomUpdates });
-      return chatMsg;
-    } catch (e) {
-      return handleError(e);
-    }
-  },
-  async chatMsgCreateInternal(_parent, {
-    roomId,
-    type,
-    content,
-  }, { sub, pubsub, prisma }, _info) {
-    if (!sub?.roles.includes(Roles.wright)) {
-      return null;
-    }
-    try {
-      const chatMsg = chatMsgToSS(await prisma.chatMsg.create({
-        data: {
-          room: { connect: { id: roomId } },
-          type,
-          content,
+          sender: isWright ? undefined : { connect: { id: sub.id } },
         },
       }));
       const chatMsgsOfRoomUpdates: Update<ChatMsgSS> = {

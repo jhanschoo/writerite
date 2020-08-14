@@ -206,15 +206,7 @@ type Mutation {
   chatMsgCreate(
     roomId: ID!
     type: ChatMsgContentType!
-    content: String!
-  ): ChatMsg @subscriptionsTriggered(
-    signatures: ["chatMsgsOfRoomUpdates"]
-  )
-
-  chatMsgCreateInternal(
-    roomId: ID!
-    type: ChatMsgContentType!
-    content: String!
+    content: JSON!
   ): ChatMsg @subscriptionsTriggered(
     signatures: ["chatMsgsOfRoomUpdates"]
   )
@@ -344,7 +336,7 @@ type ChatMsg {
   roomId: ID!
   senderId: ID
   type: ChatMsgContentType!
-  content: String!
+  content: JSON!
 
   # R Fields
   sender: User # Can be null w/o error

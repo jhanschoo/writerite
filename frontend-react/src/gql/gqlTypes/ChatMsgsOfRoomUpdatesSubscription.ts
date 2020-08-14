@@ -23,7 +23,7 @@ export interface ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data {
   readonly roomId: string;
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
-  readonly content: string;
+  readonly content: GraphQLJSON;
   readonly sender: ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data_sender | null;
 }
 

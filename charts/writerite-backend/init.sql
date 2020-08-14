@@ -81,7 +81,7 @@ CREATE TABLE "ChatMsg" (
   "roomId" uuid NOT NULL REFERENCES "Room" ON UPDATE CASCADE ON DELETE CASCADE,
   "senderId" uuid REFERENCES "User" ON UPDATE CASCADE ON DELETE CASCADE,
   "type" text DEFAULT 'TEXT' NOT NULL,
-  "content" text DEFAULT '' NOT NULL,
+  "content" json DEFAULT '""'::jsonb NOT NULL,
   "createdAt" timestamp DEFAULT now() NOT NULL,
   "updatedAt" timestamp DEFAULT now() NOT NULL
 );
