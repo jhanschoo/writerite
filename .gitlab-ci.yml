@@ -188,7 +188,7 @@ deploy-backend:
         graphql:
           http: "http://writerite-backend-writerite-backend-apollo:4000/graphql"
           ws: "ws://writerite-backend-writerite-backend-apollo:4000/graphql"
-        wrightSecretKey: "$WRIGHT_SECRET_JWT"
+        wrightSecretJwt: "$WRIGHT_SECRET_JWT"
       EOF
     - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
   services: []
