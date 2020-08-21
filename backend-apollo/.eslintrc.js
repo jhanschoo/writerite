@@ -55,7 +55,7 @@ module.exports = {
             },
             {
                 selector: "enumMember",
-                format: ["camelCase", "UPPER_CASE"],
+                format: ["camelCase", "PascalCase", "UPPER_CASE"],
             }
         ],
         "@typescript-eslint/no-base-to-string": "warn",

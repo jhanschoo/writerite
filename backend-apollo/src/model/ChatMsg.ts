@@ -3,10 +3,10 @@ import type { UserSS } from "./User";
 import type { RoomSS } from "./Room";
 
 export enum ChatMsgContentType {
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   TEXT = "TEXT",
-  // eslint-disable-next-line @typescript-eslint/naming-convention
   CONFIG = "CONFIG",
+  ROUND_SCORE = "ROUND_SCORE",
+  CONTEST_SCORE = "CONTEST_SCORE",
 }
 
 // ChatMsgStoredScalars
