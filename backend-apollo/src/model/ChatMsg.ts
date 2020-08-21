@@ -5,6 +5,7 @@ import type { RoomSS } from "./Room";
 export enum ChatMsgContentType {
   TEXT = "TEXT",
   CONFIG = "CONFIG",
+  ROUND_WIN = "ROUND_WIN",
   ROUND_SCORE = "ROUND_SCORE",
   CONTEST_SCORE = "CONTEST_SCORE",
 }

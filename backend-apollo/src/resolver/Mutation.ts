@@ -19,6 +19,8 @@ import { UserDeckRecordSS } from "../model/UserDeckRecord";
 import { UserCardRecordSS } from "../model/UserCardRecord";
 import { handleError } from "../util";
 
+const TWO_HOURS_IN_MS = 1000 * 60 * 60 * 2;
+
 const localAuth = new LocalAuthService();
 const googleAuth = new GoogleAuthService();
 const facebookAuth = new FacebookAuthService();
@@ -660,7 +662,7 @@ export const Mutation: MutationResolver = {
       if (!sub?.roles.includes(Roles.wright)) {
         return null;
       }
-      const twoHoursAgo = new Date(Date.now() - 1000 * 60 * 60 * 2);
+      const twoHoursAgo = new Date(Date.now() - TWO_HOURS_IN_MS);
       const rooms = await prisma.room.findMany({
         where: {
           state: RoomState.SERVING,
