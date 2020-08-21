@@ -8,7 +8,7 @@ import { GoogleAuthService } from "../service/GoogleAuthService";
 import { FacebookAuthService } from "../service/FacebookAuthService";
 import { DevelopmentAuthService } from "../service/DevelopmentAuthService";
 
-import { InputJsonValue, JsonObject, RoomState, Unit, Room } from "@prisma/client";
+import { InputJsonValue, JsonObject, Room, RoomState, Unit } from "@prisma/client";
 import { AuthResponseSS } from "../model/Authorization";
 import { UserSS, userToSS } from "../model/User";
 import { DeckSS, ownDecksTopic, userOwnsDeck } from "../model/Deck";
@@ -100,6 +100,8 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     id: string;
     state: RoomState;
   }, RoomSS | null>;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  roomCleanUpDead: FieldResolver<Record<string, unknown>, WrContext, {}, number | null>;
   roomAddOccupant: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     occupantId: string;
@@ -649,6 +651,48 @@ export const Mutation: MutationResolver = {
       void pubsub.publish(roomsTopic, { roomsUpdates: update });
       void pubsub.publish(roomTopic(id), { roomUpdates: update });
       return data;
+    } catch (e) {
+      return handleError(e);
+    }
+  },
+  async roomCleanUpDead(_parent, _args, { sub, pubsub, prisma }, _info) {
+    try {
+      if (!sub?.roles.includes(Roles.wright)) {
+        return null;
+      }
+      const twoHoursAgo = new Date(Date.now() - 1000 * 60 * 60 * 2);
+      const rooms = await prisma.room.findMany({
+        where: {
+          state: RoomState.SERVING,
+          updatedAt: { gt: twoHoursAgo },
+        },
+      });
+
+      const { count } = await prisma.room.updateMany({
+        where: {
+          state: RoomState.SERVING,
+          updatedAt: { gt: twoHoursAgo },
+        },
+        data: { state: RoomState.SERVED },
+      });
+
+      /*
+       * All rooms in `rooms` are now updated.
+       * Because it's not a transaction, we may undercount
+       * for sending of subscription updates.
+       */
+      // TODO: put in transaction
+      rooms.forEach((room) => {
+        const data = roomToSS(room);
+        const { id } = room;
+        const update: Update<RoomSS> = {
+          type: UpdateType.EDITED,
+          data,
+        };
+        void pubsub.publish(roomsTopic, { roomsUpdates: update });
+        void pubsub.publish(roomTopic(id), { roomUpdates: update });
+      });
+      return count;
     } catch (e) {
       return handleError(e);
     }
