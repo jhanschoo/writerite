@@ -513,6 +513,18 @@
             "deprecationReason": null
           },
           {
+            "name": "ROUND_START",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ROUND_WIN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "TEXT",
             "description": null,
             "isDeprecated": false,

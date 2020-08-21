@@ -116,42 +116,55 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
     });
   });
 
+  roundHandlers.reverse();
+
   let chatMsgHandler = (_message: ChatMsgScalars): void => undefined;
+  let chatMsgObservable: ZenObservable.Subscription;
+  let unsubscribe = noop;
 
-  const chatMsgObservable = client.subscribe<ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables>({
-    query: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
-    variables: { roomId },
-  }).subscribe({
-    next: ({ data }: FetchResult<ChatMsgsOfRoomUpdatesSubscription>) => {
-      const { type, data: chatMsgScalars } = data?.chatMsgsOfRoomUpdates ?? { type: undefined, data: undefined };
-      if (type === UpdateType.CREATED && chatMsgScalars) {
-        chatMsgHandler(chatMsgScalars);
-      }
-    },
-  });
-  let unsubscribe = () => {
-    chatMsgObservable.unsubscribe();
-    unsubscribe = noop;
-  };
+  try {
+    await new Promise((res, rej) => {
+      chatMsgObservable = client.subscribe<ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables>({
+        query: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
+        variables: { roomId },
+      }).subscribe({
+        error: (e) => rej(e),
+        start: () => {
+          unsubscribe = () => {
+            chatMsgObservable.unsubscribe();
+            setTimeout(unsubscribe, TWO_HOURS_IN_MS);
+            unsubscribe = noop;
+          };
+          res();
+        },
+        next: ({ data }: FetchResult<ChatMsgsOfRoomUpdatesSubscription>) => {
+          const { type, data: chatMsgScalars } = data?.chatMsgsOfRoomUpdates ?? { type: undefined, data: undefined };
+          if (type === UpdateType.CREATED && chatMsgScalars) {
+            chatMsgHandler(chatMsgScalars);
+          }
+        },
+      });
+    });
 
-  // TODO: await a sent message to ensure that chatMsgObservable is listening
+    roundHandlers.push(() => {
+      chatMsgHandler = (message) => {
+        roundsService.send(message);
+      };
+      return Promise.resolve({});
+    });
 
-  const roundsService = new RoundsService(roundHandlers);
-  chatMsgHandler = (message) => {
-    roundsService.send(message);
-  };
-  chatMsgHandler = roundsService.send.bind(roundsService);
+    const roundsService = new RoundsService(roundHandlers);
 
-  roundsService.done.finally(unsubscribe);
-  setTimeout(unsubscribe, TWO_HOURS_IN_MS);
+    await roundsService.done;
 
-  await roundsService.done;
-
-  await client.mutate<RoomSetStateMutation, RoomSetStateMutationVariables>({
-    mutation: ROOM_SET_STATE_MUTATION,
-    variables: {
-      id,
-      state: RoomState.SERVED,
-    },
-  });
+  } finally {
+    unsubscribe();
+    await client.mutate<RoomSetStateMutation, RoomSetStateMutationVariables>({
+      mutation: ROOM_SET_STATE_MUTATION,
+      variables: {
+        id,
+        state: RoomState.SERVED,
+      },
+    });
+  }
 };

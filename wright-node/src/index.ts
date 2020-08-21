@@ -20,6 +20,11 @@ const TIME_LIMIT = 1000 * 60 * 60;
 void client.subscribe<RoomsUpdatesSubscription>({
   query: ROOMS_UPDATES_SUBSCRIPTION,
 }).subscribe({
+  error: (e) => {
+    throw e;
+  },
+  // eslint-disable-next-line no-console
+  start: () => console.log(`Subscribed to rooms from ${GRAPHQL_WS as string}`),
   next: async ({ data }: FetchResult<RoomsUpdatesSubscription>) => {
     if (!data?.roomsUpdates?.data?.ownerConfig.requestServing) {
       return null;
@@ -49,8 +54,7 @@ void client.subscribe<RoomsUpdatesSubscription>({
   },
 });
 // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-console.log(`Subscribed to rooms from ${GRAPHQL_WS} .`);
 
 beginRoomCleanupCron();
 // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-console.log("Started cron to cleanup dead serving rooms.");
+console.log("Spun off cron to cleanup dead serving rooms.");
