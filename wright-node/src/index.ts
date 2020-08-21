@@ -24,14 +24,13 @@ void client.subscribe<RoomsUpdatesSubscription>({
     throw e;
   },
   // eslint-disable-next-line no-console
-  start: () => console.log(`Subscribed to rooms from ${GRAPHQL_WS as string}`),
   next: async ({ data }: FetchResult<RoomsUpdatesSubscription>) => {
     if (!data?.roomsUpdates?.data?.ownerConfig.requestServing) {
       return null;
     }
     const { type, data: { id, state } } = data.roomsUpdates;
     // guard against repeated and invalid starts
-    if (![UpdateType.CREATED, UpdateType.DELETED].includes(type) || state !== RoomState.WAITING || currentRooms.has(id)) {
+    if (type === UpdateType.DELETED || state !== RoomState.WAITING || currentRooms.has(id)) {
       return null;
     }
     currentRooms.add(id);
@@ -54,6 +53,7 @@ void client.subscribe<RoomsUpdatesSubscription>({
   },
 });
 // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+console.log(`Initiated subscription to rooms from ${GRAPHQL_WS as string}`);
 
 beginRoomCleanupCron();
 // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions

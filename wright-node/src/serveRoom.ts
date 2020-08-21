@@ -17,7 +17,7 @@ import { noop, shuffle } from "./util";
 import { RoundHandler, RoundsService } from "./RoundsService";
 
 // TODO: replace with user-set delay
-const DELAY = 10_000;
+const DELAY = 1000 * 30;
 
 const TWO_HOURS_IN_MS = 1000 * 60 * 60 * 2;
 
@@ -35,6 +35,7 @@ const createChatMsgFactory = (roomId: string) =>
 // Bug: cancel is not yet implemented
 export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void> => {
   const createChatMsg = createChatMsgFactory(id);
+
   // Obtain required data
   const { data: roomData } = await client
     .query<RoomDetailQuery, RoomDetailQueryVariables>({
@@ -50,6 +51,7 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
   if (typeof deckId !== "string") {
     return;
   }
+
   const { data: cardsData } = await client
     .query<CardsUnderDeckQuery, CardsUnderDeckQueryVariables>({
     query: CARDS_UNDER_DECK_QUERY,
@@ -119,53 +121,45 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
 
   roundHandlers.reverse();
 
-  let chatMsgHandler = (_message: ChatMsgScalars): void => undefined;
-  let chatMsgObservable: ZenObservable.Subscription;
   let unsubscribe = noop;
 
-  try {
-    await new Promise((res, rej) => {
-      chatMsgObservable = client.subscribe<ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables>({
-        query: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
-        variables: { roomId },
-      }).subscribe({
-        error: (e) => rej(e),
-        start: () => {
-          unsubscribe = () => {
-            chatMsgObservable.unsubscribe();
-            setTimeout(unsubscribe, TWO_HOURS_IN_MS);
-            unsubscribe = noop;
-          };
-          res();
-        },
-        next: ({ data }: FetchResult<ChatMsgsOfRoomUpdatesSubscription>) => {
-          const { type, data: chatMsgScalars } = data?.chatMsgsOfRoomUpdates ?? { type: undefined, data: undefined };
-          if (type === UpdateType.CREATED && chatMsgScalars) {
-            chatMsgHandler(chatMsgScalars);
-          }
-        },
-      });
-    });
+  /*
+   * Note: race condition: we assume subscriptions are set up before rounds begin.
+   * TODO: send dummy message and await to verify that subscriptions are set up.
+   */
+  const chatMsgObservable = client.subscribe<ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables>({
+    query: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
+    variables: { roomId },
+  }).subscribe({
+    error: (e) => {
+      throw e;
+    },
+    next: ({ data }: FetchResult<ChatMsgsOfRoomUpdatesSubscription>) => {
+      const { type, data: chatMsgScalars } = data?.chatMsgsOfRoomUpdates ?? { type: undefined, data: undefined };
+      if (type === UpdateType.CREATED && chatMsgScalars) {
+        chatMsgHandler(chatMsgScalars);
+      }
+    },
+  });
+  setTimeout(unsubscribe, TWO_HOURS_IN_MS);
+  unsubscribe = () => {
+    chatMsgObservable.unsubscribe();
+    unsubscribe = noop;
+  };
 
-    roundHandlers.push(() => {
-      chatMsgHandler = (message) => {
-        roundsService.send(message);
-      };
-      return Promise.resolve({});
-    });
+  roundHandlers.push(() => Promise.resolve({ delay: 0 }));
 
-    const roundsService = new RoundsService(roundHandlers);
+  const roundsService = new RoundsService(roundHandlers);
+  const chatMsgHandler = roundsService.send.bind(roundsService);
 
-    await roundsService.done;
+  await roundsService.done;
 
-  } finally {
-    unsubscribe();
-    await client.mutate<RoomSetStateMutation, RoomSetStateMutationVariables>({
-      mutation: ROOM_SET_STATE_MUTATION,
-      variables: {
-        id,
-        state: RoomState.SERVED,
-      },
-    });
-  }
+  unsubscribe();
+  await client.mutate<RoomSetStateMutation, RoomSetStateMutationVariables>({
+    mutation: ROOM_SET_STATE_MUTATION,
+    variables: {
+      id,
+      state: RoomState.SERVED,
+    },
+  });
 };

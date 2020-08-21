@@ -39,8 +39,6 @@ export type RoundHandler<T> = () => Promise<RoundDefinition<T>>;
  */
 type SendHandler<T> = (message: T) => Promise<void>;
 
-type Thunk = () => void;
-
 /*
  * A PromiseThunk value is a function that when evaluated
  * does some light computation, then returns a promise
