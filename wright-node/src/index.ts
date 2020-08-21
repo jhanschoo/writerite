@@ -8,6 +8,7 @@ import { RoomState, UpdateType } from "./gqlGlobalTypes";
 
 import { serveRoom } from "./serveRoom";
 import { Ref } from "./types";
+import { beginRoomCleanupCron } from "./setServedCron";
 
 const { GRAPHQL_WS } = process.env;
 
@@ -48,4 +49,8 @@ void client.subscribe<RoomsUpdatesSubscription>({
   },
 });
 // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-console.log(`Subscribed to rooms from ${GRAPHQL_WS}`);
+console.log(`Subscribed to rooms from ${GRAPHQL_WS} .`);
+
+beginRoomCleanupCron();
+// eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+console.log("Started cron to cleanup dead serving rooms.");

@@ -115,24 +115,6 @@ export class RoundsService<T> {
 
   // Public API
 
-  /*
-   * done is a promise that resolves when all rounds are done,
-   * and rejects if any errors occur.
-   */
-  get done(): Promise<void> {
-    return this.#promise;
-  }
-
-  /*
-   * send(message) queues for the currently set message handler
-   * to be evaluated on the current message.
-   */
-  set send(message: T) {
-    const currentMessageThunker = this.#messageThunker;
-    const messageThunk = () => currentMessageThunker(message);
-    this.#queue(messageThunk);
-  }
-
   constructor(roundHandlers: RoundHandler<T>[]) {
     /*
      * dummy values to satisfy ts compiler that will be overwritten
@@ -215,4 +197,23 @@ export class RoundsService<T> {
     });
     this.#queue(this.#roundThunker(0));
   }
+
+  /*
+   * done is a promise that resolves when all rounds are done,
+   * and rejects if any errors occur.
+   */
+  get done(): Promise<void> {
+    return this.#promise;
+  }
+
+  /*
+   * send(message) queues for the currently set message handler
+   * to be evaluated on the current message.
+   */
+  send(message: T): void {
+    const currentMessageThunker = this.#messageThunker;
+    const messageThunk = () => currentMessageThunker(message);
+    this.#queue(messageThunk);
+  }
+
 }

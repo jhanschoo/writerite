@@ -1,5 +1,5 @@
 import gql from "graphql-tag";
-import { CARD_SCALARS, CHAT_MSG_SCALARS, ROOM_DETAIL, USER_SCALARS } from "../client-models";
+import { CARD_SCALARS, ROOM_DETAIL, USER_SCALARS } from "../client-models";
 
 export const USER_QUERY = gql`
 ${USER_SCALARS}
@@ -24,19 +24,6 @@ ${CARD_SCALARS}
 query CardsUnderDeckQuery($deckId: ID!) {
   cardsUnderDeck(deckId: $deckId) {
     ...CardScalars
-  }
-}
-`;
-
-export const CHAT_MSG_CREATE_MUTATION = gql`
-${CHAT_MSG_SCALARS}
-mutation ChatMsgCreateMutation(
-  $roomId: ID!
-  $type: ChatMsgContentType!
-  $content: JSON!
-) {
-  chatMsgCreate(content: $content, roomId: $roomId, type: $type) {
-    ...ChatMsgScalars
   }
 }
 `;
