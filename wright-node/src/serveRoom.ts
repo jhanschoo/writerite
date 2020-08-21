@@ -77,11 +77,12 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
 
   const roundHandlers: RoundHandler<ChatMsgScalars>[] = [];
 
-  cards.forEach(({ id, prompt, fullAnswer, answers, deckId: cardDeckId }) => {
+  // eslint-disable-next-line no-shadow
+  cards.forEach(({ id: cardId, prompt, fullAnswer, answers, deckId: cardDeckId }) => {
     const wonThisRound: (string | null)[] = [];
     roundHandlers.push(async () => {
       await createChatMsg(ChatMsgContentType.ROUND_START, {
-        cardId: id,
+        cardId,
         prompt,
       });
       return {
@@ -91,7 +92,7 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
 
             await createChatMsg(ChatMsgContentType.ROUND_WIN, {
               userId: chatMsg.senderId,
-              cardId: id,
+              cardId,
             });
             wonThisRound.push(chatMsg.senderId);
           }
@@ -105,7 +106,7 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
     roundHandlers.push(async () => {
       await createChatMsg(ChatMsgContentType.ROUND_SCORE, {
         userIds: wonThisRound,
-        cardId: id,
+        cardId,
         prompt,
         fullAnswer,
         answers,
