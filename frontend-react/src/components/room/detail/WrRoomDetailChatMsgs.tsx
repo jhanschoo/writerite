@@ -7,7 +7,7 @@ import { ChatMsgContentType, ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables, 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
 
-import WrRoomDetailChatMsgItem from "./WrRoomDetailChatMsgItem";
+import WrRoomDetailChatMsgItem from "./chatMsg/WrRoomDetailChatMsgItem";
 import { DiscriminatedChatMsgDetail } from "src/types";
 
 const ConversationList = wrStyled(List)`
