@@ -4,7 +4,7 @@ import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
 import { useMutation, useQuery } from "@apollo/client";
-import { OWN_DECK_RECORD_QUERY, OWN_DECK_RECORD_SET_MUTATION } from "src/gql";
+import { OWN_DECK_RECORD_QUERY, OWN_DECK_RECORD_SET_MUTATION, ownDeckRecordSetMutationUpdate } from "src/gql";
 import { OwnDeckRecordQuery, OwnDeckRecordQueryVariables, OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
@@ -75,6 +75,7 @@ const WrDeckDetailPersonalNotes = ({
     notes: currentNotes,
   } };
   const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables>(OWN_DECK_RECORD_SET_MUTATION, {
+    update: ownDeckRecordSetMutationUpdate,
     onCompleted(newData) {
       // no-op if debounce will trigger
       if (debouncing) {
@@ -107,7 +108,7 @@ const WrDeckDetailPersonalNotes = ({
   return <StyledOuterBox>
     <StyledInnerBox>
       <StyledHeader>
-        <h4>Your goals</h4>
+        <h4>Your notes and goals</h4>
         <NotesStatus>{notesStatus}</NotesStatus>
       </StyledHeader>
       {!loading &&

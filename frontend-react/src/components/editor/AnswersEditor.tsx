@@ -391,7 +391,7 @@ const processEditorState = (state: EditorState): EditorState =>
 interface Props {
   editorState: EditorState;
   setEditorState: Dispatch<SetStateAction<EditorState>>;
-  handleChange: (newEditorState: EditorState) => EditorState | null;
+  handleChange?: (newEditorState: EditorState) => EditorState | null;
   placeholder?: string;
   readOnly?: boolean;
 }
@@ -410,7 +410,8 @@ const AnswersEditor = (props: Props): JSX.Element => {
     if (hasInconsistentBlocks(nextEditorState)) {
       setEditorState(EditorState.undo(nextEditorState));
     } else {
-      setEditorState(handleChange(processEditorState(nextEditorState)) ?? EditorState.undo(nextEditorState));
+      const processedState = processEditorState(nextEditorState);
+      setEditorState(handleChange ? handleChange(processedState) ?? EditorState.undo(nextEditorState) : processedState);
     }
   };
 

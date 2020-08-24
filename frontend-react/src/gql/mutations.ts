@@ -2,7 +2,8 @@ import gql from "graphql-tag";
 import { CARD_DETAIL, CARD_SCALARS, CHAT_MSG_SCALARS, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
 import { CardCreateMutation, CardDeleteMutation, CardEditMutation, CardsOfDeckQuery, CardsOfDeckQueryVariables, DeckCreateMutation, DecksQuery, DecksQueryScope, DecksQueryVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables } from "src/gqlTypes";
 import { MutationUpdaterFn } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, DECKS_QUERY, ROOM_QUERY } from "src/gql";
+import { CARDS_OF_DECK_QUERY, DECKS_QUERY, OWN_DECK_RECORD_QUERY, ROOM_QUERY } from "src/gql";
+import { OwnDeckRecordQuery, OwnDeckRecordQueryVariables, OwnDeckRecordSetMutation } from "./gqlTypes";
 
 export const SIGNIN_MUTATION = gql`
 mutation SigninMutation(
@@ -281,6 +282,20 @@ mutation OwnDeckRecordSetMutation(
   }
 }
 `;
+
+// we need an updater function to handle creation
+export const ownDeckRecordSetMutationUpdate: MutationUpdaterFn<OwnDeckRecordSetMutation> = (cache, { data }) => {
+  const ownDeckRecord = data?.ownDeckRecordSet;
+  if (ownDeckRecord) {
+    cache.writeQuery<OwnDeckRecordQuery, OwnDeckRecordQueryVariables>({
+      query: OWN_DECK_RECORD_QUERY,
+      variables: { deckId: ownDeckRecord.deckId },
+      data: {
+        ownDeckRecord,
+      },
+    });
+  }
+};
 
 export const DECK_ADD_SUBDECK_MUTATION = gql`
 ${DECK_SCALARS}

@@ -17,7 +17,8 @@ import { noop, shuffle } from "./util";
 import { RoundHandler, RoundsService } from "./RoundsService";
 
 // TODO: replace with user-set delay
-const DELAY = 1000 * 30;
+const CARD_DELAY = 1000 * 30;
+const SCORE_DELAY = 1000 * 30;
 
 const TWO_HOURS_IN_MS = 1000 * 60 * 60 * 2;
 
@@ -88,7 +89,7 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
         prompt,
       });
       return {
-        delay: DELAY,
+        delay: CARD_DELAY,
         messageHandler: async (chatMsg) => {
           if (chatMsg.type === ChatMsgContentType.TEXT && answers.includes((chatMsg.content as string).trim())) {
 
@@ -147,7 +148,7 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
     unsubscribe = noop;
   };
 
-  roundHandlers.push(() => Promise.resolve({ delay: 0 }));
+  roundHandlers.push(() => Promise.resolve({ delay: SCORE_DELAY }));
 
   const roundsService = new RoundsService(roundHandlers);
   const chatMsgHandler = roundsService.send.bind(roundsService);

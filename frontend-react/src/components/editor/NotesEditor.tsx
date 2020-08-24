@@ -10,12 +10,10 @@ const activeIf = (active: boolean) => active ? "active" : undefined;
 
 const Toolbar = wrStyled(List)`
 width: 100%;
+font-size: 75%;
 display: none;
 flex-wrap: wrap;
-margin: ${({ theme: { space } }) => `0 0 ${space[1]} 0`};
-@media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-  margin: ${({ theme: { space } }) => `0 0 ${space[1]} 0`};
-}
+margin: ${({ theme: { space } }) => `${space[1]} 0 0 0`};
 `;
 
 const ToolbarItem = wrStyled(Item)`
@@ -29,11 +27,11 @@ const NotesBox = wrStyled.div`
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
   font-size: 75%;
 }
-&.active, :active, :focus-within {
-  ${Toolbar} {
-    display: flex;
-  }
-}
+// &.active, :active, :focus-within {
+//   ${Toolbar} {
+//     display: flex;
+//   }
+// }
 `;
 
 const ToolbarButton = wrStyled(BorderlessButton)`
@@ -47,10 +45,6 @@ font-weight: normal;
 
 const BoldButton = wrStyled(ToolbarButton)`
 font-weight: bold;
-`;
-
-const ItalicButton = wrStyled(ToolbarButton)`
-font-style: italic;
 `;
 
 const UnderlineButton = wrStyled(ToolbarButton)`
@@ -95,21 +89,11 @@ const NotesEditor = ({
     return "not-handled";
   };
   const handleBold = () => handleEditorChange(RichUtils.toggleInlineStyle(editorState, "BOLD"));
-  const handleItalic = () => handleEditorChange(RichUtils.toggleInlineStyle(editorState, "ITALIC"));
   const handleUnderline = () => handleEditorChange(RichUtils.toggleInlineStyle(editorState, "UNDERLINE"));
   const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
   const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
   return <NotesBox>
-    {!readOnly &&
-      <Toolbar>
-        <ToolbarItem><BoldButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}>bold</BoldButton></ToolbarItem>
-        <ToolbarItem><ItalicButton onClick={handleItalic} className={activeIf(currentStyle.has("ITALIC"))}>italic</ItalicButton></ToolbarItem>
-        <ToolbarItem><UnderlineButton onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}>underline</UnderlineButton></ToolbarItem>
-        <ToolbarItem><ToolbarButton onClick={handleUnorderedList} className={activeIf(currentType === "unordered-list-item")}>• list</ToolbarButton></ToolbarItem>
-        <ToolbarItem><ToolbarButton onClick={handleOrderedList} className={activeIf(currentType === "ordered-list-item")}>1. list</ToolbarButton></ToolbarItem>
-      </Toolbar>
-    }
     <Editor
       editorState={editorState}
       onChange={handleEditorChange}
@@ -117,6 +101,14 @@ const NotesEditor = ({
       handleKeyCommand={handleKeyCommand}
       readOnly={readOnly}
     />
+    {!readOnly &&
+      <Toolbar>
+        <ToolbarItem><BoldButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}>bold</BoldButton></ToolbarItem>
+        <ToolbarItem><UnderlineButton onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}>underline</UnderlineButton></ToolbarItem>
+        <ToolbarItem><ToolbarButton onClick={handleUnorderedList} className={activeIf(currentType === "unordered-list-item")}>• list</ToolbarButton></ToolbarItem>
+        <ToolbarItem><ToolbarButton onClick={handleOrderedList} className={activeIf(currentType === "ordered-list-item")}>1. list</ToolbarButton></ToolbarItem>
+      </Toolbar>
+    }
   </NotesBox>;
 };
 

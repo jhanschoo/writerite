@@ -63,10 +63,10 @@ const blacken = "rgba(0, 0, 0, 0.75)";
 const lighten = "rgba(255, 255, 255, 0.25)";
 const whiten = "rgba(255, 255, 255, 0.75)";
 
-export const breakpoints = ["40rem", "52rem", "64rem"] as const;
+export const breakpoints = ["40rem", "52rem", "64rem"];
 
-const fg = [black, nearBlack, darkGray, midGray, gray] as const;
-const bg = [white, nearWhite, lightGray, moonGray, lightSilver] as const;
+const fg = [black, nearBlack, darkGray, midGray, gray];
+const bg = [white, nearWhite, lightGray, moonGray, lightSilver];
 /*
  * light borders are typically bg[3]
  * dark borders are typically bg[3]
@@ -103,7 +103,7 @@ export const bgfg = (fgi: (typeof fg)[number]): string => {
   return `color: ${color}; background: ${fgi};`;
 };
 
-export const edge = [transparent, darkGray, lightGray] as const;
+export const edge = [transparent, darkGray, lightGray];
 
 /*
  * TODO: organize space according to whether they are fixed (for organisms)
@@ -126,7 +126,7 @@ const theme = {
     error,
     valid,
   },
-} as const;
+};
 
 export type WrTheme = typeof theme;
 

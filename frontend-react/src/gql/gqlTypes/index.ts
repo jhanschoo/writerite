@@ -20,3 +20,4 @@ export * from "./RoomEditOwnerConfigMutation";
 export * from "./RoomDetailQuery";
 export * from "./RoomQuery";
 export * from "./SigninMutation";
+export * from "./UserQuery";

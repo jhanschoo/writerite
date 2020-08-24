@@ -9,6 +9,10 @@
 
 export enum ChatMsgContentType {
   CONFIG = "CONFIG",
+  CONTEST_SCORE = "CONTEST_SCORE",
+  ROUND_SCORE = "ROUND_SCORE",
+  ROUND_START = "ROUND_START",
+  ROUND_WIN = "ROUND_WIN",
   TEXT = "TEXT",
 }
 

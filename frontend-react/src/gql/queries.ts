@@ -1,11 +1,18 @@
 import gql from "graphql-tag";
-import { CARD_DETAIL, CHAT_MSG_DETAIL, DECK_DETAIL, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
+import { CARD_DETAIL, CHAT_MSG_DETAIL, DECK_DETAIL, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS, USER_SCALARS } from "src/client-models";
+
+export const USER_QUERY = gql`
+${USER_SCALARS}
+query UserQuery($id: ID!) {
+  user(id: $id) {
+    ...UserScalars
+  }
+}
+`;
 
 export const DECK_QUERY = gql`
 ${DECK_SCALARS}
-query DeckQuery(
-  $id: ID!
-) {
+query DeckQuery($id: ID!) {
   deck(id: $id) {
     ...DeckScalars
   }

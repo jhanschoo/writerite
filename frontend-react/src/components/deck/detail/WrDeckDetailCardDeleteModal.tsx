@@ -6,7 +6,7 @@ import { wrStyled } from "src/theme";
 import { BorderlessButton } from "src/ui";
 import { FrontBackCard, FrontBackCardButtonsBox, Modal } from "src/ui-components";
 
-import { emptyRawContent, identity } from "src/util";
+import { emptyRawContent } from "src/util";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
 import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
 
@@ -64,19 +64,16 @@ const WrDeckDetailCardDeleteModal = ({
       </StyledDeletePrompt>}
       promptContent={<SelfManagedNotesEditor
         initialContent={prompt as Record<string, unknown>}
-        placeholder="Empty"
-        handleChange={identity}
+        placeholder="Empty prompt"
         readOnly={true}
       />}
       fullAnswerContent={<SelfManagedNotesEditor
         initialContent={fullAnswer as Record<string, unknown>}
-        placeholder="Empty"
-        handleChange={identity}
+        placeholder="Empty answer"
         readOnly={true}
       />}
       answersContent={<SelfManagedAnswersEditor
         initialContent={answers}
-        handleChange={identity}
         readOnly={true}
       />}
       footer={<FrontBackCardButtonsBox>

@@ -8,7 +8,6 @@ import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
 import { FrontBackCard, FrontBackCardButtonsBox } from "src/ui-components";
 
-import { identity } from "src/util";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
 import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
@@ -49,7 +48,7 @@ const WrDeckDetailTemplateItem = ({
     update: cardDeleteMutationUpdate,
   });
   const [mutateEdit, { loading: loadingEdit }] = useMutation<CardEditMutation, CardEditMutationVariables>(CARD_EDIT_MUTATION, {
-    update: cardEditMutationUpdate
+    update: cardEditMutationUpdate,
   });
   const loading = loadingDelete || loadingEdit;
   const handleShowDeleteModal = () => setShowDeleteModal(true);
@@ -72,18 +71,15 @@ const WrDeckDetailTemplateItem = ({
       promptContent={<SelfManagedNotesEditor
         initialContent={prompt as Record<string, unknown>}
         placeholder="Empty prompt"
-        handleChange={identity}
         readOnly={true}
       />}
       fullAnswerContent={<SelfManagedNotesEditor
         initialContent={fullAnswer as Record<string, unknown>}
         placeholder="Empty answer"
-        handleChange={identity}
         readOnly={true}
       />}
       answersContent={<SelfManagedAnswersEditor
         initialContent={answers}
-        handleChange={identity}
         readOnly={true}
       />}
       footer={<FrontBackCardButtonsBox>
