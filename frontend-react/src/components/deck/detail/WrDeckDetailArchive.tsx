@@ -24,9 +24,9 @@ interface Props {
 }
 
 const WrDeckDetailArchive = ({ id }: Props): JSX.Element => {
-  [mutate] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, {
+  const [mutate] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, { variables: {
     id,
-  });
+  } });
   const handleDelete = () => {
     // TODO
   };
