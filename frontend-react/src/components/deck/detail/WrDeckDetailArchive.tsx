@@ -21,17 +21,16 @@ padding: ${({ theme: { space } }) => `${space[2]} ${space[3]}`};
 
 interface Props {
   id: string;
+  archived: boolean;
 }
 
-const WrDeckDetailArchive = ({ id }: Props): JSX.Element => {
-  const [mutate] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, { variables: {
+const WrDeckDetailArchive = ({ id, archived }: Props): JSX.Element => {
+  const [mutate, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, { variables: {
     id,
+    archived: !archived,
   } });
-  const handleDelete = () => {
-    // TODO
-  };
-  return <PrimaryButton onClick={handleDelete}>Delete...</PrimaryButton>;
+  const handleClick = () => mutate();
+  return <PrimaryButton onClick={handleClick} disabled={loading}>{archived ? "Unarchive" : "Archive"}</PrimaryButton>;
 };
 
 export default WrDeckDetailArchive;
-

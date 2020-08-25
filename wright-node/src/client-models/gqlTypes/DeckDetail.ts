@@ -16,6 +16,7 @@ export interface DeckDetail_subdecks {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
 }
@@ -57,6 +58,7 @@ export interface DeckDetail {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
   readonly subdecks: ReadonlyArray<(DeckDetail_subdecks | null)> | null;

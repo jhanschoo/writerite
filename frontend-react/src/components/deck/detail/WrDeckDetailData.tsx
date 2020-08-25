@@ -186,7 +186,7 @@ const WrDeckDetailData = ({
     <ButtonsDiv>
       <PrimaryButton onClick={handleCreateRoom}>Start Contest</PrimaryButton>
       <WrDeckDetailDownloadCsv name={currentTitle} />
-      <WrDeckDetailArchive id={deck.id} />
+      <WrDeckDetailArchive id={deck.id} archived={deck.archived} />
     </ButtonsDiv>
   </DeckDataBox>;
 };

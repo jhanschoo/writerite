@@ -42,6 +42,7 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     promptLang?: string;
     answerLang?: string;
     published?: boolean;
+    archived?: boolean;
     cards?: CardCreateInput[];
   }, DeckSS | null>;
   deckEdit: FieldResolver<Record<string, unknown>, WrContext, {
@@ -51,6 +52,7 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     promptLang?: string;
     answerLang?: string;
     published?: boolean;
+    archived?: boolean;
   }, DeckSS | null>;
   deckAddSubdeck: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
@@ -178,6 +180,7 @@ export const Mutation: MutationResolver = {
     promptLang,
     answerLang,
     published,
+    archived,
     cards,
   }, { sub, pubsub, prisma }, _info) {
     if (!sub) {
@@ -198,6 +201,7 @@ export const Mutation: MutationResolver = {
           promptLang,
           answerLang,
           published,
+          archived,
           owner: { connect: { id: sub.id } },
           cards: cardsCreate,
         },
@@ -219,6 +223,7 @@ export const Mutation: MutationResolver = {
     promptLang,
     answerLang,
     published,
+    archived,
   }, { sub, pubsub, prisma }, _info) {
     try {
       if (!sub || !await userOwnsDeck({ prisma, userId: sub.id, deckId: id })) {
@@ -233,6 +238,7 @@ export const Mutation: MutationResolver = {
           promptLang,
           answerLang,
           published,
+          archived,
           editedAt: dateNow,
           usedAt: dateNow,
         },
