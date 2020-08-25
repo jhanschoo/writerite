@@ -1,13 +1,15 @@
 import React from "react";
 
-import { useSelector } from "react-redux";
+import { Dispatch } from "redux";
+import { useDispatch, useSelector } from "react-redux";
 import type { WrState } from "src/store";
+import { SetAllAction, createSetAll } from "./actions";
 
 import { useParams } from "react-router";
 
 import { useQuery } from "@apollo/client";
 import { DECK_DETAIL_QUERY } from "src/gql";
-import type { DeckDetailQuery, DeckDetailQueryVariables, DeckScalars } from "src/gqlTypes";
+import type { CardDetail, DeckDetailQuery, DeckDetailQueryVariables, DeckScalars } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Main, MinimalLink } from "src/ui";
@@ -47,8 +49,15 @@ flex-direction: column;
 const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
   const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
+  const dispatch = useDispatch<Dispatch<SetAllAction>>();
   const { error, data } = useQuery<DeckDetailQuery, DeckDetailQueryVariables>(DECK_DETAIL_QUERY, {
     variables: { id: deckId },
+    onCompleted(newData) {
+      const cards = newData.deck?.cards?.filter((card): card is CardDetail => card?.template === false);
+      if (cards) {
+        dispatch(createSetAll(cards));
+      }
+    },
   });
   if (error) {
     return <StyledMain/>;
@@ -59,6 +68,7 @@ const WrDeckDetail = (): JSX.Element => {
   const { deck } = data;
   const readOnly = deck.ownerId !== id;
   const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
+  const cards = deck.cards?.filter((card): card is CardDetail => card !== null) ?? [];
   // Note: component is keyed to force refresh on route change.
   return <StyledMain key={`${deck.id}-WrDeckDetail`}>
     <BackLink to="/deck/list">←back to Decks</BackLink>
@@ -85,6 +95,7 @@ const WrDeckDetail = (): JSX.Element => {
     />
     <WrDeckDetailCards
       deckId={deckId}
+      cards={cards}
     />
   </StyledMain>;
 };

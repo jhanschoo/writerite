@@ -12,6 +12,7 @@ export interface DeckSS extends Partial<Deck> {
   promptLang: string;
   answerLang: string;
   published: boolean;
+  archived: boolean;
   editedAt: Date;
   usedAt: Date;
 

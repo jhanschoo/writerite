@@ -1,8 +1,6 @@
 import React from "react";
 
-import { useQuery } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY } from "src/gql";
-import type { CardDetail, CardsOfDeckQuery, CardsOfDeckQueryVariables } from "src/gqlTypes";
+import type { CardDetail } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
@@ -79,18 +77,17 @@ padding: ${({ theme: { space } }) => space[3]};
 
 interface Props {
   deckId: string;
+  cards: CardDetail[];
   readOnly?: boolean;
 }
 
 const WrDeckDetailCards = ({
   deckId,
+  cards: unsortedCards,
   readOnly,
 }: Props): JSX.Element => {
-  const { data } = useQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(CARDS_OF_DECK_QUERY, {
-    variables: { deckId },
-  });
-  const [cards, templates, mainTemplate] = groupCards(data?.cardsOfDeck ?? []);
-  const cardItems = cards.map((card) => <WrDeckDetailCardItem deckId={deckId} card={card} key={card.id} />);
+  const [cards, templates, mainTemplate] = groupCards(unsortedCards);
+  const cardItems = cards.map((card) => <WrDeckDetailCardItem deckId={deckId} card={card} key={card.id} readOnly={readOnly} />);
   return <StyledOuterBox>
     <StyledInnerBox>
       <StyledHeader>

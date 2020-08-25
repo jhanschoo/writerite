@@ -1,8 +1,8 @@
 import gql from "graphql-tag";
 import { CARD_DETAIL, CARD_SCALARS, CHAT_MSG_SCALARS, DECK_SCALARS, ROOM_DETAIL, ROOM_SCALARS, USER_DECK_RECORD_SCALARS } from "src/client-models";
-import { CardCreateMutation, CardDeleteMutation, CardEditMutation, CardsOfDeckQuery, CardsOfDeckQueryVariables, DeckCreateMutation, DecksQuery, DecksQueryScope, DecksQueryVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables } from "src/gqlTypes";
+import { CardCreateMutation, CardDeleteMutation, CardEditMutation, DeckCreateMutation, DeckDetailQuery, DeckDetailQueryVariables, DecksQuery, DecksQueryScope, DecksQueryVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables } from "src/gqlTypes";
 import { MutationUpdaterFn } from "@apollo/client";
-import { CARDS_OF_DECK_QUERY, DECKS_QUERY, OWN_DECK_RECORD_QUERY, ROOM_QUERY } from "src/gql";
+import { DECKS_QUERY, DECK_DETAIL_QUERY, OWN_DECK_RECORD_QUERY, ROOM_QUERY } from "src/gql";
 import { OwnDeckRecordQuery, OwnDeckRecordQueryVariables, OwnDeckRecordSetMutation } from "./gqlTypes";
 
 export const SIGNIN_MUTATION = gql`
@@ -30,6 +30,7 @@ mutation DeckCreateMutation(
   $promptLang: String
   $answerLang: String
   $published: Boolean
+  $archived: Boolean
   $cards: [CardCreateInput!]
 ) {
   deckCreate(
@@ -38,6 +39,7 @@ mutation DeckCreateMutation(
     promptLang: $promptLang
     answerLang: $answerLang
     published: $published
+    archived: $archived
     cards: $cards
   ) {
     ...DeckScalars
@@ -75,6 +77,7 @@ mutation DeckEditMutation(
   $promptLang: String
   $answerLang: String
   $published: Boolean
+  $archived: Boolean
 ) {
   deckEdit(
     id: $id
@@ -83,6 +86,7 @@ mutation DeckEditMutation(
     promptLang: $promptLang
     answerLang: $answerLang
     published: $published
+    archived: $archived
   ) {
     ...DeckScalars
   }
@@ -107,21 +111,30 @@ export const cardCreateMutationUpdate: MutationUpdaterFn<CardCreateMutation> = (
   if (newCard) {
     // update CardsOfDeck query of the same deckId
     try {
-      const cardsOfDeckQuery = {
-        query: CARDS_OF_DECK_QUERY,
-        variables: { deckId: newCard.deckId },
+      const deckDetailQuery = {
+        query: DECK_DETAIL_QUERY,
+        variables: { id: newCard.deckId },
       };
-      const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
-      const oldCardsOfDeck = newCard.mainTemplate
-        ? cardsOfDeckData?.cardsOfDeck?.map((card) => card && { ...card, mainTemplate: card.id === newCard.id })
-        : cardsOfDeckData?.cardsOfDeck;
-      const newCardsOfDeckData: CardsOfDeckQuery = {
-        ...cardsOfDeckData ?? {},
-        cardsOfDeck: [newCard, ...oldCardsOfDeck ?? []],
+      const deckDetailData = cache.readQuery<DeckDetailQuery, DeckDetailQueryVariables>(deckDetailQuery);
+      if (!deckDetailData?.deck?.cards) {
+        return;
+      }
+      const { deck } = deckDetailData;
+      const oldCards = newCard.mainTemplate
+        ? deck.cards?.map((card) => card && { ...card, mainTemplate: card.id === newCard.id })
+        : deck.cards;
+      const newCards = [newCard, ...oldCards ?? []];
+      const newDeck = {
+        ...deck,
+        cards: newCards,
       };
-      cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
-        ...cardsOfDeckQuery,
-        data: newCardsOfDeckData,
+      const newDeckDetailData: DeckDetailQuery = {
+        ...deckDetailData,
+        deck: newDeck,
+      };
+      cache.writeQuery<DeckDetailQuery, DeckDetailQueryVariables>({
+        ...deckDetailQuery,
+        data: newDeckDetailData,
       });
     } catch (_e) {
       // noop
@@ -159,18 +172,23 @@ export const cardEditMutationUpdate: MutationUpdaterFn<CardEditMutation> = (cach
   if (newCard?.mainTemplate) {
     // update CardsOfDeck query of the same deckId
     try {
-      const cardsOfDeckQuery = {
-        query: CARDS_OF_DECK_QUERY,
-        variables: { deckId: newCard.deckId },
+      const deckDetailQuery = {
+        query: DECK_DETAIL_QUERY,
+        variables: { id: newCard.deckId },
       };
-      const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
-      const newCardsOfDeckData: CardsOfDeckQuery = {
-        ...cardsOfDeckData ?? {},
-        cardsOfDeck: (cardsOfDeckData?.cardsOfDeck ?? []).map((card) => card && { ...card, mainTemplate: card.id !== newCard.id }),
-      };
-      cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
-        ...cardsOfDeckQuery,
-        data: newCardsOfDeckData,
+      const deckDetailData = cache.readQuery<DeckDetailQuery, DeckDetailQueryVariables>(deckDetailQuery);
+      if (!deckDetailData?.deck?.cards) {
+        return;
+      }
+      cache.writeQuery<DeckDetailQuery, DeckDetailQueryVariables>({
+        ...deckDetailQuery,
+        data: {
+          ...deckDetailData,
+          deck: {
+            ...deckDetailData.deck,
+            cards: deckDetailData.deck.cards.map((card) => card && { ...card, mainTemplate: card.id !== newCard.id }),
+          },
+        },
       });
     } catch (_e) {
       // noop
@@ -192,22 +210,23 @@ export const cardDeleteMutationUpdate: MutationUpdaterFn<CardDeleteMutation> = (
   if (deletedCard) {
     // update CardsOfDeck query of the same deckId
     try {
-      const cardsOfDeckQuery = {
-        query: CARDS_OF_DECK_QUERY,
-        variables: { deckId: deletedCard.deckId },
+      const deckDetailQuery = {
+        query: DECK_DETAIL_QUERY,
+        variables: { id: deletedCard.deckId },
       };
-      const cardsOfDeckData = cache.readQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>(cardsOfDeckQuery);
-      if (!cardsOfDeckData?.cardsOfDeck) {
+      const deckDetailData = cache.readQuery<DeckDetailQuery, DeckDetailQueryVariables>(deckDetailQuery);
+      if (!deckDetailData?.deck?.cards) {
         return;
       }
-      const newCardsOfDeckData: CardsOfDeckQuery = {
-        ...cardsOfDeckData,
-        // eslint-disable-next-line no-shadow
-        cardsOfDeck: cardsOfDeckData.cardsOfDeck.filter((card) => card?.id !== deletedCard.id),
-      };
-      cache.writeQuery<CardsOfDeckQuery, CardsOfDeckQueryVariables>({
-        ...cardsOfDeckQuery,
-        data: newCardsOfDeckData,
+      cache.writeQuery<DeckDetailQuery, DeckDetailQueryVariables>({
+        ...deckDetailQuery,
+        data: {
+          ...deckDetailData,
+          deck: {
+            ...deckDetailData.deck,
+            cards: deckDetailData.deck.cards.filter((card) => card?.id !== deletedCard.id),
+          },
+        },
       });
     } catch (_e) {
       // noop

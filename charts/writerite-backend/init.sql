@@ -24,6 +24,7 @@ CREATE TABLE "Deck" (
   "promptLang" text DEFAULT '' NOT NULL,
   "answerLang" text DEFAULT '' NOT NULL,
   "published" boolean DEFAULT false NOT NULL,
+  "archived" boolean DEFAULT false NOT NULL,
   "editedAt" timestamp DEFAULT now() NOT NULL,
   "usedAt" timestamp DEFAULT now() NOT NULL,
   "createdAt" timestamp DEFAULT now() NOT NULL,

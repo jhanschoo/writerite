@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { EditorChangeType, EditorState, convertToRaw } from "draft-js";
 
+import { Dispatch } from "redux";
+import { useDispatch } from "react-redux";
+import { SetOneAction, createSetOne } from "./actions";
+
 import { useMutation } from "@apollo/client";
 import { CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION, cardCreateMutationUpdate, cardDeleteMutationUpdate } from "src/gql";
 import type { CardCreateMutation, CardCreateMutationVariables, CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables } from "src/gqlTypes";
@@ -101,6 +105,7 @@ const WrDeckDetailMainTemplateItem = ({
     ...emptyFields,
   };
   const initialFields = { prompt, fullAnswer, answers } as Fields;
+  const dispatch = useDispatch<Dispatch<SetOneAction>>();
   const [promptEditorState, setPromptEditorState] =
     useState(notesEditorStateFromRaw(prompt as Record<string, unknown>));
   const [fullAnswerEditorState, setFullAnswerEditorState] =
@@ -117,6 +122,11 @@ const WrDeckDetailMainTemplateItem = ({
   };
   const [mutateAddCard] = useMutation<CardCreateMutation, CardCreateMutationVariables>(CARD_CREATE_MUTATION, {
     update: cardCreateMutationUpdate,
+    onCompleted(createdData) {
+      if (createdData.cardCreate) {
+        dispatch(createSetOne(createdData.cardCreate));
+      }
+    },
   });
   const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
     update: cardDeleteMutationUpdate,

@@ -18,6 +18,7 @@ export interface DecksQuery_decks {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
 }

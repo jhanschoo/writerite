@@ -218,6 +218,7 @@ const WrUploadDeck = (): JSX.Element => {
       promptLang: "",
       answerLang: "",
       published: false,
+      archived: false,
     } });
     const id = res.data?.deckCreate?.id;
     if (id) {

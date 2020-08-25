@@ -4,8 +4,10 @@ import storage from "redux-persist/lib/storage";
 import { rootReducer } from "./reducers";
 
 import { SigninState } from "src/components/signin/reducers";
+import { DeckDetailCardsState } from "src/components/deck/detail/reducers";
 
 export interface WrState {
+  readonly deckDetailCards?: DeckDetailCardsState;
   readonly signin?: SigninState;
 }
 

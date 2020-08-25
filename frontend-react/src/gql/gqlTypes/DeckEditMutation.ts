@@ -16,6 +16,7 @@ export interface DeckEditMutation_deckEdit {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
 }
@@ -31,4 +32,5 @@ export interface DeckEditMutationVariables {
   readonly promptLang?: string | null;
   readonly answerLang?: string | null;
   readonly published?: boolean | null;
+  readonly archived?: boolean | null;
 }

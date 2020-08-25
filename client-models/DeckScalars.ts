@@ -9,6 +9,7 @@ fragment DeckScalars on Deck {
   promptLang
   answerLang
   published
+  archived
   usedAt
   editedAt
 }

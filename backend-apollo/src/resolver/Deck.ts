@@ -22,6 +22,8 @@ interface DeckResolver extends IResolverObject<DeckSS, WrContext, Record<string,
 
   // published uses default resolver
 
+  // archived uses default resolver
+
   // editedAt uses plugin resolver
 
   // usedAt uses plugin resolver

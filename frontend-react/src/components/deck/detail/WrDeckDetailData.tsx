@@ -14,6 +14,8 @@ import { BorderlessButton } from "src/ui";
 
 import { DEBOUNCE_DELAY } from "src/util";
 import LineEditor, { lineEditorStateFromString } from "src/components/editor/LineEditor";
+import WrDeckDetailDownloadCsv from "./WrDeckDetailDownloadCsv";
+import WrDeckDetailArchive from "./WrDeckDetailArchive";
 
 const DeckDataBox = wrStyled.div`
 width: 33%;
@@ -64,6 +66,7 @@ margin: ${({ theme: { space } }) => `0 ${space[1]} ${space[1]} ${space[1]}`};
 
 const PrimaryButton = wrStyled(BorderlessButton)`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
+width: 100%;
 flex-grow: 1;
 display: flex;
 margin: ${({ theme: { space } }) => ` 0 ${space[1]} ${space[2]} ${space[1]}`};
@@ -182,6 +185,8 @@ const WrDeckDetailData = ({
     </DeckInfoBox>
     <ButtonsDiv>
       <PrimaryButton onClick={handleCreateRoom}>Start Contest</PrimaryButton>
+      <WrDeckDetailDownloadCsv name={currentTitle} />
+      <WrDeckDetailArchive id={deck.id} />
     </ButtonsDiv>
   </DeckDataBox>;
 };

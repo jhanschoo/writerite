@@ -16,6 +16,7 @@ export interface DeckAddSubdeckMutation_deckAddSubdeck_subdecks {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
 }
@@ -29,6 +30,7 @@ export interface DeckAddSubdeckMutation_deckAddSubdeck {
   readonly promptLang: string;
   readonly answerLang: string;
   readonly published: boolean;
+  readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
   readonly subdecks: ReadonlyArray<(DeckAddSubdeckMutation_deckAddSubdeck_subdecks | null)> | null;

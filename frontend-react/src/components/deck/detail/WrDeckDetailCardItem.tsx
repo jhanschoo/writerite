@@ -3,6 +3,10 @@ import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
+import { Dispatch } from "redux";
+import { useDispatch } from "react-redux";
+import { DeleteOneAction, SetOneAction, createDeleteOne, createSetOne } from "./actions";
+
 import { useMutation } from "@apollo/client";
 import { CARD_DELETE_MUTATION, CARD_EDIT_MUTATION, cardDeleteMutationUpdate } from "src/gql";
 import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables } from "src/gqlTypes";
@@ -49,6 +53,7 @@ const WrDeckDetailCardItem = ({
   // eslint-disable-next-line no-shadow
   const { id, prompt, fullAnswer, answers } = card;
   const initialFields = { prompt, fullAnswer, answers } as CardFields;
+  const dispatch = useDispatch<Dispatch<SetOneAction | DeleteOneAction>>();
   const [answersEditorState, setAnswersEditorState] =
     useState(answersEditorStateFromStringArray(answers));
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -74,6 +79,11 @@ const WrDeckDetailCardItem = ({
   });
   const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
     update: cardDeleteMutationUpdate,
+    onCompleted(deleteData) {
+      if (deleteData.cardDelete) {
+        dispatch(createDeleteOne(deleteData.cardDelete.id));
+      }
+    },
   });
   const [debounce, , call] = useDebouncedCallback(() => {
     setDebouncing(false);
@@ -84,7 +94,9 @@ const WrDeckDetailCardItem = ({
   }, DEBOUNCE_DELAY);
   useEffect(() => call, [call]);
   const handleChange = (newFields: Partial<CardFields>) => {
-    setCurrentFields({ ...currentFields, ...newFields });
+    const newCurrentFields = { ...currentFields, ...newFields };
+    setCurrentFields(newCurrentFields);
+    dispatch(createSetOne({ ...card, ...newCurrentFields }));
     setDebouncing(true);
     debounce();
   };

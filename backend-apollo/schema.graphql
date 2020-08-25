@@ -88,6 +88,7 @@ type Mutation {
     promptLang: String @nonNull
     answerLang: String @nonNull
     published: Boolean @nonNull
+    archived: Boolean @nonNull
     cards: [CardCreateInput!] @nonNull
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
@@ -100,6 +101,7 @@ type Mutation {
     promptLang: String @nonNull
     answerLang: String @nonNull
     published: Boolean @nonNull
+    archived: Boolean @nonNull
   ): Deck @subscriptionsTriggered(
     signatures: ["ownDecksUpdates"]
   )
@@ -277,6 +279,7 @@ type Deck {
   promptLang: String!
   answerLang: String!
   published: Boolean!
+  archived: Boolean!
   editedAt: DateTime!
   usedAt: DateTime!
 

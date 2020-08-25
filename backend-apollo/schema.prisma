@@ -62,6 +62,7 @@ model Deck {
   promptLang  String           @default("")
   answerLang  String           @default("")
   published   Boolean          @default(false)
+  archived    Boolean          @default(false)
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
   // unenforced constraint: editedAt > UserCardRecord.updatedAt,
