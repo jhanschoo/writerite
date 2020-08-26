@@ -1,13 +1,13 @@
 [build]
 
-  base = "."
-
-  publish = "build/"
-
+  base = "frontend-react"
+  
+  publish = "frontend-react/build/"
+  
   command = "npm run build:netlify"
 
 [[redirects]]
 
   from = "/*"
-  to = "/index.html"
+  to = "/"
   status = 200
