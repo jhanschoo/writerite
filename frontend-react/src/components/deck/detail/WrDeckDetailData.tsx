@@ -116,7 +116,9 @@ const WrDeckDetailData = ({
     id: deck.id,
     name: currentTitle,
   } };
-  const [mutateUsed] = useMutation<DeckUsedMutation, DeckUsedMutationVariables>(DECK_USED_MUTATION);
+  const [mutateUsed] = useMutation<DeckUsedMutation, DeckUsedMutationVariables>(DECK_USED_MUTATION, { variables: {
+    id: deck.id,
+  } });
   const [mutateEdit, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
