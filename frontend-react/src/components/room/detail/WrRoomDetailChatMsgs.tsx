@@ -57,8 +57,6 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
     });
   }, [roomId, subscribeToMore]);
   useLayoutEffect(() => {
-    console.log("useLayoutEffect fired")
-    console.log(fixToBottom)
     const { current } = conversationEl;
     if (fixToBottom && current) {
       const maxScrollTop = current.scrollHeight - current.clientHeight;
@@ -72,7 +70,6 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
     if (!current) {
       return;
     }
-    console.log(`${current.scrollTop + current.clientHeight} ${current.scrollHeight}`);
     if (current.scrollTop + current.clientHeight > current.scrollHeight - SCROLL_BUFFER) {
       return setFixToBottom(true);
     }
