@@ -3,9 +3,9 @@ import { EditorState, convertToRaw } from "draft-js";
 import equal from "fast-deep-equal/es6/react";
 import { useDebouncedCallback } from "use-debounce";
 
-import { useMutation, useQuery } from "@apollo/client";
-import { OWN_DECK_RECORD_QUERY, OWN_DECK_RECORD_SET_MUTATION, ownDeckRecordSetMutationUpdate } from "src/gql";
-import { OwnDeckRecordQuery, OwnDeckRecordQueryVariables, OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables } from "src/gqlTypes";
+import { useMutation } from "@apollo/client";
+import { OWN_DECK_RECORD_SET_MUTATION, ownDeckRecordSetMutationUpdate } from "src/gql";
+import { OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 
@@ -50,39 +50,29 @@ padding: ${({ theme: { space } }) => `0 ${space[3]} ${space[3]} ${space[3]}`};
 
 interface Props {
   deckId: string;
+  notes: Record<string, unknown>;
 }
 
 const WrDeckDetailPersonalNotes = ({
   deckId,
+  notes,
 }: Props): JSX.Element => {
-  const { loading, data } = useQuery<OwnDeckRecordQuery, OwnDeckRecordQueryVariables>(OWN_DECK_RECORD_QUERY, {
-    variables: { deckId },
-    onCompleted(newData) {
-      // synchronize editorState and currentNotes to data, for first fetch only
-      if (equal(currentNotes, {}) && newData.ownDeckRecord) {
-        const notes = newData.ownDeckRecord.notes as Record<string, unknown>;
-        setCurrentNotes(notes);
-        setEditorState(notesEditorStateFromRaw(notes));
-      }
-    },
-  });
-  const notes = (data?.ownDeckRecord?.notes ?? {}) as Record<string, unknown>;
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
-  const [currentNotes, setCurrentNotes] = useState<Record<string, unknown>>({});
+  const [editorState, setEditorState] = useState(notesEditorStateFromRaw(notes));
+  const [currentNotes, setCurrentNotes] = useState<Record<string, unknown>>(notes);
   const [debouncing, setDebouncing] = useState(false);
   const mutateOpts = { variables: {
     deckId,
     notes: currentNotes,
   } };
-  const [mutate, { loading: loadingMutation }] = useMutation<OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables>(OWN_DECK_RECORD_SET_MUTATION, {
+  const [mutate, { loading }] = useMutation<OwnDeckRecordSetMutation, OwnDeckRecordSetMutationVariables>(OWN_DECK_RECORD_SET_MUTATION, {
     update: ownDeckRecordSetMutationUpdate,
-    onCompleted(newData) {
+    onCompleted(data) {
       // no-op if debounce will trigger
       if (debouncing) {
         return;
       }
       // debounce has fired a no-op before flight returned; we now fire a new mutation
-      if (newData.ownDeckRecordSet && !equal(currentNotes, newData.ownDeckRecordSet.notes)) {
+      if (data.ownDeckRecordSet && !equal(currentNotes, data.ownDeckRecordSet.notes)) {
         void mutate(mutateOpts);
       }
     },
@@ -90,7 +80,7 @@ const WrDeckDetailPersonalNotes = ({
   const [debounce,, call] = useDebouncedCallback(() => {
     setDebouncing(false);
     // no-op if a mutation is already in-flight
-    if (loadingMutation || currentNotes === notes) {
+    if (loading || equal(currentNotes, notes)) {
       return;
     }
     void mutate(mutateOpts);
@@ -102,7 +92,7 @@ const WrDeckDetailPersonalNotes = ({
     debounce();
     return nextEditorState;
   };
-  const notesStatus = loadingMutation || !equal(currentNotes, notes)
+  const notesStatus = loading || !equal(currentNotes, notes)
     ? "saving"
     : undefined;
   return <StyledOuterBox>
@@ -111,16 +101,14 @@ const WrDeckDetailPersonalNotes = ({
         <h4>Your notes and goals</h4>
         <NotesStatus>{notesStatus}</NotesStatus>
       </StyledHeader>
-      {!loading &&
-        <StyledContent>
-          <NotesEditor
-            editorState={editorState}
-            setEditorState={setEditorState}
-            handleChange={handleChange}
-            placeholder="Enter a description..."
-          />
-        </StyledContent>
-      }
+      <StyledContent>
+        <NotesEditor
+          editorState={editorState}
+          setEditorState={setEditorState}
+          handleChange={handleChange}
+          placeholder="Enter a description..."
+        />
+      </StyledContent>
     </StyledInnerBox>
   </StyledOuterBox>;
 };

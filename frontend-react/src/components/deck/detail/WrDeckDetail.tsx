@@ -85,6 +85,7 @@ const WrDeckDetail = (): JSX.Element => {
         />
         <WrDeckDetailPersonalNotes
           deckId={deck.id}
+          notes={(deck.ownRecord?.notes as Record<string, unknown> | null) ?? {}}
         />
       </NotesBox>
     </DeckDataBox>
