@@ -91,7 +91,7 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
       return {
         delay: CARD_DELAY,
         messageHandler: async (chatMsg) => {
-          if (chatMsg.type === ChatMsgContentType.TEXT && answers.includes((chatMsg.content as string).trim())) {
+          if (chatMsg.type === ChatMsgContentType.TEXT && answers.includes((chatMsg.content as string).trim()) && !wonThisRound.includes(chatMsg.senderId)) {
 
             await createChatMsg(ChatMsgContentType.ROUND_WIN, {
               userId: chatMsg.senderId,
