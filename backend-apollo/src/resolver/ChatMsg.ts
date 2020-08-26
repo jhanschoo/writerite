@@ -18,6 +18,8 @@ interface ChatMsgResolver extends IResolverObject<ChatMsgSS, WrContext, Record<s
 
   // content uses default resolver
 
+  // createdAt uses default resolver
+
   sender: FieldResolver<ChatMsgSS, WrContext, Record<string, unknown>, UserSS | null>;
   room: FieldResolver<ChatMsgSS, WrContext, Record<string, unknown>, RoomSS | null>;
 }

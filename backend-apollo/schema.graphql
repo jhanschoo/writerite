@@ -353,6 +353,7 @@ type ChatMsg {
   senderId: ID
   type: ChatMsgContentType!
   content: JSON!
+  createdAt: DateTime!
 
   # R Fields
   sender: User # Can be null w/o error
