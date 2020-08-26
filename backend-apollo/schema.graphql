@@ -119,6 +119,8 @@ type Mutation {
     signatures: ["ownDecksUpdates"]
   )
 
+  deckUsed(id: ID!): Deck
+
   deckDelete(
     id: ID!
   ): Deck @subscriptionsTriggered(

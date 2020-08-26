@@ -54,6 +54,9 @@ interface MutationResolver extends IResolverObject<Record<string, unknown>, WrCo
     published?: boolean;
     archived?: boolean;
   }, DeckSS | null>;
+  deckUsed: FieldResolver<Record<string, unknown>, WrContext, {
+    id: string;
+  }, DeckSS | null>;
   deckAddSubdeck: FieldResolver<Record<string, unknown>, WrContext, {
     id: string;
     subdeckId: string;
@@ -248,6 +251,25 @@ export const Mutation: MutationResolver = {
         data: deck,
       };
       void pubsub.publish(ownDecksTopic(sub.id), { ownDecksUpdates });
+      return deck;
+    } catch (e) {
+      return handleError(e);
+    }
+  },
+  async deckUsed(_parent, {
+    id,
+  }, { sub, prisma }, _info) {
+    try {
+      if (!sub) {
+        return null;
+      }
+      const dateNow = new Date();
+      const deck = await prisma.deck.update({
+        where: { id },
+        data: {
+          usedAt: dateNow,
+        },
+      });
       return deck;
     } catch (e) {
       return handleError(e);
