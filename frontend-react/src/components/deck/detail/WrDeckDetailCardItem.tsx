@@ -27,7 +27,6 @@ border-bottom: 1px solid ${({ theme: { bg } }) => bg[3]};
 `;
 
 const AddGeneratedAnswer = wrStyled(BorderlessButton)`
-${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 margin: ${({ theme: { space } }) => `${space[1]} ${space[1]}`};
 `;
@@ -146,7 +145,7 @@ const WrDeckDetailCardItem = ({
         handleChange={handlePromptChange}
         readOnly={disabled}
       />}
-      beforeAnswersContent={!readOnly && generatedAnswer &&
+      beforeAnswersContent={!readOnly && generatedAnswer && !currentFields.answers.includes(generatedAnswer) &&
         <AddGeneratedAnswer onClick={addGeneratedAnswer}>
           add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
         </AddGeneratedAnswer>

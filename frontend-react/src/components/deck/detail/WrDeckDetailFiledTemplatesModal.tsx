@@ -12,12 +12,11 @@ const StyledList = wrStyled(List)`
 flex-direction: column;
 min-width: 50vw;
 padding: ${({ theme: { space } }) => space[3]};
-${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
+${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 `;
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
-${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
 `;
 
 const StyledEmptyMessage = wrStyled.p`

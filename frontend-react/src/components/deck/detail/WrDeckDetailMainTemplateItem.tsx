@@ -21,7 +21,7 @@ import WrDeckDetailFiledTemplatesModal from "./WrDeckDetailFiledTemplatesModal";
 
 const StyledItem = wrStyled(Item)`
 width: 100%;
-${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
+border: 1px solid ${({ theme: { fg } }) => fg[3]};
 `;
 
 const StyledHeader = wrStyled.header`
@@ -57,7 +57,6 @@ margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 `;
 
 const SecondaryButton = wrStyled(BorderlessButton)`
-${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 margin: ${({ theme: { space } }) => `0 ${space[2]} 0 0`};
 `;
@@ -231,7 +230,7 @@ const WrDeckDetailMainTemplateItem = ({
         handleChange={handleFullAnswerChange}
         placeholder={"Empty answer. Try writing something..."}
       />}
-      beforeAnswersContent={generatedAnswer &&
+      beforeAnswersContent={generatedAnswer && !currentFields.answers.includes(generatedAnswer) &&
         <SecondaryButton onClick={addGeneratedAnswer}>
           add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
         </SecondaryButton>
