@@ -54,7 +54,7 @@ export function generateJWT(sub: CurrentUser, persist = false): string {
   const payload = {
     exp: expiryTime,
     iat: timeNow,
-    iss: "https://writerite.site",
+    iss: "writerite.site",
     jti: generateB64UUID(),
     // nbf: timeNow,
     sub,

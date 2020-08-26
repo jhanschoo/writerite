@@ -7,12 +7,6 @@ const isBabelLoader = (o) => {
   }
   return false;
 }
-const frontend = (process.env.NODE_ENV === 'production')
-  ? '//writerite.site'
-  : '//localhost:3000';
-const backend = (process.env.NODE_ENV === 'production')
-? '//ritewrite.site'
-: '//localhost:4000';
 
 module.exports = [{
   devServer: (config) => {
