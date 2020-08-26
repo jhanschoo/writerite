@@ -12,7 +12,6 @@ margin: ${({ theme: { space } }) => `0 ${space[4]}`};
 const SenderItem = wrStyled(Item)`
 margin: ${({ theme: { space } }) => `${space[2]} ${space[4]} 0 ${space[4]}`};
 font-weight: bold;
-text-indent: ${({ theme: { space } }) => space[4]};
 `;
 
 interface Props {
@@ -28,7 +27,7 @@ const WrRoomDetailTextChatMsgItem = ({ chatMsgs }: Props): JSX.Element => {
   </MsgItem>);
   return <>
     {sender && <SenderItem key={sender.id}>
-      {senderName || ""}
+      {senderName ?? ""}
     </SenderItem>}
     {items}
   </>;
