@@ -10,6 +10,7 @@ export * from "./DeckCreateMutation";
 export * from "./DeckDetailQuery";
 export * from "./DeckEditMutation";
 export * from "./DeckQuery";
+export * from "./DeckUsedMutation";
 export * from "./DeckRemoveSubdeckMutation";
 export * from "./DecksQuery";
 export * from "./OwnDeckRecordQuery";

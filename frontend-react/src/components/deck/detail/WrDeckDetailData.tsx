@@ -6,8 +6,8 @@ import { useDebouncedCallback } from "use-debounce";
 import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
-import { DECK_EDIT_MUTATION, ROOM_CREATE_MUTATION, roomCreateMutationUpdate } from "src/gql";
-import type { DeckEditMutation, DeckEditMutationVariables, DeckScalars, RoomCreateMutation, RoomCreateMutationVariables } from "src/gqlTypes";
+import { DECK_EDIT_MUTATION, DECK_USED_MUTATION, ROOM_CREATE_MUTATION, roomCreateMutationUpdate } from "src/gql";
+import type { DeckEditMutation, DeckEditMutationVariables, DeckScalars, DeckUsedMutation, DeckUsedMutationVariables, RoomCreateMutation, RoomCreateMutationVariables } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton } from "src/ui";
@@ -116,6 +116,7 @@ const WrDeckDetailData = ({
     id: deck.id,
     name: currentTitle,
   } };
+  const [mutateUsed] = useMutation<DeckUsedMutation, DeckUsedMutationVariables>(DECK_USED_MUTATION);
   const [mutateEdit, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
@@ -157,7 +158,10 @@ const WrDeckDetailData = ({
     }
     return newEditorState;
   };
-  const handleCreateRoom = () => mutateRoomCreate({ variables: { ownerConfig: { deckId: deck.id } } });
+  const handleCreateRoom = () => {
+    void mutateUsed();
+    void mutateRoomCreate({ variables: { ownerConfig: { deckId: deck.id } } });
+  };
   const now = moment.utc();
   const deckTitleStatus = editorState.getCurrentContent().getPlainText().trim() === ""
     ? "invalid"

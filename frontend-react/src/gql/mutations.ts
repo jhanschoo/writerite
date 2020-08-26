@@ -93,6 +93,15 @@ mutation DeckEditMutation(
 }
 `;
 
+export const DECK_USED_MUTATION = gql`
+${DECK_SCALARS}
+mutation DeckUsedMutation($id: ID!){
+  deckUsed(id: $id) {
+    ...DeckScalars
+  }
+}
+`;
+
 export const CARD_CREATE_MUTATION = gql`
 ${CARD_DETAIL}
 mutation CardCreateMutation(
