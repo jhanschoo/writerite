@@ -21,6 +21,8 @@ const SpacerItem = wrStyled(Item)`
 flex-grow: 1;
 `;
 
+const SCROLL_BUFFER = 8;
+
 interface Props {
   roomId: string;
 }
@@ -55,6 +57,8 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
     });
   }, [roomId, subscribeToMore]);
   useLayoutEffect(() => {
+    console.log("useLayoutEffect fired")
+    console.log(fixToBottom)
     const { current } = conversationEl;
     if (fixToBottom && current) {
       const maxScrollTop = current.scrollHeight - current.clientHeight;
@@ -68,13 +72,14 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
     if (!current) {
       return;
     }
-    if (current.scrollTop + current.clientHeight >= current.scrollHeight) {
+    console.log(`${current.scrollTop + current.clientHeight} ${current.scrollHeight}`);
+    if (current.scrollTop + current.clientHeight > current.scrollHeight - SCROLL_BUFFER) {
       return setFixToBottom(true);
     }
     return setFixToBottom(false);
   };
   const msgItems: JSX.Element[] = [];
-  const msgs = data?.chatMsgsOfRoom?.filter((chatMsg): chatMsg is DiscriminatedChatMsgDetail => Boolean(chatMsg && chatMsg.type !== ChatMsgContentType.ROUND_WIN));
+  const msgs = data?.chatMsgsOfRoom?.filter((chatMsg): chatMsg is DiscriminatedChatMsgDetail => Boolean(chatMsg && chatMsg.type !== ChatMsgContentType.ROUND_WIN)).sort((a, b) => a.createdAt === b.createdAt ? 0 : a.createdAt < b.createdAt ? -1 : 1);
   if (msgs && msgs.length > 0) {
     let msgItemGroup: [DiscriminatedChatMsgDetail, ...DiscriminatedChatMsgDetail[]] = [msgs[0]];
     for (let i = 1; i < msgs.length; ++i) {

@@ -24,5 +24,6 @@ export interface ChatMsgDetail {
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: GraphQLJSON;
+  readonly createdAt: GraphQLDateTime;
   readonly sender: ChatMsgDetail_sender | null;
 }

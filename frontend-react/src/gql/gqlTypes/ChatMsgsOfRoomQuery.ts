@@ -24,6 +24,7 @@ export interface ChatMsgsOfRoomQuery_chatMsgsOfRoom {
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: GraphQLJSON;
+  readonly createdAt: GraphQLDateTime;
   readonly sender: ChatMsgsOfRoomQuery_chatMsgsOfRoom_sender | null;
 }
 

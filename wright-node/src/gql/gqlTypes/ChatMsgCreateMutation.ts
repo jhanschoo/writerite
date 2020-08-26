@@ -16,6 +16,7 @@ export interface ChatMsgCreateMutation_chatMsgCreate {
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: GraphQLJSON;
+  readonly createdAt: GraphQLDateTime;
 }
 
 export interface ChatMsgCreateMutation {

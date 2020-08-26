@@ -16,6 +16,7 @@ export interface ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates_data {
   readonly senderId: string | null;
   readonly type: ChatMsgContentType;
   readonly content: GraphQLJSON;
+  readonly createdAt: GraphQLDateTime;
 }
 
 export interface ChatMsgsOfRoomUpdatesSubscription_chatMsgsOfRoomUpdates {

@@ -7,5 +7,6 @@ fragment ChatMsgScalars on ChatMsg {
   senderId
   type
   content
+  createdAt
 }
 `;
