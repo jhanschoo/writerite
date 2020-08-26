@@ -16,6 +16,8 @@ const DEFAULT_TAKE = 60;
 
 enum DecksQueryScope {
   // eslint-disable-next-line @typescript-eslint/naming-convention
+  UNARCHIVED = "UNARCHIVED",
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   OWNED = "OWNED",
   // eslint-disable-next-line @typescript-eslint/naming-convention
   PARTICIPATED = "PARTICIPATED",
@@ -101,18 +103,20 @@ export const Query: QueryResolver = {
     }
     try {
       const OR = [
-        { ownerId: sub.id },
+        { ownerId: sub.id, archived: scope === DecksQueryScope.UNARCHIVED ? false : undefined },
         { cards: { some: { records: { some: { userId: sub.id } } } } },
         { published: true },
       ];
       switch (scope) {
         case DecksQueryScope.PARTICIPATED:
-          OR.length = 2;
-          break;
-        case DecksQueryScope.VISIBLE:
           OR.length = 3;
           break;
+        case DecksQueryScope.VISIBLE:
+          OR.length = 2;
+          break;
         case DecksQueryScope.OWNED:
+          // falls through
+        case DecksQueryScope.UNARCHIVED:
           // falls through
         default:
           OR.length = 1;

@@ -33,6 +33,7 @@ enum UpdateType {
 }
 
 enum DecksQueryScope {
+  UNARCHIVED
   OWNED
   PARTICIPATED
   VISIBLE

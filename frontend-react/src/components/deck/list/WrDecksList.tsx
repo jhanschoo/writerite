@@ -105,7 +105,7 @@ interface Props {
 }
 
 const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
-  const [ownershipFilter, setOwnershipFilter] = useState(DecksQueryScope.OWNED);
+  const [ownershipFilter, setOwnershipFilter] = useState(DecksQueryScope.UNARCHIVED);
   const [localTitleFilter, setLocalTitleFilter] = useState("");
   const [titleFilter] = useDebounce(localTitleFilter, DEBOUNCE_DELAY);
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -146,6 +146,7 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
       return { decks };
     },
   });
+  const handleSetUnarchived = () => setOwnershipFilter(DecksQueryScope.UNARCHIVED);
   const handleSetOwned = () => setOwnershipFilter(DecksQueryScope.OWNED);
   const handleSetParticipated = () => setOwnershipFilter(DecksQueryScope.PARTICIPATED);
   const handleSetVisible = () => setOwnershipFilter(DecksQueryScope.VISIBLE);
@@ -164,6 +165,14 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
       }
       <Ribbon>
         <VisibilityList>
+          <VisibilityItem>
+            <VisibilityButton
+              onClick={handleSetUnarchived}
+              className={ownershipFilter === DecksQueryScope.UNARCHIVED ? "active" : ""}
+            >
+              unarchived
+            </VisibilityButton>
+          </VisibilityItem>
           <VisibilityItem>
             <VisibilityButton
               onClick={handleSetOwned}

@@ -19,6 +19,7 @@ export enum ChatMsgContentType {
 export enum DecksQueryScope {
   OWNED = "OWNED",
   PARTICIPATED = "PARTICIPATED",
+  UNARCHIVED = "UNARCHIVED",
   VISIBLE = "VISIBLE",
 }
 
