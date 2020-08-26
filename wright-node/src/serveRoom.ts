@@ -148,8 +148,6 @@ export const serveRoom = async (id: string, cancel: Ref<boolean>): Promise<void>
     unsubscribe = noop;
   };
 
-  roundHandlers.push(() => Promise.resolve({ delay: SCORE_DELAY }));
-
   const roundsService = new RoundsService(roundHandlers);
   const chatMsgHandler = roundsService.send.bind(roundsService);
 
