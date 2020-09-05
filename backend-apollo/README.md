@@ -24,9 +24,7 @@ To run in development, execute:
 
 ## Notes
 
-* TODO: implement authorization-based visibility
-* Move key generation to redis
-* We do not verify that the email of users who have signed up with a Google or Facebook account have the email that is registered with those services. They are only used to validate that the sign-up was not spam. Similarly, we do not verify any email provided for email/password signups.
+* We do not verify that the email of users who have signed up with a Google or Facebook account have the email that is registered with those services. They are only used to validate that the sign-up was trusted. Similarly, we do not verify any email provided for email/password signups.
 
 ## Models
 
