@@ -6,8 +6,8 @@ WriteRite service.
 ## State stores
 
 * Transient state is managed in the respective components.
-* Per-session state is managed in Redux.
-* State persisting across sessions should be managed in Apollo Cache
+* More persistent state is managed by Apollo Cache when they correspond
+  to a query, and in redux otherwise.
 
 ## Setting up development
 
@@ -22,24 +22,21 @@ WriteRite service.
 
 ## Setting up production
 
-The app is hosted by GitHub Pages. Check `writerite/.gitlab-ci` for deployment details.
+The app is hosted on Netlify. Check `netlify.toml` for details.
 
 ## Stack summary
 
 * Language: Typescript
 * Framework: React
 * Communication:
-  * API: usual CRUD via GraphQL Queries and Mutations over HTTP via Apollo Client. Some use GraphQL Subscriptions
+  * API: usual CRUD via GraphQL Queries and Mutations over HTTP via Apollo Client. Some use GraphQL Subscriptions.
 * Authentication:
-  * Third-party (Google or Facebook) identity verification: frontend obtains an access token issued by third-party verifying that user isn't spam.
+  * Third-party (Google or Facebook) identity verification: frontend obtains an access token issued by third-party verifying that user is trusted.
   * Authorization managed using JWTs issued by server.
-* Form management: Formik, with verification using yup. Rich text editing by DraftJS
+* Form management: Formik, with verification using yup. Rich text editing by DraftJS.
 * CSS Framework: Styled Components
 * Other API: Gravatar
-* State management:
-  * Session-global: Redux
-  * Persistent: Apollo Cache
-* Deployment and build tooling: create-react-app with rescripts, published on GitHub Pages
+* Deployment and build tooling: create-react-app with rescripts, published on Netlify.
 
 ## Other notes
 
