@@ -15,7 +15,7 @@ PACKAGE_VERSION=$(node -pe "require('./package.json').version")
 SUFFIX="-$NODE_ENV"
 if [ "$SUFFIX" = "-development" ]
 then
-  SUFFIX="-dev.8"
+  SUFFIX="-dev.9"
 fi
 if [ "$SUFFIX" = "-production" ]
 then
