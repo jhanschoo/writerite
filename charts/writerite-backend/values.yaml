@@ -11,3 +11,6 @@ redis:
   networkPolicy:
     enabled: false
   usePassword: false
+
+writerite-backend-apollo:
+  hostPort: 80
