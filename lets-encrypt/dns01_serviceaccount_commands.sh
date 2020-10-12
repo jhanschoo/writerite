@@ -8,4 +8,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
    --role projects/writerite/roles/dns01_solver
 gcloud iam service-accounts keys create key.json \
    --iam-account dns01-solver@$PROJECT_ID.iam.gserviceaccount.com
+kubectl create secret generic clouddns-dns01-solver-svc-acct \
+   --namespace writerite-10694983-production \
+   --from-file=key.json
 rm key.json

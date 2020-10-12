@@ -7,5 +7,6 @@ helm install \
   --namespace cert-manager \
   --version v0.15.1 \
   --set installCRDs=true
+sleep 30
 kubectl apply -f letsencrypt-staging.issuer.yaml
 kubectl apply -f letsencrypt.issuer.yaml
