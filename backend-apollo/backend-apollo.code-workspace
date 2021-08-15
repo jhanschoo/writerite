@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "../lets-encrypt"
+		},
+		{
+			"path": "../dev-config"
 		}
 	],
 	"settings": {
@@ -16,6 +19,37 @@
 			"**/.git/objects/**": true,
 			"**/.git/subtree-cache/**": true,
 			"**/.hg/store/**": true
-		}
+		},
+		"editor.tabSize": 2,
+		"editor.insertSpaces": false,
+		"yaml.customTags": [
+			"!And",
+			"!And sequence",
+			"!If",
+			"!If sequence",
+			"!Not",
+			"!Not sequence",
+			"!Equals",
+			"!Equals sequence",
+			"!Or",
+			"!Or sequence",
+			"!FindInMap",
+			"!FindInMap sequence",
+			"!Base64",
+			"!Join",
+			"!Join sequence",
+			"!Cidr",
+			"!Ref",
+			"!Sub",
+			"!Sub sequence",
+			"!GetAtt",
+			"!GetAZs",
+			"!ImportValue",
+			"!ImportValue sequence",
+			"!Select",
+			"!Select sequence",
+			"!Split",
+			"!Split sequence"
+		]
 	},
 }

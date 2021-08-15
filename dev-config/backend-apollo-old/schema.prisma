@@ -18,10 +18,10 @@ enum RoomState {
 }
 
 model Card {
-  id         String           @default(cuid()) @id
+  id         String           @default(dbgenerated()) @id
   deckId     String
-  prompt     Json             @default("{}")
-  fullAnswer Json             @default("{}")
+  prompt     Json             @default("")
+  fullAnswer Json             @default("")
   answers    String[]
   sortKey    String           @default("")
   template   Boolean          @default(false)
@@ -38,8 +38,8 @@ model Card {
   // CHECK ("template" OR "default" IS NULL);
 }
 
-model Message {
-  id        String   @default(cuid()) @id
+model ChatMsg {
+  id        String   @default(dbgenerated()) @id
   roomId    String
   senderId  String?
   type      String   @default("TEXT")
@@ -53,7 +53,7 @@ model Message {
 }
 
 model Deck {
-  id          String           @default(cuid()) @id
+  id          String           @default(dbgenerated()) @id
   ownerId     String
   name        String           @default("")
   // I don't want to test if 'null'::jsonb works.
@@ -83,11 +83,12 @@ model Deck {
   records     UserDeckRecord[]
 }
 
+// no fields are actually nullable but they are written so as a workaround so that deletion cascades
 //See: https://github.com/prisma/prisma/issues/2057
 model Occupant {
-  id         String   @default(cuid()) @id
-  roomId     String
-  occupantId String
+  id         String   @default(dbgenerated()) @id
+  roomId     String?
+  occupantId String?
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
@@ -100,7 +101,7 @@ model Occupant {
 }
 
 model Room {
-  id             String     @default(cuid()) @id
+  id             String     @default(dbgenerated()) @id
   ownerId        String
   ownerConfig    Json       @default("{}")
   internalConfig Json       @default("{}")
@@ -111,14 +112,15 @@ model Room {
 
   owner          User       @relation(fields: [ownerId], references: [id])
   occupants      Occupant[] @relation("RoomTo_Occupant")
-  chatMsgs       Message[]
+  chatMsgs       ChatMsg[]
 }
 
+// no fields are actually nullable but they are written so as a workaround so that deletion cascades
 //See: https://github.com/prisma/prisma/issues/2057
 model Subdeck {
-  id           String   @default(cuid()) @id
-  parentDeckId String
-  subdeckId    String
+  id           String   @default(dbgenerated()) @id
+  parentDeckId String?
+  subdeckId    String?
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
@@ -127,11 +129,11 @@ model Subdeck {
   subdeck      Deck?    @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id])
 
   @@unique([parentDeckId, subdeckId])
-  @@index([subdeckId], name: "Subdeck_subdeckId_idx")
+  @@index([subdeckId], name: "Occupant_subdeckId_idx")
 }
 
 model User {
-  id             String           @default(cuid()) @id
+  id             String           @default(dbgenerated()) @id
   email          String           @unique
   facebookId     String?          @unique
   googleId       String?          @unique
@@ -145,13 +147,13 @@ model User {
   decks          Deck[]
   ownedRooms     Room[]
   occupyingRooms Occupant[]       @relation("UserTo_Occupant")
-  sentChatMsgs   Message[]
+  sentChatMsgs   ChatMsg[]
   cardRecords    UserCardRecord[]
   deckRecords    UserDeckRecord[]
 }
 
 model UserCardRecord {
-  id             String     @default(cuid()) @id
+  id             String     @default(dbgenerated()) @id
   userId         String
   cardId         String
   correctRecord  DateTime[]
@@ -166,7 +168,7 @@ model UserCardRecord {
 }
 
 model UserDeckRecord {
-  id        String   @default(cuid()) @id
+  id        String   @default(dbgenerated()) @id
   userId    String
   deckId    String
   notes     Json     @default("{}")

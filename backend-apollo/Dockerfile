@@ -7,7 +7,7 @@ ARG node_env
 ARG graph_variant
 ENV NODE_ENV ${node_env}
 ENV GRAPH_VARIANT ${graph_variant}
-# prisma generate happens here due to the postinstall hook of @prisma/client
+# prisma generate happens on the following command due to the postinstall hook of @prisma/client
 RUN npm ci
 COPY . .
 RUN npm run build

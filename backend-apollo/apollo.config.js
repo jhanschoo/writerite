@@ -1,5 +1,5 @@
 module.exports = {
-  service: {
-    name: "writerite-graph"
-  }
-}
+	service: {
+		name: "writerite-graph",
+	},
+};

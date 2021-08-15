@@ -10,32 +10,21 @@ The following environment variables need to be set:
 * `DATABASE_URL` set to the URL of an accessible PostgreSQL database
 * `REDIS_HOST`, `REDIS_PORT` of an accessible redis instance; the app uses dbs 1 and 2. Defaults to `127.0.0.1` and `6379` respectively.
 * `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY` JSON strings in JWK format respectively describing an ES256 private and public key pair.
-* `APOLLO_KEY` an API key to a project registered in Apollo studio
+* `APOLLO_GRAPH_ID`, `APOLLO_GRAPH_VARIANT`, `APOLLO_KEY`, and `APOLLO_SCHEMA_REPORTING` to configure reporting of Apollo Engine.
 
 The following environment variables may be set:
 
 * `CERT_FILE`, `KEY_FILE`; if both are present, the app serves as HTTPS and WSS.
 
-To run in development, execute:
+With environment variables configured, e.g. in a `.env`, to run in development, execute:
 
 * `npm i`
-* `npm run build`
-* `NODE_ENV="development" npm run start`
+* `npm run dev`
 
 ## Notes
 
 * We do not verify that the email of users who have signed up with a Google or Facebook account have the email that is registered with those services. They are only used to validate that the sign-up was trusted. Similarly, we do not verify any email provided for email/password signups.
-
-## Models
-
-Four sets of models are specified.
-
-* The prisma schema abstracts the database schema.
-* The `SS` inferfaces specified in `models/` are subtypes of their respective types (projected to only scalar fields) specified in the prisma schema. They specify additional optional fields so that
-* The schema served by this app is a supertype of their respective `SS` interfaces. Finally,
-* The implicit model defined by the resolvers form a subtype of the `SS` interfaces, so that they are also a subtype of the schema.
-
-Hence once the `SS` interfaces are correct subtypes of the prisma schema, and the resolvers' implicit model (loosely speaking) returns `SS` types, an API that satisfies the app's schema is correctly served. Note that this doesn't mean that the API correctly serves the right objects, or that an object is served when expected where the field is optional. In addition, no such guarantees are given for input fields.
+* APIs do not guarantee that objects returned are that of a snapshot, only that they are some time after request is made.
 
 ### Web server -- bot communication
 
