@@ -1,17 +1,17 @@
 # Dependency directories
-node_modules/
+/node_modules/
 
 # generated files
-generated/
+/generated/
 
 # logs
-npm-debug.log
+/npm-debug.log
 
 # dist
-dist/
+/dist/
 
 # secrets and local config
-.env*
+/.env*
 
 # test coverage
-coverage/
+/coverage/

@@ -39,8 +39,6 @@ export const server = CERT_FILE && KEY_FILE
 	}, app.callback())
 	: http.createServer(app.callback());
 
-apollo.installSubscriptionHandlers(server);
-
 server.listen({ port: 4000 }, () => {
 	// eslint-disable-next-line no-console
 	console.log(`🚀 Server ready at http${

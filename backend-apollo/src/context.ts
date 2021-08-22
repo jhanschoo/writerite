@@ -1,7 +1,7 @@
 import env from "./safeEnv";
 import { ContextFunction } from "apollo-server-core";
-import { PubSubEngine } from "apollo-server-koa";
 import { Context as KoaContext } from "koa";
+import { PubSubEngine } from "graphql-subscriptions";
 import { ExecutionParams } from "subscriptions-transport-ws";
 import Redis from "ioredis";
 import { RedisPubSub } from "graphql-redis-subscriptions";

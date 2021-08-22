@@ -1,20 +1,4 @@
-import { MergeInfo } from "apollo-server-koa";
-
 import { Readable } from "stream";
-import { GraphQLResolveInfo } from "graphql";
-
-// C.f. graphql-tools/dist/Interfaces.d.ts
-export type FieldResolver<
-	TSource,
-	TContext,
-	TArgs = Record<string, unknown>,
-	TReturn = unknown,
-> = (
-	source: TSource,
-	args: TArgs,
-	context: TContext,
-	info: GraphQLResolveInfo & {mergeInfo: MergeInfo}
-) => TReturn | Promise<TReturn>;
 
 export enum AuthorizerType {
 	GOOGLE = "GOOGLE",
