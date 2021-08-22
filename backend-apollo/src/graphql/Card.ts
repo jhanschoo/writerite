@@ -1,7 +1,7 @@
 import { Prisma, Unit } from "@prisma/client";
 import { AuthenticationError } from "apollo-server-core";
 import { arg, booleanArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
-import { dateTimeArg, jsonObjectArg, uuidArg } from "./scalarUtils";
+import { dateTimeArg, jsonObjectArg, uuidArg } from "./scalarUtil";
 
 export const Card = objectType({
 	name: "Card",

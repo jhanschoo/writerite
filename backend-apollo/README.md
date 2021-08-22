@@ -21,6 +21,12 @@ With environment variables configured, e.g. in a `.env`, to run in development, 
 * `npm i`
 * `npm run dev`
 
+To run the integration test, set up the environment against a PostgreSQL DB and Redis server, then after having run `npm run dev`, run
+
+* `npm run test`
+
+We don't presently have unit tests.
+
 ## Notes
 
 * We do not verify that the email of users who have signed up with a Google or Facebook account have the email that is registered with those services. They are only used to validate that the sign-up was trusted. Similarly, we do not verify any email provided for email/password signups.

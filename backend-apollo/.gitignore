@@ -12,3 +12,6 @@ dist/
 
 # secrets and local config
 .env*
+
+# test coverage
+coverage/

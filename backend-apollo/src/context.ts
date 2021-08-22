@@ -8,14 +8,10 @@ import { RedisPubSub } from "graphql-redis-subscriptions";
 
 import { PrismaClient } from "@prisma/client";
 
-import { FETCH_DEPTH, getClaims, handleError } from "./util";
+import { FETCH_DEPTH, getClaims } from "./util";
 import { CurrentUser } from "./types";
 
 const { REDIS_HOST, REDIS_PORT } = env;
-
-const prisma = new PrismaClient();
-
-// Initialize redis connection
 
 const redisOptions = {
 	host: REDIS_HOST,
@@ -25,11 +21,6 @@ const redisOptions = {
 		return delay;
 	},
 };
-
-export const pubsub = new RedisPubSub({
-	publisher: new Redis({ ...redisOptions, db: 2 }),
-	subscriber: new Redis({ ...redisOptions, db: 2 }),
-});
 
 export interface IntegrationContext {
 	ctx?: KoaContext;
@@ -45,15 +36,30 @@ export interface Context {
 	pubsub: PubSubEngine;
 }
 
-export const context: ContextFunction = (ctx: IntegrationContext): Context => ({
-	ctx,
-	fetchDepth: FETCH_DEPTH,
-	sub: getClaims(ctx),
-	prisma,
-	pubsub,
-});
-
-export function stopContextServices(): void {
-	void pubsub.close();
-	prisma.$disconnect().catch(handleError);
+/**
+ * Note: opts.ctx is never used if provided
+ * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.
+ */
+export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: PrismaClient, pubsub: PubSubEngine }] {
+	const useDefaultPrisma = !opts?.prisma;
+	const useDefaultPubsub = !opts?.pubsub;
+	const prisma = opts?.prisma ?? new PrismaClient();
+	const pubsub = opts?.pubsub ?? new RedisPubSub({
+		publisher: new Redis({ ...redisOptions, db: 2 }),
+		subscriber: new Redis({ ...redisOptions, db: 2 }),
+	});
+	return [
+		(ctx: IntegrationContext): Context => ({
+			ctx,
+			fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
+			sub: subFn?.(ctx) ?? opts?.sub ?? getClaims(ctx),
+			prisma,
+			pubsub,
+		}),
+		async () => Promise.allSettled([
+			useDefaultPrisma ? prisma.$disconnect() : Promise.resolve("custom prisma used"),
+			useDefaultPubsub ? (pubsub as RedisPubSub).close() : Promise.resolve("custom pubsub used"),
+		]),
+		{ prisma, pubsub },
+	];
 }

@@ -1,5 +1,6 @@
+import { AuthenticationError } from "apollo-server-core";
 import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
-import { jsonArg, uuidArg } from "./scalarUtils";
+import { jsonArg, uuidArg } from "./scalarUtil";
 
 export const Message = objectType({
 	name: "Message",
@@ -7,7 +8,7 @@ export const Message = objectType({
 		t.nonNull.uuid("id");
 		t.nonNull.uuid("roomId");
 		t.uuid("senderId");
-		t.nonNull.field("contentType", {
+		t.nonNull.field("type", {
 			type: "MessageContentType",
 		});
 		t.nonNull.json("content");
@@ -15,9 +16,26 @@ export const Message = objectType({
 
 		t.field("sender", {
 			type: "User",
+			async resolve({ senderId }, _args, { prisma }) {
+				if (senderId === null) {
+					return null;
+				}
+				const room = await prisma.user.findUnique({ where: { id: senderId } });
+				if (room === null) {
+					throw new Error(`Could not find user with id ${senderId}`);
+				}
+				return room;
+			},
 		});
-		t.field("room", {
+		t.nonNull.field("room", {
 			type: "Room",
+			async resolve({ roomId }, _args, { prisma }) {
+				const room = await prisma.room.findUnique({ where: { id: roomId } });
+				if (room === null) {
+					throw new Error(`Could not find room with id ${roomId}`);
+				}
+				return room;
+			},
 		});
 	},
 });

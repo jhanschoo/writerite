@@ -1,3 +1,6 @@
+// note that JSON `null` and NULL in the database are coalesced
+//   in parts in the backend app.
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -58,6 +61,7 @@ model Deck {
   name        String           @default("")
   // I don't want to test if 'null'::jsonb works.
   // Also interferes with optional.
+  // description is a JsonObject field.
   description Json             @default("{}")
   promptLang  String           @default("")
   answerLang  String           @default("")
@@ -103,7 +107,9 @@ model Occupant {
 model Room {
   id             String     @default(dbgenerated()) @id
   ownerId        String
+  // ownerConfig is a JsonObject field.
   ownerConfig    Json       @default("{}")
+  // internalConfig is a JsonObject field.
   internalConfig Json       @default("{}")
   state          RoomState  @default(WAITING)
 
@@ -171,6 +177,7 @@ model UserDeckRecord {
   id        String   @default(dbgenerated()) @id
   userId    String
   deckId    String
+  // notes is a JsonObject field.
   notes     Json     @default("{}")
 
   createdAt DateTime @default(now())

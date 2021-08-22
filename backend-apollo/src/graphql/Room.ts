@@ -1,25 +1,47 @@
+import { Prisma } from "@prisma/client";
 import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
-import { emailAddressArg, jsonObjectArg, uuidArg } from "./scalarUtils";
+import { emailAddressArg, jsonObjectArg, uuidArg } from "./scalarUtil";
 
 export const Room = objectType({
 	name: "Room",
 	definition(t) {
 		t.nonNull.uuid("id");
 		t.nonNull.uuid("ownerId");
-		t.nonNull.jsonObject("ownerConfig");
-		t.nonNull.jsonObject("internalConfig");
+		t.nonNull.jsonObject("ownerConfig", {
+			resolve({ ownerConfig }) {
+				return ownerConfig as Prisma.JsonObject;
+			},
+		});
+		t.nonNull.jsonObject("internalConfig", {
+			resolve({ internalConfig }) {
+				return internalConfig as Prisma.JsonObject;
+			},
+		});
 		t.nonNull.field("state", {
 			type: "RoomState",
 		});
 
 		t.nonNull.field("owner", {
 			type: "User",
+			async resolve({ ownerId }, _args, { prisma }) {
+				const user = await prisma.user.findUnique({ where: { id: ownerId } });
+				if (user === null) {
+					throw new Error(`Could not find user with id ${ownerId}`);
+				}
+				return user;
+			},
 		});
 		t.nonNull.list.nonNull.field("occupants", {
 			type: "User",
+			resolve({ id }, _args, { prisma }) {
+				return prisma.user.findMany({ where: { occupyingRooms: { some: { roomId: id } } } });
+			},
 		});
 		t.nonNull.list.nonNull.field("messages", {
 			type: "Message",
+			resolve({ id }, _args, { prisma }) {
+				return prisma.message.findMany({ where: { roomId: id } });
+			},
 		});
 	},
 });

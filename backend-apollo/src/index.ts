@@ -5,11 +5,14 @@ import http from "http";
 import Koa from "koa";
 import helmet from "koa-helmet";
 
-import { stopContextServices } from "./context";
-import { apollo } from "./apollo";
+import { contextFactory } from "./context";
+import { apolloFactory } from "./apollo";
 
 const { NODE_ENV, CERT_FILE, KEY_FILE } = process.env;
 
+export const [context, stopContextServices] = contextFactory();
+
+export const apollo = apolloFactory(context);
 
 // Initialize express
 
@@ -49,5 +52,5 @@ export function stop(): void {
 	server.removeAllListeners();
 	server.close();
 	void apollo.stop();
-	stopContextServices();
+	void stopContextServices();
 }

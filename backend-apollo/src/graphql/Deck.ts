@@ -3,7 +3,7 @@ import { ApolloError } from "apollo-server-core";
 import { AuthenticationError, ForbiddenError } from "apollo-server-errors";
 import { arg, booleanArg, enumType, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { getDescendantsOfDeck } from "../service/deckFamily";
-import { jsonObjectArg, uuidArg } from "./scalarUtils";
+import { jsonObjectArg, uuidArg } from "./scalarUtil";
 
 const DEFAULT_TAKE = 60;
 

@@ -72,8 +72,7 @@ export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
 	if (jwt) {
 		try {
 			if (KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, ["ES256"]) as boolean) {
-				const { sub } = KJUR.jws.JWS.parse(jwt)
-					.payloadObj;
+				const { sub } = KJUR.jws.JWS.parse(jwt).payloadObj;
 				return sub;
 			}
 		} catch (e: unknown) {

@@ -1,7 +1,7 @@
 import { makeSchema } from "nexus";
 import { join } from "path";
 import * as types from "./graphql";
-import { scalarMapping } from "./graphql/scalarUtils";
+import { scalarMapping } from "./graphql/scalarUtil";
 import { undefinedOnlyPlugin } from "./graphql/undefinedOnlyPlugin";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call

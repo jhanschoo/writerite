@@ -1,7 +1,8 @@
 import { booleanArg, mutationField, nonNull, stringArg } from "nexus";
+import { authenticate } from "../service/authentication/authenticate";
 
 export const SigninMutation = mutationField("signin", {
-	type: nonNull("JWT"),
+	type: "JWT",
 	args: {
 		email: nonNull(stringArg()),
 		name: stringArg({ undefinedOnly: true }),
@@ -10,7 +11,7 @@ export const SigninMutation = mutationField("signin", {
 		identifier: nonNull(stringArg()),
 		persist: booleanArg({ undefinedOnly: true }),
 	},
-	resolve() {
-		throw Error("not implemented yet");
+	resolve(_parent, args, { prisma }) {
+		return authenticate({ ...args, prisma });
 	},
 });

@@ -20,7 +20,9 @@ enum RoomState {
 model Card {
   id         String           @default(cuid()) @id
   deckId     String
+  // prompt is a JsonObject
   prompt     Json             @default("{}")
+  // fullAnswer is a JsonObject
   fullAnswer Json             @default("{}")
   answers    String[]
   sortKey    String           @default("")
@@ -58,6 +60,7 @@ model Deck {
   name        String           @default("")
   // I don't want to test if 'null'::jsonb works.
   // Also interferes with optional.
+  // description is a JsonObject
   description Json             @default("{}")
   promptLang  String           @default("")
   answerLang  String           @default("")
@@ -102,7 +105,9 @@ model Occupant {
 model Room {
   id             String     @default(cuid()) @id
   ownerId        String
+  // ownerConfig is a JsonObject
   ownerConfig    Json       @default("{}")
+  // internalConfig is a JsonObject
   internalConfig Json       @default("{}")
   state          RoomState  @default(WAITING)
 
@@ -169,6 +174,7 @@ model UserDeckRecord {
   id        String   @default(cuid()) @id
   userId    String
   deckId    String
+  // notes is a JsonObject
   notes     Json     @default("{}")
 
   createdAt DateTime @default(now())
