@@ -11,6 +11,12 @@ then
 fi
 export NODE_ENV
 
+if [ -z "$CI_JOB_ID" ]
+then
+  CI_REGISTRY_IMAGE="registry.gitlab.com/writerite/writerite"
+  CI_COMMIT_REF_SLUG="localdev"
+fi
+
 PACKAGE_VERSION=$(node -pe "require('./package.json').version")
 SUFFIX="-$NODE_ENV"
 if [ "$SUFFIX" = "-development" ]
@@ -29,7 +35,10 @@ fi
 IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
 CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
 
-docker pull "$CACHE_IMAGE_TAG" || true
+if [ -n "$CI_JOB_ID" ]
+then
+  docker pull "$CACHE_IMAGE_TAG" || true
+fi
 docker build \
   --cache-from "$CACHE_IMAGE_TAG" \
   --build-arg node_env="production" \
@@ -38,5 +47,8 @@ docker build \
   --tag "$CACHE_IMAGE_TAG" \
   .
 
-docker push "$IMAGE_TAG"
-docker push "$CACHE_IMAGE_TAG"
+if [ -n "$CI_JOB_ID" ]
+then
+  docker push "$IMAGE_TAG"
+  docker push "$CACHE_IMAGE_TAG"
+fi

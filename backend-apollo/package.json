@@ -16,7 +16,6 @@
 		"@types/node-fetch": "^2.5.10",
 		"@types/promise-dag": "^1.0.1",
 		"@types/ws": "^7.2.6",
-		"apollo": "^2.33.3",
 		"apollo-server-core": "^3.1.2",
 		"apollo-server-koa": "^3.1.2",
 		"bcrypt": "^5.0.0",
@@ -40,8 +39,8 @@
 		"typescript": "^4.2.4"
 	},
 	"devDependencies": {
+		"@apollo/rover": "^0.2.0",
 		"@types/jest": "^27.0.0",
-		"@types/random-words": "^1.1.1",
 		"@typescript-eslint/eslint-plugin": "^4.25.0",
 		"@typescript-eslint/parser": "^4.25.0",
 		"draft-js": "^0.11.7",
@@ -60,8 +59,6 @@
 		"start": "node dist/index.js",
 		"dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --transpile-only --no-notify src/index.ts",
 		"generate": "export $(xargs -a .env -d '\\n') && prisma generate && ts-node --transpile-only src/schema",
-		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration",
-		"push-schema:ci": "apollo service:push --graph=writerite-graph -v \"$CI_COMMIT_REF_SLUG\" --localSchemaFile=generated/schema.graphql",
-		"push-schema:dev": "export $(xargs -a .env -d '\\n') && apollo service:push --graph=writerite-graph -v \"$APOLLO_GRAPH_VARIANT\" --localSchemaFile=generated/schema.graphql"
+		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration"
 	}
 }
