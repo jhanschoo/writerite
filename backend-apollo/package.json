@@ -17,6 +17,7 @@
 		"@types/promise-dag": "^1.0.1",
 		"@types/ws": "^7.2.6",
 		"apollo-server-core": "^3.1.2",
+		"apollo-server-errors": "^3.1.0",
 		"apollo-server-koa": "^3.1.2",
 		"bcrypt": "^5.0.0",
 		"csv": "^5.5.0",
@@ -59,6 +60,7 @@
 		"start": "node dist/index.js",
 		"dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --transpile-only --no-notify src/index.ts",
 		"generate": "export $(xargs -a .env -d '\\n') && prisma generate && ts-node --transpile-only src/schema",
-		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration"
+		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration",
+		"push-schema:dev": "rover graph publish writerite-graph@development --schema generated/schema.graphql"
 	}
 }
