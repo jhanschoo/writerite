@@ -1,0 +1,77 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "writerite-backend-apollo.fullname" . }}
+  labels:
+    {{- include "writerite-backend-apollo.labels" . | nindent 4 }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install,post-upgrade
+spec:
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "writerite-backend-apollo.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: OnFailure
+      serviceAccountName: {{ include "writerite-backend-apollo.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: "{{ .Chart.Name }}-initjob"
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.initjobImage.repository }}:{{ .Values.initjobImage.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.initjobImage.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 4000
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: APOLLO_GRAPH_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  key: apolloGraphId
+                  optional: false
+            - name: APOLLO_GRAPH_VARIANT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  key: apolloGraphVariant
+                  optional: false
+            - name: APOLLO_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  key: apolloKey
+                  optional: false
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  key: databaseUrl
+                  optional: false
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

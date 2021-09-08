@@ -13,7 +13,6 @@ export NODE_ENV
 
 if [ -z "$CI_JOB_ID" ]
 then
-  CI_REGISTRY_IMAGE="registry.gitlab.com/writerite/writerite"
   CI_COMMIT_REF_SLUG="localdev"
 fi
 
@@ -21,34 +20,48 @@ PACKAGE_VERSION=$(node -pe "require('./package.json').version")
 SUFFIX="-$NODE_ENV"
 if [ "$SUFFIX" = "-development" ]
 then
-  SUFFIX="-dev.9"
+  SUFFIX="-dev.10"
 fi
 if [ "$SUFFIX" = "-production" ]
 then
   SUFFIX=""
 fi
-if [ -z "$IMAGE_NAME" ]
+if [ -z "$INITJOB_IMAGE_NAME" ]
 then
-  IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo"
+  INITJOB_IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo-initjob"
+fi
+if [ -z "$APP_IMAGE_NAME" ]
+then
+  APP_IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo-app"
 fi
 
-IMAGE_TAG="$IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
-CACHE_IMAGE_TAG="$IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
+# build init image
+INITJOB_IMAGE_TAG="$INITJOB_IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
+INITJOB_CACHE_IMAGE_TAG="$INITJOB_IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
 
-if [ -n "$CI_JOB_ID" ]
-then
-  docker pull "$CACHE_IMAGE_TAG" || true
-fi
+docker pull "$INITJOB_CACHE_IMAGE_TAG" || true
+cp Dockerfile_init Dockerfile
 docker build \
-  --cache-from "$CACHE_IMAGE_TAG" \
-  --build-arg node_env="production" \
-  --build-arg graph_variant="$CI_COMMIT_REF_SLUG" \
-  --tag "$IMAGE_TAG" \
-  --tag "$CACHE_IMAGE_TAG" \
+  --cache-from "$INITJOB_CACHE_IMAGE_TAG" \
+  --tag "$INITJOB_IMAGE_TAG" \
+  --tag "$INITJOB_CACHE_IMAGE_TAG" \
   .
 
-if [ -n "$CI_JOB_ID" ]
-then
-  docker push "$IMAGE_TAG"
-  docker push "$CACHE_IMAGE_TAG"
-fi
+docker push "$INITJOB_IMAGE_TAG"
+docker push "$INITJOB_CACHE_IMAGE_TAG"
+
+# build app image
+APP_IMAGE_TAG="$APP_IMAGE_NAME:$PACKAGE_VERSION$SUFFIX"
+APP_CACHE_IMAGE_TAG="$APP_IMAGE_NAME:latest-$CI_COMMIT_REF_SLUG"
+
+docker pull "$APP_CACHE_IMAGE_TAG" || true
+cp Dockerfile_app Dockerfile
+docker build \
+  --cache-from "$APP_CACHE_IMAGE_TAG" \
+  --tag "$APP_IMAGE_TAG" \
+  --tag "$APP_CACHE_IMAGE_TAG" \
+  .
+
+docker push "$APP_IMAGE_TAG"
+docker push "$APP_CACHE_IMAGE_TAG"
+rm Dockerfile

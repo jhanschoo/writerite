@@ -22,33 +22,42 @@ app.use(helmet({
 	contentSecurityPolicy: NODE_ENV === "production",
 }));
 
-apollo.applyMiddleware({
-	app,
-	cors: {
-		origin: NODE_ENV === "production"
-			? "https://www.writerite.site"
-			: "https://localhost:3000",
-		credentials: true,
-	},
-});
+const serverPromise: Promise<https.Server | http.Server> = Promise.resolve((async () => {
+	await apollo.start();
+	apollo.applyMiddleware({
+		app,
+		cors: {
+			origin: NODE_ENV === "production"
+				? "https://www.writerite.site"
+				: "https://localhost:3000",
+			credentials: true,
+		},
+	});
 
-export const server = CERT_FILE && KEY_FILE
-	? https.createServer({
-		cert: fs.readFileSync(CERT_FILE),
-		key: fs.readFileSync(KEY_FILE),
-	}, app.callback())
-	: http.createServer(app.callback());
+	const server = CERT_FILE && KEY_FILE
+		? https.createServer({
+			cert: fs.readFileSync(CERT_FILE),
+			key: fs.readFileSync(KEY_FILE),
+		}, app.callback())
+		: http.createServer(app.callback());
 
-server.listen({ port: 4000 }, () => {
-	// eslint-disable-next-line no-console
-	console.log(`🚀 Server ready at http${
-		CERT_FILE && KEY_FILE ? "s" : ""
-	}://localhost:${4000}${apollo.graphqlPath} in environment ${String(NODE_ENV)}`);
-});
+	return new Promise<https.Server | http.Server>((res) => {
+		server.listen({ port: 4000 }, () => {
+		// eslint-disable-next-line no-console
+			console.log(`🚀 Server ready at http${
+				CERT_FILE && KEY_FILE ? "s" : ""
+			}://localhost:${4000}${apollo.graphqlPath} in environment ${String(NODE_ENV)}`);
+			res(server);
+		});
+	});
+})());
 
-export function stop(): void {
+export async function stop(): Promise<PromiseSettledResult<unknown>[]> {
+	const server = await serverPromise;
 	server.removeAllListeners();
-	server.close();
-	void apollo.stop();
-	void stopContextServices();
+	return Promise.allSettled<unknown>([
+		new Promise<void>((res, rej) => {
+			server.close((err) => err ? rej(err) : res());
+		}), apollo.stop(), stopContextServices(),
+	]);
 }

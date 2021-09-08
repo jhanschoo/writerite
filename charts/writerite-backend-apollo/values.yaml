@@ -4,8 +4,14 @@
 
 replicaCount: 1
 
-image:
-  repository: registry.gitlab.com/writerite/writerite/backend-apollo
+initjobImage:
+  repository: registry.gitlab.com/writerite/writerite/backend-apollo-initjob
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  #tag: ""
+
+appImage:
+  repository: registry.gitlab.com/writerite/writerite/backend-apollo-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   #tag: ""
@@ -16,27 +22,37 @@ fullnameOverride: ""
 
 # Envvars
 
-apolloKey: ""
+apollo:
+  graphId: ""
+  graphVariant: ""
+  key: ""
+  schemaReporting: ""
 database:
   user: ""
   password: ""
   host: ""
   port: ""
   database: ""
-jwt:
-  privateKey: ""
-  publicKey: ""
-redis:
-  host: ""
-  port: ""
-gapiClient:
-  id: ""
-  secret: ""
 facebookApp:
   id: ""
   secret: ""
-recaptcha:
+gapiClient:
+  id: ""
   secret: ""
+graphql:
+  http: ""
+  ws: ""
+jwt:
+  privateKey: ""
+  publicKey: ""
+recaptcha:
+  clientKey: ""
+  secret: ""
+redis:
+  host: ""
+  port: ""
+  password: ""
+wrightSecretJwt: ""
 
 serviceAccount:
   # Specifies whether a service account should be created

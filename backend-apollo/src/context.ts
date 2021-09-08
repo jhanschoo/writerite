@@ -11,7 +11,7 @@ import { PrismaClient } from "@prisma/client";
 import { FETCH_DEPTH, getClaims } from "./util";
 import { CurrentUser } from "./types";
 
-const { REDIS_HOST, REDIS_PORT } = env;
+const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 
 const redisOptions = {
 	host: REDIS_HOST,
@@ -20,6 +20,7 @@ const redisOptions = {
 		const delay = Math.min(times * 50, 2000);
 		return delay;
 	},
+	password: REDIS_PASSWORD,
 };
 
 export interface IntegrationContext {
@@ -43,10 +44,20 @@ export interface Context {
 export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: PrismaClient, pubsub: PubSubEngine }] {
 	const useDefaultPrisma = !opts?.prisma;
 	const useDefaultPubsub = !opts?.pubsub;
+	const publisher = new Redis({ ...redisOptions, db: 2 });
+	const subscriber = new Redis({ ...redisOptions, db: 2 });
+	publisher.on("connect", () => {
+		// eslint-disable-next-line no-console
+		console.log(`publisher connected to redis db 2 at host ${redisOptions.host} and port ${redisOptions.port}`);
+	});
+	subscriber.on("connect", () => {
+		// eslint-disable-next-line no-console
+		console.log(`subscriber connected to redis db 2 at host ${redisOptions.host} and port ${redisOptions.port}`);
+	});
 	const prisma = opts?.prisma ?? new PrismaClient();
 	const pubsub = opts?.pubsub ?? new RedisPubSub({
-		publisher: new Redis({ ...redisOptions, db: 2 }),
-		subscriber: new Redis({ ...redisOptions, db: 2 }),
+		publisher,
+		subscriber,
 	});
 	return [
 		(ctx: IntegrationContext): Context => ({

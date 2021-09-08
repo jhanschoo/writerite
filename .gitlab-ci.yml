@@ -41,8 +41,8 @@ publish-api-graph:
   image: node:14.7
   script:
     - cd backend-apollo
-    - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
-    - npm run push-schema
+    # - npm ci --cache ../.npm --prefer-offline
+    # - npm run push-schema
   services: []
 
 build-wright-node:

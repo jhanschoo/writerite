@@ -57,10 +57,10 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"start": "node dist/index.js",
+		"init:run": "prisma migrate deploy && rover graph publish $APOLLO_GRAPH_ID@$APOLLO_GRAPH_VARIANT --schema generated/schema.graphql",
+		"app:start": "node dist/src/index.js",
 		"dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --transpile-only --no-notify src/index.ts",
 		"generate": "export $(xargs -a .env -d '\\n') && prisma generate && ts-node --transpile-only src/schema",
-		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration",
-		"push-schema:dev": "rover graph publish writerite-graph@development --schema generated/schema.graphql"
+		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration"
 	}
 }

@@ -8,25 +8,22 @@ maintainers:
     url: https://gitlab.com/jhanschoo
 dependencies:
   - name: postgresql
-    version: ^10.9.4
+    version: "^10.9.4"
     repository: https://charts.bitnami.com/bitnami
   - name: redis
-    version: ^15.3.1
+    version: "^15.3.1"
     repository: https://charts.bitnami.com/bitnami
   - name: writerite-backend-apollo
-    version: ^0.1.0-dev.9
-    # contrary to documentation, oci repositories not yet supported
-    # https://github.com/helm/helm/pull/7613
-    # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev.9
+    version: "0.1.0-dev.10"
+    repository: oci://registry.gitlab.com/writerite/writerite
     # workaround
-    repository: file://../writerite-backend-apollo
-  - name: writerite-wright-node
-    version: ^0.1.0-dev.9
-    # contrary to documentation, oci repositories not yet supported
-    # https://github.com/helm/helm/pull/7613
-    # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev.9
-    # workaround
-    repository: file://../writerite-wright-node
+  # - name: writerite-wright-node
+  #   version: ^0.1.0-dev.9
+  #   # contrary to documentation, oci repositories not yet supported
+  #   # https://github.com/helm/helm/pull/7613
+  #   # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev.9
+  #   # workaround
+  #   repository: file://../writerite-wright-node
 
 # A chart can be either an 'application' or a 'library' chart.
 #

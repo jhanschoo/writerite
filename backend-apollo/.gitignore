@@ -2,7 +2,7 @@
 /node_modules/
 
 # generated files
-/generated/
+/src/generated/
 
 # logs
 /npm-debug.log

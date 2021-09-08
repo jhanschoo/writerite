@@ -3,11 +3,7 @@
 # Declare variables to be passed into your templates.
 
 redis:
-  cluster:
-    enabled: false
+  architecture: standalone
   master:
     persistence:
       enabled: false
-  networkPolicy:
-    enabled: false
-  usePassword: false
