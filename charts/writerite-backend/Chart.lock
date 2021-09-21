@@ -1,12 +1,12 @@
 dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 10.9.5
+  version: 10.10.1
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 15.3.2
 - name: writerite-backend-apollo
   repository: oci://registry.gitlab.com/writerite/writerite
   version: 0.1.0-dev.10
-digest: sha256:2359e8332427f4511db551aeef260617594b6f2dd749a11d94920af5614b8c11
-generated: "2021-09-10T09:17:46.642671219+08:00"
+digest: sha256:04e73f07a456a8585e10bb2c3f386eb8a98a1b2a322b0ba98bd2de987d8cbb7a
+generated: "2021-09-21T08:40:46.285600609+08:00"

@@ -25,20 +25,22 @@ sh dockerbuild.sh
 
 # build-backend-apollo-chart
 cd "$WRITERITE_PROJECT_ROOT/charts/writerite-backend-apollo"
-helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend-apollo" | tee stdout
-helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
-rm stdout
+helm package .
+helm push *.tgz "oci://$CI_REGISTRY_IMAGE" 
+rm *.tgz
 
 # build-backend-chart
 cd "$WRITERITE_PROJECT_ROOT/charts/writerite-backend"
 helm repo update
 helm dependency update
-helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
-WRITERITE_BACKEND_CHART_REF="$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
-helm chart push "$WRITERITE_BACKEND_CHART_REF"
-rm stdout charts/*.tgz
+helm package .
+helm push *.tgz "oci://$CI_REGISTRY_IMAGE" | tee stdout
+WRITERITE_BACKEND_CHART_REF="$(head -1 stdout | sed 's/Pushed:\s*\(.*\)/\1/')"
+WRITERITE_BACKEND_CHART_NAME="$CI_REGISTRY_IMAGE/writerite-backend"
+WRITERITE_BACKEND_CHART_VERSION="${WRITERITE_BACKEND_CHART_REF#${WRITERITE_BACKEND_CHART_NAME}:}"
+rm *.tgz stdout charts/*.tgz
 
 # deploy
 cd "$WRITERITE_PROJECT_ROOT/dev-config"
 helm uninstall writerite-backend || true
-helm install -f .envlocalvalues.yaml writerite-backend "oci://$WRITERITE_BACKEND_CHART_REF"
+helm install -f .envlocalvalues.yaml --version "$WRITERITE_BACKEND_CHART_VERSION" writerite-backend "oci://$WRITERITE_BACKEND_CHART_NAME"
