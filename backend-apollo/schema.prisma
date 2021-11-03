@@ -30,7 +30,7 @@ model Card {
   template   Boolean          @default(false)
   default    Unit?
   editedAt   DateTime         @default(now())
-  deck       Deck             @relation(fields: [deckId], references: [id])
+  deck       Deck             @relation(fields: [deckId], references: [id], onDelete: Cascade)
 
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @default(now()) @updatedAt
@@ -51,8 +51,8 @@ model Message {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  room      Room     @relation(fields: [roomId], references: [id])
-  sender    User?    @relation(fields: [senderId], references: [id])
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender    User?    @relation(fields: [senderId], references: [id], onDelete: SetNull)
 }
 
 model Deck {
@@ -80,7 +80,7 @@ model Deck {
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @default(now()) @updatedAt
 
-  owner       User             @relation(fields: [ownerId], references: [id])
+  owner       User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   cards       Card[]
   subdecks    Subdeck[]        @relation("DeckTo_Subdeck_parentDeckId")
   parentDecks Subdeck[]        @relation("DeckTo_Subdeck_subdeckId")
@@ -96,11 +96,11 @@ model Occupant {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 
-  room       Room?    @relation("RoomTo_Occupant", fields: [roomId], references: [id])
-  occupant   User?    @relation("UserTo_Occupant", fields: [occupantId], references: [id])
+  room       Room     @relation("RoomTo_Occupant", fields: [roomId], references: [id], onDelete: Cascade)
+  occupant   User     @relation("UserTo_Occupant", fields: [occupantId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, occupantId])
-  @@index([occupantId], name: "Occupant_occupantId_idx")
+  @@index([occupantId])
 }
 
 model Room {
@@ -115,7 +115,7 @@ model Room {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @default(now()) @updatedAt
 
-  owner          User       @relation(fields: [ownerId], references: [id])
+  owner          User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   occupants      Occupant[] @relation("RoomTo_Occupant")
   chatMsgs       Message[]
 }
@@ -129,11 +129,11 @@ model Subdeck {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
 
-  parentDeck   Deck?    @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id])
-  subdeck      Deck?    @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id])
+  parentDeck   Deck?    @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id], onDelete: Cascade)
+  subdeck      Deck?    @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id], onDelete: Cascade)
 
   @@unique([parentDeckId, subdeckId])
-  @@index([subdeckId], name: "Subdeck_subdeckId_idx")
+  @@index([subdeckId])
 }
 
 model User {
@@ -165,8 +165,8 @@ model UserCardRecord {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @default(now()) @updatedAt
 
-  card           Card       @relation(fields: [cardId], references: [id])
-  user           User       @relation(fields: [userId], references: [id])
+  card           Card       @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, cardId])
 }
@@ -181,8 +181,8 @@ model UserDeckRecord {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  deck      Deck     @relation(fields: [deckId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, deckId])
 }
