@@ -332,7 +332,7 @@ export interface NexusGenArgTypes {
   Mutation: {
     cardCreate: { // args
       card: NexusGenInputs['CardCreateInput']; // CardCreateInput!
-      deckId?: NexusGenScalars['UUID'] | null; // UUID
+      deckId: NexusGenScalars['UUID']; // UUID!
       mainTemplate?: boolean | null; // Boolean
     }
     cardDelete: { // args

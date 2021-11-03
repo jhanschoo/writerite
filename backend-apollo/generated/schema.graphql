@@ -106,7 +106,7 @@ enum MessageContentType {
 }
 
 type Mutation {
-  cardCreate(card: CardCreateInput!, deckId: UUID, mainTemplate: Boolean): Card!
+  cardCreate(card: CardCreateInput!, deckId: UUID!, mainTemplate: Boolean): Card!
   cardDelete(id: UUID!): Card!
   cardEdit(answers: [String!], fullAnswer: JSONObject, id: UUID!, mainTemplate: Boolean, prompt: JSONObject, sortKey: String, template: Boolean): Card!
   cardUnsetMainTemplate(deckId: UUID!): Card

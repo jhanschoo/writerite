@@ -36,7 +36,7 @@ export const Deck = objectType({
 		t.nonNull.string("name");
 		t.nonNull.jsonObject("description", {
 			resolve({ description }) {
-				return description as Prisma.JsonObject;
+				return description as Prisma.InputJsonObject;
 			},
 		});
 		t.nonNull.string("promptLang");
@@ -265,9 +265,26 @@ export const DeckAddSubdeckMutation = mutationField("deckAddSubdeck", {
 		id: nonNull(uuidArg()),
 		subdeckId: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn(async (_source, { id, subdeckId }, { sub, prisma }) => {
+		if (await prisma.deck.count({
+			where: {
+				ownerId: sub.id,
+				id: { in: [id, subdeckId] },
+			},
+		}) !== 2) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return prisma.deck.update({
+			where: { id },
+			data: {
+				subdecks: { connectOrCreate: {
+					// eslint-disable-next-line @typescript-eslint/naming-convention
+					where: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } },
+					create: { subdeck: { connect: { id: subdeckId } } },
+				} },
+			},
+		});
+	}),
 });
 
 export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
@@ -276,9 +293,23 @@ export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
 		id: nonNull(uuidArg()),
 		subdeckId: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn(async (_source, { id, subdeckId }, { sub, prisma }) => {
+		if (await prisma.deck.count({
+			where: {
+				ownerId: sub.id,
+				id: { in: [id, subdeckId] },
+			},
+		}) !== 2) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return prisma.deck.update({
+			where: { id },
+			data: {
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
+			},
+		});
+	}),
 });
 
 export const DeckUsedMutation = mutationField("deckUsed", {
@@ -286,9 +317,17 @@ export const DeckUsedMutation = mutationField("deckUsed", {
 	args: {
 		id: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
+		if (await prisma.deck.count({ where: { ownerId: sub.id, id } }) !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return prisma.deck.update({
+			where: { id },
+			data: {
+				usedAt: new Date(),
+			},
+		});
+	}),
 });
 
 export const DeckDeleteMutation = mutationField("deckDelete", {
@@ -296,9 +335,20 @@ export const DeckDeleteMutation = mutationField("deckDelete", {
 	args: {
 		id: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
+		const decks = await prisma.deck.findMany({ where: { id, ownerId: sub.id } });
+		if (decks.length !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		const [deck] = decks;
+		const res = await prisma.deck.deleteMany({
+			where: { id, ownerId: sub.id },
+		});
+		if (res.count !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return deck;
+	}),
 });
 
 export const OwnDeckRecordSetMutation = mutationField("ownDeckRecordSet", {
@@ -307,7 +357,16 @@ export const OwnDeckRecordSetMutation = mutationField("ownDeckRecordSet", {
 		deckId: nonNull(uuidArg()),
 		notes: nonNull(jsonObjectArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn((_source, { deckId, notes }, { sub, prisma }) => prisma.userDeckRecord.upsert({
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		where: { userId_deckId: { userId: sub.id, deckId } },
+		create: {
+			deck: { connect: { id: deckId } },
+			user: { connect: { id: sub.id } },
+			notes: notes as Prisma.InputJsonObject,
+		},
+		update: {
+			notes: notes as Prisma.InputJsonObject,
+		},
+	})),
 });

@@ -30,7 +30,7 @@ export const Card = objectType({
 
 		t.field("ownRecord", {
 			type: "UserCardRecord",
-			resolve: guardLoggedIn(async ({ id: cardId }, _args, { sub, prisma }) => 
+			resolve: guardLoggedIn(async ({ id: cardId }, _args, { sub, prisma }) =>
 				// eslint-disable-next-line @typescript-eslint/naming-convention
 				prisma.userCardRecord.findUnique({ where: { userId_cardId: { userId: sub.id, cardId } } })),
 		});
@@ -55,7 +55,7 @@ export const CardCreateMutation = mutationField("cardCreate", {
 	 */
 	type: nonNull("Card"),
 	args: {
-		deckId: uuidArg(),
+		deckId: nonNull(uuidArg()),
 		/*
 		 * note that template is set to true if mainTemplate
 		 * is set to true and template is unspecified
@@ -65,9 +65,34 @@ export const CardCreateMutation = mutationField("cardCreate", {
 		})),
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
+		const { prompt, fullAnswer, answers, sortKey, template } = card;
+		if (await prisma.deck.count({ where: { id: deckId, ownerId: sub.id } }) !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		if (mainTemplate) {
+			await prisma.card.updateMany({
+				where: {
+					deckId,
+					default: Unit.UNIT,
+				},
+				data: {
+					default: null,
+				},
+			});
+		}
+		return prisma.card.create({
+			data: {
+				prompt: prompt as Prisma.InputJsonObject,
+				fullAnswer: fullAnswer as Prisma.InputJsonObject,
+				answers,
+				sortKey: sortKey ?? undefined,
+				template: template ?? undefined,
+				default: mainTemplate ? Unit.UNIT : undefined,
+				deck: { connect: { id: deckId } },
+			},
+		});
+	}),
 });
 
 export const CardCreateInput = inputObjectType({
@@ -166,9 +191,32 @@ export const CardDeleteMutation = mutationField("cardDelete", {
 	args: {
 		id: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
-	},
+	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
+		const cards = await prisma.card.findMany({
+			where: {
+				id,
+				deck: {
+					ownerId: sub.id,
+				},
+			},
+		});
+		if (cards.length !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		const [card] = cards;
+		const res = await prisma.card.deleteMany({
+			where: {
+				id,
+				deck: {
+					ownerId: sub.id,
+				},
+			},
+		});
+		if (res.count !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return card;
+	}),
 });
 
 export const OwnCardRecordSetMutation = mutationField("ownCardRecordSet", {
@@ -177,4 +225,16 @@ export const OwnCardRecordSetMutation = mutationField("ownCardRecordSet", {
 		cardId: nonNull(uuidArg()),
 		correctRecordAppend: nonNull(list(nonNull(dateTimeArg()))),
 	},
+	resolve: guardLoggedIn((_source, { cardId, correctRecordAppend }, { sub, prisma }) => prisma.userCardRecord.upsert({
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		where: { userId_cardId: { userId: sub.id, cardId } },
+		create: {
+			card: { connect: { id: cardId } },
+			user: { connect: { id: sub.id } },
+			correctRecord: { set: correctRecordAppend },
+		},
+		update: {
+			correctRecord: { push: correctRecordAppend },
+		},
+	})),
 });
