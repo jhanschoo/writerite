@@ -1,6 +1,6 @@
 import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
-import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
+import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
 import { jsonArg, uuidArg } from "./scalarUtil";
 
 export const Message = objectType({
@@ -51,16 +51,13 @@ export const MessageQuery = queryField("message", {
 	args: {
 		id: nonNull(uuidArg()),
 	},
-	async resolve(_source, { id }, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
+	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
 		const res = await prisma.message.findFirst({ where: { id, room: { occupants: { some: { occupantId: sub.id } } } } });
 		if (res === null) {
 			throw userLacksPermissionsErrorFactory();
 		}
 		return res;
-	},
+	}),
 });
 
 export const MessagesOfRoomQuery = queryField("messagesOfRoom", {
@@ -68,12 +65,7 @@ export const MessagesOfRoomQuery = queryField("messagesOfRoom", {
 	args: {
 		id: nonNull(uuidArg()),
 	},
-	async resolve(_source, { id }, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
-		return prisma.message.findMany({ where: { room: { id, occupants: { some: { occupantId: sub.id } } } } });
-	},
+	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => prisma.message.findMany({ where: { room: { id, occupants: { some: { occupantId: sub.id } } } } })),
 });
 
 export const MessageCreateMutation = mutationField("messageCreate", {

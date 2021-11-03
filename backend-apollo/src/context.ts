@@ -37,6 +37,10 @@ export interface Context {
 	pubsub: PubSubEngine;
 }
 
+export interface LoggedInContext extends Context {
+	sub: CurrentUser;
+}
+
 /**
  * Note: opts.ctx is never used if provided
  * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.

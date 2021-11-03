@@ -1,7 +1,7 @@
 import { Prisma, Unit } from "@prisma/client";
 import { arg, booleanArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
-import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
+import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
 import { dateTimeArg, jsonObjectArg, uuidArg } from "./scalarUtil";
 
 export const Card = objectType({
@@ -30,13 +30,9 @@ export const Card = objectType({
 
 		t.field("ownRecord", {
 			type: "UserCardRecord",
-			async resolve({ id: cardId }, _args, { sub, prisma }) {
-				if (!sub) {
-					throw userNotLoggedInErrorFactory();
-				}
+			resolve: guardLoggedIn(async ({ id: cardId }, _args, { sub, prisma }) => 
 				// eslint-disable-next-line @typescript-eslint/naming-convention
-				return prisma.userCardRecord.findUnique({ where: { userId_cardId: { userId: sub.id, cardId } } });
-			},
+				prisma.userCardRecord.findUnique({ where: { userId_cardId: { userId: sub.id, cardId } } })),
 		});
 	},
 });
@@ -106,10 +102,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 		 */
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
-	async resolve(_source, { id, prompt, fullAnswer, answers, sortKey, template }, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
+	resolve: guardLoggedIn(async (_source, { id, prompt, fullAnswer, answers, sortKey, template }, { sub, prisma }) => {
 		const updated = await prisma.card.updateMany({
 			where: {
 				id,
@@ -133,7 +126,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 			throw userLacksPermissionsErrorFactory();
 		}
 		return card;
-	},
+	}),
 });
 
 export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplate", {
@@ -141,10 +134,7 @@ export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplat
 	args: {
 		deckId: nonNull(uuidArg()),
 	},
-	async resolve(_source, { deckId }, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
+	resolve: guardLoggedIn(async (_source, { deckId }, { sub, prisma }) => {
 		const whereDeck = {
 			id: deckId,
 			ownerId: sub.id,
@@ -168,7 +158,7 @@ export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplat
 			throw userLacksPermissionsErrorFactory();
 		}
 		return prisma.card.findUnique({ where: { id: card.id } });
-	},
+	}),
 });
 
 export const CardDeleteMutation = mutationField("cardDelete", {

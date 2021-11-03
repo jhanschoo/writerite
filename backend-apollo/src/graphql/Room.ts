@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
-import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
+import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
 import { emailAddressArg, jsonObjectArg, uuidArg } from "./scalarUtil";
 
 export const Room = objectType({
@@ -56,10 +56,7 @@ export const RoomState = enumType({
 export const RoomQuery = queryField("room", {
 	type: nonNull("Room"),
 	args: { id: nonNull(uuidArg()) },
-	async resolve(_source, { id }, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
+	resolve: guardLoggedIn(async (_source, { id }, { prisma }) => {
 		const res = await prisma.room.findUnique({
 			where: { id },
 		});
@@ -67,19 +64,14 @@ export const RoomQuery = queryField("room", {
 			throw userLacksPermissionsErrorFactory();
 		}
 		return res;
-	},
+	}),
 });
 
 export const OccupyingRoomsQuery = queryField("occupyingRooms", {
 	type: nonNull(list(nonNull("Room"))),
-	resolve(_source, _args, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
-		return prisma.room.findMany({
-			where: { occupants: { some: { id: sub.id } } },
-		});
-	},
+	resolve: guardLoggedIn((_source, _args, { sub, prisma }) => prisma.room.findMany({
+		where: { occupants: { some: { id: sub.id } } },
+	})),
 });
 
 export const RoomCreateMutation = mutationField("roomCreate", {

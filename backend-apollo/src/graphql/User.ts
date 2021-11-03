@@ -1,6 +1,6 @@
 import { mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
-import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
+import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
 
 export const User = objectType({
 	name: "User",
@@ -40,10 +40,7 @@ export const User = objectType({
 
 export const UserQuery = queryField("user", {
 	type: nonNull("User"),
-	async resolve(_source, _args, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
+	resolve: guardLoggedIn(async (_source, _args, { sub, prisma }) => {
 		const res = await prisma.user.findUnique({
 			where: { id: sub.id },
 		});
@@ -51,7 +48,7 @@ export const UserQuery = queryField("user", {
 			throw userLacksPermissionsErrorFactory();
 		}
 		return res;
-	},
+	}),
 });
 
 export const UserEditMutation = mutationField("userEdit", {
@@ -59,10 +56,7 @@ export const UserEditMutation = mutationField("userEdit", {
 	args: {
 		name: stringArg(),
 	},
-	async resolve(_source, { name }, { sub, prisma }) {
-		if (!sub) {
-			throw userNotLoggedInErrorFactory();
-		}
+	resolve: guardLoggedIn(async (_source, { name }, { sub, prisma }) => {
 		try {
 			return await prisma.user.update({
 				where: { id: sub.id },
@@ -71,5 +65,5 @@ export const UserEditMutation = mutationField("userEdit", {
 		} catch (err) {
 			throw userLacksPermissionsErrorFactory();
 		}
-	},
+	}),
 });
