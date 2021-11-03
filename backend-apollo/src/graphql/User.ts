@@ -1,4 +1,6 @@
 import { mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
+import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
 
 export const User = objectType({
 	name: "User",
@@ -38,8 +40,17 @@ export const User = objectType({
 
 export const UserQuery = queryField("user", {
 	type: nonNull("User"),
-	resolve() {
-		throw Error("not implemented yet");
+	async resolve(_source, _args, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		const res = await prisma.user.findUnique({
+			where: { id: sub.id },
+		});
+		if (!res) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return res;
 	},
 });
 
@@ -48,7 +59,17 @@ export const UserEditMutation = mutationField("userEdit", {
 	args: {
 		name: stringArg(),
 	},
-	resolve() {
-		throw Error("not implemented yet");
+	async resolve(_source, { name }, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		try {
+			return await prisma.user.update({
+				where: { id: sub.id },
+				data: { name },
+			});
+		} catch (err) {
+			throw userLacksPermissionsErrorFactory();
+		}
 	},
 });

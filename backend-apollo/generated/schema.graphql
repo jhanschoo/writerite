@@ -108,8 +108,8 @@ enum MessageContentType {
 type Mutation {
   cardCreate(card: CardCreateInput!, deckId: UUID, mainTemplate: Boolean): Card!
   cardDelete(id: UUID!): Card!
-  cardEdit(answers: [String!], deckId: UUID!, fullAnswer: JSONObject, mainTemplate: Boolean, prompt: JSONObject, sortKey: String, template: Boolean): Card!
-  cardUnsetMainTemplate(deckId: UUID!): Boolean!
+  cardEdit(answers: [String!], fullAnswer: JSONObject, id: UUID!, mainTemplate: Boolean, prompt: JSONObject, sortKey: String, template: Boolean): Card!
+  cardUnsetMainTemplate(deckId: UUID!): Card
   deckAddSubdeck(id: UUID!, subdeckId: UUID!): Deck!
   deckCreate(answerLang: String, archived: Boolean, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!
   deckDelete(id: UUID!): Deck!
@@ -179,11 +179,11 @@ type Query {
   	
   """
   decks(cursor: UUID, scope: DecksQueryScope, take: Int, titleFilter: String): [Deck!]!
-  message(id: UUID): Message!
-  messagesOfRoom(id: UUID): [Message!]!
+  message(id: UUID!): Message!
+  messagesOfRoom(id: UUID!): [Message!]!
   occupyingRooms: [Room!]!
   ownDeckRecord(deckId: UUID!): UserDeckRecord
-  room: Room!
+  room(id: UUID!): Room!
   user: User!
 }
 

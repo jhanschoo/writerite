@@ -164,19 +164,6 @@ export const Mutation: MutationResolver = {
       return handleError(e);
     }
   },
-  async userEdit(_parent, { name }, { sub, prisma }, _info) {
-    if (!sub) {
-      return null;
-    }
-    try {
-      return userToSS(await prisma.user.update({
-        where: { id: sub.id },
-        data: { name },
-      }));
-    } catch (e) {
-      return handleError(e);
-    }
-  },
   async deckCreate(_parent, {
     name,
     description,

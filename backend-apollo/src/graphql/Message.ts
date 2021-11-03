@@ -1,5 +1,6 @@
-import { AuthenticationError } from "apollo-server-core";
 import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
+import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
 import { jsonArg, uuidArg } from "./scalarUtil";
 
 export const Message = objectType({
@@ -48,20 +49,30 @@ export const MessageContentType = enumType({
 export const MessageQuery = queryField("message", {
 	type: nonNull("Message"),
 	args: {
-		id: uuidArg(),
+		id: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
+	async resolve(_source, { id }, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		const res = await prisma.message.findFirst({ where: { id, room: { occupants: { some: { occupantId: sub.id } } } } });
+		if (res === null) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return res;
 	},
 });
 
 export const MessagesOfRoomQuery = queryField("messagesOfRoom", {
 	type: nonNull(list(nonNull("Message"))),
 	args: {
-		id: uuidArg(),
+		id: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
+	async resolve(_source, { id }, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		return prisma.message.findMany({ where: { room: { id, occupants: { some: { occupantId: sub.id } } } } });
 	},
 });
 

@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
 import { ApolloError } from "apollo-server-core";
-import { AuthenticationError, ForbiddenError } from "apollo-server-errors";
 import { arg, booleanArg, enumType, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
+import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
 import { getDescendantsOfDeck } from "../service/deckFamily";
 import { jsonObjectArg, uuidArg } from "./scalarUtil";
 
@@ -50,7 +51,7 @@ export const Deck = objectType({
 			async resolve({ ownerId: id }, _args, { prisma }) {
 				const user = await prisma.user.findUnique({ where: { id } });
 				if (!user) {
-					throw new ForbiddenError("No User that you are authorized to view");
+					throw userLacksPermissionsErrorFactory("If such a user exists, you are not authorized to view it");
 				}
 				return user;
 			},
@@ -118,7 +119,7 @@ export const DeckQuery = queryField("deck", {
 	},
 	async resolve(_root, { id }, { prisma, sub }) {
 		if (!sub) {
-			throw new AuthenticationError("You need to be logged in");
+			throw userNotLoggedInErrorFactory();
 		}
 		const OR = [
 			{ ownerId: sub.id },
@@ -130,7 +131,7 @@ export const DeckQuery = queryField("deck", {
 			OR, id,
 		} });
 		if (decks.length === 0) {
-			throw new ForbiddenError("If such a deck exists, you are not authorized to view it");
+			throw userLacksPermissionsErrorFactory("If such a deck exists, you are not authorized to view it");
 		}
 		return decks[0];
 	},
@@ -152,7 +153,7 @@ export const DecksQuery = queryField("decks", {
 	`,
 	async resolve(_root, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) {
 		if (!sub) {
-			throw new AuthenticationError("You need to be logged in");
+			throw userNotLoggedInErrorFactory();
 		}
 		const OR = [
 			{ ownerId: sub.id, archived: scope === "UNARCHIVED" ? false : undefined },
@@ -203,7 +204,7 @@ export const OwnDeckRecordQuery = queryField("ownDeckRecord", {
 	},
 	async resolve(_root, { deckId }, { sub, prisma }) {
 		if (!sub) {
-			throw new AuthenticationError("You need to be logged in.");
+			throw userNotLoggedInErrorFactory();
 		}
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		return prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } });
@@ -226,7 +227,7 @@ export const DeckCreateMutation = mutationField("deckCreate", {
 	},
 	async resolve(_root, { name, description, promptLang, answerLang, published, archived, cards }, { sub, prisma }) {
 		if (!sub) {
-			throw new AuthenticationError("You need to be logged in");
+			throw userNotLoggedInErrorFactory();
 		}
 		return prisma.deck.create({ data: {
 			ownerId: sub.id,
@@ -256,7 +257,7 @@ export const DeckEditMutation = mutationField("deckEdit", {
 	},
 	async resolve(_root, { id, name, description, promptLang, answerLang, published, archived }, { sub, prisma }) {
 		if (!sub) {
-			throw new AuthenticationError("You need to be logged in");
+			throw userNotLoggedInErrorFactory();
 		}
 		const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data: {
 			name: name as string | undefined,

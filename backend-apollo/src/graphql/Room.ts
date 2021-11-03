@@ -1,5 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
+import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
 import { emailAddressArg, jsonObjectArg, uuidArg } from "./scalarUtil";
 
 export const Room = objectType({
@@ -53,15 +55,30 @@ export const RoomState = enumType({
 
 export const RoomQuery = queryField("room", {
 	type: nonNull("Room"),
-	resolve() {
-		throw Error("not implemented yet");
+	args: { id: nonNull(uuidArg()) },
+	async resolve(_source, { id }, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		const res = await prisma.room.findUnique({
+			where: { id },
+		});
+		if (!res) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return res;
 	},
 });
 
 export const OccupyingRoomsQuery = queryField("occupyingRooms", {
 	type: nonNull(list(nonNull("Room"))),
-	resolve() {
-		throw Error("not implemented yet");
+	resolve(_source, _args, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		return prisma.room.findMany({
+			where: { occupants: { some: { id: sub.id } } },
+		});
 	},
 });
 

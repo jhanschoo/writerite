@@ -27,9 +27,7 @@ const serverPromise: Promise<https.Server | http.Server> = Promise.resolve((asyn
 	apollo.applyMiddleware({
 		app,
 		cors: {
-			origin: NODE_ENV === "production"
-				? "https://www.writerite.site"
-				: "https://localhost:3000",
+			origin: "*",
 			credentials: true,
 		},
 	});

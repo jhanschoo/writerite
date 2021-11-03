@@ -1,6 +1,7 @@
 import { Prisma, Unit } from "@prisma/client";
-import { AuthenticationError } from "apollo-server-core";
 import { arg, booleanArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
+import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userNotLoggedInErrorFactory } from "../error/userNotLoggedInErrorFactory";
 import { dateTimeArg, jsonObjectArg, uuidArg } from "./scalarUtil";
 
 export const Card = objectType({
@@ -21,8 +22,8 @@ export const Card = objectType({
 		t.nonNull.string("sortKey");
 		t.nonNull.boolean("template");
 		t.nonNull.boolean("mainTemplate", {
-			resolve(source) {
-				return source.default === Unit.UNIT;
+			resolve({ default: isDefault }) {
+				return isDefault === Unit.UNIT;
 			},
 		});
 		t.nonNull.dateTime("editedAt");
@@ -31,7 +32,7 @@ export const Card = objectType({
 			type: "UserCardRecord",
 			async resolve({ id: cardId }, _args, { sub, prisma }) {
 				if (!sub) {
-					throw new AuthenticationError("authentication required to retrieve Card.ownRecord");
+					throw userNotLoggedInErrorFactory();
 				}
 				// eslint-disable-next-line @typescript-eslint/naming-convention
 				return prisma.userCardRecord.findUnique({ where: { userId_cardId: { userId: sub.id, cardId } } });
@@ -93,7 +94,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 	 */
 	type: nonNull("Card"),
 	args: {
-		deckId: nonNull(uuidArg()),
+		id: nonNull(uuidArg()),
 		prompt: jsonObjectArg({ undefinedOnly: true }),
 		fullAnswer: jsonObjectArg({ undefinedOnly: true }),
 		answers: list(nonNull(stringArg({ undefinedOnly: true }))),
@@ -105,22 +106,68 @@ export const CardEditMutation = mutationField("cardEdit", {
 		 */
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
-	resolve() {
-		throw Error("not implemented yet");
+	async resolve(_source, { id, prompt, fullAnswer, answers, sortKey, template }, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		const updated = await prisma.card.updateMany({
+			where: {
+				id,
+				deck: {
+					ownerId: sub.id,
+				},
+			},
+			data: {
+				prompt: prompt ? JSON.stringify(prompt) : undefined,
+				fullAnswer: fullAnswer ? JSON.stringify(fullAnswer) : undefined,
+				answers: answers ? { set: answers } : undefined,
+				sortKey: sortKey ?? undefined,
+				template: template ?? undefined,
+			},
+		});
+		if (updated.count !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		const card = await prisma.card.findUnique({ where: { id } });
+		if (!card) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return card;
 	},
 });
 
-/*
- * unmarks the card currently set as the main template of the deck if it exists
- * returns true if unset, false if noop, null if error
- */
 export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplate", {
-	type: nonNull("Boolean"),
+	type: "Card",
 	args: {
 		deckId: nonNull(uuidArg()),
 	},
-	resolve() {
-		throw Error("not implemented yet");
+	async resolve(_source, { deckId }, { sub, prisma }) {
+		if (!sub) {
+			throw userNotLoggedInErrorFactory();
+		}
+		const whereDeck = {
+			id: deckId,
+			ownerId: sub.id,
+		};
+		const card = await prisma.card.findFirst({ where: { deck: whereDeck, default: Unit.UNIT } });
+		if (!card) {
+			return null;
+		}
+		const { id } = card;
+		const updated = await prisma.card.updateMany({
+			where: {
+				id,
+				deck: whereDeck,
+				default: Unit.UNIT,
+			},
+			data: {
+				default: null,
+			},
+		});
+		if (updated.count !== 1) {
+			throw userLacksPermissionsErrorFactory();
+		}
+		return prisma.card.findUnique({ where: { id: card.id } });
 	},
 });
 

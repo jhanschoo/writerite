@@ -164,7 +164,7 @@ export interface NexusGenFieldTypes {
     cardCreate: NexusGenRootTypes['Card']; // Card!
     cardDelete: NexusGenRootTypes['Card']; // Card!
     cardEdit: NexusGenRootTypes['Card']; // Card!
-    cardUnsetMainTemplate: boolean; // Boolean!
+    cardUnsetMainTemplate: NexusGenRootTypes['Card'] | null; // Card
     deckAddSubdeck: NexusGenRootTypes['Deck']; // Deck!
     deckCreate: NexusGenRootTypes['Deck']; // Deck!
     deckDelete: NexusGenRootTypes['Deck']; // Deck!
@@ -268,7 +268,7 @@ export interface NexusGenFieldTypeNames {
     cardCreate: 'Card'
     cardDelete: 'Card'
     cardEdit: 'Card'
-    cardUnsetMainTemplate: 'Boolean'
+    cardUnsetMainTemplate: 'Card'
     deckAddSubdeck: 'Deck'
     deckCreate: 'Deck'
     deckDelete: 'Deck'
@@ -340,8 +340,8 @@ export interface NexusGenArgTypes {
     }
     cardEdit: { // args
       answers?: string[] | null; // [String!]
-      deckId: NexusGenScalars['UUID']; // UUID!
       fullAnswer?: NexusGenScalars['JSONObject'] | null; // JSONObject
+      id: NexusGenScalars['UUID']; // UUID!
       mainTemplate?: boolean | null; // Boolean
       prompt?: NexusGenScalars['JSONObject'] | null; // JSONObject
       sortKey?: string | null; // String
@@ -437,13 +437,16 @@ export interface NexusGenArgTypes {
       titleFilter?: string | null; // String
     }
     message: { // args
-      id?: NexusGenScalars['UUID'] | null; // UUID
+      id: NexusGenScalars['UUID']; // UUID!
     }
     messagesOfRoom: { // args
-      id?: NexusGenScalars['UUID'] | null; // UUID
+      id: NexusGenScalars['UUID']; // UUID!
     }
     ownDeckRecord: { // args
       deckId: NexusGenScalars['UUID']; // UUID!
+    }
+    room: { // args
+      id: NexusGenScalars['UUID']; // UUID!
     }
   }
 }
