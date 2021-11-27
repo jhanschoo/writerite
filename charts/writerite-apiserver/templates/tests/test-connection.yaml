@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "writerite-apiserver.fullname" . }}-test-connection"
+  labels:
+    {{- include "writerite-apiserver.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "writerite-apiserver.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never

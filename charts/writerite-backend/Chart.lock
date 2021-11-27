@@ -5,7 +5,7 @@ dependencies:
 - name: redis
   repository: https://charts.bitnami.com/bitnami
   version: 15.3.2
-- name: writerite-backend-apollo
+- name: writerite-apiserver
   repository: oci://registry.gitlab.com/writerite/writerite
   version: 0.1.0-dev.10
 digest: sha256:04e73f07a456a8585e10bb2c3f386eb8a98a1b2a322b0ba98bd2de987d8cbb7a

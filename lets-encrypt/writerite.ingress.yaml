@@ -8,7 +8,7 @@ metadata:
     kubernetes.io/ingress.class: nginx
 spec:
   # backend:
-  #   serviceName: writerite-backend-writerite-backend-apollo
+  #   serviceName: writerite-backend-writerite-apiserver
   #   servicePort: 4000
   rules:
     - host: api.writerite.site
@@ -16,7 +16,7 @@ spec:
         paths:
           - path: /
             backend:
-              serviceName: writerite-backend-writerite-backend-apollo
+              serviceName: writerite-backend-writerite-apiserver
               servicePort: 4000
   tls:
     - hosts:

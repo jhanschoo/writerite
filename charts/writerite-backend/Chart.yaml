@@ -13,7 +13,7 @@ dependencies:
   - name: redis
     version: "^15.3.1"
     repository: https://charts.bitnami.com/bitnami
-  - name: writerite-backend-apollo
+  - name: writerite-apiserver
     version: "0.1.0-dev.10"
     repository: oci://registry.gitlab.com/writerite/writerite
     # workaround
@@ -21,7 +21,7 @@ dependencies:
   #   version: ^0.1.0-dev.9
   #   # contrary to documentation, oci repositories not yet supported
   #   # https://github.com/helm/helm/pull/7613
-  #   # repository: oci://registry.gitlab.com/writerite/writerite/writerite-backend-apollo:0.1.0-dev.9
+  #   # repository: oci://registry.gitlab.com/writerite/writerite/writerite-apiserver:0.1.0-dev.9
   #   # workaround
   #   repository: file://../writerite-wright-node
 

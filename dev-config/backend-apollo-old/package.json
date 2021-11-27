@@ -1,5 +1,5 @@
 {
-  "name": "@writerite/backend-apollo",
+  "name": "@writerite/apiserver",
   "version": "0.1.0",
   "description": "Apollo GraphQL implementation of WriteRite backend",
   "main": "dist/index.js",

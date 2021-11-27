@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-# this script should be located at $PROJECT_ROOT/dev-config/deploy-to-kind.sh
+# this script should be located at $PROJECT_ROOT/dev-config/localdev-pipeline.sh
 set -ex
 
 if [[ -z "$CI_REGISTRY_USER" || -z "$CI_REGISTRY_PASSWORD" || -z "$CI_REGISTRY" || -z "$CI_REGISTRY_IMAGE" ]]
@@ -16,15 +16,15 @@ helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGIS
 kubectl delete secret gitlab-writerite-writerite-jhanschoo || true
 kubectl create secret docker-registry gitlab-writerite-writerite-jhanschoo --docker-server="$CI_REGISTRY" --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD"
 
-# build-backend-apollo
-cd "$WRITERITE_PROJECT_ROOT/backend-apollo"
+# build-apiserver
+cd "$WRITERITE_PROJECT_ROOT/apiserver"
 npm i
 
-# build-backend-apollo
+# build-apiserver
 sh dockerbuild.sh
 
-# build-backend-apollo-chart
-cd "$WRITERITE_PROJECT_ROOT/charts/writerite-backend-apollo"
+# build-apiserver-chart
+cd "$WRITERITE_PROJECT_ROOT/charts/writerite-apiserver"
 helm package .
 helm push *.tgz "oci://$CI_REGISTRY_IMAGE" 
 rm *.tgz

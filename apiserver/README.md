@@ -1,4 +1,4 @@
-# @writerite/backend-apollo
+# @writerite/apiserver
 
 In development, create a `.env` file with the environment variables described below, to avoid tediously maintaining the environment variables.
 

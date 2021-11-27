@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "writerite-backend-apollo.fullname" . }}
+  name: {{ include "writerite-apiserver.fullname" . }}
   labels:
-    {{- include "writerite-backend-apollo.labels" . | nindent 4 }}
+    {{- include "writerite-apiserver.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "writerite-backend-apollo.selectorLabels" . | nindent 6 }}
+      {{- include "writerite-apiserver.selectorLabels" . | nindent 6 }}
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -18,13 +18,13 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "writerite-backend-apollo.selectorLabels" . | nindent 8 }}
+        {{- include "writerite-apiserver.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "writerite-backend-apollo.serviceAccountName" . }}
+      serviceAccountName: {{ include "writerite-apiserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -47,115 +47,115 @@ spec:
             - name: APOLLO_GRAPH_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloGraphId
                   optional: false
             - name: APOLLO_GRAPH_VARIANT
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloGraphVariant
                   optional: false
             - name: APOLLO_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloKey
                   optional: false
             - name: APOLLO_SCHEMA_REPORTING
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloSchemaReporting
                   optional: false
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: databaseUrl
                   optional: false
             - name: FACEBOOK_APP_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: facebookAppId
                   optional: false
             - name: FACEBOOK_APP_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: facebookAppSecret
                   optional: false
             - name: GAPI_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: gapiClientId
                   optional: false
             - name: GAPI_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: gapiClientSecret
                   optional: false
             - name: GRAPHQL_HTTP
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: graphqlHttp
                   optional: false
             - name: GRAPHQL_WS
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: graphqlWs
                   optional: false
             - name: JWT_PRIVATE_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: jwtPrivateKey
                   optional: false
             - name: JWT_PUBLIC_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: jwtPublicKey
                   optional: false
             - name: RECAPTCHA_CLIENT_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: recaptchaClientKey
                   optional: false
             - name: RECAPTCHA_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: recaptchaSecret
                   optional: false
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: redisHost
                   optional: false
             - name: REDIS_PORT
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: redisPort
                   optional: false
             - name: REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: redisPassword
                   optional: false
             - name: WRIGHT_SECRET_JWT
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: wrightSecretJwt
                   optional: false
       {{- with .Values.nodeSelector }}

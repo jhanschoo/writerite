@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-# Run in writerite/backend-apollo/
+# Run in writerite/apiserver/
 
 set -ex
 
@@ -28,11 +28,11 @@ then
 fi
 if [ -z "$INITJOB_IMAGE_NAME" ]
 then
-  INITJOB_IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo-initjob"
+  INITJOB_IMAGE_NAME="$CI_REGISTRY_IMAGE/apiserver-initjob"
 fi
 if [ -z "$APP_IMAGE_NAME" ]
 then
-  APP_IMAGE_NAME="$CI_REGISTRY_IMAGE/backend-apollo-app"
+  APP_IMAGE_NAME="$CI_REGISTRY_IMAGE/apiserver-app"
 fi
 
 # build init image

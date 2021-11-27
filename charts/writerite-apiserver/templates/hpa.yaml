@@ -2,14 +2,14 @@
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "writerite-backend-apollo.fullname" . }}
+  name: {{ include "writerite-apiserver.fullname" . }}
   labels:
-    {{- include "writerite-backend-apollo.labels" . | nindent 4 }}
+    {{- include "writerite-apiserver.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "writerite-backend-apollo.fullname" . }}
+    name: {{ include "writerite-apiserver.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

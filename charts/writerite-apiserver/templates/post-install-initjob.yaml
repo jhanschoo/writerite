@@ -1,9 +1,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "writerite-backend-apollo.fullname" . }}
+  name: {{ include "writerite-apiserver.fullname" . }}
   labels:
-    {{- include "writerite-backend-apollo.labels" . | nindent 4 }}
+    {{- include "writerite-apiserver.labels" . | nindent 4 }}
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
@@ -16,14 +16,14 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "writerite-backend-apollo.selectorLabels" . | nindent 8 }}
+        {{- include "writerite-apiserver.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       restartPolicy: OnFailure
-      serviceAccountName: {{ include "writerite-backend-apollo.serviceAccountName" . }}
+      serviceAccountName: {{ include "writerite-apiserver.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -42,25 +42,25 @@ spec:
             - name: APOLLO_GRAPH_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloGraphId
                   optional: false
             - name: APOLLO_GRAPH_VARIANT
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloGraphVariant
                   optional: false
             - name: APOLLO_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: apolloKey
                   optional: false
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "writerite-backend-apollo.fullname" . }}
+                  name: {{ include "writerite-apiserver.fullname" . }}
                   key: databaseUrl
                   optional: false
       {{- with .Values.nodeSelector }}

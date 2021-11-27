@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "writerite-backend-apollo.name" -}}
+{{- define "writerite-apiserver.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "writerite-backend-apollo.fullname" -}}
+{{- define "writerite-apiserver.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "writerite-backend-apollo.chart" -}}
+{{- define "writerite-apiserver.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "writerite-backend-apollo.labels" -}}
-helm.sh/chart: {{ include "writerite-backend-apollo.chart" . }}
-{{ include "writerite-backend-apollo.selectorLabels" . }}
+{{- define "writerite-apiserver.labels" -}}
+helm.sh/chart: {{ include "writerite-apiserver.chart" . }}
+{{ include "writerite-apiserver.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,17 +45,17 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "writerite-backend-apollo.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "writerite-backend-apollo.name" . }}
+{{- define "writerite-apiserver.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "writerite-apiserver.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "writerite-backend-apollo.serviceAccountName" -}}
+{{- define "writerite-apiserver.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "writerite-backend-apollo.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "writerite-apiserver.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

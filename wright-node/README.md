@@ -1,6 +1,6 @@
 # @writerite/wright-node
 
-Worker servicing chat in `@writerite/backend-apollo` as a chatroom bot.
+Worker servicing chat in `@writerite/apiserver` as a chatroom bot.
 
 ## Stack summary
 
