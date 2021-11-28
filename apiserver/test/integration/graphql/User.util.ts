@@ -1,5 +1,7 @@
 import { GraphQLResponse } from "apollo-server-core";
 import { ApolloServer, gql } from "apollo-server-koa";
+import { CurrentUser } from "../../../src/types";
+import { unsafeJwtToCurrentUser } from "../../_helpers";
 
 export const DEFAULT_CREATE_USER_VALUES = {
 	email: "abc@xyz.com",
@@ -22,6 +24,13 @@ export async function createUser(apollo: ApolloServer, { email, token, authorize
 
 export async function createUserWithEmail(apollo: ApolloServer, email: string): Promise<GraphQLResponse> {
 	return createUser(apollo, { ...DEFAULT_CREATE_USER_VALUES, email });
+}
+
+export async function loginAsNewlyCreatedUser(apollo: ApolloServer, setSub: (sub?: CurrentUser) => void): Promise<CurrentUser> {
+	const createUserRes = await createUser(apollo);
+	const currentUser = unsafeJwtToCurrentUser(createUserRes.data?.signin as string);
+	setSub(currentUser);
+	return currentUser;
 }
 
 export async function queryAllUserAccessibleUserScalars(apollo: ApolloServer, id: string): Promise<GraphQLResponse> {

@@ -1,7 +1,7 @@
-import { ContextFunction } from "apollo-server-core";
-import { ApolloServer } from "apollo-server-koa";
+import type { ContextFunction } from "apollo-server-core";
+import type { ApolloServer } from "apollo-server-koa";
+import type { PrismaClient } from "@prisma/client";
 import { GraphQLError } from "graphql";
-import { PrismaClient } from "@prisma/client";
 
 import { apolloFactory } from "../../../src/apollo";
 import { cascadingDelete } from "../_helpers/truncate";

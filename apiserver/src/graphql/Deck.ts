@@ -217,12 +217,12 @@ export const DeckCreateMutation = mutationField("deckCreate", {
 	},
 	resolve: guardLoggedIn(async (_root, { name, description, promptLang, answerLang, published, archived, cards }, { sub, prisma }) => prisma.deck.create({ data: {
 		ownerId: sub.id,
-		name: name ?? "",
-		description: (description ?? {}) as Prisma.InputJsonObject,
-		promptLang: promptLang ?? "",
-		answerLang: answerLang ?? "",
-		published: published ?? true,
-		archived: archived ?? false,
+		name: name ?? undefined,
+		description: description ? description as Prisma.InputJsonObject : undefined,
+		promptLang: promptLang ?? undefined,
+		answerLang: answerLang ?? undefined,
+		published: published ?? undefined,
+		archived: archived ?? undefined,
 		cards: cards ? {
 			create: cards,
 		} : undefined,
