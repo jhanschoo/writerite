@@ -63,7 +63,7 @@ export function generateJWT(sub: CurrentUser, persist = false): string {
 }
 
 export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
-	const authorization = ctx.ctx?.get("Authorization") ?? ctx.connection?.context.Authorization ?? null;
+	const authorization = ctx.ctx?.get("Authorization") ?? /*ctx.connection?.context.Authorization ??*/ null;
 	if (!authorization) {
 		return;
 	}

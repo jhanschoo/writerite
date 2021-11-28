@@ -3,11 +3,11 @@ import { ApolloServer } from "apollo-server-koa";
 import { PrismaClient } from "@prisma/client";
 
 import { apolloFactory } from "../../../src/apollo";
-import { cascadingDelete } from "../seed/truncate";
-import { createUser } from "../seed/createUser";
+import { cascadingDelete } from "../_helpers/truncate";
+import { createUser } from "./User";
 import { testContextFactory, unsafeJwtToCurrentUser } from "../../_helpers";
 
-describe("graphql/User.ts", () => {
+describe("graphql/Deck.ts", () => {
 
 	let context: ContextFunction;
 	let stopContext: () => Promise<unknown>;
@@ -34,7 +34,7 @@ describe("graphql/User.ts", () => {
 			const res = await createUser(apollo);
 			expect(res).toHaveProperty("data.signin");
 			expect(typeof res.data?.signin).toBe("string");
-			const currentUser = unsafeJwtToCurrentUser(res.data?.signin ?? "");
+			const currentUser = unsafeJwtToCurrentUser(res.data.signin as string);
 			expect(currentUser).toHaveProperty("email");
 		});
 	});

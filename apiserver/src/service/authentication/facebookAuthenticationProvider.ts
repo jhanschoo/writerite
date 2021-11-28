@@ -27,7 +27,7 @@ const FB_ACCESS_TOKEN_QUERY = `https://graph.facebook.com/oauth/access_token?cli
 const fbAccessTokenPromise = new Promise<string>((resolve) => {
 	void fetch(FB_ACCESS_TOKEN_QUERY)
 		.then((response) => response.json())
-		.then((json) => resolve(json.access_token));
+		.then((json) => resolve(json.access_token as string));
 });
 
 export const facebookAuthenticationProvider: AuthenticationProvider = {

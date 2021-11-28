@@ -1,14 +1,14 @@
-import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
+import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
-import { jsonArg, uuidArg } from "./scalarUtil";
+import { jsonArg } from "./scalarUtil";
 
 export const Message = objectType({
 	name: "Message",
 	definition(t) {
-		t.nonNull.uuid("id");
-		t.nonNull.uuid("roomId");
-		t.uuid("senderId");
+		t.nonNull.id("id");
+		t.nonNull.id("roomId");
+		t.id("senderId");
 		t.nonNull.field("type", {
 			type: "MessageContentType",
 		});
@@ -49,7 +49,7 @@ export const MessageContentType = enumType({
 export const MessageQuery = queryField("message", {
 	type: nonNull("Message"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
 		const res = await prisma.message.findFirst({ where: { id, room: { occupants: { some: { occupantId: sub.id } } } } });
@@ -63,7 +63,7 @@ export const MessageQuery = queryField("message", {
 export const MessagesOfRoomQuery = queryField("messagesOfRoom", {
 	type: nonNull(list(nonNull("Message"))),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => prisma.message.findMany({ where: { room: { id, occupants: { some: { occupantId: sub.id } } } } })),
 });
@@ -71,7 +71,7 @@ export const MessagesOfRoomQuery = queryField("messagesOfRoom", {
 export const MessageCreateMutation = mutationField("messageCreate", {
 	type: nonNull("Message"),
 	args: {
-		roomId: nonNull(uuidArg()),
+		roomId: nonNull(idArg()),
 		type: nonNull("MessageContentType"),
 		content: jsonArg(),
 	},

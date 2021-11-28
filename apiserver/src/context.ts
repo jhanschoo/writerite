@@ -2,14 +2,14 @@ import env from "./safeEnv";
 import { ContextFunction } from "apollo-server-core";
 import { Context as KoaContext } from "koa";
 import { PubSubEngine } from "graphql-subscriptions";
-import { ExecutionParams } from "subscriptions-transport-ws";
+// import { ExecutionParams } from "subscriptions-transport-ws";
 import Redis from "ioredis";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 
 import { PrismaClient } from "@prisma/client";
 
 import { FETCH_DEPTH, getClaims } from "./util";
-import { CurrentUser } from "./types";
+import { CurrentUser, Roles } from "./types";
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 
@@ -26,7 +26,12 @@ const redisOptions = {
 export interface IntegrationContext {
 	ctx?: KoaContext;
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	connection?: ExecutionParams<{ Authorization?: string }>;
+	// connection?: ExecutionParams<{ Authorization?: string }>;
+}
+
+export interface AuthorizationHelpers {
+	isLoggedInAs(id: string): boolean;
+	get isAdmin(): boolean;
 }
 
 export interface Context {
@@ -35,6 +40,7 @@ export interface Context {
 	sub?: CurrentUser;
 	prisma: PrismaClient;
 	pubsub: PubSubEngine;
+	auth: AuthorizationHelpers;
 }
 
 export interface LoggedInContext extends Context {
@@ -64,13 +70,24 @@ export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: Integratio
 		subscriber,
 	});
 	return [
-		(ctx: IntegrationContext): Context => ({
-			ctx,
-			fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
-			sub: subFn?.(ctx) ?? opts?.sub ?? getClaims(ctx),
-			prisma,
-			pubsub,
-		}),
+		(ctx: IntegrationContext): Context => {
+			const sub = subFn?.(ctx) ?? opts?.sub ?? getClaims(ctx);
+			return {
+				ctx,
+				fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
+				sub,
+				prisma,
+				pubsub,
+				auth: {
+					isLoggedInAs(id: string): boolean {
+						return sub?.id === id;
+					},
+					get isAdmin(): boolean {
+						return Boolean(sub?.roles.includes(Roles.admin));
+					},
+				},
+			};
+		},
 		async () => Promise.allSettled([
 			useDefaultPrisma ? prisma.$disconnect() : Promise.resolve("custom prisma used"),
 			useDefaultPubsub ? (pubsub as RedisPubSub).close() : Promise.resolve("custom pubsub used"),

@@ -1,14 +1,14 @@
 import { Prisma } from "@prisma/client";
-import { enumType, list, mutationField, nonNull, objectType, queryField } from "nexus";
+import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
-import { emailAddressArg, jsonObjectArg, uuidArg } from "./scalarUtil";
+import { emailAddressArg, jsonObjectArg } from "./scalarUtil";
 
 export const Room = objectType({
 	name: "Room",
 	definition(t) {
-		t.nonNull.uuid("id");
-		t.nonNull.uuid("ownerId");
+		t.nonNull.id("id");
+		t.nonNull.id("ownerId");
 		t.nonNull.jsonObject("ownerConfig", {
 			resolve({ ownerConfig }) {
 				return ownerConfig as Prisma.JsonObject;
@@ -55,7 +55,7 @@ export const RoomState = enumType({
 
 export const RoomQuery = queryField("room", {
 	type: nonNull("Room"),
-	args: { id: nonNull(uuidArg()) },
+	args: { id: nonNull(idArg()) },
 	resolve: guardLoggedIn(async (_source, { id }, { prisma }) => {
 		const res = await prisma.room.findUnique({
 			where: { id },
@@ -91,7 +91,7 @@ export const RoomCreateMutation = mutationField("roomCreate", {
 export const RoomEditOwnerConfigMutation = mutationField("roomEditOwnerConfig", {
 	type: nonNull("Room"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 		ownerConfig: nonNull(jsonObjectArg()),
 	},
 	description: `@subscriptionsTriggered(
@@ -105,7 +105,7 @@ export const RoomEditOwnerConfigMutation = mutationField("roomEditOwnerConfig", 
 export const RoomSetStateMutation = mutationField("roomSetState", {
 	type: nonNull("Room"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 		state: nonNull("RoomState"),
 	},
 	description: `@subscriptionsTriggered(
@@ -130,8 +130,8 @@ export const RoomCleanUpDeadMutation = mutationField("roomCleanUpDead", {
 export const RoomAddOccupantMutation = mutationField("roomAddOccupant", {
 	type: nonNull("Room"),
 	args: {
-		id: nonNull(uuidArg()),
-		occupantId: nonNull(uuidArg()),
+		id: nonNull(idArg()),
+		occupantId: nonNull(idArg()),
 	},
 	description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
@@ -145,7 +145,7 @@ export const RoomAddOccupantMutation = mutationField("roomAddOccupant", {
 export const RoomAddOccupantByEmailMutation = mutationField("roomAddOccupantByEmail", {
 	type: nonNull("Room"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 		email: nonNull(emailAddressArg()),
 	},
 	description: `@subscriptionsTriggered(

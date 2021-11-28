@@ -1,13 +1,13 @@
 import { Prisma, Unit } from "@prisma/client";
-import { arg, booleanArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
+import { arg, booleanArg, idArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
-import { dateTimeArg, jsonObjectArg, uuidArg } from "./scalarUtil";
+import { dateTimeArg, jsonObjectArg } from "./scalarUtil";
 
 export const Card = objectType({
 	name: "Card",
 	definition(t) {
-		t.nonNull.uuid("id");
+		t.nonNull.id("id");
 		t.nonNull.jsonObject("prompt", {
 			resolve({ prompt }) {
 				return prompt as Prisma.JsonObject;
@@ -40,8 +40,8 @@ export const Card = objectType({
 export const UserCardRecord = objectType({
 	name: "UserCardRecord",
 	definition(t) {
-		t.nonNull.uuid("userId");
-		t.nonNull.uuid("cardId");
+		t.nonNull.id("userId");
+		t.nonNull.id("cardId");
 		t.nonNull.list.nonNull.dateTime("correctRecord");
 	},
 });
@@ -55,7 +55,7 @@ export const CardCreateMutation = mutationField("cardCreate", {
 	 */
 	type: nonNull("Card"),
 	args: {
-		deckId: nonNull(uuidArg()),
+		deckId: nonNull(idArg()),
 		/*
 		 * note that template is set to true if mainTemplate
 		 * is set to true and template is unspecified
@@ -115,7 +115,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 	 */
 	type: nonNull("Card"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 		prompt: jsonObjectArg({ undefinedOnly: true }),
 		fullAnswer: jsonObjectArg({ undefinedOnly: true }),
 		answers: list(nonNull(stringArg({ undefinedOnly: true }))),
@@ -157,7 +157,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplate", {
 	type: "Card",
 	args: {
-		deckId: nonNull(uuidArg()),
+		deckId: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { deckId }, { sub, prisma }) => {
 		const whereDeck = {
@@ -189,7 +189,7 @@ export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplat
 export const CardDeleteMutation = mutationField("cardDelete", {
 	type: nonNull("Card"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
 		const cards = await prisma.card.findMany({
@@ -222,7 +222,7 @@ export const CardDeleteMutation = mutationField("cardDelete", {
 export const OwnCardRecordSetMutation = mutationField("ownCardRecordSet", {
 	type: "UserCardRecord",
 	args: {
-		cardId: nonNull(uuidArg()),
+		cardId: nonNull(idArg()),
 		correctRecordAppend: nonNull(list(nonNull(dateTimeArg()))),
 	},
 	resolve: guardLoggedIn((_source, { cardId, correctRecordAppend }, { sub, prisma }) => prisma.userCardRecord.upsert({

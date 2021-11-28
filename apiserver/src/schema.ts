@@ -1,4 +1,4 @@
-import { makeSchema } from "nexus";
+import { makeSchema, fieldAuthorizePlugin } from "nexus";
 import { join } from "path";
 import * as types from "./graphql";
 import { scalarMapping } from "./graphql/scalarUtil";
@@ -11,7 +11,7 @@ export const schema = makeSchema({
 		typegen: join(__dirname, "..", "generated", "nexus-typegen.ts"),
 		schema: join(__dirname, "..", "generated", "schema.graphql"),
 	},
-	plugins: [undefinedOnlyPlugin],
+	plugins: [undefinedOnlyPlugin, fieldAuthorizePlugin()],
 	sourceTypes: {
 		debug: true,
 		modules: [

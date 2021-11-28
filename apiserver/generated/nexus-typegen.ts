@@ -5,6 +5,7 @@
 
 import type * as p from "./../node_modules/.prisma/client/index"
 import type { Context } from "./../src/context"
+import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
 import type { core } from "nexus"
 declare global {
   interface NexusGenCustomInputMethods<TypeName extends string> {
@@ -125,7 +126,7 @@ export interface NexusGenFieldTypes {
     answers: string[]; // [String!]!
     editedAt: NexusGenScalars['DateTime']; // DateTime!
     fullAnswer: NexusGenScalars['JSONObject']; // JSONObject!
-    id: NexusGenScalars['UUID']; // UUID!
+    id: string; // ID!
     mainTemplate: boolean; // Boolean!
     ownRecord: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     prompt: NexusGenScalars['JSONObject']; // JSONObject!
@@ -140,11 +141,11 @@ export interface NexusGenFieldTypes {
     descendantDecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     description: NexusGenScalars['JSONObject']; // JSONObject!
     editedAt: NexusGenScalars['DateTime']; // DateTime!
-    id: NexusGenScalars['UUID']; // UUID!
+    id: string; // ID!
     name: string; // String!
     ownRecord: NexusGenRootTypes['UserDeckRecord'] | null; // UserDeckRecord
     owner: NexusGenRootTypes['User']; // User!
-    ownerId: NexusGenScalars['UUID']; // UUID!
+    ownerId: string; // ID!
     promptLang: string; // String!
     published: boolean; // Boolean!
     subdecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
@@ -153,11 +154,11 @@ export interface NexusGenFieldTypes {
   Message: { // field return type
     content: NexusGenScalars['JSON']; // JSON!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
-    id: NexusGenScalars['UUID']; // UUID!
+    id: string; // ID!
     room: NexusGenRootTypes['Room']; // Room!
-    roomId: NexusGenScalars['UUID']; // UUID!
+    roomId: string; // ID!
     sender: NexusGenRootTypes['User'] | null; // User
-    senderId: NexusGenScalars['UUID'] | null; // UUID
+    senderId: string | null; // ID
     type: NexusGenEnums['MessageContentType']; // MessageContentType!
   }
   Mutation: { // field return type
@@ -194,33 +195,34 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Room: { // field return type
-    id: NexusGenScalars['UUID']; // UUID!
+    id: string; // ID!
     internalConfig: NexusGenScalars['JSONObject']; // JSONObject!
     messages: NexusGenRootTypes['Message'][]; // [Message!]!
     occupants: NexusGenRootTypes['User'][]; // [User!]!
     owner: NexusGenRootTypes['User']; // User!
     ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
-    ownerId: NexusGenScalars['UUID']; // UUID!
+    ownerId: string; // ID!
     state: NexusGenEnums['RoomState']; // RoomState!
   }
   User: { // field return type
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     email: NexusGenScalars['EmailAddress']; // EmailAddress!
-    id: NexusGenScalars['UUID']; // UUID!
+    id: string; // ID!
+    isPublic: boolean; // Boolean!
     name: string; // String!
     occupyingRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownedRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     roles: string[]; // [String!]!
   }
   UserCardRecord: { // field return type
-    cardId: NexusGenScalars['UUID']; // UUID!
+    cardId: string; // ID!
     correctRecord: NexusGenScalars['DateTime'][]; // [DateTime!]!
-    userId: NexusGenScalars['UUID']; // UUID!
+    userId: string; // ID!
   }
   UserDeckRecord: { // field return type
-    deckId: NexusGenScalars['UUID']; // UUID!
+    deckId: string; // ID!
     notes: NexusGenScalars['JSONObject']; // JSONObject!
-    userId: NexusGenScalars['UUID']; // UUID!
+    userId: string; // ID!
   }
 }
 
@@ -229,7 +231,7 @@ export interface NexusGenFieldTypeNames {
     answers: 'String'
     editedAt: 'DateTime'
     fullAnswer: 'JSONObject'
-    id: 'UUID'
+    id: 'ID'
     mainTemplate: 'Boolean'
     ownRecord: 'UserCardRecord'
     prompt: 'JSONObject'
@@ -244,11 +246,11 @@ export interface NexusGenFieldTypeNames {
     descendantDecks: 'Deck'
     description: 'JSONObject'
     editedAt: 'DateTime'
-    id: 'UUID'
+    id: 'ID'
     name: 'String'
     ownRecord: 'UserDeckRecord'
     owner: 'User'
-    ownerId: 'UUID'
+    ownerId: 'ID'
     promptLang: 'String'
     published: 'Boolean'
     subdecks: 'Deck'
@@ -257,11 +259,11 @@ export interface NexusGenFieldTypeNames {
   Message: { // field return type name
     content: 'JSON'
     createdAt: 'DateTime'
-    id: 'UUID'
+    id: 'ID'
     room: 'Room'
-    roomId: 'UUID'
+    roomId: 'ID'
     sender: 'User'
-    senderId: 'UUID'
+    senderId: 'ID'
     type: 'MessageContentType'
   }
   Mutation: { // field return type name
@@ -298,33 +300,34 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Room: { // field return type name
-    id: 'UUID'
+    id: 'ID'
     internalConfig: 'JSONObject'
     messages: 'Message'
     occupants: 'User'
     owner: 'User'
     ownerConfig: 'JSONObject'
-    ownerId: 'UUID'
+    ownerId: 'ID'
     state: 'RoomState'
   }
   User: { // field return type name
     decks: 'Deck'
     email: 'EmailAddress'
-    id: 'UUID'
+    id: 'ID'
+    isPublic: 'Boolean'
     name: 'String'
     occupyingRooms: 'Room'
     ownedRooms: 'Room'
     roles: 'String'
   }
   UserCardRecord: { // field return type name
-    cardId: 'UUID'
+    cardId: 'ID'
     correctRecord: 'DateTime'
-    userId: 'UUID'
+    userId: 'ID'
   }
   UserDeckRecord: { // field return type name
-    deckId: 'UUID'
+    deckId: 'ID'
     notes: 'JSONObject'
-    userId: 'UUID'
+    userId: 'ID'
   }
 }
 
@@ -332,27 +335,27 @@ export interface NexusGenArgTypes {
   Mutation: {
     cardCreate: { // args
       card: NexusGenInputs['CardCreateInput']; // CardCreateInput!
-      deckId: NexusGenScalars['UUID']; // UUID!
+      deckId: string; // ID!
       mainTemplate?: boolean | null; // Boolean
     }
     cardDelete: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     cardEdit: { // args
       answers?: string[] | null; // [String!]
       fullAnswer?: NexusGenScalars['JSONObject'] | null; // JSONObject
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
       mainTemplate?: boolean | null; // Boolean
       prompt?: NexusGenScalars['JSONObject'] | null; // JSONObject
       sortKey?: string | null; // String
       template?: boolean | null; // Boolean
     }
     cardUnsetMainTemplate: { // args
-      deckId: NexusGenScalars['UUID']; // UUID!
+      deckId: string; // ID!
     }
     deckAddSubdeck: { // args
-      id: NexusGenScalars['UUID']; // UUID!
-      subdeckId: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
+      subdeckId: string; // ID!
     }
     deckCreate: { // args
       answerLang?: string | null; // String
@@ -364,54 +367,54 @@ export interface NexusGenArgTypes {
       published?: boolean | null; // Boolean
     }
     deckDelete: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     deckEdit: { // args
       answerLang?: string | null; // String
       archived?: boolean | null; // Boolean
       description?: NexusGenScalars['JSONObject'] | null; // JSONObject
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
       name?: string | null; // String
       promptLang?: string | null; // String
       published?: boolean | null; // Boolean
     }
     deckRemoveSubdeck: { // args
-      id: NexusGenScalars['UUID']; // UUID!
-      subdeckId: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
+      subdeckId: string; // ID!
     }
     deckUsed: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     messageCreate: { // args
       content?: NexusGenScalars['JSON'] | null; // JSON
-      roomId: NexusGenScalars['UUID']; // UUID!
+      roomId: string; // ID!
       type: NexusGenEnums['MessageContentType']; // MessageContentType!
     }
     ownCardRecordSet: { // args
-      cardId: NexusGenScalars['UUID']; // UUID!
+      cardId: string; // ID!
       correctRecordAppend: NexusGenScalars['DateTime'][]; // [DateTime!]!
     }
     ownDeckRecordSet: { // args
-      deckId: NexusGenScalars['UUID']; // UUID!
+      deckId: string; // ID!
       notes: NexusGenScalars['JSONObject']; // JSONObject!
     }
     roomAddOccupant: { // args
-      id: NexusGenScalars['UUID']; // UUID!
-      occupantId: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
+      occupantId: string; // ID!
     }
     roomAddOccupantByEmail: { // args
       email: NexusGenScalars['EmailAddress']; // EmailAddress!
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     roomCreate: { // args
       ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
     }
     roomEditOwnerConfig: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
       ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
     }
     roomSetState: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
       state: NexusGenEnums['RoomState']; // RoomState!
     }
     signin: { // args
@@ -423,30 +426,34 @@ export interface NexusGenArgTypes {
       token: string; // String!
     }
     userEdit: { // args
+      isPublic?: boolean | null; // Boolean
       name?: string | null; // String
     }
   }
   Query: {
     deck: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     decks: { // args
-      cursor?: NexusGenScalars['UUID'] | null; // UUID
+      cursor?: string | null; // ID
       scope?: NexusGenEnums['DecksQueryScope'] | null; // DecksQueryScope
       take?: number | null; // Int
       titleFilter?: string | null; // String
     }
     message: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     messagesOfRoom: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
     }
     ownDeckRecord: { // args
-      deckId: NexusGenScalars['UUID']; // UUID!
+      deckId: string; // ID!
     }
     room: { // args
-      id: NexusGenScalars['UUID']; // UUID!
+      id: string; // ID!
+    }
+    user: { // args
+      id: string; // ID!
     }
   }
 }
@@ -514,6 +521,15 @@ declare global {
   interface NexusGenPluginInputTypeConfig<TypeName extends string> {
   }
   interface NexusGenPluginFieldConfig<TypeName extends string, FieldName extends string> {
+    /**
+     * Authorization for an individual field. Returning "true"
+     * or "Promise<true>" means the field can be accessed.
+     * Returning "false" or "Promise<false>" will respond
+     * with a "Not Authorized" error for the field.
+     * Returning or throwing an error will also prevent the
+     * resolver from executing.
+     */
+    authorize?: FieldAuthorizeResolver<TypeName, FieldName>
   }
   interface NexusGenPluginInputFieldConfig<TypeName extends string, FieldName extends string> {
     /**

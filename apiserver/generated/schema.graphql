@@ -6,7 +6,7 @@ type Card {
   answers: [String!]!
   editedAt: DateTime!
   fullAnswer: JSONObject!
-  id: UUID!
+  id: ID!
   mainTemplate: Boolean!
   ownRecord: UserCardRecord
   prompt: JSONObject!
@@ -45,11 +45,11 @@ type Deck {
   descendantDecks: [Deck!]!
   description: JSONObject!
   editedAt: DateTime!
-  id: UUID!
+  id: ID!
   name: String!
   ownRecord: UserDeckRecord
   owner: User!
-  ownerId: UUID!
+  ownerId: ID!
   promptLang: String!
   published: Boolean!
 
@@ -88,11 +88,11 @@ scalar JWT
 type Message {
   content: JSON!
   createdAt: DateTime!
-  id: UUID!
+  id: ID!
   room: Room!
-  roomId: UUID!
+  roomId: ID!
   sender: User
-  senderId: UUID
+  senderId: ID
   type: MessageContentType!
 }
 
@@ -106,39 +106,39 @@ enum MessageContentType {
 }
 
 type Mutation {
-  cardCreate(card: CardCreateInput!, deckId: UUID!, mainTemplate: Boolean): Card!
-  cardDelete(id: UUID!): Card!
-  cardEdit(answers: [String!], fullAnswer: JSONObject, id: UUID!, mainTemplate: Boolean, prompt: JSONObject, sortKey: String, template: Boolean): Card!
-  cardUnsetMainTemplate(deckId: UUID!): Card
-  deckAddSubdeck(id: UUID!, subdeckId: UUID!): Deck!
+  cardCreate(card: CardCreateInput!, deckId: ID!, mainTemplate: Boolean): Card!
+  cardDelete(id: ID!): Card!
+  cardEdit(answers: [String!], fullAnswer: JSONObject, id: ID!, mainTemplate: Boolean, prompt: JSONObject, sortKey: String, template: Boolean): Card!
+  cardUnsetMainTemplate(deckId: ID!): Card
+  deckAddSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckCreate(answerLang: String, archived: Boolean, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!
-  deckDelete(id: UUID!): Deck!
-  deckEdit(answerLang: String, archived: Boolean, description: JSONObject, id: UUID!, name: String, promptLang: String, published: Boolean): Deck!
-  deckRemoveSubdeck(id: UUID!, subdeckId: UUID!): Deck!
-  deckUsed(id: UUID!): Deck!
+  deckDelete(id: ID!): Deck!
+  deckEdit(answerLang: String, archived: Boolean, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
+  deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
+  deckUsed(id: ID!): Deck!
 
   """
   @subscriptionsTriggered(
       signatures: ["chatMsgsOfRoomUpdates"]
     )
   """
-  messageCreate(content: JSON, roomId: UUID!, type: MessageContentType!): Message!
-  ownCardRecordSet(cardId: UUID!, correctRecordAppend: [DateTime!]!): UserCardRecord
-  ownDeckRecordSet(deckId: UUID!, notes: JSONObject!): UserDeckRecord!
+  messageCreate(content: JSON, roomId: ID!, type: MessageContentType!): Message!
+  ownCardRecordSet(cardId: ID!, correctRecordAppend: [DateTime!]!): UserCardRecord
+  ownDeckRecordSet(deckId: ID!, notes: JSONObject!): UserDeckRecord!
 
   """
   @subscriptionsTriggered(
       signatures: ["roomUpdates", "roomsUpdates"]
     )
   """
-  roomAddOccupant(id: UUID!, occupantId: UUID!): Room!
+  roomAddOccupant(id: ID!, occupantId: ID!): Room!
 
   """
   @subscriptionsTriggered(
       signatures: ["roomUpdates", "roomsUpdates"]
     )
   """
-  roomAddOccupantByEmail(email: EmailAddress!, id: UUID!): Room!
+  roomAddOccupantByEmail(email: EmailAddress!, id: ID!): Room!
 
   """
   @subscriptionsTriggered(
@@ -159,42 +159,42 @@ type Mutation {
       signatures: ["roomUpdates", "roomsUpdates"]
     )
   """
-  roomEditOwnerConfig(id: UUID!, ownerConfig: JSONObject!): Room!
+  roomEditOwnerConfig(id: ID!, ownerConfig: JSONObject!): Room!
 
   """
   @subscriptionsTriggered(
       signatures: ["roomUpdates", "roomsUpdates"]
     )
   """
-  roomSetState(id: UUID!, state: RoomState!): Room!
+  roomSetState(id: ID!, state: RoomState!): Room!
   signin(authorizer: String!, email: String!, identifier: String!, name: String, persist: Boolean, token: String!): JWT
-  userEdit(name: String): User!
+  userEdit(isPublic: Boolean, name: String): User!
 }
 
 type Query {
-  deck(id: UUID!): Deck!
+  deck(id: ID!): Deck!
 
   """
   	implicit limit of 60
   	
   """
-  decks(cursor: UUID, scope: DecksQueryScope, take: Int, titleFilter: String): [Deck!]!
-  message(id: UUID!): Message!
-  messagesOfRoom(id: UUID!): [Message!]!
+  decks(cursor: ID, scope: DecksQueryScope, take: Int, titleFilter: String): [Deck!]!
+  message(id: ID!): Message!
+  messagesOfRoom(id: ID!): [Message!]!
   occupyingRooms: [Room!]!
-  ownDeckRecord(deckId: UUID!): UserDeckRecord
-  room(id: UUID!): Room!
-  user: User!
+  ownDeckRecord(deckId: ID!): UserDeckRecord
+  room(id: ID!): Room!
+  user(id: ID!): User!
 }
 
 type Room {
-  id: UUID!
+  id: ID!
   internalConfig: JSONObject!
   messages: [Message!]!
   occupants: [User!]!
   owner: User!
   ownerConfig: JSONObject!
-  ownerId: UUID!
+  ownerId: ID!
   state: RoomState!
 }
 
@@ -212,7 +212,8 @@ scalar UUID
 type User {
   decks: [Deck!]!
   email: EmailAddress!
-  id: UUID!
+  id: ID!
+  isPublic: Boolean!
   name: String!
   occupyingRooms: [Room!]!
   ownedRooms: [Room!]!
@@ -220,13 +221,13 @@ type User {
 }
 
 type UserCardRecord {
-  cardId: UUID!
+  cardId: ID!
   correctRecord: [DateTime!]!
-  userId: UUID!
+  userId: ID!
 }
 
 type UserDeckRecord {
-  deckId: UUID!
+  deckId: ID!
   notes: JSONObject!
-  userId: UUID!
+  userId: ID!
 }

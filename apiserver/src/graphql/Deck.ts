@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
 import { ApolloError } from "apollo-server-core";
-import { arg, booleanArg, enumType, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
+import { arg, booleanArg, enumType, idArg, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
 import { getDescendantsOfDeck } from "../service/deckFamily";
-import { jsonObjectArg, uuidArg } from "./scalarUtil";
+import { jsonObjectArg } from "./scalarUtil";
 
 const DEFAULT_TAKE = 60;
 
@@ -31,8 +31,8 @@ function cursorParams(cursor?: string | null, take?: number | null): {
 export const Deck = objectType({
 	name: "Deck",
 	definition(t) {
-		t.nonNull.uuid("id");
-		t.nonNull.uuid("ownerId");
+		t.nonNull.id("id");
+		t.nonNull.id("ownerId");
 		t.nonNull.string("name");
 		t.nonNull.jsonObject("description", {
 			resolve({ description }) {
@@ -102,8 +102,8 @@ export const Deck = objectType({
 export const UserDeckRecord = objectType({
 	name: "UserDeckRecord",
 	definition(t) {
-		t.nonNull.uuid("userId");
-		t.nonNull.uuid("deckId");
+		t.nonNull.id("userId");
+		t.nonNull.id("deckId");
 		t.nonNull.jsonObject("notes", {
 			resolve({ notes }) {
 				return notes as Prisma.JsonObject;
@@ -115,7 +115,7 @@ export const UserDeckRecord = objectType({
 export const DeckQuery = queryField("deck", {
 	type: nonNull("Deck"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_root, { id }, { prisma, sub }) => {
 		const OR = [
@@ -137,7 +137,7 @@ export const DeckQuery = queryField("deck", {
 export const DecksQuery = queryField("decks", {
 	type: nonNull(list(nonNull("Deck"))),
 	args: {
-		cursor: uuidArg({ undefinedOnly: true }),
+		cursor: idArg({ undefinedOnly: true }),
 		take: intArg({ undefinedOnly: true }),
 		titleFilter: stringArg({ undefinedOnly: true }),
 		scope: arg({
@@ -194,7 +194,7 @@ export const DecksQueryScope = enumType({
 export const OwnDeckRecordQuery = queryField("ownDeckRecord", {
 	type: "UserDeckRecord",
 	args: {
-		deckId: nonNull(uuidArg()),
+		deckId: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_root, { deckId }, { sub, prisma }) =>
 		// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -232,7 +232,7 @@ export const DeckCreateMutation = mutationField("deckCreate", {
 export const DeckEditMutation = mutationField("deckEdit", {
 	type: nonNull("Deck"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 		name: stringArg({ undefinedOnly: true }),
 		description: jsonObjectArg({ undefinedOnly: true }),
 		promptLang: stringArg({ undefinedOnly: true }),
@@ -262,8 +262,8 @@ export const DeckEditMutation = mutationField("deckEdit", {
 export const DeckAddSubdeckMutation = mutationField("deckAddSubdeck", {
 	type: nonNull("Deck"),
 	args: {
-		id: nonNull(uuidArg()),
-		subdeckId: nonNull(uuidArg()),
+		id: nonNull(idArg()),
+		subdeckId: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id, subdeckId }, { sub, prisma }) => {
 		if (await prisma.deck.count({
@@ -290,8 +290,8 @@ export const DeckAddSubdeckMutation = mutationField("deckAddSubdeck", {
 export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
 	type: nonNull("Deck"),
 	args: {
-		id: nonNull(uuidArg()),
-		subdeckId: nonNull(uuidArg()),
+		id: nonNull(idArg()),
+		subdeckId: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id, subdeckId }, { sub, prisma }) => {
 		if (await prisma.deck.count({
@@ -315,7 +315,7 @@ export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
 export const DeckUsedMutation = mutationField("deckUsed", {
 	type: nonNull("Deck"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
 		if (await prisma.deck.count({ where: { ownerId: sub.id, id } }) !== 1) {
@@ -333,7 +333,7 @@ export const DeckUsedMutation = mutationField("deckUsed", {
 export const DeckDeleteMutation = mutationField("deckDelete", {
 	type: nonNull("Deck"),
 	args: {
-		id: nonNull(uuidArg()),
+		id: nonNull(idArg()),
 	},
 	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
 		const decks = await prisma.deck.findMany({ where: { id, ownerId: sub.id } });
@@ -354,7 +354,7 @@ export const DeckDeleteMutation = mutationField("deckDelete", {
 export const OwnDeckRecordSetMutation = mutationField("ownDeckRecordSet", {
 	type: nonNull("UserDeckRecord"),
 	args: {
-		deckId: nonNull(uuidArg()),
+		deckId: nonNull(idArg()),
 		notes: nonNull(jsonObjectArg()),
 	},
 	resolve: guardLoggedIn((_source, { deckId, notes }, { sub, prisma }) => prisma.userDeckRecord.upsert({
