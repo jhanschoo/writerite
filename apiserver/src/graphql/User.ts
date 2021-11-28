@@ -57,8 +57,8 @@ export const UserQuery = queryField("user", {
 export const UserEditMutation = mutationField("userEdit", {
 	type: nonNull("User"),
 	args: {
-		name: stringArg(),
-		isPublic: booleanArg(),
+		name: stringArg({ undefinedOnly: true }),
+		isPublic: booleanArg({ undefinedOnly: true }),
 	},
 	resolve: guardLoggedIn(async (_source, { name, isPublic }, { sub, prisma }) => {
 		try {
