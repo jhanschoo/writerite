@@ -31,59 +31,78 @@ describe("graphql/Deck.ts", () => {
 		await cascadingDelete(prisma).user;
 	});
 
-	describe("Mutation.deckCreate", () => {
-		it("should be able to create an empty deck", async () => {
-			expect.assertions(1);
-			await loginAsNewlyCreatedUser(apollo, setSub);
-			const createDeckRes = await mutationDeckCreateEmpty(apollo);
-			expect(createDeckRes).toHaveProperty("data.deckCreate.id", expect.any(String));
+	describe("Mutation", () => {
+		describe("deckAddSubdeck", () => {
+			// TODO: implement
 		});
-	});
-
-	describe("Query.deck", () => {
-		it("should be able to return scalars of an owned deck", async () => {
-			expect.assertions(1);
-			const currentUser = await loginAsNewlyCreatedUser(apollo, setSub);
-			const createDeckRes = await mutationDeckCreateEmpty(apollo);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const id = createDeckRes.data?.deckCreate?.id as string;
-			const queryDeckRes = await queryDeckScalars(apollo, id);
-			expect(queryDeckRes).toHaveProperty("data.deck", {
-				id,
-				answerLang: "",
-				archived: false,
-				description: {},
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				editedAt: expect.any(Date),
-				name: "",
-				ownerId: currentUser.id,
-				promptLang: "",
-				published: false,
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-				usedAt: expect.any(Date),
+		describe("deckCreate", () => {
+			it("should be able to create an empty deck", async () => {
+				expect.assertions(1);
+				await loginAsNewlyCreatedUser(apollo, setSub);
+				const createDeckRes = await mutationDeckCreateEmpty(apollo);
+				expect(createDeckRes).toHaveProperty("data.deckCreate.id", expect.any(String));
 			});
 		});
+		describe("deckDelete", () => {
+			// TODO: implement
+		});
+		describe("deckEdit", () => {
+			// TODO: implement
+		});
+		describe("deckRemoveSubdeck", () => {
+			// TODO: implement
+		});
+		describe("deckUsed", () => {
+			// TODO: implement
+		});
 	});
 
-	describe("Query.decks", () => {
-		it("should be able to return ids of owned, unarchived decks", async () => {
-			expect.assertions(1);
-			await loginAsNewlyCreatedUser(apollo, setSub);
-			const createDeck1Res = await mutationDeckCreateEmpty(apollo);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const id1 = createDeck1Res.data?.deckCreate?.id as string;
-			const createDeck2Res = await mutationDeckCreateEmpty(apollo);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-			const id2 = createDeck2Res.data?.deckCreate?.id as string;
-			const queryDecksRes = await queryDecks(apollo);
-			expect(queryDecksRes).toHaveProperty("data.decks", expect.arrayContaining([
-				{
-					id: id1,
-				},
-				{
-					id: id2,
-				},
-			]));
+	describe("Query", () => {
+		describe("deck", () => {
+			it("should be able to return scalars of an owned deck", async () => {
+				expect.assertions(1);
+				const currentUser = await loginAsNewlyCreatedUser(apollo, setSub);
+				const createDeckRes = await mutationDeckCreateEmpty(apollo);
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				const id = createDeckRes.data?.deckCreate?.id as string;
+				const queryDeckRes = await queryDeckScalars(apollo, id);
+				expect(queryDeckRes).toHaveProperty("data.deck", {
+					id,
+					answerLang: "",
+					archived: false,
+					description: {},
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					editedAt: expect.any(Date),
+					name: "",
+					ownerId: currentUser.id,
+					promptLang: "",
+					published: false,
+					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+					usedAt: expect.any(Date),
+				});
+			});
+		});
+
+		describe("decks", () => {
+			it("should be able to return ids of owned, unarchived decks", async () => {
+				expect.assertions(1);
+				await loginAsNewlyCreatedUser(apollo, setSub);
+				const createDeck1Res = await mutationDeckCreateEmpty(apollo);
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				const id1 = createDeck1Res.data?.deckCreate?.id as string;
+				const createDeck2Res = await mutationDeckCreateEmpty(apollo);
+				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+				const id2 = createDeck2Res.data?.deckCreate?.id as string;
+				const queryDecksRes = await queryDecks(apollo);
+				expect(queryDecksRes).toHaveProperty("data.decks", expect.arrayContaining([
+					{
+						id: id1,
+					},
+					{
+						id: id2,
+					},
+				]));
+			});
 		});
 	});
 });
