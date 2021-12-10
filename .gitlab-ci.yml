@@ -1,5 +1,5 @@
 default:
-  image: docker:19.03.11
+  image: docker:latest
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -26,33 +26,33 @@ variables:
   DOCKER_DRIVER: overlay2 
   DOCKER_TLS_CERTDIR: "/certs"
   HELM_EXPERIMENTAL_OCI: "1"
-  DEPLOY_VER: 0.1.0-dev.11
+  # DEPLOY_VER: 0.1.0-dev.11
 
 services:
-  - docker:19.03.11-dind
+  - docker:dind
 
 before_script:
   - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY" || true
   - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY" || true
 
-publish-api-graph:
-  stage: publish-api-graph
-  needs: []
-  image: node:14.7
-  script:
-    - cd apiserver
-    # - npm ci --cache ../.npm --prefer-offline
-    # - npm run push-schema
-  services: []
+# publish-api-graph:
+#   stage: publish-api-graph
+#   needs: []
+#   image: node:14.7
+#   script:
+#     - cd apiserver
+#     # - npm ci --cache ../.npm --prefer-offline
+#     # - npm run push-schema
+#   services: []
 
-build-wright-node:
-  stage: build-projects
-  needs:
-    - publish-api-graph
-  script:
-    - apk add --update nodejs npm
-    - cd wright-node
-    - sh dockerbuild.sh
+# build-wright-node:
+#   stage: build-projects
+#   needs:
+#     - publish-api-graph
+#   script:
+#     - apk add --update nodejs npm
+#     - cd wright-node
+#     - sh dockerbuild.sh
 
 build-apiserver:
   stage: build-projects
@@ -62,133 +62,132 @@ build-apiserver:
     - cd apiserver
     - sh dockerbuild.sh
 
-pages:
-  stage: build-projects
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  needs:
-    - publish-api-graph
-  image: node:14.7
-  script:
-    - cd frontend-react
-    - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
-    - NODE_ENV="production" npm run build
-    - cd ..
-    - mv frontend-react/build public
-  services: []
-  artifacts:
-    paths:
-      - public
+# pages:
+#   stage: build-projects
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master"
+#   needs:
+#     - publish-api-graph
+#   image: node:14.7
+#   script:
+#     - cd frontend-react
+#     - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
+#     - NODE_ENV="production" npm run build
+#     - cd ..
+#     - mv frontend-react/build public
+#   services: []
+#   artifacts:
+#     paths:
+#       - public
 
-build-pages:
-  stage: build-projects
-  rules:
-    - if: $CI_COMMIT_BRANCH != "master"
-  needs:
-    - publish-api-graph
-  image: node:14.7
-  script:
-    - cd frontend-react
-    - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
-    - NODE_ENV="production" CI="false" npm run build
-    - cd ..
-    - mv frontend-react/build public
-  services: []
-  artifacts:
-    paths:
-      - public
+# build-pages:
+#   stage: build-projects
+#   rules:
+#     - if: $CI_COMMIT_BRANCH != "master"
+#   needs:
+#     - publish-api-graph
+#   image: node:14.7
+#   script:
+#     - cd frontend-react
+#     - NODE_ENV="production" npm ci --cache ../.npm --prefer-offline
+#     - NODE_ENV="production" CI="false" npm run build
+#     - cd ..
+#     - mv frontend-react/build public
+#   services: []
+#   artifacts:
+#     paths:
+#       - public
 
 build-apiserver-chart:
   stage: build-projects
   needs: []
-  image: dtzar/helm-kubectl:3.3.0
+  image: dtzar/helm-kubectl:3.7.2
   script:
     - cd charts/writerite-apiserver
-    - helm chart save . "$CI_REGISTRY_IMAGE/writerite-apiserver" | tee stdout
-    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+    - helm package .
+    - helm push *.tgz "oci://$CI_REGISTRY_IMAGE"
+    - rm *.tgz
   services: []
 
-build-wright-node-chart:
-  stage: build-projects
-  needs: []
-  image: dtzar/helm-kubectl:3.3.0
-  script:
-    - cd charts/writerite-wright-node
-    - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - helm chart save . "$CI_REGISTRY_IMAGE/writerite-wright-node" | tee stdout
-    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
-  services: []
+# build-wright-node-chart:
+#   stage: build-projects
+#   needs: []
+#   image: dtzar/helm-kubectl:3.7.2
+#   script:
+#     - cd charts/writerite-wright-node
+#     - helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+#     - helm chart save . "$CI_REGISTRY_IMAGE/writerite-wright-node" | tee stdout
+#     - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+#   services: []
 
 build-backend-chart:
   stage: build-meta
   needs:
     - build-apiserver-chart
-    - build-wright-node-chart
-  image: dtzar/helm-kubectl:3.3.0
+    # - build-wright-node-chart
+  image: dtzar/helm-kubectl:3.7.2
   script:
     - cd charts/writerite-backend
     - helm repo add bitnami https://charts.bitnami.com/bitnami
     - helm repo update
-    # contrary to documentation, oci repositories not yet supported
-    # https://github.com/helm/helm/pull/7613
-    - helm dependency build
-    - tar -xf charts/postgresql* -C charts
-    - rm charts/postgresql*.tgz
-    - mv init.sql charts/postgresql/files/docker-entrypoint-initdb.d/
-    - helm chart save . "$CI_REGISTRY_IMAGE/writerite-backend" | tee stdout
-    - helm chart push "$(head -1 stdout | sed 's/ref:\s*\(.*\)/\1/')"
+    - helm dependency update
+    - helm package .
+    - helm push *.tgz "oci://$CI_REGISTRY_IMAGE" | tee stdout
+    # - WRITERITE_BACKEND_CHART_REF="$(head -1 stdout | sed 's/Pushed:\s*\(.*\)/\1/')"
+    # - WRITERITE_BACKEND_CHART_NAME="$CI_REGISTRY_IMAGE/writerite-backend"
+    # - WRITERITE_BACKEND_CHART_VERSION="${WRITERITE_BACKEND_CHART_REF#${WRITERITE_BACKEND_CHART_NAME}}"
   services: []
 
-deploy-backend:
-  stage: deploy
-  needs:
-    - publish-api-graph
-    - build-apiserver
-    - build-wright-node
-    - build-backend-chart
-    - pages
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  image: dtzar/helm-kubectl:3.3.0
-  environment:
-    name: production
-    url: https://api.writerite.site/
-  script:
-    - mkdir tmp
-    - cd tmp
-    - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
-    - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
-    - |-
-      cat << EOF > values.yaml
-      postgresql:
-        postgresqlPassword: "$POSTGRESQL_PASSWORD"
-      writerite-apiserver:
-        apolloKey: "$APOLLO_KEY"
-        jwt:
-          privateKey: '$JWT_PRIVATE_KEY'
-          publicKey: '$JWT_PUBLIC_KEY'
-        database:
-          user: "postgres"
-          password: "$POSTGRESQL_PASSWORD"
-          host: "writerite-backend-postgresql"
-          port: "5432"
-          database: "postgres"
-        redis:
-          host: "writerite-backend-redis-master"
-          port: "6379"
-        gapiClient:
-          id: "$GAPI_CLIENT_ID"
-          secret: "$GAPI_CLIENT_SECRET"
-        facebookApp:
-          id: "$FACEBOOK_APP_ID"
-          secret: "$FACEBOOK_APP_SECRET"
-        recaptcha:
-          secret: "$RECAPTCHA_SECRET"
-      writerite-wright-node:
-        graphql:
-          http: "http://writerite-backend-writerite-apiserver:4000/graphql"
-          ws: "ws://writerite-backend-writerite-apiserver:4000/graphql"
-        wrightSecretJwt: "$WRIGHT_SECRET_JWT"
-      EOF
-    - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
-  services: []
+# deploy-backend:
+#   stage: deploy
+#   needs:
+#     - publish-api-graph
+#     - build-apiserver
+#     - build-wright-node
+#     - build-backend-chart
+#     - pages
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master"
+#   image: dtzar/helm-kubectl:3.7.2
+#   environment:
+#     name: production
+#     url: https://api.writerite.site/
+#   script:
+#     - mkdir tmp
+#     - cd tmp
+#     - helm chart pull "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
+#     - helm chart export "$CI_REGISTRY_IMAGE/writerite-backend:$DEPLOY_VER"
+#     - |-
+#       cat << EOF > values.yaml
+#       postgresql:
+#         postgresqlPassword: "$POSTGRESQL_PASSWORD"
+#       writerite-apiserver:
+#         apolloKey: "$APOLLO_KEY"
+#         jwt:
+#           privateKey: '$JWT_PRIVATE_KEY'
+#           publicKey: '$JWT_PUBLIC_KEY'
+#         database:
+#           user: "postgres"
+#           password: "$POSTGRESQL_PASSWORD"
+#           host: "writerite-backend-postgresql"
+#           port: "5432"
+#           database: "postgres"
+#         redis:
+#           host: "writerite-backend-redis-master"
+#           port: "6379"
+#         gapiClient:
+#           id: "$GAPI_CLIENT_ID"
+#           secret: "$GAPI_CLIENT_SECRET"
+#         facebookApp:
+#           id: "$FACEBOOK_APP_ID"
+#           secret: "$FACEBOOK_APP_SECRET"
+#         recaptcha:
+#           secret: "$RECAPTCHA_SECRET"
+#       writerite-wright-node:
+#         graphql:
+#           http: "http://writerite-backend-writerite-apiserver:4000/graphql"
+#           ws: "ws://writerite-backend-writerite-apiserver:4000/graphql"
+#         wrightSecretJwt: "$WRIGHT_SECRET_JWT"
+#       EOF
+#     - helm upgrade -i --reset-values -f values.yaml writerite-backend writerite-backend
+#   services: []
