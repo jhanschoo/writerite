@@ -26,7 +26,7 @@ sh dockerbuild.sh
 # build-apiserver-chart
 cd "$WRITERITE_PROJECT_ROOT/charts/writerite-apiserver"
 helm package .
-helm push *.tgz "oci://$CI_REGISTRY_IMAGE" 
+helm push *.tgz "oci://$CI_REGISTRY_IMAGE"
 rm *.tgz
 
 # build-backend-chart
@@ -37,7 +37,7 @@ helm package .
 helm push *.tgz "oci://$CI_REGISTRY_IMAGE" | tee stdout
 WRITERITE_BACKEND_CHART_REF="$(head -1 stdout | sed 's/Pushed:\s*\(.*\)/\1/')"
 WRITERITE_BACKEND_CHART_NAME="$CI_REGISTRY_IMAGE/writerite-backend"
-WRITERITE_BACKEND_CHART_VERSION="${WRITERITE_BACKEND_CHART_REF#${WRITERITE_BACKEND_CHART_NAME}:}"
+WRITERITE_BACKEND_CHART_VERSION="${WRITERITE_BACKEND_CHART_REF#${WRITERITE_BACKEND_CHART_NAME}}"
 rm *.tgz stdout charts/*.tgz
 
 # deploy

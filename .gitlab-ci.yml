@@ -106,7 +106,6 @@ build-apiserver-chart:
     - cd charts/writerite-apiserver
     - helm package .
     - helm push *.tgz "oci://$CI_REGISTRY_IMAGE"
-    - rm *.tgz
   services: []
 
 # build-wright-node-chart:
