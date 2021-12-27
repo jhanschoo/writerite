@@ -1,4 +1,4 @@
-import { makeSchema, fieldAuthorizePlugin } from "nexus";
+import { fieldAuthorizePlugin, makeSchema } from "nexus";
 import { join } from "path";
 import * as types from "./graphql";
 import { scalarMapping } from "./graphql/scalarUtil";
