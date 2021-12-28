@@ -46,7 +46,7 @@ docker build \
   --tag "$INITJOB_IMAGE_TAG" \
   --tag "$INITJOB_CACHE_IMAGE_TAG" \
   .
-kind load docker-image "$INITJOB_IMAGE_TAG"
+kind load docker-image "$INITJOB_IMAGE_TAG" || true
 
 docker push "$INITJOB_IMAGE_TAG"
 docker push "$INITJOB_CACHE_IMAGE_TAG"
@@ -62,7 +62,7 @@ docker build \
   --tag "$APP_IMAGE_TAG" \
   --tag "$APP_CACHE_IMAGE_TAG" \
   .
-kind load docker-image "$APP_IMAGE_TAG"
+kind load docker-image "$APP_IMAGE_TAG" || true
 
 docker push "$APP_IMAGE_TAG"
 docker push "$APP_CACHE_IMAGE_TAG"
