@@ -19,9 +19,10 @@
       "cwd": "${workspaceFolder}"
     },
     {
-      "type": "node",
-      "name": "Run Jest integration tests",
+      "type": "pwa-node",
+      "name": "vscode-jest-tests",
       "request": "launch",
+      "runtimeVersion": "14",
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
       "disableOptimisticBPs": true,
@@ -30,10 +31,9 @@
       "args": [
         "run",
         "test:integration",
-        "--",
-        "--runInBand",
-        "--watchAll=false"
-      ]
+        "--"
+      ],
+      "preLaunchTask": "${defaultBuildTask}"
     }
   ]
 }

@@ -60,6 +60,6 @@
 		"app:start": "node dist/src/index.js",
 		"dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --transpile-only --no-notify src/index.ts",
 		"dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && ts-node --transpile-only src/schema",
-		"test:integration": "export $(xargs -a .env -d '\\n') && npm run dev:init && jest --runInBand test/integration"
+		"test:integration": "export $(xargs -a .env -d '\\n') && jest --runInBand test/integration"
 	}
 }
