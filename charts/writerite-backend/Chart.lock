@@ -1,12 +1,12 @@
 dependencies:
 - name: postgresql
   repository: https://charts.bitnami.com/bitnami
-  version: 10.13.8
+  version: 10.13.15
 - name: redis
   repository: https://charts.bitnami.com/bitnami
-  version: 15.6.1
+  version: 15.6.9
 - name: writerite-apiserver
   repository: oci://registry.gitlab.com/writerite/writerite
   version: 0.1.0-dev.11
-digest: sha256:636840e66237c43fa6bb1b06af8b7ee0e73b3329442880cda698219e37dfd2d6
-generated: "2021-11-28T09:10:05.333893253+08:00"
+digest: sha256:3b32eb3c4dd0569f9355cecca0411b982977384d2947740101ea09e2befad0b2
+generated: "2021-12-28T12:59:45.778606566+08:00"

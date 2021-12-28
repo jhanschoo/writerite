@@ -59,7 +59,7 @@
 		"init:run": "prisma db push && rover graph publish $APOLLO_GRAPH_ID@$APOLLO_GRAPH_VARIANT --schema generated/schema.graphql",
 		"app:start": "node dist/src/index.js",
 		"dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --transpile-only --no-notify src/index.ts",
-		"generate": "export $(xargs -a .env -d '\\n') && prisma generate && ts-node --transpile-only src/schema",
-		"test:integration": "export $(xargs -a .env -d '\\n') && npm run generate && jest --runInBand test/integration"
+		"dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && ts-node --transpile-only src/schema",
+		"test:integration": "export $(xargs -a .env -d '\\n') && npm run dev:init && jest --runInBand test/integration"
 	}
 }
