@@ -5,3 +5,4 @@ export * from "./Deck";
 export * from "./Card";
 export * from "./Room";
 export * from "./Message";
+export * from "./Health";

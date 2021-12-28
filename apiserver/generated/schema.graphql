@@ -179,6 +179,7 @@ type Query {
   	
   """
   decks(cursor: ID, scope: DecksQueryScope, take: Int, titleFilter: String): [Deck!]!
+  health: String!
   message(id: ID!): Message!
   messagesOfRoom(id: ID!): [Message!]!
   occupyingRooms: [Room!]!

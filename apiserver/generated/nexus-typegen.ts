@@ -187,6 +187,7 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     deck: NexusGenRootTypes['Deck']; // Deck!
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
+    health: string; // String!
     message: NexusGenRootTypes['Message']; // Message!
     messagesOfRoom: NexusGenRootTypes['Message'][]; // [Message!]!
     occupyingRooms: NexusGenRootTypes['Room'][]; // [Room!]!
@@ -292,6 +293,7 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     deck: 'Deck'
     decks: 'Deck'
+    health: 'String'
     message: 'Message'
     messagesOfRoom: 'Message'
     occupyingRooms: 'Room'

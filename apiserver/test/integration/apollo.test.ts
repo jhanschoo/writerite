@@ -5,6 +5,7 @@ import { apolloFactory } from "../../src/apollo";
 import { createUser } from "./graphql/User.util";
 import { cascadingDelete } from "./_helpers/truncate";
 import { testContextFactory } from "../_helpers";
+import { queryHealth } from "./graphql/Health.util";
 
 describe("apollo", () => {
 
@@ -23,7 +24,13 @@ describe("apollo", () => {
 		await Promise.allSettled([apollo.stop(), stopContext()]);
 	});
 
-	it("should be able to create a basic query", async () => {
+	it("should be able to respond to a health check", async () => {
+		expect.assertions(1);
+		const res = await queryHealth(apollo);
+		expect(res).toHaveProperty("data.health", "OK");
+	});
+
+	it("should be able to respond to a basic create user", async () => {
 		expect.assertions(2);
 		const res = await createUser(apollo);
 		expect(res).toHaveProperty("data.signin");
