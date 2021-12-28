@@ -22,6 +22,7 @@
 		},
 		"editor.tabSize": 2,
 		"editor.insertSpaces": false,
+		"jest.disabledWorkspaceFolders": ["charts", "dev-config", "lets-encrypt"],
 		"yaml.customTags": [
 			"!And",
 			"!And sequence",

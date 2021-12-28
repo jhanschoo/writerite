@@ -5,16 +5,35 @@
   "version": "0.2.0",
   "configurations": [
     {
+			"type": "pwa-node",
+			"name": "Start local dev server",
+			"request": "launch",
+			"runtimeArgs": [
+				"run",
+				"dev"
+			],
+			"runtimeExecutable": "npm",
+			"skipFiles": [
+				"<node_internals>/**"
+			],
+      "cwd": "${workspaceFolder}"
+    },
+    {
       "type": "node",
+      "name": "Run Jest integration tests",
       "request": "launch",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "disableOptimisticBPs": true,
       "cwd": "${workspaceFolder}",
-      "name": "Launch Program",
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ],
-      "program": "${workspaceFolder}/dist/index.js",
-      "sourceMaps": true,
-      "autoAttachChildProcesses": true
+      "runtimeExecutable": "npm",
+      "args": [
+        "run",
+        "test:integration",
+        "--",
+        "--runInBand",
+        "--watchAll=false"
+      ]
     }
   ]
 }

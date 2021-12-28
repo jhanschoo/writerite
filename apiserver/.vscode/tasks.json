@@ -11,27 +11,6 @@
 				"kind": "build",
 				"isDefault": true
 			},
-		},
-		{
-			"type": "npm",
-			"script": "test:integration",
-			"label": "Run integration test against default (usu. localhost) environment",
-			"group": {
-				"kind": "test",
-				"isDefault": true
-			}
-		},
-		{
-			"type": "shell",
-			"label": "Build an image and deploy it to local cluster",
-			"command": "./localdev-pipeline.sh",
-			"options": {
-				"cwd": "${workspaceFolder:dev-config}",
-				"shell": {
-					"executable": "zsh"
-				}
-			},
-			"group": "build"
 		}
 	]
 }
