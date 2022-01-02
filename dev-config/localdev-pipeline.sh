@@ -22,12 +22,12 @@ helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGIS
 kubectl delete secret gitlab-writerite-writerite-jhanschoo || true
 kubectl create secret docker-registry gitlab-writerite-writerite-jhanschoo --docker-server="$CI_REGISTRY" --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD"
 
-# # build-apiserver
-# cd "$WRITERITE_PROJECT_ROOT/apiserver"
-# npm i
+# build-apiserver
+cd "$WRITERITE_PROJECT_ROOT/apiserver"
+npm i
 
-# # build-apiserver
-# sh dockerbuild.sh
+# build-apiserver
+sh dockerbuild.sh
 
 # build-apiserver-chart
 cd "$WRITERITE_PROJECT_ROOT/charts/writerite-apiserver"
