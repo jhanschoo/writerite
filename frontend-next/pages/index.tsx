@@ -1,6 +1,8 @@
 import { Box } from '@mui/material';
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { Signin } from '../components/browser/Signin';
+import { Flex } from '../components/core/basic/Flex';
 import HeroHeading from '../components/core/basic/HeroHeading';
 import BrandText from '../components/core/typography/BrandText';
 
@@ -21,21 +23,21 @@ const Home: NextPage = () => {
 				}}
 				gap={2}
 			>
-				<Box gridColumn="span 7">
-					<Box sx={{ background: 'pink' }}>
+				<Flex gridColumn={{ xs: "span 12", md: "span 7" }}>
+					<Flex sx={{ textAlign: "center", justifyContent: "space-around", alignItems: "center", width: "100%" }}>
 						<HeroHeading sx={{
 							maxWidth: "50vw",
 						}}>
 							<em>Study with supercharged flashcards on </em>
 							<BrandText full suffix=".">WriteRite</BrandText>
 						</HeroHeading>
-					</Box>
-				</Box>
-				<Box gridColumn="span 5">
-					<Box sx={{ background: 'gray' }}>
-						Signin component
-					</Box>
-				</Box>
+					</Flex>
+				</Flex>
+				<Flex gridColumn={{ xs: "span 12", md: "span 5" }}>
+					<Flex sx={{ width: "100%", alignItems: "center" }}>
+						<Signin sx={{ width: "100%" }} />
+					</Flex>
+				</Flex>
 			</Box>
 		</>
 	);

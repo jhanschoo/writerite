@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/system";
+import { createTheme } from "@mui/material";
 
 import { theme } from '../../entities/theme';
 
