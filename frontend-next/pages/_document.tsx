@@ -3,8 +3,10 @@ import createEmotionServer from '@emotion/server/create-instance';
 
 import createEmotionCache from '../lib/core/frameworks/emotion/createEmotionCache';
 import { CssBaseline } from '@mui/material';
+import { createClient } from '../lib/core/frameworks/apollo';
+import { ApolloClient } from '@apollo/client';
 
-class WrDocument extends Document<{ emotionStyles: JSX.Element[] }> {
+class WrDocument extends Document<{ emotionStyles: JSX.Element[], apolloClient: ApolloClient<any> }> {
 	// `getInitialProps` belongs to `_document` (instead of `_app`),
 	// it's compatible with static-site generation (SSG).
 	static async getInitialProps(ctx: DocumentContext) {
@@ -32,11 +34,13 @@ class WrDocument extends Document<{ emotionStyles: JSX.Element[] }> {
 
 		// const originalRenderPage = ctx.renderPage;
 
+		const apolloClient = await createClient({ ssr: true });
+
 		// Create a new cache on every request
 		const emotionCache = createEmotionCache();
 		const { extractCriticalToChunks /*, constructStyleTagsFromChunks */ } = createEmotionServer(emotionCache);
 		ctx.renderPage({
-			enhanceApp: (App) => function EnhanceApp(props) { return (<App {...props} pageProps={{ ...props.pageProps, emotionCache }} />); },
+			enhanceApp: (App) => function EnhanceApp(props) { return (<App {...props} pageProps={{ ...props.pageProps, emotionCache, apolloClient }} />); },
 		});
 		const initialProps = await Document.getInitialProps(ctx);
 
@@ -52,6 +56,7 @@ class WrDocument extends Document<{ emotionStyles: JSX.Element[] }> {
 		return {
 			...initialProps,
 			emotionStyles,
+			apolloClient,
 		};
 	}
 
@@ -62,7 +67,6 @@ class WrDocument extends Document<{ emotionStyles: JSX.Element[] }> {
 					<link rel="preconnect" href="https://fonts.googleapis.com" />
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 					<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Yeseva+One&display=swap" rel="stylesheet" />
-					<meta name="viewport" content="initial-scale=1, width=device-width" />
 					{this.props.emotionStyles}
 					<CssBaseline />
 				</Head>

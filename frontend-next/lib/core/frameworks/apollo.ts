@@ -2,24 +2,19 @@ import {
 	ApolloClient, InMemoryCache
 } from "@apollo/client";
 import { LocalStorageWrapper, persistCache } from "apollo3-cache-persist";
-import { isSSRContext } from "../utilities";
 
-const clientPromise = (async () => {
+export async function createClient({ ssr }: { ssr: boolean }): Promise<ApolloClient<any>> {
 	const cache = new InMemoryCache();
-	if (!isSSRContext()) {
+	if (!ssr) {
 		await persistCache({
 			cache,
 			storage: new LocalStorageWrapper(window.localStorage)
 		});
 	}
 	const client = new ApolloClient({
-		ssrMode: isSSRContext(),
+		ssrMode: ssr,
 		uri: process.env.NEXT_PUBLIC_GRAPHQL_HTTP,
 		cache,
 	});
 	return client;
-})();
-
-export async function getClient(): Promise<ApolloClient<any>> {
-	return clientPromise;
 }
