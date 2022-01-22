@@ -34,12 +34,12 @@ export interface AuthorizationHelpers {
 	get isAdmin(): boolean;
 }
 
-export interface Context {
+export interface Context<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine> {
 	ctx: IntegrationContext;
 	fetchDepth: number;
 	sub?: CurrentUser;
-	prisma: PrismaClient;
-	pubsub: PubSubEngine;
+	prisma: T;
+	pubsub: U;
 	auth: AuthorizationHelpers;
 }
 
@@ -47,28 +47,36 @@ export interface LoggedInContext extends Context {
 	sub: CurrentUser;
 }
 
+export type ContextFactoryReturnType<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine> = [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: U }];
+
 /**
  * Note: opts.ctx is never used if provided
  * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.
  */
-export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: PrismaClient, pubsub: PubSubEngine }] {
+export function contextFactory<T extends PrismaClient, U extends PubSubEngine>(opts?: Partial<Context> & Pick<Context<T, U>, "prisma" | "pubsub">, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): ContextFactoryReturnType<T, U>;
+export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): ContextFactoryReturnType<PrismaClient, PubSubEngine>;
+export function contextFactory<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine>(opts?: Partial<Context<T, U>>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: U }] {
 	const useDefaultPrisma = !opts?.prisma;
 	const useDefaultPubsub = !opts?.pubsub;
-	const publisher = new Redis({ ...redisOptions, db: 2 });
-	const subscriber = new Redis({ ...redisOptions, db: 2 });
-	publisher.on("connect", () => {
-		// eslint-disable-next-line no-console
-		console.log(`publisher connected to redis db 2 at host ${redisOptions.host} and port ${redisOptions.port}`);
-	});
-	subscriber.on("connect", () => {
-		// eslint-disable-next-line no-console
-		console.log(`subscriber connected to redis db 2 at host ${redisOptions.host} and port ${redisOptions.port}`);
-	});
 	const prisma = opts?.prisma ?? new PrismaClient();
 	const pubsub = opts?.pubsub ?? new RedisPubSub({
-		publisher,
-		subscriber,
-	});
+		publisher: (() => {
+			const publisher = new Redis({ ...redisOptions, db: 2 });
+			publisher.on("connect", () => {
+				// eslint-disable-next-line no-console
+				console.log(`publisher connected to redis db 2 at host ${redisOptions.host} and port ${redisOptions.port}`);
+			});
+			return publisher;
+		})(),
+		subscriber: (() => {
+			const subscriber = new Redis({ ...redisOptions, db: 2 });
+			subscriber.on("connect", () => {
+				// eslint-disable-next-line no-console
+				console.log(`subscriber connected to redis db 2 at host ${redisOptions.host} and port ${redisOptions.port}`);
+			});
+			return subscriber;
+		})(),
+	}) as PubSubEngine;
 	return [
 		(ctx: IntegrationContext): Context => {
 			const sub = subFn?.(ctx) ?? opts?.sub ?? getClaims(ctx);
@@ -92,6 +100,6 @@ export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: Integratio
 			useDefaultPrisma ? prisma.$disconnect() : Promise.resolve("custom prisma used"),
 			useDefaultPubsub ? (pubsub as RedisPubSub).close() : Promise.resolve("custom pubsub used"),
 		]),
-		{ prisma, pubsub },
+		{ prisma: prisma as T, pubsub: pubsub as U },
 	];
 }

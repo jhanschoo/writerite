@@ -2,10 +2,8 @@ import { PrismaClient } from "@prisma/client";
 import { ContextFunction } from "apollo-server-core";
 import { ApolloServer } from "apollo-server-koa";
 import { apolloFactory } from "../../src/apollo";
-import { createUser } from "./graphql/User.util";
+import { createUser, queryHealth, testContextFactory } from "../helpers";
 import { cascadingDelete } from "./_helpers/truncate";
-import { testContextFactory } from "../_helpers";
-import { queryHealth } from "./graphql/Health.util";
 
 describe("apollo", () => {
 

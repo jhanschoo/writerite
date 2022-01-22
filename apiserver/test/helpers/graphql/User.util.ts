@@ -1,7 +1,7 @@
 import { GraphQLResponse } from "apollo-server-core";
 import { ApolloServer, gql } from "apollo-server-koa";
 import { CurrentUser } from "../../../src/types";
-import { unsafeJwtToCurrentUser } from "../../_helpers";
+import { unsafeJwtToCurrentUser } from "../misc";
 
 export const DEFAULT_CREATE_USER_VALUES = {
 	email: "abc@xyz.com",

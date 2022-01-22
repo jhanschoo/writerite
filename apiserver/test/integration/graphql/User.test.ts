@@ -5,8 +5,7 @@ import { GraphQLError } from "graphql";
 
 import { apolloFactory } from "../../../src/apollo";
 import { cascadingDelete } from "../_helpers/truncate";
-import { DEFAULT_CREATE_USER_VALUES, createUser, createUserWithEmail, mutationUserEdit, queryAllUserAccessibleUserScalars, queryUserPublicScalars } from "./User.util";
-import { testContextFactory, unsafeJwtToCurrentUser } from "../../_helpers";
+import { DEFAULT_CREATE_USER_VALUES, createUser, createUserWithEmail, mutationUserEdit, queryAllUserAccessibleUserScalars, queryUserPublicScalars, testContextFactory, unsafeJwtToCurrentUser } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
 
 describe("graphql/User.ts", () => {

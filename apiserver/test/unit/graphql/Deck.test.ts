@@ -1,9 +1,10 @@
 import type { ContextFunction } from "apollo-server-core";
 import type { ApolloServer } from "apollo-server-koa";
 import type { PrismaClient } from "@prisma/client";
+import { mockDeep, DeepMockProxy } from "jest-mock-extended";
+import { PubSub } from "graphql-subscriptions";
 
 import { apolloFactory } from "../../../src/apollo";
-import { cascadingDelete } from "../_helpers/truncate";
 import { loginAsNewlyCreatedUser } from "../../helpers/graphql/User.util";
 import { mutationDeckCreateEmpty, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
 import type { CurrentUser } from "../../../src/types";
@@ -13,21 +14,24 @@ describe("graphql/Deck.ts", () => {
 	let setSub: (sub?: CurrentUser) => void;
 	let context: ContextFunction;
 	let stopContext: () => Promise<unknown>;
-	let prisma: PrismaClient;
+	let prisma: DeepMockProxy<PrismaClient>;
 	let apollo: ApolloServer;
 
 	beforeAll(() => {
-		[setSub, context, stopContext, { prisma }] = testContextFactory();
+		prisma = mockDeep<PrismaClient>() as unknown as DeepMockProxy<PrismaClient>;
+		[setSub, context, stopContext] = testContextFactory({
+			prisma: prisma as unknown as PrismaClient,
+			pubsub: new PubSub(),
+		});
 		apollo = apolloFactory(context);
 	});
 
 	afterAll(async () => {
-		await cascadingDelete(prisma).user;
 		await Promise.allSettled([apollo.stop(), stopContext()]);
 	});
 
 	afterEach(async () => {
-		await cascadingDelete(prisma).user;
+		// TODO
 	});
 
 	describe("Mutation", () => {
