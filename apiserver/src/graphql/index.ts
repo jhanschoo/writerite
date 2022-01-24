@@ -1,5 +1,5 @@
 export * from "./scalars";
-export * from "./Authorization";
+export * from "./Authentication";
 export * from "./User";
 export * from "./Deck";
 export * from "./Card";

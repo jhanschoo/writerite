@@ -172,6 +172,8 @@ export interface NexusGenFieldTypes {
     deckEdit: NexusGenRootTypes['Deck']; // Deck!
     deckRemoveSubdeck: NexusGenRootTypes['Deck']; // Deck!
     deckUsed: NexusGenRootTypes['Deck']; // Deck!
+    finalizeThirdPartyOauthSignin: NexusGenScalars['JWT'] | null; // JWT
+    initializeThirdPartyOauthSignin: string; // String!
     messageCreate: NexusGenRootTypes['Message']; // Message!
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
@@ -278,6 +280,8 @@ export interface NexusGenFieldTypeNames {
     deckEdit: 'Deck'
     deckRemoveSubdeck: 'Deck'
     deckUsed: 'Deck'
+    finalizeThirdPartyOauthSignin: 'JWT'
+    initializeThirdPartyOauthSignin: 'String'
     messageCreate: 'Message'
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
@@ -386,6 +390,9 @@ export interface NexusGenArgTypes {
     }
     deckUsed: { // args
       id: string; // ID!
+    }
+    finalizeThirdPartyOauthSignin: { // args
+      nonce: string; // String!
     }
     messageCreate: { // args
       content?: NexusGenScalars['JSON'] | null; // JSON

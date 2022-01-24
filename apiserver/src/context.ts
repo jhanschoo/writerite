@@ -20,6 +20,7 @@ const redisOptions = {
 		const delay = Math.min(times * 50, 2000);
 		return delay;
 	},
+	db: 1,
 	password: REDIS_PASSWORD,
 };
 
@@ -34,12 +35,13 @@ export interface AuthorizationHelpers {
 	get isAdmin(): boolean;
 }
 
-export interface Context<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine> {
+export interface Context<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine, R extends Redis.Redis = Redis.Redis> {
 	ctx: IntegrationContext;
 	fetchDepth: number;
 	sub?: CurrentUser;
 	prisma: T;
 	pubsub: U;
+	redis: R;
 	auth: AuthorizationHelpers;
 }
 
@@ -47,15 +49,15 @@ export interface LoggedInContext extends Context {
 	sub: CurrentUser;
 }
 
-export type ContextFactoryReturnType<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine> = [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: U }];
+export type ContextFactoryReturnType<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine, R extends Redis.Redis = Redis.Redis> = [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: U, redis: R }];
 
 /**
  * Note: opts.ctx is never used if provided
  * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.
  */
-export function contextFactory<T extends PrismaClient, U extends PubSubEngine>(opts?: Partial<Context> & Pick<Context<T, U>, "prisma" | "pubsub">, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): ContextFactoryReturnType<T, U>;
+export function contextFactory<T extends PrismaClient, U extends PubSubEngine, R extends Redis.Redis>(opts?: Partial<Context> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): ContextFactoryReturnType<T, U>;
 export function contextFactory(opts?: Partial<Context>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): ContextFactoryReturnType<PrismaClient, PubSubEngine>;
-export function contextFactory<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine>(opts?: Partial<Context<T, U>>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: U }] {
+export function contextFactory<T extends PrismaClient = PrismaClient, U extends PubSubEngine = PubSubEngine, R extends Redis.Redis = Redis.Redis>(opts?: Partial<Context<T, U, R>>, subFn?: (ctx: IntegrationContext) => CurrentUser | undefined): [ContextFunction, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: U, redis: R }] {
 	const useDefaultPrisma = !opts?.prisma;
 	const useDefaultPubsub = !opts?.pubsub;
 	const prisma = opts?.prisma ?? new PrismaClient();
@@ -77,6 +79,7 @@ export function contextFactory<T extends PrismaClient = PrismaClient, U extends 
 			return subscriber;
 		})(),
 	}) as PubSubEngine;
+	const redis = opts?.redis ?? new Redis(redisOptions);
 	return [
 		(ctx: IntegrationContext): Context => {
 			const sub = subFn?.(ctx) ?? opts?.sub ?? getClaims(ctx);
@@ -86,6 +89,7 @@ export function contextFactory<T extends PrismaClient = PrismaClient, U extends 
 				sub,
 				prisma,
 				pubsub,
+				redis,
 				auth: {
 					isLoggedInAs(id: string): boolean {
 						return sub?.id === id;
@@ -100,6 +104,6 @@ export function contextFactory<T extends PrismaClient = PrismaClient, U extends 
 			useDefaultPrisma ? prisma.$disconnect() : Promise.resolve("custom prisma used"),
 			useDefaultPubsub ? (pubsub as RedisPubSub).close() : Promise.resolve("custom pubsub used"),
 		]),
-		{ prisma: prisma as T, pubsub: pubsub as U },
+		{ prisma: prisma as T, pubsub: pubsub as U, redis: redis as R },
 	];
 }

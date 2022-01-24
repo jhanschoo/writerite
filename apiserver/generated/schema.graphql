@@ -116,6 +116,8 @@ type Mutation {
   deckEdit(answerLang: String, archived: Boolean, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckUsed(id: ID!): Deck!
+  finalizeThirdPartyOauthSignin(nonce: String!): JWT
+  initializeThirdPartyOauthSignin: String!
 
   """
   @subscriptionsTriggered(
