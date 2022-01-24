@@ -17,7 +17,7 @@ describe("graphql/User.ts", () => {
 	let apollo: ApolloServer;
 
 	beforeAll(() => {
-		[setSub, context, stopContext, { prisma }] = testContextFactory();
+		[setSub, , context, stopContext, { prisma }] = testContextFactory();
 		apollo = apolloFactory(context);
 	});
 

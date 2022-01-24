@@ -13,7 +13,7 @@ describe("apollo", () => {
 	let apollo: ApolloServer;
 
 	beforeAll(() => {
-		[, context, stopContext, { prisma }] = testContextFactory();
+		[, , context, stopContext, { prisma }] = testContextFactory();
 		apollo = apolloFactory(context);
 	});
 
