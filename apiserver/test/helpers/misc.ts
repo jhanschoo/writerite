@@ -11,14 +11,18 @@ export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
 	return KJUR.jws.JWS.parse(jwt).payloadObj.sub as CurrentUser;
 }
 
-export function testContextFactory<T extends PrismaClient, U extends PubSubEngine, R extends Redis.Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType<T, U, R>];
-export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType];
-export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType] {
+export function testContextFactory<T extends PrismaClient, U extends PubSubEngine, R extends Redis.Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, (pubsub: PubSubEngine) => void, ...ContextFactoryReturnType<T, U, R>];
+export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSubEngine) => void, ...ContextFactoryReturnType];
+export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSubEngine) => void, ...ContextFactoryReturnType] {
 	let sub: CurrentUser | undefined;
+	let pubsub: PubSubEngine;
 	return [
 		(newSub) => {
 			sub = newSub;
 		},
-		...contextFactory(opts, () => sub),
+		(newPubsub) => {
+			pubsub = newPubsub;
+		},
+		...contextFactory(opts, () => sub, () => pubsub),
 	];
 }

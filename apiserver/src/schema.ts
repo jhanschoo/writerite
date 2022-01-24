@@ -4,6 +4,8 @@ import * as types from "./graphql";
 import { scalarMapping } from "./graphql/scalarUtil";
 import { undefinedOnlyPlugin } from "./graphql/undefinedOnlyPlugin";
 
+const { NODE_ENV } = process.env;
+
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 export const schema = makeSchema({
 	types,
@@ -13,7 +15,7 @@ export const schema = makeSchema({
 	},
 	plugins: [undefinedOnlyPlugin, fieldAuthorizePlugin()],
 	sourceTypes: {
-		debug: true,
+		debug: NODE_ENV !== "test",
 		modules: [
 			{
 				module: join(__dirname, "..", "node_modules", ".prisma", "client", "index.d.ts"),
