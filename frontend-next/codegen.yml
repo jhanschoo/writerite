@@ -1,0 +1,12 @@
+overwrite: true
+schema: "../apiserver/generated/schema.graphql"
+documents: "fragments/**/*.graphql"
+generates:
+  generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typed-document-node"
+  ./graphql.schema.json:
+    plugins:
+      - "introspection"

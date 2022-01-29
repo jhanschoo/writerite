@@ -1,12 +1,14 @@
-import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document'
+import Document, { DocumentContext, DocumentProps, Head, Html, Main, NextScript } from 'next/document'
 import createEmotionServer from '@emotion/server/create-instance';
 
 import createEmotionCache from '../lib/core/frameworks/emotion/createEmotionCache';
 import { CssBaseline } from '@mui/material';
-import { createClient } from '../lib/core/frameworks/apollo';
-import { ApolloClient } from '@apollo/client';
 
-class WrDocument extends Document<{ emotionStyles: JSX.Element[], apolloClient: ApolloClient<any> }> {
+interface WrDocumentProps extends DocumentProps {
+	emotionStyles: JSX.Element[];
+}
+
+class WrDocument extends Document<WrDocumentProps> {
 	// `getInitialProps` belongs to `_document` (instead of `_app`),
 	// it's compatible with static-site generation (SSG).
 	static async getInitialProps(ctx: DocumentContext) {
@@ -32,15 +34,14 @@ class WrDocument extends Document<{ emotionStyles: JSX.Element[], apolloClient: 
 		// 3. app.render
 		// 4. page.render
 
-		// const originalRenderPage = ctx.renderPage;
-
-		const apolloClient = await createClient({ ssr: true });
+		const originalRenderPage = ctx.renderPage;
 
 		// Create a new cache on every request
 		const emotionCache = createEmotionCache();
 		const { extractCriticalToChunks /*, constructStyleTagsFromChunks */ } = createEmotionServer(emotionCache);
-		ctx.renderPage({
-			enhanceApp: (App) => function EnhanceApp(props) { return (<App {...props} pageProps={{ ...props.pageProps, emotionCache, apolloClient }} />); },
+		const pageProps = { emotionCache };
+		ctx.renderPage = () => originalRenderPage({
+			enhanceApp: (App) => function EnhanceApp(props) { return (<App {...props} pageProps={{ ...props.pageProps, ...pageProps }} />); },
 		});
 		const initialProps = await Document.getInitialProps(ctx);
 
@@ -56,7 +57,6 @@ class WrDocument extends Document<{ emotionStyles: JSX.Element[], apolloClient: 
 		return {
 			...initialProps,
 			emotionStyles,
-			apolloClient,
 		};
 	}
 
@@ -75,7 +75,7 @@ class WrDocument extends Document<{ emotionStyles: JSX.Element[], apolloClient: 
 					<NextScript />
 				</body>
 			</Html>
-		)
+		);
 	}
 }
 

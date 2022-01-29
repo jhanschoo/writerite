@@ -6,8 +6,9 @@ type Data = {
 }
 
 export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
+	req: NextApiRequest,
+	res: NextApiResponse<Data>
 ) {
-  res.status(200).json({ name: 'John Doe' })
+	const { error, code, state } = req.query;
+	res.redirect(303, "/")
 }
