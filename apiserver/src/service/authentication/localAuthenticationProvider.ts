@@ -6,7 +6,6 @@ import FormData from "form-data";
 import env from "../../safeEnv";
 import { comparePassword, hashPassword } from "../../util";
 import { AuthenticationProvider } from "./types";
-import { ApolloError } from "apollo-server-koa";
 import { userToJWT } from "./util";
 import { Roles } from "../../types";
 
@@ -24,13 +23,13 @@ export const localAuthenticationProvider: AuthenticationProvider = {
 		const user = await prisma.user.findUnique({ where: { email } });
 		if (user !== null) {
 			if (!user.passwordHash || !await comparePassword(password, user.passwordHash)) {
-				throw new ApolloError("local auth: failed login");
+				throw new Error("local auth: failed login");
 			}
 			return userToJWT({ user, persist });
 		}
 		const verified = await this.verify(token);
 		if (!verified) {
-			throw new ApolloError("writerite: failed recaptcha authentication");
+			throw new Error("writerite: failed recaptcha authentication");
 		}
 		// create
 		const passwordHash = await hashPassword(password);

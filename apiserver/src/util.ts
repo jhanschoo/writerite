@@ -6,9 +6,10 @@ import env from "./safeEnv";
 import bcrypt from "bcrypt";
 import { KEYUTIL, KJUR, hextob64 } from "jsrsasign";
 import { nanoid } from "nanoid";
+import { YogaInitialContext } from "@graphql-yoga/node";
+import { Request } from "express";
 
 import { CurrentUser } from "./types";
-import { IntegrationContext } from "./context";
 
 const SALT_ROUNDS = 10;
 
@@ -62,8 +63,8 @@ export function generateJWT(sub: CurrentUser, persist = false): string {
 	return jwt;
 }
 
-export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
-	const authorization = ctx.ctx?.get("Authorization") ?? /*ctx.connection?.context.Authorization ??*/ null;
+export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
+	const authorization = (ctx.request as Request | undefined)?.get?.("Authorization") ?? /* ctx.connection?.context.Authorization ?? */ null;
 	if (!authorization) {
 		return;
 	}

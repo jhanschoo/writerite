@@ -1,5 +1,3 @@
-import { ForbiddenError } from "apollo-server-errors";
-
-export function userLacksPermissionsErrorFactory(message?: string): ForbiddenError {
-	return new ForbiddenError(message ?? "You are not allowed to perform this action");
+export function userLacksPermissionsErrorFactory(message?: string): Error {
+	return new Error(message ?? "You are not allowed to perform this action");
 }

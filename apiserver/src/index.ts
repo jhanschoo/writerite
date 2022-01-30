@@ -2,49 +2,58 @@ import fs from "fs";
 import https from "https";
 import http from "http";
 
-import Koa from "koa";
-import helmet from "koa-helmet";
+import express from "express";
+import helmet from "helmet";
+import cors from "cors";
 
 import { contextFactory } from "./context";
-import { apolloFactory } from "./apollo";
+import { graphQLServerFactory } from "./graphqlServer";
 
 const { NODE_ENV, CERT_FILE, KEY_FILE } = process.env;
 
 export const [context, stopContextServices] = contextFactory();
 
-export const apollo = apolloFactory(context);
+export const graphQLServer = graphQLServerFactory(context);
 
 // Initialize express
 
-const app = new Koa();
+const app = express();
 
 app.use(helmet({
 	contentSecurityPolicy: NODE_ENV === "production",
 }));
 
+// we handle cors here since cors handling in GraphQL Yoga is iffy
+app.use(cors({
+	origin: NODE_ENV === "production" ? "https://www.writerite.site" : "http://localhost:3000",
+}));
+
+// we handle health here since health handling in GraphQL Yoga is iffy
+app.get("/health", (_req, res) => {
+	res.send("OK");
+});
+app.get("/readiness", (_req, res) => {
+	res.send("OK");
+});
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+app.use("/graphql", graphQLServer.requestListener);
+
 const serverPromise: Promise<https.Server | http.Server> = Promise.resolve((async () => {
-	await apollo.start();
-	apollo.applyMiddleware({
-		app,
-		cors: {
-			origin: "*",
-			credentials: true,
-		},
-	});
 
 	const server = CERT_FILE && KEY_FILE
 		? https.createServer({
 			cert: fs.readFileSync(CERT_FILE),
 			key: fs.readFileSync(KEY_FILE),
-		}, app.callback())
-		: http.createServer(app.callback());
+		}, app)
+		: http.createServer(app);
 
 	return new Promise<https.Server | http.Server>((res) => {
 		server.listen({ port: 4000 }, () => {
 		// eslint-disable-next-line no-console
-			console.log(`🚀 Server ready at http${
+			console.log(`GraphQL Server running at http${
 				CERT_FILE && KEY_FILE ? "s" : ""
-			}://localhost:${4000}${apollo.graphqlPath} in environment ${String(NODE_ENV)}`);
+			}://localhost:${4000}/graphql in environment ${String(NODE_ENV)}`);
 			res(server);
 		});
 	});
@@ -56,6 +65,6 @@ export async function stop(): Promise<PromiseSettledResult<unknown>[]> {
 	return Promise.allSettled<unknown>([
 		new Promise<void>((res, rej) => {
 			server.close((err) => err ? rej(err) : res());
-		}), apollo.stop(), stopContextServices(),
+		}), graphQLServer.stop(), stopContextServices(),
 	]);
 }

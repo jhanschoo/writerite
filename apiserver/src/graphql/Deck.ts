@@ -1,5 +1,4 @@
 import { Prisma } from "@prisma/client";
-import { ApolloError } from "apollo-server-core";
 import { arg, booleanArg, enumType, idArg, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
@@ -252,10 +251,10 @@ export const DeckEditMutation = mutationField("deckEdit", {
 		if (count === 1) {
 			const deck = await prisma.deck.findUnique({ where: { id } });
 			if (!deck) {
-				throw new ApolloError("");
+				throw new Error("");
 			}
 		}
-		throw new ApolloError("");
+		throw new Error("");
 	}),
 });
 

@@ -22,11 +22,6 @@ fullnameOverride: ""
 
 # Envvars
 
-apollo:
-  graphId: ""
-  graphVariant: ""
-  key: ""
-  schemaReporting: ""
 database:
   user: ""
   password: ""

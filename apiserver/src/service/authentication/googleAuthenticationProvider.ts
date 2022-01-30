@@ -1,4 +1,3 @@
-import { ApolloError } from "apollo-server-koa";
 import { OAuth2Client } from "google-auth-library";
 
 import env from "../../safeEnv";
@@ -21,12 +20,12 @@ export const googleAuthenticationProvider: AuthenticationProvider = {
 	async signin({ prisma, email, name, token, identifier, persist }) {
 		const googleId = await this.verify(token);
 		if (!googleId || googleId !== identifier) {
-			throw new ApolloError("google auth: failed Google authentication");
+			throw new Error("google auth: failed Google authentication");
 		}
 		const user = await prisma.user.findUnique({ where: { email } });
 		if (user !== null) {
 			if (googleId !== user.googleId) {
-				throw new ApolloError("user already exists");
+				throw new Error("user already exists");
 			}
 			return userToJWT({ user, persist });
 		}

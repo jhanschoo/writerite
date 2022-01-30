@@ -1,8 +1,8 @@
+import { PubSub } from "@graphql-yoga/node";
 import { PrismaClient } from "@prisma/client";
-import { PubSubEngine } from "graphql-subscriptions";
 import Redis from "ioredis";
 import { KJUR } from "jsrsasign";
-import { Context, ContextFactoryReturnType, contextFactory } from "../../src/context";
+import { Context, ContextFactoryReturnType, PubSubPublishArgsByKey, contextFactory } from "../../src/context";
 import { CurrentUser } from "../../src/types";
 
 
@@ -11,11 +11,11 @@ export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
 	return KJUR.jws.JWS.parse(jwt).payloadObj.sub as CurrentUser;
 }
 
-export function testContextFactory<T extends PrismaClient, U extends PubSubEngine, R extends Redis.Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, (pubsub: PubSubEngine) => void, ...ContextFactoryReturnType<T, U, R>];
-export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSubEngine) => void, ...ContextFactoryReturnType];
-export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSubEngine) => void, ...ContextFactoryReturnType] {
+export function testContextFactory<T extends PrismaClient, U extends PubSubPublishArgsByKey, R extends Redis.Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType<T, U, R>];
+export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType];
+export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType] {
 	let sub: CurrentUser | undefined;
-	let pubsub: PubSubEngine;
+	let pubsub: PubSub<PubSubPublishArgsByKey>;
 	return [
 		(newSub) => {
 			sub = newSub;
@@ -26,3 +26,5 @@ export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser
 		...contextFactory(opts, () => sub, () => pubsub),
 	];
 }
+
+export const isoTimestampMatcher = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;

@@ -1,10 +1,9 @@
-import { GraphQLResponse } from "apollo-server-core";
-import { ApolloServer, gql } from "apollo-server-koa";
+import type { WrServer } from "../../../src/graphqlServer";
 
-export async function queryHealth(apollo: ApolloServer): Promise<GraphQLResponse> {
-	return apollo.executeOperation({
+export async function queryHealth(server: WrServer) {
+	return server.inject({
 		operationName: "HealthQuery",
-		query: gql`
+		document: `
 			query HealthQuery {
 				health
 			}

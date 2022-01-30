@@ -1,9 +1,8 @@
-import { GraphQLResponse } from "apollo-server-core";
-import { ApolloServer, gql } from "apollo-server-koa";
+import { WrServer } from "../../../src/graphqlServer";
 
-export async function mutationDeckCreateEmpty(apollo: ApolloServer): Promise<GraphQLResponse> {
-	const res = await apollo.executeOperation({
-		query: gql`
+export async function mutationDeckCreateEmpty(server: WrServer) {
+	return server.inject({
+		document: `
 			mutation DeckCreateEmpty {
 				deckCreate {
 					id
@@ -11,12 +10,11 @@ export async function mutationDeckCreateEmpty(apollo: ApolloServer): Promise<Gra
 			}
 		`,
 	});
-	return res;
 }
 
-export async function queryDeckScalars(apollo: ApolloServer, id: string): Promise<GraphQLResponse> {
-	const res = await apollo.executeOperation({
-		query: gql`
+export async function queryDeckScalars(server: WrServer, id: string) {
+	return server.inject({
+		document: `
 			query QueryDeck($id: ID!) {
 				deck(id: $id) {
 					id
@@ -34,12 +32,11 @@ export async function queryDeckScalars(apollo: ApolloServer, id: string): Promis
 		`,
 		variables: { id },
 	});
-	return res;
 }
 
-export async function queryDecks(apollo: ApolloServer): Promise<GraphQLResponse> {
-	const res = await apollo.executeOperation({
-		query: gql`
+export function queryDecks(server: WrServer) {
+	return server.inject({
+		document: `
 			query QueryDecks{
 				decks {
 					id
@@ -47,5 +44,4 @@ export async function queryDecks(apollo: ApolloServer): Promise<GraphQLResponse>
 			}
 		`,
 	});
-	return res;
 }

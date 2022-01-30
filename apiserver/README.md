@@ -10,7 +10,6 @@ The following environment variables need to be set:
 * `DATABASE_URL` set to the URL of an accessible PostgreSQL database
 * `REDIS_HOST`, `REDIS_PORT` of an accessible redis instance; the app uses dbs 1 and 2. Defaults to `127.0.0.1` and `6379` respectively.
 * `JWT_PRIVATE_KEY` and `JWT_PUBLIC_KEY` JSON strings in JWK format respectively describing an ES256 private and public key pair.
-* `APOLLO_GRAPH_ID`, `APOLLO_GRAPH_VARIANT`, `APOLLO_KEY`, and `APOLLO_SCHEMA_REPORTING` to configure reporting of Apollo Engine.
 
 The following environment variables may be set:
 
@@ -51,9 +50,9 @@ We don't presently have unit tests.
 * Language: Typescript
 * Server: ExpressJS
 * Communication:
-  * Frontend & bots: GraphQL with subscriptions using Apollo Server.
+  * Frontend & bots: GraphQL with subscriptions using `urql` and GraphQL Yoga.
 * Authentication:
-  * Third-party (Google or Facebook) identity verification: hand-rolled authorization flow; server verifies with third-party an access token issued by third-party to the user that is then sent to the server over HTTPS.
+  * Third-party (Google or Facebook) identity verification: hand-rolled OAuth2 flow; server verifies with third-party an access token issued by third-party to the user that is then sent to the server over HTTPS.
   * Authorization managed in hand-rolled solution (as opposed to Passport.js, etc.) using JWTs issued using `jsrsasign` to sign digest.
   * Passwords: hashed by `bcrypt`.
 * Persistence:

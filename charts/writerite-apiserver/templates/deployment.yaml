@@ -39,35 +39,11 @@ spec:
               protocol: TCP
           readinessProbe:
             httpGet:
-              path: /.well-known/apollo/server-health
+              path: /health
               port: 4000
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: APOLLO_GRAPH_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "writerite-apiserver.fullname" . }}
-                  key: apolloGraphId
-                  optional: false
-            - name: APOLLO_GRAPH_VARIANT
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "writerite-apiserver.fullname" . }}
-                  key: apolloGraphVariant
-                  optional: false
-            - name: APOLLO_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "writerite-apiserver.fullname" . }}
-                  key: apolloKey
-                  optional: false
-            - name: APOLLO_SCHEMA_REPORTING
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "writerite-apiserver.fullname" . }}
-                  key: apolloSchemaReporting
-                  optional: false
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:

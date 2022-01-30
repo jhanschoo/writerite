@@ -1,13 +1,12 @@
-import type { ContextFunction } from "apollo-server-core";
-import type { ApolloServer } from "apollo-server-koa";
 import type { PrismaClient } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
-import { PubSub, PubSubEngine } from "graphql-subscriptions";
 import Redis from "ioredis";
 
-import { apolloFactory } from "../../../src/apollo";
 import { mutationDeckCreateEmpty, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
+import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
+import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
+import { Context, PubSubPublishArgsByKey } from "../../../src/context";
 
 export const DEFAULT_CURRENT_USER = {
 	id: "fake-id",
@@ -19,12 +18,12 @@ export const DEFAULT_CURRENT_USER = {
 describe("graphql/Deck.ts", () => {
 
 	let setSub: (sub?: CurrentUser) => void;
-	let context: ContextFunction;
+	let context: (initialContext: YogaInitialContext) => Context;
 	let stopContext: () => Promise<unknown>;
 	let prisma: DeepMockProxy<PrismaClient>;
-	let apollo: ApolloServer;
+	let server: WrServer;
 	let redis: DeepMockProxy<Redis.Redis>;
-	let setPubsub: (pubsub: PubSubEngine) => void;
+	let setPubsub: (pubsub: PubSub<PubSubPublishArgsByKey>) => void;
 
 	// eslint-disable-next-line @typescript-eslint/require-await
 	beforeAll(async () => {
@@ -32,19 +31,19 @@ describe("graphql/Deck.ts", () => {
 		redis = mockDeep<Redis.Redis>();
 		[setSub, setPubsub, context, stopContext] = testContextFactory({
 			prisma: prisma as unknown as PrismaClient,
-			pubsub: new PubSub(),
+			pubsub: createPubSub(),
 			redis,
 		});
-		apollo = apolloFactory(context);
+		server = graphQLServerFactory(context);
 	});
 
 	afterAll(async () => {
-		await Promise.allSettled([apollo.stop(), stopContext()]);
+		await Promise.allSettled([server.stop(), stopContext()]);
 	});
 
 	afterEach(() => {
 		setSub();
-		setPubsub(new PubSub());
+		setPubsub(createPubSub());
 		mockReset(prisma);
 		mockReset(redis);
 	});
@@ -62,8 +61,8 @@ describe("graphql/Deck.ts", () => {
 				prisma.deck.create.mockReturnValue(Promise.resolve({
 					id,
 				}));
-				const createDeckRes = await mutationDeckCreateEmpty(apollo);
-				expect(createDeckRes).toHaveProperty("data.deckCreate.id", id);
+				const { executionResult } = await mutationDeckCreateEmpty(server);
+				expect(executionResult).toHaveProperty("data.deckCreate.id", id);
 			});
 		});
 		describe("deckDelete", () => {
@@ -85,11 +84,11 @@ describe("graphql/Deck.ts", () => {
 			it("should be able to return scalars of an owned deck", async () => {
 				expect.assertions(1);
 				setSub(DEFAULT_CURRENT_USER);
-				const createDeckRes = await mutationDeckCreateEmpty(apollo);
+				const { executionResult: createDeckExecutionResult } = await mutationDeckCreateEmpty(server);
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const id = createDeckRes.data?.deckCreate?.id as string;
-				const queryDeckRes = await queryDeckScalars(apollo, id);
-				expect(queryDeckRes).toHaveProperty("data.deck", {
+				const id = createDeckExecutionResult.data.deckCreate.id as string;
+				const { executionResult: queryDeckExecutionResult } = await queryDeckScalars(server, id);
+				expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
 					id,
 					answerLang: "",
 					archived: false,
@@ -110,13 +109,13 @@ describe("graphql/Deck.ts", () => {
 			it("should be able to return ids of owned, unarchived decks", async () => {
 				expect.assertions(1);
 				setSub(DEFAULT_CURRENT_USER);
-				const createDeck1Res = await mutationDeckCreateEmpty(apollo);
+				const { executionResult: createDeck1ExecutionResult } = await mutationDeckCreateEmpty(server);
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const id1 = createDeck1Res.data?.deckCreate?.id as string;
-				const createDeck2Res = await mutationDeckCreateEmpty(apollo);
+				const id1 = createDeck1ExecutionResult.data.deckCreate.id as string;
+				const { executionResult: createDeck2ExecutionResult } = await mutationDeckCreateEmpty(server);
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const id2 = createDeck2Res.data?.deckCreate?.id as string;
-				const queryDecksRes = await queryDecks(apollo);
+				const id2 = createDeck2ExecutionResult.data.deckCreate.id as string;
+				const queryDecksRes = await queryDecks(server);
 				expect(queryDecksRes).toHaveProperty("data.decks", expect.arrayContaining([
 					{
 						id: id1,

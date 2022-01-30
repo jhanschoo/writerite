@@ -1,30 +1,29 @@
-import type { Context } from "koa";
-import type { IntegrationContext } from "../../src/context";
+import { YogaInitialContext } from "@graphql-yoga/node";
 import type { CurrentUser } from "../../src/types";
 import { comparePassword, generateB64UUID, generateJWT, getClaims, hashPassword } from "../../src/util";
 
 describe("getClaims", () => {
 	test("getClaims returns undefined on bad context", () => {
 		expect.assertions(1);
-		expect(getClaims({})).toBeUndefined();
+		expect(getClaims({} as YogaInitialContext)).toBeUndefined();
 	});
 
 	test("getClaims returns undefined on missing jwt", () => {
 		expect.assertions(1);
-		const sub = { hello: "world" };
-		const ctx = { sub } as IntegrationContext;
+		const variables = { hello: "world" };
+		const ctx = { variables } as unknown as YogaInitialContext;
 		expect(getClaims(ctx)).toBeUndefined();
 	});
 
 	test("getClaims returns undefined if header not present", () => {
 		expect.assertions(1);
-		const ctx = { request: { get: () => undefined } } as IntegrationContext;
+		const ctx = { request: { get: () => undefined } } as unknown as YogaInitialContext;
 		expect(getClaims(ctx)).toBeUndefined();
 	});
 
 	test("getClaims returns undefined if Authorization header is malformed", () => {
 		expect.assertions(1);
-		const ctx = { ctx: { get: () => "abc" } as unknown as Context };
+		const ctx = { request: { get: () => "abc" } } as unknown as YogaInitialContext;
 		expect(getClaims(ctx)).toBeUndefined();
 	});
 });
@@ -35,10 +34,10 @@ describe("JWTs", () => {
 		const sub = { hello: "world" } as unknown as CurrentUser;
 		const jwt = `Bearer ${generateJWT(sub)}`;
 		expect(getClaims({
-			ctx: {
+			request: {
 				get: (headerKey: string) => headerKey === "Authorization" ? jwt : undefined,
-			} as unknown as Context,
-		})).toEqual(sub);
+			},
+		} as unknown as YogaInitialContext)).toEqual(sub);
 	});
 });
 

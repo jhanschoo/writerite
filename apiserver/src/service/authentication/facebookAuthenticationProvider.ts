@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { ApolloError } from "apollo-server-koa";
 import fetch from "node-fetch";
 
 import env from "../../safeEnv";
@@ -34,12 +33,12 @@ export const facebookAuthenticationProvider: AuthenticationProvider = {
 	async signin({ prisma, email, name, token, identifier, persist }) {
 		const facebookId = await this.verify(token);
 		if (!facebookId || facebookId !== identifier) {
-			throw new ApolloError("failed Facebook authentication");
+			throw new Error("failed Facebook authentication");
 		}
 		const user = await prisma.user.findUnique({ where: { email } });
 		if (user !== null) {
 			if (facebookId !== user.facebookId) {
-				throw new ApolloError("user already exists");
+				throw new Error("user already exists");
 			}
 			return userToJWT({ user, persist });
 		}
