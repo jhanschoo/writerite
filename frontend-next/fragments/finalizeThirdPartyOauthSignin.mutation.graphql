@@ -1,0 +1,3 @@
+mutation FinalizeThirdPartyOauthSignin($code: String! $provider: String! $nonce: String!) {
+  finalizeThirdPartyOauthSignin(code: $code provider: $provider nonce: $nonce)
+}

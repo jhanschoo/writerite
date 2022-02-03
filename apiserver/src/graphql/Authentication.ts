@@ -27,9 +27,12 @@ export const InitializeThirdPartySigninMutation = mutationField("initializeThird
 export const FinalizeThirdPartySigninMutation = mutationField("finalizeThirdPartyOauthSignin", {
 	type: "JWT",
 	args: {
+		code: nonNull(stringArg()),
+		provider: nonNull(stringArg()),
 		nonce: nonNull(stringArg()),
 	},
-	async resolve(_parent, { nonce }, { redis }) {
+	async resolve(_parent, { code, provider, nonce }, { redis }) {
+		console.log(code, provider, nonce);
 		await validateNonce(redis, nonce);
 		return null;
 	},

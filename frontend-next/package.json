@@ -33,7 +33,6 @@
     "@graphql-codegen/typescript-operations": "2.2.2",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
-    "@types/gapi": "^0.0.41",
     "@types/node": "16.11.12",
     "@types/react": "17.0.37",
     "eslint": "8.4.1",

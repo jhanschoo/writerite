@@ -392,7 +392,9 @@ export interface NexusGenArgTypes {
       id: string; // ID!
     }
     finalizeThirdPartyOauthSignin: { // args
+      code: string; // String!
       nonce: string; // String!
+      provider: string; // String!
     }
     messageCreate: { // args
       content?: NexusGenScalars['JSON'] | null; // JSON

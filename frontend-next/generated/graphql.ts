@@ -234,7 +234,9 @@ export type MutationDeckUsedArgs = {
 
 
 export type MutationFinalizeThirdPartyOauthSigninArgs = {
+  code: Scalars['String'];
   nonce: Scalars['String'];
+  provider: Scalars['String'];
 };
 
 
@@ -397,10 +399,26 @@ export type UserDeckRecord = {
   userId: Scalars['ID'];
 };
 
+export type FinalizeThirdPartyOauthSigninMutationVariables = Exact<{
+  code: Scalars['String'];
+  provider: Scalars['String'];
+  nonce: Scalars['String'];
+}>;
+
+
+export type FinalizeThirdPartyOauthSigninMutation = { __typename?: 'Mutation', finalizeThirdPartyOauthSignin?: any | null | undefined };
+
 export type HealthQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type HealthQueryQuery = { __typename?: 'Query', health: string };
 
+export type InitializeThirdPartyOauthSigninMutationVariables = Exact<{ [key: string]: never; }>;
 
+
+export type InitializeThirdPartyOauthSigninMutation = { __typename?: 'Mutation', initializeThirdPartyOauthSignin: string };
+
+
+export const FinalizeThirdPartyOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FinalizeThirdPartyOauthSignin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"code"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nonce"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"finalizeThirdPartyOauthSignin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"code"},"value":{"kind":"Variable","name":{"kind":"Name","value":"code"}}},{"kind":"Argument","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}},{"kind":"Argument","name":{"kind":"Name","value":"nonce"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nonce"}}}]}]}}]} as unknown as DocumentNode<FinalizeThirdPartyOauthSigninMutation, FinalizeThirdPartyOauthSigninMutationVariables>;
 export const HealthQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HealthQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"health"}}]}}]} as unknown as DocumentNode<HealthQueryQuery, HealthQueryQueryVariables>;
+export const InitializeThirdPartyOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializeThirdPartyOauthSignin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializeThirdPartyOauthSignin"}}]}}]} as unknown as DocumentNode<InitializeThirdPartyOauthSigninMutation, InitializeThirdPartyOauthSigninMutationVariables>;
