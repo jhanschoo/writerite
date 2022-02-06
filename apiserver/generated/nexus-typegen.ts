@@ -106,6 +106,7 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Room: p.Room;
+  Subscription: {};
   User: p.User;
   UserCardRecord: p.UserCardRecord;
   UserDeckRecord: p.UserDeckRecord;
@@ -205,6 +206,9 @@ export interface NexusGenFieldTypes {
     ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
     ownerId: string; // ID!
     state: NexusGenEnums['RoomState']; // RoomState!
+  }
+  Subscription: { // field return type
+    repeatHealth: string; // String!
   }
   User: { // field return type
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
@@ -314,6 +318,9 @@ export interface NexusGenFieldTypeNames {
     ownerConfig: 'JSONObject'
     ownerId: 'ID'
     state: 'RoomState'
+  }
+  Subscription: { // field return type name
+    repeatHealth: 'String'
   }
   User: { // field return type name
     decks: 'Deck'
