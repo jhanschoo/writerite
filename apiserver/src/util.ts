@@ -22,7 +22,7 @@ export function slug(size: number | null = 4): string {
 export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
 	// note: `get?.` is required here since `ctx` is not necessarily an express `Request`.
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	const authorization = (ctx.request as unknown as Request | undefined)?.get?.("Authorization") ?? /* ctx.connection?.context.Authorization ?? */ null;
+	const authorization = ctx.request.headers.get("Authorization") ?? null;
 	if (!authorization) {
 		return;
 	}
