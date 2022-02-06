@@ -9,8 +9,10 @@ export const User = objectType({
 	name: "User",
 	definition(t) {
 		t.nonNull.id("id");
-		t.nonNull.emailAddress("email", { authorize: isPublicOrLoggedInOrAdmin });
+		t.emailAddress("email", { authorize: isPublicOrLoggedInOrAdmin });
 		t.nonNull.string("name", { authorize: isPublicOrLoggedInOrAdmin });
+		t.string("googleId", { authorize: isPublicOrLoggedInOrAdmin });
+		t.string("facebookId", { authorize: isPublicOrLoggedInOrAdmin });
 		t.nonNull.list.nonNull.string("roles", { authorize: isPublicOrLoggedInOrAdmin });
 		t.nonNull.boolean("isPublic");
 
@@ -41,9 +43,13 @@ export const User = objectType({
 export const UserQuery = queryField("user", {
 	type: nonNull("User"),
 	args: {
-		id: nonNull(idArg()),
+		id: idArg(),
 	},
-	resolve: async (_source, { id }, { prisma }) => {
+	resolve: async (_source, { id: idArgument }, { prisma, sub }) => {
+		const id = idArgument ?? sub?.id;
+		if (!id) {
+			throw userLacksPermissionsErrorFactory();
+		}
 		const res = await prisma.user.findUnique({
 			where: { id },
 		});

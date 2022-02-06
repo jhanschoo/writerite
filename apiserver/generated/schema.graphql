@@ -116,7 +116,7 @@ type Mutation {
   deckEdit(answerLang: String, archived: Boolean, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckUsed(id: ID!): Deck!
-  finalizeThirdPartyOauthSignin(code: String!, nonce: String!, provider: String!): JWT
+  finalizeThirdPartyOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): JWT
   initializeThirdPartyOauthSignin: String!
 
   """
@@ -169,7 +169,6 @@ type Mutation {
     )
   """
   roomSetState(id: ID!, state: RoomState!): Room!
-  signin(authorizer: String!, email: String!, identifier: String!, name: String, persist: Boolean, token: String!): JWT
   userEdit(isPublic: Boolean, name: String): User!
 }
 
@@ -187,7 +186,7 @@ type Query {
   occupyingRooms: [Room!]!
   ownDeckRecord(deckId: ID!): UserDeckRecord
   room(id: ID!): Room!
-  user(id: ID!): User!
+  user(id: ID): User!
 }
 
 type Room {
@@ -214,7 +213,9 @@ scalar UUID
 
 type User {
   decks: [Deck!]!
-  email: EmailAddress!
+  email: EmailAddress
+  facebookId: String
+  googleId: String
   id: ID!
   isPublic: Boolean!
   name: String!

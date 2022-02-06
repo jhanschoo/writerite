@@ -1,12 +1,24 @@
 import { Box } from '@mui/material';
 import type { NextPage } from 'next'
 import Head from 'next/head'
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { Signin } from '../components/browser/Signin';
 import { Flex } from '../components/core/basic/Flex';
 import HeroHeading from '../components/core/basic/HeroHeading';
+import { useLogin } from '../components/core/signin/login/useLogin';
 import BrandText from '../components/core/typography/BrandText';
+import { getAccessKey, setAccessKey } from '../lib/browser/tokenManagement';
 
 const Home: NextPage = () => {
+	const router = useRouter();
+	const login = useLogin();
+	useEffect(() => {
+		const { token } = router.query;
+		if (window?.localStorage) {
+			login(token as string | undefined);
+		}
+	}, [router, login]);
 	return (
 		<>
 			<Head>

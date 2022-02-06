@@ -2,16 +2,13 @@
   @typescript-eslint/no-unsafe-assignment,
   @typescript-eslint/no-unsafe-call,
   @typescript-eslint/no-unsafe-member-access */
-import env from "./safeEnv";
-import bcrypt from "bcrypt";
-import { KEYUTIL, KJUR, hextob64 } from "jsrsasign";
 import { nanoid } from "nanoid";
 import { YogaInitialContext } from "@graphql-yoga/node";
 import { Request } from "express";
 
 import { CurrentUser } from "./types";
-
-const SALT_ROUNDS = 10;
+import { parseJWT, verifyJWT } from "./service/crypto/jwtUtil";
+import { URL } from "url";
 
 export const FETCH_DEPTH = process.env.FETCH_DEPTH ? parseInt(process.env.FETCH_DEPTH, 10) : 3;
 if (isNaN(FETCH_DEPTH) || FETCH_DEPTH < 1) {
@@ -22,49 +19,10 @@ export function slug(size: number | null = 4): string {
 	return nanoid(size ?? undefined);
 }
 
-const { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } = env;
-
-const PRIVATE_KEY = KEYUTIL.getKey(JSON.parse(JWT_PRIVATE_KEY));
-const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(JWT_PUBLIC_KEY));
-
-export async function comparePassword(plain: string, hashed: string): Promise<boolean> {
-	return bcrypt.compare(plain, hashed);
-}
-
-export async function hashPassword(plain: string): Promise<string> {
-	return bcrypt.hash(plain, SALT_ROUNDS);
-}
-
-export function generateB64UUID(): string {
-	const uuid = KJUR.crypto.Util.getRandomHexOfNbits(128) as string;
-	const b64uuid = hextob64(uuid) as string;
-	return b64uuid;
-}
-
-export function generateJWT(sub: CurrentUser, persist = false): string {
-	const timeNow = KJUR.jws.IntDate.get("now") as number;
-	const expiryTime = KJUR.jws.IntDate.get(persist ? "now + 1year" : "now + 1day") as number;
-
-	const header = {
-		alg: "ES256",
-		cty: "JWT",
-	} as const;
-
-	const payload = {
-		exp: expiryTime,
-		iat: timeNow,
-		iss: "writerite.site",
-		jti: generateB64UUID(),
-		// Nbf: timeNow,
-		sub,
-	};
-
-	const jwt = KJUR.jws.JWS.sign(null, header, payload, PRIVATE_KEY) as string;
-	return jwt;
-}
-
 export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
-	const authorization = (ctx.request as Request | undefined)?.get?.("Authorization") ?? /* ctx.connection?.context.Authorization ?? */ null;
+	// note: `get?.` is required here since `ctx` is not necessarily an express `Request`.
+	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+	const authorization = (ctx.request as unknown as Request | undefined)?.get?.("Authorization") ?? /* ctx.connection?.context.Authorization ?? */ null;
 	if (!authorization) {
 		return;
 	}
@@ -72,8 +30,8 @@ export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
 	const jwt = authorization.slice(7);
 	if (jwt) {
 		try {
-			if (KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, ["ES256"]) as boolean) {
-				const { sub } = KJUR.jws.JWS.parse(jwt).payloadObj;
+			if (verifyJWT(jwt)) {
+				const { sub } = parseJWT(jwt) as { sub: CurrentUser | undefined };
 				return sub;
 			}
 		} catch (e: unknown) {
@@ -91,4 +49,11 @@ export function handleError(e: unknown): null {
 	}
 
 	return null;
+}
+
+export function setSearchParams(url: URL, params: { [key: string]: string }): URL {
+	for (const [key, value] of Object.entries(params)) {
+		url.searchParams.append(key, value);
+	}
+	return url;
 }

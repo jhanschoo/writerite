@@ -11,6 +11,9 @@ const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 		<Providers emotionCache={emotionCache}>
 			<Head>
 				<meta name="viewport" content="initial-scale=1, width=device-width" />
+				<title>WriteRite</title>
+				<meta name="description" content="WriteRite: Quizzes from Cards" />
+				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<Component {...pagePropsRest} />
 		</Providers>

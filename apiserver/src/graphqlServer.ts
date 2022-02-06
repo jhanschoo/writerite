@@ -14,10 +14,5 @@ export function graphQLServerFactory(context: (initialContext: YogaInitialContex
 		schema,
 		maskedErrors: NODE_ENV === "production",
 		context,
-		/*
-		 * context,
-		 * mocks: NODE_ENV === "frontend-testing",
-		 * debug: NODE_ENV !== "production",
-		 */
 	});
 }

@@ -24,8 +24,6 @@ export type Upload = Promise<FileUpload>;
 
 export interface CurrentUser {
 	id: string;
-	email: string;
-	name: string | null;
 	roles: Roles[];
 }
 

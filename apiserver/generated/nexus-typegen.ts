@@ -183,7 +183,6 @@ export interface NexusGenFieldTypes {
     roomCreate: NexusGenRootTypes['Room']; // Room!
     roomEditOwnerConfig: NexusGenRootTypes['Room']; // Room!
     roomSetState: NexusGenRootTypes['Room']; // Room!
-    signin: NexusGenScalars['JWT'] | null; // JWT
     userEdit: NexusGenRootTypes['User']; // User!
   }
   Query: { // field return type
@@ -209,7 +208,9 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
-    email: NexusGenScalars['EmailAddress']; // EmailAddress!
+    email: NexusGenScalars['EmailAddress'] | null; // EmailAddress
+    facebookId: string | null; // String
+    googleId: string | null; // String
     id: string; // ID!
     isPublic: boolean; // Boolean!
     name: string; // String!
@@ -291,7 +292,6 @@ export interface NexusGenFieldTypeNames {
     roomCreate: 'Room'
     roomEditOwnerConfig: 'Room'
     roomSetState: 'Room'
-    signin: 'JWT'
     userEdit: 'User'
   }
   Query: { // field return type name
@@ -318,6 +318,8 @@ export interface NexusGenFieldTypeNames {
   User: { // field return type name
     decks: 'Deck'
     email: 'EmailAddress'
+    facebookId: 'String'
+    googleId: 'String'
     id: 'ID'
     isPublic: 'Boolean'
     name: 'String'
@@ -395,6 +397,7 @@ export interface NexusGenArgTypes {
       code: string; // String!
       nonce: string; // String!
       provider: string; // String!
+      redirect_uri: string; // String!
     }
     messageCreate: { // args
       content?: NexusGenScalars['JSON'] | null; // JSON
@@ -428,14 +431,6 @@ export interface NexusGenArgTypes {
       id: string; // ID!
       state: NexusGenEnums['RoomState']; // RoomState!
     }
-    signin: { // args
-      authorizer: string; // String!
-      email: string; // String!
-      identifier: string; // String!
-      name?: string | null; // String
-      persist?: boolean | null; // Boolean
-      token: string; // String!
-    }
     userEdit: { // args
       isPublic?: boolean | null; // Boolean
       name?: string | null; // String
@@ -464,7 +459,7 @@ export interface NexusGenArgTypes {
       id: string; // ID!
     }
     user: { // args
-      id: string; // ID!
+      id?: string | null; // ID
     }
   }
 }

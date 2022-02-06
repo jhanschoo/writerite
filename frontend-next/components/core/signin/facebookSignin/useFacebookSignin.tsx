@@ -20,7 +20,13 @@ export default function useFacebookSignin() {
 				throw new Error("Unable to initializeThirdPartyOauthSignin");
 			}
 			const nonce = data.initializeThirdPartyOauthSignin;
-			const url = new URL(`https://www.facebook.com/v12.0/dialog/oauth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=email public_profile&state={"provider":"facebook","nonce":"${nonce}"}`);
+			const url = new URL(`https://www.facebook.com/v12.0/dialog/oauth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=email public_profile&state=${
+				JSON.stringify({
+					provider: "facebook",
+					nonce,
+					redirect_uri,
+				})
+			}`);
 			window.location.assign(url);
 		}
 	] as const;

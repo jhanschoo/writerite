@@ -1,21 +1,9 @@
-import { booleanArg, mutationField, nonNull, stringArg } from "nexus";
-import { authenticate } from "../service/authentication/authenticate";
-import { getNonce, validateNonce } from "../service/crypto/nonce";
+/* eslint-disable @typescript-eslint/naming-convention */
+import { mutationField, nonNull, stringArg } from "nexus";
 
-export const SigninMutation = mutationField("signin", {
-	type: "JWT",
-	args: {
-		email: nonNull(stringArg()),
-		name: stringArg({ undefinedOnly: true }),
-		token: nonNull(stringArg()),
-		authorizer: nonNull(stringArg()),
-		identifier: nonNull(stringArg()),
-		persist: booleanArg({ undefinedOnly: true }),
-	},
-	resolve(_parent, args, { prisma }) {
-		return authenticate({ ...args, prisma });
-	},
-});
+import { getNonce, validateNonce } from "../service/crypto/nonce";
+import { thirdPartySignin } from "../service/authentication/thirdPartySignin";
+import { userToJWT } from "../service/authentication/util";
 
 export const InitializeThirdPartySigninMutation = mutationField("initializeThirdPartyOauthSignin", {
 	type: nonNull("String"),
@@ -30,10 +18,13 @@ export const FinalizeThirdPartySigninMutation = mutationField("finalizeThirdPart
 		code: nonNull(stringArg()),
 		provider: nonNull(stringArg()),
 		nonce: nonNull(stringArg()),
+		redirect_uri: nonNull(stringArg()),
 	},
-	async resolve(_parent, { code, provider, nonce }, { redis }) {
-		console.log(code, provider, nonce);
-		await validateNonce(redis, nonce);
-		return null;
+	async resolve(_parent, { code, provider, nonce, redirect_uri }, { prisma, redis }) {
+		if (!await validateNonce(redis, nonce)) {
+			return null;
+		}
+		const user = await thirdPartySignin({ code, provider, redirect_uri, prisma });
+		return user && userToJWT({ user, persist: true });
 	},
 });
