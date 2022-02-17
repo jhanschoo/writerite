@@ -6,7 +6,9 @@ import { useLogout } from '../../components/core/signin/login/useLogout';
 const Home: NextPage = () => {
 	const logout = useLogout();
 	return (
-		<button onClick={logout}>logout</button>
+		<div>
+			<button onClick={logout}>logout</button>
+		</div>
 	);
 }
 
