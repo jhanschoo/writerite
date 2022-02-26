@@ -1,0 +1,10 @@
+query User($id: ID) {
+	user(id: $id) {
+		id
+		email
+		facebookId
+		googleId
+		isPublic
+		name
+	}
+}
