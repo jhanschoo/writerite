@@ -6,7 +6,7 @@ COPY schema.prisma ./
 # prisma generate happens on the following command due to the postinstall hook of @prisma/client
 RUN npm ci --production
 COPY . .
-# workaround for https://github.com/graphql-nexus/nexus/pull/919 ; should be fixed in nexus@1.2.0
+# workaround for graphql-yoga's subscriptions format
 COPY patch_node_modules node_modules
 RUN npm run build
 CMD npm run app:start
