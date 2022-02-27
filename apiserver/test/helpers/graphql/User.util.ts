@@ -3,31 +3,25 @@ import { CurrentUser } from "../../../src/types";
 import { unsafeJwtToCurrentUser } from "../misc";
 
 export const DEFAULT_CREATE_USER_VALUES = {
-	email: "abc@xyz.com",
-	token: "not_used",
-	authorizer: "DEVELOPMENT",
-	identifier: "password",
+	name: "abcxyz",
 };
 
-export function createUser(server: WrServer, { email, token, authorizer, identifier }: { email: string, token: string, authorizer: string, identifier: string } = DEFAULT_CREATE_USER_VALUES) {
+export function createUser(server: WrServer, { name }: { name: string } = DEFAULT_CREATE_USER_VALUES) {
 	return server.inject({
 		document: `
-			mutation CreateUser($email: String!, $token: String!, $authorizer: String!, $identifier: String!) {
-				signin(email: $email, token: $token, authorizer: $authorizer, identifier: $identifier)
+			mutation CreateUser($code: String!, $nonce: String!, $provider: String!, $redirect_uri: String!) {
+				finalizeThirdPartyOauthSignin(code: $code, nonce: $nonce, provider: $provider, redirect_uri: $redirect_uri)
 			}
 		`,
-		variables: { email, token, authorizer, identifier },
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		variables: { code: name, nonce: "", provider: "development", redirect_uri: "" },
 	});
-}
-
-export function createUserWithEmail(server: WrServer, email: string) {
-	return createUser(server, { ...DEFAULT_CREATE_USER_VALUES, email });
 }
 
 export async function loginAsNewlyCreatedUser(server: WrServer, setSub: (sub?: CurrentUser) => void): Promise<CurrentUser> {
 	const { executionResult } = await createUser(server);
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-	const currentUser = unsafeJwtToCurrentUser(executionResult.data.signin as string);
+	const currentUser = unsafeJwtToCurrentUser(executionResult.data.finalizeThirdPartyOauthSignin as string);
 	setSub(currentUser);
 	return currentUser;
 }
@@ -37,7 +31,6 @@ export function queryAllUserAccessibleUserScalars(server: WrServer, id: string) 
 		document: `
 			query QueryUser($id: ID!) {
 				user(id: $id) {
-					email
 					id
 					isPublic
 					name

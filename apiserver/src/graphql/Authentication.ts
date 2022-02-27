@@ -5,6 +5,8 @@ import { getNonce, validateNonce } from "../service/crypto/nonce";
 import { thirdPartySignin } from "../service/authentication/thirdPartySignin";
 import { userToJWT } from "../service/authentication/util";
 
+const { NODE_ENV } = process.env;
+
 export const InitializeThirdPartySigninMutation = mutationField("initializeThirdPartyOauthSignin", {
 	type: nonNull("String"),
 	resolve(_parent, _args, { redis }) {
@@ -21,7 +23,7 @@ export const FinalizeThirdPartySigninMutation = mutationField("finalizeThirdPart
 		redirect_uri: nonNull(stringArg()),
 	},
 	async resolve(_parent, { code, provider, nonce, redirect_uri }, { prisma, redis }) {
-		if (!await validateNonce(redis, nonce)) {
+		if (NODE_ENV === "production" && !await validateNonce(redis, nonce)) {
 			return null;
 		}
 		const user = await thirdPartySignin({ code, provider, redirect_uri, prisma });

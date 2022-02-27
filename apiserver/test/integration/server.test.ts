@@ -31,8 +31,8 @@ describe("server", () => {
 	it("should be able to respond to a basic create user", async () => {
 		expect.assertions(2);
 		const { executionResult } = await createUser(server);
-		expect(executionResult).toHaveProperty("data.signin");
+		expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin");
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		expect(typeof executionResult.data.signin).toBe("string");
+		expect(typeof executionResult.data.finalizeThirdPartyOauthSignin).toBe("string");
 	});
 });

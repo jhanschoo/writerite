@@ -10,8 +10,7 @@ import { Context, PubSubPublishArgsByKey } from "../../../src/context";
 
 export const DEFAULT_CURRENT_USER = {
 	id: "fake-id",
-	email: "abc@xyz.com",
-	name: null,
+	name: "fake-name",
 	roles: [Roles.user],
 };
 

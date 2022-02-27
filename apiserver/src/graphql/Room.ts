@@ -1,8 +1,8 @@
 import { Prisma } from "@prisma/client";
-import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from "nexus";
+import { enumType, idArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
-import { emailAddressArg, jsonObjectArg } from "./scalarUtil";
+import { jsonObjectArg } from "./scalarUtil";
 
 export const Room = objectType({
 	name: "Room",
@@ -142,11 +142,11 @@ export const RoomAddOccupantMutation = mutationField("roomAddOccupant", {
 });
 
 // Only legal when room state is WAITING
-export const RoomAddOccupantByEmailMutation = mutationField("roomAddOccupantByEmail", {
+export const RoomAddOccupantByNameMutation = mutationField("roomAddOccupantByName", {
 	type: nonNull("Room"),
 	args: {
 		id: nonNull(idArg()),
-		email: nonNull(emailAddressArg()),
+		name: nonNull(stringArg()),
 	},
 	description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]

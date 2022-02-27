@@ -138,10 +138,9 @@ model Subdeck {
 
 model User {
   id             String           @default(cuid()) @id
-  email          String?          @unique
   facebookId     String?          @unique
   googleId       String?          @unique
-  name           String           @default("")
+  name           String?          @unique
   passwordHash   String?
   roles          String[]
   isPublic       Boolean          @default(false)

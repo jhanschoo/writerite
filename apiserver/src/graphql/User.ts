@@ -9,7 +9,6 @@ export const User = objectType({
 	name: "User",
 	definition(t) {
 		t.nonNull.id("id");
-		t.emailAddress("email", { authorize: isPublicOrLoggedInOrAdmin });
 		t.nonNull.string("name", { authorize: isPublicOrLoggedInOrAdmin });
 		t.string("googleId", { authorize: isPublicOrLoggedInOrAdmin });
 		t.string("facebookId", { authorize: isPublicOrLoggedInOrAdmin });

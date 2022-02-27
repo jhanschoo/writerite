@@ -179,7 +179,7 @@ export interface NexusGenFieldTypes {
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
     roomAddOccupant: NexusGenRootTypes['Room']; // Room!
-    roomAddOccupantByEmail: NexusGenRootTypes['Room']; // Room!
+    roomAddOccupantByName: NexusGenRootTypes['Room']; // Room!
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
     roomEditOwnerConfig: NexusGenRootTypes['Room']; // Room!
@@ -212,7 +212,6 @@ export interface NexusGenFieldTypes {
   }
   User: { // field return type
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
-    email: NexusGenScalars['EmailAddress'] | null; // EmailAddress
     facebookId: string | null; // String
     googleId: string | null; // String
     id: string; // ID!
@@ -291,7 +290,7 @@ export interface NexusGenFieldTypeNames {
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
     roomAddOccupant: 'Room'
-    roomAddOccupantByEmail: 'Room'
+    roomAddOccupantByName: 'Room'
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
     roomEditOwnerConfig: 'Room'
@@ -324,7 +323,6 @@ export interface NexusGenFieldTypeNames {
   }
   User: { // field return type name
     decks: 'Deck'
-    email: 'EmailAddress'
     facebookId: 'String'
     googleId: 'String'
     id: 'ID'
@@ -423,9 +421,9 @@ export interface NexusGenArgTypes {
       id: string; // ID!
       occupantId: string; // ID!
     }
-    roomAddOccupantByEmail: { // args
-      email: NexusGenScalars['EmailAddress']; // EmailAddress!
+    roomAddOccupantByName: { // args
       id: string; // ID!
+      name: string; // String!
     }
     roomCreate: { // args
       ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
