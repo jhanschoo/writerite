@@ -216,7 +216,7 @@ export interface NexusGenFieldTypes {
     googleId: string | null; // String
     id: string; // ID!
     isPublic: boolean; // Boolean!
-    name: string; // String!
+    name: string | null; // String
     occupyingRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownedRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     roles: string[]; // [String!]!

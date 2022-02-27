@@ -1,3 +1,4 @@
+import { FC } from 'react';
 import { Span } from "../basic/Span";
 
 interface Props {
@@ -6,7 +7,7 @@ interface Props {
 	suffix?: string;
 }
 
-const BrandText: React.FC<Props> = ({ prefix, full, suffix }) =>
+const BrandText: FC<Props> = ({ prefix, full, suffix }) =>
 	(
 		<Span sx={{
 			fontWeight: 400,

@@ -1,7 +1,6 @@
 mutation UserEdit($isPublic: Boolean, $name: String) {
 	userEdit(isPublic: $isPublic, name: $name) {
 		id
-		email
 		facebookId
 		googleId
 		isPublic
