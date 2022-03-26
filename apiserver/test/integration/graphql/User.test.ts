@@ -76,7 +76,7 @@ describe("graphql/User.ts", () => {
 				const { id } = unsafeJwtToCurrentUser(createUserExecutionResult.data.finalizeThirdPartyOauthSignin as string);
 				const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, id);
 				expect(queryUserExecutionResult.data).toBeNull();
-				expect(queryUserExecutionResult.errors).toHaveLength(1);
+				expect(queryUserExecutionResult.errors).not.toHaveLength(0);
 			});
 			it("should not be able to fetch all user-accessible fields of private user if logged in as another user", async () => {
 				expect.assertions(2);
@@ -89,7 +89,7 @@ describe("graphql/User.ts", () => {
 				setSub(currentUser);
 				const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, id);
 				expect(queryUserExecutionResult.data).toBeNull();
-				expect(queryUserExecutionResult.errors).toHaveLength(1);
+				expect(queryUserExecutionResult.errors).not.toHaveLength(0);
 			});
 			it("should be able to fetch public fields of private user if not logged in", async () => {
 				expect.assertions(1);

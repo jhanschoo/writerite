@@ -7,6 +7,6 @@ dependencies:
   version: 15.7.6
 - name: writerite-apiserver
   repository: oci://registry.gitlab.com/writerite/writerite
-  version: 0.1.0-dev.11
-digest: sha256:40afba93de64d3b82a1586710bee020d204f1bef5ca899c3c194a53f194ae45b
-generated: "2022-01-24T08:54:50.752123771+08:00"
+  version: 0.1.0-dev.12
+digest: sha256:5f303a6e2b0051bdcde39fac68dadc74b8363c1a2f89906179a7d6ab969f6477
+generated: "2022-03-26T08:28:43.874916047+08:00"

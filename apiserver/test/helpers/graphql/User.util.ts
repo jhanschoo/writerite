@@ -18,6 +18,21 @@ export function createUser(server: WrServer, { name }: { name: string } = DEFAUL
 	});
 }
 
+export function nameUser(server: WrServer, { name }: { name: string } = DEFAULT_CREATE_USER_VALUES) {
+	return server.inject({
+		document: `
+			mutation UserEdit($name: String!) {
+				userEdit(name: $name) {
+					id
+					name
+				}
+			}
+		`,
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		variables: { name },
+	});
+}
+
 export async function loginAsNewlyCreatedUser(server: WrServer, setSub: (sub?: CurrentUser) => void): Promise<CurrentUser> {
 	const { executionResult } = await createUser(server);
 	// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

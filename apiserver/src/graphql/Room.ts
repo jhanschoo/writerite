@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { enumType, idArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
-import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
+import { guardValidUser } from "../service/authorization/guardValidUser";
 import { jsonObjectArg } from "./scalarUtil";
 
 export const Room = objectType({
@@ -56,7 +56,7 @@ export const RoomState = enumType({
 export const RoomQuery = queryField("room", {
 	type: nonNull("Room"),
 	args: { id: nonNull(idArg()) },
-	resolve: guardLoggedIn(async (_source, { id }, { prisma }) => {
+	resolve: guardValidUser(async (_source, { id }, { prisma }) => {
 		const res = await prisma.room.findUnique({
 			where: { id },
 		});
@@ -69,7 +69,7 @@ export const RoomQuery = queryField("room", {
 
 export const OccupyingRoomsQuery = queryField("occupyingRooms", {
 	type: nonNull(list(nonNull("Room"))),
-	resolve: guardLoggedIn((_source, _args, { sub, prisma }) => prisma.room.findMany({
+	resolve: guardValidUser((_source, _args, { sub, prisma }) => prisma.room.findMany({
 		where: { occupants: { some: { id: sub.id } } },
 	})),
 });

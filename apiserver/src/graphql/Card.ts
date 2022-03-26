@@ -1,7 +1,7 @@
 import { Prisma, Unit } from "@prisma/client";
 import { arg, booleanArg, idArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
-import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
+import { guardValidUser } from "../service/authorization/guardValidUser";
 import { dateTimeArg, jsonObjectArg } from "./scalarUtil";
 
 export const Card = objectType({
@@ -30,7 +30,7 @@ export const Card = objectType({
 
 		t.field("ownRecord", {
 			type: "UserCardRecord",
-			resolve: guardLoggedIn(async ({ id: cardId }, _args, { sub, prisma }) =>
+			resolve: guardValidUser(async ({ id: cardId }, _args, { sub, prisma }) =>
 				// eslint-disable-next-line @typescript-eslint/naming-convention
 				prisma.userCardRecord.findUnique({ where: { userId_cardId: { userId: sub.id, cardId } } })),
 		});
@@ -65,7 +65,7 @@ export const CardCreateMutation = mutationField("cardCreate", {
 		})),
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
-	resolve: guardLoggedIn(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
+	resolve: guardValidUser(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
 		const { prompt, fullAnswer, answers, sortKey, template } = card;
 		if (await prisma.deck.count({ where: { id: deckId, ownerId: sub.id } }) !== 1) {
 			throw userLacksPermissionsErrorFactory();
@@ -127,7 +127,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 		 */
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
-	resolve: guardLoggedIn(async (_source, { id, prompt, fullAnswer, answers, sortKey, template }, { sub, prisma }) => {
+	resolve: guardValidUser(async (_source, { id, prompt, fullAnswer, answers, sortKey, template }, { sub, prisma }) => {
 		const updated = await prisma.card.updateMany({
 			where: {
 				id,
@@ -159,7 +159,7 @@ export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplat
 	args: {
 		deckId: nonNull(idArg()),
 	},
-	resolve: guardLoggedIn(async (_source, { deckId }, { sub, prisma }) => {
+	resolve: guardValidUser(async (_source, { deckId }, { sub, prisma }) => {
 		const whereDeck = {
 			id: deckId,
 			ownerId: sub.id,
@@ -191,7 +191,7 @@ export const CardDeleteMutation = mutationField("cardDelete", {
 	args: {
 		id: nonNull(idArg()),
 	},
-	resolve: guardLoggedIn(async (_source, { id }, { sub, prisma }) => {
+	resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
 		const cards = await prisma.card.findMany({
 			where: {
 				id,
@@ -225,7 +225,7 @@ export const OwnCardRecordSetMutation = mutationField("ownCardRecordSet", {
 		cardId: nonNull(idArg()),
 		correctRecordAppend: nonNull(list(nonNull(dateTimeArg()))),
 	},
-	resolve: guardLoggedIn((_source, { cardId, correctRecordAppend }, { sub, prisma }) => prisma.userCardRecord.upsert({
+	resolve: guardValidUser((_source, { cardId, correctRecordAppend }, { sub, prisma }) => prisma.userCardRecord.upsert({
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		where: { userId_cardId: { userId: sub.id, cardId } },
 		create: {

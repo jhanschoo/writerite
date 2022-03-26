@@ -69,7 +69,8 @@ export const UserEditMutation = mutationField("userEdit", {
 		try {
 			return await prisma.user.update({
 				where: { id: sub.id },
-				data: { name: name ?? undefined, isPublic: isPublic ?? undefined },
+				// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+				data: { name: name?.trim() || undefined, isPublic: isPublic ?? undefined },
 			});
 		} catch (err) {
 			throw userLacksPermissionsErrorFactory();

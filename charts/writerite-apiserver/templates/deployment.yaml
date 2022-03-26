@@ -98,6 +98,12 @@ spec:
                   name: {{ include "writerite-apiserver.fullname" . }}
                   key: jwtPublicKey
                   optional: false
+            - name: NODE_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "writerite-apiserver.fullname" . }}
+                  key: nodeEnv
+                  optional: false
             - name: RECAPTCHA_CLIENT_KEY
               valueFrom:
                 secretKeyRef:

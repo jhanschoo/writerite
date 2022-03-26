@@ -14,10 +14,10 @@ dependencies:
     version: "^15.3.1"
     repository: https://charts.bitnami.com/bitnami
   - name: writerite-apiserver
-    version: "0.1.0-dev.11"
+    version: "0.1.0-dev.12"
     repository: oci://registry.gitlab.com/writerite/writerite
   # - name: writerite-wright-node
-  #   version: ^0.1.0-dev.11
+  #   version: ^0.1.0-dev.12
   #   # contrary to documentation, oci repositories not yet supported
   #   # https://github.com/helm/helm/pull/7613
   #   # repository: oci://registry.gitlab.com/writerite/writerite
@@ -35,7 +35,7 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: "0.1.0-dev.11"
+version: "0.1.0-dev.12"
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to

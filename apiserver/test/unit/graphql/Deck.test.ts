@@ -57,6 +57,8 @@ describe("graphql/Deck.ts", () => {
 				setSub(DEFAULT_CURRENT_USER);
 				const id = "fake-id";
 				// @ts-expect-error dumb default type resolution error
+				prisma.user.findMany.mockReturnValue(Promise.resolve([]));
+				// @ts-expect-error dumb default type resolution error
 				prisma.deck.create.mockReturnValue(Promise.resolve({
 					id,
 				}));
