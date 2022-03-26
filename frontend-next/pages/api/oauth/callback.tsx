@@ -31,5 +31,5 @@ export default async function handler(
 			return res.redirect(303, `/?token=${token}`), undefined;
 		}
 	}
-	return res.redirect(303, `/`), undefined;
+	return res.redirect(303, '/'), undefined;
 }

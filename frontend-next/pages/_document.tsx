@@ -2,7 +2,6 @@ import Document, { DocumentContext, DocumentProps, Head, Html, Main, NextScript 
 import createEmotionServer from '@emotion/server/create-instance';
 
 import createEmotionCache from '../lib/core/frameworks/emotion/createEmotionCache';
-import { CssBaseline } from '@mui/material';
 
 interface WrDocumentProps extends DocumentProps {
 	emotionStyles: JSX.Element[];
@@ -39,9 +38,8 @@ class WrDocument extends Document<WrDocumentProps> {
 		// Create a new cache on every request
 		const emotionCache = createEmotionCache();
 		const { extractCriticalToChunks /*, constructStyleTagsFromChunks */ } = createEmotionServer(emotionCache);
-		const pageProps = { emotionCache };
 		ctx.renderPage = () => originalRenderPage({
-			enhanceApp: (App) => function EnhanceApp(props) { return (<App {...props} pageProps={{ ...props.pageProps, ...pageProps }} />); },
+			enhanceApp: (App) => function EnhanceApp(props) { return (<App {...props} pageProps={{ emotionCache, ...props.pageProps }} />); },
 		});
 		const initialProps = await Document.getInitialProps(ctx);
 
@@ -53,6 +51,7 @@ class WrDocument extends Document<WrDocumentProps> {
 			key={style.key}
 			dangerouslySetInnerHTML={{ __html: style.css }}
 		/>));
+		console.log(emotionStyles);
 
 		return {
 			...initialProps,
@@ -68,7 +67,6 @@ class WrDocument extends Document<WrDocumentProps> {
 					<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
 					<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&family=Yeseva+One&display=swap" rel="stylesheet" />
 					{this.props.emotionStyles}
-					<CssBaseline />
 				</Head>
 				<body>
 					<Main />

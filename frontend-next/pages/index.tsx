@@ -8,7 +8,6 @@ import { Flex } from '../components/core/basic/Flex';
 import HeroHeading from '../components/core/basic/HeroHeading';
 import { useLogin } from '../components/core/signin/login/useLogin';
 import BrandText from '../components/core/typography/BrandText';
-import { getAccessKey, setAccessKey } from '../lib/browser/tokenManagement';
 
 const Home: NextPage = () => {
 	const router = useRouter();

@@ -37,8 +37,6 @@ const FinalizeUserDialog: FC<FinalizeUserProps> = ({ open, handleSuccessfulNameC
 				</Button>
 				<Button variant="outlined" onClick={handleSubmit}>Submit</Button>
 			</DialogActions>
-			<div>
-		</div>
 		</Dialog>
 	);
 }
