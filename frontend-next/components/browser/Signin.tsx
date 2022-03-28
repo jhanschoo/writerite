@@ -1,5 +1,4 @@
-import { Button, Divider, SxProps } from "@mui/material";
-import { Flex } from "../core/basic/Flex"
+import { Button, Card, CardContent, Stack, SxProps, Typography } from "@mui/material";
 import useFacebookSignin from "../core/signin/facebookSignin/useFacebookSignin";
 import useGoogleSignin from "../core/signin/googleSignin/useGoogleSignin";
 import useDevelopmentSignin from "../core/signin/developmentSignin/useDevelopmentSignin";
@@ -13,20 +12,27 @@ export const Signin = ({ sx }: Props) => {
 	const [, googleSignin] = useGoogleSignin();
 	const [, developmentSignin] = useDevelopmentSignin();
 	return (
-		<Flex sx={{ flexDirection: "column", alignItems: "stretch", ...sx }}>
-			<Button variant="contained" onClick={googleSignin}>
-				Sign in with Google
-			</Button>
-			<Button variant="contained" onClick={facebookSignin}>
-				Sign in with Facebook
-			</Button>
-			{
-				process.env.NODE_ENV === "development" && (
-					<Button variant="contained" onClick={developmentSignin}>
-						development signin
+		<Card sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', ...sx }}>
+			<CardContent>
+				<Typography variant="h5" textAlign="center" paddingBottom={2}>
+					Sign in with...
+				</Typography>
+				<Stack direction="row" justifyContent="center" spacing={2}>
+					<Button variant="contained" color="inverse" onClick={googleSignin}>
+						Google
 					</Button>
-				)
-			}
-		</Flex>
+					<Button variant="contained" color="inverse" onClick={facebookSignin}>
+						Facebook
+					</Button>
+					{
+						process.env.NODE_ENV === "development" && (
+							<Button variant="contained" color="inverse" onClick={developmentSignin}>
+								Dev
+							</Button>
+						)
+					}
+				</Stack>
+			</CardContent>
+		</Card>
 	);
 };

@@ -51,7 +51,6 @@ class WrDocument extends Document<WrDocumentProps> {
 			key={style.key}
 			dangerouslySetInnerHTML={{ __html: style.css }}
 		/>));
-		console.log(emotionStyles);
 
 		return {
 			...initialProps,

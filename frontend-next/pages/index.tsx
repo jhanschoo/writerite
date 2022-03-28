@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router';
@@ -25,31 +24,25 @@ const Home: NextPage = () => {
 				<meta name="description" content="WriteRite: Quizzes from Cards" />
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
-			<Box
+			<Flex
 				sx={{
-					display: "grid",
-					alignItems: "stretch",
+					flexDirection: 'column',
 					height: "100vh",
 					gridTemplateColumns: "repeat(12, 1fr)",
 				}}
-				gap={2}
 			>
-				<Flex gridColumn={{ xs: "span 12", md: "span 7" }}>
-					<Flex sx={{ textAlign: "center", justifyContent: "space-around", alignItems: "center", width: "100%" }}>
-						<HeroHeading sx={{
-							maxWidth: "50vw",
-						}}>
-							<em>Study with supercharged flashcards on </em>
-							<BrandText full suffix=".">WriteRite</BrandText>
-						</HeroHeading>
-					</Flex>
+				<Flex sx={{ justifyContent: "space-around", width: "100%", minHeight: "25vw" }}>
+					<HeroHeading sx={{
+						maxWidth: "50vw",
+					}}>
+						<em>Study with supercharged flashcards on </em>
+						<BrandText full suffix=".">WriteRite</BrandText>
+					</HeroHeading>
 				</Flex>
-				<Flex gridColumn={{ xs: "span 12", md: "span 5" }}>
-					<Flex sx={{ width: "100%", alignItems: "center" }}>
-						<Signin sx={{ width: "100%" }} />
-					</Flex>
+				<Flex paddingX={4} sx={{ flexDirection: 'column' }} >
+					<Signin sx={{ width: "100%" }} />
 				</Flex>
-			</Box>
+			</Flex>
 		</>
 	);
 }
