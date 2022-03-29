@@ -1,5 +1,6 @@
 import type { NextPage } from 'next'
 import { useQuery } from 'urql';
+import { Button, Stack, Typography } from '@mui/material';
 
 import { useLogout } from '../../components/core/signin/login/useLogout';
 import { UserDocument } from '../../generated/graphql';
@@ -13,12 +14,14 @@ const Home: NextPage = () => {
 	const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
 	const logout = useLogout();
 	return (
-		<div>
-			<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
+		<>
+		<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
+		<Stack spacing={2} padding={2}>
 			<UserDecksSummary />
-			<button onClick={logout}>logout</button>
-			<p>{JSON.stringify(userResult.data)}</p>
-		</div>
+			<Button onClick={logout}>logout</Button>
+			<Typography>{JSON.stringify(userResult.data, undefined, 2)}</Typography>
+		</Stack>
+		</>
 	);
 }
 
