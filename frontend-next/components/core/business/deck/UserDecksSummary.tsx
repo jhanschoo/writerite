@@ -1,17 +1,24 @@
+import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
 import { useState, FC, MouseEvent } from 'react';
 
 export const UserDecksSummary: FC<{}> = () => {
-	const [showCreateDeckDialog, setShowCreateDeckDialog] = useState(false);
+	const router = useRouter();
 	const handleShowCreateDeckDialog = (e: MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-		setShowCreateDeckDialog(!showCreateDeckDialog);
+		router.push('/app/deck/create');
 	}
 	return (
-		<Paper sx={{ padding: 2 }}>
-			<Masonry columns={{ xs: 2, sm: 3, md: 4 }} spacing={1}>
-				<Button onClick={handleShowCreateDeckDialog} variant="large-action" size="large">
+		<Paper sx={{ padding: 2 }} variant="outlined">
+			<Masonry
+				defaultColumns={2}
+				defaultSpacing={2}
+				defaultHeight={150}
+				columns={{ xs: 2, sm: 3, md: 4, lg: 5, xl: 6 }}
+				spacing={2}
+			>
+				<Button onClick={handleShowCreateDeckDialog} variant="large-action" size="large" key="deck-create-button">
 					Create a new Deck
 				</Button>
 			</Masonry>
