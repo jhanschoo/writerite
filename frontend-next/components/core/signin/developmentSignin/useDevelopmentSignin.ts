@@ -20,11 +20,11 @@ export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
 			}
 			const nonce = data.initializeThirdPartyOauthSignin;
 			const url = new URL(`${window.location.origin}/api/oauth/callback?code=${encodeURIComponent(name)}&state=${
-				JSON.stringify({
+				encodeURIComponent(JSON.stringify({
 					provider: "development",
 					nonce,
 					redirect_uri,
-				})
+				}))
 			}`);
 			window.location.assign(url);
 		}
