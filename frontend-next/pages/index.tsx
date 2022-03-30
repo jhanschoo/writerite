@@ -18,32 +18,25 @@ const Home: NextPage = () => {
 		}
 	}, [router, login]);
 	return (
-		<>
-			<Head>
-				<title>WriteRite</title>
-				<meta name="description" content="WriteRite: Quizzes from Cards" />
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-			<Flex
-				sx={{
-					flexDirection: 'column',
-					height: "100vh",
-					gridTemplateColumns: "repeat(12, 1fr)",
-				}}
-			>
-				<Flex sx={{ justifyContent: "space-around", width: "100%", minHeight: "25vw" }}>
-					<HeroHeading sx={{
-						maxWidth: "50vw",
-					}}>
-						<em>Study with supercharged flashcards on </em>
-						<BrandText full suffix=".">WriteRite</BrandText>
-					</HeroHeading>
-				</Flex>
-				<Flex paddingX={4} sx={{ flexDirection: 'column' }} >
-					<Signin sx={{ width: "100%" }} />
-				</Flex>
+		<Flex
+			sx={{
+				flexDirection: 'column',
+				height: "100vh",
+				gridTemplateColumns: "repeat(12, 1fr)",
+			}}
+		>
+			<Flex sx={{ justifyContent: "space-around", width: "100%", minHeight: "25vw" }}>
+				<HeroHeading sx={{
+					maxWidth: "50vw",
+				}}>
+					<em>Study with supercharged flashcards on </em>
+					<BrandText full suffix=".">WriteRite</BrandText>
+				</HeroHeading>
 			</Flex>
-		</>
+			<Flex paddingX={4} sx={{ flexDirection: 'column' }} >
+				<Signin sx={{ width: "100%" }} />
+			</Flex>
+		</Flex>
 	);
 }
 
