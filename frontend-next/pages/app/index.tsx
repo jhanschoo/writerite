@@ -1,6 +1,7 @@
+import { motion } from 'framer-motion';
+import { Button, Stack, Typography } from '@mui/material';
 import type { NextPage } from 'next'
 import { useQuery } from 'urql';
-import { Button, Stack, Typography } from '@mui/material';
 
 import { useLogout } from '../../components/core/signin/login/useLogout';
 import { UserDocument } from '../../generated/graphql';
@@ -14,14 +15,14 @@ const Home: NextPage = () => {
 	const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
 	const logout = useLogout();
 	return (
-		<>
-		<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
-		<Stack spacing={2} padding={2}>
-			<UserDecksSummary />
-			<Button onClick={logout}>logout</Button>
-			<Typography>{JSON.stringify(userResult.data, undefined, 2)}</Typography>
-		</Stack>
-		</>
+		<motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}>
+			<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
+			<Stack spacing={2} padding={2}>
+				<UserDecksSummary />
+				<Button onClick={logout}>logout</Button>
+				<Typography>{JSON.stringify(userResult.data, undefined, 2)}</Typography>
+			</Stack>
+		</motion.div>
 	);
 }
 

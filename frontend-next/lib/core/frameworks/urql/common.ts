@@ -1,4 +1,5 @@
-import { dedupExchange, fetchExchange, cacheExchange, makeOperation, subscriptionExchange } from "urql/core";
+import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } from "urql/core";
+import { cacheExchange } from '@urql/exchange-graphcache';
 import { createClient as createSSEClient } from 'graphql-sse';
 import { authExchange } from '@urql/exchange-auth';
 import { SSRExchange } from "next-urql";
@@ -85,7 +86,7 @@ const subscription = subscriptionExchange({
 
 export const getExchanges = (ssr: SSRExchange) => [
 	dedupExchange,
-	cacheExchange,
+	cacheExchange({}),
 	ssr,
 	auth,
 	fetchExchange,

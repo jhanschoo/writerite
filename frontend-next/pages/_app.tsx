@@ -1,13 +1,19 @@
-import React from 'react';
 import '../styles/globals.css'
-import type { AppProps } from 'next/app'
-import { Providers } from '../components/core/providers/Providers';
-import Head from 'next/head';
-import { withDefaultUrqlClient } from '../lib/core/frameworks/urql/withDefaultUrqlClient';
+
+import { AnimatePresence } from 'framer-motion';
+import React from 'react';
 import { CssBaseline } from '@mui/material';
+import type { AppProps } from 'next/app'
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+
+import { Providers } from '../components/core/providers/Providers';
+import { withDefaultUrqlClient } from '../lib/core/frameworks/urql/withDefaultUrqlClient';
 
 const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 	const { emotionCache, ...pagePropsRest } = pageProps;
+	const router = useRouter();
+
 	return (
 		<Providers emotionCache={emotionCache}>
 			<Head>
@@ -17,7 +23,9 @@ const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 				<link rel="icon" href="/favicon.ico" />
 			</Head>
 			<CssBaseline />
-			<Component {...pagePropsRest} />
+			<AnimatePresence>
+				<Component {...pagePropsRest} key={router.route} />
+			</AnimatePresence>
 		</Providers>
 	);
 };
