@@ -40,8 +40,6 @@ let theme = createTheme({
 	},
 });
 
-console.log(theme.components);
-
 theme = createTheme(theme, {
 	components: {
 		MuiButton: {

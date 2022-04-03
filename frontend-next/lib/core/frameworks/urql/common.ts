@@ -1,10 +1,12 @@
-import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } from "urql/core";
-import { cacheExchange } from '@urql/exchange-graphcache';
 import { createClient as createSSEClient } from 'graphql-sse';
-import { authExchange } from '@urql/exchange-auth';
 import { SSRExchange } from "next-urql";
-import { isSSRContext } from "../../utilities";
+import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } from "urql/core";
+import { devtoolsExchange } from '@urql/devtools';
+import { authExchange } from '@urql/exchange-auth';
+import { cacheExchange } from '@urql/exchange-graphcache';
 import { getAccessKey } from "../../../browser/tokenManagement";
+import { isSSRContext } from "../../utilities";
+import schema from "../../../../graphql.schema.json";
 
 export const commonUrqlOptions = {
 	url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
@@ -85,8 +87,11 @@ const subscription = subscriptionExchange({
 // });
 
 export const getExchanges = (ssr: SSRExchange) => [
+	devtoolsExchange,
 	dedupExchange,
-	cacheExchange({}),
+	cacheExchange({
+		schema,
+	}),
 	ssr,
 	auth,
 	fetchExchange,
