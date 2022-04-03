@@ -1,7 +1,7 @@
 import Document, { DocumentContext, DocumentProps, Head, Html, Main, NextScript } from 'next/document'
 import createEmotionServer from '@emotion/server/create-instance';
 
-import createEmotionCache from '../lib/core/frameworks/emotion/createEmotionCache';
+import createEmotionCache from '../lib/core/frameworks/mui/createEmotionCache';
 
 interface WrDocumentProps extends DocumentProps {
 	emotionStyles: JSX.Element[];

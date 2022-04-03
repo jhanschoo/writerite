@@ -1,3 +1,3 @@
-import createEmotionCache from "../../core/frameworks/emotion/createEmotionCache";
+import createEmotionCache from "../../core/frameworks/mui/createEmotionCache";
 
 export const cache = createEmotionCache();
