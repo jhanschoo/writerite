@@ -1,26 +1,15 @@
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
-import { Button, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useMotionContext } from '../../../components/core/framer-motion/useMotionContext';
-import { nextTick } from '../../../lib/core/utilities/nextTick';
+import BreadcrumbsNav from '../../../components/core/nav/BreadcrumbsNav';
 
 const DeckCreate: NextPage = () => {
-	const router = useRouter();
-	const { motionProps, setMotionProps } = useMotionContext();
-	const handleBack = async (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		await nextTick(() => setMotionProps({
-			initial: { x: '-100%' },
-			animate: { x: 0 },
-			exit: { x: '100%' },
-		}));
-		router.back();
-	}
+	const { motionProps } = useMotionContext();
 	return (
 		<motion.div {...motionProps}>
 			<Stack spacing={2} padding={2}>
-				<Button onClick={handleBack}>Back</Button>
+				<BreadcrumbsNav showBack={true} breadcrumbs={[["/app", "Home"], ["/app/deck", "Decks"], ["/app/deck/create", "Create Deck"]]} />
 			</Stack>
 		</motion.div>
 	);

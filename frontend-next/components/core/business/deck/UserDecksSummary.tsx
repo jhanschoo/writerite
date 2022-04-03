@@ -1,16 +1,21 @@
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
-import { useState, FC, MouseEvent } from 'react';
+import { FC, MouseEvent } from 'react';
+import { useMotionContext } from '../../framer-motion/useMotionContext';
+import { motionThemes } from '../../../../lib/core/frameworks/framer-motion/motionThemes';
+import { Link } from '../../link/Link';
 
 export const UserDecksSummary: FC<{}> = () => {
 	const router = useRouter();
-	const handleShowCreateDeckDialog = (e: MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
+	const { setMotionProps } = useMotionContext();
+	const handleShowCreateDeckDialog = (_e: MouseEvent<HTMLButtonElement>) => {
+		setMotionProps(motionThemes.forward);
 		router.push('/app/deck/create');
 	}
 	return (
 		<Paper sx={{ padding: 2 }} variant="outlined">
+			<Typography variant="h4" paddingBottom={2}><Link href="/app/deck" underline="none">Decks</Link></Typography>
 			<Masonry
 				defaultColumns={2}
 				defaultSpacing={2}

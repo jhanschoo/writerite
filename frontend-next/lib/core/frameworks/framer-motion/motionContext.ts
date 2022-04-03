@@ -1,5 +1,6 @@
 import { createContext } from "react";
 import type { MotionProps } from "framer-motion";
+import { motionThemes } from "./motionThemes";
 
 export interface MotionState {
 	motionProps: MotionProps;
@@ -7,7 +8,7 @@ export interface MotionState {
 }
 
 export const initialMotionState: MotionState = {
-	motionProps: {},
+	motionProps: motionThemes.unanimated,
 	setMotionProps: () => {},
 };
 
