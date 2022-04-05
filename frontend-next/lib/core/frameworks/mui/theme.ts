@@ -9,6 +9,13 @@ declare module '@mui/material/Button' {
 	}
 }
 
+declare module '@mui/material/TextField' {
+	interface TextFieldPropsSizeOverrides {
+		"large": true;
+		"largecentered": true;
+	}
+}
+
 declare module '@mui/material/styles' {
 	interface Palette {
 		inverse: Palette['primary'];
@@ -59,6 +66,58 @@ theme = createTheme(theme, {
 						}
 					}
 				},
+			]
+		},
+		MuiTextField: {
+			variants: [
+				{
+					props: { variant: "filled", size: "large" },
+					style: {
+						"& .MuiInputLabel-root": {
+							fontSize: theme.typography.h5.fontSize,
+							transform: "translate(18px, 24px) scale(1)"
+						},
+						"& .MuiInputLabel-root.MuiInputLabel-shrink": {
+							fontSize: theme.typography.h5.fontSize,
+							transform: "translate(18px, 10px) scale(0.75)"
+						},
+						"& .MuiInputBase-root": {
+							fontSize: theme.typography.h5.fontSize,
+						},
+						"& .MuiInputBase-input": {
+							paddingTop: "37px",
+							paddingRight: "18px",
+							paddingBottom: "12px",
+							paddingLeft: "18px",
+						},
+					}
+				},
+				{
+					props: { variant: "filled", size: "largecentered" },
+					style: {
+						"& .MuiInputLabel-root": {
+							fontSize: theme.typography.h5.fontSize,
+							width: "100%",
+							textAlign: "center",
+							maxWidth: "none",
+							transform: "translate(0, 24px) scale(1)",
+							transformOrigin: "center top",
+						},
+						"& .MuiInputLabel-root.MuiInputLabel-shrink": {
+							transform: "translate(0, 10px) scale(0.75)",
+						},
+						"& .MuiInputBase-root": {
+							fontSize: theme.typography.h5.fontSize,
+						},
+						"& .MuiInputBase-input": {
+							textAlign: "center",
+							paddingTop: "37px",
+							paddingRight: "18px",
+							paddingBottom: "12px",
+							paddingLeft: "18px",
+						},
+					}
+				}
 			]
 		}
 	}

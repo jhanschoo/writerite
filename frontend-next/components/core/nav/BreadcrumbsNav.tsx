@@ -22,7 +22,7 @@ const BreadcrumbsNav = ({ showBack, breadcrumbs }: BreadcrumbsNavProps) => {
 	return (
 		<Stack direction="row" alignItems="baseline" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
 			{showBack && <Button onClick={handleBack} sx={{ minWidth: 0 }}>Back</Button>}
-			{breadcrumbLinks && <Flex padding={1}><Breadcrumbs aria-label="breadcrumb" separator="»">{breadcrumbLinks}</Breadcrumbs></Flex>}
+			{breadcrumbLinks && <Flex padding={1}><Breadcrumbs aria-label="breadcrumbs" separator="»">{breadcrumbLinks}</Breadcrumbs></Flex>}
 		</Stack>
 	);
 };
