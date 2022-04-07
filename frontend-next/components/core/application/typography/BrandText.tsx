@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Span } from "../basic/Span";
+import { Span } from "../../basic/Span";
 
 interface Props {
 	full?: boolean;

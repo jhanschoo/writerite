@@ -7,7 +7,7 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { Providers } from '../components/core/providers/Providers';
+import { Providers } from '../components/core/application/providers/Providers';
 import { withDefaultUrqlClient } from '../lib/core/frameworks/urql/withDefaultUrqlClient';
 
 const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {

@@ -1,8 +1,8 @@
 import { Breadcrumbs, Button, Divider, Stack } from "@mui/material";
 import router from "next/router";
-import { motionThemes } from "../../../lib/core/frameworks/framer-motion/motionThemes";
-import { Flex } from "../basic/Flex";
-import { useMotionContext } from "../framer-motion/useMotionContext";
+import { motionThemes } from "../../../../lib/core/frameworks/framer-motion/motionThemes";
+import { Flex } from "../../basic/Flex";
+import { useMotionContext } from "../../basic/framer-motion/useMotionContext";
 import { Link } from "../link/Link";
 
 export interface BreadcrumbsNavProps {

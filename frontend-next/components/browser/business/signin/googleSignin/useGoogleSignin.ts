@@ -1,11 +1,13 @@
+import { OAuth2AuthorizationSuccess } from "../../../../../lib/core/entities/authentication";
+
 import { useState } from "react";
 import { useMutation } from "urql";
-import { InitializeThirdPartyOauthSigninDocument } from "../../../../generated/graphql";
+import { InitializeThirdPartyOauthSigninDocument } from "../../../../../generated/graphql";
 
-// https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
-const client_id = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID as string;
+// https://developers.google.com/identity/protocols/oauth2/web-server#httprest
+const client_id = process.env.NEXT_PUBLIC_GAPI_CLIENT_ID as string;
 
-export default function useFacebookSignin() {
+export default function useGoogleSignin() {
 	const [_initializeOauth, executeInitializeOauth] = useMutation(InitializeThirdPartyOauthSigninDocument);
 	const [signinUnderway, setSigninUnderway] = useState(false);
 	return [
@@ -20,13 +22,11 @@ export default function useFacebookSignin() {
 				throw new Error("Unable to initializeThirdPartyOauthSignin");
 			}
 			const nonce = data.initializeThirdPartyOauthSignin;
-			const url = new URL(`https://www.facebook.com/v12.0/dialog/oauth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=email public_profile&state=${
-				JSON.stringify({
-					provider: "facebook",
-					nonce,
-					redirect_uri,
-				})
-			}`);
+			const url = new URL(`https://accounts.google.com/o/oauth2/v2/auth?client_id=${client_id}&redirect_uri=${redirect_uri}&response_type=code&scope=profile email openid&state=${JSON.stringify({
+				provider: "google",
+				nonce,
+				redirect_uri
+			})}`);
 			window.location.assign(url);
 		}
 	] as const;

@@ -1,7 +1,7 @@
 import { ChangeEvent, MouseEvent } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, TextField } from '@mui/material';
 import { FC } from 'react';
-import { useLogout } from '../../signin/login/useLogout';
+import { useLogout } from '../../../browser/business/signin/login/useLogout';
 import { useFinalizeUser } from './useFinalizeUser';
 
 interface FinalizeUserProps {

@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, Stack, SxProps, Typography } from "@mui/material";
-import useFacebookSignin from "../core/signin/facebookSignin/useFacebookSignin";
-import useGoogleSignin from "../core/signin/googleSignin/useGoogleSignin";
-import useDevelopmentSignin from "../core/signin/developmentSignin/useDevelopmentSignin";
+import useFacebookSignin from "./facebookSignin/useFacebookSignin";
+import useGoogleSignin from "./googleSignin/useGoogleSignin";
+import useDevelopmentSignin from "./developmentSignin/useDevelopmentSignin";
 
 interface Props {
 	sx?: SxProps;

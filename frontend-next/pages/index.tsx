@@ -2,11 +2,11 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Signin } from '../components/browser/Signin';
+import { Signin } from '../components/browser/business/signin/Signin';
 import { Flex } from '../components/core/basic/Flex';
 import HeroHeading from '../components/core/basic/HeroHeading';
-import { useLogin } from '../components/core/signin/login/useLogin';
-import BrandText from '../components/core/typography/BrandText';
+import { useLogin } from '../components/browser/business/signin/login/useLogin';
+import BrandText from '../components/core/application/typography/BrandText';
 
 const Home: NextPage = () => {
 	const router = useRouter();

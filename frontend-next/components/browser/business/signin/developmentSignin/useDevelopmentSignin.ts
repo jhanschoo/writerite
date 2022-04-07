@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "urql";
-import { InitializeThirdPartyOauthSigninDocument } from "../../../../generated/graphql";
+import { InitializeThirdPartyOauthSigninDocument } from "../../../../../generated/graphql";
 
 const DEFAULT_DEVELOPER_NAME = "developer";
 
