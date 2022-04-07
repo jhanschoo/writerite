@@ -1,6 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Stack } from "@mui/material";
 import Papa from 'papaparse';
 import { useState } from "react";
+import { rawFromText } from "../../../application/editor/rawFromText";
 import type { ICard } from "../../card/types";
 import DeckWithoutSubdeck from "../DeckWithoutSubdeck";
 import type { IDeckWithoutSubdecks } from "../types";
@@ -44,8 +45,8 @@ const ImportModal = ({ open, handleClose, handleSwitchToImportInstructions }: Im
 							lastChunk = true;
 						}
 						ret = ret.concat(results.data.map(([front, back, ...altAnswers]) => ({
-							front: front ?? "",
-							back: back ?? "",
+							front: rawFromText(front ?? ""),
+							back: rawFromText(back ?? ""),
 							altAnswers: altAnswers.filter((answer) => answer.trim())
 						})));
 						if (lastChunk) {

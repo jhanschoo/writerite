@@ -1,6 +1,8 @@
+import { RawDraftContentState } from "draft-js";
+
 // Note: strongly subject to change
 export interface ICard {
-	front: string;
-	back: string;
+	front: RawDraftContentState;
+	back: RawDraftContentState;
 	altAnswers: string[];
 }

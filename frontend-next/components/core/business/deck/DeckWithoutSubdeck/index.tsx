@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import Card from "../../card/Card";
 import type { IDeckWithoutSubdecks } from "../types";
 
@@ -13,7 +13,9 @@ const DeckWithoutSubdeck = ({ deck }: DeckWithoutSubdeckProps) => {
 	return (
 		<>
 			<Typography variant="h5" textAlign="center">{deck.title}</Typography>
-			{cardComponents}
+			<Stack flexShrink={1} spacing={1}>
+				{cardComponents}
+			</Stack>
 		</>
 	);
 };
