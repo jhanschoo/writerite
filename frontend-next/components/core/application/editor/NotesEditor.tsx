@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, ContentState } from "draft-js";
+import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, ContentState, convertToRaw } from "draft-js";
 import { Button, Stack, Typography } from "@mui/material";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
@@ -64,6 +64,8 @@ export const notesEditorStateFromRaw = (c: RawDraftContentState): EditorState =>
 	}
 	return EditorState.push(emptyState, convertFromRaw(c), "insert-fragment");
 };
+
+export const notesEditorStateToRaw = (editorState: EditorState): RawDraftContentState => convertToRaw(editorState.getCurrentContent());
 
 const NotesEditor = ({
 	editorState,

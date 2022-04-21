@@ -1,31 +1,34 @@
-import { Card, CardContent, Divider } from "@mui/material";
+import { Card as MuiCard, CardContent, CardTypeMap, Divider } from "@mui/material";
+import { DefaultComponentProps } from "@mui/material/OverridableComponent";
 import SelfManagedAnswersEditor from "../../../application/editor/SelfManagedAnswersEditor";
 import SelfManagedNotesEditor from "../../../application/editor/SelfManagedNotesEditor";
 import type { ICard } from "../types";
 
 export interface CardProps {
 	card: ICard;
+	muiCardProps?: Partial<DefaultComponentProps<CardTypeMap<{}, "div">>>;
 }
 
-const WrCard = ({ card }: CardProps) => {
+const Card = ({ card, muiCardProps }: CardProps) => {
 	return (
-		<Card>
+		<MuiCard {...muiCardProps}>
 			{/* <CardContent>{card.front}, {card.back}, ({card.altAnswers.join(", ")})</CardContent> */}
 			<CardContent>
 				<SelfManagedNotesEditor initialContent={card.front} readOnly={true} />
 				<Divider />
 				<SelfManagedNotesEditor initialContent={card.back} readOnly={true} />
 				{
-					card.altAnswers.length > 0 && (
+					card.altAnswers.length
+					? (
 						<>
-							<Divider />
 							<SelfManagedAnswersEditor initialContent={card.altAnswers} readOnly={true} />
 						</>
 					)
+					: undefined
 				}
 			</CardContent>
-		</Card>
+		</MuiCard>
 	);
 };
 
-export default WrCard;
+export default Card;

@@ -3,10 +3,9 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, D
 export interface ImportInstructionsModalProps {
 	open: boolean;
 	handleClose: () => void;
-	handleSwitchToImport: () => void;
 }
 
-const ImportInstructionsModal = ({ open, handleClose, handleSwitchToImport }: ImportInstructionsModalProps) => {
+const ImportInstructionsModal = ({ open, handleClose }: ImportInstructionsModalProps) => {
 	return (
 		<Dialog
 			open={open}
@@ -78,8 +77,7 @@ const ImportInstructionsModal = ({ open, handleClose, handleSwitchToImport }: Im
 				</ul>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={handleSwitchToImport}>Import a .csv</Button>
-				<Button variant="outlined" onClick={handleClose}>Back</Button>
+				<Button variant="outlined" onClick={handleClose}>Close</Button>
 			</DialogActions>
 		</Dialog>
 	);

@@ -9,7 +9,7 @@ const DeckCreate: NextPage = () => {
 	const { motionProps } = useMotionContext();
 	return (
 		<motion.div {...motionProps}>
-			<Stack spacing={2} padding={2}>
+			<Stack spacing={2} padding={2} sx={{ overflow: "auto", height: "100%" }}>
 				<BreadcrumbsNav showBack={true} breadcrumbs={[["/app", "Home"], ["/app/deck", "Decks"], ["/app/deck/create", "Create Deck"]]} />
 				<CreateDeck />
 			</Stack>

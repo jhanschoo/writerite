@@ -1,36 +1,50 @@
 import { Button, ButtonGroup, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { group } from "../../../../../lib/core/utilities";
+import CardItemsList from "../../card/CardItemsList";
+import { cardToEditableCard } from "../../card/cardToEditableCard";
+import { CARD_LIST_PAGE_SIZE } from "../../card/constants";
+import { ICard, IEditableCard } from "../../card/types";
+import { IDeck, IPaginatedEditableDeck } from "../types";
+import ImportFromCsv from "./ImportFromCsv";
 import ImportInstructionsModal from "./ImportInstructionsModal";
-import ImportModal from "./ImportModal";
 
-const CreateDeckWidget = () => {
+const CreateDeck = () => {
 	const [showImportInstructionsModal, setShowImportInstructionsModal] = useState(false);
-	const [showImportModal, setShowImportModal] = useState(false);
+	// TODO: change type once we have better support for deck creation
+	const [deck, setDeck] = useState<IPaginatedEditableDeck | undefined>(undefined);
 	const handleToggleShowImportInstructionsModal = () =>
 		setShowImportInstructionsModal(!showImportInstructionsModal);
-	const handleToggleShowImportModal = () => setShowImportModal(!showImportModal);
-	const handleSwitchImportAndIstructionsModals = () => {
-		handleToggleShowImportInstructionsModal();
-		handleToggleShowImportModal();
+	const handleOverwrite = (newDeck: IDeck) => {
+		setDeck({
+			...newDeck,
+			// we use mutation here for speed
+			cards: group(newDeck.cards.map(cardToEditableCard), CARD_LIST_PAGE_SIZE),
+		});
 	}
+	const handleAppend = (newDeck: IDeck) => {
+		if (deck) {
+			setDeck({
+				...newDeck,
+				cards: group([...deck.cards.flat(), ...newDeck.cards.map( cardToEditableCard)].slice(0, 1000), CARD_LIST_PAGE_SIZE),
+			});
+		} else {
+			handleOverwrite(newDeck);
+		}
+	}
+	const handleCardsChange = (cards: IEditableCard[][]) => setDeck(deck && { ...deck, cards });
 	return (<>
 		<Stack direction="row">
 			<Typography variant="h4" sx={{ flexGrow: 1 }} paddingX={2}>
 				Create Deck
 			</Typography>
 			<ButtonGroup variant="contained" aria-label="Import deck modal toggle buttons">
-				<Button onClick={handleToggleShowImportModal}>Import from .csv</Button>
+				<ImportFromCsv onOverwrite={handleOverwrite} onAppend={handleAppend} />
 				<Button onClick={handleToggleShowImportInstructionsModal}>?</Button>
 			</ButtonGroup>
-			{ showImportModal && <ImportModal
-				open={showImportModal}
-				handleClose={handleToggleShowImportModal}
-				handleSwitchToImportInstructions={handleSwitchImportAndIstructionsModals}
-			/> }
 			{ showImportInstructionsModal && <ImportInstructionsModal
 				open={showImportInstructionsModal}
 				handleClose={handleToggleShowImportInstructionsModal}
-				handleSwitchToImport={handleSwitchImportAndIstructionsModals}
 			/> }
 		</Stack>
 		<form>
@@ -46,6 +60,7 @@ const CreateDeckWidget = () => {
 					/>
 					<Typography variant="h6" textAlign="center" margin={2}>Subdecks</Typography>
 					<Typography variant="h6" textAlign="center" margin={2}>Cards</Typography>
+					{ deck?.cards && <CardItemsList cards={deck.cards} onCardsChange={handleCardsChange} /> }
 					<p>TODO: deck statistics on right gutter</p>
 				</CardContent>
 			</Card>
@@ -53,4 +68,4 @@ const CreateDeckWidget = () => {
 	</>);
 }
 
-export default CreateDeckWidget;
+export default CreateDeck;

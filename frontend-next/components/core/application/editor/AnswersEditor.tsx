@@ -2,27 +2,11 @@ import React, { Dispatch, FC, ReactNode, SetStateAction } from "react";
 import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, RawDraftContentState, SelectionState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
-import { Box, Typography } from "@mui/material";
+import { Box, Chip, Typography } from "@mui/material";
 
 const entityStrategy: DraftDecorator["strategy"] = (block, callback, _content) =>
 	block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
 
-// // Following CSS should mirror ui/List and ui/Item, with modifications
-// const Wrapper = wrStyled.div`
-// .DraftEditor-root ul {
-//   list-style-type: none;
-//   display: flex;
-//   flex-align: baseline;
-//   flex-wrap: wrap;
-//   margin: 0;
-//   padding: 0;
-//   li {
-//     display: flex;
-//     flex-wrap: wrap;
-//     margin: ${({ theme: { space } }) => `0 ${space[1]} ${space[3]} ${space[1]}`}
-//   }
-// }
-// `;
 const Wrapper: FC<{}> = ({ children }) => (<Box sx={{
 	".DraftEditor-root ul": {
 		listStyleType: "none",
@@ -42,13 +26,10 @@ const Wrapper: FC<{}> = ({ children }) => (<Box sx={{
 	{children}
 </Box>);
 
-// const StyledAnswer = wrStyled.span`
-// ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
-// padding: ${({ theme: { space } }) => space[1]};
-// `;
-
 // TODO: use chip
-const StyledAnswer: FC<{}> = ({ children }) => <Typography>{children}</Typography>
+const StyledAnswer: FC<{}> = ({ children }) => {
+	return (<Chip label={children} component="span" size="small" />)
+}
 
 export const answersDecorator = new CompositeDecorator([
 	{
@@ -426,6 +407,9 @@ const AnswersEditor = (props: Props): JSX.Element => {
 	} = props;
 	// eslint-disable-next-line new-cap
 	const blockRenderMap = Map({ unstyled: { element: "li", wrapper: <ul/> } });
+	// Note: important to set editor state based on nextEditorState and not current state
+	//   because the declarative state model that draft-js tries to be seems fundamentally broken
+	//   and it seems more well-supported to base next states on operations on nextEditorState
 	const handleEditorChange = (nextEditorState: EditorState): void => {
 		if (hasInconsistentBlocks(nextEditorState)) {
 			setEditorState(EditorState.undo(nextEditorState));
@@ -435,15 +419,17 @@ const AnswersEditor = (props: Props): JSX.Element => {
 		}
 	};
 
-	return <Wrapper>
-		<Editor
-			blockRenderMap={blockRenderMap}
-			editorState={editorState}
-			onChange={handleEditorChange}
-			placeholder={placeholder}
-			readOnly={readOnly}
-		/>
-	</Wrapper>;
+	return (
+		<Wrapper>
+			<Editor
+				blockRenderMap={blockRenderMap}
+				editorState={editorState}
+				onChange={handleEditorChange}
+				placeholder={placeholder}
+				readOnly={readOnly}
+			/>
+		</Wrapper>
+	);
 };
 
 export default AnswersEditor;
