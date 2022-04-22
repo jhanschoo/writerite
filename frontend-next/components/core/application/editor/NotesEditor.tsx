@@ -1,10 +1,18 @@
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
-import { Box, Button, ButtonGroup, Divider, Stack, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, ButtonProps, Divider, Stack, styled, Typography } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 
-const activeIf = (active: boolean) => active ? undefined : "secondary";
+const activeIf = (active: boolean) => active ? "notes-editor-active" : undefined;
+
+const EditorButton = styled(Button)<ButtonProps>(({ theme }) => ({
+	color: theme.palette.text.secondary,
+	"&.notes-editor-active": {
+		color: theme.palette.text.primary,
+	},
+}));
+
 
 interface Props {
 	editorState: EditorState;
@@ -54,10 +62,10 @@ const NotesEditor = ({
 		{!readOnly &&
 			<Box>
 				<ButtonGroup variant="text" orientation="vertical" size="small">
-					<Button onClick={handleBold} color={activeIf(currentStyle.has("BOLD"))}><Typography fontWeight="bold">bold</Typography></Button>
-					<Button onClick={handleUnderline} color={activeIf(currentStyle.has("UNDERLINE"))}><Typography sx={{ textDecoration: "underline" }}>underline</Typography></Button>
-					<Button onClick={handleUnorderedList} color={activeIf(currentType === "unordered-list-item")}><Typography>• list</Typography></Button>
-					<Button onClick={handleOrderedList} color={activeIf(currentType === "ordered-list-item")}><Typography>1. list</Typography></Button>
+					<EditorButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}><Typography fontWeight="bold">bold</Typography></EditorButton>
+					<EditorButton onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}><Typography sx={{ textDecoration: "underline" }}>underline</Typography></EditorButton>
+					<EditorButton onClick={handleUnorderedList} className={activeIf(currentType === "unordered-list-item")}><Typography>• list</Typography></EditorButton>
+					<EditorButton onClick={handleOrderedList} className={activeIf(currentType === "ordered-list-item")}><Typography>1. list</Typography></EditorButton>
 				</ButtonGroup>
 			</Box>
 		}
