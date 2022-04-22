@@ -1,53 +1,10 @@
+import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
+import { Box, Button, ButtonGroup, Divider, Stack, Typography } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
-import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, ContentState, convertToRaw } from "draft-js";
-import { Button, Stack, Typography } from "@mui/material";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 
-const activeIf = (active: boolean) => active ? "active" : undefined;
-
-// const Toolbar = wrStyled(List)`
-// width: 100%;
-// font-size: 75%;
-// display: none;
-// flex-wrap: wrap;
-// margin: ${({ theme: { space } }) => `${space[1]} 0 0 0`};
-// `;
-
-// const ToolbarItem = wrStyled(Item)`
-// margin: ${({ theme: { space } }) => `0 ${space[1]} 0 0`};
-// :last-child {
-//   margin: 0;
-// }
-// `;
-
-// const NotesBox = wrStyled.div`
-// @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-//   font-size: 75%;
-// }
-// // &.active, :active, :focus-within {
-// //   ${Toolbar} {
-// //     display: flex;
-// //   }
-// // }
-// `;
-
-// const ToolbarButton = wrStyled(BorderlessButton)`
-// padding: ${({ theme: { space } }) => space[1]};
-// color: ${({ theme: { fg } }) => fg[3]};
-// font-weight: normal;
-// @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-//   padding: ${({ theme: { space } }) => space[1]};
-// }
-// `;
-
-// const BoldButton = wrStyled(ToolbarButton)`
-// font-weight: bold;
-// `;
-
-// const UnderlineButton = wrStyled(ToolbarButton)`
-// text-decoration: underline;
-// `;
+const activeIf = (active: boolean) => active ? undefined : "secondary";
 
 interface Props {
 	editorState: EditorState;
@@ -93,7 +50,18 @@ const NotesEditor = ({
 	const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
 	const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
-	return <Stack>
+	return <Stack paddingY={1} spacing={1} direction="row">
+		{!readOnly &&
+			<Box>
+				<ButtonGroup variant="text" orientation="vertical" size="small">
+					<Button onClick={handleBold} color={activeIf(currentStyle.has("BOLD"))}><Typography fontWeight="bold">bold</Typography></Button>
+					<Button onClick={handleUnderline} color={activeIf(currentStyle.has("UNDERLINE"))}><Typography sx={{ textDecoration: "underline" }}>underline</Typography></Button>
+					<Button onClick={handleUnorderedList} color={activeIf(currentType === "unordered-list-item")}><Typography>• list</Typography></Button>
+					<Button onClick={handleOrderedList} color={activeIf(currentType === "ordered-list-item")}><Typography>1. list</Typography></Button>
+				</ButtonGroup>
+			</Box>
+		}
+		<Divider orientation="vertical" flexItem />
 		<Editor
 			editorState={editorState}
 			onChange={handleEditorChange}
@@ -101,14 +69,6 @@ const NotesEditor = ({
 			handleKeyCommand={handleKeyCommand}
 			readOnly={readOnly}
 		/>
-		{!readOnly &&
-			<Stack direction="row">
-				<Button onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}><Typography fontWeight="bold">bold</Typography></Button>
-				<Button onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}><Typography sx={{ textDecoration: "underline" }}>underline</Typography></Button>
-				<Button onClick={handleUnorderedList} className={activeIf(currentType === "unordered-list-item")}>• list</Button>
-				<Button onClick={handleOrderedList} className={activeIf(currentType === "ordered-list-item")}>1. list</Button>
-			</Stack>
-		}
 	</Stack>;
 };
 

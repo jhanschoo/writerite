@@ -14,7 +14,7 @@ const parametrizedStack = (({ children }: { children: ReactNode }) => <Stack spa
 // This is as opposed to receiving an array of data elements and calling a callback on only the data elements on the page. TODO: determine location of state management
 const CardItemsList = ({ cards, onCardsChange }: CardItemsListProps) => {
 	const [page, setPage] = useState(1);
-	const currentCards = cards[page];
+	const currentCards = cards[page - 1];
 	const cardItems = currentCards.map((card, index) =>
 	(<EditableCard
 		key={index}

@@ -10,13 +10,14 @@ export interface DeckWithoutSubdeckProps {
 }
 
 const ImportFromCsvPreview = ({ deck, cardComponentProps, isExceeded }: DeckWithoutSubdeckProps) => {
-	const cardComponents = deck.cards.slice(0, CARD_LIST_PAGE_SIZE).map((card, index) => (
+	const { title, cards } = deck;
+	const cardComponents = cards.slice(0, CARD_LIST_PAGE_SIZE).map((card, index) => (
 		<Card {...cardComponentProps} card={card} key={`card-${index}`} />
 	));
 	return (
 		<>
-			<Typography variant="h5" textAlign="center">{deck.title}</Typography>
-			<Typography variant="body1" textAlign="center">{deck.cards.length}{isExceeded && '+'} cards</Typography>
+			<Typography variant="h5" textAlign="center">{title}</Typography>
+			<Typography variant="body1" textAlign="center">{cards.length}{isExceeded && '+'} cards</Typography>
 			<Typography variant="body2" textAlign="center">The first few cards are as follows</Typography>
 			<Stack spacing={1} paddingY={1} overflow="auto">
 				{cardComponents}
