@@ -1,5 +1,4 @@
 import type { NextPage } from 'next'
-import Head from 'next/head'
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Signin } from '../components/browser/business/signin/Signin';

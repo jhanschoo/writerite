@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, ReactNode, SetStateAction } from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, RawDraftContentState, SelectionState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
-import { Box, Chip, Typography } from "@mui/material";
+import { Box, Chip } from "@mui/material";
 
 const entityStrategy: DraftDecorator["strategy"] = (block, callback, _content) =>
 	block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);

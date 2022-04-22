@@ -4,3 +4,7 @@
 	width: 100vw;
 	height: 100vh;
 }
+
+.DraftEditor-root {
+	flex-grow: 1;
+}
