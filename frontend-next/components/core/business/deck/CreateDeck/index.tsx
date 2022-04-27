@@ -1,5 +1,7 @@
 import { Button, ButtonGroup, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import { useMutation } from "urql";
+import { DeckCreateDocument } from "../../../../../generated/graphql";
 import { group } from "../../../../../lib/core/utilities";
 import CardItemsList from "../../card/CardItemsList";
 import { cardToEditableCard } from "../../card/cardToEditableCard";
@@ -11,7 +13,7 @@ import ImportInstructionsModal from "./ImportInstructionsModal";
 
 const CreateDeck = () => {
 	const [showImportInstructionsModal, setShowImportInstructionsModal] = useState(false);
-	// TODO: change type once we have better support for deck creation
+	const [, deckCreateMutation] = useMutation(DeckCreateDocument);
 	const [deck, setDeck] = useState<IPaginatedEditableDeck | undefined>(undefined);
 	const handleToggleShowImportInstructionsModal = () =>
 		setShowImportInstructionsModal(!showImportInstructionsModal);
@@ -60,7 +62,10 @@ const CreateDeck = () => {
 					/>
 					<Typography variant="h6" textAlign="center" margin={2}>Subdecks</Typography>
 					<Typography variant="h6" textAlign="center" margin={2}>Cards</Typography>
-					{ deck?.cards && <CardItemsList cards={deck.cards} onCardsChange={handleCardsChange} /> }
+					<Stack alignItems="center" spacing={2}>
+						<Button variant="contained">Add new card</Button>
+						{ deck?.cards && <CardItemsList cards={deck.cards} onCardsChange={handleCardsChange} /> }
+					</Stack>
 					<p>TODO: deck statistics on right gutter</p>
 				</CardContent>
 			</Card>

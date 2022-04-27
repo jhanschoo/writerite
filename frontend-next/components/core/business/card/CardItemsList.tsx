@@ -14,28 +14,23 @@ const CardItemsList = ({ cards, onCardsChange }: CardItemsListProps) => {
 	const pageIndex = page - 1;
 	const currentCards = cards[pageIndex];
 	const cardItems = currentCards.map((card, index) =>
-	(<EditableCard
-		key={index}
-		card={card}
-		onCardChange={(newCard) => onCardsChange([
-			...cards.slice(0, pageIndex),
-			[...currentCards.slice(0, index), newCard, ...currentCards.slice(index + 1)],
-			...cards.slice(pageIndex + 1)])}
-	/>));
-	const handlePageChange = (_e: ChangeEvent<unknown>, value: number) => setPage(value)
-	return (
-		<>
-		<Stack direction="row" justifyContent="center">
-			<Pagination count={cards.length} page={page} onChange={handlePageChange} />
-		</Stack>
-		<Stack spacing={2} paddingY={2}>
+		<EditableCard
+			key={index}
+			card={card}
+			onCardChange={(newCard) => onCardsChange([
+				...cards.slice(0, pageIndex),
+				[...currentCards.slice(0, index), newCard, ...currentCards.slice(index + 1)],
+				...cards.slice(pageIndex + 1)])}
+		/>
+	);
+	const handlePageChange = (_e: ChangeEvent<unknown>, value: number) => setPage(value);
+	return <>
+		<Pagination count={cards.length} page={page} onChange={handlePageChange} />
+		<Stack spacing={2} paddingY={2} width="100%">
 			{cardItems}
 		</Stack>
-		<Stack direction="row" justifyContent="center">
-			<Pagination count={cards.length} page={page} onChange={handlePageChange} />
-		</Stack>
-		</>
-	);
+		<Pagination count={cards.length} page={page} onChange={handlePageChange} />
+	</>;
 };
 
 export default CardItemsList;
