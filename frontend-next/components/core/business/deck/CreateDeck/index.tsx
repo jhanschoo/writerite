@@ -1,40 +1,41 @@
-import { Button, ButtonGroup, Card, CardContent, Stack, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { Button, ButtonGroup, Card, CardContent, Pagination, Stack, TextField, Typography } from "@mui/material";
+import { ChangeEvent, useState } from "react";
 import { useMutation } from "urql";
 import { DeckCreateDocument } from "../../../../../generated/graphql";
 import { group } from "../../../../../lib/core/utilities";
 import CardItemsList from "../../card/CardItemsList";
-import { cardToEditableCard } from "../../card/cardToEditableCard";
+import { cardToEditableCard } from "../../../../../lib/core/entities/viewModel/card/cardToEditableCard";
 import { CARD_LIST_PAGE_SIZE } from "../../card/constants";
-import { ICard, IEditableCard } from "../../card/types";
-import { IDeck, IPaginatedEditableDeck } from "../types";
+import { fromIDeck, IPaginatedEditableDeck, updateCurrentCardsOfExistingDeck } from "../../../../../lib/core/entities/viewModel/deck/paginatedEditableDeck";
+import { IDeck } from "../../../../../lib/core/entities/model/deck";
 import ImportFromCsv from "./ImportFromCsv";
 import ImportInstructionsModal from "./ImportInstructionsModal";
 
 const CreateDeck = () => {
 	const [showImportInstructionsModal, setShowImportInstructionsModal] = useState(false);
 	const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+	// Note: all mutations of setDeck and setPage must satisfy consistency property that if deck.cards.length is truthy, then 0 < page <= deck.cards.length
 	const [deck, setDeck] = useState<IPaginatedEditableDeck | undefined>(undefined);
+	const [page, setPage] = useState(1);
+	const pageIndex = page - 1;
+	const pages = deck?.cards.length;
+	const currentCards = deck?.cards.length && deck.cards[pageIndex];
+	const handlePageChange = (_e: ChangeEvent<unknown>, value: number) => setPage(value);
 	const handleToggleShowImportInstructionsModal = () =>
 		setShowImportInstructionsModal(!showImportInstructionsModal);
 	const handleOverwrite = (newDeck: IDeck) => {
-		setDeck({
-			...newDeck,
-			// we use mutation here for speed
-			cards: group(newDeck.cards.map(cardToEditableCard), CARD_LIST_PAGE_SIZE),
-		});
+		setDeck(fromIDeck(newDeck, CARD_LIST_PAGE_SIZE));
 	}
 	const handleAppend = (newDeck: IDeck) => {
 		if (deck) {
 			setDeck({
 				...newDeck,
-				cards: group([...deck.cards.flat(), ...newDeck.cards.map( cardToEditableCard)].slice(0, 1000), CARD_LIST_PAGE_SIZE),
+				cards: group([...deck.cards.flat(), ...newDeck.cards.map(cardToEditableCard)].slice(0, 1000), CARD_LIST_PAGE_SIZE),
 			});
 		} else {
 			handleOverwrite(newDeck);
 		}
 	}
-	const handleCardsChange = (cards: IEditableCard[][]) => setDeck(deck && { ...deck, cards });
 	return (<>
 		<Stack direction="row">
 			<Typography variant="h4" sx={{ flexGrow: 1 }} paddingX={2}>
@@ -64,7 +65,13 @@ const CreateDeck = () => {
 					<Typography variant="h6" textAlign="center" margin={2}>Cards</Typography>
 					<Stack alignItems="center" spacing={2}>
 						<Button variant="contained">Add new card</Button>
-						{ deck?.cards && <CardItemsList cards={deck.cards} onCardsChange={handleCardsChange} /> }
+						{ pages && currentCards &&
+							<>
+								<Pagination count={pages} page={page} onChange={handlePageChange} />
+								<CardItemsList cards={currentCards} onCardsChange={updateCurrentCardsOfExistingDeck(setDeck, deck, pageIndex)} />
+								<Pagination count={pages} page={page} onChange={handlePageChange} />
+							</>
+						}
 					</Stack>
 					<p>TODO: deck statistics on right gutter</p>
 				</CardContent>

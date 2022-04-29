@@ -4,7 +4,7 @@ import { EditorState } from "draft-js";
 import { SetStateAction } from "react";
 import AnswersEditor from "../../../application/editor/AnswersEditor";
 import NotesEditor from "../../../application/editor/NotesEditor";
-import type { IEditableCard } from "../types";
+import type { IEditableCard } from "../../../../../lib/core/entities/viewModel/card/editableCard";
 
 export interface CardProps {
 	card: IEditableCard;

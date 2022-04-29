@@ -2,9 +2,9 @@ import { Backdrop, Button, Dialog, DialogActions, DialogContent, Stack, Typograp
 import Papa from 'papaparse';
 import { useRef, useState, MouseEvent } from "react";
 import { rawFromText } from "../../../application/editor/rawFromText";
-import type { ICard } from "../../card/types";
+import { ICard } from "../../../../../lib/core/entities/model/card";
 import ImportFromCsvPreview from "./ImportFromCsvPreview";
-import type { IDeck } from "../types";
+import { IDeck } from "../../../../../lib/core/entities/model/deck";
 import { nextTick } from "../../../../../lib/core/utilities/nextTick";
 
 const matchFilename = /^(.*)\.csv$/;

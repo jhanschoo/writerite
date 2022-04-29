@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import Card, { CardProps } from "../../card/Card";
 import { CARD_LIST_PAGE_SIZE } from "../../card/constants";
-import type { IDeck } from "../types";
+import { IDeck } from "../../../../../lib/core/entities/model/deck";
 
 export interface DeckWithoutSubdeckProps {
 	deck: IDeck;
