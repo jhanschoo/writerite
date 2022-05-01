@@ -1,4 +1,4 @@
-import { isSSRContext } from "../../utils";
+import { isSSRContext } from "@/utils";
 import { withUrqlClient } from "next-urql";
 import { commonUrqlOptions, getExchanges } from "./common";
 

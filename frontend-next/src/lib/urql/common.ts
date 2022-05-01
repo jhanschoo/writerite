@@ -4,9 +4,9 @@ import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } fro
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
-import { getAccessKey } from "../tokenManagement";
-import { isSSRContext } from "../../utils";
-import schema from "../../../graphql.schema.json";
+import { getAccessKey } from "@lib/tokenManagement";
+import { isSSRContext } from "@/utils";
+import schema from "@root/graphql.schema.json";
 
 export const commonUrqlOptions = {
 	url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,

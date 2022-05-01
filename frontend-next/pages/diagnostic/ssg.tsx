@@ -1,7 +1,7 @@
 import { GetStaticProps, NextPage } from "next";
 import { useQuery } from "urql";
 import { initDefaultServerSideUrqlClient } from "../../src/lib/urql/initDefaultServerSideUrqlClient";
-import { HealthQueryDocument } from "../../generated/graphql";
+import { HealthQueryDocument } from "@generated/graphql";
 
 export const getStaticProps: GetStaticProps = async () => {
 	const [client, getUrqlState] = initDefaultServerSideUrqlClient();
