@@ -3,12 +3,12 @@ import { Button, Stack, Typography } from '@mui/material';
 import type { NextPage } from 'next'
 import { useQuery } from 'urql';
 
-import { useLogout } from '../../components/browser/business/signin/login/useLogout';
+import { useLogout } from '../../src/features/signin/hooks/useLogout';
 import { UserDocument } from '../../generated/graphql';
-import FinalizeUserDialog from '../../components/core/business/user/FinalizeUserDialog';
-import { UserDecksSummary } from '../../components/core/business/deck/UserDecksSummary';
-import { useMotionContext } from '../../components/core/basic/framer-motion/useMotionContext';
-import BreadcrumbsNav from '../../components/core/application/nav/BreadcrumbsNav';
+import FinalizeUserDialog from '../../src/components/user/FinalizeUserDialog';
+import { UserDecksSummary } from '../../src/components/deck/UserDecksSummary';
+import { useMotionContext } from '../../src/hooks/useMotionContext';
+import BreadcrumbsNav from '../../src/components/nav/BreadcrumbsNav';
 
 const Home: NextPage = () => {
 	const { motionProps } = useMotionContext();

@@ -8,8 +8,8 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { Providers } from '../components/core/application/providers/Providers';
-import { withDefaultUrqlClient } from '../lib/core/frameworks/urql/withDefaultUrqlClient';
+import { Providers } from '../src/providers/Providers';
+import { withDefaultUrqlClient } from '../src/lib/urql/withDefaultUrqlClient';
 
 const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 	const { emotionCache, ...pagePropsRest } = pageProps;

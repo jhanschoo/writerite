@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { FinalizeThirdPartyOauthSigninDocument } from '../../../generated/graphql';
-import { initDefaultUrqlClient } from '../../../lib/server/urql/initDefaultUrqlClient';
+import { initDefaultServerSideUrqlClient } from '../../../src/lib/urql/initDefaultServerSideUrqlClient';
 
 type Data = {
   name: string
@@ -22,7 +22,7 @@ export default async function handler(
 			res.status(400).end('Invalid state');
 			return;
 		}
-		const [client] = initDefaultUrqlClient();
+		const [client] = initDefaultServerSideUrqlClient();
 		const mutationRes = await client.mutation(FinalizeThirdPartyOauthSigninDocument, {
 			code, provider, nonce, redirect_uri
 		}).toPromise();

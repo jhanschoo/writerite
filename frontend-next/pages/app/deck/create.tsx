@@ -1,9 +1,9 @@
 import type { NextPage } from 'next'
 import { Stack } from '@mui/material';
 import { motion } from 'framer-motion';
-import { useMotionContext } from '../../../components/core/basic/framer-motion/useMotionContext';
-import BreadcrumbsNav from '../../../components/core/application/nav/BreadcrumbsNav';
-import CreateDeck from '../../../components/core/business/deck/CreateDeck';
+import { useMotionContext } from '../../../src/hooks/useMotionContext';
+import BreadcrumbsNav from '../../../src/components/nav/BreadcrumbsNav';
+import CreateDeck from '../../../src/components/deck/CreateDeck';
 
 const DeckCreate: NextPage = () => {
 	const { motionProps } = useMotionContext();
