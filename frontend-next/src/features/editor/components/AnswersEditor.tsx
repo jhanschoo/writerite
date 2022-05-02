@@ -2,12 +2,12 @@ import React, { Dispatch, FC, SetStateAction } from "react";
 import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, RawDraftContentState, SelectionState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
-import { Box, Chip } from "@mui/material";
+import { Box, Chip, SxProps, Theme } from "@mui/material";
 
 const entityStrategy: DraftDecorator["strategy"] = (block, callback, _content) =>
 	block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
 
-const Wrapper: FC<{}> = ({ children }) => (<Box sx={{
+const Wrapper: FC<{ sx?: SxProps<Theme> }> = ({ sx, children }) => (<Box sx={{
 	".DraftEditor-root ul": {
 		listStyleType: "none",
 		display: "flex",
@@ -21,7 +21,8 @@ const Wrapper: FC<{}> = ({ children }) => (<Box sx={{
 			// TODO: use theming
 			margin: "0 1px 5px 1px",
 		}
-	}
+	},
+	...sx,
 }}>
 	{children}
 </Box>);
@@ -395,6 +396,7 @@ interface Props {
 	handleChange?: (newEditorState: EditorState) => EditorState | null;
 	placeholder?: string;
 	readOnly?: boolean;
+	wrapperSx?: SxProps<Theme>;
 }
 
 export const AnswersEditor = (props: Props): JSX.Element => {
@@ -404,6 +406,7 @@ export const AnswersEditor = (props: Props): JSX.Element => {
 		handleChange,
 		placeholder,
 		readOnly,
+		wrapperSx,
 	} = props;
 	// eslint-disable-next-line new-cap
 	const blockRenderMap = Map({ unstyled: { element: "li", wrapper: <ul/> } });
@@ -420,7 +423,7 @@ export const AnswersEditor = (props: Props): JSX.Element => {
 	};
 
 	return (
-		<Wrapper>
+		<Wrapper sx={wrapperSx}>
 			<Editor
 				blockRenderMap={blockRenderMap}
 				editorState={editorState}

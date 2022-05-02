@@ -2,9 +2,9 @@ import { Backdrop, Button, Dialog, DialogActions, DialogContent, Stack, Typograp
 import Papa from 'papaparse';
 import { useRef, useState, MouseEvent } from "react";
 import { rawFromText } from "@features/editor";
-import { ICard } from "../utils/card";
+import { IImportCard } from "../types/IImportCard";
 import ImportFromCsvPreview from "./ImportFromCsvPreview";
-import { IDeck } from "../utils/deck";
+import { IDeck } from "../types/IImportDeck";
 import { nextTick } from "@/utils";
 
 const matchFilename = /^(.*)\.csv$/;
@@ -19,7 +19,7 @@ enum ImportState {
 }
 
 export interface ImportInstructionsModalProps {
-	onAppend: (deck: IDeck) => void;
+	onAppend?: (deck: IDeck) => void;
 	onOverwrite: (deck: IDeck) => void;
 }
 
@@ -33,18 +33,18 @@ export const ImportFromCsv = ({ onAppend, onOverwrite }: ImportInstructionsModal
 		(event.target as HTMLInputElement).value = "";
 	}
 	const handleCloseModal = () => setImportState(ImportState.EMPTY);
-	const handleAppend = () => {
+	const handleAppend = onAppend && (() => {
 		if (deck) {
 			onAppend(deck);
 		}
 		handleCloseModal();
-	}
+	});
 	const handleOverwrite = () => {
 		if (deck) {
 			onOverwrite(deck);
 		}
 		handleCloseModal();
-	}
+	};
 	const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		if (!event.target.files || event.target.files.length !== 1) {
 			return; // TODO: consider showing an error message, consider try-catch
@@ -59,8 +59,8 @@ export const ImportFromCsv = ({ onAppend, onOverwrite }: ImportInstructionsModal
 		setImportState(ImportState.IMPORTING);
 		await nextTick(async () => {
 			try {
-				const { cards, exceeded } = await new Promise<{ cards: ICard[], exceeded: boolean }>((resolve, reject) => {
-					let retCards: ICard[] = [];
+				const { cards, exceeded } = await new Promise<{ cards: IImportCard[], exceeded: boolean }>((resolve, reject) => {
+					let retCards: IImportCard[] = [];
 					let exceeded = false;
 					Papa.parse<string[], File>(csvFile, {
 						skipEmptyLines: "greedy",
@@ -73,10 +73,10 @@ export const ImportFromCsv = ({ onAppend, onOverwrite }: ImportInstructionsModal
 								results.data.length = MAX_CARDS_PER_DECK - retCards.length;
 								exceeded = true;
 							}
-							retCards = retCards.concat(results.data.map(([front, back, ...altAnswers]) => ({
-								front: rawFromText(front ?? ""),
-								back: rawFromText(back ?? ""),
-								altAnswers: altAnswers.filter((answer) => answer.trim())
+							retCards = retCards.concat(results.data.map(([prompt, fullAnswer, ...answers]) => ({
+								prompt: rawFromText(prompt ?? ""),
+								fullAnswer: rawFromText(fullAnswer ?? ""),
+								answers: answers.filter((answer) => answer.trim())
 							})));
 							if (exceeded) {
 								parser.abort();
@@ -130,11 +130,9 @@ export const ImportFromCsv = ({ onAppend, onOverwrite }: ImportInstructionsModal
 			</DialogContent>
 			<DialogActions>
 				<Button variant="text" onClick={handleCloseModal}>Cancel</Button>
-				<Button variant="outlined" onClick={handleAppend}>Add Cards to Existing</Button>
-				<Button onClick={handleOverwrite}>Import and Replace</Button>
+				{handleAppend && <Button variant="outlined" onClick={handleAppend}>Add Cards to Existing</Button>}
+				<Button onClick={handleOverwrite}>Import{ handleAppend && " and Replace"}</Button>
 			</DialogActions>
 		</Dialog>
 	</>;
 };
-
-export default ImportFromCsv;

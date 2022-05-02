@@ -1,10 +1,10 @@
 import { Card as MuiCard, CardContent, CardTypeMap, Divider } from "@mui/material";
 import { DefaultComponentProps } from "@mui/material/OverridableComponent";
 import { SelfManagedAnswersEditor, SelfManagedNotesEditor } from "../../editor";
-import { ICard } from "../utils/card";
+import { IImportCard } from "../types/IImportCard";
 
 export interface CardProps {
-	card: ICard;
+	card: IImportCard;
 	muiCardProps?: Partial<DefaultComponentProps<CardTypeMap<{}, "div">>>;
 }
 
@@ -13,14 +13,14 @@ const Card = ({ card, muiCardProps }: CardProps) => {
 		<MuiCard {...muiCardProps}>
 			{/* <CardContent>{card.front}, {card.back}, ({card.altAnswers.join(", ")})</CardContent> */}
 			<CardContent>
-				<SelfManagedNotesEditor initialContent={card.front} readOnly={true} />
+				<SelfManagedNotesEditor initialContent={card.prompt} readOnly={true} />
 				<Divider />
-				<SelfManagedNotesEditor initialContent={card.back} readOnly={true} />
+				<SelfManagedNotesEditor initialContent={card.fullAnswer} readOnly={true} />
 				{
-					card.altAnswers.length
+					card.answers.length
 					? (
 						<>
-							<SelfManagedAnswersEditor initialContent={card.altAnswers} readOnly={true} />
+							<SelfManagedAnswersEditor initialContent={card.answers} readOnly={true} />
 						</>
 					)
 					: undefined

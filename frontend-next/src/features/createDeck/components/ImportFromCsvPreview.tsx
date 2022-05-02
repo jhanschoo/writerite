@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import Card, { CardProps } from "./Card";
-import { CARD_LIST_PAGE_SIZE } from "../constants";
-import { IDeck } from "../utils/deck";
+import { IDeck } from "../types/IImportDeck";
+import { MAX_CARDS_PER_DECK } from "../stores/paginatedEditableDeck";
 
 export interface DeckWithoutSubdeckProps {
 	deck: IDeck;
@@ -9,9 +9,11 @@ export interface DeckWithoutSubdeckProps {
 	isExceeded?: boolean;
 }
 
+const IMPORT_PREVIEW_NUM_CARDS = 10;
+
 const ImportFromCsvPreview = ({ deck, cardComponentProps, isExceeded }: DeckWithoutSubdeckProps) => {
 	const { title, cards } = deck;
-	const cardComponents = cards.slice(0, CARD_LIST_PAGE_SIZE).map((card, index) =>
+	const cardComponents = cards.slice(0, IMPORT_PREVIEW_NUM_CARDS).map((card, index) =>
 		<Card {...cardComponentProps} card={card} key={`card-${index}`} />
 	);
 	return <>
@@ -21,7 +23,7 @@ const ImportFromCsvPreview = ({ deck, cardComponentProps, isExceeded }: DeckWith
 		<Stack spacing={1} paddingY={1} overflow="auto">
 			{cardComponents}
 		</Stack>
-		{isExceeded && <Typography variant="body2">If replacing, the first 1000 rows of the .csv file will be imported. If overwriting, only the first few cards will be added until the deck has 1000 cards.</Typography>}
+		{isExceeded && <Typography variant="body2">If replacing, the first {MAX_CARDS_PER_DECK} rows of the .csv file will be imported. If overwriting, only the first few cards will be added until the deck has {MAX_CARDS_PER_DECK} cards.</Typography>}
 	</>;
 };
 

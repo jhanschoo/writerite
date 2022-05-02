@@ -69,7 +69,6 @@ export const NotesEditor = ({
 				</ButtonGroup>
 			</Box>
 		}
-		<Divider orientation="vertical" flexItem />
 		<Editor
 			editorState={editorState}
 			onChange={handleEditorChange}

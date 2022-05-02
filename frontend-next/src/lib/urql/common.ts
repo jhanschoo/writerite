@@ -10,7 +10,8 @@ import schema from "@root/graphql.schema.json";
 
 export const commonUrqlOptions = {
 	url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
-	preferGetMethod: true,
+	// preferGetMethod: true seems to be necessary for my implementation of subscriptions to work
+	// preferGetMethod: true,
 } as const;
 
 const auth = authExchange<string | null>({

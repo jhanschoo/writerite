@@ -1,25 +1,28 @@
 import { Stack } from "@mui/material";
-import EditableCard from "./EditableCard";
-import type { IEditableCard } from "../utils/editableCard";
-import { updateCardOfCurrentCards } from "../utils/paginatedEditableDeck";
+import { EditableCard } from "./EditableCard";
+import type { IEditableCard } from "../types/IEditableCard";
 
 export interface CardItemsListProps {
 	cards: IEditableCard[];
-	onCardsChange: (cards: IEditableCard[]) => void;
+	handleCardChange: (card: IEditableCard, index: number) => void;
+	handleCardDelete: (index: number) => void;
 }
 
-// This is as opposed to receiving an array of data elements and calling a callback on only the data elements on the page. TODO: determine location of state management
-const CardItemsList = ({ cards, onCardsChange }: CardItemsListProps) => {
+export const CardItemsList = ({ cards, handleCardChange, handleCardDelete }: CardItemsListProps) => {
 	const cardItems = cards.map((card, index) =>
 		<EditableCard
 			key={index}
 			card={card}
-			onCardChange={updateCardOfCurrentCards(onCardsChange, cards, index)}
+			onCardChange={(nextCard) => handleCardChange(nextCard, index)}
+			onCardDelete={() => handleCardDelete(index)}
+			muiCardProps={{
+				sx: {
+					flexShrink: 0,
+				}
+			}}
 		/>
 	);
-	return <Stack spacing={2} paddingY={2} width="100%">
+	return <Stack spacing={2} padding={2} width="100%" maxHeight="50vh" overflow="auto">
 		{cardItems}
 	</Stack>;
 };
-
-export default CardItemsList;

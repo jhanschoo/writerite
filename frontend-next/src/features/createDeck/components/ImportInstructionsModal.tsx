@@ -5,7 +5,7 @@ export interface ImportInstructionsModalProps {
 	handleClose: () => void;
 }
 
-const ImportInstructionsModal = ({ open, handleClose }: ImportInstructionsModalProps) => {
+export const ImportInstructionsModal = ({ open, handleClose }: ImportInstructionsModalProps) => {
 	return (
 		<Dialog
 			open={open}
@@ -82,5 +82,3 @@ const ImportInstructionsModal = ({ open, handleClose }: ImportInstructionsModalP
 		</Dialog>
 	);
 };
-
-export default ImportInstructionsModal;
