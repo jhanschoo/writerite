@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import { UserEditDocument } from '../../../generated/graphql';
+import { UserEditDocument } from '@generated/graphql';
 
 export function useFinalizeUser(handleSuccessfulNameChange: () => void) {
 	const [, updateUserName] = useMutation(UserEditDocument);

@@ -1,11 +1,11 @@
 import { Backdrop, Button, Dialog, DialogActions, DialogContent, Stack, Typography } from "@mui/material";
 import Papa from 'papaparse';
 import { useRef, useState, MouseEvent } from "react";
-import { rawFromText } from "../../../features/editor";
-import { ICard } from "../../../lib/entities/model/card";
+import { rawFromText } from "@features/editor";
+import { ICard } from "../utils/card";
 import ImportFromCsvPreview from "./ImportFromCsvPreview";
-import { IDeck } from "../../../lib/entities/model/deck";
-import { nextTick } from "../../../utils/nextTick";
+import { IDeck } from "../utils/deck";
+import { nextTick } from "@/utils";
 
 const matchFilename = /^(.*)\.csv$/;
 const MAX_CARDS_PER_DECK = parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string);
@@ -24,7 +24,7 @@ export interface ImportInstructionsModalProps {
 }
 
 // TODO: show errors for limit reached
-const ImportFromCsv = ({ onAppend, onOverwrite }: ImportInstructionsModalProps) => {
+export const ImportFromCsv = ({ onAppend, onOverwrite }: ImportInstructionsModalProps) => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [importState, setImportState] = useState<ImportState>(ImportState.EMPTY);
 	const [deck, setDeck] = useState<IDeck | undefined>(undefined);

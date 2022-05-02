@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { LinkProps as NextLinkProps } from 'next/link';
 import MuiLink, { LinkProps as MuiLinkProps } from '@mui/material/Link';
-import { Anchor } from '../Anchor';
+import { Anchor } from '@components/Anchor';
 import { NextLinkComposed, NextLinkComposedProps } from './adapters/NextLinkComposed';
 
 export type LinkProps = {

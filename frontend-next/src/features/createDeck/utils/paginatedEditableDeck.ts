@@ -1,7 +1,7 @@
-import { group } from "../../../../utils/group";
-import { IDeck } from "../../model/deck";
-import { cardToEditableCard } from "../card/cardToEditableCard";
-import { IEditableCard } from "../card/editableCard";
+import { group } from "@/utils";
+import { IDeck } from "./deck";
+import { cardToEditableCard } from "./cardToEditableCard";
+import { IEditableCard } from "./editableCard";
 
 export interface IPaginatedEditableDeck {
 	title: string;

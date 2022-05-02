@@ -12,6 +12,7 @@
       "@providers/*": ["src/providers/*"],
       "@root/*": ["./*"],
       "@stores/*": ["src/stores/*"],
+      "@styles/*": ["styles/*"],
       "@utils/*": ["src/utils/*"],
     },
     "target": "es5",

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import NextLink, { LinkProps } from 'next/link';
-import { Anchor } from '../../Anchor';
+import { Anchor } from '@components/Anchor';
 
 export interface NextLinkComposedProps
 	extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,

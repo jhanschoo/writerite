@@ -1,7 +1,7 @@
 import { Card as MuiCard, CardContent, CardTypeMap, Divider } from "@mui/material";
 import { DefaultComponentProps } from "@mui/material/OverridableComponent";
-import { SelfManagedAnswersEditor, SelfManagedNotesEditor } from "../../../features/editor";
-import { ICard } from "../../../lib/entities/model/card";
+import { SelfManagedAnswersEditor, SelfManagedNotesEditor } from "../../editor";
+import { ICard } from "../utils/card";
 
 export interface CardProps {
 	card: ICard;

@@ -1,17 +1,17 @@
 import { Button, ButtonGroup, Card, CardContent, Pagination, Stack, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { useMutation } from "urql";
-import { DeckCreateDocument } from "../../../../generated/graphql";
-import { group } from "../../../utils";
-import CardItemsList from "../../card/CardItemsList";
-import { cardToEditableCard } from "../../../lib/entities/viewModel/card/cardToEditableCard";
-import { CARD_LIST_PAGE_SIZE } from "../../card/constants";
-import { fromIDeck, IPaginatedEditableDeck, updateCurrentCardsOfExistingDeck } from "../../../lib/entities/viewModel/deck/paginatedEditableDeck";
-import { IDeck } from "../../../lib/entities/model/deck";
-import ImportFromCsv from "./ImportFromCsv";
+import { DeckCreateDocument } from "@generated/graphql";
+import { group } from "@/utils";
+import CardItemsList from "./CardItemsList";
+import { cardToEditableCard } from "../utils/cardToEditableCard";
+import { CARD_LIST_PAGE_SIZE } from "../constants";
+import { fromIDeck, IPaginatedEditableDeck, updateCurrentCardsOfExistingDeck } from "../utils/paginatedEditableDeck";
+import { IDeck } from "../utils/deck";
+import { ImportFromCsv } from "./ImportFromCsv";
 import ImportInstructionsModal from "./ImportInstructionsModal";
 
-const CreateDeck = () => {
+export const CreateDeck = () => {
 	const [showImportInstructionsModal, setShowImportInstructionsModal] = useState(false);
 	const [, deckCreateMutation] = useMutation(DeckCreateDocument);
 	// Note: all mutations of setDeck and setPage must satisfy consistency property that if deck.cards.length is truthy, then 0 < page <= deck.cards.length
@@ -79,5 +79,3 @@ const CreateDeck = () => {
 		</form>
 	</>);
 }
-
-export default CreateDeck;

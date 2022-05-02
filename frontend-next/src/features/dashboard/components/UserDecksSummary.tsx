@@ -2,9 +2,9 @@ import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
 import { FC, MouseEvent } from 'react';
-import { useMotionContext } from '../../hooks/useMotionContext';
-import { motionThemes } from '../../lib/framer-motion/motionThemes';
-import { Link } from '../link/Link';
+import { useMotionContext } from '../../../hooks/useMotionContext';
+import { motionThemes } from '../../../lib/framer-motion/motionThemes';
+import { Link } from '../../../components/link/Link';
 
 export const UserDecksSummary: FC<{}> = () => {
 	const router = useRouter();

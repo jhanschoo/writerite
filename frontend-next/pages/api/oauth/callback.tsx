@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { FinalizeThirdPartyOauthSigninDocument } from '../../../generated/graphql';
-import { initDefaultServerSideUrqlClient } from '../../../src/lib/urql/initDefaultServerSideUrqlClient';
+import { FinalizeThirdPartyOauthSigninDocument } from '@generated/graphql';
+import { initDefaultServerSideUrqlClient } from '@lib/urql/initDefaultServerSideUrqlClient';
 
 type Data = {
   name: string

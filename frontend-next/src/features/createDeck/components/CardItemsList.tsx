@@ -1,7 +1,7 @@
 import { Stack } from "@mui/material";
 import EditableCard from "./EditableCard";
-import type { IEditableCard } from "../../lib/entities/viewModel/card/editableCard";
-import { updateCardOfCurrentCards } from "../../lib/entities/viewModel/deck/paginatedEditableDeck";
+import type { IEditableCard } from "../utils/editableCard";
+import { updateCardOfCurrentCards } from "../utils/paginatedEditableDeck";
 
 export interface CardItemsListProps {
 	cards: IEditableCard[];

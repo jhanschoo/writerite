@@ -1,6 +1,6 @@
-import { answersEditorStateToStringArray, notesEditorStateToRaw } from "../../../../features/editor";
+import { answersEditorStateToStringArray, notesEditorStateToRaw } from "@features/editor";
 import { IEditableCard } from "./editableCard";
-import { ICard } from "../../model/card";
+import { ICard } from "./card";
 
 export function editableCardToCard({ front, back, altAnswers }: IEditableCard): ICard {
 	return {

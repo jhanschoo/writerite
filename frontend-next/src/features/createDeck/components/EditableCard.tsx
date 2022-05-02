@@ -2,8 +2,8 @@ import { Card as MuiCard, CardContent, CardTypeMap, Divider } from "@mui/materia
 import { DefaultComponentProps } from "@mui/material/OverridableComponent";
 import { EditorState } from "draft-js";
 import { SetStateAction } from "react";
-import { AnswersEditor, NotesEditor } from "../../../features/editor";
-import type { IEditableCard } from "../../../lib/entities/viewModel/card/editableCard";
+import { AnswersEditor, NotesEditor } from "@features/editor";
+import type { IEditableCard } from "../utils/editableCard";
 
 export interface CardProps {
 	card: IEditableCard;

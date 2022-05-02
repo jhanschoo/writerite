@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import { SubscriptionHandler, useQuery, useSubscription } from "urql";
-import { HealthQueryDocument, RepeatHealthSubscriptionDocument, RepeatHealthSubscriptionSubscription } from "../../generated/graphql";
+import { HealthQueryDocument, RepeatHealthSubscriptionDocument, RepeatHealthSubscriptionSubscription } from "@generated/graphql";
 
 const handleSubscription: SubscriptionHandler<RepeatHealthSubscriptionSubscription, string[]> = (prevData = [], response) => {
 	return [...prevData, response.repeatHealth];

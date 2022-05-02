@@ -1,5 +1,5 @@
 import 'draft-js/dist/Draft.css';
-import '../styles/globals.css'
+import '@styles/globals.css'
 
 import { AnimatePresence } from 'framer-motion';
 import React from 'react';
@@ -8,8 +8,8 @@ import type { AppProps } from 'next/app'
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
-import { Providers } from '../src/providers/Providers';
-import { withDefaultUrqlClient } from '../src/lib/urql/withDefaultUrqlClient';
+import { Providers } from '@providers/Providers';
+import { withDefaultUrqlClient } from '@lib/urql/withDefaultUrqlClient';
 
 const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
 	const { emotionCache, ...pagePropsRest } = pageProps;

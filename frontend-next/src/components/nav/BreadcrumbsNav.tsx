@@ -1,9 +1,9 @@
 import { Breadcrumbs, Button, Divider, Stack } from "@mui/material";
 import router from "next/router";
-import { motionThemes } from "../../lib/framer-motion/motionThemes";
-import { Flex } from "../Flex";
-import { useMotionContext } from "../../hooks/useMotionContext";
-import { Link } from "../link/Link";
+import { motionThemes } from "@lib/framer-motion/motionThemes";
+import { Flex } from "@components/Flex";
+import { useMotionContext } from "@hooks/useMotionContext";
+import { Link } from "@components/link/Link";
 
 export interface BreadcrumbsNavProps {
 	showBack?: boolean;
