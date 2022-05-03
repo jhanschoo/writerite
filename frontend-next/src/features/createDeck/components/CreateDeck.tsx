@@ -1,5 +1,5 @@
-import { Button, ButtonGroup, Card, CardActions, CardContent, Pagination, Paper, Stack, TextField, Typography } from "@mui/material";
-import { ChangeEvent, useRef, useState } from "react";
+import { Button, ButtonGroup, Card, CardActions, CardContent, Divider, Pagination, Paper, Stack, TextField, Typography } from "@mui/material";
+import { ChangeEvent, SetStateAction, useRef, useState } from "react";
 import { useMutation } from "urql";
 import { DeckCreateDocument } from "@generated/graphql";
 import { CardItemsList } from "./CardItemsList";
@@ -10,7 +10,8 @@ import { ImportInstructionsModal } from "./ImportInstructionsModal";
 import { PaginatedEditableDeckActionType, usePaginatedEditableDeckReducer } from "../stores/paginatedEditableDeck";
 import { IEditableCard } from "../types/IEditableCard";
 import { newEditableCard } from "../utils/newEditableCard";
-import { answersEditorStateToStringArray } from "@/features/editor";
+import { answersEditorStateToStringArray, NotesEditor, notesEditorStateToRaw } from "@/features/editor";
+import { EditorState } from "draft-js";
 
 export const CreateDeck = () => {
 	const [showImportInstructionsModal, setShowImportInstructionsModal] = useState(false);
@@ -21,6 +22,7 @@ export const CreateDeck = () => {
 	const cardsHeaderRef = useRef<HTMLHeadingElement>(null);
 	const majorIndex = page - 1;
 	const pages = deck?.cards.length;
+	const flattenedCards = deck.cards.flat();
 	const currentCards = deck?.cards.length && deck.cards[majorIndex];
 	const handleDeckCreate = () => {
 		deckCreateMutation({
@@ -30,12 +32,18 @@ export const CreateDeck = () => {
 				...card,
 				answers: answersEditorStateToStringArray(card.answers),
 			})),
-			description: "",
-			name: deck.title,
+			description: notesEditorStateToRaw(deck.description),
+			name: deck.name,
 			promptLang: "",
 			published: true,
 		})
 	}
+	const handleDescriptionChange = (newDescription: SetStateAction<EditorState>) => {
+		dispatchDeck({
+			type: PaginatedEditableDeckActionType.SET_DESCRIPTION,
+			description: (newDescription instanceof Function) ? newDescription(deck.description) : newDescription,
+		});
+	};
 	const handlePrependNewCard = () => {
 		dispatchDeck({ type: PaginatedEditableDeckActionType.PREPEND_CARD, card: newEditableCard() });
 	}
@@ -80,12 +88,18 @@ export const CreateDeck = () => {
 					label="Title"
 					variant="filled"
 					size="largecentered"
-					sx={{ width: "80%" }}
+					sx={{ minWidth: "80%" }}
 					margin="normal"
+				/>
+				<NotesEditor
+					editorState={deck.description}
+					setEditorState={handleDescriptionChange}
+					stackSx={{ minWidth: "80%" }}
+					placeholder="write a description for this deck (optional)"
 				/>
 				<Typography variant="h6" textAlign="center">Subdecks</Typography>
 				<Typography variant="h6" textAlign="center" id="create-deck-cards" ref={cardsHeaderRef}>Cards</Typography>
-					<Button variant="outlined" onClick={handlePrependNewCard}>Add new card</Button>
+					<Button variant="outlined" onClick={handlePrependNewCard}>Add a new card</Button>
 					{ (pages && currentCards)
 						? <>
 							<Pagination count={pages} page={page} onChange={handlePageChange} />
@@ -94,6 +108,22 @@ export const CreateDeck = () => {
 						</>
 						: undefined
 					}
+				</Stack>
+			</Paper>
+			<Paper variant="outlined">
+				<Stack alignItems="center" spacing={2} padding={1}>
+					<Typography variant="h6" textAlign="center">Summary</Typography>
+					<Stack direction="row" spacing={2}>
+						<Stack sx={{ textAlign: "center" }}>
+							<Typography variant="h6">0</Typography>
+							<p>subdecks</p>
+						</Stack>
+						<Divider orientation="vertical" flexItem />
+						<Stack sx={{ textAlign: "center" }}>
+							<Typography variant="h6">{flattenedCards.length}</Typography>
+							<p>card{flattenedCards.length === 1 ? "" : "s"}</p>
+						</Stack>
+					</Stack>
 				</Stack>
 			</Paper>
 			<Button variant="contained" size="large" sx={{alignSelf: "center"}} onClick={handleDeckCreate}>Create Deck</Button>

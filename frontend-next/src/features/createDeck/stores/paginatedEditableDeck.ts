@@ -4,11 +4,15 @@ import { IDeck } from "../types/IImportDeck";
 import { IEditableCard } from "../types/IEditableCard";
 import { IPaginatedEditableDeck } from "../types/IPaginatedEditableDeck";
 import { fromIDeck } from "../utils/fromIDeck";
+import { notesEditorStateFromRaw, rawFromText } from "@/features/editor";
+import { EditorState } from "draft-js";
 
 export const CARD_LIST_PAGE_SIZE = 10;
 export const MAX_CARDS_PER_DECK = parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string);
 
 export enum PaginatedEditableDeckActionType {
+	SET_NAME,
+	SET_DESCRIPTION,
 	PREPEND_CARD,
 	APPEND_N_CARDS,
 	REMOVE_CARD,
@@ -17,6 +21,12 @@ export enum PaginatedEditableDeckActionType {
 }
 
 export interface PaginatedEditableDeckActionPayloads {
+	[PaginatedEditableDeckActionType.SET_NAME]: {
+		name: string;
+	};
+	[PaginatedEditableDeckActionType.SET_DESCRIPTION]: {
+		description: EditorState;
+	};
 	[PaginatedEditableDeckActionType.PREPEND_CARD]: {
 		card: IEditableCard;
 	};
@@ -46,12 +56,23 @@ type PaginatedEditableDeckActionPayloadsWithType = {
 export type PaginatedEditableDeckAction = PaginatedEditableDeckActionPayloadsWithType[PaginatedEditableDeckActionType];
 
 export const INITIAL_PAGINATED_EDITABLE_DECK_STATE: IPaginatedEditableDeck = {
-	title: "",
+	name: "",
+	description: notesEditorStateFromRaw(rawFromText("")),
 	cards: [],
 }
 
 export const paginatedEditableDeckReducer = (state: IPaginatedEditableDeck, action: PaginatedEditableDeckAction): IPaginatedEditableDeck => {
 	switch (action.type) {
+		case PaginatedEditableDeckActionType.SET_NAME:
+			return {
+				...state,
+				name: action.name,
+			};
+		case PaginatedEditableDeckActionType.SET_DESCRIPTION:
+			return {
+				...state,
+				description: action.description,
+			};
 		case PaginatedEditableDeckActionType.PREPEND_CARD:
 			return {
 				...state,

@@ -5,6 +5,10 @@ import { FC, MouseEvent } from 'react';
 import { useMotionContext } from '../../../hooks/useMotionContext';
 import { motionThemes } from '../../../lib/framer-motion/motionThemes';
 import { Link } from '../../../components/link/Link';
+import { useQuery } from 'urql';
+import { DecksDocument, DecksQueryScope } from '@generated/graphql';
+
+export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
 export const UserDecksSummary: FC<{}> = () => {
 	const router = useRouter();
@@ -13,6 +17,14 @@ export const UserDecksSummary: FC<{}> = () => {
 		setMotionProps(motionThemes.forward);
 		router.push('/app/deck/create');
 	}
+	const [decksResult, reexecuteDecksQuery] = useQuery({
+		query: DecksDocument,
+		variables: {
+			scope: DecksQueryScope.Owned,
+			take: USER_DECK_SUMMARY_DECKS_NUM,
+		},
+	});
+	console.log(decksResult);
 	return (
 		<Paper sx={{ padding: 2 }} variant="outlined">
 			<Typography variant="h4" paddingBottom={2}><Link href="/app/deck" underline="none">Decks</Link></Typography>

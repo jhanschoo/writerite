@@ -91,6 +91,8 @@ export const getExchanges = (ssr: SSRExchange) => [
 	devtoolsExchange,
 	dedupExchange,
 	cacheExchange({
+		// https://github.com/microsoft/TypeScript/issues/32063
+		// @ts-expect-error
 		schema,
 	}),
 	ssr,

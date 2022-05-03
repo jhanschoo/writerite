@@ -1,5 +1,5 @@
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
-import { Box, Button, ButtonGroup, ButtonProps, Divider, Stack, styled, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, ButtonProps, Divider, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
@@ -20,6 +20,7 @@ interface Props {
 	handleChange?: (newEditorState: EditorState) => EditorState | null;
 	placeholder?: EditorProps["placeholder"];
 	readOnly?: boolean;
+	stackSx?: SxProps<Theme>;
 }
 
 export const notesEditorStateFromRaw = (c: RawDraftContentState): EditorState => {
@@ -38,6 +39,7 @@ export const NotesEditor = ({
 	handleChange,
 	placeholder,
 	readOnly,
+	stackSx,
 }: Props): JSX.Element => {
 	const currentStyle = editorState.getCurrentInlineStyle();
 	const currentSelection = editorState.getSelection();
@@ -58,7 +60,14 @@ export const NotesEditor = ({
 	const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
 	const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
-	return <Stack paddingY={1} spacing={1} direction="row">
+	return <Stack paddingY={1} spacing={1} direction="row" sx={stackSx}>
+		<Editor
+			editorState={editorState}
+			onChange={handleEditorChange}
+			placeholder={placeholder}
+			handleKeyCommand={handleKeyCommand}
+			readOnly={readOnly}
+		/>
 		{!readOnly &&
 			<Box>
 				<ButtonGroup variant="text" orientation="vertical" size="small">
@@ -69,12 +78,5 @@ export const NotesEditor = ({
 				</ButtonGroup>
 			</Box>
 		}
-		<Editor
-			editorState={editorState}
-			onChange={handleEditorChange}
-			placeholder={placeholder}
-			handleKeyCommand={handleKeyCommand}
-			readOnly={readOnly}
-		/>
 	</Stack>;
 };
