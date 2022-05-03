@@ -1,5 +1,5 @@
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
-import { Box, Button, ButtonGroup, ButtonProps, Divider, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, ButtonProps, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
 import React, { Dispatch, SetStateAction } from "react";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
@@ -47,7 +47,7 @@ export const NotesEditor = ({
 	const handleEditorChange = (nextEditorState: EditorState) => {
 		setEditorState(handleChange?.(nextEditorState) ?? nextEditorState);
 	};
-	const handleKeyCommand = (command: DraftEditorCommand, state: EditorState, _eventTimeStamp: number) => {
+	const handleKeyCommand = (command: DraftEditorCommand, state: EditorState) => {
 		const newState = RichUtils.handleKeyCommand(state, command);
 		if (newState) {
 			handleEditorChange(newState);

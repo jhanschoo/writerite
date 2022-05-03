@@ -8,4 +8,4 @@ export function editableCardToImportCard({ prompt, fullAnswer, answers }: IEdita
 		fullAnswer: notesEditorStateToRaw(fullAnswer),
 		answers: answersEditorStateToStringArray(answers),
 	};
-};
+}

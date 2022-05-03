@@ -90,7 +90,7 @@ export const paginatedEditableDeckReducer = (state: IPaginatedEditableDeck, acti
 				...state,
 				cards: group([...state.cards.flat().filter((card) => card !== toRemove)], CARD_LIST_PAGE_SIZE),
 			};
-		};
+		}
 		case PaginatedEditableDeckActionType.REPLACE_CARD: {
 			const { card, majorIndex, minorIndex } = action;
 			const { cards } = state;

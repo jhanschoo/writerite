@@ -12,6 +12,8 @@ export interface NextLinkComposedProps
 
 export const NextLinkComposed = React.forwardRef<HTMLAnchorElement, NextLinkComposedProps>(
 	function NextLinkComposed(props, ref) {
+		// href is specified to remove it from ...other
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { to, linkAs, href, replace, scroll, shallow, prefetch, locale, ...other } = props;
 
 		return (

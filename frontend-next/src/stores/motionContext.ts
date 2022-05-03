@@ -9,7 +9,7 @@ export interface MotionState {
 
 export const initialMotionState: MotionState = {
 	motionProps: motionThemes.unanimated,
-	setMotionProps: () => {},
+	setMotionProps: () => undefined,
 };
 
 export const MotionContext = createContext<MotionState>(initialMotionState);

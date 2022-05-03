@@ -7,7 +7,7 @@ const handleSubscription: SubscriptionHandler<RepeatHealthSubscriptionSubscripti
 }
 
 const ClientOnly: NextPage = () => {
-	const [result, reexecuteQuery] = useQuery({
+	const [result] = useQuery({
 		query: HealthQueryDocument,
 	});
 	const [res] = useSubscription({ query: RepeatHealthSubscriptionDocument }, handleSubscription);

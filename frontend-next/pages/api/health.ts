@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 
 type Health = {
   next: string;
-  queryRes: any;
+  queryRes: Record<string, never>;
 }
 
 export default async function handler(

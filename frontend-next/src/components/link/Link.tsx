@@ -24,7 +24,6 @@ export const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link
 		className: classNameProps,
 		href,
 		noLinkStyle,
-		role, // Link don't have roles.
 		...other
 	} = props;
 

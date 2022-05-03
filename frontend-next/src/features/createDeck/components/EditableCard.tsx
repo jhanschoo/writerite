@@ -9,7 +9,7 @@ export interface CardProps {
 	card: IEditableCard;
 	onCardChange: (card: IEditableCard) => void;
 	onCardDelete: () => void;
-	muiCardProps?: Partial<DefaultComponentProps<CardTypeMap<{}, "div">>>;
+	muiCardProps?: Partial<DefaultComponentProps<CardTypeMap<Record<string, unknown>, "div">>>;
 }
 
 export const EditableCard = ({ card, onCardChange, onCardDelete, muiCardProps }: CardProps) => {

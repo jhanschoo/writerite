@@ -6,7 +6,7 @@ import { InitializeThirdPartyOauthSigninDocument } from "../../../../generated/g
 const client_id = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID as string;
 
 export default function useFacebookSignin() {
-	const [_initializeOauth, executeInitializeOauth] = useMutation(InitializeThirdPartyOauthSigninDocument);
+	const [, executeInitializeOauth] = useMutation(InitializeThirdPartyOauthSigninDocument);
 	const [signinUnderway, setSigninUnderway] = useState(false);
 	return [
 		signinUnderway,

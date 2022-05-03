@@ -17,7 +17,7 @@ export const getStaticProps: GetStaticProps = async () => {
 }
 
 const Ssg: NextPage = () => {
-	const [result, reexecuteQuery] = useQuery({
+	const [result] = useQuery({
 		query: HealthQueryDocument,
 	});
 	return (

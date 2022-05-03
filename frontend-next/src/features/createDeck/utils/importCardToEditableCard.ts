@@ -8,4 +8,4 @@ export function importCardToEditableCard({ prompt, fullAnswer, answers }: IImpor
 		fullAnswer: notesEditorStateFromRaw(fullAnswer),
 		answers: answersEditorStateFromStringArray(answers),
 	};
-};
+}

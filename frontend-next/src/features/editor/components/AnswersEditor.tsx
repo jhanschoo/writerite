@@ -4,7 +4,7 @@ import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor,
 import { Map } from "immutable";
 import { Box, Chip, SxProps, Theme } from "@mui/material";
 
-const entityStrategy: DraftDecorator["strategy"] = (block, callback, _content) =>
+const entityStrategy: DraftDecorator["strategy"] = (block, callback) =>
 	block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
 
 const Wrapper: FC<{ sx?: SxProps<Theme> }> = ({ sx, children }) => (<Box sx={{
@@ -28,7 +28,7 @@ const Wrapper: FC<{ sx?: SxProps<Theme> }> = ({ sx, children }) => (<Box sx={{
 </Box>);
 
 // TODO: use chip
-const StyledAnswer: FC<{}> = ({ children }) => {
+const StyledAnswer: FC<Record<string, unknown>> = ({ children }) => {
 	return (<Chip label={children} component="span" size="small" />)
 }
 

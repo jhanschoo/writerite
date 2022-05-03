@@ -12,7 +12,7 @@ export interface BreadcrumbsNavProps {
 
 const BreadcrumbsNav = ({ showBack, breadcrumbs }: BreadcrumbsNavProps) => {
 	const { setMotionProps } = useMotionContext();
-	const handleBack = async (_e: React.MouseEvent<HTMLButtonElement>) => {
+	const handleBack = async () => {
 		setMotionProps(motionThemes.back);
 		router.back();
 	}

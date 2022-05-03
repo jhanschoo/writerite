@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Card, CardActions, CardContent, Divider, Pagination, Paper, Stack, TextField, Typography } from "@mui/material";
+import { Button, ButtonGroup, Divider, Pagination, Paper, Stack, TextField, Typography } from "@mui/material";
 import { ChangeEvent, SetStateAction, useRef, useState } from "react";
 import { useMutation } from "urql";
 import { DeckCreateDocument } from "@generated/graphql";

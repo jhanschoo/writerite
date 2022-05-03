@@ -5,7 +5,7 @@ import { IImportCard } from "../types/IImportCard";
 
 export interface CardProps {
 	card: IImportCard;
-	muiCardProps?: Partial<DefaultComponentProps<CardTypeMap<{}, "div">>>;
+	muiCardProps?: Partial<DefaultComponentProps<CardTypeMap<Record<string, unknown>, "div">>>;
 }
 
 const Card = ({ card, muiCardProps }: CardProps) => {

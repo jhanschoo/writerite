@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { Button, Paper, Typography } from '@mui/material';
 import { Masonry } from '@mui/lab';
-import { FC, MouseEvent } from 'react';
+import { FC } from 'react';
 import { useMotionContext } from '../../../hooks/useMotionContext';
 import { motionThemes } from '../../../lib/framer-motion/motionThemes';
 import { Link } from '../../../components/link/Link';
@@ -10,14 +10,14 @@ import { DecksDocument, DecksQueryScope } from '@generated/graphql';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
-export const UserDecksSummary: FC<{}> = () => {
+export const UserDecksSummary: FC<Record<string, unknown>> = () => {
 	const router = useRouter();
 	const { setMotionProps } = useMotionContext();
-	const handleShowCreateDeckDialog = (_e: MouseEvent<HTMLButtonElement>) => {
+	const handleShowCreateDeckDialog = () => {
 		setMotionProps(motionThemes.forward);
 		router.push('/app/deck/create');
 	}
-	const [decksResult, reexecuteDecksQuery] = useQuery({
+	const [decksResult] = useQuery({
 		query: DecksDocument,
 		variables: {
 			scope: DecksQueryScope.Owned,

@@ -36,10 +36,10 @@ const auth = authExchange<string | null>({
 			fetchOptions,
 		})
 	},
-	async getAuth({ authState, mutate }) {
+	async getAuth({ authState }) {
 		return authState || getAccessKey();
 	},
-	didAuthError({ error, authState }) {
+	didAuthError({ authState }) {
 		return authState === null;
 	}
 });
@@ -91,8 +91,7 @@ export const getExchanges = (ssr: SSRExchange) => [
 	devtoolsExchange,
 	dedupExchange,
 	cacheExchange({
-		// https://github.com/microsoft/TypeScript/issues/32063
-		// @ts-expect-error
+		// @ts-expect-error https://github.com/microsoft/TypeScript/issues/32063
 		schema,
 	}),
 	ssr,

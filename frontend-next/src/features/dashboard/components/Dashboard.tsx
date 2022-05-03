@@ -8,7 +8,7 @@ import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
 import { FC } from 'react';
 
 export const Dashboard: FC = () => {
-	const [userResult, reexecuteUserQuery] = useQuery({
+	const [userResult] = useQuery({
 		query: UserDocument,
 	});
 	const logout = useLogout();

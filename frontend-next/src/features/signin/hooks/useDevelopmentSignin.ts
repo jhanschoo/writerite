@@ -5,7 +5,7 @@ import { InitializeThirdPartyOauthSigninDocument } from "../../../../generated/g
 const DEFAULT_DEVELOPER_NAME = "developer";
 
 export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
-	const [_initializeOauth, executeInitializeOauth] = useMutation(InitializeThirdPartyOauthSigninDocument);
+	const [, executeInitializeOauth] = useMutation(InitializeThirdPartyOauthSigninDocument);
 	const [signinUnderway, setSigninUnderway] = useState(false);
 	return [
 		signinUnderway,
