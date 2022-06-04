@@ -2,7 +2,10 @@ query Decks($cursor: ID, $scope: DecksQueryScope, $take: Int, $titleFilter: Stri
 	decks(cursor: $cursor, scope: $scope, take: $take, titleFilter: $titleFilter) {
 		answerLang
 		archived
-		descendantDecks {
+		cardsDirect {
+			id
+		}
+		subdecks {
 			id
 		}
 		description
