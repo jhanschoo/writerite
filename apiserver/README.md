@@ -62,3 +62,53 @@ We don't presently have unit tests.
   * Containerization: Docker
   * Orchestration: Kubernetes
   * TLS Certificate management for cluster ingress: `cert-manager`; see `writerite/lets-encrypt`.
+  
+### patch for subscriptions:
+
+The following patch for subscriptions is required
+
+```
+diff -bur node_modules patch_node_modules 
+diff --color -bur node_modules/@graphql-yoga/common/index.js patch_node_modules/@graphql-yoga/common/index.js
+--- node_modules/@graphql-yoga/common/index.js	2022-06-07 13:12:29.000324641 +0800
++++ patch_node_modules/@graphql-yoga/common/index.js	2022-02-07 06:38:30.400429000 +0800
+@@ -175,11 +175,15 @@
+         async pull(controller) {
+             const { done, value } = await iterator.next();
+             if (done) {
++                controller.enqueue('event: complete\n\n');
+                 controller.close();
+-            }
++            } else {
+             if (value != null) {
+                 const chunk = JSON.stringify(value);
+-                controller.enqueue(`data: ${chunk}\n\n`);
++                    controller.enqueue(`event: next\ndata: ${chunk}\n\n`);
++                } else {
++                    controller.enqueue('event: next\n\n');
++                }
+             }
+         },
+         async cancel(e) {
+diff --color -bur node_modules/@graphql-yoga/common/index.mjs patch_node_modules/@graphql-yoga/common/index.mjs
+--- node_modules/@graphql-yoga/common/index.mjs	2022-06-07 13:12:29.004324643 +0800
++++ patch_node_modules/@graphql-yoga/common/index.mjs	2022-02-07 06:39:02.888205000 +0800
+@@ -174,11 +174,15 @@
+         async pull(controller) {
+             const { done, value } = await iterator.next();
+             if (done) {
++                controller.enqueue('event: complete\n\n');
+                 controller.close();
+-            }
++            } else {
+             if (value != null) {
+                 const chunk = JSON.stringify(value);
+-                controller.enqueue(`data: ${chunk}\n\n`);
++                    controller.enqueue(`event: next\ndata: ${chunk}\n\n`);
++                } else {
++                    controller.enqueue('event: next\n\n');
++                }
+             }
+         },
+         async cancel(e) {
+```

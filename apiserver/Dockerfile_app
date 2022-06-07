@@ -7,6 +7,6 @@ COPY schema.prisma ./
 RUN npm ci --production
 COPY . .
 # workaround for graphql-yoga's subscriptions format
-#COPY patch_node_modules node_modules
+COPY patch_node_modules node_modules
 RUN npm run build
 CMD npm run app:start
