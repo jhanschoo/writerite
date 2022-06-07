@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return,
   @typescript-eslint/no-unsafe-assignment,
   @typescript-eslint/no-unsafe-call,
-  @typescript-eslint/no-unsafe-member-access */
+  @typescript-eslint/no-unsafe-member-access,
+  @typescript-eslint/no-unsafe-argument
+ */
 import { nanoid } from "nanoid";
 import { YogaInitialContext } from "@graphql-yoga/node";
-import { Request } from "express";
 
 import { CurrentUser } from "./types";
 import { parseJWT, verifyJWT } from "./service/crypto/jwtUtil";
+// eslint-disable-next-line @typescript-eslint/no-shadow
 import { URL } from "url";
 
 export const FETCH_DEPTH = process.env.FETCH_DEPTH ? parseInt(process.env.FETCH_DEPTH, 10) : 3;
@@ -20,9 +22,11 @@ export function slug(size: number | null = 4): string {
 }
 
 export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
-	// note: `get?.` is required here since `ctx` is not necessarily an express `Request`.
 	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	const authorization = ctx.request?.headers?.get("Authorization") ?? null;
+	const authorization = ctx.request?.headers?.get("Authorization") ??
+	// path if called from GraphiQL
+	ctx.extensions?.payload?.extensions?.headers?.Authorization ??
+	ctx.extensions?.payload?.context?.fetchOptions?.headers?.Authorization;
 	if (!authorization) {
 		return;
 	}

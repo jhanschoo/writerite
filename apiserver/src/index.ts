@@ -28,11 +28,16 @@ async function main() {
 		path: yogaApp.getAddressInfo().endpoint,
 	});
 	useServer({
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
 		execute: (args: any) => args.rootValue.execute(args),
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
 		subscribe: (args: any) => args.rootValue.subscribe(args),
 		onSubscribe: async (ctx, msg) => {
-			const { schema, execute, subscribe, contextFactory, parse, validate } = yogaApp.getEnveloped(ctx);
-
+			// eslint-disable-next-line @typescript-eslint/no-shadow
+			const { schema, execute, subscribe, contextFactory, parse, validate } = yogaApp.getEnveloped({
+				...ctx,
+				extensions: msg,
+			});
 			const args = {
 				schema,
 				operationName: msg.payload.operationName,
