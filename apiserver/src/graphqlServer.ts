@@ -27,8 +27,10 @@ interface GraphQLServerFactoryOpts {
 
 export function graphQLServerFactory(opts: GraphQLServerFactoryOpts) {
 	return createServer<Record<string, unknown>, Context>({
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 		schema,
+		graphiql: {
+			subscriptionsProtocol: "WS",
+		},
 		maskedErrors: NODE_ENV === "production",
 		...opts,
 	});
