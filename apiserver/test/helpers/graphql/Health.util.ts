@@ -1,12 +1,15 @@
 import type { WrServer } from "../../../src/graphqlServer";
+import { gql, inject } from "../misc";
+import { HealthQuery } from "../../../generated/typescript-operations";
 
 export async function queryHealth(server: WrServer) {
-	return server.inject({
-		operationName: "HealthQuery",
-		document: `
-			query HealthQuery {
+	return inject<HealthQuery, undefined>({
+		server,
+		document: gql`
+			query Health {
 				health
 			}
 		`,
+		variables: undefined,
 	});
 }

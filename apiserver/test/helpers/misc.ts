@@ -2,7 +2,9 @@ import { PubSub } from "@graphql-yoga/node";
 import { PrismaClient } from "@prisma/client";
 import Redis from "ioredis";
 import { KJUR } from "jsrsasign";
+import { string } from "yup";
 import { Context, ContextFactoryReturnType, PubSubPublishArgsByKey, contextFactory } from "../../src/context";
+import { WrServer } from "../../src/graphqlServer";
 import { CurrentUser } from "../../src/types";
 
 
@@ -28,3 +30,18 @@ export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser
 }
 
 export const isoTimestampMatcher = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function inject<TData, TVariables>({ server, document, variables }: { server: WrServer, document: string, variables: TVariables }) {
+	return server.inject<TData, TVariables>({
+		headers: {
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			"Content-Type": "application/json",
+		},
+		document,
+		variables,
+	});
+}
+
+// dummy gql tag for codegen
+export const gql = ([s]: TemplateStringsArray) => s;

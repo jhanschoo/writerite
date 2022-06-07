@@ -1,21 +1,26 @@
 import { WrServer } from "../../../src/graphqlServer";
+import { gql, inject } from "../misc";
+import { DeckCreateEmptyMutation, DeckQuery, DeckQueryVariables, DecksQuery } from "../../../generated/typescript-operations";
 
 export async function mutationDeckCreateEmpty(server: WrServer) {
-	return server.inject({
-		document: `
+	return inject<DeckCreateEmptyMutation, undefined>({
+		server,
+		document: gql`
 			mutation DeckCreateEmpty {
 				deckCreate {
 					id
 				}
 			}
 		`,
+		variables: undefined,
 	});
 }
 
 export async function queryDeckScalars(server: WrServer, id: string) {
-	return server.inject({
-		document: `
-			query QueryDeck($id: ID!) {
+	return inject<DeckQuery, DeckQueryVariables>({
+		server,
+		document: gql`
+			query Deck($id: ID!) {
 				deck(id: $id) {
 					id
 					answerLang
@@ -35,13 +40,15 @@ export async function queryDeckScalars(server: WrServer, id: string) {
 }
 
 export function queryDecks(server: WrServer) {
-	return server.inject({
-		document: `
-			query QueryDecks{
+	return inject<DecksQuery, undefined>({
+		server,
+		document: gql`
+			query Decks{
 				decks {
 					id
 				}
 			}
 		`,
+		variables: undefined,
 	});
 }

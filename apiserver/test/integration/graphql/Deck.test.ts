@@ -18,7 +18,7 @@ describe("graphql/Deck.ts", () => {
 
 	beforeAll(() => {
 		[setSub, , context, stopContext, { prisma }] = testContextFactory();
-		server = graphQLServerFactory(context);
+		server = graphQLServerFactory({ context });
 	});
 
 	afterAll(async () => {
@@ -61,10 +61,9 @@ describe("graphql/Deck.ts", () => {
 			it("should be able to return scalars of an owned deck", async () => {
 				expect.assertions(1);
 				const currentUser = await loginAsNewlyCreatedUser(server, setSub);
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 				const { executionResult: createDeckExecutionResult } = await mutationDeckCreateEmpty(server);
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const id = createDeckExecutionResult.data.deckCreate.id as string;
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const { id } = createDeckExecutionResult!.data!.deckCreate;
 				const { executionResult: queryDeckExecutionResult } = await queryDeckScalars(server, id);
 				expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
 					id,
@@ -88,11 +87,11 @@ describe("graphql/Deck.ts", () => {
 				expect.assertions(1);
 				await loginAsNewlyCreatedUser(server, setSub);
 				const { executionResult: createDeck1ExecutionResult } = await mutationDeckCreateEmpty(server);
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const id1 = createDeck1ExecutionResult.data.deckCreate.id as string;
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const id1 = createDeck1ExecutionResult!.data!.deckCreate.id;
 				const { executionResult: createDeck2ExecutionResult } = await mutationDeckCreateEmpty(server);
-				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-				const id2 = createDeck2ExecutionResult.data.deckCreate.id as string;
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				const id2 = createDeck2ExecutionResult!.data!.deckCreate.id;
 				const { executionResult: queryDeckExecutionResult } = await queryDecks(server);
 				expect(queryDeckExecutionResult).toHaveProperty("data.decks", expect.arrayContaining([
 					{

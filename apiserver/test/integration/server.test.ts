@@ -14,7 +14,7 @@ describe("server", () => {
 
 	beforeAll(() => {
 		[, , context, stopContext, { prisma }] = testContextFactory();
-		server = graphQLServerFactory(context);
+		server = graphQLServerFactory({ context });
 	});
 
 	afterAll(async () => {
@@ -29,10 +29,10 @@ describe("server", () => {
 	});
 
 	it("should be able to respond to a basic create user", async () => {
-		expect.assertions(2);
+		expect.assertions(1);
 		const { executionResult } = await createUser(server);
-		expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin");
+		expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
 		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		expect(typeof executionResult.data.finalizeThirdPartyOauthSignin).toBe("string");
+		// expect(typeof executionResult.data.finalizeThirdPartyOauthSignin).toBe("string");
 	});
 });

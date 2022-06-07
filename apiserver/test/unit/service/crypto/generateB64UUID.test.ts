@@ -1,6 +1,6 @@
 import { generateB64UUID } from "../../../../src/service/crypto/generateB64UUID";
 
-describe("generateB64UUID", () => {
+describe("service/crypto/generateB64UUID", () => {
 	test("generateB64UUID generates distinct strings", () => {
 		expect.assertions(31 * 32 / 2);
 		const a: string[] = [];

@@ -1,6 +1,6 @@
 import { comparePassword, hashPassword } from "../../../../src/service/crypto/passwordUtil";
 
-describe("passwords", () => {
+describe("service/crypto/passwordUtil.ts", () => {
 	test("comparePassword fails on malformed", async () => {
 		expect.assertions(1);
 		const passwordResultP = await comparePassword("123", "abc");
