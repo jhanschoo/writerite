@@ -423,6 +423,13 @@ export type DeckEditNameMutationVariables = Exact<{
 
 export type DeckEditNameMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', id: string, name: string } };
 
+export type DeckUsedMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeckUsedMutation = { __typename?: 'Mutation', deckUsed: { __typename?: 'Deck', id: string } };
+
 export type DeckQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;

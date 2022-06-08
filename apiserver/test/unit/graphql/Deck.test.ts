@@ -2,7 +2,7 @@ import type { Deck, PrismaClient, User } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 
-import { mutationDeckAddSubdeck, mutationDeckCreateEmpty, mutationDeckEditName, mutationDeckRemoveSubdeck, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
+import { mutationDeckAddSubdeck, mutationDeckCreateEmpty, mutationDeckEditName, mutationDeckRemoveSubdeck, queryDeckScalars, queryDecks, testContextFactory, mutationDeckUsed } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
 import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
 import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
@@ -141,7 +141,23 @@ describe("graphql/Deck.ts", () => {
 			});
 		});
 		describe("deckUsed", () => {
-			// TODO: implement
+			it("should ask the db to update the usedAt field of a deck to a recent time", async () => {
+				const id = "deck-id";
+				setSub(DEFAULT_CURRENT_USER);
+				prisma.user.findMany.mockResolvedValue([]);
+				prisma.deck.count.mockResolvedValue(1);
+				prisma.deck.update.mockResolvedValue({ id } as Deck);
+				const { executionResult } = await mutationDeckUsed(server, { id });
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				expect(prisma.deck.update).toHaveBeenCalledWith(expect.objectContaining({
+					where: { id },
+					data: {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						usedAt: expect.any(Date),
+					},
+				}));
+				expect(executionResult).toHaveProperty("data.deckUsed.id", id);
+			});
 		});
 	});
 

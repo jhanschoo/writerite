@@ -1,6 +1,6 @@
 import { WrServer } from "../../../src/graphqlServer";
 import { gql, inject } from "../misc";
-import { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckCreateEmptyMutation, DeckEditNameMutation, DeckEditNameMutationVariables, DeckQuery, DeckQueryVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DecksQuery } from "../../../generated/typescript-operations";
+import { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckCreateEmptyMutation, DeckEditNameMutation, DeckEditNameMutationVariables, DeckQuery, DeckQueryVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DecksQuery, DeckUsedMutation, DeckUsedMutationVariables } from "../../../generated/typescript-operations";
 
 export async function mutationDeckCreateEmpty(server: WrServer) {
 	return inject<DeckCreateEmptyMutation, undefined>({
@@ -52,6 +52,20 @@ export async function mutationDeckEditName(server: WrServer, variables: DeckEdit
 				deckEdit(id: $id, name: $name) {
 					id
 					name
+				}
+			}
+		`,
+		variables,
+	});
+}
+
+export async function mutationDeckUsed(server: WrServer, variables: DeckUsedMutationVariables) {
+	return inject<DeckUsedMutation, DeckUsedMutationVariables>({
+		server,
+		document: gql`
+			mutation DeckUsed($id: ID!) {
+				deckUsed(id: $id) {
+					id
 				}
 			}
 		`,
