@@ -248,13 +248,14 @@ export const DeckEditMutation = mutationField("deckEdit", {
 			published: published as boolean | undefined,
 			archived: archived as boolean | undefined,
 		} });
-		if (count === 1) {
-			const deck = await prisma.deck.findUnique({ where: { id } });
-			if (!deck) {
-				throw new Error("");
-			}
+		if (count !== 1) {
+			throw new Error("");
 		}
-		throw new Error("");
+		const deck = await prisma.deck.findUnique({ where: { id } });
+		if (!deck) {
+			throw new Error("");
+		}
+		return deck;
 	}),
 });
 
