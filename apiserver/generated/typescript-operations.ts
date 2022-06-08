@@ -399,6 +399,30 @@ export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string } };
 
+export type DeckAddSubdeckMutationVariables = Exact<{
+  id: Scalars['ID'];
+  subdeckId: Scalars['ID'];
+}>;
+
+
+export type DeckAddSubdeckMutation = { __typename?: 'Mutation', deckAddSubdeck: { __typename?: 'Deck', id: string } };
+
+export type DeckRemoveSubdeckMutationVariables = Exact<{
+  id: Scalars['ID'];
+  subdeckId: Scalars['ID'];
+}>;
+
+
+export type DeckRemoveSubdeckMutation = { __typename?: 'Mutation', deckRemoveSubdeck: { __typename?: 'Deck', id: string } };
+
+export type DeckEditNameMutationVariables = Exact<{
+  id: Scalars['ID'];
+  name: Scalars['String'];
+}>;
+
+
+export type DeckEditNameMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', id: string, name: string } };
+
 export type DeckQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;

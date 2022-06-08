@@ -1,8 +1,8 @@
-import type { PrismaClient } from "@prisma/client";
+import type { Deck, PrismaClient, User } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 
-import { mutationDeckCreateEmpty, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
+import { mutationDeckAddSubdeck, mutationDeckCreateEmpty, mutationDeckEditName, mutationDeckRemoveSubdeck, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
 import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
 import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
@@ -49,31 +49,96 @@ describe("graphql/Deck.ts", () => {
 
 	describe("Mutation", () => {
 		describe("deckAddSubdeck", () => {
-			// TODO: implement
+			it("should proxy requests to add a subdeck to a deck to the db, and return the parent deck", async () => {
+				expect.assertions(2);
+				setSub(DEFAULT_CURRENT_USER);
+				const id = "parent-id";
+				const subdeckId = "child-id";
+				prisma.user.findMany.mockResolvedValue([]);
+				prisma.deck.count.mockResolvedValue(2);
+				prisma.deck.update.mockResolvedValue({ id } as Deck);
+				const { executionResult } = await mutationDeckAddSubdeck(server, { id, subdeckId });
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				expect(prisma.deck.update).toHaveBeenCalledWith({
+					where: { id },
+					data: {
+						subdecks: { connectOrCreate: {
+							// eslint-disable-next-line @typescript-eslint/naming-convention
+							where: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } },
+							create: { subdeck: { connect: { id: subdeckId } } },
+						} },
+					},
+				});
+				expect(executionResult).toHaveProperty("data.deckAddSubdeck.id", id);
+			});
 		});
 		describe("deckCreate", () => {
-			it("should be able to create an empty deck", async () => {
+			it("should proxy requests to create an empty deck to the db, and return the created empty deck", async () => {
 				expect.assertions(1);
 				setSub(DEFAULT_CURRENT_USER);
 				const id = "fake-id";
-				// @ts-expect-error dumb default type resolution error
-				prisma.user.findMany.mockReturnValue(Promise.resolve([]));
-				// @ts-expect-error dumb default type resolution error
-				prisma.deck.create.mockReturnValue(Promise.resolve({
+				prisma.user.findMany.mockResolvedValue([]);
+				prisma.deck.create.mockResolvedValue({
 					id,
-				}));
+				} as Deck);
 				const { executionResult } = await mutationDeckCreateEmpty(server);
 				expect(executionResult).toHaveProperty("data.deckCreate.id", id);
 			});
 		});
 		describe("deckDelete", () => {
+			it.skip("should proxy requests to delete empty decks to the DB, and return the id of the deleted deck", async () => {
+				// TODO: implement
+			});
+			it.skip("should proxy requests to delete decks to the DB by asking it to delete the deck and cards and user records associated with it, and return the id of the deleted deck", async () => {
+				// TODO: implement
+			});
 			// TODO: implement
 		});
 		describe("deckEdit", () => {
-			// TODO: implement
+			it("should be able to change the name of a deck, and retrieve the updated state with a further call", async () => {
+				expect.assertions(2);
+				setSub(DEFAULT_CURRENT_USER);
+				const id = "fake-id";
+				const nextName = "next-name";
+				prisma.user.findMany.mockResolvedValue([]);
+				prisma.deck.updateMany.mockResolvedValue({
+					count: 1,
+				});
+				prisma.deck.findUnique.mockResolvedValue({
+					id,
+					name: nextName,
+				} as Deck);
+				const { executionResult } = await mutationDeckEditName(server, { id, name: nextName });
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				expect(prisma.deck.updateMany).toHaveBeenCalledWith({
+					where: { id, ownerId: DEFAULT_CURRENT_USER.id },
+					data: {
+						name: nextName,
+					},
+				});
+				expect(executionResult).toHaveProperty("data.deckEdit.name", nextName);
+			});
 		});
 		describe("deckRemoveSubdeck", () => {
-			// TODO: implement
+			it("should proxy requests to remove a subdeck relationship between decks to the db, and return the parent deck", async () => {
+				expect.assertions(2);
+				setSub(DEFAULT_CURRENT_USER);
+				const id = "parent-id";
+				const subdeckId = "child-id";
+				prisma.user.findMany.mockResolvedValue([]);
+				prisma.deck.count.mockResolvedValue(2);
+				prisma.deck.update.mockResolvedValue({ id } as Deck);
+				const { executionResult } = await mutationDeckRemoveSubdeck(server, { id, subdeckId });
+				// eslint-disable-next-line @typescript-eslint/unbound-method
+				expect(prisma.deck.update).toHaveBeenCalledWith({
+					where: { id },
+					data: {
+						// eslint-disable-next-line @typescript-eslint/naming-convention
+						subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
+					},
+				});
+				expect(executionResult).toHaveProperty("data.deckRemoveSubdeck.id", id);
+			});
 		});
 		describe("deckUsed", () => {
 			// TODO: implement

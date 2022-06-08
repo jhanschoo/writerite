@@ -32,7 +32,5 @@ describe("server", () => {
 		expect.assertions(1);
 		const { executionResult } = await createUser(server);
 		expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-		// expect(typeof executionResult.data.finalizeThirdPartyOauthSignin).toBe("string");
 	});
 });

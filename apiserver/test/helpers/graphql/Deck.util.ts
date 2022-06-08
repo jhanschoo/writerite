@@ -1,6 +1,6 @@
 import { WrServer } from "../../../src/graphqlServer";
 import { gql, inject } from "../misc";
-import { DeckCreateEmptyMutation, DeckQuery, DeckQueryVariables, DecksQuery } from "../../../generated/typescript-operations";
+import { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckCreateEmptyMutation, DeckEditNameMutation, DeckEditNameMutationVariables, DeckQuery, DeckQueryVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DecksQuery } from "../../../generated/typescript-operations";
 
 export async function mutationDeckCreateEmpty(server: WrServer) {
 	return inject<DeckCreateEmptyMutation, undefined>({
@@ -13,6 +13,49 @@ export async function mutationDeckCreateEmpty(server: WrServer) {
 			}
 		`,
 		variables: undefined,
+	});
+}
+
+export async function mutationDeckAddSubdeck(server: WrServer, variables: DeckAddSubdeckMutationVariables) {
+	return inject<DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables>({
+		server,
+		document: gql`
+			mutation DeckAddSubdeck($id: ID!, $subdeckId: ID!) {
+				deckAddSubdeck(id: $id, subdeckId: $subdeckId) {
+					id
+				}
+			}
+		`,
+		variables,
+	});
+}
+
+export async function mutationDeckRemoveSubdeck(server: WrServer, variables: DeckRemoveSubdeckMutationVariables) {
+	return inject<DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables>({
+		server,
+		document: gql`
+			mutation DeckRemoveSubdeck($id: ID!, $subdeckId: ID!) {
+				deckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
+					id
+				}
+			}
+		`,
+		variables,
+	});
+}
+
+export async function mutationDeckEditName(server: WrServer, variables: DeckEditNameMutationVariables) {
+	return inject<DeckEditNameMutation, DeckEditNameMutationVariables>({
+		server,
+		document: gql`
+			mutation DeckEditName($id: ID!, $name: String!) {
+				deckEdit(id: $id, name: $name) {
+					id
+					name
+				}
+			}
+		`,
+		variables,
 	});
 }
 
