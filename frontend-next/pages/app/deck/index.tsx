@@ -3,9 +3,9 @@ import type { NextPage } from 'next'
 import { useQuery } from 'urql';
 
 import { UserDocument } from '@generated/graphql';
-import FinalizeUserDialog from '@components/user/FinalizeUserDialog';
 import { useMotionContext } from '@hooks/useMotionContext';
-import { Dashboard } from '@/features/dashboard';
+import { ManageDecks } from '@/features/manageDecks';
+import { StandardLayout } from '@/features/standardLayout';
 
 const Home: NextPage = () => {
 	const { motionProps } = useMotionContext();
@@ -15,8 +15,9 @@ const Home: NextPage = () => {
 	const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
 	return (
 		<motion.div {...motionProps}>
-			<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
-			<Dashboard />
+			<StandardLayout breadcrumbs={[["/app", "Home"], ["/app/deck", "Decks"]]}>
+				<ManageDecks />
+			</StandardLayout>
 		</motion.div>
 	);
 }

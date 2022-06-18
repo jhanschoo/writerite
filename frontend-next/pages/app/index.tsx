@@ -6,6 +6,7 @@ import { UserDocument } from '@generated/graphql';
 import FinalizeUserDialog from '@components/user/FinalizeUserDialog';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { Dashboard } from '@/features/dashboard';
+import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 
 const Home: NextPage = () => {
 	const { motionProps } = useMotionContext();
@@ -16,7 +17,9 @@ const Home: NextPage = () => {
 	return (
 		<motion.div {...motionProps}>
 			<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
-			<Dashboard />
+			<StandardLayout breadcrumbs={[["/app", "Home"]]}>
+				<Dashboard />
+			</StandardLayout>
 		</motion.div>
 	);
 }

@@ -1,6 +1,6 @@
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 import { Box, Button, ButtonGroup, ButtonProps, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 
@@ -41,9 +41,15 @@ export const NotesEditor = ({
 	readOnly,
 	stackSx,
 }: Props): JSX.Element => {
+	const editorRef = useRef<Editor>(null);
 	const currentStyle = editorState.getCurrentInlineStyle();
 	const currentSelection = editorState.getSelection();
 	const currentType = editorState.getCurrentContent().getBlockForKey(currentSelection.getStartKey()).getType();
+	const handleClick = () => {
+		if (editorRef.current) {
+			editorRef.current.focus();
+		}
+	}
 	const handleEditorChange = (nextEditorState: EditorState) => {
 		setEditorState(handleChange?.(nextEditorState) ?? nextEditorState);
 	};
@@ -60,16 +66,17 @@ export const NotesEditor = ({
 	const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
 	const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
-	return <Stack paddingY={1} spacing={1} direction="row" sx={stackSx}>
+	return <Stack paddingY={1} spacing={1} direction="row" sx={stackSx} onClick={handleClick}>
 		<Editor
 			editorState={editorState}
 			onChange={handleEditorChange}
 			placeholder={placeholder}
 			handleKeyCommand={handleKeyCommand}
 			readOnly={readOnly}
+			ref={editorRef}
 		/>
 		{!readOnly &&
-			<Box>
+			<Box onClick={(e) => e.preventDefault()}>
 				<ButtonGroup variant="text" orientation="vertical" size="small">
 					<EditorButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}><Typography fontWeight="bold">bold</Typography></EditorButton>
 					<EditorButton onClick={handleUnderline} className={activeIf(currentStyle.has("UNDERLINE"))}><Typography sx={{ textDecoration: "underline" }}>underline</Typography></EditorButton>

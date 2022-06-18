@@ -1,11 +1,10 @@
 import { formatISO, parseISO } from 'date-fns';
 import { Button, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
-import { FC } from 'react';
+import { FC, MouseEvent } from 'react';
 import { useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
-import { Link } from '@components/link/Link';
 import { DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
@@ -32,9 +31,15 @@ const DeckItem = ({ deck: { id, name, editedAt, subdecks, cardsDirect } }: { dec
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
 	const router = useRouter();
 	const { setMotionProps } = useMotionContext();
-	const handleShowCreateDeckDialog = () => {
+	const handleCreateDeckDialog = (e: MouseEvent) => {
+		e.preventDefault();
 		setMotionProps(motionThemes.forward);
 		router.push('/app/deck/create');
+	}
+	const handleManageDecksDialog = (e: MouseEvent) => {
+		e.preventDefault();
+		setMotionProps(motionThemes.forward);
+		router.push('/app/deck');
 	}
 	const [decksResult] = useQuery({
 		query: DecksDocument,
@@ -45,16 +50,18 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
 	});
 	const decks = (decksResult.data?.decks || []).map((deck, index) => <DeckItem key={index} deck={deck} />);
 	return (
-		<Paper sx={{ padding: 2 }} variant="outlined">
+		<Paper sx={{ padding: 2, cursor: "pointer" }} variant="outlined" onClick={handleManageDecksDialog}>
 			<Stack direction="row" alignItems="baseline" spacing={2}>
-				<Typography variant="h4" paddingBottom={2}><Link href="/app/deck" underline="none">Decks</Link></Typography>
-				<Typography variant="subtitle1" paddingBottom={2} sx={{ fontStyle: "italic" }}><Link href="/app/deck" underline="none">manage...</Link></Typography>
+				<Typography variant="h4" paddingBottom={2}>Decks</Typography>
 			</Stack>
 			<Stack direction="row" alignItems="stretch" spacing={2}>
-				<Button onClick={handleShowCreateDeckDialog} variant="large-action" size="large" key="deck-create-button">
+				<Button onClick={handleCreateDeckDialog} variant="large-action" size="large" key="deck-create-button">
 					Create a new Deck
 				</Button>
 				{decks}
+				<Button onClick={handleManageDecksDialog} size="large" key="deck-create-button">
+					more...
+				</Button>
 			</Stack>
 		</Paper>
 	);

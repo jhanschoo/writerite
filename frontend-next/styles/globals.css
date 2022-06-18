@@ -7,4 +7,5 @@
 
 .DraftEditor-root {
 	flex-grow: 1;
+	cursor: text;
 }

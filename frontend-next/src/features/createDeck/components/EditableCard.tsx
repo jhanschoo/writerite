@@ -1,4 +1,4 @@
-import { Button, Card as MuiCard, CardContent, CardTypeMap, Divider, Stack } from "@mui/material";
+import { Button, Card as MuiCard, CardContent, CardTypeMap, Divider, Paper, Stack } from "@mui/material";
 import { DefaultComponentProps } from "@mui/material/OverridableComponent";
 import { EditorState } from "draft-js";
 import { SetStateAction } from "react";
@@ -33,7 +33,11 @@ export const EditableCard = ({ card, onCardChange, onCardDelete, muiCardProps }:
 				<Divider />
 				<NotesEditor editorState={fullAnswer} setEditorState={handleBackChange} />
 				<Stack direction="row" alignItems="baseline" spacing={1}>
-					<AnswersEditor editorState={answers} setEditorState={handleAltAnswersChange} wrapperSx={{ flexGrow: 1 }} />
+					<Paper variant="outlined">
+						<Stack padding={1}>
+							<AnswersEditor editorState={answers} setEditorState={handleAltAnswersChange} wrapperSx={{ flexGrow: 1, borderRadius: '2px' }} />
+						</Stack>
+					</Paper>
 					<Divider orientation="vertical" flexItem />
 					<Button size="small" onClick={onCardDelete}>delete card</Button>
 				</Stack>

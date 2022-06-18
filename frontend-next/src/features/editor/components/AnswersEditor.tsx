@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction } from "react";
+import React, { Dispatch, FC, SetStateAction, useRef } from "react";
 import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, RawDraftContentState, SelectionState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
@@ -7,7 +7,7 @@ import { Box, Chip, SxProps, Theme } from "@mui/material";
 const entityStrategy: DraftDecorator["strategy"] = (block, callback) =>
 	block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
 
-const Wrapper: FC<{ sx?: SxProps<Theme> }> = ({ sx, children }) => (<Box sx={{
+const Wrapper: FC<{ sx?: SxProps<Theme>, onClick?: () => void }> = ({ sx, children, onClick }) => (<Box sx={{
 	".DraftEditor-root ul": {
 		listStyleType: "none",
 		display: "flex",
@@ -19,11 +19,11 @@ const Wrapper: FC<{ sx?: SxProps<Theme> }> = ({ sx, children }) => (<Box sx={{
 			display: "flex",
 			flexWrap: "wrap",
 			// TODO: use theming
-			margin: "0 1px 5px 1px",
+			margin: "0 3px 5px 3px",
 		}
 	},
 	...sx,
-}}>
+}} onClick={onClick}>
 	{children}
 </Box>);
 
@@ -408,8 +408,14 @@ export const AnswersEditor = (props: Props): JSX.Element => {
 		readOnly,
 		wrapperSx,
 	} = props;
+	const editorRef = useRef<Editor>(null);
 	// eslint-disable-next-line new-cap
 	const blockRenderMap = Map({ unstyled: { element: "li", wrapper: <ul/> } });
+	const handleClick = () => {
+		if (editorRef.current) {
+			editorRef.current.focus();
+		}
+	}
 	// Note: important to set editor state based on nextEditorState and not current state
 	//   because the declarative state model that draft-js tries to be seems fundamentally broken
 	//   and it seems more well-supported to base next states on operations on nextEditorState
@@ -423,13 +429,14 @@ export const AnswersEditor = (props: Props): JSX.Element => {
 	};
 
 	return (
-		<Wrapper sx={wrapperSx}>
+		<Wrapper sx={wrapperSx} onClick={handleClick}>
 			<Editor
 				blockRenderMap={blockRenderMap}
 				editorState={editorState}
 				onChange={handleEditorChange}
 				placeholder={placeholder}
 				readOnly={readOnly}
+				ref={editorRef}
 			/>
 		</Wrapper>
 	);
