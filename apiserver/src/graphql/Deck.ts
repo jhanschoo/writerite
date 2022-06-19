@@ -42,6 +42,7 @@ export const Deck = objectType({
 		t.nonNull.string("answerLang");
 		t.nonNull.boolean("published");
 		t.nonNull.boolean("archived");
+		t.nonNull.list.nonNull.string("sortData");
 		t.nonNull.dateTime("editedAt");
 		t.nonNull.dateTime("usedAt");
 
@@ -101,8 +102,6 @@ export const Deck = objectType({
 export const UserDeckRecord = objectType({
 	name: "UserDeckRecord",
 	definition(t) {
-		t.nonNull.id("userId");
-		t.nonNull.id("deckId");
 		t.nonNull.jsonObject("notes", {
 			resolve({ notes }) {
 				return notes as Prisma.JsonObject;

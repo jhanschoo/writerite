@@ -33,7 +33,6 @@ export type Card = {
   mainTemplate: Scalars['Boolean'];
   ownRecord?: Maybe<UserCardRecord>;
   prompt: Scalars['JSONObject'];
-  sortKey: Scalars['String'];
   template: Scalars['Boolean'];
 };
 
@@ -41,7 +40,6 @@ export type CardCreateInput = {
   answers: Array<Scalars['String']>;
   fullAnswer: Scalars['JSONObject'];
   prompt: Scalars['JSONObject'];
-  sortKey?: InputMaybe<Scalars['String']>;
   template?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -64,6 +62,7 @@ export type Deck = {
   ownerId: Scalars['ID'];
   promptLang: Scalars['String'];
   published: Scalars['Boolean'];
+  sortData: Array<Scalars['String']>;
   /** all direct subdecks of this deck */
   subdecks: Array<Deck>;
   usedAt: Scalars['DateTime'];
@@ -177,7 +176,6 @@ export type MutationCardEditArgs = {
   id: Scalars['ID'];
   mainTemplate?: InputMaybe<Scalars['Boolean']>;
   prompt?: InputMaybe<Scalars['JSONObject']>;
-  sortKey?: InputMaybe<Scalars['String']>;
   template?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -435,7 +433,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, archived: boolean, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, usedAt: any } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, archived: boolean, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: any } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 

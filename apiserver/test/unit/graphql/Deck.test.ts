@@ -181,6 +181,7 @@ describe("graphql/Deck.ts", () => {
 					ownerId: DEFAULT_CURRENT_USER.id,
 					promptLang: "",
 					published: false,
+					sortData: [],
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 					usedAt: expect.any(Date),
 				});

@@ -26,7 +26,6 @@ model Card {
   // fullAnswer is a JsonObject
   fullAnswer Json             @default("{}")
   answers    String[]
-  sortKey    String           @default("")
   template   Boolean          @default(false)
   default    Unit?
   editedAt   DateTime         @default(now())
@@ -82,6 +81,9 @@ model Deck {
 
   owner       User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   cards       Card[]
+  // sortData is an array of IDs, indicating that cards of this deck with IDs
+  //   in this array should be displayed in the order they appear in the array.
+  sortData    String[]
   subdecks    Subdeck[]        @relation("DeckTo_Subdeck_parentDeckId")
   parentDecks Subdeck[]        @relation("DeckTo_Subdeck_subdeckId")
   records     UserDeckRecord[]

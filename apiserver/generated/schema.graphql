@@ -10,7 +10,6 @@ type Card {
   mainTemplate: Boolean!
   ownRecord: UserCardRecord
   prompt: JSONObject!
-  sortKey: String!
   template: Boolean!
 }
 
@@ -18,7 +17,6 @@ input CardCreateInput {
   answers: [String!]!
   fullAnswer: JSONObject!
   prompt: JSONObject!
-  sortKey: String
   template: Boolean
 }
 
@@ -52,6 +50,7 @@ type Deck {
   ownerId: ID!
   promptLang: String!
   published: Boolean!
+  sortData: [String!]!
 
   """all direct subdecks of this deck"""
   subdecks: [Deck!]!
@@ -108,7 +107,7 @@ enum MessageContentType {
 type Mutation {
   cardCreate(card: CardCreateInput!, deckId: ID!, mainTemplate: Boolean): Card!
   cardDelete(id: ID!): Card!
-  cardEdit(answers: [String!], fullAnswer: JSONObject, id: ID!, mainTemplate: Boolean, prompt: JSONObject, sortKey: String, template: Boolean): Card!
+  cardEdit(answers: [String!], fullAnswer: JSONObject, id: ID!, mainTemplate: Boolean, prompt: JSONObject, template: Boolean): Card!
   cardUnsetMainTemplate(deckId: ID!): Card
   deckAddSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckCreate(answerLang: String, archived: Boolean, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!

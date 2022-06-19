@@ -19,7 +19,6 @@ export const Card = objectType({
 			},
 		});
 		t.nonNull.list.nonNull.string("answers");
-		t.nonNull.string("sortKey");
 		t.nonNull.boolean("template");
 		t.nonNull.boolean("mainTemplate", {
 			resolve({ default: isDefault }) {
@@ -40,8 +39,6 @@ export const Card = objectType({
 export const UserCardRecord = objectType({
 	name: "UserCardRecord",
 	definition(t) {
-		t.nonNull.id("userId");
-		t.nonNull.id("cardId");
 		t.nonNull.list.nonNull.dateTime("correctRecord");
 	},
 });
@@ -66,7 +63,7 @@ export const CardCreateMutation = mutationField("cardCreate", {
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
 	resolve: guardValidUser(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
-		const { prompt, fullAnswer, answers, sortKey, template } = card;
+		const { prompt, fullAnswer, answers, template } = card;
 		if (await prisma.deck.count({ where: { id: deckId, ownerId: sub.id } }) !== 1) {
 			throw userLacksPermissionsErrorFactory();
 		}
@@ -86,7 +83,6 @@ export const CardCreateMutation = mutationField("cardCreate", {
 				prompt: prompt as Prisma.InputJsonObject,
 				fullAnswer: fullAnswer as Prisma.InputJsonObject,
 				answers,
-				sortKey: sortKey ?? undefined,
 				template: template ?? undefined,
 				default: mainTemplate ? Unit.UNIT : undefined,
 				deck: { connect: { id: deckId } },
@@ -101,7 +97,6 @@ export const CardCreateInput = inputObjectType({
 		t.nonNull.jsonObject("prompt");
 		t.nonNull.jsonObject("fullAnswer");
 		t.nonNull.list.nonNull.string("answers");
-		t.string("sortKey", { undefinedOnly: true });
 		t.boolean("template", { undefinedOnly: true });
 	},
 });
@@ -119,7 +114,6 @@ export const CardEditMutation = mutationField("cardEdit", {
 		prompt: jsonObjectArg({ undefinedOnly: true }),
 		fullAnswer: jsonObjectArg({ undefinedOnly: true }),
 		answers: list(nonNull(stringArg({ undefinedOnly: true }))),
-		sortKey: stringArg({ undefinedOnly: true }),
 		template: booleanArg({ undefinedOnly: true }),
 		/*
 		 * note that template is set to true if mainTemplate
@@ -127,7 +121,7 @@ export const CardEditMutation = mutationField("cardEdit", {
 		 */
 		mainTemplate: booleanArg({ undefinedOnly: true }),
 	},
-	resolve: guardValidUser(async (_source, { id, prompt, fullAnswer, answers, sortKey, template }, { sub, prisma }) => {
+	resolve: guardValidUser(async (_source, { id, prompt, fullAnswer, answers, template }, { sub, prisma }) => {
 		const updated = await prisma.card.updateMany({
 			where: {
 				id,
@@ -139,7 +133,6 @@ export const CardEditMutation = mutationField("cardEdit", {
 				prompt: prompt ? JSON.stringify(prompt) : undefined,
 				fullAnswer: fullAnswer ? JSON.stringify(fullAnswer) : undefined,
 				answers: answers ? { set: answers } : undefined,
-				sortKey: sortKey ?? undefined,
 				template: template ?? undefined,
 			},
 		});

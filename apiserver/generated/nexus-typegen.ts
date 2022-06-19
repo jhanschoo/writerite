@@ -74,7 +74,6 @@ export interface NexusGenInputs {
     answers: string[]; // [String!]!
     fullAnswer: NexusGenScalars['JSONObject']; // JSONObject!
     prompt: NexusGenScalars['JSONObject']; // JSONObject!
-    sortKey?: string | null; // String
     template?: boolean | null; // Boolean
   }
 }
@@ -131,7 +130,6 @@ export interface NexusGenFieldTypes {
     mainTemplate: boolean; // Boolean!
     ownRecord: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     prompt: NexusGenScalars['JSONObject']; // JSONObject!
-    sortKey: string; // String!
     template: boolean; // Boolean!
   }
   Deck: { // field return type
@@ -149,6 +147,7 @@ export interface NexusGenFieldTypes {
     ownerId: string; // ID!
     promptLang: string; // String!
     published: boolean; // Boolean!
+    sortData: string[]; // [String!]!
     subdecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     usedAt: NexusGenScalars['DateTime']; // DateTime!
   }
@@ -242,7 +241,6 @@ export interface NexusGenFieldTypeNames {
     mainTemplate: 'Boolean'
     ownRecord: 'UserCardRecord'
     prompt: 'JSONObject'
-    sortKey: 'String'
     template: 'Boolean'
   }
   Deck: { // field return type name
@@ -260,6 +258,7 @@ export interface NexusGenFieldTypeNames {
     ownerId: 'ID'
     promptLang: 'String'
     published: 'Boolean'
+    sortData: 'String'
     subdecks: 'Deck'
     usedAt: 'DateTime'
   }
@@ -360,7 +359,6 @@ export interface NexusGenArgTypes {
       id: string; // ID!
       mainTemplate?: boolean | null; // Boolean
       prompt?: NexusGenScalars['JSONObject'] | null; // JSONObject
-      sortKey?: string | null; // String
       template?: boolean | null; // Boolean
     }
     cardUnsetMainTemplate: { // args

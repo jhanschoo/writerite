@@ -88,6 +88,7 @@ export async function queryDeckScalars(server: WrServer, id: string) {
 					ownerId
 					promptLang
 					published
+					sortData
 					usedAt
 				}
 			}
