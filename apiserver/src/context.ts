@@ -1,5 +1,4 @@
 import env from "./safeEnv";
-// import { ExecutionParams } from "subscriptions-transport-ws";
 import Redis from "ioredis";
 import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
 

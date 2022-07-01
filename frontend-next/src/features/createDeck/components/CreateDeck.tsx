@@ -70,7 +70,7 @@ export const CreateDeck = () => {
 		<Stack spacing={2}>
 			<Stack direction="row">
 				<Typography variant="h4" sx={{ flexGrow: 1 }} paddingX={2}>
-					Create a New Deck
+					Create a New Deck (deprecated)
 				</Typography>
 				<ButtonGroup variant="contained" aria-label="Import deck modal toggle buttons">
 					<ImportFromCsv onOverwrite={handleOverwrite} onAppend={deck.cards.length ? handleAppend : undefined} />

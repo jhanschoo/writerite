@@ -221,14 +221,10 @@ export interface NexusGenFieldTypes {
     roles: string[]; // [String!]!
   }
   UserCardRecord: { // field return type
-    cardId: string; // ID!
     correctRecord: NexusGenScalars['DateTime'][]; // [DateTime!]!
-    userId: string; // ID!
   }
   UserDeckRecord: { // field return type
-    deckId: string; // ID!
     notes: NexusGenScalars['JSONObject']; // JSONObject!
-    userId: string; // ID!
   }
 }
 
@@ -332,14 +328,10 @@ export interface NexusGenFieldTypeNames {
     roles: 'String'
   }
   UserCardRecord: { // field return type name
-    cardId: 'ID'
     correctRecord: 'DateTime'
-    userId: 'ID'
   }
   UserDeckRecord: { // field return type name
-    deckId: 'ID'
     notes: 'JSONObject'
-    userId: 'ID'
   }
 }
 

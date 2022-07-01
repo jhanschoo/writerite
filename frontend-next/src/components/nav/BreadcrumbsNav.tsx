@@ -7,7 +7,7 @@ import { Link } from "@components/link/Link";
 
 export interface BreadcrumbsNavProps {
 	showBack?: boolean;
-	breadcrumbs?: [string, string][];
+	breadcrumbs?: [string, string | JSX.Element][];
 }
 
 const BreadcrumbsNav = ({ showBack, breadcrumbs }: BreadcrumbsNavProps) => {

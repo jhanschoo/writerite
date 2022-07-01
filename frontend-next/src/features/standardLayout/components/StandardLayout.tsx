@@ -5,7 +5,7 @@ import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
 import { FC } from 'react';
 
 interface Props {
-	breadcrumbs?: [string, string][];
+	breadcrumbs?: [string, string | JSX.Element][];
 }
 
 export const StandardLayout: FC<Props> = ({ breadcrumbs, children }) => {

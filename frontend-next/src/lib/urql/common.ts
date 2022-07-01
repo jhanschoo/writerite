@@ -8,6 +8,8 @@ import { isSSRContext } from "@/utils";
 import { createClient } from "graphql-ws";
 import WebSocket from "isomorphic-ws";
 import schema from "@root/graphql.schema.json";
+import { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
+import { Deck } from "@generated/graphql";
 
 export const commonUrqlOptions = {
 	url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
@@ -63,8 +65,15 @@ export const getExchanges = (ssr: SSRExchange) => [
 	devtoolsExchange,
 	dedupExchange,
 	cacheExchange({
-		// @ts-expect-error https://github.com/microsoft/TypeScript/issues/32063
-		schema,
+		schema: schema as IntrospectionData,
+		resolvers: {
+			Query: {
+				deck(_parent, { id }) {
+					const __typename: Deck["__typename"] = "Deck";
+					return { __typename, id };
+				}
+			}
+		}
 	}),
 	ssr,
 	auth,

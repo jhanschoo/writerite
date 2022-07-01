@@ -1,21 +1,5 @@
 query Decks($cursor: ID, $scope: DecksQueryScope, $take: Int, $titleFilter: String) {
 	decks(cursor: $cursor, scope: $scope, take: $take, titleFilter: $titleFilter) {
-		answerLang
-		archived
-		cardsDirect {
-			id
-		}
-		subdecks {
-			id
-		}
-		description
-		editedAt
-		id
-		name
-		ownRecord {
-			notes
-		}
-		promptLang
-		published
+		...deckSummary
 	}
 }

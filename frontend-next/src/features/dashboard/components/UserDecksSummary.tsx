@@ -14,7 +14,8 @@ const DeckItem = ({ deck: { id, name, editedAt, subdecks, cardsDirect } }: { dec
 	const router = useRouter();
 	const nameDisplay = name ? <Typography variant="h5">{name}</Typography> : <Typography variant="h5" sx={{ fontStyle: "italic", color: theme.palette.text.secondary }}>Untitled</Typography>;
 	const editedAtDisplay = formatISO(parseISO(editedAt), { representation: "date" });
-	const handleClick = () => {
+	const handleClick = (e: MouseEvent) => {
+		e.stopPropagation();
 		router.push(`/app/deck/${id}`);
 	};
 	return <Paper elevation={2} onClick={handleClick}>
@@ -32,12 +33,12 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
 	const router = useRouter();
 	const { setMotionProps } = useMotionContext();
 	const handleCreateDeckDialog = (e: MouseEvent) => {
-		e.preventDefault();
+		e.stopPropagation();
 		setMotionProps(motionThemes.forward);
 		router.push('/app/deck/create');
 	}
 	const handleManageDecksDialog = (e: MouseEvent) => {
-		e.preventDefault();
+		e.stopPropagation();
 		setMotionProps(motionThemes.forward);
 		router.push('/app/deck');
 	}
@@ -59,7 +60,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
 					Create a new Deck
 				</Button>
 				{decks}
-				<Button onClick={handleManageDecksDialog} size="large" key="deck-create-button">
+				<Button onClick={handleManageDecksDialog} size="large" key="manage-decks-button">
 					more...
 				</Button>
 			</Stack>

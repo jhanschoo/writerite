@@ -76,6 +76,7 @@ describe("graphql/Deck.ts", () => {
 					ownerId: currentUser.id,
 					promptLang: "",
 					published: false,
+					sortData: [],
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 					usedAt: expect.stringMatching(isoTimestampMatcher),
 				});

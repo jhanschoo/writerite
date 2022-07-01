@@ -1,0 +1,19 @@
+fragment deckSummary on Deck {
+	answerLang
+	archived
+	cardsDirect {
+		id
+	}
+	subdecks {
+		id
+	}
+	description
+	editedAt
+	id
+	name
+	ownRecord {
+		notes
+	}
+	promptLang
+	published
+}

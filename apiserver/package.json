@@ -22,6 +22,7 @@
 		"bcrypt": "^5.0.0",
 		"cross-fetch": "^3.1.5",
 		"csv": "^6.1.0",
+		"cuid": "^2.1.8",
 		"dotenv": "^16.0.1",
 		"form-data": "^4.0.0",
 		"graphql": "^15.3.0",
@@ -47,14 +48,13 @@
 		"jest": "^28.1.0",
 		"jest-mock-extended": "^2.0.4",
 		"prisma": "^3.15.2",
-		"subscriptions-transport-ws": "^0.11.0",
 		"ts-jest": "^28.0.4",
 		"ts-node": "^10.8.1",
 		"ts-node-dev": "^2.0.0"
 	},
 	"scripts": {
 		"build": "tsc",
-		"init:run": "prisma db push",
+		"init:run": "prisma db push --accept-data-loss",
 		"app:start": "node dist/src/index.js",
 		"dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --exit-child --transpile-only --respawn src/index.ts",
 		"dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && graphql-codegen && ts-node --transpile-only src/schema",

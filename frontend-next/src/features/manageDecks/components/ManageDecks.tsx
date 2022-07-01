@@ -1,4 +1,4 @@
-import { FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, Stack, TextField } from '@mui/material';
+import { Button, Divider, FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, Stack, TextField } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useState, ChangeEvent, FC } from 'react';
 import { DecksDocument, DecksQueryScope } from '@generated/graphql';
@@ -25,6 +25,7 @@ export const ManageDecks: FC = () => {
 			cursor,
 		},
 	});
+	const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
 	return <Stack spacing={2}>
 		<Stack direction="row" spacing={2}>
 			<TextField
@@ -57,7 +58,9 @@ export const ManageDecks: FC = () => {
 					<MenuItem value={DecksQueryScope.Visible}>that I can see</MenuItem>
 				</Select>
 			</FormControl>
+			<Divider orientation="vertical" flexItem />
+			<Button variant="contained">Create Deck</Button>
 		</Stack>
-		<DecksList decks={data?.decks} />
+		<DecksList decks={decks} />
 	</Stack>;
 }

@@ -380,16 +380,12 @@ export type User = {
 
 export type UserCardRecord = {
   __typename?: 'UserCardRecord';
-  cardId: Scalars['ID'];
   correctRecord: Array<Scalars['DateTime']>;
-  userId: Scalars['ID'];
 };
 
 export type UserDeckRecord = {
   __typename?: 'UserDeckRecord';
-  deckId: Scalars['ID'];
   notes: Scalars['JSONObject'];
-  userId: Scalars['ID'];
 };
 
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;

@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import cuid from "cuid";
 import { arg, booleanArg, enumType, idArg, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardValidUser } from "../service/authorization/guardValidUser";
@@ -213,18 +214,22 @@ export const DeckCreateMutation = mutationField("deckCreate", {
 			undefinedOnly: true,
 		}))),
 	},
-	resolve: guardValidUser(async (_root, { name, description, promptLang, answerLang, published, archived, cards }, { sub, prisma }) => prisma.deck.create({ data: {
-		ownerId: sub.id,
-		name: name ?? undefined,
-		description: description ? description as Prisma.InputJsonObject : undefined,
-		promptLang: promptLang ?? undefined,
-		answerLang: answerLang ?? undefined,
-		published: published ?? undefined,
-		archived: archived ?? undefined,
-		cards: cards ? {
-			create: cards,
-		} : undefined,
-	} })),
+	resolve: guardValidUser(async (_root, { name, description, promptLang, answerLang, published, archived, cards }, { sub, prisma }) => {
+		const cardsWithId = cards?.map((card) => ({ id: cuid(), ...card }));
+		const sortData = cardsWithId?.map(({ id }) => id);
+
+		return prisma.deck.create({ data: {
+			ownerId: sub.id,
+			name: name ?? undefined,
+			description: description ? description as Prisma.InputJsonObject : undefined,
+			promptLang: promptLang ?? undefined,
+			answerLang: answerLang ?? undefined,
+			published: published ?? undefined,
+			archived: archived ?? undefined,
+			cards: cardsWithId ? { create: cardsWithId } : undefined,
+			sortData,
+		} });
+	}),
 });
 
 export const DeckEditMutation = mutationField("deckEdit", {

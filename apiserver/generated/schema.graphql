@@ -227,13 +227,9 @@ type User {
 }
 
 type UserCardRecord {
-  cardId: ID!
   correctRecord: [DateTime!]!
-  userId: ID!
 }
 
 type UserDeckRecord {
-  deckId: ID!
   notes: JSONObject!
-  userId: ID!
 }
