@@ -25,13 +25,52 @@ declare module '@mui/material/styles' {
 	}
 }
 
+const fontFamily = ['"Noto Sans"', "sans-serif"].join(",");
+
 let theme = createTheme({
 	typography: {
-		fontFamily: ['"Noto Sans"', "sans-serif"].join(","),
+		fontFamily,
+		h1: {
+			fontFamily,
+		},
+		h2: {
+			fontFamily,
+		},
+		h3: {
+			fontFamily,
+		},
+		h4: {
+			fontFamily,
+		},
+		h5: {
+			fontFamily,
+		},
+		h6: {
+			fontFamily,
+		},
+		subtitle1: {
+			fontFamily,
+		},
+		subtitle2: {
+			fontFamily,
+		},
+		body1: {
+			fontFamily,
+		},
+		body2: {
+			fontFamily,
+		},
 		button: {
 			textTransform: "none",
 			fontWeight: "bold",
+			fontFamily,
 		},
+		caption: {
+			fontFamily,
+		},
+		overline: {
+			fontFamily,
+		}
 	},
 	palette: {
 		primary: {

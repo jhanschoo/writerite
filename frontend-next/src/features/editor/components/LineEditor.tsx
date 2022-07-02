@@ -1,4 +1,4 @@
-import React, { Dispatch, ForwardRefRenderFunction, SetStateAction, forwardRef } from "react";
+import React, { Dispatch, ForwardRefRenderFunction, SetStateAction, forwardRef, ReactNode } from "react";
 import { ContentState, Editor, EditorState } from "draft-js";
 import { Map } from "immutable";
 
@@ -11,9 +11,10 @@ import { Map } from "immutable";
 interface Props {
 	editorState: EditorState;
 	setEditorState: Dispatch<SetStateAction<EditorState>>;
-	tag?: string;
 	handleChange: (newEditorState: EditorState) => EditorState | null;
+	placeholder?: string;
 	readOnly?: boolean;
+	tag?: string;
 }
 
 export const lineEditorStateFromString = (s: string): EditorState => {
@@ -29,9 +30,10 @@ type Params = Parameters<ForwardRefRenderFunction<Editor, Props>>;
 const LineEditorBase = ({
 	editorState,
 	setEditorState,
-	tag,
 	handleChange,
+	placeholder,
 	readOnly,
+	tag,
 }: Params[0], ref: Params[1]): JSX.Element => {
 	const element = tag ?? "div";
 	const blockRenderMap = Map({ unstyled: { element } });
@@ -48,6 +50,7 @@ const LineEditorBase = ({
 		editorState={editorState}
 		onChange={handleEditorChange}
 		readOnly={readOnly}
+		placeholder={placeholder}
 		ref={ref}
 	/>;
 };

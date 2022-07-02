@@ -1,4 +1,5 @@
-import { CacheProvider, EmotionCache, ThemeProvider } from '@emotion/react';
+import { CacheProvider, EmotionCache } from '@emotion/react';
+import { ThemeProvider } from '@mui/material';
 import type { MotionProps } from 'framer-motion';
 import { useMemo, useState } from 'react';
 import { cache } from '@lib/emotion/cache';
