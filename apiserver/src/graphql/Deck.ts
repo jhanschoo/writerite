@@ -5,6 +5,7 @@ import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsE
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { getDescendantsOfDeck } from "../service/deckFamily";
 import { jsonObjectArg } from "./scalarUtil";
+import * as yup from 'yup';
 
 const DEFAULT_TAKE = 60;
 
@@ -200,6 +201,20 @@ export const OwnDeckRecordQuery = queryField("ownDeckRecord", {
 		prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } })),
 });
 
+export const deckCreateSchema = yup.object({
+	name: yup.string().trim(),
+	description: yup.object(),
+	promptLang: yup.string().trim().min(2),
+	answerLang: yup.string().trim().min(2),
+	published: yup.boolean(),
+	archived: yup.boolean(),
+	cards: yup.array(yup.object({
+		answers: yup.array(yup.string()).required(),
+		fullAnswer: yup.object().required(),
+		prompt: yup.object().required(),
+		template: yup.boolean(),
+	})),
+});
 export const DeckCreateMutation = mutationField("deckCreate", {
 	type: nonNull("Deck"),
 	args: {
@@ -214,24 +229,29 @@ export const DeckCreateMutation = mutationField("deckCreate", {
 			undefinedOnly: true,
 		}))),
 	},
-	resolve: guardValidUser(async (_root, { name, description, promptLang, answerLang, published, archived, cards }, { sub, prisma }) => {
+	resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
+		const { cards, ...rest } = await deckCreateSchema.validate(args);
 		const cardsWithId = cards?.map((card) => ({ id: cuid(), ...card }));
 		const sortData = cardsWithId?.map(({ id }) => id);
 
 		return prisma.deck.create({ data: {
 			ownerId: sub.id,
-			name: name ?? undefined,
-			description: description ? description as Prisma.InputJsonObject : undefined,
-			promptLang: promptLang ?? undefined,
-			answerLang: answerLang ?? undefined,
-			published: published ?? undefined,
-			archived: archived ?? undefined,
+			...rest,
 			cards: cardsWithId ? { create: cardsWithId } : undefined,
 			sortData,
 		} });
 	}),
 });
 
+export const deckEditSchema = yup.object({
+	id: yup.string().min(20).required(),
+	name: yup.string().trim(),
+	description: yup.object(),
+	promptLang: yup.string().trim().min(2),
+	answerLang: yup.string().trim().min(2),
+	published: yup.boolean(),
+	archived: yup.boolean(),
+});
 export const DeckEditMutation = mutationField("deckEdit", {
 	type: nonNull("Deck"),
 	args: {
@@ -243,15 +263,9 @@ export const DeckEditMutation = mutationField("deckEdit", {
 		published: booleanArg({ undefinedOnly: true }),
 		archived: booleanArg({ undefinedOnly: true }),
 	},
-	resolve: guardValidUser(async (_root, { id, name, description, promptLang, answerLang, published, archived }, { sub, prisma }) => {
-		const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data: {
-			name: name as string | undefined,
-			description: description as Prisma.InputJsonObject | undefined,
-			promptLang: promptLang as string | undefined,
-			answerLang: answerLang as string | undefined,
-			published: published as boolean | undefined,
-			archived: archived as boolean | undefined,
-		} });
+	resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
+		const { id, ...data } = await deckEditSchema.validate(args);
+		const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data });
 		if (count !== 1) {
 			throw new Error("");
 		}

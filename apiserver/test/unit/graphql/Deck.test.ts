@@ -52,8 +52,8 @@ describe("graphql/Deck.ts", () => {
 			it("should proxy requests to add a subdeck to a deck to the db, and return the parent deck", async () => {
 				expect.assertions(2);
 				setSub(DEFAULT_CURRENT_USER);
-				const id = "parent-id";
-				const subdeckId = "child-id";
+				const id = "parent-id-with-20-plus-chars";
+				const subdeckId = "child-id-with-20-plus-chars";
 				prisma.user.findMany.mockResolvedValue([]);
 				prisma.deck.count.mockResolvedValue(2);
 				prisma.deck.update.mockResolvedValue({ id } as Deck);
@@ -76,7 +76,7 @@ describe("graphql/Deck.ts", () => {
 			it("should proxy requests to create an empty deck to the db, and return the created empty deck", async () => {
 				expect.assertions(1);
 				setSub(DEFAULT_CURRENT_USER);
-				const id = "fake-id";
+				const id = "fake-id-with-20-plus-chars";
 				prisma.user.findMany.mockResolvedValue([]);
 				prisma.deck.create.mockResolvedValue({
 					id,
@@ -98,7 +98,7 @@ describe("graphql/Deck.ts", () => {
 			it("should be able to change the name of a deck, and retrieve the updated state with a further call", async () => {
 				expect.assertions(2);
 				setSub(DEFAULT_CURRENT_USER);
-				const id = "fake-id";
+				const id = "fake-id-with-20-plus-chars";
 				const nextName = "next-name";
 				prisma.user.findMany.mockResolvedValue([]);
 				prisma.deck.updateMany.mockResolvedValue({
@@ -123,8 +123,8 @@ describe("graphql/Deck.ts", () => {
 			it("should proxy requests to remove a subdeck relationship between decks to the db, and return the parent deck", async () => {
 				expect.assertions(2);
 				setSub(DEFAULT_CURRENT_USER);
-				const id = "parent-id";
-				const subdeckId = "child-id";
+				const id = "parent-id-with-20-plus-chars";
+				const subdeckId = "child-id-with-20-plus-chars";
 				prisma.user.findMany.mockResolvedValue([]);
 				prisma.deck.count.mockResolvedValue(2);
 				prisma.deck.update.mockResolvedValue({ id } as Deck);
@@ -142,7 +142,7 @@ describe("graphql/Deck.ts", () => {
 		});
 		describe("deckUsed", () => {
 			it("should ask the db to update the usedAt field of a deck to a recent time", async () => {
-				const id = "deck-id";
+				const id = "deck-id-with-20-plus-chars";
 				setSub(DEFAULT_CURRENT_USER);
 				prisma.user.findMany.mockResolvedValue([]);
 				prisma.deck.count.mockResolvedValue(1);
