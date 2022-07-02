@@ -265,7 +265,7 @@ export const DeckEditMutation = mutationField("deckEdit", {
 	},
 	resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
 		const { id, ...data } = await deckEditSchema.validate(args);
-		const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data });
+		const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data: { ...data, editedAt: new Date() } });
 		if (count !== 1) {
 			throw new Error("");
 		}

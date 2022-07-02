@@ -114,6 +114,8 @@ describe("graphql/Deck.ts", () => {
 					where: { id, ownerId: DEFAULT_CURRENT_USER.id },
 					data: {
 						name: nextName,
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+						editedAt: expect.any(Date),
 					},
 				});
 				expect(executionResult).toHaveProperty("data.deckEdit.name", nextName);
