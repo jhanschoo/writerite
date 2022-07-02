@@ -1,5 +1,5 @@
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
-import { Box, Button, ButtonGroup, ButtonProps, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
+import { Box, Button, ButtonGroup, ButtonProps, CircularProgress, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
 import React, { Dispatch, SetStateAction, useRef } from "react";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
@@ -21,6 +21,7 @@ interface Props {
 	placeholder?: EditorProps["placeholder"];
 	readOnly?: boolean;
 	stackSx?: SxProps<Theme>;
+	spinner?: boolean;
 }
 
 export const notesEditorStateFromRaw = (c: RawDraftContentState): EditorState => {
@@ -40,6 +41,7 @@ export const NotesEditor = ({
 	placeholder,
 	readOnly,
 	stackSx,
+	spinner,
 }: Props): JSX.Element => {
 	const editorRef = useRef<Editor>(null);
 	const currentStyle = editorState.getCurrentInlineStyle();
@@ -66,16 +68,23 @@ export const NotesEditor = ({
 	const handleUnorderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "unordered-list-item"));
 	const handleOrderedList = () => handleEditorChange(RichUtils.toggleBlockType(editorState, "ordered-list-item"));
 
-	return <Stack paddingY={1} spacing={1} direction="row" sx={stackSx} onClick={handleClick}>
-		<Editor
-			editorState={editorState}
-			onChange={handleEditorChange}
-			placeholder={placeholder}
-			handleKeyCommand={handleKeyCommand}
-			readOnly={readOnly}
-			ref={editorRef}
-		/>
-		{!readOnly &&
+	return <Stack paddingY={1} spacing={2} direction="row" sx={stackSx} onClick={handleClick}>
+		<Box sx={{ flexGrow: 1, position: "relative" }}>
+			<Editor
+				editorState={editorState}
+				onChange={handleEditorChange}
+				placeholder={placeholder}
+				handleKeyCommand={handleKeyCommand}
+				readOnly={readOnly}
+				ref={editorRef}
+			/>
+			{ spinner &&
+				<Box sx={{ position: "absolute", bottom: 0, right: 0}}>
+					<CircularProgress />
+				</Box>
+			}
+		</Box>
+		{ !readOnly &&
 			<Box onClick={(e) => e.preventDefault()}>
 				<ButtonGroup variant="text" orientation="vertical" size="small">
 					<EditorButton onClick={handleBold} className={activeIf(currentStyle.has("BOLD"))}><Typography fontWeight="bold">bold</Typography></EditorButton>
