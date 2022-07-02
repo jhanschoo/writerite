@@ -1,15 +1,11 @@
-import { DeckEditDocument, DeckQuery } from "@generated/graphql";
+import { DeckEditDocument } from "@generated/graphql";
 import { CircularProgress, Stack, TextField, Typography, useTheme } from "@mui/material";
 import { formatISO, parseISO } from "date-fns";
 import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
 import { useMutation } from "urql";
+import { ManageDeckProps } from "../types/ManageDeckProps";
 
-
-interface Props {
-	deck: DeckQuery["deck"] // TODO: decouple interface
-}
-
-export const ManageDeckTitle: FC<Props> = ({ deck: { id, name, editedAt } }) => {
+export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name, editedAt } }) => {
 	const [{ fetching }, mutateTitle] = useMutation(DeckEditDocument);
 
 	const theme = useTheme();
@@ -51,7 +47,7 @@ export const ManageDeckTitle: FC<Props> = ({ deck: { id, name, editedAt } }) => 
 		height: "1.4375em",
 		lineHeight: "1.4375",
 		fontSize: (nameInput || showInput) ? "italic" : undefined,
-		color: (nameInput || showInput || fetching) ? theme.palette.text.secondary : undefined,
+		color: (!nameInput || fetching) ? theme.palette.text.secondary : undefined,
 	}} ref={titleRef}>{(nameInput || showInput) ? nameInput : "Untitled Deck"}</Typography>;
 	const editedAtDisplay = formatISO(parseISO(editedAt), { representation: "date" });
 	return <Stack direction="row" alignItems="baseline" spacing={2}>

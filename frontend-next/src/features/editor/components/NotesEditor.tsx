@@ -1,6 +1,6 @@
 import { DraftEditorCommand, Editor, EditorProps, EditorState, RawDraftContentState, RichUtils, convertFromRaw, convertToRaw } from "draft-js";
 import { Box, Button, ButtonGroup, ButtonProps, CircularProgress, Stack, styled, SxProps, Theme, Typography } from "@mui/material";
-import React, { Dispatch, SetStateAction, useRef } from "react";
+import React, { useRef } from "react";
 
 const isEmpty = (o: RawDraftContentState | Record<string, unknown>): o is Record<string, unknown> => !Object.keys(o).length;
 
@@ -16,7 +16,7 @@ const EditorButton = styled(Button)<ButtonProps>(({ theme }) => ({
 
 interface Props {
 	editorState: EditorState;
-	setEditorState: Dispatch<SetStateAction<EditorState>>;
+	setEditorState: (nextEditorState: EditorState) => void;
 	handleChange?: (newEditorState: EditorState) => EditorState | null;
 	placeholder?: EditorProps["placeholder"];
 	readOnly?: boolean;
