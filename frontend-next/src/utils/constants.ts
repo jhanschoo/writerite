@@ -1,0 +1,2 @@
+export const STANDARD_DEBOUNCE_MS = 500;
+export const STANDARD_MAX_WAIT_DEBOUNCE_MS = 2000;

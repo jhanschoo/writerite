@@ -5,15 +5,14 @@ import { DecksDocument, DecksQueryScope } from '@generated/graphql';
 import { useQuery } from 'urql';
 import { useDebounce } from 'use-debounce';
 import { DecksList } from './DecksList';
+import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
-export const MANAGE_DECKS_FILTER_TITLE_DEBOUNCE_MS = 500;
-export const MANAGE_DECKS_FILTER_TITLE_MAX_WAIT_DEBOUNCE_MS = 2000;
 
 // TODO: pagination
 export const ManageDecks: FC = () => {
 	const [titleFilter, setTitleFilter] = useState('');
-	const [debouncedTitleFilter] = useDebounce(titleFilter, MANAGE_DECKS_FILTER_TITLE_DEBOUNCE_MS, { maxWait: MANAGE_DECKS_FILTER_TITLE_MAX_WAIT_DEBOUNCE_MS });
+	const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
 	const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Unarchived);
 	const [cursor, setCursor] = useState<string | undefined>();
 	const [{ data, fetching, error }] = useQuery({
