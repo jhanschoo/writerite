@@ -18,6 +18,9 @@ export HELM_EXPERIMENTAL_OCI=1
 docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
 helm registry login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY" 
 
+# kubectl context management
+kubectl config use-context kind-kind
+
 # secret management
 kubectl delete secret gitlab-writerite-writerite-jhanschoo || true
 kubectl create secret docker-registry gitlab-writerite-writerite-jhanschoo --docker-server="$CI_REGISTRY" --docker-username="$CI_REGISTRY_USER" --docker-password="$CI_REGISTRY_PASSWORD"
