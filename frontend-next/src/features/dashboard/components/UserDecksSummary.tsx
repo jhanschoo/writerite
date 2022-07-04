@@ -6,6 +6,7 @@ import { useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
+import { Add } from '@mui/icons-material';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -56,8 +57,8 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
 				<Typography variant="h4" paddingBottom={2}>Decks</Typography>
 			</Stack>
 			<Stack direction="row" alignItems="stretch" spacing={2}>
-				<Button onClick={handleCreateDeckDialog} variant="large-action" size="large" key="deck-create-button">
-					Create a new Deck
+				<Button onClick={handleCreateDeckDialog} variant="large-action" size="large" key="deck-create-button" aria-label="Create an new Deck">
+					<Add />
 				</Button>
 				{decks}
 				<Button onClick={handleManageDecksDialog} size="large" key="manage-decks-button">
