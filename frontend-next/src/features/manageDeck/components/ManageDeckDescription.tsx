@@ -10,6 +10,7 @@ import { ManageDeckProps } from "../types/ManageDeckProps";
 export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, description } }) => {
 	const [{ fetching }, mutateDescription] = useMutation(DeckEditDocument);
 
+	// TODO: implement https://github.com/vercel/next.js/issues/2476#issuecomment-563190607 to prevent leaving if unsaved data present
 	const [editorState, setEditorState] = useState(notesEditorStateFromRaw(description));
 	const debouncedSaveEditorState = useDebouncedCallback((editorState) => {
 		mutateDescription({ id, description: notesEditorStateToRaw(editorState) });
