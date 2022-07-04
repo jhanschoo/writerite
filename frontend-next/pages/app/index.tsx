@@ -9,19 +9,19 @@ import { Dashboard } from '@/features/dashboard';
 import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 
 const Home: NextPage = () => {
-	const { motionProps } = useMotionContext();
-	const [userResult, reexecuteUserQuery] = useQuery({
-		query: UserDocument,
-	});
-	const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
-	return (
-		<motion.div {...motionProps}>
-			<FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
-			<StandardLayout breadcrumbs={[["/app", "Home"]]}>
-				<Dashboard />
-			</StandardLayout>
-		</motion.div>
-	);
+  const { motionProps } = useMotionContext();
+  const [userResult, reexecuteUserQuery] = useQuery({
+    query: UserDocument,
+  });
+  const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
+  return (
+    <motion.div {...motionProps}>
+      <FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
+      <StandardLayout breadcrumbs={[["/app", "Home"]]}>
+        <Dashboard />
+      </StandardLayout>
+    </motion.div>
+  );
 }
 
 export default Home;

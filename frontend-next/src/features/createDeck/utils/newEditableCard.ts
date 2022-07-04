@@ -2,7 +2,7 @@ import { answersEditorStateFromStringArray, notesEditorStateFromRaw, rawFromText
 import { IEditableCard } from "../types/IEditableCard"
 
 export const newEditableCard = (): IEditableCard => ({
-	prompt: notesEditorStateFromRaw(rawFromText("")),
-	fullAnswer: notesEditorStateFromRaw(rawFromText("")),
-	answers: answersEditorStateFromStringArray([]),
+  prompt: notesEditorStateFromRaw(rawFromText("")),
+  fullAnswer: notesEditorStateFromRaw(rawFromText("")),
+  answers: answersEditorStateFromStringArray([]),
 });

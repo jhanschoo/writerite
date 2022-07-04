@@ -1,5 +1,5 @@
 query Decks($cursor: ID, $scope: DecksQueryScope, $take: Int, $titleFilter: String) {
-	decks(cursor: $cursor, scope: $scope, take: $take, titleFilter: $titleFilter) {
-		...deckSummary
-	}
+  decks(cursor: $cursor, scope: $scope, take: $take, titleFilter: $titleFilter) {
+    ...deckSummary
+  }
 }

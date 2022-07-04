@@ -10,28 +10,28 @@ const { NODE_ENV } = process.env;
 export type WrServer = ReturnType<typeof graphQLServerFactory>;
 
 interface CORSOptions {
-	origin?: string[] | string;
-	methods?: string[];
-	allowedHeaders?: string[];
-	exposedHeaders?: string[];
-	credentials?: boolean;
-	maxAge?: number;
+  origin?: string[] | string;
+  methods?: string[];
+  allowedHeaders?: string[];
+  exposedHeaders?: string[];
+  credentials?: boolean;
+  maxAge?: number;
 }
 
 interface GraphQLServerFactoryOpts {
-	port?: number;
-	https?: ServerOptions;
-	cors?: CORSOptions;
-	context(initialContext: YogaInitialContext): Context;
+  port?: number;
+  https?: ServerOptions;
+  cors?: CORSOptions;
+  context(initialContext: YogaInitialContext): Context;
 }
 
 export function graphQLServerFactory(opts: GraphQLServerFactoryOpts) {
-	return createServer<Record<string, unknown>, Context>({
-		schema,
-		graphiql: {
-			subscriptionsProtocol: "WS",
-		},
-		maskedErrors: NODE_ENV === "production",
-		...opts,
-	});
+  return createServer<Record<string, unknown>, Context>({
+    schema,
+    graphiql: {
+      subscriptionsProtocol: "WS",
+    },
+    maskedErrors: NODE_ENV === "production",
+    ...opts,
+  });
 }

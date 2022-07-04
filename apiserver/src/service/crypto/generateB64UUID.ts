@@ -4,7 +4,7 @@ import { KJUR, hextob64 } from "jsrsasign";
 
 
 export function generateB64UUID(): string {
-	const uuid = KJUR.crypto.Util.getRandomHexOfNbits(128) as string;
-	const b64uuid = hextob64(uuid) as string;
-	return b64uuid;
+  const uuid = KJUR.crypto.Util.getRandomHexOfNbits(128) as string;
+  const b64uuid = hextob64(uuid) as string;
+  return b64uuid;
 }

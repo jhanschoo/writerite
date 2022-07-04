@@ -12,71 +12,71 @@ import { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
 import { Deck } from "@generated/graphql";
 
 export const commonUrqlOptions = {
-	url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
-	requestPolicy: 'cache-and-network',
-	// preferGetMethod: true seems to be necessary for my implementation of subscriptions to work
-	// preferGetMethod: true,
+  url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
+  requestPolicy: 'cache-and-network',
+  // preferGetMethod: true seems to be necessary for my implementation of subscriptions to work
+  // preferGetMethod: true,
 } as const;
 
 const wsClient = createClient({
-	url: process.env.NEXT_PUBLIC_GRAPHQL_WS as string,
-	webSocketImpl: WebSocket,
+  url: process.env.NEXT_PUBLIC_GRAPHQL_WS as string,
+  webSocketImpl: WebSocket,
 })
 
 const auth = authExchange<string | null>({
-	addAuthToOperation({ authState, operation }) {
-		if (isSSRContext() || !authState) {
-			return operation;
-		}
-		const prevFetchOptions = 
-		typeof operation.context.fetchOptions === 'function'
-			? operation.context.fetchOptions()
-			: operation.context.fetchOptions || {};
-		const fetchOptions = {
-			...prevFetchOptions,
-			headers: {
-				...prevFetchOptions.headers,
-				"Authorization": `Bearer ${authState}`,
-			},
-		};
+  addAuthToOperation({ authState, operation }) {
+    if (isSSRContext() || !authState) {
+      return operation;
+    }
+    const prevFetchOptions = 
+    typeof operation.context.fetchOptions === 'function'
+      ? operation.context.fetchOptions()
+      : operation.context.fetchOptions || {};
+    const fetchOptions = {
+      ...prevFetchOptions,
+      headers: {
+        ...prevFetchOptions.headers,
+        "Authorization": `Bearer ${authState}`,
+      },
+    };
 
-		return makeOperation(operation.kind, operation, {
-			...operation.context,
-			fetchOptions,
-		})
-	},
-	async getAuth({ authState }) {
-		return authState || getAccessKey();
-	},
-	didAuthError({ authState }) {
-		return authState === null;
-	}
+    return makeOperation(operation.kind, operation, {
+      ...operation.context,
+      fetchOptions,
+    })
+  },
+  async getAuth({ authState }) {
+    return authState || getAccessKey();
+  },
+  didAuthError({ authState }) {
+    return authState === null;
+  }
 });
 
 const subscription = subscriptionExchange({
-	forwardSubscription: (operation) => ({
-		subscribe: (sink) => ({
-			unsubscribe: wsClient.subscribe(operation, sink),
-		}),
-	}),
+  forwardSubscription: (operation) => ({
+    subscribe: (sink) => ({
+      unsubscribe: wsClient.subscribe(operation, sink),
+    }),
+  }),
 });
 
 export const getExchanges = (ssr: SSRExchange) => [
-	devtoolsExchange,
-	dedupExchange,
-	cacheExchange({
-		schema: schema as IntrospectionData,
-		resolvers: {
-			Query: {
-				deck(_parent, { id }) {
-					const __typename: Deck["__typename"] = "Deck";
-					return { __typename, id };
-				}
-			}
-		}
-	}),
-	ssr,
-	auth,
-	fetchExchange,
-	subscription,
+  devtoolsExchange,
+  dedupExchange,
+  cacheExchange({
+    schema: schema as IntrospectionData,
+    resolvers: {
+      Query: {
+        deck(_parent, { id }) {
+          const __typename: Deck["__typename"] = "Deck";
+          return { __typename, id };
+        }
+      }
+    }
+  }),
+  ssr,
+  auth,
+  fetchExchange,
+  subscription,
 ];

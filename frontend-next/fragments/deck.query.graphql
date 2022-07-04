@@ -1,5 +1,5 @@
 query Deck($id: ID!) {
-	deck(id: $id) {
-		...deckDetail
-	}
+  deck(id: $id) {
+    ...deckDetail
+  }
 }

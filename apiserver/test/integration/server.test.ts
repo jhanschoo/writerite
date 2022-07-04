@@ -7,30 +7,30 @@ import { cascadingDelete } from "./_helpers/truncate";
 
 describe("server", () => {
 
-	let context: (initialContext: YogaInitialContext) => Context;
-	let stopContext: () => Promise<unknown>;
-	let prisma: PrismaClient;
-	let server: WrServer;
+  let context: (initialContext: YogaInitialContext) => Context;
+  let stopContext: () => Promise<unknown>;
+  let prisma: PrismaClient;
+  let server: WrServer;
 
-	beforeAll(() => {
-		[, , context, stopContext, { prisma }] = testContextFactory();
-		server = graphQLServerFactory({ context });
-	});
+  beforeAll(() => {
+    [, , context, stopContext, { prisma }] = testContextFactory();
+    server = graphQLServerFactory({ context });
+  });
 
-	afterAll(async () => {
-		await cascadingDelete(prisma).user;
-		await Promise.allSettled([server.stop(), stopContext()]);
-	});
+  afterAll(async () => {
+    await cascadingDelete(prisma).user;
+    await Promise.allSettled([server.stop(), stopContext()]);
+  });
 
-	it("should be able to respond to a health check", async () => {
-		expect.assertions(1);
-		const { executionResult } = await queryHealth(server);
-		expect(executionResult).toHaveProperty("data.health", "OK");
-	});
+  it("should be able to respond to a health check", async () => {
+    expect.assertions(1);
+    const { executionResult } = await queryHealth(server);
+    expect(executionResult).toHaveProperty("data.health", "OK");
+  });
 
-	it("should be able to respond to a basic create user", async () => {
-		expect.assertions(1);
-		const { executionResult } = await createUser(server);
-		expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
-	});
+  it("should be able to respond to a basic create user", async () => {
+    expect.assertions(1);
+    const { executionResult } = await createUser(server);
+    expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
+  });
 });

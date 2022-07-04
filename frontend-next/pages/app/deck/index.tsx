@@ -8,18 +8,18 @@ import { ManageDecks } from '@/features/manageDecks';
 import { StandardLayout } from '@/features/standardLayout';
 
 const Home: NextPage = () => {
-	const { motionProps } = useMotionContext();
-	const [userResult, reexecuteUserQuery] = useQuery({
-		query: UserDocument,
-	});
-	const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
-	return (
-		<motion.div {...motionProps}>
-			<StandardLayout breadcrumbs={[["/app", "Home"], ["/app/deck", "Decks"]]}>
-				<ManageDecks />
-			</StandardLayout>
-		</motion.div>
-	);
+  const { motionProps } = useMotionContext();
+  const [userResult, reexecuteUserQuery] = useQuery({
+    query: UserDocument,
+  });
+  const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
+  return (
+    <motion.div {...motionProps}>
+      <StandardLayout breadcrumbs={[["/app", "Home"], ["/app/deck", "Decks"]]}>
+        <ManageDecks />
+      </StandardLayout>
+    </motion.div>
+  );
 }
 
 export default Home;

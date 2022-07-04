@@ -2,5 +2,5 @@ import { UserDecksSummary } from '@/features/dashboard/components/UserDecksSumma
 import { FC } from 'react';
 
 export const Dashboard: FC = () => {
-	return <UserDecksSummary />;
+  return <UserDecksSummary />;
 }

@@ -4,12 +4,12 @@ set -ex
 
 if [[ -f "./.env" ]]
 then
-	source .env
+  source .env
 fi
 
 if [[ -z "$CI_REGISTRY_USER" || -z "$CI_REGISTRY_PASSWORD" || -z "$CI_REGISTRY" || -z "$CI_REGISTRY_IMAGE" ]]
 then
-	exit 1
+  exit 1
 fi
 export CI_REGISTRY_USER CI_REGISTRY_PASSWORD CI_REGISTRY CI_REGISTRY_IMAGE
 

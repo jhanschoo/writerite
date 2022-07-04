@@ -12,30 +12,30 @@ const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(JWT_PUBLIC_KEY));
 const alg = "ES256";
 
 export function generateUserJWT(sub: CurrentUser, persist = false): string {
-	const timeNow = KJUR.jws.IntDate.get("now") as number;
-	const expiryTime = KJUR.jws.IntDate.get(persist ? "now + 1year" : "now + 1day") as number;
+  const timeNow = KJUR.jws.IntDate.get("now") as number;
+  const expiryTime = KJUR.jws.IntDate.get(persist ? "now + 1year" : "now + 1day") as number;
 
-	const header = {
-		alg,
-		cty: "JWT",
-	} as const;
+  const header = {
+    alg,
+    cty: "JWT",
+  } as const;
 
-	const payload = {
-		exp: expiryTime,
-		iat: timeNow,
-		iss: "writerite.site",
-		jti: generateB64UUID(),
-		// Nbf: timeNow,
-		sub,
-	};
+  const payload = {
+    exp: expiryTime,
+    iat: timeNow,
+    iss: "writerite.site",
+    jti: generateB64UUID(),
+    // Nbf: timeNow,
+    sub,
+  };
 
-	return KJUR.jws.JWS.sign(null, header, payload, PRIVATE_KEY) as string;
+  return KJUR.jws.JWS.sign(null, header, payload, PRIVATE_KEY) as string;
 }
 
 export function verifyJWT(jwt: string): boolean {
-	return KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, [alg]) as boolean;
+  return KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, [alg]) as boolean;
 }
 
 export function parseJWT(jwt: string): unknown {
-	return KJUR.jws.JWS.parse(jwt).payloadObj;
+  return KJUR.jws.JWS.parse(jwt).payloadObj;
 }

@@ -14,50 +14,50 @@ import { URL } from "url";
 
 export const FETCH_DEPTH = process.env.FETCH_DEPTH ? parseInt(process.env.FETCH_DEPTH, 10) : 3;
 if (isNaN(FETCH_DEPTH) || FETCH_DEPTH < 1) {
-	throw Error("envvar FETCH_DEPTH needs to be unset or a positive integer");
+  throw Error("envvar FETCH_DEPTH needs to be unset or a positive integer");
 }
 
 export function slug(size: number | null = 4): string {
-	return nanoid(size ?? undefined);
+  return nanoid(size ?? undefined);
 }
 
 export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
-	// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-	const authorization = ctx.request?.headers?.get("Authorization") ??
-	// path if called from GraphiQL
-	ctx.extensions?.payload?.extensions?.headers?.Authorization ??
-	ctx.extensions?.payload?.context?.fetchOptions?.headers?.Authorization;
-	if (!authorization) {
-		return;
-	}
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const authorization = ctx.request?.headers?.get("Authorization") ??
+  // path if called from GraphiQL
+  ctx.extensions?.payload?.extensions?.headers?.Authorization ??
+  ctx.extensions?.payload?.context?.fetchOptions?.headers?.Authorization;
+  if (!authorization) {
+    return;
+  }
 
-	const jwt = authorization.slice(7);
-	if (jwt) {
-		try {
-			if (verifyJWT(jwt)) {
-				const { sub } = parseJWT(jwt) as { sub: CurrentUser | undefined };
-				return sub;
-			}
-		} catch (e: unknown) {
-			handleError(e);
-			return undefined;
-		}
-	}
+  const jwt = authorization.slice(7);
+  if (jwt) {
+    try {
+      if (verifyJWT(jwt)) {
+        const { sub } = parseJWT(jwt) as { sub: CurrentUser | undefined };
+        return sub;
+      }
+    } catch (e: unknown) {
+      handleError(e);
+      return undefined;
+    }
+  }
 }
 
 export function handleError(e: unknown): null {
-	if (process.env.NODE_ENV === "development") {
-		// eslint-disable-next-line no-console
-		console.error(e);
-		throw e;
-	}
+  if (process.env.NODE_ENV === "development") {
+    // eslint-disable-next-line no-console
+    console.error(e);
+    throw e;
+  }
 
-	return null;
+  return null;
 }
 
 export function setSearchParams(url: URL, params: { [key: string]: string }): URL {
-	for (const [key, value] of Object.entries(params)) {
-		url.searchParams.append(key, value);
-	}
-	return url;
+  for (const [key, value] of Object.entries(params)) {
+    url.searchParams.append(key, value);
+  }
+  return url;
 }

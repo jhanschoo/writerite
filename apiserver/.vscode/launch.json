@@ -5,17 +5,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-			"type": "pwa-node",
-			"name": "Start local dev server",
-			"request": "launch",
-			"runtimeArgs": [
-				"run",
-				"dev"
-			],
-			"runtimeExecutable": "npm",
-			"skipFiles": [
-				"<node_internals>/**"
-			],
+      "type": "pwa-node",
+      "name": "Start local dev server",
+      "request": "launch",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "runtimeExecutable": "npm",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
       "cwd": "${workspaceFolder}"
     },
     {

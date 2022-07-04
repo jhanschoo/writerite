@@ -1,4 +1,4 @@
 export interface ThirdPartyProfileInformation {
-	id: string;
-	email?: string;
+  id: string;
+  email?: string;
 }

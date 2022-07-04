@@ -4,24 +4,24 @@ import { initDefaultServerSideUrqlClient } from "@lib/urql/initDefaultServerSide
 import { HealthQueryDocument } from "@generated/graphql";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-	const [client, getUrqlState] = initDefaultServerSideUrqlClient();
+  const [client, getUrqlState] = initDefaultServerSideUrqlClient();
 
-	await client.query(HealthQueryDocument).toPromise();
+  await client.query(HealthQueryDocument).toPromise();
 
-	return {
-		props: {
-			urqlState: getUrqlState(),
-		},
-	}
+  return {
+    props: {
+      urqlState: getUrqlState(),
+    },
+  }
 }
 
 const Ssr: NextPage = () => {
-	const [result] = useQuery({
-		query: HealthQueryDocument,
-	});
-	return (
-		<p>{JSON.stringify(result.data)}</p>
-	);
+  const [result] = useQuery({
+    query: HealthQueryDocument,
+  });
+  return (
+    <p>{JSON.stringify(result.data)}</p>
+  );
 }
 
 export default Ssr;

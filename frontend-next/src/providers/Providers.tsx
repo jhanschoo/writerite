@@ -7,19 +7,19 @@ import { emotionTheme } from '@lib/mui/theme';
 import { initialMotionState, MotionContext } from '@stores/motionContext';
 
 interface ProvidersProps {
-	emotionCache?: EmotionCache;
+  emotionCache?: EmotionCache;
 }
 
 export const Providers: React.FC<ProvidersProps> = ({ emotionCache, children }) => {
-	const [motionProps, setMotionProps] = useState<MotionProps>(initialMotionState.motionProps);
-	const motionState = useMemo(() => ({ motionProps, setMotionProps }), [motionProps]);
-	return (
-		<CacheProvider value={emotionCache || cache}>
-			<ThemeProvider theme={emotionTheme}>
-				<MotionContext.Provider value={motionState}>
-					{children}
-				</MotionContext.Provider>
-			</ThemeProvider>
-		</CacheProvider>
-	);
+  const [motionProps, setMotionProps] = useState<MotionProps>(initialMotionState.motionProps);
+  const motionState = useMemo(() => ({ motionProps, setMotionProps }), [motionProps]);
+  return (
+    <CacheProvider value={emotionCache || cache}>
+      <ThemeProvider theme={emotionTheme}>
+        <MotionContext.Provider value={motionState}>
+          {children}
+        </MotionContext.Provider>
+      </ThemeProvider>
+    </CacheProvider>
+  );
 }

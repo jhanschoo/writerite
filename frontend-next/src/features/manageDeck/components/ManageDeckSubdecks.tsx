@@ -9,6 +9,6 @@ import { ManageDeckProps } from "../types/ManageDeckProps";
 
 // TODO: WIP
 export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck: { id, description } }) => {
-	const [{ fetching }, mutateDescription] = useMutation(DeckEditDocument);
-	return null;
+  const [{ fetching }, mutateDescription] = useMutation(DeckEditDocument);
+  return null;
 }

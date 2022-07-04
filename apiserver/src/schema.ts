@@ -8,26 +8,26 @@ const { NODE_ENV } = process.env;
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 export const schema = makeSchema({
-	types,
-	outputs: {
-		typegen: join(__dirname, "..", "generated", "nexus-typegen.ts"),
-		schema: join(__dirname, "..", "generated", "schema.graphql"),
-	},
-	plugins: [undefinedOnlyPlugin, fieldAuthorizePlugin()],
-	sourceTypes: {
-		debug: NODE_ENV !== "test",
-		modules: [
-			{
-				module: join(__dirname, "..", "node_modules", ".prisma", "client", "index.d.ts"),
-				alias: "p",
-			},
-		],
-		mapping: {
-			...scalarMapping,
-		},
-	},
-	contextType: {
-		module: join(__dirname, "./context.ts"),
-		export: "Context",
-	},
+  types,
+  outputs: {
+    typegen: join(__dirname, "..", "generated", "nexus-typegen.ts"),
+    schema: join(__dirname, "..", "generated", "schema.graphql"),
+  },
+  plugins: [undefinedOnlyPlugin, fieldAuthorizePlugin()],
+  sourceTypes: {
+    debug: NODE_ENV !== "test",
+    modules: [
+      {
+        module: join(__dirname, "..", "node_modules", ".prisma", "client", "index.d.ts"),
+        alias: "p",
+      },
+    ],
+    mapping: {
+      ...scalarMapping,
+    },
+  },
+  contextType: {
+    module: join(__dirname, "./context.ts"),
+    export: "Context",
+  },
 });

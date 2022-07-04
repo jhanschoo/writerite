@@ -1,29 +1,29 @@
 fragment deckDetail on Deck {
-	answerLang
-	archived
-	cardsDirect {
-		answers
-		editedAt
-		fullAnswer
-		id
-		mainTemplate
-		ownRecord {
-			correctRecord
-		}
-		prompt
-		template
-	}
-	subdecks {
-		id
-	}
-	description
-	editedAt
-	id
-	name
-	ownRecord {
-		notes
-	}
-	promptLang
-	published
-	sortData
+  answerLang
+  archived
+  cardsDirect {
+    answers
+    editedAt
+    fullAnswer
+    id
+    mainTemplate
+    ownRecord {
+      correctRecord
+    }
+    prompt
+    template
+  }
+  subdecks {
+    id
+  }
+  description
+  editedAt
+  id
+  name
+  ownRecord {
+    notes
+  }
+  promptLang
+  published
+  sortData
 }

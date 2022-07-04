@@ -1,21 +1,21 @@
 mutation DeckCreate(
-	$answerLang: String!
-	$archived: Boolean!
-	$cards: [CardCreateInput!]!
-	$description: JSONObject!
-	$name: String!
-	$promptLang: String!
-	$published: Boolean!
+  $answerLang: String!
+  $archived: Boolean!
+  $cards: [CardCreateInput!]!
+  $description: JSONObject!
+  $name: String!
+  $promptLang: String!
+  $published: Boolean!
 ) {
-	deckCreate(
-		answerLang: $answerLang
-		archived: $archived
-		cards: $cards
-		description: $description
-		name: $name
-		promptLang: $promptLang
-		published: $published
-	) {
-		...deckDetail
-	}
+  deckCreate(
+    answerLang: $answerLang
+    archived: $archived
+    cards: $cards
+    description: $description
+    name: $name
+    promptLang: $promptLang
+    published: $published
+  ) {
+    ...deckDetail
+  }
 }
