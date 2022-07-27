@@ -1,25 +1,21 @@
-import { CacheProvider, EmotionCache } from '@emotion/react';
-import { ThemeProvider } from '@mui/material';
+import { MantineProvider } from '@mantine/core';
 import type { MotionProps } from 'framer-motion';
 import { useMemo, useState } from 'react';
-import { cache } from '@lib/emotion/cache';
-import { emotionTheme } from '@lib/mui/theme';
 import { initialMotionState, MotionContext } from '@stores/motionContext';
+import { theme } from '@/lib/mantine/theme';
 
-interface ProvidersProps {
-  emotionCache?: EmotionCache;
-}
-
-export const Providers: React.FC<ProvidersProps> = ({ emotionCache, children }) => {
+export const Providers: React.FC = ({ children }) => {
   const [motionProps, setMotionProps] = useState<MotionProps>(initialMotionState.motionProps);
   const motionState = useMemo(() => ({ motionProps, setMotionProps }), [motionProps]);
   return (
-    <CacheProvider value={emotionCache || cache}>
-      <ThemeProvider theme={emotionTheme}>
-        <MotionContext.Provider value={motionState}>
-          {children}
-        </MotionContext.Provider>
-      </ThemeProvider>
-    </CacheProvider>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      theme={theme}
+    >
+      <MotionContext.Provider value={motionState}>
+        {children}
+      </MotionContext.Provider>
+    </MantineProvider>
   );
-}
+};

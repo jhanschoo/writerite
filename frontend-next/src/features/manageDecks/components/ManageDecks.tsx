@@ -1,5 +1,3 @@
-import { Button, Divider, FormControl, IconButton, InputAdornment, MenuItem, Select, SelectChangeEvent, Stack, TextField } from '@mui/material';
-import { Close } from '@mui/icons-material';
 import { useState, ChangeEvent, FC } from 'react';
 import { DecksDocument, DecksQueryScope } from '@generated/graphql';
 import { useQuery } from 'urql';
@@ -25,41 +23,42 @@ export const ManageDecks: FC = () => {
     },
   });
   const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
-  return <Stack spacing={2}>
-    <Stack direction="row" spacing={2}>
-      <TextField
-        variant="outlined"
-        label="Show decks with title containing..."
-        InputProps={titleFilter ? {
-          endAdornment: <InputAdornment position="end">
-            <IconButton
-              aria-label="clear title search"
-              onClick={() => setTitleFilter('')}
-            >
-              <Close />
-            </IconButton>
-          </InputAdornment>
-        } : undefined}
-        sx={{
-          flexGrow: 1,
-        }}
-        value={titleFilter}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
-      />
-      <FormControl>
-        <Select
-          value={scopeFilter}
-          onChange={(e: SelectChangeEvent<DecksQueryScope>) => setScopeFilter(e.target.value as DecksQueryScope)}
-        >
-          <MenuItem value={DecksQueryScope.Unarchived}>that I own</MenuItem>
-          <MenuItem value={DecksQueryScope.Owned}>that I own (incl. archived)</MenuItem>
-          <MenuItem value={DecksQueryScope.Participated}>that I&rsquo;ve played</MenuItem>
-          <MenuItem value={DecksQueryScope.Visible}>that I can see</MenuItem>
-        </Select>
-      </FormControl>
-      <Divider orientation="vertical" flexItem />
-      <Button variant="contained">Create Deck</Button>
-    </Stack>
-    <DecksList decks={decks} />
-  </Stack>;
+  return null;
+  // return <Stack spacing={2}>
+  //   <Stack direction="row" spacing={2}>
+  //     <TextField
+  //       variant="outlined"
+  //       label="Show decks with title containing..."
+  //       InputProps={titleFilter ? {
+  //         endAdornment: <InputAdornment position="end">
+  //           <IconButton
+  //             aria-label="clear title search"
+  //             onClick={() => setTitleFilter('')}
+  //           >
+  //             <Close />
+  //           </IconButton>
+  //         </InputAdornment>
+  //       } : undefined}
+  //       sx={{
+  //         flexGrow: 1,
+  //       }}
+  //       value={titleFilter}
+  //       onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
+  //     />
+  //     <FormControl>
+  //       <Select
+  //         value={scopeFilter}
+  //         onChange={(e: SelectChangeEvent<DecksQueryScope>) => setScopeFilter(e.target.value as DecksQueryScope)}
+  //       >
+  //         <MenuItem value={DecksQueryScope.Unarchived}>that I own</MenuItem>
+  //         <MenuItem value={DecksQueryScope.Owned}>that I own (incl. archived)</MenuItem>
+  //         <MenuItem value={DecksQueryScope.Participated}>that I&rsquo;ve played</MenuItem>
+  //         <MenuItem value={DecksQueryScope.Visible}>that I can see</MenuItem>
+  //       </Select>
+  //     </FormControl>
+  //     <Divider orientation="vertical" flexItem>OR</Divider>
+  //     <Button variant="contained">Create a new Deck</Button>
+  //   </Stack>
+  //   <DecksList decks={decks} />
+  // </Stack>;
 }

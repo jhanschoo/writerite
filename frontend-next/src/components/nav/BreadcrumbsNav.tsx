@@ -1,29 +1,31 @@
-import { Breadcrumbs, Button, Divider, Stack } from "@mui/material";
-import router from "next/router";
-import { motionThemes } from "@lib/framer-motion/motionThemes";
-import { Flex } from "@components/Flex";
-import { useMotionContext } from "@hooks/useMotionContext";
-import { Link } from "@components/link/Link";
+import router from 'next/router';
+import { motionThemes } from '@lib/framer-motion/motionThemes';
+import { useMotionContext } from '@hooks/useMotionContext';
+import { Breadcrumbs, Button, Divider, Group, GroupProps, Text } from '@mantine/core';
+import { NextLinkAnchor } from '../link/NextLinkAnchor';
 
 export interface BreadcrumbsNavProps {
   showBack?: boolean;
   breadcrumbs?: [string, string | JSX.Element][];
+  groupProps?: GroupProps;
 }
 
-const BreadcrumbsNav = ({ showBack, breadcrumbs }: BreadcrumbsNavProps) => {
+const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavProps) => {
   const { setMotionProps } = useMotionContext();
   const handleBack = async () => {
     setMotionProps(motionThemes.back);
     router.back();
-  }
-  const breadcrumbLinks = breadcrumbs && breadcrumbs.length && breadcrumbs.map(([href, name], index) => (
-    <Link key={index} underline="hover" href={href}>{name}</Link>
-  ));
+  };
+  const breadcrumbLinks = breadcrumbs && breadcrumbs.length && breadcrumbs.map(
+    ([href, name], index) =>
+      <NextLinkAnchor key={index} href={href} variant="text">{ typeof name === 'string' ? (<Text>{name}</Text>) : name }</NextLinkAnchor>
+  );
   return (
-    <Stack direction="row" alignItems="baseline" spacing={1} divider={<Divider orientation="vertical" flexItem />}>
+    <Group {...groupProps}>
       {showBack && <Button onClick={handleBack} sx={{ minWidth: 0 }}>Back</Button>}
-      {breadcrumbLinks && <Flex padding={1}><Breadcrumbs aria-label="breadcrumbs" separator="»">{breadcrumbLinks}</Breadcrumbs></Flex>}
-    </Stack>
+      {showBack && breadcrumbLinks && <Divider orientation="vertical" />}
+      {breadcrumbLinks && <Breadcrumbs separator="»">{breadcrumbLinks}</Breadcrumbs>}
+    </Group>
   );
 };
 

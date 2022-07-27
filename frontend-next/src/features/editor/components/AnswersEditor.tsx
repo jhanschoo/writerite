@@ -2,12 +2,12 @@ import React, { Dispatch, FC, SetStateAction, useRef } from "react";
 import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, RawDraftContentState, SelectionState } from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
-import { Box, Chip, SxProps, Theme } from "@mui/material";
+import { Badge, Box, Sx } from "@mantine/core";
 
 const entityStrategy: DraftDecorator["strategy"] = (block, callback) =>
   block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
 
-const Wrapper: FC<{ sx?: SxProps<Theme>, onClick?: () => void }> = ({ sx, children, onClick }) => (<Box sx={{
+const Wrapper: FC<{ sx?: Sx, onClick?: () => void }> = ({ sx, children, onClick }) => (<Box sx={{
   ".DraftEditor-root ul": {
     listStyleType: "none",
     display: "flex",
@@ -27,9 +27,8 @@ const Wrapper: FC<{ sx?: SxProps<Theme>, onClick?: () => void }> = ({ sx, childr
   {children}
 </Box>);
 
-// TODO: use chip
 const StyledAnswer: FC<Record<string, unknown>> = ({ children }) => {
-  return (<Chip label={children} component="span" size="small" />)
+  return (<Badge>{children}</Badge>)
 }
 
 export const answersDecorator = new CompositeDecorator([

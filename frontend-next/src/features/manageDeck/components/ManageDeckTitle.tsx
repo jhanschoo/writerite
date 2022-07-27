@@ -1,106 +1,94 @@
-import { DeckEditDocument } from "@generated/graphql";
-import { CircularProgress, Stack, TextField, Typography, useTheme } from "@mui/material";
-import { formatISO, parseISO } from "date-fns";
-import { ChangeEvent, FC, useEffect, useRef, useState } from "react";
-import { useMutation } from "urql";
-import { ManageDeckProps } from "../types/ManageDeckProps";
+import { DeckEditDocument } from '@generated/graphql';
+import { ActionIcon, createStyles, Group, Input, LoadingOverlay, Text, Title, UnstyledButton } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { PaperPlaneIcon } from '@modulz/radix-icons';
+import { formatISO, parseISO } from 'date-fns';
+import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { useMutation } from 'urql';
+import { ManageDeckProps } from '../types/ManageDeckProps';
+
+const useStyles = createStyles((_theme, _params, getRef) => ({
+  editText: {
+    ref: getRef('editText'),
+    visibility: 'hidden',
+  },
+
+  titleContainer: {
+    [`&:hover .${getRef('editText')}`]: {
+      visibility: 'visible',
+    },
+  },
+}));
 
 export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name, editedAt } }) => {
   const [{ fetching }, mutateTitle] = useMutation(DeckEditDocument);
-
-  const theme = useTheme();
-  const [showInput, setShowInput] = useState(false);
-  const [nameInput, setNameInput] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
-  const titleRef = useRef<HTMLHeadElement>(null);
+  const { classes: { editText, titleContainer } } = useStyles();
+  const [showNameInput, setShowNameInput] = useState(false);
   useEffect(() => {
-    const inputElement = inputRef.current;
-    const titleElement = titleRef.current;
-    if (inputElement && titleElement) {
-      inputElement.style.width = `${titleElement.getBoundingClientRect().width}px`;
-    }
-  }, [showInput, nameInput]);
-  useEffect(() => {
-    if (showInput) {
-      inputRef.current?.select();
-    }
-  }, [showInput]);
+    showNameInput && inputRef.current?.select();
+  }, [showNameInput]);
+  const form = useForm({
+    initialValues: {
+      name,
+    },
+  });
+  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   const startEditingTitle = () => {
     if (!fetching) {
-      setShowInput(true);
+      setShowNameInput(true);
+      form.setFieldValue('name', name);
     }
-  }
-  const endEditingTitle = async () => {
-    setShowInput(false);
-    const { data } = await mutateTitle({
-      id,
-      name: nameInput,
-    });
-    if (data) {
-      setNameInput(data.deckEdit.name);
-    }
-  }
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNameInput(e.target.value);
   };
-  const nameDisplay = <Typography variant="h3" sx={{
-    height: "1.4375em",
-    lineHeight: "1.4375",
-    fontSize: (nameInput || showInput) ? "italic" : undefined,
-    color: (!nameInput || fetching) ? theme.palette.text.secondary : undefined,
-  }} ref={titleRef}>{(nameInput || showInput) ? nameInput : "Untitled Deck"}</Typography>;
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: "date" });
-  return <Stack direction="row" alignItems="baseline" spacing={2}>
-    <Stack direction="row" sx={{ position: "relative" }}>
-      <Stack direction="row" onClick={startEditingTitle} sx={{
-        padding: "16.5px 14px",
-        visibility: showInput ? "hidden" : "visible",
-        position: showInput ? "absolute" : undefined,
-        whiteSpace: "pre",
-        borderRadius: "4px",
-        "&:hover": {
-          backgroundColor: theme.palette.secondary.light,
-        },
-        alignItems: "baseline"
-      }}>
-        {nameDisplay}
-        {fetching && 
-        <Stack direction="row" justifyContent="center" sx={{
-          position: "absolute",
-          top: "-16.5px",
-          left: "-14px",
-          width: "100%",
-          height: "100%",
-        }}>
-          <Stack direction="row" sx={{
-            width: "6ex",
-            height: "6ex",
-            alignSelf: "end",
-          }}>
-            <CircularProgress size="6ex" />
-          </Stack>
-        </Stack>}
-      </Stack>
-      <Stack sx={{
-        visibility: showInput ? "visible" : "hidden",
-        position: showInput ? undefined : "absolute",
-      }}>
-        <TextField
-          value={nameInput}
-          onChange={handleNameChange}
-          onKeyDown={(e) => e.key === "Enter" && endEditingTitle()}
-          label="Deck Title"
-          variant="outlined"
-          inputProps={{
-            sx: {
-              ...theme.typography.h3,
-            }
-          }}
-          onBlur={endEditingTitle}
-          inputRef={inputRef}
-        />
-      </Stack>
-    </Stack>
-    <Typography>last edited: {editedAtDisplay}</Typography>
-  </Stack>
-}
+  const endEditingTitle = async (newName: string) => {
+    if (name !== newName) {
+      await mutateTitle({ id, name: newName });
+    }
+    setShowNameInput(false);
+  };
+  const submitForm = form.onSubmit(({ name: newName }) => endEditingTitle(newName));
+  if (showNameInput) {
+    return (
+      <Group align="baseline" sx={{ position: 'relative' }}>
+        <LoadingOverlay visible={fetching} />
+        <form
+          onSubmit={submitForm}
+        >
+          <Input.Wrapper label="Title" description="Enter a new title for your deck" required error={form.getInputProps('name').error}>
+            <Input
+              placeholder="Deck Title"
+              type="text"
+              size="xl"
+              styles={{
+                input: { fontWeight: 'bolder' },
+              }}
+              ref={inputRef}
+              disabled={fetching}
+              required
+              autoFocus
+              onKeyDown={(e: KeyboardEvent<HTMLInputElement>) =>
+                (e.key === 'Escape') && setShowNameInput(false)
+              }
+              rightSection={
+                <ActionIcon size={48} variant="subtle" color="dark" title="Save">
+                  <PaperPlaneIcon />
+                </ActionIcon>
+              }
+              rightSectionWidth={60}
+              {...form.getInputProps('name')}
+            />
+            <Text color="dimmed" size="xs" sx={{ marginTop: '7px' }}>Press &lsquo;esc&rsquo; to cancel editing</Text>
+          </Input.Wrapper>
+        </form>
+      </Group>
+    );
+  }
+  return (
+    <UnstyledButton className={titleContainer} component="div" onClick={startEditingTitle}>
+      <Group align="baseline">
+        <Title order={1}>{name}</Title>
+        <Text color="dimmed" className={editText}>edit...</Text>
+      </Group>
+    </UnstyledButton>
+  );
+};

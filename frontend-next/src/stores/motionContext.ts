@@ -1,6 +1,6 @@
-import { createContext } from "react";
-import type { MotionProps } from "framer-motion";
-import { motionThemes } from "@lib/framer-motion/motionThemes";
+import { createContext } from 'react';
+import type { MotionProps } from 'framer-motion';
+import { motionThemes } from '@lib/framer-motion/motionThemes';
 
 export interface MotionState {
   motionProps: MotionProps;

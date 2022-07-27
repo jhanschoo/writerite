@@ -1,7 +1,7 @@
-import { GetServerSideProps, NextPage } from "next";
-import { useQuery } from "urql";
-import { initDefaultServerSideUrqlClient } from "@lib/urql/initDefaultServerSideUrqlClient";
-import { HealthQueryDocument } from "@generated/graphql";
+import { GetServerSideProps, NextPage } from 'next';
+import { useQuery } from 'urql';
+import { initDefaultServerSideUrqlClient } from '@lib/urql/initDefaultServerSideUrqlClient';
+import { HealthQueryDocument } from '@generated/graphql';
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const [client, getUrqlState] = initDefaultServerSideUrqlClient();
@@ -12,8 +12,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
     props: {
       urqlState: getUrqlState(),
     },
-  }
-}
+  };
+};
 
 const Ssr: NextPage = () => {
   const [result] = useQuery({
@@ -22,6 +22,6 @@ const Ssr: NextPage = () => {
   return (
     <p>{JSON.stringify(result.data)}</p>
   );
-}
+};
 
 export default Ssr;

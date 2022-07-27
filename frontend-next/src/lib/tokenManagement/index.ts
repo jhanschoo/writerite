@@ -1,4 +1,4 @@
-import { isSSRContext } from "@/utils";
+import { isSSRContext } from '@/utils';
 
 const ACCESS_TOKEN_KEY = 'access_token';
 

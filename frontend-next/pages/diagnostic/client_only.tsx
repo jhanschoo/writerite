@@ -1,10 +1,9 @@
-import { NextPage } from "next";
-import { SubscriptionHandler, useQuery, useSubscription } from "urql";
-import { HealthQueryDocument, RepeatHealthSubscriptionDocument, RepeatHealthSubscriptionSubscription } from "@generated/graphql";
+import { NextPage } from 'next';
+import { SubscriptionHandler, useQuery, useSubscription } from 'urql';
+import { HealthQueryDocument, RepeatHealthSubscriptionDocument, RepeatHealthSubscriptionSubscription } from '@generated/graphql';
 
-const handleSubscription: SubscriptionHandler<RepeatHealthSubscriptionSubscription, string[]> = (prevData = [], response) => {
-  return [...prevData, response.repeatHealth];
-}
+const handleSubscription: SubscriptionHandler<RepeatHealthSubscriptionSubscription, string[]> =
+  (prevData, response) => [...(prevData || []), response.repeatHealth];
 
 const ClientOnly: NextPage = () => {
   const [result] = useQuery({
@@ -17,6 +16,6 @@ const ClientOnly: NextPage = () => {
       <p>{JSON.stringify(res.data)}</p>
     </div>
   );
-}
+};
 
 export default ClientOnly;

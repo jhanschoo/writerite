@@ -1,27 +1,32 @@
 import { motion } from 'framer-motion';
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 import { useQuery } from 'urql';
 
 import { UserDocument } from '@generated/graphql';
-import FinalizeUserDialog from '@components/user/FinalizeUserDialog';
 import { useMotionContext } from '@hooks/useMotionContext';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { Dashboard } from '@/features/dashboard';
 import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 
 const Home: NextPage = () => {
+  const router = useRouter();
   const { motionProps } = useMotionContext();
-  const [userResult, reexecuteUserQuery] = useQuery({
+  const [userResult] = useQuery({
     query: UserDocument,
   });
-  const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
+  useEffect(() => {
+    if (userResult.data?.user && !userResult.data.user.name) {
+      router.push('/app/finalize-name');
+    }
+  });
   return (
-    <motion.div {...motionProps}>
-      <FinalizeUserDialog open={showFinalizeUserModal} handleSuccessfulNameChange={reexecuteUserQuery} />
-      <StandardLayout breadcrumbs={[["/app", "Home"]]}>
+    <StandardLayout breadcrumbs={[['/app', 'Home']]}>
+      <motion.div {...motionProps}>
         <Dashboard />
-      </StandardLayout>
-    </motion.div>
+      </motion.div>
+    </StandardLayout>
   );
-}
+};
 
 export default Home;

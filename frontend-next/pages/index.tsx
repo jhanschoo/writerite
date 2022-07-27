@@ -1,10 +1,10 @@
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Signin, useLogin } from '@features/signin';
-import { Flex } from '@components/Flex';
 import HeroHeading from '@components/HeroHeading';
 import BrandText from '@components/typography/BrandText';
+import { Box, Center, Stack } from '@mantine/core';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -16,26 +16,23 @@ const Home: NextPage = () => {
     }
   }, [router, login]);
   return (
-    <Flex
+    <Stack
+      align="center"
       sx={{
-        flexDirection: 'column',
-        height: "100vh",
-        gridTemplateColumns: "repeat(12, 1fr)",
+        height: '100vh',
       }}
     >
-      <Flex sx={{ justifyContent: "space-around", width: "100%", minHeight: "25vw" }}>
-        <HeroHeading sx={{
-          maxWidth: "50vw",
-        }}>
+      <Center sx={(theme) => ({ minHeight: '25vw', maxWidth: '50vw', margin: theme.spacing.lg })}>
+        <HeroHeading>
           <em>Study with supercharged flashcards on </em>
           <BrandText full suffix=".">WriteRite</BrandText>
         </HeroHeading>
-      </Flex>
-      <Flex paddingX={4} sx={{ flexDirection: 'column' }} >
-        <Signin sx={{ width: "100%" }} />
-      </Flex>
-    </Flex>
+      </Center>
+      <Center sx={(theme) => ({ maxWidth: '50vw' })}>
+        <Signin sx={{ width: '100%' }} />
+      </Center>
+    </Stack>
   );
-}
+};
 
-export default Home
+export default Home;

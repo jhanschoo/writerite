@@ -1,70 +1,125 @@
 import { formatISO, parseISO } from 'date-fns';
-import { Button, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { useRouter } from 'next/router';
 import { FC, MouseEvent } from 'react';
-import { useQuery } from 'urql';
+import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
-import { DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
-import { Add } from '@mui/icons-material';
+import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
+import { Button, Group, Paper, Stack, Text, Title, UnstyledButton, UnstyledButtonProps } from '@mantine/core';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
-const DeckItem = ({ deck: { id, name, editedAt, subdecks, cardsDirect } }: { deck: DecksQuery["decks"][number] }) => {
-  const theme = useTheme();
-  const router = useRouter();
-  const nameDisplay = name ? <Typography variant="h5">{name}</Typography> : <Typography variant="h5" sx={{ fontStyle: "italic", color: theme.palette.text.secondary }}>Untitled</Typography>;
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: "date" });
-  const handleClick = (e: MouseEvent) => {
-    e.stopPropagation();
-    router.push(`/app/deck/${id}`);
-  };
-  return <Paper elevation={2} onClick={handleClick}>
-    <Stack padding={2}>
-      {nameDisplay}
-      <Typography>{subdecks.length} subdecks<br />
-      {cardsDirect.length} cards<br />
-      last edited at {editedAtDisplay}
-      </Typography>
-    </Stack>
-  </Paper>
-}
+const NewDeckItem = (props: UnstyledButtonProps<'button'>) => (
+  <UnstyledButton sx={{ height: 'unset' }} {...props}>
+    <Paper
+      shadow="md"
+      radius="md"
+      p="md"
+      withBorder
+      sx={(theme) => {
+        const { background, color, hover } = theme.fn.variant({ variant: 'filled' });
+        return {
+          backgroundColor: background,
+          color,
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          ...theme.fn.hover({ backgroundColor: hover }),
+        };
+      }}
+    >
+      <Text size="xl" weight="bolder">Create a new Deck</Text>
+    </Paper>
+  </UnstyledButton>
+);
 
+const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, ...props }: { deck: DecksQuery['decks'][number] } & UnstyledButtonProps<'button'>) => {
+  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
+  return (
+    <UnstyledButton sx={{ height: 'unset' }} {...props}>
+      <Paper
+        shadow="md"
+        radius="md"
+        p="md"
+        withBorder
+        sx={(theme) => {
+          const { border, background, color, hover } = theme.fn.variant({ variant: 'default' });
+          return {
+            backgroundColor: background,
+            color,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderColor: border,
+            ...theme.fn.hover({ backgroundColor: hover }),
+          };
+        }}
+      >
+        <Stack>
+          {
+            name
+            ? <Text size="lg" weight="bold">{name}</Text>
+            :
+            <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
+              Untitled Deck
+            </Text>
+          }
+          <Text>
+            {subdecks.length} subdecks<br />
+            {cardsDirect.length} cards<br />
+            last edited at {editedAtDisplay}
+          </Text>
+        </Stack>
+      </Paper>
+    </UnstyledButton>
+  );
+};
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
-  const handleCreateDeckDialog = (e: MouseEvent) => {
-    e.stopPropagation();
-    setMotionProps(motionThemes.forward);
-    router.push('/app/deck/create');
-  }
-  const handleManageDecksDialog = (e: MouseEvent) => {
-    e.stopPropagation();
-    setMotionProps(motionThemes.forward);
-    router.push('/app/deck');
-  }
-  const [decksResult] = useQuery({
+  const [decksResult, refetchDecks] = useQuery({
     query: DecksDocument,
     variables: {
       scope: DecksQueryScope.Owned,
       take: USER_DECK_SUMMARY_DECKS_NUM,
     },
   });
-  const decks = (decksResult.data?.decks || []).map((deck, index) => <DeckItem key={index} deck={deck} />);
+  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+  const handleManageDecksDialog = async (e: MouseEvent) => {
+    e.stopPropagation();
+    setMotionProps(motionThemes.forward);
+    const createdDeck = await deckCreateMutation({
+      answerLang: 'en',
+      archived: false,
+      cards: [],
+      description: {},
+      name: '',
+      promptLang: 'en',
+      published: false,
+    });
+    refetchDecks();
+    if (createdDeck.data?.deckCreate.id) {
+      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+    }
+  };
+  const decks = (decksResult.data?.decks || []).map(
+    (deck, index) => <DeckItem key={index} deck={deck} onClick={(e) => {
+      e.stopPropagation();
+      router.push(`/app/deck/${deck.id}`);
+    }} />
+  );
   return (
-    <Paper sx={{ padding: 2, cursor: "pointer" }} variant="outlined" onClick={handleManageDecksDialog}>
-      <Stack direction="row" alignItems="baseline" spacing={2}>
-        <Typography variant="h4" paddingBottom={2}>Decks</Typography>
-      </Stack>
-      <Stack direction="row" alignItems="stretch" spacing={2}>
-        <Button onClick={handleCreateDeckDialog} variant="large-action" size="large" key="deck-create-button" aria-label="Create an new Deck">
-          <Add />
-        </Button>
-        {decks}
-        <Button onClick={handleManageDecksDialog} size="large" key="manage-decks-button">
-          more...
-        </Button>
-      </Stack>
-    </Paper>
+    <UnstyledButton component="div" onClick={() => router.push('/app/deck')}>
+      <Paper shadow="md" radius="md" p="md" withBorder>
+        <Title order={2}>Decks</Title>
+        <Group align="stretch" sx={{ minHeight: '5rem' }}>
+          <NewDeckItem onClick={handleManageDecksDialog} />
+          {decks}
+          <Text sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>View more...</Text>
+        </Group>
+      </Paper>
+    </UnstyledButton>
   );
 };

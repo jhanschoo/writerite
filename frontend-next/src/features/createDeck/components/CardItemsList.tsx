@@ -1,4 +1,3 @@
-import { Stack } from "@mui/material";
 import { EditableCard } from "./EditableCard";
 import type { IEditableCard } from "../types/IEditableCard";
 
@@ -22,7 +21,8 @@ export const CardItemsList = ({ cards, handleCardChange, handleCardDelete }: Car
       }}
     />
   );
-  return <Stack spacing={2} padding={2} width="100%" maxHeight="50vh" overflow="auto">
-    {cardItems}
-  </Stack>;
+  // return <Stack spacing={2} padding={2} width="100%" maxHeight="50vh" overflow="auto">
+  //   {cardItems}
+  // </Stack>;
+  return null;
 };

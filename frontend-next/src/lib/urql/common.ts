@@ -1,15 +1,15 @@
-import { SSRExchange } from "next-urql";
-import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } from "urql/core";
+import { SSRExchange } from 'next-urql';
+import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } from 'urql/core';
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange } from '@urql/exchange-graphcache';
-import { getAccessKey } from "@lib/tokenManagement";
-import { isSSRContext } from "@/utils";
-import { createClient } from "graphql-ws";
-import WebSocket from "isomorphic-ws";
-import schema from "@root/graphql.schema.json";
-import { IntrospectionData } from "@urql/exchange-graphcache/dist/types/ast";
-import { Deck } from "@generated/graphql";
+import { getAccessKey } from '@lib/tokenManagement';
+import { createClient } from 'graphql-ws';
+import WebSocket from 'isomorphic-ws';
+import schema from '@root/graphql.schema.json';
+import { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
+import { Deck } from '@generated/graphql';
+import { isSSRContext } from '@/utils';
 
 export const commonUrqlOptions = {
   url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
@@ -21,14 +21,14 @@ export const commonUrqlOptions = {
 const wsClient = createClient({
   url: process.env.NEXT_PUBLIC_GRAPHQL_WS as string,
   webSocketImpl: WebSocket,
-})
+});
 
 const auth = authExchange<string | null>({
   addAuthToOperation({ authState, operation }) {
     if (isSSRContext() || !authState) {
       return operation;
     }
-    const prevFetchOptions = 
+    const prevFetchOptions =
     typeof operation.context.fetchOptions === 'function'
       ? operation.context.fetchOptions()
       : operation.context.fetchOptions || {};
@@ -36,21 +36,21 @@ const auth = authExchange<string | null>({
       ...prevFetchOptions,
       headers: {
         ...prevFetchOptions.headers,
-        "Authorization": `Bearer ${authState}`,
+        Authorization: `Bearer ${authState}`,
       },
     };
 
     return makeOperation(operation.kind, operation, {
       ...operation.context,
       fetchOptions,
-    })
+    });
   },
   async getAuth({ authState }) {
     return authState || getAccessKey();
   },
   didAuthError({ authState }) {
     return authState === null;
-  }
+  },
 });
 
 const subscription = subscriptionExchange({
@@ -69,11 +69,11 @@ export const getExchanges = (ssr: SSRExchange) => [
     resolvers: {
       Query: {
         deck(_parent, { id }) {
-          const __typename: Deck["__typename"] = "Deck";
+          const __typename: Deck['__typename'] = 'Deck';
           return { __typename, id };
-        }
-      }
-    }
+        },
+      },
+    },
   }),
   ssr,
   auth,

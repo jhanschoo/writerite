@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 import { useQuery } from 'urql';
 
 import { UserDocument } from '@generated/graphql';
@@ -14,12 +14,12 @@ const Home: NextPage = () => {
   });
   const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
   return (
-    <motion.div {...motionProps}>
-      <StandardLayout breadcrumbs={[["/app", "Home"], ["/app/deck", "Decks"]]}>
+    <StandardLayout breadcrumbs={[['/app', 'Home'], ['/app/deck', 'Decks']]}>
+      <motion.div {...motionProps}>
         <ManageDecks />
-      </StandardLayout>
-    </motion.div>
+      </motion.div>
+    </StandardLayout>
   );
-}
+};
 
 export default Home;

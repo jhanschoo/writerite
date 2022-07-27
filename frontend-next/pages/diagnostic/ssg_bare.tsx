@@ -1,9 +1,7 @@
-import { NextPage } from "next";
+import { NextPage } from 'next';
 
-const SsgBare: NextPage = () => {
-  return (
+const SsgBare: NextPage = () => (
     <p>Hello World!</p>
   );
-}
 
 export default SsgBare;

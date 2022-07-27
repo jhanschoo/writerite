@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Span } from "@components/Span";
+import { Text } from '@mantine/core';
 
 interface Props {
   full?: boolean;
@@ -9,13 +9,16 @@ interface Props {
 
 const BrandText: FC<Props> = ({ prefix, full, suffix }) =>
   (
-    <Span sx={{
-      fontWeight: 400,
-      fontSize: "125%",
-      fontFamily: "Yeseva One, serif",
-    }}>
-      {prefix}{full ? "WriteRite" : "Wr"}{suffix}
-    </Span>
+    <Text
+      component="span"
+      sx={{
+        fontWeight: 400,
+        fontSize: '125%',
+        fontFamily: 'Yeseva One, serif',
+      }}
+    >
+      {prefix}{full ? 'WriteRite' : 'Wr'}{suffix}
+    </Text>
   );
 
 export default BrandText;

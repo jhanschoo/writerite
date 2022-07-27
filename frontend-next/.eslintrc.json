@@ -2,12 +2,24 @@
   "ignorePatterns": ["generated/**/*"],
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["testing-library", "jest"],
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "import/extensions": "ignorePackages"
+  },
   "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "next/core-web-vitals"
+    "mantine",
+    "plugin:@next/next/recommended",
+    "plugin:jest/recommended",
+    "plugin:storybook/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["**/?(*.)+(spec|test).[jt]s?(x)"],
+      "extends": ["plugin:testing-library/react"]
+    }
   ]
 }

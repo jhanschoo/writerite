@@ -1,10 +1,10 @@
-import { Button, Card, CardContent, Stack, SxProps, Typography } from "@mui/material";
 import useFacebookSignin from "../hooks/useFacebookSignin";
 import useGoogleSignin from "../hooks/useGoogleSignin";
 import useDevelopmentSignin from "../hooks/useDevelopmentSignin";
+import { Button, Group, Sx } from "@mantine/core";
 
 interface Props {
-  sx?: SxProps;
+  sx?: Sx;
 }
 
 export const Signin = ({ sx }: Props) => {
@@ -12,27 +12,14 @@ export const Signin = ({ sx }: Props) => {
   const [, googleSignin] = useGoogleSignin();
   const [, developmentSignin] = useDevelopmentSignin();
   return (
-    <Card sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', ...sx }}>
-      <CardContent>
-        <Typography variant="h5" textAlign="center" paddingBottom={2}>
-          Sign in with...
-        </Typography>
-        <Stack direction="row" justifyContent="center" spacing={2}>
-          <Button variant="contained" color="inverse" onClick={googleSignin}>
-            Google
-          </Button>
-          <Button variant="contained" color="inverse" onClick={facebookSignin}>
-            Facebook
-          </Button>
-          {
-            process.env.NODE_ENV === "development" && (
-              <Button variant="contained" color="inverse" onClick={developmentSignin}>
-                Dev
-              </Button>
-            )
-          }
-        </Stack>
-      </CardContent>
-    </Card>
+    <Group>
+      <Button onClick={googleSignin}>Sign in with Google</Button>
+      <Button onClick={facebookSignin}>Sign in with Facebook</Button>
+      {
+        process.env.NODE_ENV === "development" && (
+          <Button onClick={developmentSignin}>Sign in in Development</Button>
+        )
+      }
+    </Group>
   );
 };

@@ -1,10 +1,15 @@
-import { styled } from "@mui/material";
+import { Title } from '@mantine/core';
+import { FC } from 'react';
 
-const HeroHeading = styled("h1")({
-  fontSize: "300%",
-  textAlign: "center",
-  margin: 0,
-  padding: "2rem",
-});
+const HeroHeading: FC = ({ children }) =>
+  <Title
+    order={1}
+    align="center"
+    sx={{
+      fontSize: '300%',
+    }}
+  >
+    {children}
+  </Title>;
 
 export default HeroHeading;
