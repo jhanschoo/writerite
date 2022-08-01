@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useMutation } from 'urql';
-import { PaperPlaneIcon } from '@modulz/radix-icons';
+import { PaperPlaneIcon } from '@radix-ui/react-icons';
 
 import { UserEditDocument } from '@generated/graphql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { useRouter } from 'next/router';
-import { Button, Center, InputWrapper, Stack, TextInput, Title } from '@mantine/core';
-import { useForm } from '@mantine/hooks';
+import { Button, Center, Stack, TextInput, Title } from '@mantine/core';
+import { useForm } from '@mantine/form';
 
 const FinalizeName: NextPage = () => {
   const form = useForm({
@@ -30,19 +30,13 @@ const FinalizeName: NextPage = () => {
         >
           <Stack>
             <Title order={1}>Let&rsquo;s finalize your account...</Title>
-            <InputWrapper
-              id="input-username"
-              required
-              label="Username"
+            <TextInput
+              placeholder="Enter a username..."
+              rightSection={<Button compact type="submit" variant="subtle"><PaperPlaneIcon /></Button>}
               description="Please enter a username that will be displayed publicly."
-            >
-              <TextInput
-                id="input-username"
-                placeholder="Enter a username..."
-                rightSection={<Button compact type="submit" variant="subtle"><PaperPlaneIcon /></Button>}
-                {...form.getInputProps('name')}
-              />
-            </InputWrapper>
+              label="Username"
+              {...form.getInputProps('name')}
+            />
           </Stack>
         </form>
       </Center>
