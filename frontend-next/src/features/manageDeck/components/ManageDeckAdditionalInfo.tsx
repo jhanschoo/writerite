@@ -6,6 +6,6 @@ import { ManageDeckProps } from '../types/ManageDeckProps';
 export const ManageDeckAdditionalInfo: FC<ManageDeckProps> = ({ deck: { editedAt } }) => {
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
-    <Text color="dimmed" size="xs">Last edited on {editedAtDisplay}</Text>
+    <Text color="dimmed" size="xs" mx="md">Last edited on {editedAtDisplay}</Text>
   );
 };

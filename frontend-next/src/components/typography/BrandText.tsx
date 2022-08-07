@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, PropsWithChildren } from 'react';
 import { Text } from '@mantine/core';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
   suffix?: string;
 }
 
-const BrandText: FC<Props> = ({ prefix, full, suffix }) =>
+const BrandText: FC<PropsWithChildren<Props>> = ({ prefix, full, suffix }) =>
   (
     <Text
       component="span"

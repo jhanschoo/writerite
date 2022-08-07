@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useMutation } from 'urql';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
@@ -19,28 +18,26 @@ const FinalizeName: NextPage = () => {
   const { motionProps } = useMotionContext();
   const [, updateUserName] = useMutation(UserEditDocument);
   return (
-    <motion.div {...motionProps}>
-      <Center sx={{ minHeight: '50vh' }}>
-        <form onSubmit={form.onSubmit(async (values) => {
-          const result = await updateUserName(values);
-          if (result.data?.userEdit.name === values.name) {
-            router.push('/app');
-          }
-        })}
-        >
-          <Stack>
-            <Title order={1}>Let&rsquo;s finalize your account...</Title>
-            <TextInput
-              placeholder="Enter a username..."
-              rightSection={<Button compact type="submit" variant="subtle"><PaperPlaneIcon /></Button>}
-              description="Please enter a username that will be displayed publicly."
-              label="Username"
-              {...form.getInputProps('name')}
-            />
-          </Stack>
-        </form>
-      </Center>
-    </motion.div>
+    <Center sx={{ minHeight: '50vh' }}>
+      <form onSubmit={form.onSubmit(async (values) => {
+        const result = await updateUserName(values);
+        if (result.data?.userEdit.name === values.name) {
+          router.push('/app');
+        }
+      })}
+      >
+        <Stack>
+          <Title order={1}>Let&rsquo;s finalize your account...</Title>
+          <TextInput
+            placeholder="Enter a username..."
+            rightSection={<Button compact type="submit" variant="subtle"><PaperPlaneIcon /></Button>}
+            description="Please enter a username that will be displayed publicly."
+            label="Username"
+            {...form.getInputProps('name')}
+          />
+        </Stack>
+      </form>
+    </Center>
   );
 };
 

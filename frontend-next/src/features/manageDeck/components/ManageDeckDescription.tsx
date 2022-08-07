@@ -1,5 +1,4 @@
 import { DeckEditDocument } from '@generated/graphql';
-import type Editor from 'react-quill';
 import { FC, KeyboardEvent, useRef, useState } from 'react';
 import { useMutation } from 'urql';
 import { RichTextEditorProps } from '@mantine/rte';
@@ -12,7 +11,7 @@ export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, descrip
   const [{ fetching }, mutateDeck] = useMutation(DeckEditDocument);
   const [writableMode, setWritableMode] = useState(false);
   const [htmlValue, setHtmlValue] = useState<RichTextEditorProps['value']>(description);
-  const editorRef = useRef<Editor>(null);
+  const editorRef = useRef<any>(null);
   const { hovered, ref } = useHover();
   const handleBlur = async () => {
     if (!writableMode || hovered) {
@@ -30,8 +29,7 @@ export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, descrip
   return (
     <Box
       sx={({ spacing: { md } }) => ({
-        margin: `0 -${md}px`,
-        width: `calc(100% + ${md * 2}px)`,
+        width: `100%`,
         position: 'relative',
       })}
       ref={ref}
@@ -72,21 +70,4 @@ export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, descrip
       {writableMode && <Text color="dimmed" size="xs" sx={{ marginTop: '7px', padding: '0 8px' }}>Press &lsquo;esc&rsquo; to save changes and stop editing</Text>}
     </Box>
   );
-
-  // const [{ fetching }, mutateDeck] = useMutation(DeckEditDocument);
-  // // TODO: implement https://github.com/vercel/next.js/issues/2476#issuecomment-563190607 to prevent leaving if unsaved data present
-  // const [editorState, setEditorState] = useState(notesEditorStateFromRaw(description));
-  // const debouncedSaveEditorState = useDebouncedCallback((editorState) => {
-  //   mutateDeck({ id, description: notesEditorStateToRaw(editorState) });
-  // }, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
-  // const setAndSaveEditorState = (newEditorState: EditorState) => {
-  //   setEditorState(newEditorState);
-  //   debouncedSaveEditorState(editorState);
-  // };
-  // return <NotesEditor
-  //   editorState={editorState}
-  //   setEditorState={setAndSaveEditorState}
-  //   placeholder="Write a description..."
-  //   spinner={debouncedSaveEditorState.isPending() || fetching}
-  // />;
 };

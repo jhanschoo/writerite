@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useQuery } from 'urql';
-import { Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 
 import { DeckDocument } from '@generated/graphql';
 import { useMotionContext } from '@hooks/useMotionContext';
@@ -26,11 +26,11 @@ const Home: NextPage = () => {
   const nameBreadcrumb: string | JSX.Element = name || <Text color="dimmed" sx={{ fontStyle: 'italic' }}>Untitled Deck</Text>;
 
   return (
-    <motion.div {...motionProps}>
-      <StandardLayout breadcrumbs={[['/app', 'Home'], ['/app/deck', 'Decks'], [`/app/deck/${id}`, nameBreadcrumb]]}>
-        <ManageDeck deck={deck} />
-      </StandardLayout>
-    </motion.div>
+    <StandardLayout breadcrumbs={[['/app', 'Home'], ['/app/deck', 'Decks'], [`/app/deck/${id}`, nameBreadcrumb]]}>
+      <motion.div {...motionProps}>
+        <ManageDeck deck={deck} grow />
+      </motion.div>
+    </StandardLayout>
   );
 };
 

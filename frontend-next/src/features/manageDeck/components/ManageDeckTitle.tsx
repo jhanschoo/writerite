@@ -84,7 +84,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name, editedA
     );
   }
   return (
-    <UnstyledButton className={titleContainer} component="div" onClick={startEditingTitle}>
+    <UnstyledButton className={titleContainer} component="div" onClick={startEditingTitle} mx="md">
       <Group align="baseline">
         <Title order={1}>{name}</Title>
         <Text color="dimmed" className={editText}>edit...</Text>

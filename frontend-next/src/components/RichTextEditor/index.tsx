@@ -1,14 +1,13 @@
 import type { RichTextEditorProps } from '@mantine/rte';
 import dynamic from 'next/dynamic';
 import type { Ref } from 'react';
-import type ReactQuill from 'react-quill';
 
 export default dynamic(async () => {
   const { default: Editor } = await import('@mantine/rte');
   return (
     { forwardedRef, ...props }:
       RichTextEditorProps
-      & { forwardedRef: Ref<ReactQuill> }
+      & { forwardedRef: Ref<any> }
   ) => <Editor ref={forwardedRef} {...props} />;
 }, {
   // Disable during server side rendering

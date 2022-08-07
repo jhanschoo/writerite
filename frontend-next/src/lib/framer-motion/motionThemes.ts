@@ -13,7 +13,6 @@ const variants = {
 } as const;
 
 const style = {
-  position: 'absolute',
   width: '100%',
   height: '100%',
 } as const;

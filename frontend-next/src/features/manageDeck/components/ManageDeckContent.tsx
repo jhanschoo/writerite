@@ -3,6 +3,8 @@ import { FC } from 'react';
 import { useMutation } from 'urql';
 import { Box, createStyles, Group, Stack, Tabs, useMantineTheme } from '@mantine/core';
 import { ManageDeckProps } from '../types/ManageDeckProps';
+import { ManageDeckCards } from './ManageDeckCards';
+import { ManageDeckSubdecks } from './ManageDeckSubdecks';
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
@@ -12,8 +14,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
   return {
     tabsRoot: {
       position: 'relative',
-      width: `calc(100% + ${spacing.md * 2}px)`,
-      margin: `0 -${spacing.md}px -${spacing.md}px -${spacing.md}px`,
+      width: `100%`,
     },
     tab: {
       '&[data-active]': {
@@ -25,7 +26,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     },
     tabsList: {
       maxWidth: `${breakpoints.lg}px`,
-      width: '100%',
+      width: `calc(100% - ${spacing.md * 4}px)`,
       margin: '0 auto',
       border: '0',
     },
@@ -34,29 +35,29 @@ const useStyles = createStyles((theme, _params, getRef) => {
     },
     panel: {
       maxWidth: `${breakpoints.lg}px`,
-      width: '100%',
+      width: `calc(100% - ${spacing.md * 4}px)`,
       margin: '0 auto',
     },
   }
 });
 
-export const ManageDeckContent: FC<ManageDeckProps> = ({ deck: { id, description } }) => {
+export const ManageDeckContent: FC<ManageDeckProps> = ({ deck }) => {
   const { classes } = useStyles();
   return (
     <Tabs variant="outline" defaultValue="cards" className={classes.tabsRoot}>
       <Group className={classes.tabsListWrapper}>
         <Tabs.List className={classes.tabsList}>
-          <Tabs.Tab value="cards" className={classes.tab}>Cards</Tabs.Tab>
-          <Tabs.Tab value="subdecks" className={classes.tab}>Subdecks</Tabs.Tab>
+          <Tabs.Tab value="cards" className={classes.tab}>{deck.cardsDirect.length} Cards</Tabs.Tab>
+          <Tabs.Tab value="subdecks" className={classes.tab}>{deck.subdecks.length} Subdecks</Tabs.Tab>
         </Tabs.List>
       </Group>
       <Stack className={classes.panelWrapper}>
         <Tabs.Panel value="cards" pt="xs" className={classes.panel}>
-          Gallery tab content
+          <ManageDeckCards deck={deck} />
         </Tabs.Panel>
 
         <Tabs.Panel value="subdecks" pt="xs" className={classes.panel}>
-          Messages tab content
+          <ManageDeckSubdecks deck={deck} />
         </Tabs.Panel>
       </Stack>
     </Tabs>

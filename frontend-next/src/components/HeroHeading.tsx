@@ -1,7 +1,7 @@
 import { Title } from '@mantine/core';
-import { FC } from 'react';
+import { FC, PropsWithChildren } from 'react';
 
-const HeroHeading: FC = ({ children }) =>
+const HeroHeading: FC<PropsWithChildren> = ({ children }) =>
   <Title
     order={1}
     align="center"

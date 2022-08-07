@@ -3,7 +3,7 @@ import Link, { LinkProps } from 'next/link';
 import { Anchor, AnchorProps } from '@mantine/core';
 
 export interface NextLinkAnchorProps
-  extends Omit<AnchorProps<'a'>, 'href'>,
+  extends Omit<AnchorProps, 'href'>,
     Omit<LinkProps, 'as' | 'onClick' | 'onMouseEnter'> {
   linkAs?: LinkProps['as'];
   href: LinkProps['href'];

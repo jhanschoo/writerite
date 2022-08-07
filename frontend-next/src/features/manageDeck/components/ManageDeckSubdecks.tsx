@@ -1,4 +1,5 @@
 import { DeckEditDocument } from "@generated/graphql";
+import { Group, Stack } from "@mantine/core";
 import { FC, useState } from "react";
 import { useMutation } from "urql";
 import { ManageDeckProps } from "../types/ManageDeckProps";
@@ -9,7 +10,13 @@ export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck }) => {
   const { id, subdecks } = deck;
   const [open, setOpen] = useState(false);
   const [{ fetching }, mutateDeck] = useMutation(DeckEditDocument);
-  return null;
+  return (
+    <Stack>
+      <Group>
+        Hello
+      </Group>
+    </Stack>
+  );
   // return <>
   //   <ManageDeckSubdecksAddSubdeckDialog deck={deck} open={open} onClose={() => setOpen(false)} />
   //   <Stack direction="row" spacing={2}>
