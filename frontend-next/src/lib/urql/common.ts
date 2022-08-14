@@ -9,17 +9,17 @@ import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
 import { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
 import { Deck } from '@generated/graphql';
-import { isSSRContext } from '@/utils';
+import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
 
 export const commonUrqlOptions = {
-  url: process.env.NEXT_PUBLIC_GRAPHQL_HTTP as string,
+  url: NEXT_PUBLIC_GRAPHQL_HTTP,
   requestPolicy: 'cache-and-network',
   // preferGetMethod: true seems to be necessary for my implementation of subscriptions to work
   // preferGetMethod: true,
 } as const;
 
 const wsClient = createClient({
-  url: process.env.NEXT_PUBLIC_GRAPHQL_WS as string,
+  url: NEXT_PUBLIC_GRAPHQL_WS,
   webSocketImpl: WebSocket,
 });
 
