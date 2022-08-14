@@ -8,7 +8,6 @@ import { DeckDocument } from '@generated/graphql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';
 import { ManageDeck } from '@/features/manageDeck';
-import { theme } from '@/lib/mantine/theme';
 
 const Home: NextPage = () => {
   const { motionProps } = useMotionContext();

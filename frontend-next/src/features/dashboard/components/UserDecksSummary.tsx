@@ -1,16 +1,16 @@
 import { formatISO, parseISO } from 'date-fns';
 import { useRouter } from 'next/router';
-import { FC, MouseEvent } from 'react';
+import { FC, MouseEvent, MouseEventHandler } from 'react';
 import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
-import { Button, Group, Paper, Stack, Text, Title, UnstyledButton, UnstyledButtonProps } from '@mantine/core';
+import { Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
-const NewDeckItem = (props: UnstyledButtonProps<'button'>) => (
-  <UnstyledButton sx={{ height: 'unset' }} {...props}>
+const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
+  <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
     <Paper
       shadow="md"
       radius="md"
@@ -34,10 +34,10 @@ const NewDeckItem = (props: UnstyledButtonProps<'button'>) => (
   </UnstyledButton>
 );
 
-const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, ...props }: { deck: DecksQuery['decks'][number] } & UnstyledButtonProps<'button'>) => {
+const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
-    <UnstyledButton sx={{ height: 'unset' }} {...props}>
+    <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
       <Paper
         shadow="md"
         radius="md"
@@ -76,6 +76,7 @@ const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, ...props }:
     </UnstyledButton>
   );
 };
+
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();

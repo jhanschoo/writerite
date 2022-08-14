@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import { FC, useState } from 'react';
-import Delta from 'quill-delta';
+import { Delta } from 'quill';
 import { Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 

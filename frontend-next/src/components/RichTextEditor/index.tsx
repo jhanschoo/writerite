@@ -7,7 +7,7 @@ export default dynamic(async () => {
   return (
     { forwardedRef, ...props }:
       RichTextEditorProps
-      & { forwardedRef: Ref<any> }
+      & { forwardedRef?: Ref<any> }
   ) => <Editor ref={forwardedRef} {...props} />;
 }, {
   // Disable during server side rendering

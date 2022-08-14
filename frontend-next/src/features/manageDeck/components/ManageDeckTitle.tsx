@@ -20,7 +20,7 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
   },
 }));
 
-export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name, editedAt } }) => {
+export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => {
   const [{ fetching }, mutateTitle] = useMutation(DeckEditDocument);
   const inputRef = useRef<HTMLInputElement>(null);
   const { classes: { editText, titleContainer } } = useStyles();
@@ -33,7 +33,6 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name, editedA
       name,
     },
   });
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   const startEditingTitle = () => {
     if (!fetching) {
       setShowNameInput(true);

@@ -3,7 +3,6 @@ import { useMutation } from 'urql';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 
 import { UserEditDocument } from '@generated/graphql';
-import { useMotionContext } from '@hooks/useMotionContext';
 import { useRouter } from 'next/router';
 import { Button, Center, Stack, TextInput, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -15,7 +14,6 @@ const FinalizeName: NextPage = () => {
     },
   });
   const router = useRouter();
-  const { motionProps } = useMotionContext();
   const [, updateUserName] = useMutation(UserEditDocument);
   return (
     <Center sx={{ minHeight: '50vh' }}>

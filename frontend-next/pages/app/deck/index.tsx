@@ -9,10 +9,6 @@ import { StandardLayout } from '@/features/standardLayout';
 
 const Home: NextPage = () => {
   const { motionProps } = useMotionContext();
-  const [userResult, reexecuteUserQuery] = useQuery({
-    query: UserDocument,
-  });
-  const showFinalizeUserModal = Boolean(userResult.data?.user && !userResult.data.user.name);
   return (
     <StandardLayout breadcrumbs={[['/app', 'Home'], ['/app/deck', 'Decks']]}>
       <motion.div {...motionProps}>
