@@ -109,6 +109,7 @@ type Mutation {
   cardDelete(id: ID!): Card!
   cardEdit(answers: [String!], fullAnswer: JSONObject, id: ID!, mainTemplate: Boolean, prompt: JSONObject, template: Boolean): Card!
   cardUnsetMainTemplate(deckId: ID!): Card
+  deckAddCards(cards: [CardCreateInput!]!, deckId: ID!): Deck!
   deckAddSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckCreate(answerLang: String, archived: Boolean, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!
   deckDelete(id: ID!): Deck!

@@ -166,6 +166,7 @@ export interface NexusGenFieldTypes {
     cardDelete: NexusGenRootTypes['Card']; // Card!
     cardEdit: NexusGenRootTypes['Card']; // Card!
     cardUnsetMainTemplate: NexusGenRootTypes['Card'] | null; // Card
+    deckAddCards: NexusGenRootTypes['Deck']; // Deck!
     deckAddSubdeck: NexusGenRootTypes['Deck']; // Deck!
     deckCreate: NexusGenRootTypes['Deck']; // Deck!
     deckDelete: NexusGenRootTypes['Deck']; // Deck!
@@ -273,6 +274,7 @@ export interface NexusGenFieldTypeNames {
     cardDelete: 'Card'
     cardEdit: 'Card'
     cardUnsetMainTemplate: 'Card'
+    deckAddCards: 'Deck'
     deckAddSubdeck: 'Deck'
     deckCreate: 'Deck'
     deckDelete: 'Deck'
@@ -354,6 +356,10 @@ export interface NexusGenArgTypes {
       template?: boolean | null; // Boolean
     }
     cardUnsetMainTemplate: { // args
+      deckId: string; // ID!
+    }
+    deckAddCards: { // args
+      cards: NexusGenInputs['CardCreateInput'][]; // [CardCreateInput!]!
       deckId: string; // ID!
     }
     deckAddSubdeck: { // args

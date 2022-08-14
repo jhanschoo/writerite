@@ -5,7 +5,7 @@ import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsE
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { getDescendantsOfDeck } from "../service/deckFamily";
 import { jsonObjectArg } from "./scalarUtil";
-import * as yup from 'yup';
+import * as yup from "yup";
 
 const DEFAULT_TAKE = 60;
 
@@ -252,6 +252,7 @@ export const deckEditSchema = yup.object({
   published: yup.boolean(),
   archived: yup.boolean(),
 });
+
 export const DeckEditMutation = mutationField("deckEdit", {
   type: nonNull("Deck"),
   args: {
@@ -274,6 +275,33 @@ export const DeckEditMutation = mutationField("deckEdit", {
       throw new Error("");
     }
     return deck;
+  }),
+});
+
+export const DeckAddCardsMutation = mutationField("deckAddCards", {
+  type: nonNull("Deck"),
+  args: {
+    deckId: nonNull(idArg()),
+    cards: nonNull(list(nonNull("CardCreateInput"))),
+  },
+  resolve: guardValidUser(async (_root, { deckId, cards }, { sub, prisma }) => {
+    if (await prisma.deck.count({ where: { id: deckId, ownerId: sub.id } }) !== 1) {
+      throw userLacksPermissionsErrorFactory();
+    }
+    const defaultCards = cards.map(({ prompt, fullAnswer, answers, template }) => ({
+      prompt: prompt as Prisma.InputJsonObject,
+      fullAnswer: fullAnswer as Prisma.InputJsonObject,
+      answers,
+      template: template ?? undefined,
+    }));
+    return prisma.deck.update({
+      where: { id: deckId },
+      data: {
+        cards: {
+          create: defaultCards,
+        },
+      },
+    });
   }),
 });
 

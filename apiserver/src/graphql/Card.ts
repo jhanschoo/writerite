@@ -57,9 +57,7 @@ export const CardCreateMutation = mutationField("cardCreate", {
      * note that template is set to true if mainTemplate
      * is set to true and template is unspecified
      */
-    card: nonNull(arg({
-      type: "CardCreateInput",
-    })),
+    card: nonNull("CardCreateInput"),
     mainTemplate: booleanArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
