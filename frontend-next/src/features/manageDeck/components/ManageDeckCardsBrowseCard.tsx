@@ -1,10 +1,11 @@
 import { FC, useState } from 'react';
-import { Card, createStyles, Divider, Stack, Text } from '@mantine/core';
+import { ActionIcon, Badge, Card, createStyles, Divider, Group, Stack, Text } from '@mantine/core';
 import { Delta } from 'quill';
 
 import { ManageDeckProps } from '../types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
 import { useFocusWithin } from '@mantine/hooks';
+import { Cross1Icon, Cross2Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -32,7 +33,7 @@ interface Props {
 }
 
 export const ManageDeckCardsBrowseCard: FC<Props> = ({ card }) => {
-  const { prompt, fullAnswer } = card;
+  const { prompt, fullAnswer, answers } = card;
   const [promptDelta, setPromptDelta] = useState<string | Delta>(prompt);
   const [fullAnswerDelta, setFullAnswerDelta] = useState(fullAnswer);
   const { classes } = useStyles();
@@ -58,6 +59,13 @@ export const ManageDeckCardsBrowseCard: FC<Props> = ({ card }) => {
           onChange={setFullAnswerDelta}
           classNames={classes}
         />
+      </Card.Section>
+      <Card.Section inheritPadding py="sm">
+        <Text size="xs" weight="bold">Accepted answers</Text>
+        <Group spacing="xs">
+          {answers.map((answer, index) => <Badge variant="light" key={index} rightSection={<Group spacing={0}><ActionIcon size="xs" variant="transparent"><Pencil1Icon /></ActionIcon><ActionIcon size="xs" variant="transparent"><Cross2Icon /></ActionIcon></Group>}>{answer}</Badge>)}
+          <Badge variant="outline"><ActionIcon size="xs" variant="transparent"><PlusIcon /></ActionIcon></Badge>
+        </Group>
       </Card.Section>
     </Card>
   );

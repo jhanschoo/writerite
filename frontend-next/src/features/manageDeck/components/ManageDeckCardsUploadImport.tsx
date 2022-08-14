@@ -1,6 +1,7 @@
 import Papa from 'papaparse';
 import { FC, useState } from 'react';
-import { Delta } from 'quill';
+import Delta from 'quill-delta';
+import { Delta as DeltaType } from 'quill';
 import { Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
@@ -37,8 +38,8 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
                 parser.abort();
               }
               newCards = newCards.concat(results.data.map(([prompt, fullAnswer, ...answers]) => ({
-                prompt: new Delta().insert(prompt ?? ""),
-                fullAnswer: new Delta().insert(fullAnswer ?? ""),
+                prompt: new Delta().insert(prompt ?? "") as unknown as DeltaType,
+                fullAnswer: new Delta().insert(fullAnswer ?? "") as unknown as DeltaType,
                 answers: answers.filter((answer) => answer.trim())
               })));
               if (newCards.length > NEXT_PUBLIC_MAX_CARDS_PER_DECK) {
