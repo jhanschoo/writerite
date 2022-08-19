@@ -14,6 +14,7 @@ const Home: NextPage = () => {
   const { motionProps } = useMotionContext();
   const [userResult] = useQuery({
     query: UserDocument,
+    variables: {},
   });
   useEffect(() => {
     if (userResult.data?.user && !userResult.data.user.name) {

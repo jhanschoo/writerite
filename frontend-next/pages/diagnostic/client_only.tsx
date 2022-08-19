@@ -8,8 +8,9 @@ const handleSubscription: SubscriptionHandler<RepeatHealthSubscriptionSubscripti
 const ClientOnly: NextPage = () => {
   const [result] = useQuery({
     query: HealthQueryDocument,
+    variables: {},
   });
-  const [res] = useSubscription({ query: RepeatHealthSubscriptionDocument }, handleSubscription);
+  const [res] = useSubscription({ query: RepeatHealthSubscriptionDocument, variables: {} }, handleSubscription);
   return (
     <div>
       <p>{JSON.stringify(result.data)}</p>

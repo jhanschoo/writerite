@@ -11,7 +11,7 @@ export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
     signinUnderway,
     async () => {
       setSigninUnderway(true);
-      const initializeOauth = await executeInitializeOauth();
+      const initializeOauth = await executeInitializeOauth({});
       const redirect_uri = `${window.location.origin}/api/oauth/callback`;
       const { data } = initializeOauth;
       if (!data) {

@@ -6,7 +6,7 @@ import { HealthQueryDocument } from '@generated/graphql';
 export const getStaticProps: GetStaticProps = async () => {
   const [client, getUrqlState] = initDefaultServerSideUrqlClient();
 
-  await client.query(HealthQueryDocument).toPromise();
+  await client.query(HealthQueryDocument, {}).toPromise();
 
   return {
     props: {
@@ -19,6 +19,7 @@ export const getStaticProps: GetStaticProps = async () => {
 const Ssg: NextPage = () => {
   const [result] = useQuery({
     query: HealthQueryDocument,
+    variables: {},
   });
   return (
     <p>{JSON.stringify(result.data)}</p>

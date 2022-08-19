@@ -12,7 +12,7 @@ export default function useFacebookSignin() {
     signinUnderway,
     async () => {
       setSigninUnderway(true);
-      const initializeOauth = await executeInitializeOauth();
+      const initializeOauth = await executeInitializeOauth({});
       const redirect_uri = `${window.location.origin}/api/oauth/callback`;
       const { data } = initializeOauth;
       if (!data) {
