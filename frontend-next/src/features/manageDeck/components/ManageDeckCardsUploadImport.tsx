@@ -1,13 +1,10 @@
-import Papa from 'papaparse';
 import { FC, useState } from 'react';
-import Delta from 'quill-delta';
-import { Delta as DeltaType } from 'quill';
 import { Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
-import { ManageDeckProps, NewCardData } from '../types';
-import { nextTick, NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
+import { NewCardData } from '../types';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { useParseCsv } from '../hooks/useParseCsv';
 
 const MAX_SIZE_MIB = 3;
 
@@ -20,47 +17,22 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
   const [loading, setLoading] = useState<boolean>(false);
   const [cards, setCards] = useState<null | NewCardData[]>(null)
   const [hasErrors, setHasErrors] = useState<boolean>(false);
+  const parseCsv = useParseCsv();
   const handleDrop = async (files: File[]) => {
     if (files.length !== 1) {
       return;
     }
     const [ csvFile ] = files;
     setLoading(true);
-    await nextTick(async () => {
-      try {
-        const newCards = await new Promise<NewCardData[]>((resolve, reject) => {
-          let newCards: NewCardData[] = [];
-          Papa.parse<string[], File>(csvFile, {
-            skipEmptyLines: "greedy",
-            chunk: (results, parser) => {
-              if (results.errors.length > 0) {
-                reject(results.errors);
-                parser.abort();
-              }
-              newCards = newCards.concat(results.data.map(([prompt, fullAnswer, ...answers]) => ({
-                prompt: new Delta().insert(prompt ?? "") as unknown as DeltaType,
-                fullAnswer: new Delta().insert(fullAnswer ?? "") as unknown as DeltaType,
-                answers: answers.filter((answer) => answer.trim())
-              })));
-              if (newCards.length > NEXT_PUBLIC_MAX_CARDS_PER_DECK) {
-                parser.abort();
-              } else {
-                parser.resume();
-              }
-            },
-            complete: () => resolve(newCards),
-            error: (e) => reject(e),
-          });
-        });
-        // invariant: NEXT_PUBLIC_MAX_CARDS_PER_DECK < newCards.length exactly when csv has more cards to import than NEXT_PUBLIC_MAX_CARDS_PER_DECK
-        onSuccessfulImport(newCards);
-        setHasErrors(false);
-        setLoading(false);
-      } catch (e) {
-        setHasErrors(true);
-        setLoading(false);
-      }
-    });
+    try {
+      const newCards = await parseCsv(csvFile);
+      onSuccessfulImport(newCards);
+      setHasErrors(false);
+      setLoading(false);
+    } catch (e) {
+      setHasErrors(true);
+      setLoading(false);
+    }
   };
   if (cards) {
     return null;
