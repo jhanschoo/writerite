@@ -3,7 +3,7 @@ import { Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '../types/ManageDeckProps';
 import { Delta } from 'quill';
-import { ManageDeckCardsBrowseCard } from './ManageDeckCardsBrowseCard';
+import { ManageCard } from '@/features/manageCard';
 
 type Card = ManageDeckProps['deck']['cardsDirect'][number];
 
@@ -37,7 +37,7 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
     <Stack align="stretch">
       <TextInput value={filter} onChange={handleFilterChange} label="Search cards" sx={{ flexGrow: 1 }} />
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} sx={{ alignSelf: "center" }} /> : undefined}
-      {currentCards.map((card) => <ManageDeckCardsBrowseCard card={card} key={card.id} />)}
+      {currentCards.map((card) => <ManageCard card={card} key={card.id} />)}
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} sx={{ alignSelf: "center" }} /> : undefined}
     </Stack>
   );

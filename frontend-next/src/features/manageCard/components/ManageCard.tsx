@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import { ActionIcon, Badge, Card, createStyles, Divider, Group, Stack, Text } from '@mantine/core';
 import { Delta } from 'quill';
 
-import { ManageDeckProps } from '../types/ManageDeckProps';
+import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
 import { useFocusWithin } from '@mantine/hooks';
 import { Cross1Icon, Cross2Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
@@ -32,7 +32,7 @@ interface Props {
   card: ManageDeckProps["deck"]["cardsDirect"][number];
 }
 
-export const ManageDeckCardsBrowseCard: FC<Props> = ({ card }) => {
+export const ManageCard: FC<Props> = ({ card }) => {
   const { prompt, fullAnswer, answers } = card;
   const [promptDelta, setPromptDelta] = useState<string | Delta>(prompt);
   const [fullAnswerDelta, setFullAnswerDelta] = useState(fullAnswer);
