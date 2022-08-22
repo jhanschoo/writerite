@@ -85,7 +85,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
             </Text>
             {hasErrors && (
               <Text color="red" size="xs">
-                There were errors importing the previous file. Please check and try again.
+                There were errors importing the file. Please check and try again.
               </Text>
             )}
           </Stack>
