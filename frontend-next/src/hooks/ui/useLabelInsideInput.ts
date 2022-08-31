@@ -18,4 +18,4 @@ export const useLabelInsideInput = createStyles((theme) => ({
     paddingTop: theme.spacing.sm / 2,
     zIndex: 1,
   },
-}))
+}));

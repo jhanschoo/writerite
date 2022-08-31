@@ -1,11 +1,13 @@
 import { FC, useState } from 'react';
-import { ActionIcon, Badge, Card, createStyles, Divider, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Badge, Card, createStyles, Divider, Group, Stack, Text, TextInput } from '@mantine/core';
 import { Delta } from 'quill';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
-import { useFocusWithin } from '@mantine/hooks';
-import { Cross1Icon, Cross2Icon, Pencil1Icon, PlusIcon } from '@radix-ui/react-icons';
+import { useListState } from '@mantine/hooks';
+import { PlusIcon } from '@radix-ui/react-icons';
+import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
+import { ManageCardAltAnswer } from './ManageCardAltAnswer';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -36,6 +38,9 @@ export const ManageCard: FC<Props> = ({ card }) => {
   const { prompt, fullAnswer, answers } = card;
   const [promptDelta, setPromptDelta] = useState<string | Delta>(prompt);
   const [fullAnswerDelta, setFullAnswerDelta] = useState(fullAnswer);
+  const [answerValues, handlers] = useListState(answers);
+  const [currentlyEditing, setCurrentlyEditing] = useState<number | null>(null);
+  const existsCurrentlyEditing = currentlyEditing !== null;
   const { classes } = useStyles();
   return (
     <Card withBorder shadow="sm" radius="md">
@@ -63,8 +68,31 @@ export const ManageCard: FC<Props> = ({ card }) => {
       <Card.Section inheritPadding py="sm">
         <Text size="xs" weight="bold">Accepted answers</Text>
         <Group spacing="xs">
-          {answers.map((answer, index) => <Badge variant="light" key={index} rightSection={<Group spacing={0}><ActionIcon size="xs" variant="transparent"><Pencil1Icon /></ActionIcon><ActionIcon size="xs" variant="transparent"><Cross2Icon /></ActionIcon></Group>}>{answer}</Badge>)}
-          <Badge variant="outline"><ActionIcon size="xs" variant="transparent"><PlusIcon /></ActionIcon></Badge>
+          {answerValues.map((answer, index) => {
+            if (index === currentlyEditing) {
+              return <ManageCardAltAnswerInput key={index} initialAnswer={answer} onCancel={() => {
+                setCurrentlyEditing(null);
+                if (!answer) {
+                  handlers.remove(index);
+                }
+              }} onSave={(newAnswer) => {
+                const answerToSave = newAnswer.trim();
+                setCurrentlyEditing(null);
+                if (answerToSave) {
+                  handlers.setItem(index, answerToSave);
+                } else {
+                  handlers.remove(index);
+                }
+              }}
+              />;
+            }
+            return <ManageCardAltAnswer key={index} answer={answer} onRemove={() => handlers.remove(index)} editable={!existsCurrentlyEditing} onStartEditing={() => setCurrentlyEditing(index)} />
+          })}
+          {currentlyEditing === null && (
+            <Badge variant="outline" onClick={() => { handlers.append(""); setCurrentlyEditing(answerValues.length); }}>
+              <ActionIcon size="xs" variant="transparent"><PlusIcon /></ActionIcon>
+            </Badge>
+          )}
         </Group>
       </Card.Section>
     </Card>
