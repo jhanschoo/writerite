@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { ActionIcon, Badge, Card, createStyles, Divider, Group, Stack, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Badge, Card, createStyles, Divider, Group, Paper, Stack, Text, TextInput } from '@mantine/core';
 import { Delta } from 'quill';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
@@ -67,7 +67,7 @@ export const ManageCard: FC<Props> = ({ card }) => {
       </Card.Section>
       <Card.Section inheritPadding py="sm">
         <Text size="xs" weight="bold">Accepted answers</Text>
-        <Group spacing="xs">
+        <Group spacing="xs" py="xs">
           {answerValues.map((answer, index) => {
             if (index === currentlyEditing) {
               return <ManageCardAltAnswerInput key={index} initialAnswer={answer} onCancel={() => {
@@ -89,9 +89,9 @@ export const ManageCard: FC<Props> = ({ card }) => {
             return <ManageCardAltAnswer key={index} answer={answer} onRemove={() => handlers.remove(index)} editable={!existsCurrentlyEditing} onStartEditing={() => setCurrentlyEditing(index)} />
           })}
           {currentlyEditing === null && (
-            <Badge variant="outline" onClick={() => { handlers.append(""); setCurrentlyEditing(answerValues.length); }}>
-              <ActionIcon size="xs" variant="transparent"><PlusIcon /></ActionIcon>
-            </Badge>
+            <Paper withBorder px="xs" py="6px" onClick={() => { handlers.append(""); setCurrentlyEditing(answerValues.length); }}>
+              <ActionIcon size="sm" variant="transparent"><PlusIcon /></ActionIcon>
+            </Paper>
           )}
         </Group>
       </Card.Section>

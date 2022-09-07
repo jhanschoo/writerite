@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import { ActionIcon, Badge, Group } from '@mantine/core';
+import { FC, MouseEvent } from 'react';
+import { ActionIcon, Group, Paper, Text } from '@mantine/core';
 
 import { Cross2Icon, Pencil1Icon } from '@radix-ui/react-icons';
 
@@ -12,18 +12,21 @@ interface Props {
 
 export const ManageCardAltAnswer: FC<Props> = ({ answer, editable, onRemove, onStartEditing }) => {
   return (
-    <Badge variant="light" sx={{ textTransform: "none" }} rightSection={
-      <Group spacing={0}>
+    <Paper px="xs" py="6px" withBorder onClick={onStartEditing}>
+      <Group spacing={1}>
+        <Text size="sm">
+          {answer}
+        </Text>
         {
           editable && 
-          <ActionIcon size="xs" variant="transparent" onClick={onStartEditing}>
+          <ActionIcon size="sm" variant="subtle">
             <Pencil1Icon />
           </ActionIcon>
         }
-        <ActionIcon size="xs" variant="transparent" onClick={onRemove}>
+        <ActionIcon size="sm" variant="subtle" onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); onRemove(); }}>
           <Cross2Icon />
         </ActionIcon>
-      </Group>}>{answer}
-    </Badge>
+      </Group>
+    </Paper>
   );
 };
