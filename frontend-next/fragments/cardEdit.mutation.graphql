@@ -1,0 +1,12 @@
+mutation CardEdit(
+  $answers: [String!]
+  $fullAnswer: JSONObject
+  $id: ID!
+  $mainTemplate: Boolean
+  $prompt: JSONObject
+  $template: Boolean
+) {
+  cardEdit(answers: $answers, fullAnswer: $fullAnswer, id: $id, mainTemplate: $mainTemplate, prompt: $prompt, template: $template) {
+    ...cardDetail
+  }
+}

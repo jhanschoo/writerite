@@ -1,0 +1,12 @@
+fragment cardDetail on Card {
+    answers
+    editedAt
+    fullAnswer
+    id
+    mainTemplate
+    ownRecord {
+      correctRecord
+    }
+    prompt
+    template
+}

@@ -2,16 +2,7 @@ fragment deckDetail on Deck {
   answerLang
   archived
   cardsDirect {
-    answers
-    editedAt
-    fullAnswer
-    id
-    mainTemplate
-    ownRecord {
-      correctRecord
-    }
-    prompt
-    template
+    ...cardDetail
   }
   subdecks {
     id
