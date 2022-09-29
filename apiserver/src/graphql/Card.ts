@@ -128,8 +128,8 @@ export const CardEditMutation = mutationField("cardEdit", {
         },
       },
       data: {
-        prompt: prompt ? JSON.stringify(prompt) : undefined,
-        fullAnswer: fullAnswer ? JSON.stringify(fullAnswer) : undefined,
+        prompt: (prompt ?? undefined) as Prisma.InputJsonObject | undefined,
+        fullAnswer: (fullAnswer ?? undefined) as Prisma.InputJsonObject | undefined,
         answers: answers ? { set: answers } : undefined,
         template: template ?? undefined,
       },
