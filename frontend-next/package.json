@@ -40,6 +40,7 @@
     "date-fns": "^2.29.1",
     "dayjs": "^1.11.4",
     "draft-js": "^0.11.7",
+    "fast-json-stable-stringify": "^2.1.0",
     "framer-motion": "^7.1.0",
     "graphql": "^16.5.0",
     "graphql-sse": "^1.3.0",
@@ -55,7 +56,7 @@
     "react-dom": "^18.2.0",
     "react-is": "^18.2.0",
     "urql": "^3.0.0",
-    "use-debounce": "^8.0.3",
+    "use-debounce": "^8.0.4",
     "ws": "^8.8.1"
   },
   "devDependencies": {
@@ -85,7 +86,7 @@
     "eslint-config-mantine": "^2.0.0",
     "eslint-config-next": "^12.2.3",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jest": "^26.6.0",
+    "eslint-plugin-jest": "^26.9.0",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-react-hooks": "^4.6.0",

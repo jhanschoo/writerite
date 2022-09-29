@@ -47,7 +47,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
           loading={loading}
           /*
           * Note that there is a file chooser error (automatically cancels and exits)
-          * when accept is defined, for Chrome on GTK 4 (?).
+          * when accept is defined, for Chrome on GTK 4 (?), when useFsAccessApi={true}.
           * 
           * In more detail,
           * the showOpenFilePicker method in the File System Access API available
@@ -57,11 +57,8 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
           * Next, the underlying library `react-dropzone` on browsers supporting
           * the File System Access API uses it unless a flag is set, and uses
           * it in such a way that does not expose a way to set the `description`
-          * property. Finally, `@mantine/dropzone` does not expose a way to
-          * set the flag (it is the `useFsAccessApi` flag). As such, there is
-          * no workaround for this bug as long as we use `@mantine/dropzone`,
-          * and not the underlying library `react-dropzone` directly nor
-          * using `<input type="file" />` or the File System Access API directly.
+          * property. That is unless we have set `useFsAccessApi` to false to use
+          * another method of uploading files.
           */
           // A bug report has been submitted to the Chromium project:
           // https://bugs.chromium.org/p/chromium/issues/detail?id=1350487
@@ -73,6 +70,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
             alignItems: 'center',
             textAlign: 'center',
           }}
+          useFsAccessApi={false}
         >
           <Stack spacing="md" align="center">
             <Text size="lg">
