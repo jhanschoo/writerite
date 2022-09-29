@@ -11,7 +11,6 @@ import { Providers } from '@providers/Providers';
 import { withDefaultUrqlClient } from '@lib/urql/withDefaultUrqlClient';
 
 const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
-  const { emotionCache, ...pagePropsRest } = pageProps;
   const router = useRouter();
 
   return (
@@ -24,7 +23,7 @@ const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <Providers>
         <AnimatePresence>
-          <Component {...pagePropsRest} key={router.route} />
+          <Component {...pageProps} key={router.route} />
         </AnimatePresence>
       </Providers>
     </>
