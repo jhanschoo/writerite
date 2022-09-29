@@ -1,9 +1,8 @@
 import { useState, ChangeEvent, FC } from 'react';
 import { DecksDocument, DecksQueryScope } from '@generated/graphql';
 import { useQuery } from 'urql';
-import { useDebounce } from 'use-debounce';
-import { DecksList } from './DecksList';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
+import { useDebounce } from 'use-debounce';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
