@@ -102,6 +102,7 @@ export type Mutation = {
   cardDelete: Card;
   cardEdit: Card;
   cardUnsetMainTemplate?: Maybe<Card>;
+  deckAddCards: Deck;
   deckAddSubdeck: Deck;
   deckCreate: Deck;
   deckDelete: Deck;
@@ -181,6 +182,12 @@ export type MutationCardEditArgs = {
 
 
 export type MutationCardUnsetMainTemplateArgs = {
+  deckId: Scalars['ID'];
+};
+
+
+export type MutationDeckAddCardsArgs = {
+  cards: Array<CardCreateInput>;
   deckId: Scalars['ID'];
 };
 
