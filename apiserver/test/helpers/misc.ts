@@ -13,7 +13,7 @@ export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   return KJUR.jws.JWS.parse(jwt).payloadObj.sub as CurrentUser;
 }
 
-export function testContextFactory<T extends PrismaClient, U extends PubSubPublishArgsByKey, R extends Redis.Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType<T, U, R>];
+export function testContextFactory<T extends PrismaClient, U extends PubSubPublishArgsByKey, R extends Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType<T, U, R>];
 export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType];
 export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType] {
   let sub: CurrentUser | undefined;

@@ -21,13 +21,13 @@ describe("graphql/Deck.ts", () => {
   let stopContext: () => Promise<unknown>;
   let prisma: DeepMockProxy<PrismaClient>;
   let server: WrServer;
-  let redis: DeepMockProxy<Redis.Redis>;
+  let redis: DeepMockProxy<Redis>;
   let setPubsub: (pubsub: PubSub<PubSubPublishArgsByKey>) => void;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   beforeAll(async () => {
     prisma = mockDeep<PrismaClient>() as unknown as DeepMockProxy<PrismaClient>;
-    redis = mockDeep<Redis.Redis>();
+    redis = mockDeep<Redis>();
     [setSub, setPubsub, context, stopContext] = testContextFactory({
       prisma: prisma as unknown as PrismaClient,
       pubsub: createPubSub(),

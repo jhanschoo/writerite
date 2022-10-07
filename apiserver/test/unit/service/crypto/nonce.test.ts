@@ -5,10 +5,10 @@ import { getNonce, validateNonce } from "../../../../src/service/crypto/nonce";
 
 describe("service/crypto/nonce.ts", () => {
 
-  let redis: DeepMockProxy<Redis.Redis>;
+  let redis: DeepMockProxy<Redis>;
 
   beforeAll(() => {
-    redis = mockDeep<Redis.Redis>();
+    redis = mockDeep<Redis>();
   });
 
   beforeEach(() => {
