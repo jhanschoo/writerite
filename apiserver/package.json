@@ -56,7 +56,7 @@
     "app:start": "node dist/src/index.js",
     "dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --exit-child --transpile-only --respawn src/index.ts",
     "dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && graphql-codegen && ts-node --transpile-only src/schema",
-    "test:integration": "export $(xargs -a .env -d '\\n') && graphql-codegen && jest --runInBand test/integration",
-    "test:unit": "export $(xargs -a .env.unit-test -d '\\n') && graphql-codegen && jest --runInBand test/unit"
+    "test:integration": "export $(xargs -a .env -d '\\n') && graphql-codegen && jest --runInBand --config=\"jest.config.integration.ts\" test/integration",
+    "test:unit": "graphql-codegen && jest"
   }
 }
