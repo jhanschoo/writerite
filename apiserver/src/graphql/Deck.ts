@@ -145,9 +145,7 @@ export const DecksQuery = queryField("decks", {
       undefinedOnly: true,
     }),
   },
-  description: `\
-  implicit limit of 60
-  `,
+  description: "implicit limit of 60",
   resolve: guardValidUser(async (_root, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) => {
     const OR = [
       { ownerId: sub.id, archived: scope === "UNARCHIVED" ? false : undefined },
