@@ -79,7 +79,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
-  DecksQueryScope: "OWNED" | "PARTICIPATED" | "UNARCHIVED" | "VISIBLE"
+  DecksQueryScope: "OWNED" | "PARTICIPATED" | "VISIBLE"
   MessageContentType: "CONFIG" | "CONTEST_SCORE" | "ROUND_SCORE" | "ROUND_START" | "ROUND_WIN" | "TEXT"
   RoomState: p.RoomState
 }
@@ -134,7 +134,6 @@ export interface NexusGenFieldTypes {
   }
   Deck: { // field return type
     answerLang: string; // String!
-    archived: boolean; // Boolean!
     cardsAllUnder: NexusGenRootTypes['Card'][]; // [Card!]!
     cardsDirect: NexusGenRootTypes['Card'][]; // [Card!]!
     cardsDirectCount: number; // Int!
@@ -244,7 +243,6 @@ export interface NexusGenFieldTypeNames {
   }
   Deck: { // field return type name
     answerLang: 'String'
-    archived: 'Boolean'
     cardsAllUnder: 'Card'
     cardsDirect: 'Card'
     cardsDirectCount: 'Int'
@@ -372,7 +370,6 @@ export interface NexusGenArgTypes {
     }
     deckCreate: { // args
       answerLang?: string | null; // String
-      archived?: boolean | null; // Boolean
       cards?: NexusGenInputs['CardCreateInput'][] | null; // [CardCreateInput!]
       description?: NexusGenScalars['JSONObject'] | null; // JSONObject
       name?: string | null; // String
@@ -384,7 +381,6 @@ export interface NexusGenArgTypes {
     }
     deckEdit: { // args
       answerLang?: string | null; // String
-      archived?: boolean | null; // Boolean
       description?: NexusGenScalars['JSONObject'] | null; // JSONObject
       id: string; // ID!
       name?: string | null; // String

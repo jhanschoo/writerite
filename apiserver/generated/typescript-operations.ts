@@ -46,7 +46,6 @@ export type CardCreateInput = {
 export type Deck = {
   __typename?: 'Deck';
   answerLang: Scalars['String'];
-  archived: Scalars['Boolean'];
   /** all cards directly belonging to some descendant (reflexive, transitive closure of subdeck) deck of this deck */
   cardsAllUnder: Array<Card>;
   /** all cards directly belonging to this deck */
@@ -75,7 +74,6 @@ export type Deck = {
 export enum DecksQueryScope {
   Owned = 'OWNED',
   Participated = 'PARTICIPATED',
-  Unarchived = 'UNARCHIVED',
   Visible = 'VISIBLE'
 }
 
@@ -204,7 +202,6 @@ export type MutationDeckAddSubdeckArgs = {
 
 export type MutationDeckCreateArgs = {
   answerLang?: InputMaybe<Scalars['String']>;
-  archived?: InputMaybe<Scalars['Boolean']>;
   cards?: InputMaybe<Array<CardCreateInput>>;
   description?: InputMaybe<Scalars['JSONObject']>;
   name?: InputMaybe<Scalars['String']>;
@@ -220,7 +217,6 @@ export type MutationDeckDeleteArgs = {
 
 export type MutationDeckEditArgs = {
   answerLang?: InputMaybe<Scalars['String']>;
-  archived?: InputMaybe<Scalars['Boolean']>;
   description?: InputMaybe<Scalars['JSONObject']>;
   id: Scalars['ID'];
   name?: InputMaybe<Scalars['String']>;
@@ -440,7 +436,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, archived: boolean, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: any } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: any } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 

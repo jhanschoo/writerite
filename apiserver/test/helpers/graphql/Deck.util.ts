@@ -81,7 +81,6 @@ export async function queryDeckScalars(server: WrServer, id: string) {
         deck(id: $id) {
           id
           answerLang
-          archived
           description
           editedAt
           name

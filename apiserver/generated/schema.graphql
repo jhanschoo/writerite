@@ -27,7 +27,6 @@ scalar DateTime
 
 type Deck {
   answerLang: String!
-  archived: Boolean!
 
   """
   all cards directly belonging to some descendant (reflexive, transitive closure of subdeck) deck of this deck
@@ -66,7 +65,6 @@ type Deck {
 enum DecksQueryScope {
   OWNED
   PARTICIPATED
-  UNARCHIVED
   VISIBLE
 }
 
@@ -117,9 +115,9 @@ type Mutation {
   cardUnsetMainTemplate(deckId: ID!): Card
   deckAddCards(cards: [CardCreateInput!]!, deckId: ID!): Deck!
   deckAddSubdeck(id: ID!, subdeckId: ID!): Deck!
-  deckCreate(answerLang: String, archived: Boolean, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!
+  deckCreate(answerLang: String, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!
   deckDelete(id: ID!): Deck!
-  deckEdit(answerLang: String, archived: Boolean, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
+  deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckUsed(id: ID!): Deck!
   finalizeThirdPartyOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): JWT

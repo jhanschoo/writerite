@@ -68,7 +68,6 @@ describe("graphql/Deck.ts", () => {
         expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
           id,
           answerLang: "",
-          archived: false,
           description: {},
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           editedAt: expect.stringMatching(isoTimestampMatcher),
@@ -84,7 +83,7 @@ describe("graphql/Deck.ts", () => {
     });
 
     describe("decks", () => {
-      it("should be able to return ids of owned, unarchived decks", async () => {
+      it("should be able to return ids of owned decks", async () => {
         expect.assertions(1);
         await loginAsNewlyCreatedUser(server, setSub);
         const { executionResult: createDeck1ExecutionResult } = await mutationDeckCreateEmpty(server);

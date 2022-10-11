@@ -43,7 +43,6 @@ export const Deck = objectType({
     t.nonNull.string("promptLang");
     t.nonNull.string("answerLang");
     t.nonNull.boolean("published");
-    t.nonNull.boolean("archived");
     t.nonNull.list.nonNull.string("sortData");
     t.nonNull.dateTime("editedAt");
     t.nonNull.dateTime("usedAt");
@@ -160,7 +159,7 @@ export const DecksQuery = queryField("decks", {
   description: "implicit limit of 60",
   resolve: guardValidUser(async (_root, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) => {
     const OR = [
-      { ownerId: sub.id, archived: scope === "UNARCHIVED" ? false : undefined },
+      { ownerId: sub.id },
       { cards: { some: { records: { some: { userId: sub.id } } } } },
       { published: true },
     ];
@@ -172,8 +171,6 @@ export const DecksQuery = queryField("decks", {
         OR.length = 2;
         break;
       case "OWNED":
-        // falls through
-      case "UNARCHIVED":
         // falls through
       default:
         OR.length = 1;
@@ -198,7 +195,7 @@ export const DecksQuery = queryField("decks", {
 
 export const DecksQueryScope = enumType({
   name: "DecksQueryScope",
-  members: ["UNARCHIVED", "OWNED", "PARTICIPATED", "VISIBLE"],
+  members: ["OWNED", "PARTICIPATED", "VISIBLE"],
 });
 
 export const OwnDeckRecordQuery = queryField("ownDeckRecord", {
@@ -217,7 +214,6 @@ export const deckCreateSchema = yup.object({
   promptLang: yup.string().trim().min(2),
   answerLang: yup.string().trim().min(2),
   published: yup.boolean(),
-  archived: yup.boolean(),
   cards: yup.array(yup.object({
     answers: yup.array(yup.string()).required(),
     fullAnswer: yup.object().required(),
@@ -233,7 +229,6 @@ export const DeckCreateMutation = mutationField("deckCreate", {
     promptLang: stringArg({ undefinedOnly: true }),
     answerLang: stringArg({ undefinedOnly: true }),
     published: booleanArg({ undefinedOnly: true }),
-    archived: booleanArg({ undefinedOnly: true }),
     cards: list(nonNull(arg({
       type: "CardCreateInput",
       undefinedOnly: true,
@@ -260,7 +255,6 @@ export const deckEditSchema = yup.object({
   promptLang: yup.string().trim().min(2),
   answerLang: yup.string().trim().min(2),
   published: yup.boolean(),
-  archived: yup.boolean(),
 });
 
 export const DeckEditMutation = mutationField("deckEdit", {
@@ -272,7 +266,6 @@ export const DeckEditMutation = mutationField("deckEdit", {
     promptLang: stringArg({ undefinedOnly: true }),
     answerLang: stringArg({ undefinedOnly: true }),
     published: booleanArg({ undefinedOnly: true }),
-    archived: booleanArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
     const { id, ...data } = await deckEditSchema.validate(args);
