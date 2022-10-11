@@ -10,7 +10,7 @@ export const MANAGE_DECKS_DECKS_NUM = 20;
 export const ManageDecks: FC = () => {
   const [titleFilter, setTitleFilter] = useState('');
   const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
-  const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Unarchived);
+  const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [cursor, setCursor] = useState<string | undefined>();
   const [{ data, fetching, error }] = useQuery({
     query: DecksDocument,

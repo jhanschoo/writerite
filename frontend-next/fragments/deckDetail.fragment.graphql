@@ -1,6 +1,5 @@
 fragment deckDetail on Deck {
   answerLang
-  archived
   cardsDirect {
     ...cardDetail
   }

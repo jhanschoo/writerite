@@ -1,6 +1,5 @@
 mutation DeckCreate(
   $answerLang: String!
-  $archived: Boolean!
   $cards: [CardCreateInput!]!
   $description: JSONObject!
   $name: String!
@@ -9,7 +8,6 @@ mutation DeckCreate(
 ) {
   deckCreate(
     answerLang: $answerLang
-    archived: $archived
     cards: $cards
     description: $description
     name: $name

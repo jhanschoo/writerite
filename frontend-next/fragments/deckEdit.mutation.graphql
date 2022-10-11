@@ -1,13 +1,12 @@
 mutation DeckEdit(
   $id: ID!
   $answerLang: String
-  $archived: Boolean
   $description: JSONObject
   $name: String
   $promptLang: String
   $published: Boolean
 ) {
-  deckEdit(answerLang: $answerLang, archived: $archived, description: $description, id: $id, name: $name, promptLang: $promptLang, published: $published) {
+  deckEdit(answerLang: $answerLang, description: $description, id: $id, name: $name, promptLang: $promptLang, published: $published) {
     ...deckDetail
   }
 }

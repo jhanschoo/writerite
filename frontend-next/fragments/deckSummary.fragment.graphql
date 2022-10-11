@@ -1,6 +1,5 @@
 fragment deckSummary on Deck {
   answerLang
-  archived
   cardsDirect {
     id
   }
