@@ -5,26 +5,25 @@ import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
-import { Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { createStyles, Divider, Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
 const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
-  <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
+  <UnstyledButton onClick={onClick}>
     <Paper
       shadow="md"
       radius="md"
-      p="md"
+      px="md"
+      py="sm"
       withBorder
       sx={(theme) => {
         const { background, color, hover } = theme.fn.variant({ variant: 'filled' });
         return {
           backgroundColor: background,
           color,
-          height: '100%',
           display: 'flex',
           flexDirection: 'row',
-          alignItems: 'center',
           ...theme.fn.hover({ backgroundColor: hover }),
         };
       }}
@@ -77,9 +76,21 @@ const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, onClick }: 
   );
 };
 
+const useStyles = createStyles({
+  group: {
+    alignItems: 'center',
+    minHeight: '5rem',
+    marginRight: '-5rem',
+    '& > #view-more-text': {
+      flexGrow: 1
+    }
+  },
+});
+
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
+  const { classes } = useStyles();
   const [decksResult, refetchDecks] = useQuery({
     query: DecksDocument,
     variables: {
@@ -93,7 +104,6 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
     setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation({
       answerLang: 'en',
-      archived: false,
       cards: [],
       description: {},
       name: '',
@@ -112,13 +122,14 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
     }} />
   );
   return (
-    <UnstyledButton component="div" onClick={() => router.push('/app/deck')}>
+    <UnstyledButton component="div" mr="5rem" onClick={() => router.push('/app/deck')}>
       <Paper shadow="md" radius="md" p="md" withBorder>
-        <Title order={2}>Decks</Title>
-        <Group align="stretch" sx={{ minHeight: '5rem' }}>
-          <NewDeckItem onClick={handleManageDecksDialog} />
+        <Title order={2} mb="md">Decks</Title>
+        <Divider mb="md" />
+        <Group className={classes.group}>
           {decks}
-          <Text sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>View more...</Text>
+          <Text id="view-more-text" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>View more...</Text>
+          <NewDeckItem onClick={handleManageDecksDialog} />
         </Group>
       </Paper>
     </UnstyledButton>
