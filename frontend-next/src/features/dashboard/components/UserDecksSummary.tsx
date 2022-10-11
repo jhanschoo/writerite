@@ -88,7 +88,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
   const { classes } = useStyles();
-  const [decksResult, refetchDecks] = useQuery({
+  const [{ data, fetching, error }, refetchDecks] = useQuery({
     query: DecksDocument,
     variables: {
       scope: DecksQueryScope.Owned,
@@ -96,7 +96,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
     },
   });
   const [, deckCreateMutation] = useMutation(DeckCreateDocument);
-  const handleManageDecksDialog = async (e: MouseEvent) => {
+  const handleCreateDeck = async (e: MouseEvent) => {
     e.stopPropagation();
     setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation({
@@ -112,7 +112,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
       router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
     }
   };
-  const decks = (decksResult.data?.decks || []).map(
+  const decks = (data?.decks || []).map(
     (deck, index) => <DeckItem key={index} deck={deck} onClick={(e) => {
       e.stopPropagation();
       router.push(`/app/deck/${deck.id}`);
@@ -126,7 +126,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
         <Group className={classes.group}>
           {decks}
           <Text id="view-more-text" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>View more...</Text>
-          <NewDeckItem onClick={handleManageDecksDialog} />
+          <NewDeckItem onClick={handleCreateDeck} />
         </Group>
       </Paper>
     </UnstyledButton>

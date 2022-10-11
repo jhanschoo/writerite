@@ -1,11 +1,14 @@
 import { useState, ChangeEvent, FC, MouseEventHandler } from 'react';
-import { DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
-import { useQuery } from 'urql';
+import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
+import { useMutation, useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
 import { Center, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
 import { DecksList } from './DecksList';
 import { formatISO, parseISO } from 'date-fns';
+import { motionThemes } from '@/lib/framer-motion/motionThemes';
+import { useMotionContext } from '@/hooks';
+import { useRouter } from 'next/router';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
@@ -35,11 +38,13 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
 
 // TODO: pagination
 export const ManageDecks: FC = () => {
+  const router = useRouter();
+  const { setMotionProps } = useMotionContext();
   const [titleFilter, setTitleFilter] = useState('');
   const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
   const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [cursor, setCursor] = useState<string | undefined>();
-  const [{ data, fetching, error }] = useQuery({
+  const [{ data, fetching, error }, refetchDecks] = useQuery({
     query: DecksDocument,
     variables: {
       scope: scopeFilter,
@@ -48,12 +53,29 @@ export const ManageDecks: FC = () => {
       cursor,
     },
   });
+  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+  const handleCreateDeck = async (e: MouseEvent) => {
+    e.stopPropagation();
+    setMotionProps(motionThemes.forward);
+    const createdDeck = await deckCreateMutation({
+      answerLang: 'en',
+      cards: [],
+      description: {},
+      name: '',
+      promptLang: 'en',
+      published: false,
+    });
+    refetchDecks();
+    if (createdDeck.data?.deckCreate.id) {
+      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+    }
+  };
   const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
   return <Center>
     <Stack p="md" spacing={2} sx={({ breakpoints }) => ({ width: '100%', maxWidth: `${breakpoints.lg}px` })}>
       <Group align="end" mb="sm" sx={{ "& > #manage-decks-title": { flexGrow: 1 } }}>
         <Title order={1} id="manage-decks-title">Manage Decks</Title>
-        <NewDeckItem />
+        <NewDeckItem onClick={handleCreateDeck} />
       </Group>
       <Divider mb="md" />
       <SegmentedControl
