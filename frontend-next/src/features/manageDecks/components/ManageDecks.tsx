@@ -1,10 +1,37 @@
-import { useState, ChangeEvent, FC } from 'react';
-import { DecksDocument, DecksQueryScope } from '@generated/graphql';
+import { useState, ChangeEvent, FC, MouseEventHandler } from 'react';
+import { DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
 import { useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
+import { Center, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
+import { DecksList } from './DecksList';
+import { formatISO, parseISO } from 'date-fns';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
+
+const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
+  <UnstyledButton onClick={onClick}>
+    <Paper
+      shadow="sm"
+      radius="md"
+      px="sm"
+      py="xs"
+      withBorder
+      sx={(theme) => {
+        const { background, color, hover } = theme.fn.variant({ variant: 'filled' });
+        return {
+          backgroundColor: background,
+          color,
+          display: 'flex',
+          flexDirection: 'row',
+          ...theme.fn.hover({ backgroundColor: hover }),
+        };
+      }}
+    >
+      <Text size="lg" weight="bolder">Create a new Deck</Text>
+    </Paper>
+  </UnstyledButton>
+);
 
 // TODO: pagination
 export const ManageDecks: FC = () => {
@@ -22,42 +49,30 @@ export const ManageDecks: FC = () => {
     },
   });
   const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
-  return null;
-  // return <Stack spacing={2}>
-  //   <Stack direction="row" spacing={2}>
-  //     <TextField
-  //       variant="outlined"
-  //       label="Show decks with title containing..."
-  //       InputProps={titleFilter ? {
-  //         endAdornment: <InputAdornment position="end">
-  //           <IconButton
-  //             aria-label="clear title search"
-  //             onClick={() => setTitleFilter('')}
-  //           >
-  //             <Close />
-  //           </IconButton>
-  //         </InputAdornment>
-  //       } : undefined}
-  //       sx={{
-  //         flexGrow: 1,
-  //       }}
-  //       value={titleFilter}
-  //       onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
-  //     />
-  //     <FormControl>
-  //       <Select
-  //         value={scopeFilter}
-  //         onChange={(e: SelectChangeEvent<DecksQueryScope>) => setScopeFilter(e.target.value as DecksQueryScope)}
-  //       >
-  //         <MenuItem value={DecksQueryScope.Unarchived}>that I own</MenuItem>
-  //         <MenuItem value={DecksQueryScope.Owned}>that I own (incl. archived)</MenuItem>
-  //         <MenuItem value={DecksQueryScope.Participated}>that I&rsquo;ve played</MenuItem>
-  //         <MenuItem value={DecksQueryScope.Visible}>that I can see</MenuItem>
-  //       </Select>
-  //     </FormControl>
-  //     <Divider orientation="vertical" flexItem>OR</Divider>
-  //     <Button variant="contained">Create a new Deck</Button>
-  //   </Stack>
-  //   <DecksList decks={decks} />
-  // </Stack>;
+  return <Center>
+    <Stack p="md" spacing={2} sx={({ breakpoints }) => ({ width: '100%', maxWidth: `${breakpoints.lg}px` })}>
+      <Group align="end" mb="sm" sx={{ "& > #manage-decks-title": { flexGrow: 1 } }}>
+        <Title order={1} id="manage-decks-title">Manage Decks</Title>
+        <NewDeckItem />
+      </Group>
+      <Divider mb="md" />
+      <SegmentedControl
+        data={[
+          { label: 'Owned decks', value: DecksQueryScope.Owned },
+          { label: 'Relevant decks', value: DecksQueryScope.Participated },
+          { label: 'Public decks', value: DecksQueryScope.Visible }
+        ]}
+      />
+      <TextInput
+        variant="filled"
+        label="title must contain..."
+        placeholder="e.g. ocabular"
+        size="md"
+        mb="md"
+        value={titleFilter}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
+      />
+      <DecksList decks={decks} />
+    </Stack>
+  </Center>;
 }

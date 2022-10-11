@@ -1,11 +1,7 @@
 fragment deckSummary on Deck {
   answerLang
-  cardsDirect {
-    id
-  }
-  subdecks {
-    id
-  }
+  cardsDirectCount
+  subdecksCount
   description
   editedAt
   id

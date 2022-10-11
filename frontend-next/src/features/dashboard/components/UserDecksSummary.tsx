@@ -33,7 +33,7 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
   </UnstyledButton>
 );
 
-const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
+const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
     <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
@@ -49,28 +49,25 @@ const DeckItem = ({ deck: { name, editedAt, subdecks, cardsDirect }, onClick }: 
             color,
             height: '100%',
             display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: 'column',
             borderColor: border,
             ...theme.fn.hover({ backgroundColor: hover }),
           };
         }}
       >
-        <Stack>
-          {
-            name
-            ? <Text size="lg" weight="bold">{name}</Text>
-            :
-            <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
-              Untitled Deck
-            </Text>
-          }
-          <Text>
-            {subdecks.length} subdecks<br />
-            {cardsDirect.length} cards<br />
-            last edited at {editedAtDisplay}
+        {
+          name
+          ? <Text size="lg" weight="bold">{name}</Text>
+          :
+          <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
+            Untitled Deck
           </Text>
-        </Stack>
+        }
+        <Text>
+          {subdecksCount} subdecks<br />
+          {cardsDirectCount} cards<br />
+          last edited at {editedAtDisplay}
+        </Text>
       </Paper>
     </UnstyledButton>
   );

@@ -1,46 +1,73 @@
 import { formatISO, parseISO } from 'date-fns';
 import { DecksQuery } from "@generated/graphql";
-import { FC, MouseEvent } from "react";
-import { useMotionContext } from '@hooks/useMotionContext';
-import { motionThemes } from '@lib/framer-motion/motionThemes';
+import { FC, MouseEventHandler } from "react";
 import { useRouter } from 'next/router';
+import { Box, Paper, Text, UnstyledButton } from '@mantine/core';
 
 
 interface ItemProps {
   deck: DecksQuery["decks"][number];
 }
 
-export const DecksListItem: FC<ItemProps> = ({ deck }: ItemProps) => {
-  // const theme = useTheme();
-  const router = useRouter();
-  const { name, subdecks, cardsDirect, editedAt } = deck;
-  const { setMotionProps } = useMotionContext();
-  const handleClick = (e: MouseEvent) => {
-    e.preventDefault();
-    setMotionProps(motionThemes.forward);
-    router.push(`/app/deck/${deck.id}`);
-  }
-  return null;
-  // const title = deck.name ? <Typography variant="h5" sx={{flexGrow: 1}}>{name}</Typography> : <Typography variant="h5" sx={{ fontStyle: "italic", color: theme.palette.text.secondary, flexGrow: 1 }}>Untitled</Typography>;
-  // const editedAtDisplay = formatISO(parseISO(editedAt), { representation: "date" });
-  // return <Paper sx={{ padding: 2, cursor: "pointer" }} onClick={handleClick}>
-  //   <Stack direction="row"  divider={<Divider orientation="vertical" flexItem />} spacing={2} alignItems="center">
-  //     {title}
-  //     <Typography textAlign="center"><strong>{subdecks.length}</strong><br />subdecks</Typography>
-  //     <Typography textAlign="center"><strong>{cardsDirect.length}</strong><br />cards</Typography>
-  //     <Typography textAlign="center"><strong>{editedAtDisplay}</strong><br />last edited</Typography>
-  //   </Stack>
-  // </Paper>;
-}
+const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
+  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
+  return (
+    <UnstyledButton sx={{ height: 'unset', flex: '1 0 auto'}} onClick={onClick}>
+      <Paper
+        shadow="md"
+        radius="md"
+        p="md"
+        withBorder
+        sx={(theme) => {
+          const { border, background, color, hover } = theme.fn.variant({ variant: 'default' });
+          return {
+            backgroundColor: background,
+            color,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            borderColor: border,
+            ...theme.fn.hover({ backgroundColor: hover }),
+          };
+        }}
+      >
+          {
+            name
+            ? <Text size="lg" weight="bold">{name}</Text>
+            :
+            <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
+              Untitled Deck
+            </Text>
+          }
+          <Text>
+            {subdecksCount} subdecks<br />
+            {cardsDirectCount} cards<br />
+            last edited at {editedAtDisplay}
+          </Text>
+      </Paper>
+    </UnstyledButton>
+  );
+};
 
 interface Props {
   decks?: DecksQuery["decks"];
 }
 
 export const DecksList: FC<Props> = ({ decks }: Props) => {
-  const decksList = decks?.map((deck) => <DecksListItem deck={deck} key={deck.id} />);
-  return null;
-  // return <Stack>
-  //   {decksList}
-  // </Stack>;
+  const router = useRouter();
+  const decksList = decks?.map(
+    (deck, index) => <DeckItem key={index} deck={deck} onClick={(e) => {
+      e.stopPropagation();
+      router.push(`/app/deck/${deck.id}`);
+    }} />
+  ) || [];
+  decksList.reverse();
+  return <Box sx={({ spacing }) => ({
+    display: 'flex',
+    flexWrap: 'wrap-reverse',
+    flexDirection: 'row-reverse',
+    gap: `${spacing.sm}px`
+  })}>
+    {decksList}
+  </Box>;
 }

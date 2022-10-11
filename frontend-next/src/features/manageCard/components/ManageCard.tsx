@@ -62,7 +62,7 @@ export const ManageCard: FC<Props> = ({ card }) => {
       });
     }
   }, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
-  const hasInitialState = !fetching && !debounced.isPending();
+  const hasUnsavedChanges = fetching || debounced.isPending();
   useEffect(() => {
     debounced(currentState);
   }, [currentStateString]);
@@ -126,7 +126,7 @@ export const ManageCard: FC<Props> = ({ card }) => {
               )}
             </Group>
           </Stack>
-          <Loader visibility={hasInitialState ? "hidden" : undefined} />
+          <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
         </Group>
       </Card.Section>
     </Card>
