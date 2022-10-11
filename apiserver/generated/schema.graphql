@@ -37,6 +37,9 @@ type Deck {
   """all cards directly belonging to this deck"""
   cardsDirect: [Card!]!
 
+  """number of all cards directly belonging to this deck"""
+  cardsDirectCount: Int!
+
   """
   all descendant (reflexive, transitive closure of subdeck) decks of this deck
   """
@@ -54,6 +57,9 @@ type Deck {
 
   """all direct subdecks of this deck"""
   subdecks: [Deck!]!
+
+  """count of all direct subdecks of this deck"""
+  subdecksCount: Int!
   usedAt: DateTime!
 }
 

@@ -65,6 +65,12 @@ export const Deck = objectType({
         return prisma.deck.findMany({ where: { parentDecks: { some: { parentDeckId } } } });
       },
     });
+    t.nonNull.int("subdecksCount", {
+      description: "count of all direct subdecks of this deck",
+      async resolve({ id: parentDeckId }, _args, { prisma }) {
+        return prisma.deck.count({ where: { parentDecks: { some: { parentDeckId } } } });
+      },
+    });
     t.nonNull.list.nonNull.field("descendantDecks", {
       type: "Deck",
       description: "all descendant (reflexive, transitive closure of subdeck) decks of this deck",
@@ -77,6 +83,12 @@ export const Deck = objectType({
       description: "all cards directly belonging to this deck",
       async resolve({ id: deckId }, _args, { prisma }) {
         return prisma.card.findMany({ where: { deckId } });
+      },
+    });
+    t.nonNull.int("cardsDirectCount", {
+      description: "number of all cards directly belonging to this deck",
+      async resolve({ id: deckId }, _args, { prisma }) {
+        return prisma.card.count({ where: { deckId } });
       },
     });
     t.nonNull.list.nonNull.field("cardsAllUnder", {

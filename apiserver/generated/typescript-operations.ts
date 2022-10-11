@@ -51,6 +51,8 @@ export type Deck = {
   cardsAllUnder: Array<Card>;
   /** all cards directly belonging to this deck */
   cardsDirect: Array<Card>;
+  /** number of all cards directly belonging to this deck */
+  cardsDirectCount: Scalars['Int'];
   /** all descendant (reflexive, transitive closure of subdeck) decks of this deck */
   descendantDecks: Array<Deck>;
   description: Scalars['JSONObject'];
@@ -65,6 +67,8 @@ export type Deck = {
   sortData: Array<Scalars['String']>;
   /** all direct subdecks of this deck */
   subdecks: Array<Deck>;
+  /** count of all direct subdecks of this deck */
+  subdecksCount: Scalars['Int'];
   usedAt: Scalars['DateTime'];
 };
 

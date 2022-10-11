@@ -137,6 +137,7 @@ export interface NexusGenFieldTypes {
     archived: boolean; // Boolean!
     cardsAllUnder: NexusGenRootTypes['Card'][]; // [Card!]!
     cardsDirect: NexusGenRootTypes['Card'][]; // [Card!]!
+    cardsDirectCount: number; // Int!
     descendantDecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     description: NexusGenScalars['JSONObject']; // JSONObject!
     editedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -149,6 +150,7 @@ export interface NexusGenFieldTypes {
     published: boolean; // Boolean!
     sortData: string[]; // [String!]!
     subdecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
+    subdecksCount: number; // Int!
     usedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Message: { // field return type
@@ -245,6 +247,7 @@ export interface NexusGenFieldTypeNames {
     archived: 'Boolean'
     cardsAllUnder: 'Card'
     cardsDirect: 'Card'
+    cardsDirectCount: 'Int'
     descendantDecks: 'Deck'
     description: 'JSONObject'
     editedAt: 'DateTime'
@@ -257,6 +260,7 @@ export interface NexusGenFieldTypeNames {
     published: 'Boolean'
     sortData: 'String'
     subdecks: 'Deck'
+    subdecksCount: 'Int'
     usedAt: 'DateTime'
   }
   Message: { // field return type name
