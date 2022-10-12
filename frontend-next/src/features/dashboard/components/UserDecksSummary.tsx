@@ -73,16 +73,22 @@ const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, o
   );
 };
 
-const useStyles = createStyles({
+const useStyles = createStyles(({ breakpoints }, _params, getRef) => ({
   group: {
     alignItems: 'center',
     minHeight: '5rem',
     marginRight: '-5rem',
-    '& > #view-more-text': {
+    [`& > .${getRef('viewMoreText')}`]: {
       flexGrow: 1
     }
   },
-});
+  viewMoreText: {
+    ref: getRef('viewMoreText'),
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  }
+}));
 
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const router = useRouter();
@@ -125,7 +131,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
         <Divider mb="md" />
         <Group className={classes.group}>
           {decks}
-          <Text id="view-more-text" sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>View more...</Text>
+          <Text className={classes.viewMoreText}>View more...</Text>
           <NewDeckItem onClick={handleCreateDeck} />
         </Group>
       </Paper>

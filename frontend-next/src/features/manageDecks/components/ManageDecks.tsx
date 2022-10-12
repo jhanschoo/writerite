@@ -3,7 +3,7 @@ import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '
 import { useMutation, useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
-import { Center, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
+import { Center, createStyles, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
 import { DecksList } from './DecksList';
 import { formatISO, parseISO } from 'date-fns';
 import { motionThemes } from '@/lib/framer-motion/motionThemes';
@@ -36,10 +36,24 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
   </UnstyledButton>
 );
 
+const useStyles = createStyles(({ breakpoints }, _params, getRef) => ({
+  root: {
+    width: '100%',
+    maxWidth: `${breakpoints.lg}px`,
+  },
+  group: {
+    [`& > .${getRef('growable')}`]: { flexGrow: 1 }
+  },
+  growable: {
+    ref: getRef('growable')
+  }
+}));
+
 // TODO: pagination
 export const ManageDecks: FC = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
+  const { classes } = useStyles();
   const [titleFilter, setTitleFilter] = useState('');
   const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
   const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
@@ -54,27 +68,29 @@ export const ManageDecks: FC = () => {
     },
   });
   const [, deckCreateMutation] = useMutation(DeckCreateDocument);
-  const handleCreateDeck = async (e: MouseEvent) => {
-    e.stopPropagation();
-    setMotionProps(motionThemes.forward);
-    const createdDeck = await deckCreateMutation({
-      answerLang: 'en',
-      cards: [],
-      description: {},
-      name: '',
-      promptLang: 'en',
-      published: false,
-    });
-    refetchDecks();
-    if (createdDeck.data?.deckCreate.id) {
-      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
-    }
+  const handleCreateDeck: MouseEventHandler = (e) => {
+    (async () => {
+      e.stopPropagation();
+      setMotionProps(motionThemes.forward);
+      const createdDeck = await deckCreateMutation({
+        answerLang: 'en',
+        cards: [],
+        description: {},
+        name: '',
+        promptLang: 'en',
+        published: false,
+      });
+      refetchDecks();
+      if (createdDeck.data?.deckCreate.id) {
+        router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+      }
+    })();
   };
   const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
   return <Center>
-    <Stack p="md" spacing={2} sx={({ breakpoints }) => ({ width: '100%', maxWidth: `${breakpoints.lg}px` })}>
-      <Group align="end" mb="sm" sx={{ "& > #manage-decks-title": { flexGrow: 1 } }}>
-        <Title order={1} id="manage-decks-title">Manage Decks</Title>
+    <Stack p="md" className={classes.root} spacing={2}>
+      <Group align="end" mb="sm" className={classes.group}>
+        <Title order={1} className={classes.growable}>Manage Decks</Title>
         <NewDeckItem onClick={handleCreateDeck} />
       </Group>
       <Divider mb="md" />
