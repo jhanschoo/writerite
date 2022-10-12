@@ -5,14 +5,14 @@ import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
-import { useListState } from '@mantine/hooks';
 import { PlusIcon } from '@radix-ui/react-icons';
-import { useDebouncedCallback } from 'use-debounce';
+import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
 import { ManageCardAltAnswer } from './ManageCardAltAnswer';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
 import { CardEditDocument } from '@generated/graphql';
+import { RichTextEditorProps } from '@mantine/rte';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -40,36 +40,91 @@ interface Props {
 }
 
 interface State {
-  promptContent: Delta;
-  fullAnswerContent: Delta;
-  answerValues: string[];
+  prompt: Delta;
+  fullAnswer: Delta;
+  answers: string[];
 }
 
+function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State) => unknown>, initialState: State, latestState: State) {
+  if (stringify(initialState) !== stringify(latestState)) {
+    debounced(latestState);
+  } else {
+    debounced.cancel();
+  }
+}
+
+/**
+ * Regarding the state of ManageCard
+ * `card.prompt`, `card.fullAnswer`, `card.answers` should reflect the server-side state of these fields.
+ * 
+ * When the user edits the prompt or the fullAnswer, we expect to update the server after at most STANDARD_DEBOUNCE_MS with:
+ * * the latest state of prompt
+ * * the latest state of fullAnswer
+ * * the latest definite state of each answer in the latest definite state of answers, where
+ * by latest definite state of answers we mean the answers array containing all answers except any newly added answer currently being edited
+ * by latest definite state of answer we mean the answer if it is not in editing state, or what the answer was before entering editing state if it is in editing state
+ * 
+ * When the user is done adding, deleting, or editing any answer, we expect to update the server immediately with:
+ * * the latest state of prompt
+ * * the latest state of fullAnswer
+ * * the latest definite state of each answer in the latest definite state of answers, which is the latest state of answers
+ * 
+ * We then add the further assumption:
+ * * getting the latest definite state of each answer is no problem
+ * 
+ * Then observe the following
+ * * clearly when updating the server, after answers edits, we have no problem since we just use the latest state of everything.
+ * * while still updating the server, if we edit the prompt or fullAnswer we may have a problem only if we are editing a newly edited answer as well. To this end, when we add an answer, set its latest definite state to the illegal empty string, and then the latest definite state is simply the latest state after filtering out empty strings.
+ */
 export const ManageCard: FC<Props> = ({ card }) => {
   const { id, prompt, fullAnswer, answers } = card;
-  const state = { prompt, fullAnswer, answers };
+  const initialState = { prompt: prompt as unknown, fullAnswer: fullAnswer as unknown, answers } as State;
   const [promptContent, setPromptContent] = useState<Delta>(prompt);
   const [fullAnswerContent, setFullAnswerContent] = useState<Delta>(fullAnswer);
-  const [answerValues, handlers] = useListState<string>(answers);
-  const currentState = { prompt: promptContent, fullAnswer: fullAnswerContent, answers: answerValues };
-  const [initialStateString, currentStateString] =
-    [state, currentState].map(stringify);
+  const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
-  const debounced = useDebouncedCallback(async (debouncedState) => {
-    if (stringify(debouncedState) !== initialStateString) {
-      await cardEdit({
-        id, ...debouncedState
-      });
-    }
-  }, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
+  const updateStateToServer = (newState: State) => {
+    cardEdit({
+      id, ...newState
+    });
+  };
+  const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
   const hasUnsavedChanges = fetching || debounced.isPending();
-  useEffect(() => {
-    debounced(currentState);
-  }, [currentStateString]);
 
   const [currentlyEditing, setCurrentlyEditing] = useState<number | null>(null);
   const existsCurrentlyEditing = currentlyEditing !== null;
   const { classes } = useStyles();
+  const handlePromptChange: RichTextEditorProps["onChange"] = (_value, _delta, _sources, editor) => {
+    const latestPromptContent = editor.getContents();
+    const latestState = {
+      prompt: latestPromptContent,
+      fullAnswer: fullAnswerContent,
+      answers: answerValues,
+    }
+    setPromptContent(latestPromptContent);
+    debounceIfStateDeltaExists(debounced, initialState, latestState);
+  }
+  const handleFullAnswerChange: RichTextEditorProps["onChange"] = (_value, _delta, _sources, editor) => {
+    const latestFullAnswerContent = editor.getContents();
+    const latestState = {
+      prompt: promptContent,
+      fullAnswer: latestFullAnswerContent,
+      answers: answerValues,
+    }
+    setFullAnswerContent(latestFullAnswerContent);
+    debounceIfStateDeltaExists(debounced, initialState, latestState);
+  }
+  const handleAnswersChange = (latestAnswers: string[]) => {
+    latestAnswers = latestAnswers.map((answer) => answer.trim()).filter((answer) => Boolean(answer));
+    debounced.cancel()
+    const latestState = {
+      prompt: promptContent,
+      fullAnswer: fullAnswerContent,
+      answers: latestAnswers,
+    };
+    setAnswerValues(latestAnswers);
+    updateStateToServer(latestState);
+  }
   return (
     <Card withBorder shadow="sm" radius="md">
       <Card.Section inheritPadding pt="sm">
@@ -78,7 +133,7 @@ export const ManageCard: FC<Props> = ({ card }) => {
       <Card.Section>
         <RichTextEditor
           value={promptContent}
-          onChange={(_value, _delta, _sources, editor) => { setPromptContent(editor.getContents()); }}
+          onChange={handlePromptChange}
           classNames={classes}
         />
       </Card.Section>
@@ -89,7 +144,7 @@ export const ManageCard: FC<Props> = ({ card }) => {
       <Card.Section>
         <RichTextEditor
           value={fullAnswerContent}
-          onChange={(_value, _delta, _sources, editor) => { setFullAnswerContent(editor.getContents()); }}
+          onChange={handleFullAnswerChange}
           classNames={classes}
         />
       </Card.Section>
@@ -101,26 +156,51 @@ export const ManageCard: FC<Props> = ({ card }) => {
             <Group spacing="xs" py="xs">
               {answerValues.map((answer, index) => {
                 if (index === currentlyEditing) {
-                  return <ManageCardAltAnswerInput key={index} initialAnswer={answer} onCancel={() => {
-                    setCurrentlyEditing(null);
-                    if (!answer) {
-                      handlers.remove(index);
-                    }
-                  }} onSave={(newAnswer) => {
-                    const answerToSave = newAnswer.trim();
-                    setCurrentlyEditing(null);
-                    if (answerToSave) {
-                      handlers.setItem(index, answerToSave);
-                    } else {
-                      handlers.remove(index);
-                    }
-                  }}
+                  return <ManageCardAltAnswerInput
+                    key={index} 
+                    initialAnswer={answer}
+                    onCancel={() => {
+                      setCurrentlyEditing(null);
+                      if (!answer) {
+                        const latestAnswers = Array.from(answers);
+                        latestAnswers.splice(index, 1);
+                        handleAnswersChange(latestAnswers)
+                      }
+                    }}
+                    onSave={(newAnswer) => {
+                      const answerToSave = newAnswer.trim();
+                      const latestAnswers = Array.from(answers);
+                      setCurrentlyEditing(null);
+                      if (answerToSave) {
+                        latestAnswers.splice(index, 1, answerToSave);
+                      } else {
+                        latestAnswers.splice(index, 1);
+                      }
+                      handleAnswersChange(latestAnswers);
+                    }}
                   />;
                 }
-                return <ManageCardAltAnswer key={index} answer={answer} onRemove={() => handlers.remove(index)} editable={!existsCurrentlyEditing} onStartEditing={() => setCurrentlyEditing(index)} />
+                return <ManageCardAltAnswer
+                  key={index}
+                  answer={answer}
+                  onRemove={() => {
+                    const latestAnswers = Array.from(answers)
+                    latestAnswers.splice(index, 1)
+                    handleAnswersChange(latestAnswers)
+                  }}
+                  editable={!existsCurrentlyEditing}
+                  onStartEditing={() => setCurrentlyEditing(index)}
+                />
               })}
               {currentlyEditing === null && (
-                <Paper withBorder px="xs" py="6px" onClick={() => { handlers.append(""); setCurrentlyEditing(answerValues.length); }}>
+                <Paper
+                  withBorder px="xs" py="6px"
+                  onClick={() => {
+                    const latestAnswers = [...answers, ""];
+                    setAnswerValues(latestAnswers);
+                    setCurrentlyEditing(answerValues.length);
+                  }}
+                >
                   <ActionIcon size="sm" variant="transparent"><PlusIcon /></ActionIcon>
                 </Paper>
               )}
