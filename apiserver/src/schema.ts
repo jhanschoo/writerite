@@ -10,15 +10,15 @@ const { NODE_ENV } = process.env;
 export const schema = makeSchema({
   types,
   outputs: {
-    typegen: join(__dirname, "..", "generated", "nexus-typegen.ts"),
-    schema: join(__dirname, "..", "generated", "schema.graphql"),
+    typegen: join(process.cwd(), "generated", "nexus-typegen.ts"),
+    schema: join(process.cwd(), "generated", "schema.graphql"),
   },
   plugins: [undefinedOnlyPlugin, fieldAuthorizePlugin()],
   sourceTypes: {
     debug: NODE_ENV !== "test",
     modules: [
       {
-        module: join(__dirname, "..", "node_modules", ".prisma", "client", "index.d.ts"),
+        module: join(process.cwd(), "node_modules", ".prisma", "client", "index.d.ts"),
         alias: "p",
       },
     ],
@@ -27,7 +27,7 @@ export const schema = makeSchema({
     },
   },
   contextType: {
-    module: join(__dirname, "./context.ts"),
+    module: join(process.cwd(), "src", "/context.ts"),
     export: "Context",
   },
 });
