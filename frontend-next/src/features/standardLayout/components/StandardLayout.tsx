@@ -42,7 +42,7 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ breadcrumbs, chil
           </Group>
         </Header>
       }
-      footer={<Footer height={40}><Center><Text>Hello, World!</Text></Center></Footer>}
+      // footer={<Footer height={40}><Center><Text>Hello, World!</Text></Center></Footer>}
       classNames={classes}
     >
       <Stack spacing={2} sx={{ flexGrow: 1 }}>

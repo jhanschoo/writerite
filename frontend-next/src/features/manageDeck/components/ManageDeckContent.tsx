@@ -14,7 +14,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
   return {
     tabsRoot: {
       position: 'relative',
-      width: `100%`,
+      width: '100%',
+      display: 'flex',
+      flexGrow: 1,
+      flexDirection: 'column',
     },
     tab: {
       '&[data-active]': {
@@ -32,10 +35,12 @@ const useStyles = createStyles((theme, _params, getRef) => {
     },
     panelWrapper: {
       backgroundColor,
+      flexGrow: 1,
     },
     panel: {
       maxWidth: `${breakpoints.lg}px`,
       width: `calc(100% - ${spacing.md * 4}px)`,
+      flexGrow: 1,
       margin: '0 auto',
     },
   }

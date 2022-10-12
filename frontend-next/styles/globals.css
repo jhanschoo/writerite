@@ -1,3 +1,7 @@
+html {
+  overflow-y: scroll;
+}
+
 .DraftEditor-root {
   flex-grow: 1;
   cursor: text;

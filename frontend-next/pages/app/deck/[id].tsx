@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   return (
     <StandardLayout breadcrumbs={[['/app', 'Home'], ['/app/deck', 'Decks'], [`/app/deck/${id}`, nameBreadcrumb]]}>
       <motion.div {...motionProps}>
-        <ManageDeck deck={deck} grow />
+        <ManageDeck deck={deck} />
       </motion.div>
     </StandardLayout>
   );
