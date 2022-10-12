@@ -85,7 +85,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
         </Stack>
       </Dropzone>
       <Button sx={{ alignSelf: "flex-start" }} variant="subtle" onClick={onPreviousStep} leftIcon={<ArrowLeftIcon />}>
-        Review instructions
+        Back to instructions
       </Button>
     </Stack>
   );

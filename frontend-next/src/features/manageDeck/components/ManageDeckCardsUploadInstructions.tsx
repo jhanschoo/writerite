@@ -60,7 +60,7 @@ export const ManageDeckCardsUploadInstructions: FC<{ onNextStep: () => unknown }
         </ul>
       </ul>
       <Button fullWidth onClick={onNextStep} rightIcon={<ArrowRightIcon />}>
-        Proceed to import
+        Proceed
       </Button>
     </Stack>
   );
