@@ -7,11 +7,11 @@ import { graphQLServerFactory } from "./graphqlServer";
 
 const { NODE_ENV, CERT_FILE, KEY_FILE } = process.env;
 
-export const [context, stopContextServices] = contextFactory();
+export const [contextFn, stopContextServices] = contextFactory();
 
 export const yogaApp = graphQLServerFactory({
   port: 4000,
-  context,
+  context: contextFn,
   https: CERT_FILE && KEY_FILE ? {
     cert: fs.readFileSync(CERT_FILE),
     key: fs.readFileSync(KEY_FILE),

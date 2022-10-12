@@ -1,42 +1,40 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import dotenv from "dotenv";
-dotenv.config();
+import { z } from "zod";
 
-type EnvKeys =
-| "DATABASE_URL"
-| "FACEBOOK_APP_ID"
-| "FACEBOOK_APP_SECRET"
-| "GAPI_CLIENT_ID"
-| "GAPI_CLIENT_SECRET"
-| "JWT_PRIVATE_KEY"
-| "JWT_PUBLIC_KEY"
-| "REDIS_HOST"
-| "REDIS_PORT"
-| "REDIS_PASSWORD"
-| "RECAPTCHA_SECRET";
+const keySchema = z.object({
+  kty: z.string()
+});
 
-const {
-  DATABASE_URL, FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, GAPI_CLIENT_ID, GAPI_CLIENT_SECRET, JWT_PRIVATE_KEY, JWT_PUBLIC_KEY, REDIS_HOST, REDIS_PORT, REDIS_PASSWORD, RECAPTCHA_SECRET,
-} = process.env;
-
-const env: Record<EnvKeys, string | undefined> = {
-  DATABASE_URL,
-  FACEBOOK_APP_ID,
-  FACEBOOK_APP_SECRET,
-  GAPI_CLIENT_ID,
-  GAPI_CLIENT_SECRET,
-  JWT_PRIVATE_KEY,
-  JWT_PUBLIC_KEY,
-  REDIS_HOST,
-  REDIS_PORT,
-  REDIS_PASSWORD,
-  RECAPTCHA_SECRET,
+const keyTransform = (path: (string | number)[]) => (o: string, ctx: z.RefinementCtx) => {
+  const parsed = JSON.parse(o);
+  const validationResult = keySchema.safeParse(parsed);
+  if (validationResult.success) {
+    // note: we return `parsed` instead of `validationResult` to preserve fields independent of
+    //   the `kty`, etc. in this data.
+    return parsed;
+  } else {
+    for (const { path: pathSuffix, ...rest } of validationResult.error.issues) {
+      ctx.addIssue({ path: [...path, ...pathSuffix], ...rest });
+    }
+  }
 };
 
-for (const key of Object.keys(env) as EnvKeys[]) {
-  if (env[key] === undefined) {
-    throw new Error(`configuration value ${key} not found`);
-  }
-}
+const envSchema = z.object({
+  DATABASE_URL: z.string(),
+  FACEBOOK_APP_ID: z.string(),
+  FACEBOOK_APP_SECRET: z.string(),
+  GAPI_CLIENT_ID: z.string(),
+  GAPI_CLIENT_SECRET: z.string(),
+  JWT_PRIVATE_KEY: z.string()
+    .transform(keyTransform(["JWT_PRIVATE_KEY"])),
+  JWT_PUBLIC_KEY: z.string()
+    .transform(keyTransform(["JWT_PUBLIC_KEY"])),
+  REDIS_HOST: z.string(),
+  REDIS_PORT: z.string(),
+  REDIS_PASSWORD: z.string(),
+  RECAPTCHA_SECRET: z.string(),
+});
 
-export default env as Record<EnvKeys, string>;
+const env = envSchema.parse(process.env);
+
+export default env;

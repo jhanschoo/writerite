@@ -8,7 +8,7 @@ import { nanoid } from "nanoid";
 import { YogaInitialContext } from "@graphql-yoga/node";
 
 import { CurrentUser } from "./types";
-import { parseJWT, verifyJWT } from "./service/crypto/jwtUtil";
+import { verifyUserJWT } from "./service/crypto/jwtUtil";
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { URL } from "url";
 
@@ -21,7 +21,7 @@ export function slug(size: number | null = 4): string {
   return nanoid(size ?? undefined);
 }
 
-export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
+export async function getClaims(ctx: YogaInitialContext): Promise<CurrentUser | undefined> {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const authorization = ctx.request?.headers?.get("Authorization") ??
   // path if called from GraphiQL
@@ -34,10 +34,7 @@ export function getClaims(ctx: YogaInitialContext): CurrentUser | undefined {
   const jwt = authorization.slice(7);
   if (jwt) {
     try {
-      if (verifyJWT(jwt)) {
-        const { sub } = parseJWT(jwt) as { sub: CurrentUser | undefined };
-        return sub;
-      }
+      return verifyUserJWT(jwt);
     } catch (e: unknown) {
       handleError(e);
       return undefined;

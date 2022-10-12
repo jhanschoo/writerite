@@ -11,7 +11,7 @@ import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
 describe("graphql/Deck.ts", () => {
 
   let setSub: (sub?: CurrentUser) => void;
-  let context: (initialContext: YogaInitialContext) => Context;
+  let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
   let server: WrServer;

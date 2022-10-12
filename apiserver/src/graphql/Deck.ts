@@ -5,7 +5,7 @@ import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsE
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { getDescendantsOfDeck } from "../service/deckFamily";
 import { jsonObjectArg } from "./scalarUtil";
-import * as yup from "yup";
+import { z } from "zod";
 
 const DEFAULT_TAKE = 60;
 
@@ -208,18 +208,18 @@ export const OwnDeckRecordQuery = queryField("ownDeckRecord", {
     prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } })),
 });
 
-export const deckCreateSchema = yup.object({
-  name: yup.string().trim(),
-  description: yup.object(),
-  promptLang: yup.string().trim().min(2),
-  answerLang: yup.string().trim().min(2),
-  published: yup.boolean(),
-  cards: yup.array(yup.object({
-    answers: yup.array(yup.string()).required(),
-    fullAnswer: yup.object().required(),
-    prompt: yup.object().required(),
-    template: yup.boolean(),
-  })),
+export const deckCreateSchema = z.object({
+  name: z.string().trim().optional(),
+  description: z.object({}).optional(),
+  promptLang: z.string().trim().min(2).optional(),
+  answerLang: z.string().trim().min(2).optional(),
+  published: z.boolean().optional(),
+  cards: z.array(z.object({
+    answers: z.array(z.string()),
+    fullAnswer: z.object({}),
+    prompt: z.object({}),
+    template: z.boolean().optional(),
+  })).optional(),
 });
 export const DeckCreateMutation = mutationField("deckCreate", {
   type: nonNull("Deck"),
@@ -235,7 +235,7 @@ export const DeckCreateMutation = mutationField("deckCreate", {
     }))),
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
-    const { cards, ...rest } = await deckCreateSchema.validate(args);
+    const { cards, ...rest } = await deckCreateSchema.parse(args);
     const cardsWithId = cards?.map((card) => ({ id: cuid(), ...card }));
     const sortData = cardsWithId?.map(({ id }) => id);
 
@@ -248,13 +248,13 @@ export const DeckCreateMutation = mutationField("deckCreate", {
   }),
 });
 
-export const deckEditSchema = yup.object({
-  id: yup.string().min(20).required(),
-  name: yup.string().trim(),
-  description: yup.object(),
-  promptLang: yup.string().trim().min(2),
-  answerLang: yup.string().trim().min(2),
-  published: yup.boolean(),
+export const deckEditSchema = z.object({
+  id: z.string().min(20),
+  name: z.string().trim().optional(),
+  description: z.object({}).optional(),
+  promptLang: z.string().trim().min(2).optional(),
+  answerLang: z.string().trim().min(2).optional(),
+  published: z.boolean().optional(),
 });
 
 export const DeckEditMutation = mutationField("deckEdit", {
@@ -268,7 +268,7 @@ export const DeckEditMutation = mutationField("deckEdit", {
     published: booleanArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
-    const { id, ...data } = await deckEditSchema.validate(args);
+    const { id, ...data } = await deckEditSchema.parse(args);
     const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data: { ...data, editedAt: new Date() } });
     if (count !== 1) {
       throw new Error("");

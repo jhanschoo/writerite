@@ -7,7 +7,7 @@ export function userToJWT({
 }: {
   user: User;
   persist?: boolean;
-}): string {
+}): Promise<string> {
   return generateUserJWT({
     id,
     roles: roles as Roles[],

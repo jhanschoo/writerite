@@ -22,7 +22,7 @@ interface GraphQLServerFactoryOpts {
   port?: number;
   https?: ServerOptions;
   cors?: CORSOptions;
-  context(initialContext: YogaInitialContext): Context;
+  context(initialContext: YogaInitialContext): Promise<Context>;
 }
 
 export function graphQLServerFactory(opts: GraphQLServerFactoryOpts) {

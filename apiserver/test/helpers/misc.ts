@@ -1,16 +1,16 @@
 import { PubSub } from "@graphql-yoga/node";
 import { PrismaClient } from "@prisma/client";
 import Redis from "ioredis";
-import { KJUR } from "jsrsasign";
-import { string } from "yup";
+import { JWTPayload } from "jose";
 import { Context, ContextFactoryReturnType, PubSubPublishArgsByKey, contextFactory } from "../../src/context";
 import { WrServer } from "../../src/graphqlServer";
+import { parseArbitraryJWT } from "../../src/service/crypto/jwtUtil";
 import { CurrentUser } from "../../src/types";
 
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  return KJUR.jws.JWS.parse(jwt).payloadObj.sub as CurrentUser;
+  return JSON.parse(parseArbitraryJWT<JWTPayload & { sub: string }>(jwt).sub) as CurrentUser;
 }
 
 export function testContextFactory<T extends PrismaClient, U extends PubSubPublishArgsByKey, R extends Redis>(opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">): [(sub?: CurrentUser) => void, (pubsub: PubSub<PubSubPublishArgsByKey>) => void, ...ContextFactoryReturnType<T, U, R>];
@@ -25,7 +25,7 @@ export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser
     (newPubsub) => {
       pubsub = newPubsub;
     },
-    ...contextFactory(opts, () => sub, () => pubsub),
+    ...contextFactory(opts, () => Promise.resolve(sub), () => pubsub),
   ];
 }
 

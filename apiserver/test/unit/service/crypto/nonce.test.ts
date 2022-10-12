@@ -20,7 +20,7 @@ describe("service/crypto/nonce.ts", () => {
       expect.assertions(3);
       redis.setex.calledWith(any(), any(), any()).mockResolvedValue("OK");
       const nonce = await getNonce(redis);
-      expect(nonce).toHaveLength(8);
+      expect(nonce).toHaveLength(4);
       // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(redis.setex).toHaveBeenCalledTimes(1);
       // eslint-disable-next-line @typescript-eslint/unbound-method

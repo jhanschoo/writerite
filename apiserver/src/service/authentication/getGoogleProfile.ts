@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import env from "../../safeEnv";
-import { parseJWT } from "../crypto/jwtUtil";
+import { parseArbitraryJWT } from "../crypto/jwtUtil";
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { URL } from "url";
 import fetch from "cross-fetch";
 import { setSearchParams } from "../../util";
 import { ThirdPartyProfileInformation } from "./types";
+import { JWTPayload } from "jose";
 
 const GOOGLE_OAUTH_TOKEN_BASE_URL = new URL("https://oauth2.googleapis.com/token");
 const { GAPI_CLIENT_ID, GAPI_CLIENT_SECRET } = env;
@@ -18,7 +19,7 @@ interface GoogleTokenResponse {
   token_type: "Bearer";
 }
 
-interface GoogleIdTokenWithEmailOpenIDAndProfile {
+interface GoogleIdTokenWithEmailOpenIDAndProfile extends JWTPayload {
   aud: string; // === GAPI_CLIENT_ID
   exp: number; // seconds since epoch
   iat: number; // seconds since epoch
@@ -46,7 +47,7 @@ export async function getGoogleProfile({ code, redirect_uri }: { code: string; r
   const {
     id_token,
   } = await res.json() as GoogleTokenResponse;
-  const parsedJWT = parseJWT(id_token) as GoogleIdTokenWithEmailOpenIDAndProfile;
+  const parsedJWT = parseArbitraryJWT<GoogleIdTokenWithEmailOpenIDAndProfile>(id_token);
   const { sub, email } = parsedJWT;
   return { email, id: sub };
 }

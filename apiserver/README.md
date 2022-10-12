@@ -53,7 +53,7 @@ We don't presently have unit tests.
   * Frontend & bots: GraphQL with subscriptions using `urql` and GraphQL Yoga.
 * Authentication:
   * Third-party (Google or Facebook) identity verification: hand-rolled OAuth2 flow; server verifies with third-party an access token issued by third-party to the user that is then sent to the server over HTTPS.
-  * Authorization managed in hand-rolled solution (as opposed to Passport.js, etc.) using JWTs issued using `jsrsasign` to sign digest.
+  * Authorization managed in hand-rolled solution (as opposed to Passport.js, etc.) using JWTs issued using `jose` to sign digest.
   * Passwords: hashed by `bcrypt`.
 * Persistence:
   * Database: PostgreSQL through Prisma Client.

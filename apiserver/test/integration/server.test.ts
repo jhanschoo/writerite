@@ -7,7 +7,7 @@ import { cascadingDelete } from "./_helpers/truncate";
 
 describe("server", () => {
 
-  let context: (initialContext: YogaInitialContext) => Context;
+  let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
   let server: WrServer;

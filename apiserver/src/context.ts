@@ -44,23 +44,23 @@ export interface LoggedInContext extends Context {
   sub: CurrentUser;
 }
 
-export type ContextFactoryReturnType<T extends PrismaClient = PrismaClient, U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey, R extends Redis = Redis> = [(initialContext: YogaInitialContext) => Context, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: PubSub<U>, redis: R }];
+export type ContextFactoryReturnType<T extends PrismaClient = PrismaClient, U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey, R extends Redis = Redis> = [(initialContext: YogaInitialContext) => Promise<Context>, () => Promise<PromiseSettledResult<unknown>[]>, { prisma: T, pubsub: PubSub<U>, redis: R }];
 
 /**
  * Note: opts.ctx is never used if provided
  * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.
  */
-export function contextFactory<T extends PrismaClient, U extends PubSubPublishArgsByKey, R extends Redis>(opts?: Partial<Context> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">, subFn?: (initialContext: YogaInitialContext) => CurrentUser | undefined, pubsubFn?: () => PubSub<U>): ContextFactoryReturnType<T, U>;
-export function contextFactory(opts?: Partial<Context>, subFn?: (initialContext: YogaInitialContext) => CurrentUser | undefined, pubsubFn?: () => PubSub<PubSubPublishArgsByKey>): ContextFactoryReturnType<PrismaClient, PubSubPublishArgsByKey>;
-export function contextFactory<T extends PrismaClient = PrismaClient, U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey, R extends Redis = Redis>(opts?: Partial<Context<T, U, R>>, subFn?: (initialContext: YogaInitialContext) => CurrentUser | undefined, pubsubFn?: () => PubSub<U>): ContextFactoryReturnType<T, U> {
+export function contextFactory<T extends PrismaClient, U extends PubSubPublishArgsByKey, R extends Redis>(opts?: Partial<Context> & Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">, subFn?: (initialContext: YogaInitialContext) => Promise<CurrentUser | undefined>, pubsubFn?: () => PubSub<U>): ContextFactoryReturnType<T, U>;
+export function contextFactory(opts?: Partial<Context>, subFn?: (initialContext: YogaInitialContext) => Promise<CurrentUser | undefined>, pubsubFn?: () => PubSub<PubSubPublishArgsByKey>): ContextFactoryReturnType<PrismaClient, PubSubPublishArgsByKey>;
+export function contextFactory<T extends PrismaClient = PrismaClient, U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey, R extends Redis = Redis>(opts?: Partial<Context<T, U, R>>, subFn?: (initialContext: YogaInitialContext) => Promise<CurrentUser | undefined>, pubsubFn?: () => PubSub<U>): ContextFactoryReturnType<T, U> {
   const useDefaultPrisma = !opts?.prisma;
   const useDefaultRedis = !opts?.redis;
   const prisma = opts?.prisma ?? new PrismaClient();
   const pubsub = pubsubFn ? pubsubFn() : opts?.pubsub ?? createPubSub();
   const redis = opts?.redis ?? new Redis(redisOptions);
   return [
-    (ctx: YogaInitialContext): Context => {
-      const sub = subFn?.(ctx) ?? opts?.sub ?? getClaims(ctx);
+    async (ctx: YogaInitialContext): Promise<Context> => {
+      const sub = await subFn?.(ctx) ?? opts?.sub ?? await getClaims(ctx);
       return {
         ...ctx,
         fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,

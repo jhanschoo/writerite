@@ -1,41 +1,33 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import env from "../../safeEnv";
-import { KEYUTIL, KJUR } from "jsrsasign";
+import { importJWK, SignJWT, jwtVerify, decodeJwt, JWTPayload } from "jose";
 import { CurrentUser } from "../../types";
-import { generateB64UUID } from "./generateB64UUID";
+import { nanoid } from "nanoid";
 
 const { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } = env;
 
-const PRIVATE_KEY = KEYUTIL.getKey(JSON.parse(JWT_PRIVATE_KEY));
-const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(JWT_PUBLIC_KEY));
-
 const alg = "ES256";
+const issuer = "writerite.site";
 
-export function generateUserJWT(sub: CurrentUser, persist = false): string {
-  const timeNow = KJUR.jws.IntDate.get("now") as number;
-  const expiryTime = KJUR.jws.IntDate.get(persist ? "now + 1year" : "now + 1day") as number;
+const PRIVATE_KEY_P = importJWK(JWT_PRIVATE_KEY, alg);
+const PUBLIC_KEY_P = importJWK(JWT_PUBLIC_KEY, alg);
 
-  const header = {
-    alg,
-    cty: "JWT",
-  } as const;
 
-  const payload = {
-    exp: expiryTime,
-    iat: timeNow,
-    iss: "writerite.site",
-    jti: generateB64UUID(),
-    // Nbf: timeNow,
-    sub,
-  };
-
-  return KJUR.jws.JWS.sign(null, header, payload, PRIVATE_KEY) as string;
+export async function generateUserJWT(sub: CurrentUser, persist = false): Promise<string> {
+  return new SignJWT({ sub: JSON.stringify(sub) })
+    .setProtectedHeader({ alg, cty: "JWT" })
+    .setIssuedAt()
+    .setIssuer(issuer)
+    .setExpirationTime(persist ? "1year" : "1day")
+    .setJti(nanoid())
+    .sign(await PRIVATE_KEY_P)
 }
 
-export function verifyJWT(jwt: string): boolean {
-  return KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, [alg]) as boolean;
+export async function verifyUserJWT(jwt: string): Promise<CurrentUser> {
+  const { payload } = await jwtVerify(jwt, await PUBLIC_KEY_P, { algorithms: [alg], issuer })
+  return JSON.parse(payload.sub as string) as CurrentUser;
 }
 
-export function parseJWT(jwt: string): unknown {
-  return KJUR.jws.JWS.parse(jwt).payloadObj;
+export function parseArbitraryJWT<T extends JWTPayload>(jwt: string): T {
+  return decodeJwt(jwt) as T;
 }

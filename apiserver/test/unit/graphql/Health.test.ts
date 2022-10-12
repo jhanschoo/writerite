@@ -19,7 +19,7 @@ export const DEFAULT_CURRENT_USER = {
 describe("graphql/Health.ts", () => {
 
   let setSub: (sub?: CurrentUser) => void;
-  let context: (initialContext: YogaInitialContext) => Context;
+  let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: DeepMockProxy<PrismaClient>;
   let server: YogaServerInstance<Record<string, never>, Context, Record<string, never>>;
