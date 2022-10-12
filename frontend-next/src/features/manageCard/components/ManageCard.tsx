@@ -89,6 +89,12 @@ export const ManageCard: FC<Props> = ({ card }) => {
     });
   };
   const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
+  useEffect(
+    () => () => {
+      debounced.flush();
+    },
+    [debounced]
+  );
   const hasUnsavedChanges = fetching || debounced.isPending();
 
   const [currentlyEditing, setCurrentlyEditing] = useState<number | null>(null);
