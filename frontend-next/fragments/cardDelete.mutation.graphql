@@ -1,0 +1,12 @@
+mutation CardDelete(
+  $answers: [String!]
+  $fullAnswer: JSONObject
+  $id: ID!
+  $mainTemplate: Boolean
+  $prompt: JSONObject
+  $template: Boolean
+) {
+  cardDelete(id: $id) {
+    ...cardDetail
+  }
+}
