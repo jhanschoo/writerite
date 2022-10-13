@@ -175,7 +175,7 @@ export const DecksQuery = queryField("decks", {
       default:
         OR.length = 1;
     }
-    const decks = await prisma.deck.findMany({
+    return prisma.deck.findMany({
       ...cursorParams(cursor, take),
       where: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -189,7 +189,6 @@ export const DecksQuery = queryField("decks", {
         cards: true,
       },
     });
-    return decks;
   }),
 });
 
@@ -235,7 +234,7 @@ export const DeckCreateMutation = mutationField("deckCreate", {
     }))),
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
-    const { cards, ...rest } = await deckCreateSchema.parse(args);
+    const { cards, ...rest } = deckCreateSchema.parse(args);
     const cardsWithId = cards?.map((card) => ({ id: cuid(), ...card }));
     const sortData = cardsWithId?.map(({ id }) => id);
 
@@ -268,7 +267,7 @@ export const DeckEditMutation = mutationField("deckEdit", {
     published: booleanArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
-    const { id, ...data } = await deckEditSchema.parse(args);
+    const { id, ...data } = deckEditSchema.parse(args);
     const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data: { ...data, editedAt: new Date() } });
     if (count !== 1) {
       throw new Error("");

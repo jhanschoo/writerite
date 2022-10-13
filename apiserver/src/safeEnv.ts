@@ -2,21 +2,26 @@
 import { z } from "zod";
 
 const keySchema = z.object({
-  kty: z.string()
+  kty: z.string(),
 });
 
 const keyTransform = (path: (string | number)[]) => (o: string, ctx: z.RefinementCtx) => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const parsed = JSON.parse(o);
   const validationResult = keySchema.safeParse(parsed);
   if (validationResult.success) {
-    // note: we return `parsed` instead of `validationResult` to preserve fields independent of
-    //   the `kty`, etc. in this data.
-    return parsed;
-  } else {
-    for (const { path: pathSuffix, ...rest } of validationResult.error.issues) {
-      ctx.addIssue({ path: [...path, ...pathSuffix], ...rest });
-    }
+    /*
+     * note: we return `parsed` instead of `validationResult` to preserve fields independent of
+     *   the `kty`, etc. in this data.
+     */
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return parsed as z.SafeParseSuccess<{ kty: string }>["data"];
   }
+  for (const { path: pathSuffix, ...rest } of validationResult.error.issues) {
+    ctx.addIssue({ path: [...path, ...pathSuffix], ...rest });
+  }
+  // we improperly coerce the type here, but it's safe because we've already added issues
+  return undefined as unknown as z.SafeParseSuccess<{ kty: string }>["data"];
 };
 
 const envSchema = z.object({

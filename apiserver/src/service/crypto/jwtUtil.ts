@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-return */
 import env from "../../safeEnv";
-import { importJWK, SignJWT, jwtVerify, decodeJwt, JWTPayload } from "jose";
+import { JWTPayload, SignJWT, decodeJwt, importJWK, jwtVerify } from "jose";
 import { CurrentUser } from "../../types";
 import { nanoid } from "nanoid";
 
@@ -20,11 +20,11 @@ export async function generateUserJWT(sub: CurrentUser, persist = false): Promis
     .setIssuer(issuer)
     .setExpirationTime(persist ? "1year" : "1day")
     .setJti(nanoid())
-    .sign(await PRIVATE_KEY_P)
+    .sign(await PRIVATE_KEY_P);
 }
 
 export async function verifyUserJWT(jwt: string): Promise<CurrentUser> {
-  const { payload } = await jwtVerify(jwt, await PUBLIC_KEY_P, { algorithms: [alg], issuer })
+  const { payload } = await jwtVerify(jwt, await PUBLIC_KEY_P, { algorithms: [alg], issuer });
   return JSON.parse(payload.sub as string) as CurrentUser;
 }
 

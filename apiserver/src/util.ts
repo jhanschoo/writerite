@@ -34,7 +34,7 @@ export async function getClaims(ctx: YogaInitialContext): Promise<CurrentUser | 
   const jwt = authorization.slice(7);
   if (jwt) {
     try {
-      return verifyUserJWT(jwt);
+      return await verifyUserJWT(jwt);
     } catch (e: unknown) {
       handleError(e);
       return undefined;

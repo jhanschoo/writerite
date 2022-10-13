@@ -1,8 +1,8 @@
-import type { Deck, PrismaClient, User } from "@prisma/client";
+import type { Deck, PrismaClient } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 
-import { mutationDeckAddSubdeck, mutationDeckCreateEmpty, mutationDeckEditName, mutationDeckRemoveSubdeck, queryDeckScalars, queryDecks, testContextFactory, mutationDeckUsed } from "../../helpers";
+import { mutationDeckAddSubdeck, mutationDeckCreateEmpty, mutationDeckEditName, mutationDeckRemoveSubdeck, mutationDeckUsed, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
 import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
 import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
@@ -190,7 +190,7 @@ describe("graphql/Deck.ts", () => {
     });
 
     describe.skip("decks", () => {
-      it("should be able to return ids of owned decks", async () => {
+      it("should be able to return ids of ownedSignJWT decks", async () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const { executionResult: createDeck1ExecutionResult } = await mutationDeckCreateEmpty(server);
