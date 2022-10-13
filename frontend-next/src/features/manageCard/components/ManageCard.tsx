@@ -239,6 +239,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
                   </Paper>
                 )}
               </Group>
+              <Text size="xs" color="dimmed" sx={{ visibility: currentlyEditing ? "visible" : "hidden" }}>Press 'Esc' to cancel edits, or 'Return' to confirm edits.</Text>
             </Stack>
             <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
           </Group>

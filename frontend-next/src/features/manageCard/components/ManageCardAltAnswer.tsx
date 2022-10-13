@@ -19,13 +19,15 @@ export const ManageCardAltAnswer: FC<Props> = ({ answer, editable, onRemove, onS
         </Text>
         {
           editable && 
-          <ActionIcon size="sm" variant="subtle">
-            <Pencil1Icon />
-          </ActionIcon>
+          <>
+            <ActionIcon size="sm" variant="subtle">
+              <Pencil1Icon />
+            </ActionIcon>
+            <ActionIcon size="sm" variant="subtle" onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); onRemove(); }}>
+              <Cross2Icon />
+            </ActionIcon>
+          </>
         }
-        <ActionIcon size="sm" variant="subtle" onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); onRemove(); }}>
-          <Cross2Icon />
-        </ActionIcon>
       </Group>
     </Paper>
   );
