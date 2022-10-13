@@ -27,6 +27,13 @@ export const Card = objectType({
     });
     t.nonNull.dateTime("editedAt");
 
+    t.nonNull.field("deck", {
+      type: "Deck",
+      description: "the Deck directly containing this card",
+      async resolve({ id }, _args, { prisma }) {
+        return prisma.deck.findFirstOrThrow({ where: { cards: { some: { id } } } });
+      },
+    });
     t.field("ownRecord", {
       type: "UserCardRecord",
       resolve: guardValidUser(async ({ id: cardId }, _args, { sub, prisma }) =>

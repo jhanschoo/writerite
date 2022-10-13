@@ -4,6 +4,9 @@
 
 type Card {
   answers: [String!]!
+
+  """the Deck directly containing this card"""
+  deck: Deck!
   editedAt: DateTime!
   fullAnswer: JSONObject!
   id: ID!

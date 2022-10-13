@@ -27,6 +27,8 @@ export type Scalars = {
 export type Card = {
   __typename?: 'Card';
   answers: Array<Scalars['String']>;
+  /** the Deck directly containing this card */
+  deck: Deck;
   editedAt: Scalars['DateTime'];
   fullAnswer: Scalars['JSONObject'];
   id: Scalars['ID'];
