@@ -66,14 +66,6 @@ export const getExchanges = (ssr: SSRExchange) => [
   dedupExchange,
   cacheExchange({
     schema: schema as IntrospectionData,
-    resolvers: {
-      Query: {
-        deck(_parent, { id }) {
-          const __typename: Deck['__typename'] = 'Deck';
-          return { __typename, id };
-        },
-      },
-    },
   }),
   ssr,
   auth,
