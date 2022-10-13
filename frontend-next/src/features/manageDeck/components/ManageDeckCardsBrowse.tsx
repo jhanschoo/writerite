@@ -27,7 +27,6 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
     sortCards(filteredCards);
     return filteredCards.slice((activePage - 1) * 10, activePage * 10);
   }, [deck.cardsDirect, activePage, filter]);
-  console.log("fetching deck: ManageDeckCardsBrowse: currentCards", currentCards);
   const total = Math.ceil(deck.cardsDirect.length / 10);
   return (
     <Stack align="stretch">
