@@ -1,18 +1,17 @@
 import { FC, useEffect, useState } from 'react';
-import { ActionIcon, Button, Box, Card, createStyles, Divider, Group, Loader, LoadingOverlay, Paper, Stack, Text } from '@mantine/core';
+import { Button, Box, Card, createStyles, Divider, Group, Loader, LoadingOverlay, Paper, Stack, Text } from '@mantine/core';
 import { Delta } from 'quill';
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
-import { PlusIcon, TrashIcon } from '@radix-ui/react-icons';
+import { TrashIcon } from '@radix-ui/react-icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
-import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
-import { ManageCardAltAnswer } from './ManageCardAltAnswer';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
 import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { RichTextEditorProps } from '@mantine/rte';
+import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 
 const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -79,21 +78,23 @@ function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State)
  * When the user edits the prompt or the fullAnswer, we expect to update the server after at most STANDARD_DEBOUNCE_MS with:
  * * the latest state of prompt
  * * the latest state of fullAnswer
- * * the latest definite state of each answer in the latest definite state of answers, where
- * by latest definite state of answers we mean the answers array containing all answers except any newly added answer currently being edited
- * by latest definite state of answer we mean the answer if it is not in editing state, or what the answer was before entering editing state if it is in editing state
+ * * the latest definite latest definite state of answers, where
+ *   by latest definite state of answers we mean the answers array containing all answers except any
+ *   newly added answer currently being edited, with each answer in the state before we started but
+ *   not finished editing them, if we had started editing them but not finished.
  * 
  * When the user is done adding, deleting, or editing any answer, we expect to update the server immediately with:
  * * the latest state of prompt
  * * the latest state of fullAnswer
  * * the latest definite state of each answer in the latest definite state of answers, which is the latest state of answers
  * 
- * We then add the further assumption:
- * * getting the latest definite state of each answer is no problem
- * 
- * Then observe the following
- * * clearly when updating the server, after answers edits, we have no problem since we just use the latest state of everything.
- * * while still updating the server, if we edit the prompt or fullAnswer we may have a problem only if we are editing a newly edited answer as well. To this end, when we add an answer, set its latest definite state to the illegal empty string, and then the latest definite state is simply the latest state after filtering out empty strings.
+ * Then observe that
+ * * clearly when updating the server, after answers edits, since there are no longer any
+ *   answers being edited, the latest definite state of answers is the latest state of answers.
+ *   and we have no problem obtaining the latest state of answers.
+ * * while still updating the server, if we edit the prompt or fullAnswer, the latest definite state
+ *   of answers is the latest answers that we have trued to update the server with (or the initial
+ *   answers if we have not tried any such thing).
  */
 export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const { id, prompt, fullAnswer, answers } = card;
@@ -119,8 +120,6 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   );
   const hasUnsavedChanges = fetching || debounced.isPending();
 
-  const [currentlyEditing, setCurrentlyEditing] = useState<number | null>(null);
-  const existsCurrentlyEditing = currentlyEditing !== null;
   const { classes } = useStyles();
   const handlePromptChange: RichTextEditorProps["onChange"] = (_value, _delta, _sources, editor) => {
     const latestPromptContent = editor.getContents();
@@ -142,8 +141,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     setFullAnswerContent(latestFullAnswerContent);
     debounceIfStateDeltaExists(debounced, initialState, latestState);
   }
-  const handleAnswersChange = (latestAnswers: string[]) => {
-    latestAnswers = latestAnswers.map((answer) => answer.trim()).filter((answer) => Boolean(answer));
+  const handleAnswersSave = (latestAnswers: string[]) => {
     debounced.cancel()
     const latestState = {
       prompt: promptContent,
@@ -185,62 +183,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         <Divider />
         <Card.Section inheritPadding py="sm">
           <Group>
-            <Stack spacing={0} sx={{ flexGrow: 1 }}>
-              <Text size="xs" weight="bold">Accepted answers</Text>
-              <Group spacing="xs" py="xs">
-                {answerValues.map((answer, index) => {
-                  if (index === currentlyEditing) {
-                    return <ManageCardAltAnswerInput
-                      key={index} 
-                      initialAnswer={answer}
-                      onCancel={() => {
-                        setCurrentlyEditing(null);
-                        if (!answer) {
-                          const latestAnswers = Array.from(answers);
-                          latestAnswers.splice(index, 1);
-                          handleAnswersChange(latestAnswers)
-                        }
-                      }}
-                      onSave={(newAnswer) => {
-                        const answerToSave = newAnswer.trim();
-                        const latestAnswers = Array.from(answers);
-                        setCurrentlyEditing(null);
-                        if (answerToSave) {
-                          latestAnswers.splice(index, 1, answerToSave);
-                        } else {
-                          latestAnswers.splice(index, 1);
-                        }
-                        handleAnswersChange(latestAnswers);
-                      }}
-                    />;
-                  }
-                  return <ManageCardAltAnswer
-                    key={index}
-                    answer={answer}
-                    onRemove={() => {
-                      const latestAnswers = Array.from(answers)
-                      latestAnswers.splice(index, 1)
-                      handleAnswersChange(latestAnswers)
-                    }}
-                    editable={!existsCurrentlyEditing}
-                    onStartEditing={() => setCurrentlyEditing(index)}
-                  />
-                })}
-                {currentlyEditing === null && (
-                  <Paper
-                    withBorder px="xs" py="6px"
-                    onClick={() => {
-                      const latestAnswers = [...answers, ""];
-                      setAnswerValues(latestAnswers);
-                      setCurrentlyEditing(answerValues.length);
-                    }}
-                  >
-                    <ActionIcon size="sm" variant="transparent"><PlusIcon /></ActionIcon>
-                  </Paper>
-                )}
-              </Group>
-              <Text size="xs" color="dimmed" sx={{ visibility: currentlyEditing ? "visible" : "hidden" }}>Press 'Esc' to cancel edits, or 'Return' to confirm edits.</Text>
-            </Stack>
+            <ManageCardAltAnswers answers={answerValues} onAnswersSave={handleAnswersSave} />
             <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
           </Group>
         </Card.Section>

@@ -5,7 +5,7 @@ import { Cross1Icon, PaperPlaneIcon } from '@radix-ui/react-icons';
 interface Props {
   initialAnswer: string;
   onCancel: () => void;
-  onSave: (answer: string) => void;
+  onSave: (answer: string) => void; // answer.trim() will be nonzero
 }
 
 export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, onSave }) => {
@@ -17,7 +17,15 @@ export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, o
       onKeyDown={(e: KeyboardEvent<unknown>) => {
         switch (e.key) {
           case 'Escape': onCancel(); break;
-          case 'Enter': onSave(answerInput); break;
+          case 'Enter': {
+            const answerToSave = answerInput.trim();
+            if (answerToSave) {
+              onSave(answerToSave);
+            } else {
+              onCancel();
+            }
+            break;
+          }
         }
       }}
       variant="filled"
