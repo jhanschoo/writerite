@@ -94,6 +94,7 @@ export const ManageDecks: FC = () => {
         <NewDeckItem onClick={handleCreateDeck} />
       </Group>
       <Divider mb="md" />
+      <Text>Search decks</Text>
       <SegmentedControl
         data={[
           { label: 'Owned decks', value: DecksQueryScope.Owned },
