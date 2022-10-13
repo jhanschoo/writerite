@@ -8,8 +8,8 @@ import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
 import { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
-import { Deck } from '@generated/graphql';
 import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
+import { Mutation } from '@generated/graphql';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
@@ -66,6 +66,18 @@ export const getExchanges = (ssr: SSRExchange) => [
   dedupExchange,
   cacheExchange({
     schema: schema as IntrospectionData,
+    updates: {
+      Mutation: {
+        cardDelete(result, _args, cache, _info) {
+          const { cardDelete: { id, deckId } } = result as Mutation;
+          const cardsDirect = cache.resolve({ __typename: 'Deck', id: deckId as string }, 'cardsDirect');
+          if (Array.isArray(cardsDirect)) {
+            const updatedCards = cardsDirect.filter((cardKey) => cardKey !== cache.keyOfEntity({ __typename: 'Card', id }));
+            cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
+          }
+        }
+      }
+    }
   }),
   ssr,
   auth,

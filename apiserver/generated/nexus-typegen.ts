@@ -124,7 +124,7 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 export interface NexusGenFieldTypes {
   Card: { // field return type
     answers: string[]; // [String!]!
-    deck: NexusGenRootTypes['Deck']; // Deck!
+    deckId: string; // ID!
     editedAt: NexusGenScalars['DateTime']; // DateTime!
     fullAnswer: NexusGenScalars['JSONObject']; // JSONObject!
     id: string; // ID!
@@ -234,7 +234,7 @@ export interface NexusGenFieldTypes {
 export interface NexusGenFieldTypeNames {
   Card: { // field return type name
     answers: 'String'
-    deck: 'Deck'
+    deckId: 'ID'
     editedAt: 'DateTime'
     fullAnswer: 'JSONObject'
     id: 'ID'

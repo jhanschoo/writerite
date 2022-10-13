@@ -50,15 +50,15 @@
             "deprecationReason": null
           },
           {
-            "name": "deck",
-            "description": "the Deck directly containing this card",
+            "name": "deckId",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
+                "kind": "SCALAR",
+                "name": "ID",
                 "ofType": null
               }
             },

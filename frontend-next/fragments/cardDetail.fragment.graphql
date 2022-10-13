@@ -1,5 +1,6 @@
 fragment cardDetail on Card {
     answers
+    deckId
     editedAt
     fullAnswer
     id
