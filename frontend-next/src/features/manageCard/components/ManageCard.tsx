@@ -1,11 +1,11 @@
 import { FC, useEffect, useState } from 'react';
-import { ActionIcon, Card, createStyles, Divider, Group, Loader, Paper, Stack, Text } from '@mantine/core';
+import { ActionIcon, Button, Box, Card, createStyles, Divider, Group, Loader, LoadingOverlay, Paper, Stack, Text } from '@mantine/core';
 import { Delta } from 'quill';
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
-import { PlusIcon } from '@radix-ui/react-icons';
+import { PlusIcon, TrashIcon } from '@radix-ui/react-icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
 import { ManageCardAltAnswer } from './ManageCardAltAnswer';
@@ -14,7 +14,7 @@ import { useMutation } from 'urql';
 import { CardEditDocument } from '@generated/graphql';
 import { RichTextEditorProps } from '@mantine/rte';
 
-const useStyles = createStyles(({ fn }) => {
+const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
   return {
     root: {
@@ -31,12 +31,31 @@ const useStyles = createStyles(({ fn }) => {
       borderRadius: 0,
       border: 'none',
       background: 'transparent',
+    },
+    cardRoot: {
+      [`&:hover .${getRef('cardCloseButton')}`]: {
+        visibility: "visible",
+      }
+    },
+    cardCloseButton: {
+      ref: getRef('cardCloseButton'),
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      visibility: "hidden",
+      borderTopLeftRadius: 0,
+      borderBottomRightRadius: 0,
+    },
+    boxRoot: {
+      position: 'relative'
     }
   };
 });
 
 interface Props {
   card: ManageDeckProps["deck"]["cardsDirect"][number];
+  onDelete: () => void;
+  forceLoading: boolean;
 }
 
 interface State {
@@ -76,7 +95,7 @@ function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State)
  * * clearly when updating the server, after answers edits, we have no problem since we just use the latest state of everything.
  * * while still updating the server, if we edit the prompt or fullAnswer we may have a problem only if we are editing a newly edited answer as well. To this end, when we add an answer, set its latest definite state to the illegal empty string, and then the latest definite state is simply the latest state after filtering out empty strings.
  */
-export const ManageCard: FC<Props> = ({ card }) => {
+export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const { id, prompt, fullAnswer, answers } = card;
   const initialState = { prompt: prompt as unknown, fullAnswer: fullAnswer as unknown, answers } as State;
   const [promptContent, setPromptContent] = useState<Delta>(prompt);
@@ -132,89 +151,96 @@ export const ManageCard: FC<Props> = ({ card }) => {
     updateStateToServer(latestState);
   }
   return (
-    <Card withBorder shadow="sm" radius="md">
-      <Card.Section inheritPadding pt="sm">
-        <Text size="xs" weight="bold">Front</Text>
-      </Card.Section>
-      <Card.Section>
-        <RichTextEditor
-          value={promptContent}
-          onChange={handlePromptChange}
-          classNames={classes}
-        />
-      </Card.Section>
-      <Divider />
-      <Card.Section inheritPadding pt="sm">
-        <Text size="xs" weight="bold">Back</Text>
-      </Card.Section>
-      <Card.Section>
-        <RichTextEditor
-          value={fullAnswerContent}
-          onChange={handleFullAnswerChange}
-          classNames={classes}
-        />
-      </Card.Section>
-      <Divider />
-      <Card.Section inheritPadding py="sm">
-        <Group>
-          <Stack spacing={0} sx={{ flexGrow: 1 }}>
-            <Text size="xs" weight="bold">Accepted answers</Text>
-            <Group spacing="xs" py="xs">
-              {answerValues.map((answer, index) => {
-                if (index === currentlyEditing) {
-                  return <ManageCardAltAnswerInput
-                    key={index} 
-                    initialAnswer={answer}
-                    onCancel={() => {
-                      setCurrentlyEditing(null);
-                      if (!answer) {
+    <Box className={classes.boxRoot}>
+      <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
+        <Card.Section inheritPadding pt="sm">
+          <Button size="xs" radius="xs" compact rightIcon={<TrashIcon />} variant="filled" className={classes.cardCloseButton}>
+            delete card
+          </Button>
+          <Text size="xs" weight="bold">Front</Text>
+        </Card.Section>
+        {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
+        <LoadingOverlay visible={forceLoading} />
+        <Card.Section>
+          <RichTextEditor
+            value={promptContent}
+            onChange={handlePromptChange}
+            classNames={classes}
+          />
+        </Card.Section>
+        <Divider />
+        <Card.Section inheritPadding pt="sm">
+          <Text size="xs" weight="bold">Back</Text>
+        </Card.Section>
+        <Card.Section>
+          <RichTextEditor
+            value={fullAnswerContent}
+            onChange={handleFullAnswerChange}
+            classNames={classes}
+          />
+        </Card.Section>
+        <Divider />
+        <Card.Section inheritPadding py="sm">
+          <Group>
+            <Stack spacing={0} sx={{ flexGrow: 1 }}>
+              <Text size="xs" weight="bold">Accepted answers</Text>
+              <Group spacing="xs" py="xs">
+                {answerValues.map((answer, index) => {
+                  if (index === currentlyEditing) {
+                    return <ManageCardAltAnswerInput
+                      key={index} 
+                      initialAnswer={answer}
+                      onCancel={() => {
+                        setCurrentlyEditing(null);
+                        if (!answer) {
+                          const latestAnswers = Array.from(answers);
+                          latestAnswers.splice(index, 1);
+                          handleAnswersChange(latestAnswers)
+                        }
+                      }}
+                      onSave={(newAnswer) => {
+                        const answerToSave = newAnswer.trim();
                         const latestAnswers = Array.from(answers);
-                        latestAnswers.splice(index, 1);
-                        handleAnswersChange(latestAnswers)
-                      }
+                        setCurrentlyEditing(null);
+                        if (answerToSave) {
+                          latestAnswers.splice(index, 1, answerToSave);
+                        } else {
+                          latestAnswers.splice(index, 1);
+                        }
+                        handleAnswersChange(latestAnswers);
+                      }}
+                    />;
+                  }
+                  return <ManageCardAltAnswer
+                    key={index}
+                    answer={answer}
+                    onRemove={() => {
+                      const latestAnswers = Array.from(answers)
+                      latestAnswers.splice(index, 1)
+                      handleAnswersChange(latestAnswers)
                     }}
-                    onSave={(newAnswer) => {
-                      const answerToSave = newAnswer.trim();
-                      const latestAnswers = Array.from(answers);
-                      setCurrentlyEditing(null);
-                      if (answerToSave) {
-                        latestAnswers.splice(index, 1, answerToSave);
-                      } else {
-                        latestAnswers.splice(index, 1);
-                      }
-                      handleAnswersChange(latestAnswers);
+                    editable={!existsCurrentlyEditing}
+                    onStartEditing={() => setCurrentlyEditing(index)}
+                  />
+                })}
+                {currentlyEditing === null && (
+                  <Paper
+                    withBorder px="xs" py="6px"
+                    onClick={() => {
+                      const latestAnswers = [...answers, ""];
+                      setAnswerValues(latestAnswers);
+                      setCurrentlyEditing(answerValues.length);
                     }}
-                  />;
-                }
-                return <ManageCardAltAnswer
-                  key={index}
-                  answer={answer}
-                  onRemove={() => {
-                    const latestAnswers = Array.from(answers)
-                    latestAnswers.splice(index, 1)
-                    handleAnswersChange(latestAnswers)
-                  }}
-                  editable={!existsCurrentlyEditing}
-                  onStartEditing={() => setCurrentlyEditing(index)}
-                />
-              })}
-              {currentlyEditing === null && (
-                <Paper
-                  withBorder px="xs" py="6px"
-                  onClick={() => {
-                    const latestAnswers = [...answers, ""];
-                    setAnswerValues(latestAnswers);
-                    setCurrentlyEditing(answerValues.length);
-                  }}
-                >
-                  <ActionIcon size="sm" variant="transparent"><PlusIcon /></ActionIcon>
-                </Paper>
-              )}
-            </Group>
-          </Stack>
-          <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
-        </Group>
-      </Card.Section>
-    </Card>
+                  >
+                    <ActionIcon size="sm" variant="transparent"><PlusIcon /></ActionIcon>
+                  </Paper>
+                )}
+              </Group>
+            </Stack>
+            <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
+          </Group>
+        </Card.Section>
+      </Card>
+    </Box>
   );
 };

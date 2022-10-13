@@ -37,7 +37,7 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
     <Stack align="stretch">
       <TextInput value={filter} onChange={handleFilterChange} label="Search cards" sx={{ flexGrow: 1 }} />
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} radius="lg" sx={{ alignSelf: "center" }} /> : undefined}
-      {currentCards.map((card) => <ManageCard card={card} key={card.id} />)}
+      {currentCards.map((card) => <ManageCard card={card} key={card.id} onDelete={() => undefined} forceLoading={false} />)}
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} radius="lg" sx={{ alignSelf: "center" }} /> : undefined}
     </Stack>
   );
