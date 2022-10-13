@@ -11,7 +11,7 @@ import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
 import { ManageCardAltAnswer } from './ManageCardAltAnswer';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
-import { CardEditDocument } from '@generated/graphql';
+import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { RichTextEditorProps } from '@mantine/rte';
 
 const useStyles = createStyles(({ fn }, _params, getRef) => {
@@ -102,11 +102,14 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const [fullAnswerContent, setFullAnswerContent] = useState<Delta>(fullAnswer);
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
-  const updateStateToServer = (newState: State) => {
-    cardEdit({
-      id, ...newState
-    });
-  };
+  const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
+  const updateStateToServer = (newState: State) => cardEdit({
+    id, ...newState
+  });
+  const handleCardDelete = () => {
+    debounced.cancel();
+    cardDelete({ id });
+  }
   const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
   useEffect(
     () => () => {
@@ -154,13 +157,13 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     <Box className={classes.boxRoot}>
       <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
         <Card.Section inheritPadding pt="sm">
-          <Button size="xs" radius="xs" compact rightIcon={<TrashIcon />} variant="filled" className={classes.cardCloseButton}>
+          <Button size="xs" radius="xs" compact rightIcon={<TrashIcon />} variant="filled" className={classes.cardCloseButton} disabled={hasUnsavedChanges || fetchingDelete} onClick={handleCardDelete}>
             delete card
           </Button>
           <Text size="xs" weight="bold">Front</Text>
         </Card.Section>
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
-        <LoadingOverlay visible={forceLoading} />
+        <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
           <RichTextEditor
             value={promptContent}
