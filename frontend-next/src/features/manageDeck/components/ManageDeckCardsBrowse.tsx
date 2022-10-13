@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useState } from 'react';
+import { ChangeEvent, FC, useMemo, useState } from 'react';
 import { Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '../types/ManageDeckProps';
@@ -13,26 +13,22 @@ const sortCards = (cards: Card[]) => {
 
 export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
   const [filter, setFilter] = useState('');
-  const [persistedCards, setPersistedCards] = useState<Card[]>(() => {
-    const initialCards = [...deck.cardsDirect];
-    sortCards(initialCards);
-    return initialCards;
-  });
   const [activePage, setActivePage] = useState<number>(1);
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newFilter = e.target.value;
-    const filteredCards = newFilter ? deck.cardsDirect.filter(({ prompt, fullAnswer, answers }: { prompt: Delta, fullAnswer: Delta, answers: string[] }) =>
-        prompt.ops?.some(({ insert }) => typeof insert === "string" && insert.includes(newFilter)) ||
-        fullAnswer.ops?.some(({ insert }) => typeof insert === "string" && insert.includes(newFilter)) ||
-        answers.some((answer) => answer.includes(newFilter))
-    ) : [...deck.cardsDirect];
-    sortCards(filteredCards);
-    setPersistedCards(filteredCards);
-    setFilter(newFilter);
+    setFilter(e.target.value);
     setActivePage(1);
   }
-  const currentCards = persistedCards.slice((activePage - 1) * 10, activePage * 10);
-  const total = Math.ceil(persistedCards.length / 10);
+  const currentCards = useMemo(() => {
+    const filteredCards = filter ? deck.cardsDirect.filter(({ prompt, fullAnswer, answers }: { prompt: Delta, fullAnswer: Delta, answers: string[] }) =>
+        prompt.ops?.some(({ insert }) => typeof insert === "string" && insert.includes(filter)) ||
+        fullAnswer.ops?.some(({ insert }) => typeof insert === "string" && insert.includes(filter)) ||
+        answers.some((answer) => answer.includes(filter))
+    ) : Array.from(deck.cardsDirect);
+    sortCards(filteredCards);
+    return filteredCards.slice((activePage - 1) * 10, activePage * 10);
+  }, [deck.cardsDirect, activePage, filter]);
+  console.log("fetching deck: ManageDeckCardsBrowse: currentCards", currentCards);
+  const total = Math.ceil(deck.cardsDirect.length / 10);
   return (
     <Stack align="stretch">
       <TextInput value={filter} onChange={handleFilterChange} label="Search cards" sx={{ flexGrow: 1 }} />
