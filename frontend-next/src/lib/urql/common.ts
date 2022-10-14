@@ -9,7 +9,7 @@ import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
 import { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
 import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
-import { Mutation } from '@generated/graphql';
+import { DeckCardsDirectCountFragmentDoc, DeckSummaryFragmentDoc, Mutation } from '@generated/graphql';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
@@ -74,6 +74,7 @@ export const getExchanges = (ssr: SSRExchange) => [
           if (Array.isArray(cardsDirect)) {
             const updatedCards = cardsDirect.filter((cardKey) => cardKey !== cache.keyOfEntity({ __typename: 'Card', id }));
             cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
+            cache.writeFragment(DeckCardsDirectCountFragmentDoc, { id: deckId as string, cardsDirectCount: updatedCards.length });
           }
         }
       }
