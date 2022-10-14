@@ -11,6 +11,18 @@ type Card = ManageDeckProps['deck']['cardsDirect'][number];
 
 const sortCards = (cards: Card[]) => cards.sort((a, b) => a.editedAt > b.editedAt ? -1 : a.editedAt < b.editedAt ? 1 : a.id > b.id ? 1 : -1);
 
+const dummyCard: Card = {
+  __typename: "Card",
+  answers: [],
+  deckId: "",
+  editedAt: undefined,
+  fullAnswer: {},
+  id: "",
+  mainTemplate: false,
+  prompt: {},
+  template: false,
+}
+
 export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
   const [filter, setFilter] = useState('');
   const [activePage, setActivePage] = useState<number>(1);
@@ -43,6 +55,9 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
       <TextInput value={filter} onChange={handleFilterChange} label="Search cards" sx={{ flexGrow: 1 }} />
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} radius="lg" sx={{ alignSelf: "center" }} /> : undefined}
       {canAddANewCard && <Button onClick={handleAddNewCard}>New Card</Button>}
+      {
+        fetching && <ManageCard card={dummyCard} onDelete={() => undefined} forceLoading={true} />
+      }
       {currentCards.map((card) => <ManageCard card={card} key={card.id} onDelete={() => undefined} forceLoading={false} />)}
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} radius="lg" sx={{ alignSelf: "center" }} /> : undefined}
     </Stack>
