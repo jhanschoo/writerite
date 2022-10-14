@@ -1,0 +1,9 @@
+mutation CardCreate(
+  $card: CardCreateInput!
+  $deckId: ID!
+  $mainTemplate: Boolean
+) {
+  cardCreate(card: $card, deckId: $deckId, mainTemplate: $mainTemplate) {
+    ...cardDetail
+  }
+}
