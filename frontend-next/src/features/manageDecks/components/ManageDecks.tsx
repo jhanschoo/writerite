@@ -55,7 +55,7 @@ export const ManageDecks: FC = () => {
   const { setMotionProps } = useMotionContext();
   const { classes } = useStyles();
   const [titleFilter, setTitleFilter] = useState('');
-  const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
+  const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS);
   const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [cursor, setCursor] = useState<string | undefined>();
   const [{ data, fetching, error }, refetchDecks] = useQuery({
