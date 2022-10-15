@@ -3,7 +3,7 @@ import { DeckCreateDocument, DecksDocument, DecksQueryScope } from '@generated/g
 import { useMutation, useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
-import { Button, Center, createStyles, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
+import { Button, Card, Center, createStyles, Divider, Group, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
 import { DeckItemComponentProps, DecksList, DeckSummaryContent } from '@/components/deck';
 import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
@@ -33,7 +33,7 @@ const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
       e.stopPropagation();
       router.push(`/app/deck/${deck.id}`);
     }}>
-      <Paper
+      <Card
         shadow="md"
         radius="md"
         p="md"
@@ -52,7 +52,7 @@ const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
         }}
       >
         <DeckSummaryContent deck={deck} />
-      </Paper>
+      </Card>
     </UnstyledButton>
   );
 };

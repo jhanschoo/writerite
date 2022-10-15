@@ -4,7 +4,7 @@ import { useQuery } from "urql";
 import type { ManageDeckProps } from "@/features/manageDeck";
 import { useDebounce } from "use-debounce";
 import { STANDARD_DEBOUNCE_MS } from "@/utils";
-import { Paper, Stack, Text, TextInput, UnstyledButton } from "@mantine/core"
+import { Card, Paper, Stack, Text, TextInput, UnstyledButton } from "@mantine/core"
 import { DeckSummaryContent } from "@/components/deck/DeckSummaryContent";
 import { DecksList, DeckItemComponentProps } from "@/components/deck";
 
@@ -13,7 +13,7 @@ export const MANAGE_DECKS_DECKS_NUM = 12;
 const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
   return (
     <UnstyledButton sx={{ height: 'unset' }} onClick={() => undefined}>
-      <Paper
+      <Card
         shadow="md"
         radius="md"
         p="md"
@@ -32,7 +32,7 @@ const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
         }}
       >
         <DeckSummaryContent deck={deck} />
-      </Paper>
+      </Card>
     </UnstyledButton>
   );
 };

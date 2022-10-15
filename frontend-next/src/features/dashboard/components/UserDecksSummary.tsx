@@ -4,7 +4,7 @@ import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
-import { Button, createStyles, Divider, Group, Paper, Text, Title, UnstyledButton } from '@mantine/core';
+import { Button, Card, createStyles, Divider, Group, Paper, Text, Title, UnstyledButton } from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
@@ -18,7 +18,7 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
 const DeckItem = ({ deck, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
   return (
     <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
-      <Paper
+      <Card
         shadow="md"
         radius="md"
         p="md"
@@ -37,7 +37,7 @@ const DeckItem = ({ deck, onClick }: { deck: DecksQuery['decks'][number], onClic
         }}
       >
         <DeckSummaryContent deck={deck} />
-      </Paper>
+      </Card>
     </UnstyledButton>
   );
 };
