@@ -1,10 +1,10 @@
-import { useState, ChangeEvent, FC, MouseEventHandler, Dispatch, SetStateAction } from 'react';
+import { useState, ChangeEvent, FC, MouseEvent, MouseEventHandler, Dispatch, SetStateAction } from 'react';
 import { DeckCreateDocument, DecksDocument, DecksQueryScope } from '@generated/graphql';
 import { useMutation, useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
-import { Center, createStyles, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
-import { DecksList } from './DecksList';
+import { Button, Center, createStyles, Divider, Group, Paper, SegmentedControl, Stack, Text, TextInput, Title, UnstyledButton } from '@mantine/core';
+import { DeckItemComponentProps, DecksList, DeckSummaryContent } from '@/components/deck';
 import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
@@ -21,28 +21,41 @@ const emptyNewDeckInput = {
 };
 
 const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
-  <UnstyledButton onClick={onClick}>
-    <Paper
-      shadow="sm"
-      radius="md"
-      px="sm"
-      py="xs"
-      withBorder
-      sx={(theme) => {
-        const { background, color, hover } = theme.fn.variant({ variant: 'filled' });
-        return {
-          backgroundColor: background,
-          color,
-          display: 'flex',
-          flexDirection: 'row',
-          ...theme.fn.hover({ backgroundColor: hover }),
-        };
-      }}
-    >
-      <Text size="lg" weight="bolder">Create a new Deck</Text>
-    </Paper>
-  </UnstyledButton>
+  <Button onClick={onClick} size="lg">
+    Create a new Deck
+  </Button>
 );
+
+const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
+  const router = useRouter();
+  return (
+    <UnstyledButton sx={{ height: 'unset', flex: '1 0 auto'}} onClick={(e: MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+      router.push(`/app/deck/${deck.id}`);
+    }}>
+      <Paper
+        shadow="md"
+        radius="md"
+        p="md"
+        withBorder
+        sx={(theme) => {
+          const { border, background, color, hover } = theme.fn.variant({ variant: 'default' });
+          return {
+            backgroundColor: background,
+            color,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            borderColor: border,
+            ...theme.fn.hover({ backgroundColor: hover }),
+          };
+        }}
+      >
+        <DeckSummaryContent deck={deck} />
+      </Paper>
+    </UnstyledButton>
+  );
+};
 
 const useStyles = createStyles(({ breakpoints }, _params, getRef) => ({
   root: {
@@ -114,7 +127,7 @@ export const ManageDecks: FC = () => {
         value={titleFilter}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
       />
-      <DecksList decks={decks} />
+      <DecksList decks={decks} component={DeckItem} justifyLeading/>
     </Stack>
   </Center>;
 }

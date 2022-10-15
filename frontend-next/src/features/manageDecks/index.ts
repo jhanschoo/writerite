@@ -1,2 +1,2 @@
 export * from "./components/ManageDecks";
-export * from "./components/DecksList";
+export * from "../../components/deck/DecksList";

@@ -1,12 +1,41 @@
-import { DecksDocument, DecksQueryScope } from "@generated/graphql";
-import { FC, useState } from "react";
+import { DecksDocument, DecksQuery, DecksQueryScope } from "@generated/graphql";
+import { FC, useState, ChangeEvent, MouseEventHandler } from "react";
 import { useQuery } from "urql";
 import type { ManageDeckProps } from "@/features/manageDeck";
 import { useDebounce } from "use-debounce";
 import { STANDARD_DEBOUNCE_MS } from "@/utils";
-import { Text } from "@mantine/core"
+import { Paper, Stack, Text, TextInput, UnstyledButton } from "@mantine/core"
+import { DeckSummaryContent } from "@/components/deck/DeckSummaryContent";
+import { DecksList, DeckItemComponentProps } from "@/components/deck";
 
 export const MANAGE_DECKS_DECKS_NUM = 12;
+
+const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
+  return (
+    <UnstyledButton sx={{ height: 'unset' }} onClick={() => undefined}>
+      <Paper
+        shadow="md"
+        radius="md"
+        p="md"
+        withBorder
+        sx={(theme) => {
+          const { border, background, color, hover } = theme.fn.variant({ variant: 'default' });
+          return {
+            backgroundColor: background,
+            color,
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            borderColor: border,
+            ...theme.fn.hover({ backgroundColor: hover }),
+          };
+        }}
+      >
+        <DeckSummaryContent deck={deck} />
+      </Paper>
+    </UnstyledButton>
+  );
+};
 
 export const ManageDeckSubdecksAddSubdeck: FC<ManageDeckProps> = ({ deck: { id: deckId, subdecks } }) => {
   const [titleFilter, setTitleFilter] = useState('');
@@ -26,5 +55,16 @@ export const ManageDeckSubdecksAddSubdeck: FC<ManageDeckProps> = ({ deck: { id: 
     id !== deckId &&
     !subdecks.some((subdeck) => subdeck.id !== id)
   );
-  return <Text>{JSON.stringify(candidateDecks)}</Text>;
+  return <Stack p="md" spacing={2}>
+    <TextInput
+      variant="filled"
+      label="title must contain..."
+      placeholder="e.g. ocabular"
+      size="md"
+      mb="md"
+      value={titleFilter}
+      onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
+    />
+    <DecksList decks={candidateDecks} component={DeckItem} />
+  </Stack>;
 }

@@ -52,7 +52,7 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
   const canAddANewCard = deck.cardsDirect.length < parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) && activePage === 1;
   return (
     <Stack align="stretch">
-      <TextInput value={filter} onChange={handleFilterChange} label="Search cards" sx={{ flexGrow: 1 }} />
+      <TextInput value={filter} onChange={handleFilterChange} label="Search for cards containing..." sx={{ flexGrow: 1 }} />
       {total ? <Pagination page={activePage} onChange={setActivePage} total={total} radius="lg" sx={{ alignSelf: "center" }} /> : undefined}
       {canAddANewCard && <Button onClick={handleAddNewCard}>New Card</Button>}
       {
