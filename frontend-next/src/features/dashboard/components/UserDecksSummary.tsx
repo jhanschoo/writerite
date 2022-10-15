@@ -6,6 +6,7 @@ import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
 import { createStyles, Divider, Group, Paper, Stack, Text, Title, UnstyledButton } from '@mantine/core';
+import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -33,8 +34,7 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
   </UnstyledButton>
 );
 
-const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
+const DeckItem = ({ deck, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
   return (
     <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
       <Paper
@@ -55,25 +55,13 @@ const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, o
           };
         }}
       >
-        {
-          name
-          ? <Text size="lg" weight="bold">{name}</Text>
-          :
-          <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
-            Untitled Deck
-          </Text>
-        }
-        <Text>
-          {subdecksCount} subdecks<br />
-          {cardsDirectCount} cards<br />
-          last edited at {editedAtDisplay}
-        </Text>
+        <DeckSummaryContent deck={deck} />
       </Paper>
     </UnstyledButton>
   );
 };
 
-const useStyles = createStyles(({ breakpoints }, _params, getRef) => ({
+const useStyles = createStyles((_theme, _params, getRef) => ({
   group: {
     alignItems: 'center',
     minHeight: '5rem',

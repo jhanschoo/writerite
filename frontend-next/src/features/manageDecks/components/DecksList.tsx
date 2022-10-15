@@ -3,9 +3,14 @@ import { DecksQuery } from "@generated/graphql";
 import { FC, MouseEventHandler } from "react";
 import { useRouter } from 'next/router';
 import { Box, Paper, Text, UnstyledButton } from '@mantine/core';
+import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 
-const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
+interface DeckItemProps {
+  deck: DecksQuery['decks'][number];
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}
+
+const DeckItem: FC<DeckItemProps> = ({ deck, onClick }) => {
   return (
     <UnstyledButton sx={{ height: 'unset', flex: '1 0 auto'}} onClick={onClick}>
       <Paper
@@ -26,19 +31,7 @@ const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, o
           };
         }}
       >
-          {
-            name
-            ? <Text size="lg" weight="bold">{name}</Text>
-            :
-            <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
-              Untitled Deck
-            </Text>
-          }
-          <Text>
-            {subdecksCount} subdecks<br />
-            {cardsDirectCount} cards<br />
-            last edited at {editedAtDisplay}
-          </Text>
+        <DeckSummaryContent deck={deck} />
       </Paper>
     </UnstyledButton>
   );

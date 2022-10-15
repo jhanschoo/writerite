@@ -11,6 +11,15 @@ import { useRouter } from 'next/router';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
+const emptyNewDeckInput = {
+  answerLang: 'en',
+  cards: [],
+  description: {},
+  name: '',
+  promptLang: 'en',
+  published: false,
+};
+
 const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
   <UnstyledButton onClick={onClick}>
     <Paper
@@ -57,7 +66,7 @@ export const ManageDecks: FC = () => {
   const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS);
   const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [cursor, setCursor] = useState<string | undefined>();
-  const [{ data, fetching, error }, refetchDecks] = useQuery({
+  const [{ data }, refetchDecks] = useQuery({
     query: DecksDocument,
     variables: {
       scope: scopeFilter,
@@ -71,14 +80,7 @@ export const ManageDecks: FC = () => {
     (async () => {
       e.stopPropagation();
       setMotionProps(motionThemes.forward);
-      const createdDeck = await deckCreateMutation({
-        answerLang: 'en',
-        cards: [],
-        description: {},
-        name: '',
-        promptLang: 'en',
-        published: false,
-      });
+      const createdDeck = await deckCreateMutation(emptyNewDeckInput);
       refetchDecks();
       if (createdDeck.data?.deckCreate.id) {
         router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
