@@ -3,6 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { MagnifyingGlassIcon, UploadIcon } from "@radix-ui/react-icons";
 import { FC, useState } from "react";
 import { ManageDeckProps } from "../../manageDeck/types/ManageDeckProps";
+import { ManageDeckSubdecksAddSubdeck } from "./SubdecksAddSubdeck";
 
 // TODO: WIP
 export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck }) => {
@@ -18,6 +19,7 @@ export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck }) => {
       <Tabs.Panel value="view" pl="md">
       </Tabs.Panel>
       <Tabs.Panel value="add" pl="md">
+        <ManageDeckSubdecksAddSubdeck deck={deck} />
       </Tabs.Panel>
     </Tabs>
   );
