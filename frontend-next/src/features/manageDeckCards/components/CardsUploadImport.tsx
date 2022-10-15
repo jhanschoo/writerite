@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import { Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
-import { NewCardData } from '../types';
+import type { NewCardData } from '../types';
 import { ArrowLeftIcon } from '@radix-ui/react-icons';
 import { useParseCsv } from '../hooks/useParseCsv';
 

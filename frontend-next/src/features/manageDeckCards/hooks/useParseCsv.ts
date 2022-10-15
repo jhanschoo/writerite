@@ -2,7 +2,7 @@ import Papa from "papaparse";
 import Delta from 'quill-delta';
 import { Delta as DeltaType } from 'quill';
 import { nextTick, NEXT_PUBLIC_MAX_CARDS_PER_DECK } from "@/utils";
-import { NewCardData } from "../types";
+import type { NewCardData } from "../types";
 
 export const useParseCsv = () => async (file: File) => nextTick(
   async () => new Promise<NewCardData[]>(

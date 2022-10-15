@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Stack, Text, Title } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 import { ManageDeckTitle } from './ManageDeckTitle';
 import { ManageDeckDescription } from './ManageDeckDescription';

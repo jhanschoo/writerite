@@ -2,7 +2,7 @@ import { ChangeEvent, FC, useMemo, useState } from 'react';
 import { useMutation } from 'urql';
 import { Button, Pagination, Stack, TextInput } from '@mantine/core';
 
-import { ManageDeckProps } from '../types/ManageDeckProps';
+import { ManageDeckProps } from '@/features/manageDeck';
 import { Delta } from 'quill';
 import { ManageCard } from '@/features/manageCard';
 import { CardCreateDocument } from '@generated/graphql';

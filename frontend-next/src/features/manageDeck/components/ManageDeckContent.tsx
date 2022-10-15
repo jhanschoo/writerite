@@ -1,10 +1,8 @@
-import { DeckEditDocument } from '@generated/graphql';
 import { FC } from 'react';
-import { useMutation } from 'urql';
-import { Box, createStyles, Group, Stack, Tabs, useMantineTheme } from '@mantine/core';
+import { createStyles, Group, Stack, Tabs } from '@mantine/core';
 import { ManageDeckProps } from '../types/ManageDeckProps';
-import { ManageDeckCards } from './ManageDeckCards';
-import { ManageDeckSubdecks } from './ManageDeckSubdecks';
+import { ManageDeckCards } from '../../manageDeckCards/components/Cards';
+import { ManageDeckSubdecks } from '../../manageDeckSubdecks/components/ManageDeckSubdecks';
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });

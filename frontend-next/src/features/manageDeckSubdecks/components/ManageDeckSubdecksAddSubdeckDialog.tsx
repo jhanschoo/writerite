@@ -1,7 +1,7 @@
 import { DeckEditDocument } from "@generated/graphql";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useMutation } from "urql";
-import { ManageDeckProps } from "../types/ManageDeckProps";
+import type { ManageDeckProps } from "@/features/manageDeck";
 
 type Props = ManageDeckProps & {
   open: boolean;

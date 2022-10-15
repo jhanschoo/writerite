@@ -4,11 +4,6 @@ import { FC, MouseEventHandler } from "react";
 import { useRouter } from 'next/router';
 import { Box, Paper, Text, UnstyledButton } from '@mantine/core';
 
-
-interface ItemProps {
-  deck: DecksQuery["decks"][number];
-}
-
 const DeckItem = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount }, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (

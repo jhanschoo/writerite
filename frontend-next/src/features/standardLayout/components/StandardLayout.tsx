@@ -1,4 +1,4 @@
-import { AppShell, Box, Button, Center, createStyles, Footer, Group, Header, Stack, Text } from '@mantine/core';
+import { AppShell, Button, Center, createStyles, Footer, Group, Header, Stack } from '@mantine/core';
 import { useLogout } from '@features/signin/hooks/useLogout';
 import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
 import { FC, PropsWithChildren } from 'react';

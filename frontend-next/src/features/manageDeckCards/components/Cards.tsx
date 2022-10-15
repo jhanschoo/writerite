@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import { Tabs, useMantineTheme } from '@mantine/core';
 
-import { ManageDeckProps } from '../types/ManageDeckProps';
+import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { MagnifyingGlassIcon, UploadIcon } from '@radix-ui/react-icons';
-import { ManageDeckCardsBrowse } from './ManageDeckCardsBrowse';
-import { ManageDeckCardsUpload } from './ManageDeckCardsUpload';
+import { ManageDeckCardsBrowse } from './CardsBrowse';
+import { ManageDeckCardsUpload } from './CardsUpload';
 import { useMediaQuery } from '@mantine/hooks';
 
 export const ManageDeckCards: FC<ManageDeckProps> = ({ deck }) => {

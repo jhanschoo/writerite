@@ -1,11 +1,11 @@
 import { FC, useState } from 'react';
-import { Button, createStyles, Group, Stack, Stepper } from '@mantine/core';
+import { Stack, Stepper } from '@mantine/core';
 
-import { ManageDeckProps } from '../types/ManageDeckProps';
-import { ManageDeckCardsUploadImport } from './ManageDeckCardsUploadImport';
-import { ManageDeckCardsUploadInstructions } from './ManageDeckCardsUploadInstructions';
-import { ImportCardsData } from '../types';
-import { ManageDeckCardsUploadReview } from './ManageDeckCardsUploadReview';
+import { ManageDeckProps } from '@/features/manageDeck';
+import { ManageDeckCardsUploadImport } from './CardsUploadImport';
+import { ManageDeckCardsUploadInstructions } from './CardsUploadInstructions';
+import type { ImportCardsData } from '../types';
+import { ManageDeckCardsUploadReview } from './CardsUploadReview';
 
 interface Props extends ManageDeckProps {
   onUploadCompleted: () => unknown;

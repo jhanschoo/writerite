@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Button, Group, Stack, Table, Text } from '@mantine/core';
-import { ArrowLeftIcon, ArrowRightIcon, UploadIcon } from '@radix-ui/react-icons';
-import { ImportCardsData, ManageDeckProps } from '../types';
+import { ArrowLeftIcon, UploadIcon } from '@radix-ui/react-icons';
+import type { ImportCardsData } from '../types';
+import type { ManageDeckProps } from '@/features/manageDeck';
 import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
 import { DeckAddCardsDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
-import { useRouter } from 'next/router';
 
 interface Props extends ImportCardsData, ManageDeckProps {
   onPreviousStep: () => unknown;
@@ -19,7 +19,6 @@ export const ManageDeckCardsUploadReview: FC<Props> = ({ onPreviousStep, cards, 
   const postImportNumCards = Math.min(numDeckCards + numCards, NEXT_PUBLIC_MAX_CARDS_PER_DECK);
   const cardsToImport = cards.slice(0, postImportNumCards - numDeckCards);
   const exceeded = numDeckCards + numCards > postImportNumCards;
-  const router = useRouter();
   return (
     <Stack>
       <Text>
