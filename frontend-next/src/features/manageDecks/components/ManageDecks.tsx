@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FC, MouseEventHandler } from 'react';
+import { useState, ChangeEvent, FC, MouseEventHandler, Dispatch, SetStateAction } from 'react';
 import { DeckCreateDocument, DecksDocument, DecksQueryScope } from '@generated/graphql';
 import { useMutation, useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
@@ -95,6 +95,8 @@ export const ManageDecks: FC = () => {
       <Divider mb="md" />
       <Text>Search decks</Text>
       <SegmentedControl
+        value={scopeFilter}
+        onChange={setScopeFilter as Dispatch<SetStateAction<string>>}
         data={[
           { label: 'Owned decks', value: DecksQueryScope.Owned },
           { label: 'Relevant decks', value: DecksQueryScope.Participated },
