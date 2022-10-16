@@ -45,6 +45,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
     setShowNameInput(false);
   };
   const submitForm = form.onSubmit(({ name: newName }) => endEditingTitle(newName));
+  const nameDisplay = name ? <Title order={1}>{name}</Title> : <Title order={1} color="dimmed" italic>Untitled Deck</Title>
   if (showNameInput) {
     return (
       <Group align="baseline" sx={{ position: 'relative' }}>
@@ -84,7 +85,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
   return (
     <UnstyledButton className={titleContainer} component="div" onClick={startEditingTitle} mx="md">
       <Group align="baseline">
-        <Title order={1}>{name}</Title>
+        {nameDisplay}
         <Text color="dimmed" className={editText}>edit...</Text>
       </Group>
     </UnstyledButton>
