@@ -29,10 +29,10 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
 const DeckItem: FC<DeckItemComponentProps> = ({ deck }) => {
   const router = useRouter();
   return (
-    <UnstyledButton sx={{ height: 'unset', flex: '1 0 auto'}} onClick={(e: MouseEvent<HTMLButtonElement>) => {
+    <UnstyledButton sx={{ height: 'unset', flex: '1 0 auto'}} onClick={(e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
       router.push(`/app/deck/${deck.id}`);
-    }}>
+    }} component="div">
       <Card
         shadow="md"
         radius="md"

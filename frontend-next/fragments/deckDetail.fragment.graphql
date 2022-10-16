@@ -4,9 +4,7 @@ fragment deckDetail on Deck {
     ...cardDetail
   }
   subdecks {
-    id
-    name
-    editedAt
+    ...deckSummary
   }
   description
   editedAt

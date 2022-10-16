@@ -87,7 +87,9 @@ export const getExchanges = (ssr: SSRExchange) => [
             cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
             cache.writeFragment(DeckCardsDirectCountFragmentDoc, { id: deckId as string, cardsDirectCount: updatedCards.length });
           }
-        }
+        },
+        // deckAddSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
+        // deckRemoveSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
       }
     }
   }),

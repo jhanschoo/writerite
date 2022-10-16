@@ -13,7 +13,7 @@ import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { RichTextEditorProps } from '@mantine/rte';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 
-const useStyles = createStyles(({ fn }, _params, getRef) => {
+const useEditorStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
   return {
     root: {
@@ -30,7 +30,12 @@ const useStyles = createStyles(({ fn }, _params, getRef) => {
       borderRadius: 0,
       border: 'none',
       background: 'transparent',
-    },
+    }
+  };
+});
+
+const useStyles = createStyles((_theme, _params, getRef) => {
+  return {
     cardRoot: {
       [`&:hover .${getRef('cardCloseButton')}`]: {
         visibility: "visible",
@@ -98,6 +103,8 @@ function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State)
  */
 export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const { id, prompt, fullAnswer, answers } = card;
+  const { classes: editorClasses } = useEditorStyles();
+  const { classes: cardDeleteButtonClasses } = useStyles();
   const initialState = { prompt: prompt as unknown, fullAnswer: fullAnswer as unknown, answers } as State;
   const [promptContent, setPromptContent] = useState<Delta>(prompt);
   const [fullAnswerContent, setFullAnswerContent] = useState<Delta>(fullAnswer);
@@ -120,7 +127,6 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   );
   const hasUnsavedChanges = fetching || debounced.isPending();
 
-  const { classes } = useStyles();
   const handlePromptChange: RichTextEditorProps["onChange"] = (_value, _delta, _sources, editor) => {
     const latestPromptContent = editor.getContents();
     const latestState = {
@@ -152,10 +158,10 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     updateStateToServer(latestState);
   }
   return (
-    <Box className={classes.boxRoot}>
-      <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
+    <Box className={cardDeleteButtonClasses.boxRoot}>
+      <Card withBorder shadow="sm" radius="md" className={cardDeleteButtonClasses.cardRoot}>
         <Card.Section inheritPadding pt="sm">
-          <Button size="xs" radius="xs" compact rightIcon={<TrashIcon />} variant="filled" className={classes.cardCloseButton} disabled={hasUnsavedChanges || fetchingDelete} onClick={handleCardDelete}>
+          <Button size="xs" radius="xs" compact rightIcon={<TrashIcon />} variant="filled" className={cardDeleteButtonClasses.cardCloseButton} disabled={hasUnsavedChanges || fetchingDelete} onClick={handleCardDelete}>
             delete card
           </Button>
           <Text size="xs" weight="bold">Front</Text>
@@ -166,7 +172,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
           <RichTextEditor
             value={promptContent}
             onChange={handlePromptChange}
-            classNames={classes}
+            classNames={editorClasses}
           />
         </Card.Section>
         <Divider />
@@ -177,7 +183,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
           <RichTextEditor
             value={fullAnswerContent}
             onChange={handleFullAnswerChange}
-            classNames={classes}
+            classNames={editorClasses}
           />
         </Card.Section>
         <Divider />

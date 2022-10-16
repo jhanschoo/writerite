@@ -1,0 +1,6 @@
+fragment deckSubdecks on Deck {
+  ...deckSummary
+  subdecks {
+    ...deckSummary
+  }
+}

@@ -15,9 +15,9 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
   </Button>
 );
 
-const DeckItem = ({ deck, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLButtonElement> }) => {
+const DeckItem = ({ deck, onClick }: { deck: DecksQuery['decks'][number], onClick?: MouseEventHandler<HTMLDivElement> }) => {
   return (
-    <UnstyledButton sx={{ height: 'unset' }} onClick={onClick}>
+    <UnstyledButton sx={{ height: 'unset' }} onClick={onClick} component="div">
       <Card
         shadow="md"
         radius="md"

@@ -1,4 +1,4 @@
-import { DecksQuery } from "@generated/graphql";
+import { DecksQuery, DeckSummaryFragment } from "@generated/graphql";
 import { FC } from "react";
 import { useRouter } from 'next/router';
 import { Box } from '@mantine/core';
@@ -8,7 +8,7 @@ export interface DeckItemComponentProps {
 }
 
 interface Props {
-  decks?: DecksQuery["decks"];
+  decks?: DeckSummaryFragment[];
   component: FC<DeckItemComponentProps>;
   justifyLeading?: boolean;
 }

@@ -3,6 +3,6 @@ mutation DeckAddSubdeck(
   $subdeckId: ID!
 ) {
   deckAddSubdeck(id: $id, subdeckId: $subdeckId) {
-    ...deckDetail
+    ...deckSubdecks
   }
 }
