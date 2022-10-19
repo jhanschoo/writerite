@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:18
 EXPOSE 4000
 WORKDIR /usr/src/apiserver
 COPY package*.json ./
