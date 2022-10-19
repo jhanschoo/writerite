@@ -1,4 +1,4 @@
-import { YogaInitialContext } from "@graphql-yoga/node";
+import { YogaInitialContext } from "graphql-yoga";
 import type { CurrentUser } from "../../../../src/types";
 import { generateUserJWT } from "../../../../src/service/crypto/jwtUtil";
 import { getClaims } from "../../../../src/util";

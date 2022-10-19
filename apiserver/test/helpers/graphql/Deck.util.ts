@@ -1,9 +1,10 @@
-import { WrServer } from "../../../src/graphqlServer";
-import { gql, inject } from "../misc";
-import { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckCreateEmptyMutation, DeckEditNameMutation, DeckEditNameMutationVariables, DeckQuery, DeckQueryVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DeckUsedMutation, DeckUsedMutationVariables, DecksQuery } from "../../../generated/typescript-operations";
+import { WrServer } from "../../../src/graphqlApp";
+import { gql, testQuery } from "../misc";
+import { DeckAddSubdeckMutationVariables, DeckEditNameMutationVariables, DeckQueryVariables, DeckRemoveSubdeckMutationVariables, DeckUsedMutationVariables, DecksQuery } from "../../../generated/typescript-operations";
 
-export async function mutationDeckCreateEmpty(server: WrServer) {
-  return inject<DeckCreateEmptyMutation, undefined>({
+export function mutationDeckCreateEmpty(server: WrServer) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<undefined>({
     server,
     document: gql`
       mutation DeckCreateEmpty {
@@ -16,8 +17,9 @@ export async function mutationDeckCreateEmpty(server: WrServer) {
   });
 }
 
-export async function mutationDeckAddSubdeck(server: WrServer, variables: DeckAddSubdeckMutationVariables) {
-  return inject<DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables>({
+export function mutationDeckAddSubdeck(server: WrServer, variables: DeckAddSubdeckMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<DeckAddSubdeckMutationVariables>({
     server,
     document: gql`
       mutation DeckAddSubdeck($id: ID!, $subdeckId: ID!) {
@@ -30,8 +32,9 @@ export async function mutationDeckAddSubdeck(server: WrServer, variables: DeckAd
   });
 }
 
-export async function mutationDeckRemoveSubdeck(server: WrServer, variables: DeckRemoveSubdeckMutationVariables) {
-  return inject<DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables>({
+export function mutationDeckRemoveSubdeck(server: WrServer, variables: DeckRemoveSubdeckMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<DeckRemoveSubdeckMutationVariables>({
     server,
     document: gql`
       mutation DeckRemoveSubdeck($id: ID!, $subdeckId: ID!) {
@@ -44,8 +47,9 @@ export async function mutationDeckRemoveSubdeck(server: WrServer, variables: Dec
   });
 }
 
-export async function mutationDeckEditName(server: WrServer, variables: DeckEditNameMutationVariables) {
-  return inject<DeckEditNameMutation, DeckEditNameMutationVariables>({
+export function mutationDeckEditName(server: WrServer, variables: DeckEditNameMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<DeckEditNameMutationVariables>({
     server,
     document: gql`
       mutation DeckEditName($id: ID!, $name: String!) {
@@ -59,8 +63,9 @@ export async function mutationDeckEditName(server: WrServer, variables: DeckEdit
   });
 }
 
-export async function mutationDeckUsed(server: WrServer, variables: DeckUsedMutationVariables) {
-  return inject<DeckUsedMutation, DeckUsedMutationVariables>({
+export function mutationDeckUsed(server: WrServer, variables: DeckUsedMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<DeckUsedMutationVariables>({
     server,
     document: gql`
       mutation DeckUsed($id: ID!) {
@@ -73,8 +78,9 @@ export async function mutationDeckUsed(server: WrServer, variables: DeckUsedMuta
   });
 }
 
-export async function queryDeckScalars(server: WrServer, id: string) {
-  return inject<DeckQuery, DeckQueryVariables>({
+export function queryDeckScalars(server: WrServer, id: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<DeckQueryVariables>({
     server,
     document: gql`
       query Deck($id: ID!) {
@@ -97,7 +103,8 @@ export async function queryDeckScalars(server: WrServer, id: string) {
 }
 
 export function queryDecks(server: WrServer) {
-  return inject<DecksQuery, undefined>({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<undefined>({
     server,
     document: gql`
       query Decks{

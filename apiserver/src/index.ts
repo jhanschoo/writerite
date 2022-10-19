@@ -1,31 +1,29 @@
-import fs from "fs";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 
 import { contextFactory } from "./context";
-import { graphQLServerFactory } from "./graphqlServer";
+import { WrServer, createGraphQLApp } from "./graphqlApp";
+import { RequestListener, Server, createServer } from "http";
 
-const { NODE_ENV, CERT_FILE, KEY_FILE } = process.env;
+const { NODE_ENV } = process.env;
 
 export const [contextFn, stopContextServices] = contextFactory();
 
-export const yogaApp = graphQLServerFactory({
-  port: 4000,
+const graphqlEndpoint = "/graphql";
+
+export const yoga: WrServer = createGraphQLApp({
   context: contextFn,
-  https: CERT_FILE && KEY_FILE ? {
-    cert: fs.readFileSync(CERT_FILE),
-    key: fs.readFileSync(KEY_FILE),
-  } : undefined,
   cors: {
     origin: NODE_ENV === "production" ? "https://www.writerite.site" : "http://localhost:3000",
   },
+  graphqlEndpoint,
 });
 
-async function main() {
-  const httpServer = await yogaApp.start();
+async function main(): Promise<[Server, WebSocketServer]> {
+  const httpServer = createServer(yoga as RequestListener);
   const wsServer = new WebSocketServer({
     server: httpServer,
-    path: yogaApp.getAddressInfo().endpoint,
+    path: graphqlEndpoint,
   });
   useServer({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
@@ -33,14 +31,16 @@ async function main() {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
     subscribe: (args: any) => args.rootValue.subscribe(args),
     onSubscribe: async (ctx, msg) => {
-      // eslint-disable-next-line @typescript-eslint/no-shadow
-      const { schema, execute, subscribe, contextFactory, parse, validate } = yogaApp.getEnveloped({
+      // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-assignment
+      const { schema, execute, subscribe, contextFactory, parse, validate } = yoga.getEnveloped({
         ...ctx,
         extensions: msg,
       });
       const args = {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         schema,
         operationName: msg.payload.operationName,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         document: parse(msg.payload.query),
         variableValues: msg.payload.variables,
         contextValue: await contextFactory(),
@@ -50,14 +50,37 @@ async function main() {
         },
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const errors = validate(args.schema, args.document);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (errors.length) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return errors;
       }
       return args;
     },
   }, wsServer);
-  return [httpServer, wsServer];
+  return new Promise((res, rej) => {
+    let rejected = false;
+    let resolved = false;
+    httpServer.on("error", (err) => {
+      // eslint-disable-next-line no-console
+      console.error(err);
+      if (rejected || resolved) {
+        return;
+      }
+      rejected = true;
+      rej(err);
+    });
+    httpServer.listen(4000, () => {
+      if (rejected) {
+        httpServer.close();
+      } else {
+        resolved = true;
+        res([httpServer, wsServer]);
+      }
+    });
+  });
 }
 
 const mainPromise = main();
@@ -77,7 +100,6 @@ export async function stop(): Promise<PromiseSettledResult<unknown>[]> {
     new Promise<void>((res, rej) => {
       wsServer.close((err) => err ? rej(err) : res());
     }),
-    yogaApp.stop(),
     stopContextServices(),
   ]);
 }

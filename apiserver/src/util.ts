@@ -5,7 +5,7 @@
   @typescript-eslint/no-unsafe-argument
  */
 import { nanoid } from "nanoid";
-import { YogaInitialContext } from "@graphql-yoga/node";
+import { YogaInitialContext } from "graphql-yoga";
 
 import { CurrentUser } from "./types";
 import { verifyUserJWT } from "./service/crypto/jwtUtil";
@@ -25,8 +25,10 @@ export async function getClaims(ctx: YogaInitialContext): Promise<CurrentUser | 
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const authorization = ctx.request?.headers?.get("Authorization") ??
   // path if called from GraphiQL
-  ctx.extensions?.payload?.extensions?.headers?.Authorization ??
-  ctx.extensions?.payload?.context?.fetchOptions?.headers?.Authorization;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (ctx as any).extensions?.payload?.extensions?.headers?.Authorization ??
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (ctx as any).extensions?.payload?.context?.fetchOptions?.headers?.Authorization;
   if (!authorization) {
     return;
   }

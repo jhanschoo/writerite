@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from "@prisma/client";
-import { YogaInitialContext } from "@graphql-yoga/node";
+import { YogaInitialContext } from "graphql-yoga";
 
 import { cascadingDelete } from "../_helpers/truncate";
 import { DEFAULT_CREATE_USER_VALUES, createUser, mutationUserEdit, queryAllUserAccessibleUserScalars, queryUserPublicScalars, testContextFactory, unsafeJwtToCurrentUser } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
 import { Context } from "../../../src/context";
-import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
+import { WrServer, createGraphQLApp } from "../../../src/graphqlApp";
 
 describe("graphql/User.ts", () => {
 
@@ -17,12 +20,12 @@ describe("graphql/User.ts", () => {
 
   beforeAll(() => {
     [setSub, , context, stopContext, { prisma }] = testContextFactory();
-    server = graphQLServerFactory({ context });
+    server = createGraphQLApp({ context });
   });
 
   afterAll(async () => {
     await cascadingDelete(prisma).user;
-    await Promise.allSettled([server.stop(), stopContext()]);
+    await stopContext();
   });
 
   afterEach(async () => {
@@ -34,12 +37,10 @@ describe("graphql/User.ts", () => {
     describe("signin", () => {
       it("should be able to create a user with development authentication in test environment", async () => {
         expect.assertions(2);
-        const { executionResult } = await createUser(server);
-        expect(executionResult).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const currentUser = unsafeJwtToCurrentUser(executionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const response = await createUser(server);
+        expect(response.body).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
+        const currentUser = unsafeJwtToCurrentUser(response.body!.data!.finalizeThirdPartyOauthSignin as string);
         expect(currentUser).toEqual({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           id: expect.any(String),
           roles: [Roles.user],
         });
@@ -54,13 +55,11 @@ describe("graphql/User.ts", () => {
     describe("user", () => {
       it("should be able to fetch all user-accessible fields of current user", async () => {
         expect.assertions(1);
-        const { executionResult: createUserExecutionResult } = await createUser(server);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const currentUser = unsafeJwtToCurrentUser(createUserExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse = await createUser(server);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse.body!.data!.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
-        const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, currentUser.id);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        expect(queryUserExecutionResult).toHaveProperty("data.user", {
+        const queryUserRequest = await queryAllUserAccessibleUserScalars(server, currentUser.id);
+        expect(queryUserRequest).toHaveProperty("body.data.user", {
           id: currentUser.id,
           name: DEFAULT_CREATE_USER_VALUES.name,
           isPublic: false,
@@ -69,69 +68,55 @@ describe("graphql/User.ts", () => {
       });
       it("should not be able to fetch all user-accessible fields of private user if not logged in", async () => {
         expect.assertions(2);
-        const { executionResult: createUserExecutionResult } = await createUser(server);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const { id } = unsafeJwtToCurrentUser(createUserExecutionResult?.data?.finalizeThirdPartyOauthSignin as string);
-        const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, id);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(queryUserExecutionResult!.data).toBeNull();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(queryUserExecutionResult!.errors).not.toHaveLength(0);
+        const createUserResponse = await createUser(server);
+        const { id } = unsafeJwtToCurrentUser(createUserResponse.body?.data?.finalizeThirdPartyOauthSignin as string);
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
+        expect(queryUserResponse.body!.data).toBeNull();
+        expect(queryUserResponse.body!.errors).not.toHaveLength(0);
       });
       it("should not be able to fetch all user-accessible fields of private user if logged in as another user", async () => {
         expect.assertions(2);
-        const { executionResult: createUser1ExecutionResult } = await createUser(server, { name: "user1" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const { id } = unsafeJwtToCurrentUser(createUser1ExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
-        const { executionResult: createUser2ExecutionResult } = await createUser(server, { name: "user2" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const currentUser = unsafeJwtToCurrentUser(createUser2ExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse1 = await createUser(server, { name: "user1" });
+        const { id } = unsafeJwtToCurrentUser(createUserResponse1.body!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse2 = await createUser(server, { name: "user2" });
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.body!.data!.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
-        const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, id);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(queryUserExecutionResult!.data).toBeNull();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        expect(queryUserExecutionResult!.errors).not.toHaveLength(0);
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
+        expect(queryUserResponse.body!.data).toBeNull();
+        expect(queryUserResponse.body!.errors).not.toHaveLength(0);
       });
       it("should be able to fetch public fields of private user if not logged in", async () => {
         expect.assertions(1);
-        const { executionResult: createUserExecutionResult } = await createUser(server);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const { id } = unsafeJwtToCurrentUser(createUserExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
-        const { executionResult: queryUserExecutionResult } = await queryUserPublicScalars(server, id);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        expect(queryUserExecutionResult).toHaveProperty("data.user", {
+        const createUserResponse = await createUser(server);
+        const { id } = unsafeJwtToCurrentUser(createUserResponse.body!.data!.finalizeThirdPartyOauthSignin as string);
+        const queryUserResponse = await queryUserPublicScalars(server, id);
+        expect(queryUserResponse).toHaveProperty("body.data.user", {
           id,
           isPublic: false,
         });
       });
       it("should be able to fetch public fields of private user if logged in as another user", async () => {
         expect.assertions(1);
-        const { executionResult: createUser1ExecutionResult } = await createUser(server, { name: "user1" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const { id } = unsafeJwtToCurrentUser(createUser1ExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
-        const { executionResult: createUser2ExecutionResult } = await createUser(server, { name: "user2" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const currentUser = unsafeJwtToCurrentUser(createUser2ExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse1 = await createUser(server, { name: "user1" });
+        const { id } = unsafeJwtToCurrentUser(createUserResponse1.body!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse2 = await createUser(server, { name: "user2" });
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.body!.data!.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
-        const { executionResult: queryUserExecutionResult } = await queryUserPublicScalars(server, id);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        expect(queryUserExecutionResult).toHaveProperty("data.user", {
+        const queryUserResponse = await queryUserPublicScalars(server, id);
+        expect(queryUserResponse).toHaveProperty("body.data.user", {
           id,
           isPublic: false,
         });
       });
       it("should be able to fetch all fields of public user if not logged in", async () => {
         expect.assertions(1);
-        const { executionResult: createUserExecutionResult } = await createUser(server);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const currentUser = unsafeJwtToCurrentUser(createUserExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse = await createUser(server);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse.body!.data!.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
         await mutationUserEdit(server, { isPublic: true });
         setSub(undefined);
-        const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, currentUser.id);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        expect(queryUserExecutionResult).toHaveProperty("data.user", {
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, currentUser.id);
+        expect(queryUserResponse).toHaveProperty("body.data.user", {
           id: currentUser.id,
           name: DEFAULT_CREATE_USER_VALUES.name,
           isPublic: true,
@@ -140,17 +125,15 @@ describe("graphql/User.ts", () => {
       });
       it("should be able to fetch all fields of public user if logged in as another user", async () => {
         expect.assertions(1);
-        const { executionResult: createUser1ExecutionResult } = await createUser(server, { name: "user1" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const targetUser = unsafeJwtToCurrentUser(createUser1ExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse1 = await createUser(server, { name: "user1" });
+        const targetUser = unsafeJwtToCurrentUser(createUserResponse1.body!.data!.finalizeThirdPartyOauthSignin as string);
         setSub(targetUser);
         await mutationUserEdit(server, { isPublic: true });
-        const { executionResult: createUser2ExecutionResult } = await createUser(server, { name: "user2" });
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-        const currentUser = unsafeJwtToCurrentUser(createUser2ExecutionResult!.data!.finalizeThirdPartyOauthSignin as string);
+        const createUserResponse2 = await createUser(server, { name: "user2" });
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.body!.data!.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
-        const { executionResult: queryUserExecutionResult } = await queryAllUserAccessibleUserScalars(server, targetUser.id);
-        expect(queryUserExecutionResult).toHaveProperty("data.user", {
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, targetUser.id);
+        expect(queryUserResponse).toHaveProperty("body.data.user", {
           id: targetUser.id,
           name: "user1",
           isPublic: true,

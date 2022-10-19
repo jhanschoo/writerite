@@ -1,13 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 
 import { queryHealth, testContextFactory } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
-import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
 import { Context, PubSubPublishArgsByKey } from "../../../src/context";
-import { YogaServerInstance, createServer } from "@graphql-yoga/common";
-import { WrServer } from "../../../src/graphqlServer";
+import { PubSub, YogaInitialContext, YogaServerInstance, createPubSub, createYoga } from "graphql-yoga";
+import { WrServer } from "../../../src/graphqlApp";
 import { schema } from "../../../src/schema";
 
 export const DEFAULT_CURRENT_USER = {
@@ -22,7 +22,7 @@ describe("graphql/Health.ts", () => {
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: DeepMockProxy<PrismaClient>;
-  let server: YogaServerInstance<Record<string, never>, Context, Record<string, never>>;
+  let server: YogaServerInstance<Record<string, never>, Context>;
   let redis: DeepMockProxy<Redis>;
   let setPubsub: (pubsub: PubSub<PubSubPublishArgsByKey>) => void;
 
@@ -35,7 +35,7 @@ describe("graphql/Health.ts", () => {
       pubsub: createPubSub(),
       redis,
     });
-    server = createServer({ context, schema });
+    server = createYoga({ context, schema });
   });
 
   afterAll(async () => {
@@ -53,8 +53,8 @@ describe("graphql/Health.ts", () => {
     describe("health", () => {
       it("should return a string \"OK\"", async () => {
         expect.assertions(1);
-        const { executionResult } = await queryHealth(server as unknown as WrServer);
-        expect(executionResult).toHaveProperty("data.health", "OK");
+        const response = await queryHealth(server as unknown as WrServer);
+        expect(response).toHaveProperty("body.data.health", "OK");
       });
     });
   });

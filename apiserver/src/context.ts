@@ -1,6 +1,6 @@
 import env from "./safeEnv";
 import Redis from "ioredis";
-import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
+import { PubSub, YogaInitialContext, createPubSub } from "graphql-yoga";
 
 import { PrismaClient } from "@prisma/client";
 

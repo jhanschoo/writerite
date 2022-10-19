@@ -1,9 +1,9 @@
-import type { WrServer } from "../../../src/graphqlServer";
-import { gql, inject } from "../misc";
-import { HealthQuery } from "../../../generated/typescript-operations";
+import type { WrServer } from "../../../src/graphqlApp";
+import { gql, testQuery } from "../misc";
 
-export async function queryHealth(server: WrServer) {
-  return inject<HealthQuery, undefined>({
+export function queryHealth(server: WrServer) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<undefined>({
     server,
     document: gql`
       query Health {

@@ -1,13 +1,11 @@
-import { YogaInitialContext } from "@graphql-yoga/common";
-import { createServer } from "@graphql-yoga/node";
-import { ServerOptions } from "https";
+import { YogaInitialContext, createYoga } from "graphql-yoga";
 import { Context } from "./context";
 import { schema } from "./schema";
 
 const { NODE_ENV } = process.env;
 
 // This type is defined because GraphQL Yoga doesn't export the YogaNodeServer type.
-export type WrServer = ReturnType<typeof graphQLServerFactory>;
+export type WrServer = ReturnType<typeof createGraphQLApp>;
 
 interface CORSOptions {
   origin?: string[] | string;
@@ -19,15 +17,14 @@ interface CORSOptions {
 }
 
 interface GraphQLServerFactoryOpts {
-  port?: number;
-  https?: ServerOptions;
   cors?: CORSOptions;
   logging?: boolean;
+  graphqlEndpoint?: string;
   context(initialContext: YogaInitialContext): Promise<Context>;
 }
 
-export function graphQLServerFactory(opts: GraphQLServerFactoryOpts) {
-  return createServer<Record<string, unknown>, Context>({
+export function createGraphQLApp(opts: GraphQLServerFactoryOpts) {
+  return createYoga<Record<string, unknown>, Context>({
     schema,
     graphiql: {
       subscriptionsProtocol: "WS",

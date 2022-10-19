@@ -1,11 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Deck, PrismaClient } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 
 import { mutationDeckAddSubdeck, mutationDeckCreateEmpty, mutationDeckEditName, mutationDeckRemoveSubdeck, mutationDeckUsed, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
 import { CurrentUser, Roles } from "../../../src/types";
-import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
-import { PubSub, YogaInitialContext, createPubSub } from "@graphql-yoga/node";
+import { WrServer, createGraphQLApp } from "../../../src/graphqlApp";
+import { PubSub, YogaInitialContext, createPubSub } from "graphql-yoga";
 import { Context, PubSubPublishArgsByKey } from "../../../src/context";
 
 export const DEFAULT_CURRENT_USER = {
@@ -33,11 +36,11 @@ describe("graphql/Deck.ts", () => {
       pubsub: createPubSub(),
       redis,
     });
-    server = graphQLServerFactory({ context });
+    server = createGraphQLApp({ context });
   });
 
   afterAll(async () => {
-    await Promise.allSettled([server.stop(), stopContext()]);
+    await stopContext();
   });
 
   afterEach(() => {
@@ -57,7 +60,7 @@ describe("graphql/Deck.ts", () => {
         prisma.user.findMany.mockResolvedValue([]);
         prisma.deck.count.mockResolvedValue(2);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
-        const { executionResult } = await mutationDeckAddSubdeck(server, { id, subdeckId });
+        const response = await mutationDeckAddSubdeck(server, { id, subdeckId });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.update).toHaveBeenCalledWith({
           where: { id },
@@ -69,7 +72,7 @@ describe("graphql/Deck.ts", () => {
             } },
           },
         });
-        expect(executionResult).toHaveProperty("data.deckAddSubdeck.id", id);
+        expect(response).toHaveProperty("body.data.deckAddSubdeck.id", id);
       });
     });
     describe("deckCreate", () => {
@@ -81,8 +84,8 @@ describe("graphql/Deck.ts", () => {
         prisma.deck.create.mockResolvedValue({
           id,
         } as Deck);
-        const { executionResult } = await mutationDeckCreateEmpty(server);
-        expect(executionResult).toHaveProperty("data.deckCreate.id", id);
+        const response = await mutationDeckCreateEmpty(server);
+        expect(response).toHaveProperty("body.data.deckCreate.id", id);
       });
     });
     describe("deckDelete", () => {
@@ -108,7 +111,7 @@ describe("graphql/Deck.ts", () => {
           id,
           name: nextName,
         } as Deck);
-        const { executionResult } = await mutationDeckEditName(server, { id, name: nextName });
+        const response = await mutationDeckEditName(server, { id, name: nextName });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.updateMany).toHaveBeenCalledWith({
           where: { id, ownerId: DEFAULT_CURRENT_USER.id },
@@ -118,7 +121,7 @@ describe("graphql/Deck.ts", () => {
             editedAt: expect.any(Date),
           },
         });
-        expect(executionResult).toHaveProperty("data.deckEdit.name", nextName);
+        expect(response).toHaveProperty("body.data.deckEdit.name", nextName);
       });
     });
     describe("deckRemoveSubdeck", () => {
@@ -130,7 +133,7 @@ describe("graphql/Deck.ts", () => {
         prisma.user.findMany.mockResolvedValue([]);
         prisma.deck.count.mockResolvedValue(2);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
-        const { executionResult } = await mutationDeckRemoveSubdeck(server, { id, subdeckId });
+        const response = await mutationDeckRemoveSubdeck(server, { id, subdeckId });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.update).toHaveBeenCalledWith({
           where: { id },
@@ -139,7 +142,7 @@ describe("graphql/Deck.ts", () => {
             subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
           },
         });
-        expect(executionResult).toHaveProperty("data.deckRemoveSubdeck.id", id);
+        expect(response).toHaveProperty("body.data.deckRemoveSubdeck.id", id);
       });
     });
     describe("deckUsed", () => {
@@ -149,7 +152,7 @@ describe("graphql/Deck.ts", () => {
         prisma.user.findMany.mockResolvedValue([]);
         prisma.deck.count.mockResolvedValue(1);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
-        const { executionResult } = await mutationDeckUsed(server, { id });
+        const response = await mutationDeckUsed(server, { id });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.update).toHaveBeenCalledWith(expect.objectContaining({
           where: { id },
@@ -158,7 +161,7 @@ describe("graphql/Deck.ts", () => {
             usedAt: expect.any(Date),
           },
         }));
-        expect(executionResult).toHaveProperty("data.deckUsed.id", id);
+        expect(response).toHaveProperty("body.data.deckUsed.id", id);
       });
     });
   });
@@ -168,11 +171,10 @@ describe("graphql/Deck.ts", () => {
       it("should be able to return scalars of an owned deck", async () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
-        const { executionResult: createDeckExecutionResult } = await mutationDeckCreateEmpty(server);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const { id } = createDeckExecutionResult!.data!.deckCreate;
-        const { executionResult: queryDeckExecutionResult } = await queryDeckScalars(server, id);
-        expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
+        const createDeckResponse = await mutationDeckCreateEmpty(server);
+        const id = createDeckResponse.body!.data!.deckCreate.id as string;
+        const queryDeckResponse = await queryDeckScalars(server, id);
+        expect(queryDeckResponse).toHaveProperty("body.data.deck", {
           id,
           answerLang: "",
           description: {},
@@ -193,14 +195,12 @@ describe("graphql/Deck.ts", () => {
       it("should be able to return ids of ownedSignJWT decks", async () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
-        const { executionResult: createDeck1ExecutionResult } = await mutationDeckCreateEmpty(server);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const id1 = createDeck1ExecutionResult!.data!.deckCreate.id;
-        const { executionResult: createDeck2ExecutionResult } = await mutationDeckCreateEmpty(server);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const id2 = createDeck2ExecutionResult!.data!.deckCreate.id;
-        const queryDecksRes = await queryDecks(server);
-        expect(queryDecksRes).toHaveProperty("data.decks", expect.arrayContaining([
+        const createDeckResponse1 = await mutationDeckCreateEmpty(server);
+        const id1 = createDeckResponse1.body!.data!.deckCreate.id as string;
+        const createDeckResponse2 = await mutationDeckCreateEmpty(server);
+        const id2 = createDeckResponse2.body!.data!.deckCreate.id;
+        const queryDecksResponse = await queryDecks(server);
+        expect(queryDecksResponse).toHaveProperty("body.data.decks", expect.arrayContaining([
           {
             id: id1,
           },

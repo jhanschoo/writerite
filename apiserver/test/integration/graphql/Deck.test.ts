@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from "@prisma/client";
 
 import { cascadingDelete } from "../_helpers/truncate";
 import { loginAsNewlyCreatedUser } from "../../helpers/graphql/User.util";
 import { isoTimestampMatcher, mutationDeckCreateEmpty, queryDeckScalars, queryDecks, testContextFactory } from "../../helpers";
 import type { CurrentUser } from "../../../src/types";
-import { YogaInitialContext } from "@graphql-yoga/node";
+import { YogaInitialContext } from "graphql-yoga";
 import { Context } from "../../../src/context";
-import { WrServer, graphQLServerFactory } from "../../../src/graphqlServer";
+import { WrServer, createGraphQLApp } from "../../../src/graphqlApp";
 
 describe("graphql/Deck.ts", () => {
 
@@ -18,12 +21,12 @@ describe("graphql/Deck.ts", () => {
 
   beforeAll(() => {
     [setSub, , context, stopContext, { prisma }] = testContextFactory();
-    server = graphQLServerFactory({ context });
+    server = createGraphQLApp({ context });
   });
 
   afterAll(async () => {
     await cascadingDelete(prisma).user;
-    await Promise.allSettled([server.stop(), stopContext()]);
+    await stopContext();
   });
 
   afterEach(async () => {
@@ -38,8 +41,8 @@ describe("graphql/Deck.ts", () => {
       it("should be able to create an empty deck", async () => {
         expect.assertions(1);
         await loginAsNewlyCreatedUser(server, setSub);
-        const { executionResult } = await mutationDeckCreateEmpty(server);
-        expect(executionResult).toHaveProperty("data.deckCreate.id", expect.any(String));
+        const response = await mutationDeckCreateEmpty(server);
+        expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
       });
     });
     describe("deckDelete", () => {
@@ -61,11 +64,10 @@ describe("graphql/Deck.ts", () => {
       it("should be able to return scalars of an owned deck", async () => {
         expect.assertions(1);
         const currentUser = await loginAsNewlyCreatedUser(server, setSub);
-        const { executionResult: createDeckExecutionResult } = await mutationDeckCreateEmpty(server);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const { id } = createDeckExecutionResult!.data!.deckCreate;
-        const { executionResult: queryDeckExecutionResult } = await queryDeckScalars(server, id);
-        expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
+        const createDeckResponse = await mutationDeckCreateEmpty(server);
+        const id = createDeckResponse.body!.data!.deckCreate.id as string;
+        const queryDeckResponse = await queryDeckScalars(server, id);
+        expect(queryDeckResponse).toHaveProperty("body.data.deck", {
           id,
           answerLang: "",
           description: {},
@@ -86,20 +88,14 @@ describe("graphql/Deck.ts", () => {
       it("should be able to return ids of owned decks", async () => {
         expect.assertions(1);
         await loginAsNewlyCreatedUser(server, setSub);
-        const { executionResult: createDeck1ExecutionResult } = await mutationDeckCreateEmpty(server);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const id1 = createDeck1ExecutionResult!.data!.deckCreate.id;
-        const { executionResult: createDeck2ExecutionResult } = await mutationDeckCreateEmpty(server);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const id2 = createDeck2ExecutionResult!.data!.deckCreate.id;
-        const { executionResult: queryDeckExecutionResult } = await queryDecks(server);
-        expect(queryDeckExecutionResult).toHaveProperty("data.decks", expect.arrayContaining([
-          {
-            id: id1,
-          },
-          {
-            id: id2,
-          },
+        const createDeckResponse1 = await mutationDeckCreateEmpty(server);
+        const id1 = createDeckResponse1.body!.data!.deckCreate.id as string;
+        const createDeckResponse2 = await mutationDeckCreateEmpty(server);
+        const id2 = createDeckResponse2.body!.data!.deckCreate.id as string;
+        const queryDeckResponse = await queryDecks(server);
+        expect(queryDeckResponse).toHaveProperty("body.data.decks", expect.arrayContaining([
+          { id: id1 },
+          { id: id2 },
         ]));
       });
     });

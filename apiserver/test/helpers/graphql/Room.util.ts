@@ -1,9 +1,10 @@
-import { WrServer } from "../../../src/graphqlServer";
-import { gql, inject } from "../misc";
-import { OccupyingRoomsQuery, RoomAddOccupantMutation, RoomAddOccupantMutationVariables, RoomCreateMutation, RoomQuery, RoomQueryVariables, RoomSetDeckMutation, RoomSetDeckMutationVariables, RoomSetStateMutation, RoomSetStateMutationVariables } from "../../../generated/typescript-operations";
+import { WrServer } from "../../../src/graphqlApp";
+import { gql, testQuery } from "../misc";
+import { RoomAddOccupantMutationVariables, RoomQueryVariables, RoomSetDeckMutationVariables, RoomSetStateMutationVariables } from "../../../generated/typescript-operations";
 
-export async function mutationRoomCreate(server: WrServer) {
-  return inject<RoomCreateMutation, undefined>({
+export function mutationRoomCreate(server: WrServer) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<undefined>({
     server,
     document: gql`
       mutation RoomCreate {
@@ -25,8 +26,9 @@ export async function mutationRoomCreate(server: WrServer) {
   });
 }
 
-export async function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMutationVariables) {
-  return inject<RoomSetDeckMutation, RoomSetDeckMutationVariables>({
+export function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<RoomSetDeckMutationVariables>({
     server,
     document: gql`
       mutation RoomSetDeck($id: ID!, $deckId: ID!) {
@@ -45,8 +47,9 @@ export async function mutationRoomSetDeck(server: WrServer, variables: RoomSetDe
   });
 }
 
-export async function mutationRoomAddOccupant(server: WrServer, variables: RoomAddOccupantMutationVariables) {
-  return inject<RoomAddOccupantMutation, RoomAddOccupantMutationVariables>({
+export function mutationRoomAddOccupant(server: WrServer, variables: RoomAddOccupantMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<RoomAddOccupantMutationVariables>({
     server,
     document: gql`
       mutation RoomAddOccupant($id: ID!, $occupantId: ID!) {
@@ -68,8 +71,9 @@ export async function mutationRoomAddOccupant(server: WrServer, variables: RoomA
   });
 }
 
-export async function mutationRoomSetState(server: WrServer, variables: RoomSetStateMutationVariables) {
-  return inject<RoomSetStateMutation, RoomSetStateMutationVariables>({
+export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<RoomSetStateMutationVariables>({
     server,
     document: gql`
       mutation RoomSetState($id: ID!, $state: RoomState!) {
@@ -84,8 +88,9 @@ export async function mutationRoomSetState(server: WrServer, variables: RoomSetS
   });
 }
 
-export async function queryRoom(server: WrServer, id: string) {
-  return inject<RoomQuery, RoomQueryVariables>({
+export function queryRoom(server: WrServer, id: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<RoomQueryVariables>({
     server,
     document: gql`
       query Room($id: ID!) {
@@ -101,7 +106,8 @@ export async function queryRoom(server: WrServer, id: string) {
 }
 
 export function queryOccupyingRooms(server: WrServer) {
-  return inject<OccupyingRoomsQuery, undefined>({
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<undefined>({
     server,
     document: gql`
       query OccupyingRooms{

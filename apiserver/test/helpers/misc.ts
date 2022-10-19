@@ -1,9 +1,10 @@
-import { PubSub } from "@graphql-yoga/node";
+import { PubSub } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
 import Redis from "ioredis";
+import request from "supertest";
 import { JWTPayload } from "jose";
 import { Context, ContextFactoryReturnType, PubSubPublishArgsByKey, contextFactory } from "../../src/context";
-import { WrServer } from "../../src/graphqlServer";
+import { WrServer } from "../../src/graphqlApp";
 import { parseArbitraryJWT } from "../../src/service/crypto/jwtUtil";
 import { CurrentUser } from "../../src/types";
 
@@ -31,16 +32,9 @@ export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser
 
 export const isoTimestampMatcher = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function inject<TData, TVariables>({ server, document, variables }: { server: WrServer, document: string, variables: TVariables }) {
-  return server.inject<TData, TVariables>({
-    headers: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      "Content-Type": "application/json",
-    },
-    document,
-    variables,
-  });
+export function testQuery<TVariables>({ server, document, variables }: { server: WrServer, document: string, variables: TVariables }) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  return request(server).post("/graphql").send({ query: document, variables });
 }
 
 // dummy gql tag for codegen
