@@ -16,7 +16,6 @@ The following environment variables need to be set:
 
 The following environment variables may be set:
 
-* `CERT_FILE`, `KEY_FILE`; if both are present, the app serves as HTTPS and WSS.
 * `DEBUG`, c.f. Prisma documentation
 
 The runtime for this project is `node` of the major version given in `.nvmrc`

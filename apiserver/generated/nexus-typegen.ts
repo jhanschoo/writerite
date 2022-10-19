@@ -185,6 +185,7 @@ export interface NexusGenFieldTypes {
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
     roomEditOwnerConfig: NexusGenRootTypes['Room']; // Room!
+    roomSetDeck: NexusGenRootTypes['Room']; // Room!
     roomSetState: NexusGenRootTypes['Room']; // Room!
     userEdit: NexusGenRootTypes['User']; // User!
   }
@@ -200,6 +201,8 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Room: { // field return type
+    deck: NexusGenRootTypes['Deck'] | null; // Deck
+    deckId: string | null; // ID
     id: string; // ID!
     internalConfig: NexusGenScalars['JSONObject']; // JSONObject!
     messages: NexusGenRootTypes['Message'][]; // [Message!]!
@@ -295,6 +298,7 @@ export interface NexusGenFieldTypeNames {
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
     roomEditOwnerConfig: 'Room'
+    roomSetDeck: 'Room'
     roomSetState: 'Room'
     userEdit: 'User'
   }
@@ -310,6 +314,8 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Room: { // field return type name
+    deck: 'Deck'
+    deckId: 'ID'
     id: 'ID'
     internalConfig: 'JSONObject'
     messages: 'Message'
@@ -423,12 +429,13 @@ export interface NexusGenArgTypes {
       id: string; // ID!
       name: string; // String!
     }
-    roomCreate: { // args
-      ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
-    }
     roomEditOwnerConfig: { // args
       id: string; // ID!
       ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
+    }
+    roomSetDeck: { // args
+      deckId: string; // ID!
+      id: string; // ID!
     }
     roomSetState: { // args
       id: string; // ID!

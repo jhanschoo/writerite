@@ -1,7 +1,9 @@
 import { Prisma } from "@prisma/client";
 import { enumType, idArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
+import { RoomState as GeneratedRoomState } from "../../generated/typescript-operations";
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardValidUser } from "../service/authorization/guardValidUser";
+import { roomAddOccupant, roomEditOwnerConfig, roomSetDeck, roomSetState } from "../service/room";
 import { jsonObjectArg } from "./scalarUtil";
 
 export const Room = objectType({
@@ -9,6 +11,7 @@ export const Room = objectType({
   definition(t) {
     t.nonNull.id("id");
     t.nonNull.id("ownerId");
+    t.id("deckId");
     t.nonNull.jsonObject("ownerConfig", {
       resolve({ ownerConfig }) {
         return ownerConfig as Prisma.JsonObject;
@@ -31,6 +34,19 @@ export const Room = objectType({
           throw new Error(`Could not find user with id ${ownerId}`);
         }
         return user;
+      },
+    });
+    t.field("deck", {
+      type: "Deck",
+      async resolve({ deckId }, _args, { prisma }) {
+        if (!deckId) {
+          return null;
+        }
+        const deck = await prisma.deck.findUnique({ where: { id: deckId } });
+        if (deck === null) {
+          throw new Error(`Could not find deck with id ${deckId}`);
+        }
+        return deck;
       },
     });
     t.nonNull.list.nonNull.field("occupants", {
@@ -76,15 +92,32 @@ export const OccupyingRoomsQuery = queryField("occupyingRooms", {
 
 export const RoomCreateMutation = mutationField("roomCreate", {
   type: nonNull("Room"),
+  description: `@subscriptionsTriggered(
+    signatures: ["roomUpdates", "roomsUpdates"]
+  )`,
+  resolve: guardValidUser((_parent, _args, { sub, prisma }) => {
+    const { id } = sub;
+    return prisma.room.create({
+      data: {
+        owner: { connect: { id } },
+        occupants: { create: { occupantId: id } },
+        state: GeneratedRoomState.Waiting,
+      },
+    });
+  }),
+});
+
+// Only legal when room state is WAITING
+export const RoomSetDeckMutation = mutationField("roomSetDeck", {
+  type: nonNull("Room"),
   args: {
-    ownerConfig: nonNull(jsonObjectArg()),
+    id: nonNull(idArg()),
+    deckId: nonNull(idArg()),
   },
   description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
   )`,
-  resolve() {
-    throw Error("not implemented yet");
-  },
+  resolve: guardValidUser(async (_parent, { id: roomId, deckId }, { prisma, sub }) => roomSetDeck(prisma, { roomId, deckId, currentUserId: sub.id })),
 });
 
 // Only legal when room state is WAITING
@@ -97,8 +130,8 @@ export const RoomEditOwnerConfigMutation = mutationField("roomEditOwnerConfig", 
   description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
   )`,
-  resolve() {
-    throw Error("not implemented yet");
+  async resolve(_parent, { id, ownerConfig }, { prisma }) {
+    return roomEditOwnerConfig(prisma, { id, ownerConfig: ownerConfig as Prisma.InputJsonObject });
   },
 });
 
@@ -111,8 +144,8 @@ export const RoomSetStateMutation = mutationField("roomSetState", {
   description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
   )`,
-  resolve() {
-    throw Error("not implemented yet");
+  async resolve(_parent, { id, state }, { prisma }) {
+    return roomSetState(prisma, { id, state: state as GeneratedRoomState });
   },
 });
 
@@ -136,9 +169,7 @@ export const RoomAddOccupantMutation = mutationField("roomAddOccupant", {
   description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
   )`,
-  resolve() {
-    throw Error("not implemented yet");
-  },
+  resolve: guardValidUser((_parent, { id, occupantId }, { prisma, sub }) => roomAddOccupant(prisma, { roomId: id, occupantId, currentUserId: sub.id })),
 });
 
 // Only legal when room state is WAITING

@@ -157,6 +157,12 @@ export type Mutation = {
    *     signatures: ["roomUpdates", "roomsUpdates"]
    *   )
    */
+  roomSetDeck: Room;
+  /**
+   * @subscriptionsTriggered(
+   *     signatures: ["roomUpdates", "roomsUpdates"]
+   *   )
+   */
   roomSetState: Room;
   userEdit: User;
 };
@@ -276,14 +282,15 @@ export type MutationRoomAddOccupantByNameArgs = {
 };
 
 
-export type MutationRoomCreateArgs = {
+export type MutationRoomEditOwnerConfigArgs = {
+  id: Scalars['ID'];
   ownerConfig: Scalars['JSONObject'];
 };
 
 
-export type MutationRoomEditOwnerConfigArgs = {
+export type MutationRoomSetDeckArgs = {
+  deckId: Scalars['ID'];
   id: Scalars['ID'];
-  ownerConfig: Scalars['JSONObject'];
 };
 
 
@@ -352,6 +359,8 @@ export type QueryUserArgs = {
 
 export type Room = {
   __typename?: 'Room';
+  deck?: Maybe<Deck>;
+  deckId?: Maybe<Scalars['ID']>;
   id: Scalars['ID'];
   internalConfig: Scalars['JSONObject'];
   messages: Array<Message>;
@@ -448,6 +457,47 @@ export type HealthQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type HealthQuery = { __typename?: 'Query', health: string };
+
+export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomSetDeckMutationVariables = Exact<{
+  id: Scalars['ID'];
+  deckId: Scalars['ID'];
+}>;
+
+
+export type RoomSetDeckMutation = { __typename?: 'Mutation', roomSetDeck: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null } };
+
+export type RoomAddOccupantMutationVariables = Exact<{
+  id: Scalars['ID'];
+  occupantId: Scalars['ID'];
+}>;
+
+
+export type RoomAddOccupantMutation = { __typename?: 'Mutation', roomAddOccupant: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomSetStateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  state: RoomState;
+}>;
+
+
+export type RoomSetStateMutation = { __typename?: 'Mutation', roomSetState: { __typename?: 'Room', id: string, state: RoomState, deckId?: string | null } };
+
+export type RoomQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, state: RoomState, deckId?: string | null } };
+
+export type OccupyingRoomsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OccupyingRoomsQuery = { __typename?: 'Query', occupyingRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, deckId?: string | null }> };
 
 export type CreateUserMutationVariables = Exact<{
   code: Scalars['String'];

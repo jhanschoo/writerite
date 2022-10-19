@@ -80,6 +80,7 @@ model Deck {
 
   owner       User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   cards       Card[]
+  rooms       Room[]
   // sortData is an array of IDs, indicating that cards of this deck with IDs
   //   in this array should be displayed in the order they appear in the array.
   sortData    String[]
@@ -107,6 +108,7 @@ model Occupant {
 model Room {
   id             String     @default(cuid()) @id
   ownerId        String
+  deckId         String?
   // ownerConfig is a JsonObject
   ownerConfig    Json       @default("{}")
   // internalConfig is a JsonObject
@@ -116,6 +118,7 @@ model Room {
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @default(now()) @updatedAt
 
+  deck           Deck?      @relation(fields: [deckId], references: [id], onDelete: Cascade)
   owner          User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   occupants      Occupant[] @relation("RoomTo_Occupant")
   chatMsgs       Message[]

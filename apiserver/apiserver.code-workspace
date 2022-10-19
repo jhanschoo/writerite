@@ -21,7 +21,7 @@
       "**/.hg/store/**": true
     },
     "editor.tabSize": 2,
-    "editor.insertSpaces": false,
+    "editor.insertSpaces": true,
     "jest.disabledWorkspaceFolders": ["charts", "dev-config", "lets-encrypt"],
     "yaml.customTags": [
       "!And",

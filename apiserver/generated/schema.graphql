@@ -159,7 +159,7 @@ type Mutation {
       signatures: ["roomUpdates", "roomsUpdates"]
     )
   """
-  roomCreate(ownerConfig: JSONObject!): Room!
+  roomCreate: Room!
 
   """
   @subscriptionsTriggered(
@@ -167,6 +167,13 @@ type Mutation {
     )
   """
   roomEditOwnerConfig(id: ID!, ownerConfig: JSONObject!): Room!
+
+  """
+  @subscriptionsTriggered(
+      signatures: ["roomUpdates", "roomsUpdates"]
+    )
+  """
+  roomSetDeck(deckId: ID!, id: ID!): Room!
 
   """
   @subscriptionsTriggered(
@@ -192,6 +199,8 @@ type Query {
 }
 
 type Room {
+  deck: Deck
+  deckId: ID
   id: ID!
   internalConfig: JSONObject!
   messages: [Message!]!

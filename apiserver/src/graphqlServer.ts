@@ -22,6 +22,7 @@ interface GraphQLServerFactoryOpts {
   port?: number;
   https?: ServerOptions;
   cors?: CORSOptions;
+  logging?: boolean;
   context(initialContext: YogaInitialContext): Promise<Context>;
 }
 

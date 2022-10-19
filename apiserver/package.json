@@ -26,6 +26,7 @@
     "graphql": "^16.6.0",
     "graphql-scalars": "^1.9.3",
     "graphql-ws": "^5.8.2",
+    "graphql-yoga": "^3.0.0-next.5",
     "ioredis": "^5.2.3",
     "jose": "^4.10.0",
     "nanoid": "^3.1.23",
@@ -57,7 +58,7 @@
     "app:start": "node dist/src/index.js",
     "dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --exit-child --transpile-only --respawn src/index.ts",
     "dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && graphql-codegen && ts-node --transpile-only src/schema",
-    "test:integration": "export $(xargs -a .env -d '\\n') && graphql-codegen && jest --runInBand --config=\"jest.config.integration.ts\" test/integration",
+    "test:integration": "export $(xargs -a .env -d '\\n') && graphql-codegen && jest --runInBand --config=\"jest.config.integration.ts\" test/integration/graphql/Room.test.ts",
     "test:unit": "graphql-codegen && jest"
   }
 }

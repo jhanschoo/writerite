@@ -36,8 +36,8 @@ export function nameUser(server: WrServer, { name }: { name: string } = DEFAULT_
   });
 }
 
-export async function loginAsNewlyCreatedUser(server: WrServer, setSub: (sub?: CurrentUser) => void): Promise<CurrentUser> {
-  const { executionResult } = await createUser(server);
+export async function loginAsNewlyCreatedUser(server: WrServer, setSub: (sub?: CurrentUser) => void, name?: string): Promise<CurrentUser> {
+  const { executionResult } = await (name ? createUser(server, { name }) : createUser(server));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
   const currentUser = unsafeJwtToCurrentUser(executionResult!.data!.finalizeThirdPartyOauthSignin as string);
   setSub(currentUser);
