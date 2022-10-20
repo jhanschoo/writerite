@@ -41,7 +41,7 @@ export async function loginAsNewlyCreatedUser(server: WrServer, setSub: (sub?: C
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const response = await (name ? createUser(server, { name }) : createUser(server));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-non-null-assertion, @typescript-eslint/no-unnecessary-type-assertion
-  const currentUser = unsafeJwtToCurrentUser(response!.body!.data!.finalizeThirdPartyOauthSignin as string);
+  const currentUser = unsafeJwtToCurrentUser(response!.body.data!.finalizeThirdPartyOauthSignin as string);
   setSub(currentUser);
   return currentUser;
 }

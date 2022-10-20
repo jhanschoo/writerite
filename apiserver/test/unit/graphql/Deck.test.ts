@@ -172,7 +172,7 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const createDeckResponse = await mutationDeckCreateEmpty(server);
-        const id = createDeckResponse.body!.data!.deckCreate.id as string;
+        const id = createDeckResponse.body.data!.deckCreate.id as string;
         const queryDeckResponse = await queryDeckScalars(server, id);
         expect(queryDeckResponse).toHaveProperty("body.data.deck", {
           id,
@@ -196,9 +196,9 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const createDeckResponse1 = await mutationDeckCreateEmpty(server);
-        const id1 = createDeckResponse1.body!.data!.deckCreate.id as string;
+        const id1 = createDeckResponse1.body.data!.deckCreate.id as string;
         const createDeckResponse2 = await mutationDeckCreateEmpty(server);
-        const id2 = createDeckResponse2.body!.data!.deckCreate.id;
+        const id2 = createDeckResponse2.body.data!.deckCreate.id;
         const queryDecksResponse = await queryDecks(server);
         expect(queryDecksResponse).toHaveProperty("body.data.decks", expect.arrayContaining([
           {
