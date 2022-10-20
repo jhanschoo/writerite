@@ -33,6 +33,9 @@ async function main(): Promise<[Server, WebSocketServer]> {
     onSubscribe: async (ctx, msg) => {
       // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-assignment
       const { schema, execute, subscribe, contextFactory, parse, validate } = yoga.getEnveloped({
+        // setting the params field is required for compatibility with envelope plugins that assume i guess a http-like request
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+        params: { ...(ctx as any).params, ...msg.payload },
         ...ctx,
         extensions: msg,
       });

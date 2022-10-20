@@ -23,7 +23,7 @@ export function slug(size: number | null = 4): string {
 
 export async function getClaims(ctx: YogaInitialContext): Promise<CurrentUser | undefined> {
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  const authorization = ctx.request?.headers?.get("Authorization") ??
+  const authorization = ctx.request?.headers?.get?.("Authorization") ??
   // path if called from GraphiQL
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (ctx as any).extensions?.payload?.extensions?.headers?.Authorization ??
