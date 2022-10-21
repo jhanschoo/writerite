@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { PrismaClient } from "@prisma/client";
 
@@ -43,15 +42,15 @@ describe("graphql/Room.ts", () => {
         const user2 = await loginAsNewlyCreatedUser(app, setSub, "user2");
         const user1 = await loginAsNewlyCreatedUser(app, setSub, "user1");
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           ownerId: user1.id,
           occupants: expect.arrayContaining([{ id: user1.id }]),
         }));
-        const room1 = roomCreateResponse.body.data!.roomCreate;
+        const room1 = roomCreateResponse.data.roomCreate;
         const roomAddOccupantResponse = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: user2.id });
-        const room2 = roomAddOccupantResponse.body.data!.roomAddOccupant;
+        const room2 = roomAddOccupantResponse.data.roomAddOccupant;
         expect(room2).toEqual(expect.objectContaining({
           id: room1.id,
           state: RoomState.Waiting,
@@ -64,15 +63,15 @@ describe("graphql/Room.ts", () => {
         const user2 = await loginAsNewlyCreatedUser(app, setSub, "user2");
         const user1 = await loginAsNewlyCreatedUser(app, setSub, "user1");
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           ownerId: user1.id,
           occupants: expect.arrayContaining([{ id: user1.id }]),
         }));
-        const room1 = roomCreateResponse.body.data!.roomCreate;
+        const room1 = roomCreateResponse.data.roomCreate;
         const roomAddOccupantResponse1 = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: user2.id });
-        const room2 = roomAddOccupantResponse1.body.data!.roomAddOccupant;
+        const room2 = roomAddOccupantResponse1.data.roomAddOccupant;
         expect(room2).toEqual(expect.objectContaining({
           id: room1.id,
           state: RoomState.Waiting,
@@ -80,7 +79,7 @@ describe("graphql/Room.ts", () => {
           occupants: expect.arrayContaining([{ id: user1.id }, { id: user2.id }]),
         }));
         const roomAddOccupantResponse2 = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: user2.id });
-        const room3 = roomAddOccupantResponse2.body.data!.roomAddOccupant;
+        const room3 = roomAddOccupantResponse2.data.roomAddOccupant;
         expect(room3).toEqual(expect.objectContaining({
           id: room1.id,
           state: RoomState.Waiting,
@@ -93,17 +92,15 @@ describe("graphql/Room.ts", () => {
         expect.assertions(3);
         const user = await loginAsNewlyCreatedUser(app, setSub);
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           ownerId: user.id,
         }));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const room1 = roomCreateResponse.body.data!.roomCreate;
+        const room1 = roomCreateResponse.data.roomCreate;
         const roomAddOccupantResponse = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: cuid() });
-        expect(roomAddOccupantResponse).toHaveProperty("body.data", null);
-        expect(roomAddOccupantResponse.body?.errors?.length).toBeTruthy();
+        expect(roomAddOccupantResponse).toHaveProperty("data", null);
+        expect(roomAddOccupantResponse.errors).not.toHaveLength(0);
       });
       it.skip("should fail to add an occupant to a room not in WAITING state", async () => {
         // no-op
@@ -112,8 +109,8 @@ describe("graphql/Room.ts", () => {
         expect.assertions(2);
         const user = await loginAsNewlyCreatedUser(app, setSub);
         const response = await mutationRoomAddOccupant(app, { id: cuid(), occupantId: user.id });
-        expect(response).toHaveProperty("body.data", null);
-        expect(response.body?.errors?.length).toBeTruthy();
+        expect(response).toHaveProperty("data", null);
+        expect(response.errors).not.toHaveLength(0);
       });
       it("should fail to add an occupant to an owned room if not authenticated as the owner, occupant, or the person being added", async () => {
         expect.assertions(3);
@@ -121,20 +118,17 @@ describe("graphql/Room.ts", () => {
         const user2 = await loginAsNewlyCreatedUser(app, setSub, "user2");
         const user1 = await loginAsNewlyCreatedUser(app, setSub, "user1");
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           ownerId: user1.id,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           occupants: expect.arrayContaining([{ id: user1.id }]),
         }));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const room1 = roomCreateResponse.body.data!.roomCreate;
+        const room1 = roomCreateResponse.data.roomCreate;
         await loginAsNewlyCreatedUser(app, setSub, "user3");
         const roomAddOccupantResponse = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: user2.id });
-        expect(roomAddOccupantResponse).toHaveProperty("body.data", null);
-        expect(roomAddOccupantResponse.body?.errors?.length).toBeTruthy();
+        expect(roomAddOccupantResponse).toHaveProperty("data", null);
+        expect(roomAddOccupantResponse.errors).not.toHaveLength(0);
       });
     });
     describe.skip("roomAddOccupantByName", () => {
@@ -143,7 +137,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should be able to add multiple occupant to an empty room in WAITING state", async () => {
@@ -151,7 +145,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should be able to re-add an occupant to a room in WAITING state with no apparent change in state", async () => {
@@ -159,7 +153,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should fail to add a missing occupant to a room in WAITING state", async () => {
@@ -167,7 +161,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should fail to add an occupant to a room not in WAITING state", async () => {
@@ -175,7 +169,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should fail to add an occupant to a missing room", async () => {
@@ -183,7 +177,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should fail to add an occupant to an owned room if not authenticated as the owner, occupant, or the person being added", async () => {
@@ -191,7 +185,7 @@ describe("graphql/Room.ts", () => {
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
     });
@@ -203,7 +197,7 @@ describe("graphql/Room.ts", () => {
         expect.assertions(1);
         const user = await loginAsNewlyCreatedUser(app, setSub);
         const response = await mutationRoomCreate(app);
-        expect(response).toHaveProperty("body.data.roomCreate", expect.objectContaining({
+        expect(response).toHaveProperty("data.roomCreate", expect.objectContaining({
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           id: expect.any(String),
           state: RoomState.Waiting,
@@ -219,17 +213,17 @@ describe("graphql/Room.ts", () => {
         expect.assertions(2);
         await loginAsNewlyCreatedUser(app, setSub);
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           deck: null,
           deckId: null,
         }));
-        const room = roomCreateResponse.body.data!.roomCreate;
+        const room = roomCreateResponse.data.roomCreate;
         const deckCreateResponse = await mutationDeckCreateEmpty(app);
-        const deck = deckCreateResponse.body.data!.deckCreate;
+        const deck = deckCreateResponse.data.deckCreate;
         const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: room.id, deckId: deck.id });
-        expect(roomSetDeckResponse).toHaveProperty("body.data.roomSetDeck", expect.objectContaining({
+        expect(roomSetDeckResponse).toHaveProperty("data.roomSetDeck", expect.objectContaining({
           id: room.id,
           state: RoomState.Waiting,
           deckId: deck.id,
@@ -242,20 +236,17 @@ describe("graphql/Room.ts", () => {
         expect.assertions(3);
         await loginAsNewlyCreatedUser(app, setSub);
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           deck: null,
           deckId: null,
         }));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const room = roomCreateResponse.body.data!.roomCreate;
+        const room = roomCreateResponse.data.roomCreate;
         const deckCreateResponse = await mutationDeckCreateEmpty(app);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const deck = deckCreateResponse.body.data!.deckCreate;
+        const deck = deckCreateResponse.data.deckCreate;
         const roomSetDeckResponse1 = await mutationRoomSetDeck(app, { id: room.id, deckId: deck.id });
-        expect(roomSetDeckResponse1).toHaveProperty("body.data.roomSetDeck", expect.objectContaining({
+        expect(roomSetDeckResponse1).toHaveProperty("data.roomSetDeck", expect.objectContaining({
           id: room.id,
           state: RoomState.Waiting,
           deckId: deck.id,
@@ -264,7 +255,7 @@ describe("graphql/Room.ts", () => {
           },
         }));
         const roomSetDeckResponse2 = await mutationRoomSetDeck(app, { id: room.id, deckId: deck.id });
-        expect(roomSetDeckResponse2).toHaveProperty("body.data.roomSetDeck", expect.objectContaining({
+        expect(roomSetDeckResponse2).toHaveProperty("data.roomSetDeck", expect.objectContaining({
           id: room.id,
           state: RoomState.Waiting,
           deckId: deck.id,
@@ -277,20 +268,17 @@ describe("graphql/Room.ts", () => {
         expect.assertions(3);
         await loginAsNewlyCreatedUser(app, setSub);
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           deck: null,
           deckId: null,
         }));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const room = roomCreateResponse.body.data!.roomCreate;
+        const room = roomCreateResponse.data.roomCreate;
         const deckCreateResponse1 = await mutationDeckCreateEmpty(app);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const deck1 = deckCreateResponse1.body.data!.deckCreate;
+        const deck1 = deckCreateResponse1.data.deckCreate;
         const roomSetDeckResponse1 = await mutationRoomSetDeck(app, { id: room.id, deckId: deck1.id });
-        expect(roomSetDeckResponse1).toHaveProperty("body.data.roomSetDeck", expect.objectContaining({
+        expect(roomSetDeckResponse1).toHaveProperty("data.roomSetDeck", expect.objectContaining({
           id: room.id,
           state: RoomState.Waiting,
           deckId: deck1.id,
@@ -299,10 +287,9 @@ describe("graphql/Room.ts", () => {
           },
         }));
         const deckCreateResponse2 = await mutationDeckCreateEmpty(app);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const deck2 = deckCreateResponse2.body.data!.deckCreate;
+        const deck2 = deckCreateResponse2.data.deckCreate;
         const roomSetDeckResponse2 = await mutationRoomSetDeck(app, { id: room.id, deckId: deck2.id });
-        expect(roomSetDeckResponse2).toHaveProperty("body.data.roomSetDeck", expect.objectContaining({
+        expect(roomSetDeckResponse2).toHaveProperty("data.roomSetDeck", expect.objectContaining({
           id: room.id,
           state: RoomState.Waiting,
           deckId: deck2.id,
@@ -315,59 +302,53 @@ describe("graphql/Room.ts", () => {
         expect.assertions(3);
         await loginAsNewlyCreatedUser(app, setSub);
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           deck: null,
           deckId: null,
         }));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const room = roomCreateResponse.body.data!.roomCreate;
+        const room = roomCreateResponse.data.roomCreate;
         const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: room.id, deckId: cuid() });
-        expect(roomSetDeckResponse).toHaveProperty("body.data", null);
-        expect(roomSetDeckResponse.body?.errors?.length).toBeTruthy();
+        expect(roomSetDeckResponse).toHaveProperty("data", null);
+        expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
       it.skip("should fail to add a deck to a room not in WAITING state", async () => {
         expect.assertions(1);
         await loginAsNewlyCreatedUser(app, setSub);
         /*
          * const response = await mutationDeckCreateEmpty(server);
-         * expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+         * expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
          */
       });
       it("should fail to add an deck to a missing room", async () => {
         expect.assertions(2);
         await loginAsNewlyCreatedUser(app, setSub);
         const deckCreateResponse = await mutationDeckCreateEmpty(app);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const deck = deckCreateResponse.body.data!.deckCreate;
+        const deck = deckCreateResponse.data.deckCreate;
         const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: cuid(), deckId: deck.id });
-        expect(roomSetDeckResponse).toHaveProperty("body.data", null);
-        expect(roomSetDeckResponse.body?.errors?.length).toBeTruthy();
+        expect(roomSetDeckResponse).toHaveProperty("data", null);
+        expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
 
       it("should fail to add a deck to an owned room if not authenticated as the owner of the room", async () => {
         expect.assertions(3);
         const user1 = await loginAsNewlyCreatedUser(app, setSub, "user1");
         const roomCreateResponse = await mutationRoomCreate(app);
-        expect(roomCreateResponse).toHaveProperty("body.data.roomCreate", expect.objectContaining({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        expect(roomCreateResponse).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
           state: RoomState.Waiting,
           ownerId: user1.id,
           deck: null,
           deckId: null,
         }));
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const room = roomCreateResponse.body.data!.roomCreate;
-        const user2 = await loginAsNewlyCreatedUser(app, setSub, "user2");
+        const room = roomCreateResponse.data.roomCreate;
+        await loginAsNewlyCreatedUser(app, setSub, "user2");
         const deckCreateResponse = await mutationDeckCreateEmpty(app);
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const deck = deckCreateResponse.body.data!.deckCreate;
+        const deck = deckCreateResponse.data.deckCreate;
         const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: room.id, deckId: deck.id });
-        expect(roomSetDeckResponse).toHaveProperty("body.data", null);
-        expect(roomSetDeckResponse.body?.errors?.length).toBeTruthy();
+        expect(roomSetDeckResponse).toHaveProperty("data", null);
+        expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
     });
   });
@@ -378,8 +359,7 @@ describe("graphql/Room.ts", () => {
         // expect.assertions(1);
         // const currentUser = await loginAsNewlyCreatedUser(server, setSub);
         // const { executionResult: createDeckExecutionResult } = await mutationDeckCreateEmpty(server);
-        // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        // const { id } = createDeckExecutionResult!.data!.deckCreate;
+        // const { id } = createDeckExecutionResultdata.datadeckCreate;
         // const { executionResult: queryDeckExecutionResult } = await queryDeckScalars(server, id);
         // expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
         //   id,
@@ -399,8 +379,7 @@ describe("graphql/Room.ts", () => {
         expect.assertions(1);
         // const currentUser = await loginAsNewlyCreatedUser(server, setSub);
         // const { executionResult: createDeckExecutionResult } = await mutationDeckCreateEmpty(server);
-        // // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        // const { id } = createDeckExecutionResult!.data!.deckCreate;
+        // const { id } = createDeckExecutionResultdata.datadeckCreate;
         // const { executionResult: queryDeckExecutionResult } = await queryDeckScalars(server, id);
         // expect(queryDeckExecutionResult).toHaveProperty("data.deck", {
         //   id,

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from "@prisma/client";
@@ -20,7 +19,7 @@ describe("graphql/User.ts", () => {
 
   beforeAll(() => {
     [setSub, , context, stopContext, { prisma }] = testContextFactory();
-    server = createGraphQLApp({ context });
+    server = createGraphQLApp({ context, logging: false });
   });
 
   afterAll(async () => {
@@ -38,8 +37,8 @@ describe("graphql/User.ts", () => {
       it("should be able to create a user with development authentication in test environment", async () => {
         expect.assertions(2);
         const response = await createUser(server);
-        expect(response.body).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
-        const currentUser = unsafeJwtToCurrentUser(response.body.data!.finalizeThirdPartyOauthSignin as string);
+        expect(response).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
+        const currentUser = unsafeJwtToCurrentUser(response.data.finalizeThirdPartyOauthSignin as string);
         expect(currentUser).toEqual({
           id: expect.any(String),
           roles: [Roles.user],
@@ -56,10 +55,10 @@ describe("graphql/User.ts", () => {
       it("should be able to fetch all user-accessible fields of current user", async () => {
         expect.assertions(1);
         const createUserResponse = await createUser(server);
-        const currentUser = unsafeJwtToCurrentUser(createUserResponse.body.data!.finalizeThirdPartyOauthSignin as string);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse.data.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
         const queryUserRequest = await queryAllUserAccessibleUserScalars(server, currentUser.id);
-        expect(queryUserRequest).toHaveProperty("body.data.user", {
+        expect(queryUserRequest).toHaveProperty("data.user", {
           id: currentUser.id,
           name: DEFAULT_CREATE_USER_VALUES.name,
           isPublic: false,
@@ -69,28 +68,28 @@ describe("graphql/User.ts", () => {
       it("should not be able to fetch all user-accessible fields of private user if not logged in", async () => {
         expect.assertions(2);
         const createUserResponse = await createUser(server);
-        const { id } = unsafeJwtToCurrentUser(createUserResponse.body?.data?.finalizeThirdPartyOauthSignin as string);
+        const { id } = unsafeJwtToCurrentUser(createUserResponse.data.finalizeThirdPartyOauthSignin as string);
         const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
-        expect(queryUserResponse.body.data).toBeNull();
-        expect(queryUserResponse.body!.errors).not.toHaveLength(0);
+        expect(queryUserResponse.data).toBeNull();
+        expect(queryUserResponse.errors).not.toHaveLength(0);
       });
       it("should not be able to fetch all user-accessible fields of private user if logged in as another user", async () => {
         expect.assertions(2);
         const createUserResponse1 = await createUser(server, { name: "user1" });
-        const { id } = unsafeJwtToCurrentUser(createUserResponse1.body.data!.finalizeThirdPartyOauthSignin as string);
+        const { id } = unsafeJwtToCurrentUser(createUserResponse1.data.finalizeThirdPartyOauthSignin as string);
         const createUserResponse2 = await createUser(server, { name: "user2" });
-        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.body.data!.finalizeThirdPartyOauthSignin as string);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.data.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
         const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
-        expect(queryUserResponse.body.data).toBeNull();
-        expect(queryUserResponse.body!.errors).not.toHaveLength(0);
+        expect(queryUserResponse.data).toBeNull();
+        expect(queryUserResponse.errors).not.toHaveLength(0);
       });
       it("should be able to fetch public fields of private user if not logged in", async () => {
         expect.assertions(1);
         const createUserResponse = await createUser(server);
-        const { id } = unsafeJwtToCurrentUser(createUserResponse.body.data!.finalizeThirdPartyOauthSignin as string);
+        const { id } = unsafeJwtToCurrentUser(createUserResponse.data.finalizeThirdPartyOauthSignin as string);
         const queryUserResponse = await queryUserPublicScalars(server, id);
-        expect(queryUserResponse).toHaveProperty("body.data.user", {
+        expect(queryUserResponse).toHaveProperty("data.user", {
           id,
           isPublic: false,
         });
@@ -98,12 +97,12 @@ describe("graphql/User.ts", () => {
       it("should be able to fetch public fields of private user if logged in as another user", async () => {
         expect.assertions(1);
         const createUserResponse1 = await createUser(server, { name: "user1" });
-        const { id } = unsafeJwtToCurrentUser(createUserResponse1.body.data!.finalizeThirdPartyOauthSignin as string);
+        const { id } = unsafeJwtToCurrentUser(createUserResponse1.data.finalizeThirdPartyOauthSignin as string);
         const createUserResponse2 = await createUser(server, { name: "user2" });
-        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.body.data!.finalizeThirdPartyOauthSignin as string);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.data.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
         const queryUserResponse = await queryUserPublicScalars(server, id);
-        expect(queryUserResponse).toHaveProperty("body.data.user", {
+        expect(queryUserResponse).toHaveProperty("data.user", {
           id,
           isPublic: false,
         });
@@ -111,12 +110,12 @@ describe("graphql/User.ts", () => {
       it("should be able to fetch all fields of public user if not logged in", async () => {
         expect.assertions(1);
         const createUserResponse = await createUser(server);
-        const currentUser = unsafeJwtToCurrentUser(createUserResponse.body.data!.finalizeThirdPartyOauthSignin as string);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse.data.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
         await mutationUserEdit(server, { isPublic: true });
         setSub(undefined);
         const queryUserResponse = await queryAllUserAccessibleUserScalars(server, currentUser.id);
-        expect(queryUserResponse).toHaveProperty("body.data.user", {
+        expect(queryUserResponse).toHaveProperty("data.user", {
           id: currentUser.id,
           name: DEFAULT_CREATE_USER_VALUES.name,
           isPublic: true,
@@ -126,14 +125,14 @@ describe("graphql/User.ts", () => {
       it("should be able to fetch all fields of public user if logged in as another user", async () => {
         expect.assertions(1);
         const createUserResponse1 = await createUser(server, { name: "user1" });
-        const targetUser = unsafeJwtToCurrentUser(createUserResponse1.body.data!.finalizeThirdPartyOauthSignin as string);
+        const targetUser = unsafeJwtToCurrentUser(createUserResponse1.data.finalizeThirdPartyOauthSignin as string);
         setSub(targetUser);
         await mutationUserEdit(server, { isPublic: true });
         const createUserResponse2 = await createUser(server, { name: "user2" });
-        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.body.data!.finalizeThirdPartyOauthSignin as string);
+        const currentUser = unsafeJwtToCurrentUser(createUserResponse2.data.finalizeThirdPartyOauthSignin as string);
         setSub(currentUser);
         const queryUserResponse = await queryAllUserAccessibleUserScalars(server, targetUser.id);
-        expect(queryUserResponse).toHaveProperty("body.data.user", {
+        expect(queryUserResponse).toHaveProperty("data.user", {
           id: targetUser.id,
           name: "user1",
           isPublic: true,

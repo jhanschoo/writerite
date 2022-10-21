@@ -8,9 +8,9 @@ describe("server", () => {
   it("should be able to be raised and destroyed", async () => {
     expect.assertions(1);
     const [ctxFn, stopCtx] = contextFactory();
-    const server = createGraphQLApp({ context: ctxFn });
+    const server = createGraphQLApp({ context: ctxFn, logging: false });
     const response = await queryHealth(server);
-    expect(response).toHaveProperty("body.data.health", "OK");
+    expect(response).toHaveProperty("data.health", "OK");
     await stopCtx();
   });
 });

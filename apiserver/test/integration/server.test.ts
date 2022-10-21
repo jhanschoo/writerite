@@ -15,7 +15,7 @@ describe("server", () => {
 
   beforeAll(() => {
     [, , context, stopContext, { prisma }] = testContextFactory();
-    server = createGraphQLApp({ context });
+    server = createGraphQLApp({ context, logging: false });
   });
 
   afterAll(async () => {
@@ -26,12 +26,12 @@ describe("server", () => {
   it("should be able to respond to a health check", async () => {
     expect.assertions(1);
     const response = await queryHealth(server);
-    expect(response).toHaveProperty("body.data.health", "OK");
+    expect(response).toHaveProperty("data.health", "OK");
   });
 
   it.skip("should be able to respond to a basic create user", async () => {
     expect.assertions(1);
     const response = await createUser(server);
-    expect(response).toHaveProperty("body.data.finalizeThirdPartyOauthSignin", expect.any(String));
+    expect(response).toHaveProperty("data.finalizeThirdPartyOauthSignin", expect.any(String));
   });
 });

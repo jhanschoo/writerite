@@ -54,7 +54,7 @@ describe("graphql/Health.ts", () => {
       it("should return a string \"OK\"", async () => {
         expect.assertions(1);
         const response = await queryHealth(server as unknown as WrServer);
-        expect(response).toHaveProperty("body.data.health", "OK");
+        expect(response).toHaveProperty("data.health", "OK");
       });
     });
   });

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { Deck, PrismaClient } from "@prisma/client";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
@@ -36,7 +35,7 @@ describe("graphql/Deck.ts", () => {
       pubsub: createPubSub(),
       redis,
     });
-    server = createGraphQLApp({ context });
+    server = createGraphQLApp({ context, logging: false });
   });
 
   afterAll(async () => {
@@ -72,7 +71,7 @@ describe("graphql/Deck.ts", () => {
             } },
           },
         });
-        expect(response).toHaveProperty("body.data.deckAddSubdeck.id", id);
+        expect(response).toHaveProperty("data.deckAddSubdeck.id", id);
       });
     });
     describe("deckCreate", () => {
@@ -85,7 +84,7 @@ describe("graphql/Deck.ts", () => {
           id,
         } as Deck);
         const response = await mutationDeckCreateEmpty(server);
-        expect(response).toHaveProperty("body.data.deckCreate.id", id);
+        expect(response).toHaveProperty("data.deckCreate.id", id);
       });
     });
     describe("deckDelete", () => {
@@ -121,7 +120,7 @@ describe("graphql/Deck.ts", () => {
             editedAt: expect.any(Date),
           },
         });
-        expect(response).toHaveProperty("body.data.deckEdit.name", nextName);
+        expect(response).toHaveProperty("data.deckEdit.name", nextName);
       });
     });
     describe("deckRemoveSubdeck", () => {
@@ -142,7 +141,7 @@ describe("graphql/Deck.ts", () => {
             subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
           },
         });
-        expect(response).toHaveProperty("body.data.deckRemoveSubdeck.id", id);
+        expect(response).toHaveProperty("data.deckRemoveSubdeck.id", id);
       });
     });
     describe("deckUsed", () => {
@@ -161,7 +160,7 @@ describe("graphql/Deck.ts", () => {
             usedAt: expect.any(Date),
           },
         }));
-        expect(response).toHaveProperty("body.data.deckUsed.id", id);
+        expect(response).toHaveProperty("data.deckUsed.id", id);
       });
     });
   });
@@ -172,9 +171,9 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const createDeckResponse = await mutationDeckCreateEmpty(server);
-        const id = createDeckResponse.body.data!.deckCreate.id as string;
+        const id = createDeckResponse.data.deckCreate.id as string;
         const queryDeckResponse = await queryDeckScalars(server, id);
-        expect(queryDeckResponse).toHaveProperty("body.data.deck", {
+        expect(queryDeckResponse).toHaveProperty("data.deck", {
           id,
           answerLang: "",
           description: {},
@@ -196,11 +195,11 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const createDeckResponse1 = await mutationDeckCreateEmpty(server);
-        const id1 = createDeckResponse1.body.data!.deckCreate.id as string;
+        const id1 = createDeckResponse1.data.deckCreate.id as string;
         const createDeckResponse2 = await mutationDeckCreateEmpty(server);
-        const id2 = createDeckResponse2.body.data!.deckCreate.id;
+        const id2 = createDeckResponse2.data.deckCreate.id;
         const queryDecksResponse = await queryDecks(server);
-        expect(queryDecksResponse).toHaveProperty("body.data.decks", expect.arrayContaining([
+        expect(queryDecksResponse).toHaveProperty("data.decks", expect.arrayContaining([
           {
             id: id1,
           },

@@ -21,7 +21,7 @@ describe("graphql/Deck.ts", () => {
 
   beforeAll(() => {
     [setSub, , context, stopContext, { prisma }] = testContextFactory();
-    server = createGraphQLApp({ context });
+    server = createGraphQLApp({ context, logging: false });
   });
 
   afterAll(async () => {
@@ -42,7 +42,7 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         await loginAsNewlyCreatedUser(server, setSub);
         const response = await mutationDeckCreateEmpty(server);
-        expect(response).toHaveProperty("body.data.deckCreate.id", expect.any(String));
+        expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
       });
     });
     describe("deckDelete", () => {
@@ -65,9 +65,9 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         const currentUser = await loginAsNewlyCreatedUser(server, setSub);
         const createDeckResponse = await mutationDeckCreateEmpty(server);
-        const id = createDeckResponse.body.data!.deckCreate.id as string;
+        const id = createDeckResponse.data.deckCreate.id as string;
         const queryDeckResponse = await queryDeckScalars(server, id);
-        expect(queryDeckResponse).toHaveProperty("body.data.deck", {
+        expect(queryDeckResponse).toHaveProperty("data.deck", {
           id,
           answerLang: "",
           description: {},
@@ -89,11 +89,11 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         await loginAsNewlyCreatedUser(server, setSub);
         const createDeckResponse1 = await mutationDeckCreateEmpty(server);
-        const id1 = createDeckResponse1.body.data!.deckCreate.id as string;
+        const id1 = createDeckResponse1.data.deckCreate.id as string;
         const createDeckResponse2 = await mutationDeckCreateEmpty(server);
-        const id2 = createDeckResponse2.body.data!.deckCreate.id as string;
+        const id2 = createDeckResponse2.data.deckCreate.id as string;
         const queryDeckResponse = await queryDecks(server);
-        expect(queryDeckResponse).toHaveProperty("body.data.decks", expect.arrayContaining([
+        expect(queryDeckResponse).toHaveProperty("data.decks", expect.arrayContaining([
           { id: id1 },
           { id: id2 },
         ]));

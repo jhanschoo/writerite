@@ -32,9 +32,16 @@ export function testContextFactory(opts?: Partial<Context>): [(sub?: CurrentUser
 
 export const isoTimestampMatcher = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
 
-export function testQuery<TVariables>({ server, document, variables }: { server: WrServer, document: string, variables: TVariables }) {
+export async function testQuery<TVariables>({ server, document, variables }: { server: WrServer, document: string, variables: TVariables }) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  return request(server).post("/graphql").send({ query: document, variables });
+  return (await server.fetch("http://localhost:4000/graphql", {
+    method: "POST",
+    headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ query: document, variables }),
+  })).json();
 }
 
 // dummy gql tag for codegen
