@@ -1,6 +1,6 @@
 import { WrServer } from "../../../src/graphqlApp";
 import { gql, testQuery } from "../misc";
-import { DeckAddSubdeckMutationVariables, DeckEditNameMutationVariables, DeckQueryVariables, DeckRemoveSubdeckMutationVariables, DeckUsedMutationVariables, DecksQuery } from "../../../generated/typescript-operations";
+import { DeckAddSubdeckMutationVariables, DeckEditNameMutationVariables, DeckQueryVariables, DeckRemoveSubdeckMutationVariables, DeckUsedMutationVariables } from "../../../generated/typescript-operations";
 
 export function mutationDeckCreateEmpty(server: WrServer) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return

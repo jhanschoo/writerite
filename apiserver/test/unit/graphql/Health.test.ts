@@ -28,14 +28,14 @@ describe("graphql/Health.ts", () => {
 
   // eslint-disable-next-line @typescript-eslint/require-await
   beforeAll(async () => {
-    prisma = mockDeep<PrismaClient>() as unknown as DeepMockProxy<PrismaClient>;
+    prisma = mockDeep<PrismaClient>();
     redis = mockDeep<Redis>();
     [setSub, setPubsub, context, stopContext] = testContextFactory({
       prisma: prisma as unknown as PrismaClient,
       pubsub: createPubSub(),
       redis,
     });
-    server = createYoga({ context, schema });
+    server = createYoga({ context, schema, logging: false });
   });
 
   afterAll(async () => {
