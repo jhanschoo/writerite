@@ -13,7 +13,7 @@ import { schema } from "../../../src/schema";
 export const DEFAULT_CURRENT_USER = {
   id: "fake-id",
   name: "fake-name",
-  roles: [Roles.user],
+  roles: [Roles.User],
 };
 
 describe("graphql/Health.ts", () => {

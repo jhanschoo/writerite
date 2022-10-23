@@ -13,7 +13,7 @@ import { Context, PubSubPublishArgsByKey } from "../../../src/context";
 export const DEFAULT_CURRENT_USER = {
   id: "fake-id",
   name: "fake-name",
-  roles: [Roles.user],
+  roles: [Roles.User],
 };
 
 describe("graphql/Deck.ts", () => {
