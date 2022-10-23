@@ -72,9 +72,9 @@ export const RoomState = enumType({
 export const RoomQuery = queryField("room", {
   type: nonNull("Room"),
   args: { id: nonNull(idArg()) },
-  resolve: guardValidUser(async (_source, { id }, { prisma }) => {
-    const res = await prisma.room.findUnique({
-      where: { id },
+  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
+    const res = await prisma.room.findFirst({
+      where: { id, ownerId: sub.id },
     });
     if (!res) {
       throw userLacksPermissionsErrorFactory();
@@ -144,9 +144,7 @@ export const RoomSetStateMutation = mutationField("roomSetState", {
   description: `@subscriptionsTriggered(
     signatures: ["roomUpdates", "roomsUpdates"]
   )`,
-  async resolve(_parent, { id, state }, { prisma }) {
-    return roomSetState(prisma, { id, state: state as GeneratedRoomState });
-  },
+  resolve: guardValidUser((_parent, { id, state }, { prisma, sub }) => roomSetState(prisma, { id, state: state as GeneratedRoomState, currentUserId: sub.id })),
 });
 
 export const RoomCleanUpDeadMutation = mutationField("roomCleanUpDead", {

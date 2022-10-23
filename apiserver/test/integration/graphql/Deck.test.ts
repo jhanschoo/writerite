@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -37,12 +38,19 @@ describe("graphql/Deck.ts", () => {
     describe("deckAddSubdeck", () => {
       // TODO: implement
     });
+
     describe("deckCreate", () => {
       it("should be able to create an empty deck", async () => {
         expect.assertions(1);
+
+        // create user
         await loginAsNewlyCreatedUser(server, setSub);
+
+        // create deck
         const response = await mutationDeckCreateEmpty(server);
-        expect(response).toHaveProperty("data.deckCreate.id", expect.any(String));
+        expect(response).toHaveProperty("data.deckCreate", expect.objectContaining({
+          id: expect.any(String),
+        }));
       });
     });
     describe("deckDelete", () => {
@@ -62,40 +70,70 @@ describe("graphql/Deck.ts", () => {
   describe("Query", () => {
     describe("deck", () => {
       it("should be able to return scalars of an owned deck", async () => {
-        expect.assertions(1);
-        const currentUser = await loginAsNewlyCreatedUser(server, setSub);
+        expect.assertions(2);
+
+        // create user
+        const user = await loginAsNewlyCreatedUser(server, setSub);
+
+        // create deck
         const createDeckResponse = await mutationDeckCreateEmpty(server);
-        const id = createDeckResponse.data.deckCreate.id as string;
-        const queryDeckResponse = await queryDeckScalars(server, id);
-        expect(queryDeckResponse).toHaveProperty("data.deck", {
-          id,
+        expect(createDeckResponse).toHaveProperty("data.deckCreate", {
+          id: expect.any(String),
           answerLang: "",
           description: {},
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           editedAt: expect.stringMatching(isoTimestampMatcher),
           name: "",
-          ownerId: currentUser.id,
+          ownerId: user.id,
           promptLang: "",
           published: false,
           sortData: [],
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           usedAt: expect.stringMatching(isoTimestampMatcher),
+        });
+        const deckBefore = createDeckResponse.data.deckCreate;
+
+        // query deck
+        const queryDeckResponse = await queryDeckScalars(server, deckBefore.id);
+        expect(queryDeckResponse).toHaveProperty("data.deck", {
+          id: deckBefore.id,
+          answerLang: "",
+          description: {},
+          editedAt: deckBefore.editedAt,
+          name: "",
+          ownerId: user.id,
+          promptLang: "",
+          published: false,
+          sortData: [],
+          usedAt: deckBefore.usedAt,
         });
       });
     });
 
     describe("decks", () => {
       it("should be able to return ids of owned decks", async () => {
-        expect.assertions(1);
+        expect.assertions(3);
+
+        // create user
         await loginAsNewlyCreatedUser(server, setSub);
+
+        // create deck 1
         const createDeckResponse1 = await mutationDeckCreateEmpty(server);
-        const id1 = createDeckResponse1.data.deckCreate.id as string;
+        expect(createDeckResponse1).toHaveProperty("data.deckCreate", expect.objectContaining({
+          id: expect.any(String),
+        }));
+        const deckBefore1 = createDeckResponse1.data.deckCreate;
+
+        // create deck 2
         const createDeckResponse2 = await mutationDeckCreateEmpty(server);
-        const id2 = createDeckResponse2.data.deckCreate.id as string;
+        expect(createDeckResponse2).toHaveProperty("data.deckCreate", expect.objectContaining({
+          id: expect.any(String),
+        }));
+        const deckBefore2 = createDeckResponse2.data.deckCreate;
+
+        // query decks
         const queryDeckResponse = await queryDecks(server);
         expect(queryDeckResponse).toHaveProperty("data.decks", expect.arrayContaining([
-          { id: id1 },
-          { id: id2 },
+          expect.objectContaining({ id: deckBefore1.id }),
+          expect.objectContaining({ id: deckBefore2.id }),
         ]));
       });
     });

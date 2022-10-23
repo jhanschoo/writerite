@@ -29,7 +29,7 @@ export async function thirdPartySignin({ code, provider, redirect_uri, prisma }:
     if (!user) {
       user = await prisma.user.create({ data: {
         [idField]: profile.id,
-        roles: [Roles.user],
+        roles: [Roles.User],
       } });
     }
   }

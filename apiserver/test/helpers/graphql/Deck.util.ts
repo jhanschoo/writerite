@@ -10,6 +10,15 @@ export function mutationDeckCreateEmpty(server: WrServer) {
       mutation DeckCreateEmpty {
         deckCreate {
           id
+          answerLang
+          description
+          editedAt
+          name
+          ownerId
+          promptLang
+          published
+          sortData
+          usedAt
         }
       }
     `,

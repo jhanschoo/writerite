@@ -8,9 +8,9 @@ export enum AuthorizerType {
 }
 
 export enum Roles {
-  user = "user",
-  admin = "admin",
-  wright = "wright",
+  User = "User",
+  Admin = "Admin",
+  Wright = "Wright",
 }
 
 export interface FileUpload {

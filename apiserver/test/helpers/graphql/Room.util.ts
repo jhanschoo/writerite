@@ -47,6 +47,27 @@ export function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMuta
   });
 }
 
+export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMutationVariables) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<RoomSetStateMutationVariables>({
+    server,
+    document: gql`
+      mutation RoomSetState($id: ID!, $state: RoomState!) {
+        roomSetState(id: $id, state: $state) {
+          id
+          ownerId
+          state
+          deckId
+          deck {
+            id
+          }
+        }
+      }
+    `,
+    variables,
+  });
+}
+
 export function mutationRoomAddOccupant(server: WrServer, variables: RoomAddOccupantMutationVariables) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomAddOccupantMutationVariables>({
@@ -64,23 +85,6 @@ export function mutationRoomAddOccupant(server: WrServer, variables: RoomAddOccu
           occupants {
             id
           }
-        }
-      }
-    `,
-    variables,
-  });
-}
-
-export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMutationVariables) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomSetStateMutationVariables>({
-    server,
-    document: gql`
-      mutation RoomSetState($id: ID!, $state: RoomState!) {
-        roomSetState(id: $id, state: $state) {
-          id
-          state
-          deckId
         }
       }
     `,

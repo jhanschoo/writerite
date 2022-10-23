@@ -408,7 +408,7 @@ export type UserDeckRecord = {
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string } };
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: any } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -471,6 +471,14 @@ export type RoomSetDeckMutationVariables = Exact<{
 
 export type RoomSetDeckMutation = { __typename?: 'Mutation', roomSetDeck: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null } };
 
+export type RoomSetStateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  state: RoomState;
+}>;
+
+
+export type RoomSetStateMutation = { __typename?: 'Mutation', roomSetState: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null } };
+
 export type RoomAddOccupantMutationVariables = Exact<{
   id: Scalars['ID'];
   occupantId: Scalars['ID'];
@@ -478,14 +486,6 @@ export type RoomAddOccupantMutationVariables = Exact<{
 
 
 export type RoomAddOccupantMutation = { __typename?: 'Mutation', roomAddOccupant: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
-
-export type RoomSetStateMutationVariables = Exact<{
-  id: Scalars['ID'];
-  state: RoomState;
-}>;
-
-
-export type RoomSetStateMutation = { __typename?: 'Mutation', roomSetState: { __typename?: 'Room', id: string, state: RoomState, deckId?: string | null } };
 
 export type RoomQueryVariables = Exact<{
   id: Scalars['ID'];

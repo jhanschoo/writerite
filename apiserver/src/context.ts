@@ -23,7 +23,7 @@ const redisOptions = {
     return delay;
   },
   db: 1,
-  password: REDIS_PASSWORD,
+  password: REDIS_PASSWORD || undefined,
 };
 
 export interface AuthorizationHelpers {
@@ -73,7 +73,7 @@ export function contextFactory<T extends PrismaClient = PrismaClient, U extends 
             return sub?.id === id;
           },
           get isAdmin(): boolean {
-            return Boolean(sub?.roles.includes(Roles.admin));
+            return Boolean(sub?.roles.includes(Roles.Admin));
           },
         },
       };
