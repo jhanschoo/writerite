@@ -10,6 +10,7 @@ export function mutationRoomCreate(server: WrServer) {
       mutation RoomCreate {
         roomCreate {
           id
+          slug
           ownerId
           state
           deckId

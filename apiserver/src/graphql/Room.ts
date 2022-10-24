@@ -23,20 +23,11 @@ export const Room = objectType({
         return internalConfig as Prisma.JsonObject;
       },
     });
+    t.string("slug");
     t.nonNull.field("state", {
       type: "RoomState",
     });
 
-    t.nonNull.field("owner", {
-      type: "User",
-      async resolve({ ownerId }, _args, { prisma }) {
-        const user = await prisma.user.findUnique({ where: { id: ownerId } });
-        if (user === null) {
-          throw new Error(`Could not find user with id ${ownerId}`);
-        }
-        return user;
-      },
-    });
     t.field("deck", {
       type: "Deck",
       async resolve({ deckId }, _args, { prisma }) {
@@ -50,17 +41,6 @@ export const Room = objectType({
         return deck;
       },
     });
-    t.nonNull.list.nonNull.field("occupants", {
-      type: "User",
-      resolve({ id }, _args, { prisma }) {
-        return prisma.user.findMany({ where: { occupyingRooms: { some: { roomId: id } } } });
-      },
-    });
-    t.nonNull.int("occupantCount", {
-      resolve({ id }, _args, { prisma }) {
-        return prisma.occupant.count({ where: { roomId: id } });
-      },
-    });
     t.nonNull.list.nonNull.field("messages", {
       type: "Message",
       resolve({ id }, _args, { prisma }) {
@@ -70,6 +50,27 @@ export const Room = objectType({
     t.nonNull.int("messageCount", {
       resolve({ id }, _args, { prisma }) {
         return prisma.message.count({ where: { roomId: id } });
+      },
+    });
+    t.nonNull.list.nonNull.field("occupants", {
+      type: "User",
+      resolve({ id }, _args, { prisma }) {
+        return prisma.user.findMany({ where: { occupyingRooms: { some: { roomId: id } } } });
+      },
+    });
+    t.nonNull.int("occupantsCount", {
+      resolve({ id }, _args, { prisma }) {
+        return prisma.occupant.count({ where: { roomId: id } });
+      },
+    });
+    t.nonNull.field("owner", {
+      type: "User",
+      async resolve({ ownerId }, _args, { prisma }) {
+        const user = await prisma.user.findUnique({ where: { id: ownerId } });
+        if (user === null) {
+          throw new Error(`Could not find user with id ${ownerId}`);
+        }
+        return user;
       },
     });
   },

@@ -206,11 +206,12 @@ export interface NexusGenFieldTypes {
     internalConfig: NexusGenScalars['JSONObject']; // JSONObject!
     messageCount: number; // Int!
     messages: NexusGenRootTypes['Message'][]; // [Message!]!
-    occupantCount: number; // Int!
     occupants: NexusGenRootTypes['User'][]; // [User!]!
+    occupantsCount: number; // Int!
     owner: NexusGenRootTypes['User']; // User!
     ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
     ownerId: string; // ID!
+    slug: string | null; // String
     state: NexusGenEnums['RoomState']; // RoomState!
   }
   Subscription: { // field return type
@@ -320,11 +321,12 @@ export interface NexusGenFieldTypeNames {
     internalConfig: 'JSONObject'
     messageCount: 'Int'
     messages: 'Message'
-    occupantCount: 'Int'
     occupants: 'User'
+    occupantsCount: 'Int'
     owner: 'User'
     ownerConfig: 'JSONObject'
     ownerId: 'ID'
+    slug: 'String'
     state: 'RoomState'
   }
   Subscription: { // field return type name

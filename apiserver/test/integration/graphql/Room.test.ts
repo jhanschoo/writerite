@@ -206,6 +206,7 @@ describe("graphql/Room.ts", () => {
         const response = await mutationRoomCreate(app);
         expect(response).toHaveProperty("data.roomCreate", expect.objectContaining({
           id: expect.any(String),
+          slug: expect.any(String),
           state: RoomState.Waiting,
           ownerId: user.id,
         }));

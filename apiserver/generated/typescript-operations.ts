@@ -353,11 +353,12 @@ export type Room = {
   internalConfig: Scalars['JSONObject'];
   messageCount: Scalars['Int'];
   messages: Array<Message>;
-  occupantCount: Scalars['Int'];
   occupants: Array<User>;
+  occupantsCount: Scalars['Int'];
   owner: User;
   ownerConfig: Scalars['JSONObject'];
   ownerId: Scalars['ID'];
+  slug?: Maybe<Scalars['String']>;
   state: RoomState;
 };
 
@@ -451,7 +452,7 @@ export type HealthQuery = { __typename?: 'Query', health: string };
 export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', id: string, slug?: string | null, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
 
 export type RoomSetDeckMutationVariables = Exact<{
   id: Scalars['ID'];

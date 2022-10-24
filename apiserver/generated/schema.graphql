@@ -198,11 +198,12 @@ type Room {
   internalConfig: JSONObject!
   messageCount: Int!
   messages: [Message!]!
-  occupantCount: Int!
   occupants: [User!]!
+  occupantsCount: Int!
   owner: User!
   ownerConfig: JSONObject!
   ownerId: ID!
+  slug: String
   state: RoomState!
 }
 
