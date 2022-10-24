@@ -19,7 +19,7 @@ export const roomSetState = async (...[prisma, { id, state, currentUserId }]: Ro
       return prisma.room.update({
         // TODO: there may be additional arguments to this as we progress coding
         where: { id, ownerId: currentUserId, state: RoomState.Waiting },
-        data: { state },
+        data: { state, slug: null },
       });
     }
     default:

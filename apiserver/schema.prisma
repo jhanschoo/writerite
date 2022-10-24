@@ -108,6 +108,10 @@ model Occupant {
 model Room {
   id             String     @default(cuid()) @id
   ownerId        String
+  // slug is a string for the URL with the following property
+  // when state is non-terminal, slug is some short cuid
+  // when state is terminal, slug is null
+  slug           String?    @unique
   deckId         String?
   // ownerConfig is a JsonObject
   ownerConfig    Json       @default("{}")

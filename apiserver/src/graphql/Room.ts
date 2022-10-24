@@ -4,6 +4,7 @@ import { RoomState as GeneratedRoomState } from "../../generated/typescript-oper
 import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { roomAddOccupant, roomEditOwnerConfig, roomSetDeck, roomSetState } from "../service/room";
+import { slug } from "../util";
 import { jsonObjectArg } from "./scalarUtil";
 
 export const Room = objectType({
@@ -112,6 +113,7 @@ export const RoomCreateMutation = mutationField("roomCreate", {
         owner: { connect: { id } },
         occupants: { create: { occupantId: id } },
         state: GeneratedRoomState.Waiting,
+        slug: slug(),
       },
     });
   }),
