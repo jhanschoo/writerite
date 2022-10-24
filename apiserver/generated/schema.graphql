@@ -203,7 +203,9 @@ type Room {
   deckId: ID
   id: ID!
   internalConfig: JSONObject!
+  messageCount: Int!
   messages: [Message!]!
+  occupantCount: Int!
   occupants: [User!]!
   owner: User!
   ownerConfig: JSONObject!

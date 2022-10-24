@@ -55,10 +55,20 @@ export const Room = objectType({
         return prisma.user.findMany({ where: { occupyingRooms: { some: { roomId: id } } } });
       },
     });
+    t.nonNull.int("occupantCount", {
+      resolve({ id }, _args, { prisma }) {
+        return prisma.occupant.count({ where: { roomId: id } });
+      },
+    });
     t.nonNull.list.nonNull.field("messages", {
       type: "Message",
       resolve({ id }, _args, { prisma }) {
         return prisma.message.findMany({ where: { roomId: id } });
+      },
+    });
+    t.nonNull.int("messageCount", {
+      resolve({ id }, _args, { prisma }) {
+        return prisma.message.count({ where: { roomId: id } });
       },
     });
   },

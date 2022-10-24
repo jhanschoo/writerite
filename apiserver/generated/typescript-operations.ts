@@ -363,7 +363,9 @@ export type Room = {
   deckId?: Maybe<Scalars['ID']>;
   id: Scalars['ID'];
   internalConfig: Scalars['JSONObject'];
+  messageCount: Scalars['Int'];
   messages: Array<Message>;
+  occupantCount: Scalars['Int'];
   occupants: Array<User>;
   owner: User;
   ownerConfig: Scalars['JSONObject'];

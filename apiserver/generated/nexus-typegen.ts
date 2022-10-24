@@ -205,7 +205,9 @@ export interface NexusGenFieldTypes {
     deckId: string | null; // ID
     id: string; // ID!
     internalConfig: NexusGenScalars['JSONObject']; // JSONObject!
+    messageCount: number; // Int!
     messages: NexusGenRootTypes['Message'][]; // [Message!]!
+    occupantCount: number; // Int!
     occupants: NexusGenRootTypes['User'][]; // [User!]!
     owner: NexusGenRootTypes['User']; // User!
     ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
@@ -318,7 +320,9 @@ export interface NexusGenFieldTypeNames {
     deckId: 'ID'
     id: 'ID'
     internalConfig: 'JSONObject'
+    messageCount: 'Int'
     messages: 'Message'
+    occupantCount: 'Int'
     occupants: 'User'
     owner: 'User'
     ownerConfig: 'JSONObject'

@@ -1,5 +1,7 @@
 # @writerite/apiserver
 
+## Performing tasks on the project
+
 ### Local environment variables
 
 In development, create a `.env` file with the environment variables described below, to avoid tediously maintaining the environment variables.
@@ -42,23 +44,6 @@ To run unit tests, run
 
 * `npm i`
 * `npm run test:unit`
-
-## Notes
-
-* We do not verify that the email of users who have signed up with a Google or Facebook account have the email that is registered with those services. They are only used to validate that the sign-up was trusted. Similarly, we do not verify any email provided for email/password signups.
-* APIs do not guarantee that objects returned are that of a snapshot, only that they are some time after request is made.
-
-## Room consistency model
-
-* A room is active when created
-* Rooms can be set to inactive by an API
-* When a message is posted into a room, assuming no errors,
-  if it is not longer than one day since creation or the last known
-  posting of a message into the room while it was active, it updates
-  the last known posting of a message into the room while it was active
-* When more than one day has passed since the creation of a room or
-  the last known posting of a message into the room while it was active,
-  the room becomes inactive
 
 ## Subproject organization
 
@@ -134,3 +119,21 @@ To run unit tests, run
 * `dev:init` is run during development to reconfigure `prisma` and `nexus` for this project.
 * `test:integration` executes integration tests serially
 * `test:unit` executes unit tests in parallel
+* 
+
+## Notes
+
+* We do not verify that the email of users who have signed up with a Google or Facebook account have the email that is registered with those services. They are only used to validate that the sign-up was trusted. Similarly, we do not verify any email provided for email/password signups.
+* APIs do not guarantee that objects returned are that of a snapshot, only that they are some time after request is made.
+
+### Room consistency model
+
+* A room is active when created
+* Rooms can be set to inactive by an API
+* When a message is posted into a room, assuming no errors,
+  if it is not longer than one day since creation or the last known
+  posting of a message into the room while it was active, it updates
+  the last known posting of a message into the room while it was active
+* When more than one day has passed since the creation of a room or
+  the last known posting of a message into the room while it was active,
+  the room becomes inactive

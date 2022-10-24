@@ -25,7 +25,7 @@ export async function thirdPartySignin({ code, provider, redirect_uri, prisma }:
     if (!profile) {
       return null;
     }
-    user = await prisma.user.findUnique({ where: { [idField]: profile.id } });
+    user = await prisma.user.findFirst({ where: { [idField]: profile.id } });
     if (!user) {
       user = await prisma.user.create({ data: {
         [idField]: profile.id,
