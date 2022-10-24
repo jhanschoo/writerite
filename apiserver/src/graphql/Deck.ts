@@ -134,14 +134,15 @@ export const DeckQuery = queryField("deck", {
       { cards: { some: { records: { some: { userId: sub.id } } } } },
       { published: true },
     ];
-    const decks = await prisma.deck.findMany({ where: {
+    const deck = await prisma.deck.findUnique({ where: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      OR, id,
+      id, OR,
     } });
-    if (decks.length === 0) {
+
+    if (!deck) {
       throw userLacksPermissionsErrorFactory("If such a deck exists, you are not authorized to view it");
     }
-    return decks[0];
+    return deck;
   }),
 });
 
@@ -220,6 +221,7 @@ export const deckCreateSchema = z.object({
     template: z.boolean().optional(),
   })).optional(),
 });
+
 export const DeckCreateMutation = mutationField("deckCreate", {
   type: nonNull("Deck"),
   args: {
@@ -268,15 +270,7 @@ export const DeckEditMutation = mutationField("deckEdit", {
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
     const { id, ...data } = deckEditSchema.parse(args);
-    const { count } = await prisma.deck.updateMany({ where: { id, ownerId: sub.id }, data: { ...data, editedAt: new Date() } });
-    if (count !== 1) {
-      throw new Error("");
-    }
-    const deck = await prisma.deck.findUnique({ where: { id } });
-    if (!deck) {
-      throw new Error("");
-    }
-    return deck;
+    return prisma.deck.update({ where: { id, ownerId: sub.id }, data: { ...data, editedAt: new Date() } });
   }),
 });
 
@@ -287,9 +281,6 @@ export const DeckAddCardsMutation = mutationField("deckAddCards", {
     cards: nonNull(list(nonNull("CardCreateInput"))),
   },
   resolve: guardValidUser(async (_root, { deckId, cards }, { sub, prisma }) => {
-    if (await prisma.deck.count({ where: { id: deckId, ownerId: sub.id } }) !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
     const defaultCards = cards.map(({ prompt, fullAnswer, answers, template }) => ({
       prompt: prompt as Prisma.InputJsonObject,
       fullAnswer: fullAnswer as Prisma.InputJsonObject,
@@ -297,7 +288,7 @@ export const DeckAddCardsMutation = mutationField("deckAddCards", {
       template: template ?? undefined,
     }));
     return prisma.deck.update({
-      where: { id: deckId },
+      where: { id: deckId, ownerId: sub.id },
       data: {
         cards: {
           create: defaultCards,
@@ -313,26 +304,16 @@ export const DeckAddSubdeckMutation = mutationField("deckAddSubdeck", {
     id: nonNull(idArg()),
     subdeckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) => {
-    if (await prisma.deck.count({
-      where: {
-        ownerId: sub.id,
-        id: { in: [id, subdeckId] },
-      },
-    }) !== 2) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return prisma.deck.update({
-      where: { id },
-      data: {
-        subdecks: { connectOrCreate: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          where: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } },
-          create: { subdeck: { connect: { id: subdeckId } } },
-        } },
-      },
-    });
-  }),
+  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) => prisma.deck.update({
+    where: { id, ownerId: sub.id },
+    data: {
+      subdecks: { connectOrCreate: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        where: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId }, subdeck: { id: subdeckId, ownerId: sub.id } },
+        create: { subdeck: { connect: { id: subdeckId, ownerId: sub.id } } },
+      } },
+    },
+  })),
 });
 
 export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
@@ -341,23 +322,13 @@ export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
     id: nonNull(idArg()),
     subdeckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) => {
-    if (await prisma.deck.count({
-      where: {
-        ownerId: sub.id,
-        id: { in: [id, subdeckId] },
-      },
-    }) !== 2) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return prisma.deck.update({
-      where: { id },
-      data: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
-      },
-    });
-  }),
+  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) => prisma.deck.update({
+    where: { id, ownerId: sub.id },
+    data: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
+    },
+  })),
 });
 
 export const DeckUsedMutation = mutationField("deckUsed", {
@@ -365,17 +336,12 @@ export const DeckUsedMutation = mutationField("deckUsed", {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
-    if (await prisma.deck.count({ where: { ownerId: sub.id, id } }) !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return prisma.deck.update({
-      where: { id },
-      data: {
-        usedAt: new Date(),
-      },
-    });
-  }),
+  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => prisma.deck.update({
+    where: { id, ownerId: sub.id },
+    data: {
+      usedAt: new Date(),
+    },
+  })),
 });
 
 export const DeckDeleteMutation = mutationField("deckDelete", {
@@ -383,20 +349,7 @@ export const DeckDeleteMutation = mutationField("deckDelete", {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
-    const decks = await prisma.deck.findMany({ where: { id, ownerId: sub.id } });
-    if (decks.length !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    const [deck] = decks;
-    const res = await prisma.deck.deleteMany({
-      where: { id, ownerId: sub.id },
-    });
-    if (res.count !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return deck;
-  }),
+  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => prisma.deck.delete({ where: { id, ownerId: sub.id } })),
 });
 
 export const OwnDeckRecordSetMutation = mutationField("ownDeckRecordSet", {

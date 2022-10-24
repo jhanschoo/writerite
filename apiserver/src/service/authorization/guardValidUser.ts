@@ -3,20 +3,18 @@ import { userNotValidUserErrorFactory } from "../../error/userNotValidUserErrorF
 import { guardLoggedIn } from "./guardLoggedIn";
 
 export async function notValidUser({ prisma, sub }: LoggedInContext) {
-  const users = await prisma.user.findMany({ where: {
+  const user = await prisma.user.findUnique({ where: {
+    id: sub.id,
     // eslint-disable-next-line @typescript-eslint/naming-convention
     OR: [
       {
-        id: sub.id,
         name: null,
-      },
-      {
-        id: sub.id,
+      }, {
         name: "",
       },
     ],
   } });
-  return users.length > 0;
+  return Boolean(user);
 }
 
 export function guardValidUser<T, U, V, W>(f: (parent: T, args: U, context: LoggedInContext, info: V) => W) {

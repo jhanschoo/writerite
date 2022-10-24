@@ -181,7 +181,6 @@ export interface NexusGenFieldTypes {
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
     roomAddOccupant: NexusGenRootTypes['Room']; // Room!
-    roomAddOccupantByName: NexusGenRootTypes['Room']; // Room!
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
     roomEditOwnerConfig: NexusGenRootTypes['Room']; // Room!
@@ -296,7 +295,6 @@ export interface NexusGenFieldTypeNames {
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
     roomAddOccupant: 'Room'
-    roomAddOccupantByName: 'Room'
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
     roomEditOwnerConfig: 'Room'
@@ -428,10 +426,6 @@ export interface NexusGenArgTypes {
     roomAddOccupant: { // args
       id: string; // ID!
       occupantId: string; // ID!
-    }
-    roomAddOccupantByName: { // args
-      id: string; // ID!
-      name: string; // String!
     }
     roomEditOwnerConfig: { // args
       id: string; // ID!

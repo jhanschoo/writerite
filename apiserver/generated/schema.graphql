@@ -145,13 +145,6 @@ type Mutation {
       signatures: ["roomUpdates", "roomsUpdates"]
     )
   """
-  roomAddOccupantByName(id: ID!, name: String!): Room!
-
-  """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
-    )
-  """
   roomCleanUpDead: Int!
 
   """

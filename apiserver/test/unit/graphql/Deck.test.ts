@@ -56,7 +56,7 @@ describe("graphql/Deck.ts", () => {
         setSub(DEFAULT_CURRENT_USER);
         const id = "parent-id-with-20-plus-chars";
         const subdeckId = "child-id-with-20-plus-chars";
-        prisma.user.findMany.mockResolvedValue([]);
+        prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.count.mockResolvedValue(2);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
         const response = await mutationDeckAddSubdeck(server, { id, subdeckId });
@@ -79,7 +79,7 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const id = "fake-id-with-20-plus-chars";
-        prisma.user.findMany.mockResolvedValue([]);
+        prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.create.mockResolvedValue({
           id,
         } as Deck);
@@ -102,7 +102,7 @@ describe("graphql/Deck.ts", () => {
         setSub(DEFAULT_CURRENT_USER);
         const id = "fake-id-with-20-plus-chars";
         const nextName = "next-name";
-        prisma.user.findMany.mockResolvedValue([]);
+        prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.updateMany.mockResolvedValue({
           count: 1,
         });
@@ -129,7 +129,7 @@ describe("graphql/Deck.ts", () => {
         setSub(DEFAULT_CURRENT_USER);
         const id = "parent-id-with-20-plus-chars";
         const subdeckId = "child-id-with-20-plus-chars";
-        prisma.user.findMany.mockResolvedValue([]);
+        prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.count.mockResolvedValue(2);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
         const response = await mutationDeckRemoveSubdeck(server, { id, subdeckId });
@@ -148,7 +148,7 @@ describe("graphql/Deck.ts", () => {
       it("should ask the db to update the usedAt field of a deck to a recent time", async () => {
         const id = "deck-id-with-20-plus-chars";
         setSub(DEFAULT_CURRENT_USER);
-        prisma.user.findMany.mockResolvedValue([]);
+        prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.count.mockResolvedValue(1);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
         const response = await mutationDeckUsed(server, { id });
@@ -170,24 +170,22 @@ describe("graphql/Deck.ts", () => {
       it("should be able to return scalars of an owned deck", async () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
-        prisma.user.findMany.mockResolvedValue([]);
         const id = "deck-id-with-20-plus-chars";
-        prisma.deck.findMany.mockResolvedValue([
-          {
-            id,
-            answerLang: "",
-            description: {},
-            editedAt: new Date(),
-            name: "",
-            ownerId: DEFAULT_CURRENT_USER.id,
-            promptLang: "",
-            published: false,
-            sortData: [],
-            usedAt: new Date(),
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          },
-        ]);
+        prisma.user.findUnique.mockResolvedValue(null);
+        prisma.deck.findUnique.mockResolvedValue({
+          id,
+          answerLang: "",
+          description: {},
+          editedAt: new Date(),
+          name: "",
+          ownerId: DEFAULT_CURRENT_USER.id,
+          promptLang: "",
+          published: false,
+          sortData: [],
+          usedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
         const queryDeckResponse = await queryDeckScalars(server, id);
         expect(queryDeckResponse).toHaveProperty("data.deck", {
           id,
@@ -212,7 +210,7 @@ describe("graphql/Deck.ts", () => {
         const id1 = "deck-id-with-20-plus-chars-1";
         const id2 = "deck-id-with-20-plus-chars-2";
         setSub(DEFAULT_CURRENT_USER);
-        prisma.user.findMany.mockResolvedValue([]);
+        prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.findMany.mockResolvedValue([{ id: id1 } as Deck, { id: id2 } as Deck]);
         const queryDecksResponse = await queryDecks(server);
         expect(queryDecksResponse.data.decks).toHaveLength(2);

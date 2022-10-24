@@ -83,7 +83,7 @@ export const RoomQuery = queryField("room", {
   type: nonNull("Room"),
   args: { id: nonNull(idArg()) },
   resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
-    const res = await prisma.room.findFirst({
+    const res = await prisma.room.findUnique({
       where: { id, ownerId: sub.id },
     });
     if (!res) {
@@ -178,19 +178,4 @@ export const RoomAddOccupantMutation = mutationField("roomAddOccupant", {
     signatures: ["roomUpdates", "roomsUpdates"]
   )`,
   resolve: guardValidUser((_parent, { id, occupantId }, { prisma, sub }) => roomAddOccupant(prisma, { roomId: id, occupantId, currentUserId: sub.id })),
-});
-
-// Only legal when room state is WAITING
-export const RoomAddOccupantByNameMutation = mutationField("roomAddOccupantByName", {
-  type: nonNull("Room"),
-  args: {
-    id: nonNull(idArg()),
-    name: nonNull(stringArg()),
-  },
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
-  )`,
-  resolve() {
-    throw Error("not implemented yet");
-  },
 });

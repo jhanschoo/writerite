@@ -133,12 +133,6 @@ export type Mutation = {
    *     signatures: ["roomUpdates", "roomsUpdates"]
    *   )
    */
-  roomAddOccupantByName: Room;
-  /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
-   *   )
-   */
   roomCleanUpDead: Scalars['Int'];
   /**
    * @subscriptionsTriggered(
@@ -273,12 +267,6 @@ export type MutationOwnDeckRecordSetArgs = {
 export type MutationRoomAddOccupantArgs = {
   id: Scalars['ID'];
   occupantId: Scalars['ID'];
-};
-
-
-export type MutationRoomAddOccupantByNameArgs = {
-  id: Scalars['ID'];
-  name: Scalars['String'];
 };
 
 

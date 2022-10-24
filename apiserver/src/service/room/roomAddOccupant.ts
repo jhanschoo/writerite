@@ -5,20 +5,26 @@ import { userLacksPermissionsErrorFactory } from "../../error/userLacksPermissio
 
 type RoomAddOccupantProps = [PrismaClient, { roomId: string, occupantId: string, currentUserId?: string }];
 
-export const roomAddOccupant = async (...[prisma, { roomId, occupantId, currentUserId }]: RoomAddOccupantProps) => {
-  const room = await prisma.room.findFirst({ select: { ownerId: true }, where: { id: roomId, state: RoomState.Waiting } });
-  if (room === null) {
-    throw invalidArgumentsErrorFactory();
+export const roomAddOccupant = (...[prisma, { roomId, occupantId, currentUserId }]: RoomAddOccupantProps) => {
+  const commonRoomWhere = { id: roomId, state: RoomState.Waiting };
+  const data = {
+    occupants: {
+      upsert: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        where: { roomId_occupantId: { roomId, occupantId } },
+        update: {},
+        create: { occupantId },
+      },
+    },
+  } as const;
+  if (occupantId === currentUserId) {
+    return prisma.room.update({
+      where: commonRoomWhere,
+      data,
+    });
   }
-  if (currentUserId && currentUserId !== occupantId && currentUserId !== room.ownerId) {
-    throw userLacksPermissionsErrorFactory();
-  }
-  const occupant = await prisma.occupant.upsert({
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    where: { roomId_occupantId: { roomId, occupantId } },
-    create: { room: { connect: { id: roomId } }, occupant: { connect: { id: occupantId } } },
-    update: {},
-    include: { room: true },
+  return prisma.room.update({
+    where: { ...commonRoomWhere, ownerId: currentUserId },
+    data,
   });
-  return occupant.room;
 };

@@ -10,28 +10,19 @@ export const roomSetState = async (...[prisma, { id, state, currentUserId }]: Ro
       throw invalidArgumentsErrorFactory("Transitioning to an initial state is illegal.");
     }
     case RoomState.Serving: {
-      const updateResult = await prisma.room.updateMany({
+      return prisma.room.update({
         where: { id, ownerId: currentUserId, state: RoomState.Waiting, deckId: { not: null } },
         data: { state },
       });
-      if (!updateResult.count) {
-        throw invalidArgumentsErrorFactory(`Unable to find room with id ${id} in WAITING state already configured with a deck`);
-      }
-      break;
     }
     case RoomState.Served: {
-      const updateResult = await prisma.room.updateMany({
+      return prisma.room.update({
         // TODO: there may be additional arguments to this as we progress coding
         where: { id, ownerId: currentUserId, state: RoomState.Waiting },
         data: { state },
       });
-      if (!updateResult.count) {
-        throw invalidArgumentsErrorFactory(`Unable to find room with id ${id} in SERVED state`);
-      }
-      break;
     }
     default:
       throw invalidArgumentsErrorFactory(`Unknown state ${state as string}`);
   }
-  return prisma.room.findUniqueOrThrow({ where: { id } });
 };

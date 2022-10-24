@@ -63,30 +63,34 @@ export const CardCreateMutation = mutationField("cardCreate", {
   },
   resolve: guardValidUser(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
     const { prompt, fullAnswer, answers, template } = card;
-    if (await prisma.deck.count({ where: { id: deckId, ownerId: sub.id } }) !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    if (mainTemplate) {
-      await prisma.card.updateMany({
-        where: {
-          deckId,
-          default: Unit.UNIT,
+    const deckConditions = { id: deckId, userId: sub.id };
+    const mainTemplateOperation = () => prisma.deck.update({
+      where: deckConditions,
+      data: {
+        cards: {
+          updateMany: {
+            where: { default: Unit.UNIT },
+            data: { default: null },
+          },
         },
-        data: {
-          default: null,
-        },
-      });
-    }
-    return prisma.card.create({
+      },
+    });
+    const cardOperation = () => prisma.card.create({
       data: {
         prompt: prompt as Prisma.InputJsonObject,
         fullAnswer: fullAnswer as Prisma.InputJsonObject,
         answers,
         template: template ?? undefined,
         default: mainTemplate ? Unit.UNIT : undefined,
-        deck: { connect: { id: deckId } },
+        deck: {
+          connect: deckConditions,
+        },
       },
     });
+    if (mainTemplate) {
+      return (await prisma.$transaction([mainTemplateOperation(), cardOperation()]))[1];
+    }
+    return cardOperation();
   }),
 });
 
@@ -120,30 +124,20 @@ export const CardEditMutation = mutationField("cardEdit", {
      */
     mainTemplate: booleanArg({ undefinedOnly: true }),
   },
-  resolve: guardValidUser(async (_source, { id, prompt, fullAnswer, answers, template }, { sub, prisma }) => {
-    const updated = await prisma.card.updateMany({
-      where: {
-        id,
-        deck: {
-          ownerId: sub.id,
-        },
+  resolve: guardValidUser(async (_source, { id, prompt, fullAnswer, answers, template }, { sub, prisma }) => prisma.card.update({
+    where: {
+      id,
+      deck: {
+        ownerId: sub.id,
       },
-      data: {
-        prompt: (prompt ?? undefined) as Prisma.InputJsonObject | undefined,
-        fullAnswer: (fullAnswer ?? undefined) as Prisma.InputJsonObject | undefined,
-        answers: answers ? { set: answers } : undefined,
-        template: template ?? undefined,
-      },
-    });
-    if (updated.count !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    const card = await prisma.card.findUnique({ where: { id } });
-    if (!card) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return card;
-  }),
+    },
+    data: {
+      prompt: (prompt ?? undefined) as Prisma.InputJsonObject | undefined,
+      fullAnswer: (fullAnswer ?? undefined) as Prisma.InputJsonObject | undefined,
+      answers: answers ? { set: answers } : undefined,
+      template: template ?? undefined,
+    },
+  })),
 });
 
 export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplate", {
@@ -161,7 +155,7 @@ export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplat
       return null;
     }
     const { id } = card;
-    const updated = await prisma.card.updateMany({
+    return prisma.card.update({
       where: {
         id,
         deck: whereDeck,
@@ -171,10 +165,6 @@ export const CardUnsetMainTemplateMutation = mutationField("cardUnsetMainTemplat
         default: null,
       },
     });
-    if (updated.count !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return prisma.card.findUnique({ where: { id: card.id } });
   }),
 });
 
@@ -183,32 +173,9 @@ export const CardDeleteMutation = mutationField("cardDelete", {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
-    const cards = await prisma.card.findMany({
-      where: {
-        id,
-        deck: {
-          ownerId: sub.id,
-        },
-      },
-    });
-    if (cards.length !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    const [card] = cards;
-    const res = await prisma.card.deleteMany({
-      where: {
-        id,
-        deck: {
-          ownerId: sub.id,
-        },
-      },
-    });
-    if (res.count !== 1) {
-      throw userLacksPermissionsErrorFactory();
-    }
-    return card;
-  }),
+  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => prisma.card.delete({
+    where: { id, deck: { ownerId: sub.id } },
+  })),
 });
 
 export const OwnCardRecordSetMutation = mutationField("ownCardRecordSet", {
