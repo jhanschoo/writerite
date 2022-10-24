@@ -48,8 +48,8 @@ const auth = authExchange<string | null>({
   async getAuth({ authState }) {
     return authState || getAccessKey();
   },
-  didAuthError({ authState }) {
-    return authState === null;
+  didAuthError({ error }) {
+    return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');
   },
 });
 

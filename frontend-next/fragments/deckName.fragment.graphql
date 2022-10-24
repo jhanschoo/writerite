@@ -1,0 +1,4 @@
+fragment deckName on Deck {
+  id
+  name
+}

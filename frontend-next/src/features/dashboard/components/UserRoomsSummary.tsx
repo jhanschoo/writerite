@@ -3,41 +3,35 @@ import { FC, MouseEvent, MouseEventHandler } from 'react';
 import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
-import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
+import { OccupyingRoomsDocument, OccupyingRoomsQuery, RoomCreateDocument } from '@generated/graphql';
 import { Button, Card, createStyles, Divider, Group, Paper, Text, Title, UnstyledButton } from '@mantine/core';
-import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
+import { RoomSummaryContent } from '@/components/room/RoomSummaryContent';
 import Link from 'next/link';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
-const NewDeckItem = () => {
+const NewRoomItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
-  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
-  const handleCreateDeck = async (e: MouseEvent) => {
+  const [, roomCreateMutation] = useMutation(RoomCreateDocument);
+  const handleCreateRoom = async (e: MouseEvent) => {
     e.stopPropagation();
     setMotionProps(motionThemes.forward);
-    const createdDeck = await deckCreateMutation({
-      answerLang: 'en',
-      cards: [],
-      description: {},
-      name: '',
-      promptLang: 'en',
-      published: false,
-    });
-    if (createdDeck.data?.deckCreate.id) {
-      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+    const createdRoom = await roomCreateMutation({});
+    if (createdRoom.data?.roomCreate) {
+      router.push(`/app/room/${createdRoom.data.roomCreate.slug || createdRoom.data.roomCreate.id}`);
     }
   };
 
-  return <Button onClick={handleCreateDeck} size="md" radius="xl" mb="md">
-    Create a new Deck
+  return <Button onClick={onClick} size="md" radius="xl" mb="md">
+    Start a new Room
   </Button>
+
 };
 
-const DeckItem = ({ deck }: { deck: DecksQuery['decks'][number] }) => {
+const RoomItem = ({ room }: { room: OccupyingRoomsQuery['occupyingRooms'][number] }) => {
   return (
-    <Link href={`/app/deck/${deck.id}`}>
+    <Link href={`/app/room/${room.slug || room.id}`}>
       <UnstyledButton sx={{ height: 'unset' }} onClick={(e) => e.stopPropagation()} component="div">
         <Card
           shadow="md"
@@ -57,7 +51,7 @@ const DeckItem = ({ deck }: { deck: DecksQuery['decks'][number] }) => {
             };
           }}
         >
-          <DeckSummaryContent deck={deck} />
+          <RoomSummaryContent room={room} />
         </Card>
       </UnstyledButton>
     </Link>
@@ -80,30 +74,27 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
   }
 }));
 
-export const UserDecksSummary: FC<Record<string, unknown>> = () => {
+export const UserRoomsSummary: FC<Record<string, unknown>> = () => {
+  const router = useRouter();
   const { classes } = useStyles();
   const [{ data, fetching, error }, refetchDecks] = useQuery({
-    query: DecksDocument,
-    variables: {
-      scope: DecksQueryScope.Owned,
-      take: USER_DECK_SUMMARY_DECKS_NUM,
-    },
+    query: OccupyingRoomsDocument,
   });
-  const decks = (data?.decks || []).map(
-    (deck, index) => <DeckItem key={index} deck={deck} />
+  const rooms = (data?.occupyingRooms || []).map(
+    (room, index) => <RoomItem key={index} room={room} />
   );
   return (
-    <Link href="/app/deck">
+    <Link href="/app/rooms">
       <UnstyledButton component="div" mr="5rem">
         <Paper shadow="md" radius="md" p="md" withBorder>
           <Group className={classes.group}>
-            <Title order={2} className={classes.heading} mb="md">Decks</Title>
-            <NewDeckItem />
+            <Title order={2} className={classes.heading} mb="md">Rooms</Title>
+            <NewRoomItem />
           </Group>
           <Divider mb="md" />
           <Group>
-            {decks}
-            <Text>{decks.length ? "View more..." : "You have no decks to show."}</Text>
+            {rooms}
+            <Text>{rooms.length ? "View more..." : "You are not in any rooms."}</Text>
           </Group>
         </Paper>
       </UnstyledButton>

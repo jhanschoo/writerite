@@ -1,10 +1,10 @@
-import { DecksQuery } from "@generated/graphql";
+import { DeckSummaryFragment } from "@generated/graphql";
 import { Text } from "@mantine/core";
 import { formatISO, parseISO } from "date-fns";
 import { FC } from "react";
 
 interface Props {
-  deck: DecksQuery["decks"][number];
+  deck: DeckSummaryFragment;
 }
 
 export const DeckSummaryContent: FC<Props> = ({ deck: { name, editedAt, subdecksCount, cardsDirectCount } }) => {

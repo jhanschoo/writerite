@@ -1,0 +1,15 @@
+fragment roomSummary on Room {
+  createdAt
+  deck {
+    ...deckName
+  }
+  deckId
+  id
+  internalConfig
+  messageCount
+  occupantsCount
+  ownerConfig
+  ownerId
+  slug
+  state
+}

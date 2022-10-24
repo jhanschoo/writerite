@@ -69,7 +69,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
                 (e.key === 'Escape') && setShowNameInput(false)
               }
               rightSection={
-                <ActionIcon size={48} variant="subtle" color="dark" title="Save">
+                <ActionIcon type="submit" size={48} variant="subtle" color="dark" title="Save">
                   <PaperPlaneIcon />
                 </ActionIcon>
               }
@@ -82,6 +82,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
       </Group>
     );
   }
+
   return (
     <UnstyledButton className={titleContainer} component="div" onClick={startEditingTitle} mx="md">
       <Group align="baseline">

@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { Stack } from '@mantine/core';
-import { UserDecksSummary } from '@/features/dashboard/components/UserDecksSummary';
+import { UserDecksSummary } from './UserDecksSummary';
+import { UserRoomsSummary } from './UserRoomsSummary';
 
-export const Dashboard: FC = () => <Stack p="md"><UserDecksSummary /></Stack>;
+export const Dashboard: FC = () => <Stack p="md"><UserDecksSummary /><UserRoomsSummary /></Stack>;

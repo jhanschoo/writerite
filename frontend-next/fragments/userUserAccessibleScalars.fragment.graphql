@@ -1,0 +1,6 @@
+fragment userUserAccessibleScalars on User {
+  id
+  isPublic
+  name
+  roles
+}

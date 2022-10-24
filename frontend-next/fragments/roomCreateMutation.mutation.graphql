@@ -1,0 +1,5 @@
+mutation RoomCreate {
+  roomCreate {
+    ...roomDetail
+  }
+}
