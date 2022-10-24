@@ -53,6 +53,7 @@ export type Deck = {
   cardsDirect: Array<Card>;
   /** number of all cards directly belonging to this deck */
   cardsDirectCount: Scalars['Int'];
+  createdAt: Scalars['DateTime'];
   /** all descendant (reflexive, transitive closure of subdeck) decks of this deck */
   descendantDecks: Array<Deck>;
   description: Scalars['JSONObject'];
@@ -347,6 +348,7 @@ export type QueryUserArgs = {
 
 export type Room = {
   __typename?: 'Room';
+  createdAt: Scalars['DateTime'];
   deck?: Maybe<Deck>;
   deckId?: Maybe<Scalars['ID']>;
   id: Scalars['ID'];
@@ -483,12 +485,12 @@ export type RoomQueryVariables = Exact<{
 }>;
 
 
-export type RoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, state: RoomState, deckId?: string | null } };
+export type RoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, state: RoomState, ownerId: string } };
 
 export type OccupyingRoomsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OccupyingRoomsQuery = { __typename?: 'Query', occupyingRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, deckId?: string | null }> };
+export type OccupyingRoomsQuery = { __typename?: 'Query', occupyingRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, ownerId: string }> };
 
 export type CreateUserMutationVariables = Exact<{
   code: Scalars['String'];

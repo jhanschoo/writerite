@@ -12,7 +12,7 @@ import { Context } from "../../../src/context";
 import { WrServer, createGraphQLApp } from "../../../src/graphqlApp";
 import { mutationRoomAddOccupant, mutationRoomCreate, mutationRoomSetDeck, mutationRoomSetState, queryOccupyingRooms, queryRoom } from "../../helpers/graphql/Room.util";
 import { RoomState } from "../../../generated/typescript-operations";
-import cuid from "cuid";
+import { nanoid } from "nanoid";
 
 describe("graphql/Room.ts", () => {
 
@@ -36,7 +36,7 @@ describe("graphql/Room.ts", () => {
     await cascadingDelete(prisma).user;
   });
 
-  describe.only("Mutation", () => {
+  describe("Mutation", () => {
     describe("roomAddOccupant", () => {
       it("should be able to add an occupant to an owned empty room in WAITING state", async () => {
         expect.assertions(2);
@@ -116,7 +116,7 @@ describe("graphql/Room.ts", () => {
         const roomBefore = roomCreateResponse.data.roomCreate;
 
         // add occupant to room
-        const roomAddOccupantResponse = await mutationRoomAddOccupant(app, { id: roomBefore.id, occupantId: cuid() });
+        const roomAddOccupantResponse = await mutationRoomAddOccupant(app, { id: roomBefore.id, occupantId: nanoid() });
         expect(roomAddOccupantResponse).toHaveProperty("data", null);
         expect(roomAddOccupantResponse.errors).not.toHaveLength(0);
       });
@@ -162,7 +162,7 @@ describe("graphql/Room.ts", () => {
 
         // create occupant user
         const occupantBefore = await loginAsNewlyCreatedUser(app, setSub);
-        const response = await mutationRoomAddOccupant(app, { id: cuid(), occupantId: occupantBefore.id });
+        const response = await mutationRoomAddOccupant(app, { id: nanoid(), occupantId: occupantBefore.id });
         expect(response).toHaveProperty("data", null);
         expect(response.errors).not.toHaveLength(0);
       });
@@ -344,7 +344,7 @@ describe("graphql/Room.ts", () => {
           deckId: null,
         }));
         const roomBefore = roomCreateResponse.data.roomCreate;
-        const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: roomBefore.id, deckId: cuid() });
+        const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: roomBefore.id, deckId: nanoid() });
         expect(roomSetDeckResponse).toHaveProperty("data", null);
         expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
@@ -369,7 +369,7 @@ describe("graphql/Room.ts", () => {
         const deckBefore = deckCreateResponse.data.deckCreate;
 
         // set deck
-        const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: cuid(), deckId: deckBefore.id });
+        const roomSetDeckResponse = await mutationRoomSetDeck(app, { id: nanoid(), deckId: deckBefore.id });
         expect(roomSetDeckResponse).toHaveProperty("data", null);
         expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
@@ -536,56 +536,57 @@ describe("graphql/Room.ts", () => {
         }));
       });
     });
-  });
 
-  describe("occupyingRooms", () => {
-    it("should be able to return ids of owned rooms and rooms you are occupying state", async () => {
-      expect.assertions(4);
-      // create owner user
-      const user1 = await loginAsNewlyCreatedUser(app, setSub);
+    describe("occupyingRooms", () => {
+      it("should be able to return ids of owned rooms and rooms you are occupying state", async () => {
+        expect.assertions(5);
+        // create owner user
+        const user1 = await loginAsNewlyCreatedUser(app, setSub, "user1");
 
-      // create room
-      const roomCreateResponse1 = await mutationRoomCreate(app);
-      const room1 = roomCreateResponse1.data.roomCreate;
+        // create room
+        const roomCreateResponse1 = await mutationRoomCreate(app);
+        const room1 = roomCreateResponse1.data.roomCreate;
 
-      // create room
-      const roomCreateResponse2 = await mutationRoomCreate(app);
-      const room2 = roomCreateResponse2.data.roomCreate;
+        // create room
+        const roomCreateResponse2 = await mutationRoomCreate(app);
+        const room2 = roomCreateResponse2.data.roomCreate;
 
-      // create owner and occupant user
-      const user2 = await loginAsNewlyCreatedUser(app, setSub);
+        // create owner and occupant user
+        const user2 = await loginAsNewlyCreatedUser(app, setSub, "user2");
 
-      // create room
-      const roomCreateResponse3 = await mutationRoomCreate(app);
-      expect(roomCreateResponse3).toHaveProperty("data.roomCreate", expect.objectContaining({
-        id: expect.any(String),
-        state: RoomState.Waiting,
-        ownerId: user1.id,
-      }));
-      const roomBefore3 = roomCreateResponse1.data.roomCreate;
+        expect(user2.id).not.toEqual(user1.id);
+        // create room
+        const roomCreateResponse3 = await mutationRoomCreate(app);
+        expect(roomCreateResponse3).toHaveProperty("data.roomCreate", expect.objectContaining({
+          id: expect.any(String),
+          state: RoomState.Waiting,
+          ownerId: user2.id,
+        }));
+        const roomBefore3 = roomCreateResponse1.data.roomCreate;
 
-      const roomAddOccupantResponse1 = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: user2.id });
-      expect(roomAddOccupantResponse1).toHaveProperty("data.roomAddOccupant", expect.objectContaining({
-        id: room1.id,
-        state: RoomState.Waiting,
-        ownerId: user1.id,
-      }));
-      const roomBefore1 = roomAddOccupantResponse1.data.roomAddOccupant;
-      const roomAddOccupantResponse2 = await mutationRoomAddOccupant(app, { id: room2.id, occupantId: user2.id });
-      expect(roomAddOccupantResponse2).toHaveProperty("data.roomAddOccupant", expect.objectContaining({
-        id: room2.id,
-        state: RoomState.Waiting,
-        ownerId: user1.id,
-      }));
-      const roomBefore2 = roomAddOccupantResponse2.data.roomAddOccupant;
+        const roomAddOccupantResponse1 = await mutationRoomAddOccupant(app, { id: room1.id, occupantId: user2.id });
+        expect(roomAddOccupantResponse1).toHaveProperty("data.roomAddOccupant", expect.objectContaining({
+          id: room1.id,
+          state: RoomState.Waiting,
+          ownerId: user1.id,
+        }));
+        const roomBefore1 = roomAddOccupantResponse1.data.roomAddOccupant;
+        const roomAddOccupantResponse2 = await mutationRoomAddOccupant(app, { id: room2.id, occupantId: user2.id });
+        expect(roomAddOccupantResponse2).toHaveProperty("data.roomAddOccupant", expect.objectContaining({
+          id: room2.id,
+          state: RoomState.Waiting,
+          ownerId: user1.id,
+        }));
+        const roomBefore2 = roomAddOccupantResponse2.data.roomAddOccupant;
 
-      // query room
-      const occupyingRoomsResponse = await queryOccupyingRooms(app);
-      expect(occupyingRoomsResponse).toHaveProperty("data.occupyingRooms", expect.arrayContaining([
-        { id: roomBefore1.id },
-        { id: roomBefore2.id },
-        { id: roomBefore3.id },
-      ]));
+        // query room
+        const occupyingRoomsResponse = await queryOccupyingRooms(app);
+        expect(occupyingRoomsResponse).toHaveProperty("data.occupyingRooms", expect.arrayContaining([
+          expect.objectContaining({ id: roomBefore1.id }),
+          expect.objectContaining({ id: roomBefore2.id }),
+          expect.objectContaining({ id: roomBefore3.id }),
+        ]));
+      });
     });
   });
 });

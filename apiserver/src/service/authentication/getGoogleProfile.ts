@@ -3,7 +3,6 @@ import env from "../../safeEnv";
 import { parseArbitraryJWT } from "../crypto/jwtUtil";
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { URL } from "url";
-import fetch from "cross-fetch";
 import { setSearchParams } from "../../util";
 import { ThirdPartyProfileInformation } from "./types";
 import { JWTPayload } from "jose";

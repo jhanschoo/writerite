@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { RoomState } from "../../../generated/typescript-operations";
-import { invalidArgumentsErrorFactory } from "../../error/invalidArgumentsErrorFactory";
+import { invalidArgumentsErrorFactory } from "../../error";
 
 type RoomSetStateProps = [PrismaClient, { id: string, state: RoomState, currentUserId: string }];
 

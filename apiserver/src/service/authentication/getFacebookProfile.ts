@@ -2,8 +2,6 @@
 import env from "../../safeEnv";
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { URL } from "url";
-// eslint-disable-next-line @typescript-eslint/no-shadow
-import fetch from "cross-fetch";
 import { setSearchParams } from "../../util";
 import { ThirdPartyProfileInformation } from "./types";
 

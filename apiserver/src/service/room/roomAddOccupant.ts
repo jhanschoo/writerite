@@ -1,7 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import { RoomState } from "../../../generated/typescript-operations";
-import { invalidArgumentsErrorFactory } from "../../error/invalidArgumentsErrorFactory";
-import { userLacksPermissionsErrorFactory } from "../../error/userLacksPermissionsErrorFactory";
 
 type RoomAddOccupantProps = [PrismaClient, { roomId: string, occupantId: string, currentUserId?: string }];
 

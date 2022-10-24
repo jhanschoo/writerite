@@ -1,5 +1,5 @@
 import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from "nexus";
-import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userLacksPermissionsErrorFactory } from "../error";
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { jsonArg } from "./scalarUtil";
 

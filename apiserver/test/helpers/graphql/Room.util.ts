@@ -102,7 +102,7 @@ export function queryRoom(server: WrServer, id: string) {
         room(id: $id) {
           id
           state
-          deckId
+          ownerId
         }
       }
     `,
@@ -119,7 +119,7 @@ export function queryOccupyingRooms(server: WrServer) {
         occupyingRooms {
           id
           state
-          deckId
+          ownerId
         }
       }
     `,

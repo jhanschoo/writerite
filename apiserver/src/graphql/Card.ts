@@ -1,6 +1,5 @@
 import { Prisma, Unit } from "@prisma/client";
 import { booleanArg, idArg, inputObjectType, list, mutationField, nonNull, objectType, stringArg } from "nexus";
-import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { dateTimeArg, jsonObjectArg } from "./scalarUtil";
 

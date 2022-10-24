@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { enumType, idArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
+import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from "nexus";
 import { RoomState as GeneratedRoomState } from "../../generated/typescript-operations";
-import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userLacksPermissionsErrorFactory } from "../error";
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { roomAddOccupant, roomEditOwnerConfig, roomSetDeck, roomSetState } from "../service/room";
 import { slug } from "../util";
@@ -27,6 +27,7 @@ export const Room = objectType({
     t.nonNull.field("state", {
       type: "RoomState",
     });
+    t.nonNull.dateTime("createdAt");
 
     t.field("deck", {
       type: "Deck",
@@ -98,7 +99,7 @@ export const RoomQuery = queryField("room", {
 export const OccupyingRoomsQuery = queryField("occupyingRooms", {
   type: nonNull(list(nonNull("Room"))),
   resolve: guardValidUser((_source, _args, { sub, prisma }) => prisma.room.findMany({
-    where: { occupants: { some: { id: sub.id } } },
+    where: { occupants: { some: { occupantId: sub.id } } },
   })),
 });
 

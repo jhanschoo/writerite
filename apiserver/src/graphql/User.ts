@@ -1,6 +1,6 @@
 import { booleanArg, idArg, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
 import type { Context } from "../context";
-import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userLacksPermissionsErrorFactory, userNotLoggedInErrorFactory } from "../error";
 import { guardLoggedIn } from "../service/authorization/guardLoggedIn";
 
 const isPublicOrLoggedInOrAdmin = ({ id, isPublic }: { id: string, isPublic: boolean }, _args: unknown, { auth }: Context) => isPublic || auth.isLoggedInAs(id) || auth.isAdmin;
@@ -47,7 +47,7 @@ export const UserQuery = queryField("user", {
   resolve: async (_source, { id: idArgument }, { prisma, sub }) => {
     const id = idArgument ?? sub?.id;
     if (!id) {
-      throw userLacksPermissionsErrorFactory();
+      throw userNotLoggedInErrorFactory();
     }
     const res = await prisma.user.findUnique({
       where: { id },

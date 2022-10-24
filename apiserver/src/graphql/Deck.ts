@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
-import cuid from "cuid";
 import { arg, booleanArg, enumType, idArg, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
-import { userLacksPermissionsErrorFactory } from "../error/userLacksPermissionsErrorFactory";
+import { userLacksPermissionsErrorFactory } from "../error";
 import { guardValidUser } from "../service/authorization/guardValidUser";
 import { getDescendantsOfDeck } from "../service/deckFamily";
 import { jsonObjectArg } from "./scalarUtil";
@@ -44,6 +43,7 @@ export const Deck = objectType({
     t.nonNull.string("answerLang");
     t.nonNull.boolean("published");
     t.nonNull.list.nonNull.string("sortData");
+    t.nonNull.dateTime("createdAt");
     t.nonNull.dateTime("editedAt");
     t.nonNull.dateTime("usedAt");
 
@@ -237,14 +237,11 @@ export const DeckCreateMutation = mutationField("deckCreate", {
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
     const { cards, ...rest } = deckCreateSchema.parse(args);
-    const cardsWithId = cards?.map((card) => ({ id: cuid(), ...card }));
-    const sortData = cardsWithId?.map(({ id }) => id);
 
     return prisma.deck.create({ data: {
       ownerId: sub.id,
       ...rest,
-      cards: cardsWithId ? { create: cardsWithId } : undefined,
-      sortData,
+      cards: { create: cards },
     } });
   }),
 });

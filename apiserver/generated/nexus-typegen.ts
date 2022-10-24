@@ -138,6 +138,7 @@ export interface NexusGenFieldTypes {
     cardsAllUnder: NexusGenRootTypes['Card'][]; // [Card!]!
     cardsDirect: NexusGenRootTypes['Card'][]; // [Card!]!
     cardsDirectCount: number; // Int!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     descendantDecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     description: NexusGenScalars['JSONObject']; // JSONObject!
     editedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -200,6 +201,7 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Room: { // field return type
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
     deck: NexusGenRootTypes['Deck'] | null; // Deck
     deckId: string | null; // ID
     id: string; // ID!
@@ -253,6 +255,7 @@ export interface NexusGenFieldTypeNames {
     cardsAllUnder: 'Card'
     cardsDirect: 'Card'
     cardsDirectCount: 'Int'
+    createdAt: 'DateTime'
     descendantDecks: 'Deck'
     description: 'JSONObject'
     editedAt: 'DateTime'
@@ -315,6 +318,7 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Room: { // field return type name
+    createdAt: 'DateTime'
     deck: 'Deck'
     deckId: 'ID'
     id: 'ID'

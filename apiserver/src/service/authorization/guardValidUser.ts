@@ -1,5 +1,5 @@
 import { LoggedInContext } from "../../context";
-import { userNotValidUserErrorFactory } from "../../error/userNotValidUserErrorFactory";
+import { userNotValidUserErrorFactory } from "../../error";
 import { guardLoggedIn } from "./guardLoggedIn";
 
 export async function notValidUser({ prisma, sub }: LoggedInContext) {

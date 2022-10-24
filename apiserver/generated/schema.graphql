@@ -39,6 +39,7 @@ type Deck {
 
   """number of all cards directly belonging to this deck"""
   cardsDirectCount: Int!
+  createdAt: DateTime!
 
   """
   all descendant (reflexive, transitive closure of subdeck) decks of this deck
@@ -192,6 +193,7 @@ type Query {
 }
 
 type Room {
+  createdAt: DateTime!
   deck: Deck
   deckId: ID
   id: ID!
