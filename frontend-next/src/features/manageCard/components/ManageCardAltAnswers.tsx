@@ -59,12 +59,13 @@ export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
         )}
         {
           // Component if editing a new answer
-          currentlyEditing === answers.length &&
+          currentlyEditing === answers.length ?
           <ManageCardAltAnswerInput
             initialAnswer={""}
             onCancel={handleCancel}
             onSave={handleSave(answers.length)}
           />
+          : undefined
         }
       </Group>
       {currentlyEditing && <Text size="xs" color="dimmed">Press 'Esc' to cancel edits, or 'Return' to confirm edits.</Text>}
