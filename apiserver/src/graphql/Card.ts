@@ -62,7 +62,7 @@ export const CardCreateMutation = mutationField("cardCreate", {
   },
   resolve: guardValidUser(async (_source, { deckId, card, mainTemplate }, { prisma, sub }) => {
     const { prompt, fullAnswer, answers, template } = card;
-    const deckConditions = { id: deckId, userId: sub.id };
+    const deckConditions = { id: deckId, ownerId: sub.id };
     const mainTemplateOperation = () => prisma.deck.update({
       where: deckConditions,
       data: {
