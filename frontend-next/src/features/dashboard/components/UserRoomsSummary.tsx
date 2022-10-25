@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
-const NewRoomItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => {
+const NewRoomItem = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
   const [, roomCreateMutation] = useMutation(RoomCreateDocument);
@@ -23,7 +23,7 @@ const NewRoomItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
     }
   };
 
-  return <Button onClick={onClick} size="md" radius="xl" mb="md">
+  return <Button onClick={handleCreateRoom} size="md" radius="xl" mb="md">
     Start a new Room
   </Button>
 
