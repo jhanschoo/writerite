@@ -4,6 +4,7 @@
 
 set -ex
 
+export DOCKER_BUILDKIT=1 
 NODE_ENV="development"
 if [ -n "$1" ]
 then
