@@ -11,10 +11,7 @@ interface Props extends ManageDeckProps {
   onUploadCompleted: () => unknown;
 }
 
-type UploadState =
-  | { step: 0 }
-  | { step: 1 }
-  | { step: 2 } & ImportCardsData;
+type UploadState = { step: 0 } | { step: 1 } | ({ step: 2 } & ImportCardsData);
 
 export const ManageDeckCardsUpload: FC<Props> = ({ deck, onUploadCompleted }) => {
   const [{ step, ...data }, setUploadState] = useState<UploadState>({ step: 0 });
@@ -25,10 +22,18 @@ export const ManageDeckCardsUpload: FC<Props> = ({ deck, onUploadCompleted }) =>
           <ManageDeckCardsUploadInstructions onNextStep={() => setUploadState({ step: 1 })} />
         </Stepper.Step>
         <Stepper.Step label="Import" description="Choose the file">
-          <ManageDeckCardsUploadImport onPreviousStep={() => setUploadState({ step: 0 })} onSuccessfulImport={(cards) => setUploadState({ step: 2, cards })} />
+          <ManageDeckCardsUploadImport
+            onPreviousStep={() => setUploadState({ step: 0 })}
+            onSuccessfulImport={(cards) => setUploadState({ step: 2, cards })}
+          />
         </Stepper.Step>
         <Stepper.Step label="Review" description="Confirm the cards">
-          <ManageDeckCardsUploadReview deck={deck} {...(data as ImportCardsData)} onPreviousStep={() => setUploadState({ step: 1 })} onUploadCompleted={onUploadCompleted} />
+          <ManageDeckCardsUploadReview
+            deck={deck}
+            {...(data as ImportCardsData)}
+            onPreviousStep={() => setUploadState({ step: 1 })}
+            onUploadCompleted={onUploadCompleted}
+          />
         </Stepper.Step>
       </Stepper>
     </Stack>

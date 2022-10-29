@@ -22,10 +22,20 @@ const Home: NextPage = () => {
   }
   const { deck } = data;
   const { name } = deck;
-  const nameBreadcrumb: string | JSX.Element = name || <Text color="dimmed" sx={{ fontStyle: 'italic' }}>Untitled Deck</Text>;
+  const nameBreadcrumb: string | JSX.Element = name || (
+    <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
+      Untitled Deck
+    </Text>
+  );
 
   return (
-    <StandardLayout breadcrumbs={[['/app', 'Home'], ['/app/deck', 'Decks'], [`/app/deck/${id}`, nameBreadcrumb]]}>
+    <StandardLayout
+      breadcrumbs={[
+        ['/app', 'Home'],
+        ['/app/deck', 'Decks'],
+        [`/app/deck/${id}`, nameBreadcrumb],
+      ]}
+    >
       <motion.div {...motionProps}>
         <ManageDeck deck={deck} />
       </motion.div>

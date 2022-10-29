@@ -17,18 +17,23 @@ const FinalizeName: NextPage = () => {
   const [, updateUserName] = useMutation(UserEditDocument);
   return (
     <Center sx={{ minHeight: '50vh' }}>
-      <form onSubmit={form.onSubmit(async (values) => {
-        const result = await updateUserName(values);
-        if (result.data?.userEdit.name === values.name) {
-          router.push('/app');
-        }
-      })}
+      <form
+        onSubmit={form.onSubmit(async (values) => {
+          const result = await updateUserName(values);
+          if (result.data?.userEdit.name === values.name) {
+            router.push('/app');
+          }
+        })}
       >
         <Stack>
           <Title order={1}>Let&rsquo;s finalize your account...</Title>
           <TextInput
             placeholder="Enter a username..."
-            rightSection={<Button compact type="submit" variant="subtle"><PaperPlaneIcon /></Button>}
+            rightSection={
+              <Button compact type="submit" variant="subtle">
+                <PaperPlaneIcon />
+              </Button>
+            }
             description="Please enter a username that will be displayed publicly."
             label="Username"
             {...form.getInputProps('name')}

@@ -14,21 +14,25 @@ export const ManageCardAltAnswer: FC<Props> = ({ answer, editable, onRemove, onS
   return (
     <Paper px="8px" py="3px" withBorder onClick={onStartEditing}>
       <Group spacing={2}>
-        <Text size="sm">
-          {answer}
-        </Text>
-        {
-          editable &&
+        <Text size="sm">{answer}</Text>
+        {editable && (
           <>
-          <ActionIcon size="sm" variant="subtle">
-            <Pencil1Icon />
-          </ActionIcon>
-          <Divider orientation="vertical" />
-          <ActionIcon size="sm" variant="subtle" onClick={(e: MouseEvent<HTMLButtonElement>) => { e.stopPropagation(); onRemove(); }}>
-            <Cross2Icon />
-          </ActionIcon>
+            <ActionIcon size="sm" variant="subtle">
+              <Pencil1Icon />
+            </ActionIcon>
+            <Divider orientation="vertical" />
+            <ActionIcon
+              size="sm"
+              variant="subtle"
+              onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                e.stopPropagation();
+                onRemove();
+              }}
+            >
+              <Cross2Icon />
+            </ActionIcon>
           </>
-        }
+        )}
       </Group>
     </Paper>
   );

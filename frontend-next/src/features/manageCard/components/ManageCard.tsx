@@ -1,5 +1,15 @@
 import { FC, useEffect, useState } from 'react';
-import { Button, Box, Card, createStyles, Divider, Group, Loader, LoadingOverlay, Paper, Stack, Text } from '@mantine/core';
+import {
+  Button,
+  Box,
+  Card,
+  createStyles,
+  Divider,
+  Group,
+  Loader,
+  LoadingOverlay,
+  Text,
+} from '@mantine/core';
 import { Delta } from 'quill';
 import stringify from 'fast-json-stable-stringify';
 
@@ -30,7 +40,7 @@ const useEditorStyles = createStyles(({ fn }) => {
       borderRadius: 0,
       border: 'none',
       background: 'transparent',
-    }
+    },
   };
 });
 
@@ -38,26 +48,26 @@ const useStyles = createStyles((_theme, _params, getRef) => {
   return {
     cardRoot: {
       [`&:hover .${getRef('cardCloseButton')}`]: {
-        visibility: "visible",
-      }
+        visibility: 'visible',
+      },
     },
     cardCloseButton: {
       ref: getRef('cardCloseButton'),
       position: 'absolute',
       top: 0,
       right: 0,
-      visibility: "hidden",
+      visibility: 'hidden',
       borderTopLeftRadius: 0,
       borderBottomRightRadius: 0,
     },
     boxRoot: {
-      position: 'relative'
-    }
+      position: 'relative',
+    },
   };
 });
 
 interface Props {
-  card: ManageDeckProps["deck"]["cardsDirect"][number];
+  card: ManageDeckProps['deck']['cardsDirect'][number];
   onDelete: () => void;
   forceLoading: boolean;
 }
@@ -68,7 +78,11 @@ interface State {
   answers: string[];
 }
 
-function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State) => unknown>, initialState: State, latestState: State) {
+function debounceIfStateDeltaExists(
+  debounced: DebouncedState<(nextState: State) => unknown>,
+  initialState: State,
+  latestState: State
+) {
   if (stringify(initialState) !== stringify(latestState)) {
     debounced(latestState);
   } else {
@@ -79,7 +93,7 @@ function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State)
 /**
  * Regarding the state of ManageCard
  * `card.prompt`, `card.fullAnswer`, `card.answers` should reflect the server-side state of these fields.
- * 
+ *
  * When the user edits the prompt or the fullAnswer, we expect to update the server after at most STANDARD_DEBOUNCE_MS with:
  * * the latest state of prompt
  * * the latest state of fullAnswer
@@ -87,12 +101,12 @@ function debounceIfStateDeltaExists(debounced: DebouncedState<(nextState: State)
  *   by latest definite state of answers we mean the answers array containing all answers except any
  *   newly added answer currently being edited, with each answer in the state before we started but
  *   not finished editing them, if we had started editing them but not finished.
- * 
+ *
  * When the user is done adding, deleting, or editing any answer, we expect to update the server immediately with:
  * * the latest state of prompt
  * * the latest state of fullAnswer
  * * the latest definite state of each answer in the latest definite state of answers, which is the latest state of answers
- * 
+ *
  * Then observe that
  * * clearly when updating the server, after answers edits, since there are no longer any
  *   answers being edited, the latest definite state of answers is the latest state of answers.
@@ -105,20 +119,28 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const { id, prompt, fullAnswer, answers } = card;
   const { classes: editorClasses } = useEditorStyles();
   const { classes: cardDeleteButtonClasses } = useStyles();
-  const initialState = { prompt: prompt as unknown, fullAnswer: fullAnswer as unknown, answers } as State;
+  const initialState = {
+    prompt: prompt as unknown,
+    fullAnswer: fullAnswer as unknown,
+    answers,
+  } as State;
   const [promptContent, setPromptContent] = useState<Delta>(prompt);
   const [fullAnswerContent, setFullAnswerContent] = useState<Delta>(fullAnswer);
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
-  const updateStateToServer = (newState: State) => cardEdit({
-    id, ...newState
-  });
+  const updateStateToServer = (newState: State) =>
+    cardEdit({
+      id,
+      ...newState,
+    });
   const handleCardDelete = () => {
     debounced.cancel();
     cardDelete({ id });
-  }
-  const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, { maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS });
+  };
+  const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, {
+    maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS,
+  });
   useEffect(
     () => () => {
       debounced.flush();
@@ -127,28 +149,38 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   );
   const hasUnsavedChanges = fetching || debounced.isPending();
 
-  const handlePromptChange: RichTextEditorProps["onChange"] = (_value, _delta, _sources, editor) => {
+  const handlePromptChange: RichTextEditorProps['onChange'] = (
+    _value,
+    _delta,
+    _sources,
+    editor
+  ) => {
     const latestPromptContent = editor.getContents();
     const latestState = {
       prompt: latestPromptContent,
       fullAnswer: fullAnswerContent,
       answers: answerValues,
-    }
+    };
     setPromptContent(latestPromptContent);
     debounceIfStateDeltaExists(debounced, initialState, latestState);
-  }
-  const handleFullAnswerChange: RichTextEditorProps["onChange"] = (_value, _delta, _sources, editor) => {
+  };
+  const handleFullAnswerChange: RichTextEditorProps['onChange'] = (
+    _value,
+    _delta,
+    _sources,
+    editor
+  ) => {
     const latestFullAnswerContent = editor.getContents();
     const latestState = {
       prompt: promptContent,
       fullAnswer: latestFullAnswerContent,
       answers: answerValues,
-    }
+    };
     setFullAnswerContent(latestFullAnswerContent);
     debounceIfStateDeltaExists(debounced, initialState, latestState);
-  }
+  };
   const handleAnswersSave = (latestAnswers: string[]) => {
-    debounced.cancel()
+    debounced.cancel();
     const latestState = {
       prompt: promptContent,
       fullAnswer: fullAnswerContent,
@@ -156,15 +188,26 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     };
     setAnswerValues(latestAnswers);
     updateStateToServer(latestState);
-  }
+  };
   return (
     <Box className={cardDeleteButtonClasses.boxRoot}>
       <Card withBorder shadow="sm" radius="md" className={cardDeleteButtonClasses.cardRoot}>
         <Card.Section inheritPadding pt="sm">
-          <Button size="xs" radius="xs" compact rightIcon={<TrashIcon />} variant="filled" className={cardDeleteButtonClasses.cardCloseButton} disabled={hasUnsavedChanges || fetchingDelete} onClick={handleCardDelete}>
+          <Button
+            size="xs"
+            radius="xs"
+            compact
+            rightIcon={<TrashIcon />}
+            variant="filled"
+            className={cardDeleteButtonClasses.cardCloseButton}
+            disabled={hasUnsavedChanges || fetchingDelete}
+            onClick={handleCardDelete}
+          >
             delete card
           </Button>
-          <Text size="xs" weight="bold">Front</Text>
+          <Text size="xs" weight="bold">
+            Front
+          </Text>
         </Card.Section>
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
@@ -177,7 +220,9 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding pt="sm">
-          <Text size="xs" weight="bold">Back</Text>
+          <Text size="xs" weight="bold">
+            Back
+          </Text>
         </Card.Section>
         <Card.Section>
           <RichTextEditor
@@ -190,7 +235,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         <Card.Section inheritPadding py="sm">
           <Group>
             <ManageCardAltAnswers answers={answerValues} onAnswersSave={handleAnswersSave} />
-            <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
+            <Loader visibility={hasUnsavedChanges ? 'visible' : 'hidden'} />
           </Group>
         </Card.Section>
       </Card>

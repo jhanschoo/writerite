@@ -36,38 +36,42 @@ export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, descrip
     >
       <LoadingOverlay visible={fetching} />
       <RichTextEditor
-        styles={writableMode
-        ? {
-          root: {
-            width: '100%',
-          },
+        styles={
+          writableMode
+            ? {
+                root: {
+                  width: '100%',
+                },
+              }
+            : ({ fn }) => {
+                const { background, hover, border, color } = fn.variant({ variant: 'subtle' });
+                return {
+                  root: {
+                    backgroundColor: background,
+                    borderColor: border,
+                    width: '100%',
+                    color,
+                    ...fn.hover({
+                      backgroundColor: hover,
+                    }),
+                  },
+                };
+              }
         }
-        : ({ fn }) => {
-          const { background, hover, border, color } = fn.variant({ variant: 'subtle' });
-          return {
-            root: {
-              backgroundColor: background,
-              borderColor: border,
-              width: '100%',
-              color,
-              ...fn.hover({
-                backgroundColor: hover,
-              }),
-            },
-          };
-        }}
         value={htmlValue}
         forwardedRef={editorRef}
         onChange={setHtmlValue}
         onClick={() => setWritableMode(true)}
         readOnly={!writableMode}
         onBlur={handleBlur}
-        onKeyDown={(e: KeyboardEvent<unknown>) =>
-          (e.key === 'Escape') && setWritableMode(false)
-        }
+        onKeyDown={(e: KeyboardEvent<unknown>) => e.key === 'Escape' && setWritableMode(false)}
         placeholder="Enter a description for the deck..."
       />
-      {writableMode && <Text color="dimmed" size="xs" sx={{ marginTop: '7px', padding: '0 8px' }}>Press &lsquo;esc&rsquo; to save changes and stop editing</Text>}
+      {writableMode && (
+        <Text color="dimmed" size="xs" sx={{ marginTop: '7px', padding: '0 8px' }}>
+          Press &lsquo;esc&rsquo; to save changes and stop editing
+        </Text>
+      )}
     </Box>
   );
 };

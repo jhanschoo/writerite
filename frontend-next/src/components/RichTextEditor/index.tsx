@@ -8,20 +8,21 @@ export const SUPPORTED_RTE_TOOLBAR: ToolbarControl[][] = [
   ['h1', 'h2', 'h3', 'h4'],
   ['unorderedList', 'orderedList'],
   ['alignLeft', 'alignCenter', 'alignRight'],
-  ['sup', 'sub']
+  ['sup', 'sub'],
 ];
 
-export default dynamic(async () => {
-  const { default: Editor } = await import('@mantine/rte');
-  return (
-    { forwardedRef, ...props }:
-      RichTextEditorProps
-      & { forwardedRef?: Ref<any> }
-  ) => <Editor ref={forwardedRef} controls={SUPPORTED_RTE_TOOLBAR} {...props} />;
-}, {
-  // Disable during server side rendering
-  ssr: false,
+export default dynamic(
+  async () => {
+    const { default: Editor } = await import('@mantine/rte');
+    return ({ forwardedRef, ...props }: RichTextEditorProps & { forwardedRef?: Ref<any> }) => (
+      <Editor ref={forwardedRef} controls={SUPPORTED_RTE_TOOLBAR} {...props} />
+    );
+  },
+  {
+    // Disable during server side rendering
+    ssr: false,
 
-  // Render anything as fallback on server, e.g. loader or html content without editor
-  loading: () => null,
-});
+    // Render anything as fallback on server, e.g. loader or html content without editor
+    loading: () => null,
+  }
+);

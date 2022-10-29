@@ -1,4 +1,4 @@
-import { NewCardData } from "./NewCardData";
+import { NewCardData } from './NewCardData';
 
 export interface ImportCardsData {
   cards: NewCardData[];

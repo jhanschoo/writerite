@@ -1,7 +1,7 @@
 import { Title } from '@mantine/core';
 import { FC, PropsWithChildren } from 'react';
 
-const HeroHeading: FC<PropsWithChildren> = ({ children }) =>
+const HeroHeading: FC<PropsWithChildren> = ({ children }) => (
   <Title
     order={1}
     align="center"
@@ -10,6 +10,7 @@ const HeroHeading: FC<PropsWithChildren> = ({ children }) =>
     }}
   >
     {children}
-  </Title>;
+  </Title>
+);
 
 export default HeroHeading;

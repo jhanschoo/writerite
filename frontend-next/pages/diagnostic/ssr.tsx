@@ -20,9 +20,7 @@ const Ssr: NextPage = () => {
     query: HealthQueryDocument,
     variables: {},
   });
-  return (
-    <p>{JSON.stringify(result.data)}</p>
-  );
+  return <p>{JSON.stringify(result.data)}</p>;
 };
 
 export default Ssr;

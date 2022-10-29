@@ -1,1 +1,1 @@
-export * from "./ManageDeckProps";
+export * from './ManageDeckProps';

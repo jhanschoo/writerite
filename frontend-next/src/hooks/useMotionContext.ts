@@ -1,4 +1,4 @@
-import { useContext } from "react";
-import { MotionContext } from "../stores/motionContext";
+import { useContext } from 'react';
+import { MotionContext } from '../stores/motionContext';
 
 export const useMotionContext = () => useContext(MotionContext);

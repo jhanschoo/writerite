@@ -10,25 +10,23 @@ export interface NextLinkButtonProps
   href?: LinkProps['href'];
 }
 
-export const NextLinkButton = forwardRef<HTMLButtonElement, NextLinkButtonProps>(
-  (props, ref) => {
-    // href is specified to remove it from ...other
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { to, linkAs, href, replace, scroll, shallow, prefetch, locale, ...other } = props;
+export const NextLinkButton = forwardRef<HTMLButtonElement, NextLinkButtonProps>((props, ref) => {
+  // href is specified to remove it from ...other
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { to, linkAs, href, replace, scroll, shallow, prefetch, locale, ...other } = props;
 
-    return (
-      <Link
-        href={to}
-        prefetch={prefetch}
-        as={linkAs}
-        replace={replace}
-        scroll={scroll}
-        shallow={shallow}
-        passHref
-        locale={locale}
-      >
-        <Button ref={ref} {...other} />
-      </Link>
-    );
-  },
-);
+  return (
+    <Link
+      href={to}
+      prefetch={prefetch}
+      as={linkAs}
+      replace={replace}
+      scroll={scroll}
+      shallow={shallow}
+      passHref
+      locale={locale}
+    >
+      <Button ref={ref} {...other} />
+    </Link>
+  );
+});

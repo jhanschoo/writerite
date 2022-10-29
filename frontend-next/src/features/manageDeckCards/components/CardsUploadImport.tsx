@@ -21,7 +21,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
     if (files.length !== 1) {
       return;
     }
-    const [ csvFile ] = files;
+    const [csvFile] = files;
     setLoading(true);
     try {
       const newCards = await parseCsv(csvFile);
@@ -42,23 +42,23 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
         multiple={false}
         loading={loading}
         /*
-        * Note that there is a file chooser error (automatically cancels and exits)
-        * when accept is defined, for Chrome on GTK 4 (?), when useFsAccessApi={true}.
-        * 
-        * In more detail,
-        * the showOpenFilePicker method in the File System Access API available
-        * on Blink-based browsers allows for an optional `description` field
-        * when restricting accepted types, and the GTK file picker errors out
-        * when this field is undefined or an empty string (at least).
-        * Next, the underlying library `react-dropzone` on browsers supporting
-        * the File System Access API uses it unless a flag is set, and uses
-        * it in such a way that does not expose a way to set the `description`
-        * property. That is unless we have set `useFsAccessApi` to false to use
-        * another method of uploading files.
-        */
+         * Note that there is a file chooser error (automatically cancels and exits)
+         * when accept is defined, for Chrome on GTK 4 (?), when useFsAccessApi={true}.
+         *
+         * In more detail,
+         * the showOpenFilePicker method in the File System Access API available
+         * on Blink-based browsers allows for an optional `description` field
+         * when restricting accepted types, and the GTK file picker errors out
+         * when this field is undefined or an empty string (at least).
+         * Next, the underlying library `react-dropzone` on browsers supporting
+         * the File System Access API uses it unless a flag is set, and uses
+         * it in such a way that does not expose a way to set the `description`
+         * property. That is unless we have set `useFsAccessApi` to false to use
+         * another method of uploading files.
+         */
         // A bug report has been submitted to the Chromium project:
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1350487
-        accept={{[MIME_TYPES.csv]: ['.csv']}}
+        accept={{ [MIME_TYPES.csv]: ['.csv'] }}
         sx={{
           minHeight: '50vh',
           display: 'flex',
@@ -69,10 +69,8 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
         useFsAccessApi={false}
       >
         <Stack spacing="md" align="center">
-          <Text size="lg">
-            Drag a .csv file here
-          </Text>
-          <Divider label="or" sx={{ alignSelf: "stretch" }} labelPosition="center" />
+          <Text size="lg">Drag a .csv file here</Text>
+          <Divider label="or" sx={{ alignSelf: 'stretch' }} labelPosition="center" />
           <Button>Select file</Button>
           <Text color="dimmed" size="xs">
             Maximum file size limit: {MAX_SIZE_MIB}MB
@@ -84,7 +82,12 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
           )}
         </Stack>
       </Dropzone>
-      <Button sx={{ alignSelf: "flex-start" }} variant="subtle" onClick={onPreviousStep} leftIcon={<ArrowLeftIcon />}>
+      <Button
+        sx={{ alignSelf: 'flex-start' }}
+        variant="subtle"
+        onClick={onPreviousStep}
+        leftIcon={<ArrowLeftIcon />}
+      >
         Back to instructions
       </Button>
     </Stack>

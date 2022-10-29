@@ -22,9 +22,7 @@ const BasicPagination = ({ wrapper: Wrapper, children, pageSize, top }: BasicPag
   return (
     <>
       {top && paginationComponent}
-      <Wrapper>
-        {children.slice(pageSize * (page - 1), pageSize * page)}
-      </Wrapper>
+      <Wrapper>{children.slice(pageSize * (page - 1), pageSize * page)}</Wrapper>
       {paginationComponent}
     </>
   );

@@ -16,7 +16,9 @@ export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, o
       onChange={(e) => setAnswerInput(e.currentTarget.value)}
       onKeyDown={(e: KeyboardEvent<unknown>) => {
         switch (e.key) {
-          case 'Escape': onCancel(); break;
+          case 'Escape':
+            onCancel();
+            break;
           case 'Enter': {
             const answerToSave = answerInput.trim();
             if (answerToSave) {
@@ -30,7 +32,11 @@ export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, o
       }}
       variant="filled"
       aria-label="input new alternate answer"
-      rightSection={<ActionIcon onClick={() => onSave(answerInput)}><PaperPlaneIcon /></ActionIcon>}
+      rightSection={
+        <ActionIcon onClick={() => onSave(answerInput)}>
+          <PaperPlaneIcon />
+        </ActionIcon>
+      }
     />
   );
 };

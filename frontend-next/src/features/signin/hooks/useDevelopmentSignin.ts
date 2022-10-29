@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { useMutation } from "urql";
-import { InitializeThirdPartyOauthSigninDocument } from "../../../../generated/graphql";
+import { useState } from 'react';
+import { useMutation } from 'urql';
+import { InitializeThirdPartyOauthSigninDocument } from '../../../../generated/graphql';
 
-const DEFAULT_DEVELOPER_NAME = "developer";
+const DEFAULT_DEVELOPER_NAME = 'developer';
 
 export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
   const [, executeInitializeOauth] = useMutation(InitializeThirdPartyOauthSigninDocument);
@@ -16,17 +16,21 @@ export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
       const { data } = initializeOauth;
       if (!data) {
         setSigninUnderway(false);
-        throw new Error("Unable to initializeThirdPartyOauthSignin");
+        throw new Error('Unable to initializeThirdPartyOauthSignin');
       }
       const nonce = data.initializeThirdPartyOauthSignin;
-      const url = new URL(`${window.location.origin}/api/oauth/callback?code=${encodeURIComponent(name)}&state=${
-        encodeURIComponent(JSON.stringify({
-          provider: "development",
-          nonce,
-          redirect_uri,
-        }))
-      }`);
+      const url = new URL(
+        `${window.location.origin}/api/oauth/callback?code=${encodeURIComponent(
+          name
+        )}&state=${encodeURIComponent(
+          JSON.stringify({
+            provider: 'development',
+            nonce,
+            redirect_uri,
+          })
+        )}`
+      );
       window.location.assign(url);
-    }
+    },
   ] as const;
 }

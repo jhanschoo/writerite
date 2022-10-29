@@ -16,13 +16,21 @@ const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavPro
     setMotionProps(motionThemes.back);
     router.back();
   };
-  const breadcrumbLinks = breadcrumbs && breadcrumbs.length && breadcrumbs.map(
-    ([href, name], index) =>
-      <NextLinkAnchor key={index} href={href} variant="text">{ typeof name === 'string' ? (<Text>{name}</Text>) : name }</NextLinkAnchor>
-  );
+  const breadcrumbLinks =
+    breadcrumbs &&
+    breadcrumbs.length &&
+    breadcrumbs.map(([href, name], index) => (
+      <NextLinkAnchor key={index} href={href} variant="text">
+        {typeof name === 'string' ? <Text>{name}</Text> : name}
+      </NextLinkAnchor>
+    ));
   return (
     <Group {...groupProps}>
-      {showBack && <Button onClick={handleBack} sx={{ minWidth: 0 }}>Back</Button>}
+      {showBack && (
+        <Button onClick={handleBack} sx={{ minWidth: 0 }}>
+          Back
+        </Button>
+      )}
       {showBack && breadcrumbLinks && <Divider orientation="vertical" />}
       {breadcrumbLinks && <Breadcrumbs separator="»">{breadcrumbLinks}</Breadcrumbs>}
     </Group>

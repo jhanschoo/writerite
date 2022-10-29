@@ -20,7 +20,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
     tab: {
       '&[data-active]': {
         backgroundColor,
-      }
+      },
     },
     tabsListWrapper: {
       borderBottom: `1px solid ${borderColor}`,
@@ -41,7 +41,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
       flexGrow: 1,
       margin: '0 auto',
     },
-  }
+  };
 });
 
 export const ManageDeckContent: FC<ManageDeckProps> = ({ deck }) => {
@@ -50,8 +50,12 @@ export const ManageDeckContent: FC<ManageDeckProps> = ({ deck }) => {
     <Tabs variant="outline" defaultValue="cards" className={classes.tabsRoot}>
       <Group className={classes.tabsListWrapper}>
         <Tabs.List className={classes.tabsList}>
-          <Tabs.Tab value="cards" className={classes.tab}>{deck.cardsDirect.length} Cards</Tabs.Tab>
-          <Tabs.Tab value="subdecks" className={classes.tab}>{deck.subdecks.length} Subdecks</Tabs.Tab>
+          <Tabs.Tab value="cards" className={classes.tab}>
+            {deck.cardsDirect.length} Cards
+          </Tabs.Tab>
+          <Tabs.Tab value="subdecks" className={classes.tab}>
+            {deck.subdecks.length} Subdecks
+          </Tabs.Tab>
         </Tabs.List>
       </Group>
       <Stack className={classes.panelWrapper}>

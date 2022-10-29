@@ -4,7 +4,17 @@ import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
-import { Button, Card, createStyles, Divider, Group, Paper, Text, Title, UnstyledButton } from '@mantine/core';
+import {
+  Button,
+  Card,
+  createStyles,
+  Divider,
+  Group,
+  Paper,
+  Text,
+  Title,
+  UnstyledButton,
+} from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import Link from 'next/link';
 
@@ -30,9 +40,11 @@ const NewDeckItem = () => {
     }
   };
 
-  return <Button onClick={handleCreateDeck} size="md" radius="xl" mb="md">
-    Create a new Deck
-  </Button>
+  return (
+    <Button onClick={handleCreateDeck} size="md" radius="xl" mb="md">
+      Create a new Deck
+    </Button>
+  );
 };
 
 const DeckItem = ({ deck }: { deck: DecksQuery['decks'][number] }) => {
@@ -69,15 +81,15 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
     alignItems: 'flex-end',
     marginRight: '-5rem',
     [`& > .${getRef('heading')}`]: {
-      flexGrow: 1
-    }
+      flexGrow: 1,
+    },
   },
   heading: {
     ref: getRef('heading'),
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'flex-end'
-  }
+    alignItems: 'flex-end',
+  },
 }));
 
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
@@ -89,21 +101,21 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
       take: USER_DECK_SUMMARY_DECKS_NUM,
     },
   });
-  const decks = (data?.decks || []).map(
-    (deck, index) => <DeckItem key={index} deck={deck} />
-  );
+  const decks = (data?.decks || []).map((deck, index) => <DeckItem key={index} deck={deck} />);
   return (
     <Link href="/app/deck">
       <UnstyledButton component="div" mr="5rem">
         <Paper shadow="md" radius="md" p="md" withBorder>
           <Group className={classes.group}>
-            <Title order={2} className={classes.heading} mb="md">Decks</Title>
+            <Title order={2} className={classes.heading} mb="md">
+              Decks
+            </Title>
             <NewDeckItem />
           </Group>
           <Divider mb="md" />
           <Group>
             {decks}
-            <Text>{decks.length ? "View more..." : "You have no decks to show."}</Text>
+            <Text>{decks.length ? 'View more...' : 'You have no decks to show.'}</Text>
           </Group>
         </Paper>
       </UnstyledButton>

@@ -29,9 +29,9 @@ const auth = authExchange<string | null>({
       return operation;
     }
     const prevFetchOptions =
-    typeof operation.context.fetchOptions === 'function'
-      ? operation.context.fetchOptions()
-      : operation.context.fetchOptions || {};
+      typeof operation.context.fetchOptions === 'function'
+        ? operation.context.fetchOptions()
+        : operation.context.fetchOptions || {};
     const fetchOptions = {
       ...prevFetchOptions,
       headers: {
@@ -71,27 +71,45 @@ export const getExchanges = (ssr: SSRExchange) => [
         cardCreate(result, _args, cache, _info) {
           const { cardCreate: card } = result as Mutation;
           const { id, deckId } = card;
-          const cardsDirect = cache.resolve({ __typename: 'Deck', id: deckId as string }, 'cardsDirect');
+          const cardsDirect = cache.resolve(
+            { __typename: 'Deck', id: deckId as string },
+            'cardsDirect'
+          );
           if (Array.isArray(cardsDirect)) {
             cardsDirect.unshift({ __typename: 'Card', id });
-            cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', cardsDirect as NullArray<Data>);
-            cache.writeFragment(DeckCardsDirectCountFragmentDoc, { id: deckId as string, cardsDirectCount: cardsDirect.length });
+            cache.link(
+              { __typename: 'Deck', id: deckId as string },
+              'cardsDirect',
+              cardsDirect as NullArray<Data>
+            );
+            cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
+              id: deckId as string,
+              cardsDirectCount: cardsDirect.length,
+            });
           }
         },
         cardDelete(result, _args, cache, _info) {
-          const { cardDelete: { id, deckId } } = result as Mutation;
-          const cardsDirect = cache.resolve({ __typename: 'Deck', id: deckId as string }, 'cardsDirect');
-          const deletedCardKey = cache.keyOfEntity({ __typename: 'Card', id })
+          const {
+            cardDelete: { id, deckId },
+          } = result as Mutation;
+          const cardsDirect = cache.resolve(
+            { __typename: 'Deck', id: deckId as string },
+            'cardsDirect'
+          );
+          const deletedCardKey = cache.keyOfEntity({ __typename: 'Card', id });
           if (Array.isArray(cardsDirect)) {
             const updatedCards = cardsDirect.filter((cardKey) => cardKey !== deletedCardKey);
             cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
-            cache.writeFragment(DeckCardsDirectCountFragmentDoc, { id: deckId as string, cardsDirectCount: updatedCards.length });
+            cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
+              id: deckId as string,
+              cardsDirectCount: updatedCards.length,
+            });
           }
         },
         // deckAddSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
         // deckRemoveSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
-      }
-    }
+      },
+    },
   }),
   ssr,
   auth,

@@ -9,7 +9,11 @@ import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
 // TODO: pagination
 export const ManageDeck: FC<ManageDeckProps> = ({ deck }) => (
   <Stack spacing={2} align="center" sx={{ height: '100%' }}>
-    <Stack sx={({ breakpoints }) => ({ maxWidth: `${breakpoints.lg}px`, width: '100%' })} p="md" align="flex-start">
+    <Stack
+      sx={({ breakpoints }) => ({ maxWidth: `${breakpoints.lg}px`, width: '100%' })}
+      p="md"
+      align="flex-start"
+    >
       <ManageDeckTitle deck={deck} />
       <ManageDeckDescription deck={deck} />
       <ManageDeckAdditionalInfo deck={deck} />

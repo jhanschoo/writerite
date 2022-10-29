@@ -1,5 +1,14 @@
 import { DeckEditDocument } from '@generated/graphql';
-import { ActionIcon, createStyles, Group, Input, LoadingOverlay, Text, Title, UnstyledButton } from '@mantine/core';
+import {
+  ActionIcon,
+  createStyles,
+  Group,
+  Input,
+  LoadingOverlay,
+  Text,
+  Title,
+  UnstyledButton,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
@@ -22,7 +31,9 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
 export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => {
   const [{ fetching }, mutateTitle] = useMutation(DeckEditDocument);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { classes: { editText, titleContainer } } = useStyles();
+  const {
+    classes: { editText, titleContainer },
+  } = useStyles();
   const [showNameInput, setShowNameInput] = useState(false);
   useEffect(() => {
     showNameInput && inputRef.current?.select();
@@ -45,15 +56,24 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
     setShowNameInput(false);
   };
   const submitForm = form.onSubmit(({ name: newName }) => endEditingTitle(newName));
-  const nameDisplay = name ? <Title order={1}>{name}</Title> : <Title order={1} color="dimmed" italic>Untitled Deck</Title>
+  const nameDisplay = name ? (
+    <Title order={1}>{name}</Title>
+  ) : (
+    <Title order={1} color="dimmed" italic>
+      Untitled Deck
+    </Title>
+  );
   if (showNameInput) {
     return (
       <Group align="baseline" sx={{ position: 'relative' }}>
         <LoadingOverlay visible={fetching} />
-        <form
-          onSubmit={submitForm}
-        >
-          <Input.Wrapper label="Title" description="Enter a new title for your deck" required error={form.getInputProps('name').error}>
+        <form onSubmit={submitForm}>
+          <Input.Wrapper
+            label="Title"
+            description="Enter a new title for your deck"
+            required
+            error={form.getInputProps('name').error}
+          >
             <Input
               placeholder="Deck Title"
               type="text"
@@ -66,7 +86,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
               required
               autoFocus
               onKeyDown={(e: KeyboardEvent<HTMLInputElement>) =>
-                (e.key === 'Escape') && setShowNameInput(false)
+                e.key === 'Escape' && setShowNameInput(false)
               }
               rightSection={
                 <ActionIcon type="submit" size={48} variant="subtle" color="dark" title="Save">
@@ -76,7 +96,9 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
               rightSectionWidth={60}
               {...form.getInputProps('name')}
             />
-            <Text color="dimmed" size="xs" sx={{ marginTop: '7px' }}>Press &lsquo;esc&rsquo; to cancel editing</Text>
+            <Text color="dimmed" size="xs" sx={{ marginTop: '7px' }}>
+              Press &lsquo;esc&rsquo; to cancel editing
+            </Text>
           </Input.Wrapper>
         </form>
       </Group>
@@ -87,7 +109,9 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
     <UnstyledButton className={titleContainer} component="div" onClick={startEditingTitle} mx="md">
       <Group align="baseline">
         {nameDisplay}
-        <Text color="dimmed" className={editText}>edit...</Text>
+        <Text color="dimmed" className={editText}>
+          edit...
+        </Text>
       </Group>
     </UnstyledButton>
   );

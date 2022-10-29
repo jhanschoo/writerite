@@ -25,7 +25,9 @@ const Home: NextPage = () => {
       <Center sx={(theme) => ({ minHeight: '25vw', maxWidth: '50vw', margin: theme.spacing.lg })}>
         <HeroHeading>
           <em>Study with supercharged flashcards on </em>
-          <BrandText full suffix=".">WriteRite</BrandText>
+          <BrandText full suffix=".">
+            WriteRite
+          </BrandText>
         </HeroHeading>
       </Center>
       <Center sx={(theme) => ({ maxWidth: '50vw' })}>
