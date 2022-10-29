@@ -6,3 +6,8 @@ html {
   flex-grow: 1;
   cursor: text;
 }
+
+a {
+  text-decoration: unset;
+  color: unset;
+}

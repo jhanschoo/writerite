@@ -93,6 +93,7 @@ const useStyles = createStyles((_theme, _params, getRef) => ({
 }));
 
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
+  const router = useRouter();
   const { classes } = useStyles();
   const [{ data, fetching, error }, refetchDecks] = useQuery({
     query: DecksDocument,
@@ -103,22 +104,20 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   });
   const decks = (data?.decks || []).map((deck, index) => <DeckItem key={index} deck={deck} />);
   return (
-    <Link href="/app/deck">
-      <UnstyledButton component="div" mr="5rem">
-        <Paper shadow="md" radius="md" p="md" withBorder>
-          <Group className={classes.group}>
-            <Title order={2} className={classes.heading} mb="md">
-              Decks
-            </Title>
-            <NewDeckItem />
-          </Group>
-          <Divider mb="md" />
-          <Group>
-            {decks}
-            <Text>{decks.length ? 'View more...' : 'You have no decks to show.'}</Text>
-          </Group>
-        </Paper>
-      </UnstyledButton>
-    </Link>
+    <UnstyledButton component="div" mr="5rem" onClick={() => router.push('/app/deck')}>
+      <Paper shadow="md" radius="md" p="md">
+        <Group className={classes.group}>
+          <Title order={2} className={classes.heading} mb="md">
+            Decks
+          </Title>
+          <NewDeckItem />
+        </Group>
+        <Divider mb="md" />
+        <Group>
+          {decks}
+          <Text>{decks.length ? 'View more...' : 'You have no decks to show.'}</Text>
+        </Group>
+      </Paper>
+    </UnstyledButton>
   );
 };

@@ -101,22 +101,20 @@ export const UserRoomsSummary: FC<Record<string, unknown>> = () => {
     <RoomItem key={index} room={room} />
   ));
   return (
-    <Link href="/app/rooms">
-      <UnstyledButton component="div" mr="5rem">
-        <Paper shadow="md" radius="md" p="md" withBorder>
-          <Group className={classes.group}>
-            <Title order={2} className={classes.heading} mb="md">
-              Rooms
-            </Title>
-            <NewRoomItem />
-          </Group>
-          <Divider mb="md" />
-          <Group>
-            {rooms}
-            <Text>{rooms.length ? 'View more...' : 'You are not in any rooms.'}</Text>
-          </Group>
-        </Paper>
-      </UnstyledButton>
-    </Link>
+    <UnstyledButton component="div" mr="5rem" onClick={() => router.push('/app/rooms')}>
+      <Paper shadow="md" radius="md" p="md">
+        <Group className={classes.group}>
+          <Title order={2} className={classes.heading} mb="md">
+            Rooms
+          </Title>
+          <NewRoomItem />
+        </Group>
+        <Divider mb="md" />
+        <Group>
+          {rooms}
+          <Text>{rooms.length ? 'View more...' : 'You are not in any rooms.'}</Text>
+        </Group>
+      </Paper>
+    </UnstyledButton>
   );
 };
