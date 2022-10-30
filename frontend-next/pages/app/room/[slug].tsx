@@ -274,7 +274,7 @@ const Home: NextPage = () => {
               avoid worse pains."
             </Text>
           </Stack>
-          <Group p="md" className={classes.inputPanel}>
+          <Group p="md" className={classes.inputPanel} position="center">
             <TextInput
               rightSection={
                 <ActionIcon type="submit" variant="subtle" color="dark" title="Save">
@@ -282,6 +282,9 @@ const Home: NextPage = () => {
                 </ActionIcon>
               }
               variant="filled"
+              sx={{
+                minWidth: "33vw"
+              }}
             />
           </Group>
         </Stack>
