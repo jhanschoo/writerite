@@ -137,3 +137,14 @@ To run unit tests, run
 * When more than one day has passed since the creation of a room or
   the last known posting of a message into the room while it was active,
   the room becomes inactive
+
+### Session management
+
+* Tokens are issued by authorization with username & password, or with 3rd-party authentication, or by refreshing
+* There exists an endpoint for frontends to refresh their tokens against
+  * We maintain on redis an allowlist of session tokens with TTLs only slightly greater than the tokens' TTLs
+  * We maintain redis maps of
+    * userid to sessionid
+    * roomid to sessionid
+  * When user information (e.g. name) is changed, or room membership of a user is changed, or room state is changed,
+    * we invalidate session tokens via those maps.
