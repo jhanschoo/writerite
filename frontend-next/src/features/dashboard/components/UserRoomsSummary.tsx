@@ -4,8 +4,8 @@ import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import {
-  OccupyingRoomsDocument,
-  OccupyingRoomsQuery,
+  OccupyingActiveRoomsDocument,
+  OccupyingActiveRoomsQuery,
   RoomCreateDocument,
 } from '@generated/graphql';
 import {
@@ -46,7 +46,7 @@ const NewRoomItem = () => {
   );
 };
 
-const RoomItem = ({ room }: { room: OccupyingRoomsQuery['occupyingRooms'][number] }) => {
+const RoomItem = ({ room }: { room: OccupyingActiveRoomsQuery['occupyingActiveRooms'][number] }) => {
   return (
     <Link href={`/app/room/${room.slug || room.id}`}>
       <UnstyledButton sx={{ height: 'unset' }} onClick={(e) => e.stopPropagation()} component="div">
@@ -95,9 +95,9 @@ export const UserRoomsSummary: FC<Record<string, unknown>> = () => {
   const router = useRouter();
   const { classes } = useStyles();
   const [{ data, fetching, error }, refetchDecks] = useQuery({
-    query: OccupyingRoomsDocument,
+    query: OccupyingActiveRoomsDocument,
   });
-  const rooms = (data?.occupyingRooms || []).map((room, index) => (
+  const rooms = (data?.occupyingActiveRooms || []).map((room, index) => (
     <RoomItem key={index} room={room} />
   ));
   return (

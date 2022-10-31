@@ -1527,7 +1527,7 @@
             "deprecationReason": null
           },
           {
-            "name": "finalizeThirdPartyOauthSignin",
+            "name": "finalizeOauthSignin",
             "description": null,
             "args": [
               {
@@ -1604,7 +1604,7 @@
             "deprecationReason": null
           },
           {
-            "name": "initializeThirdPartyOauthSignin",
+            "name": "initializeOauthSignin",
             "description": null,
             "args": [],
             "type": {
@@ -2259,7 +2259,7 @@
             "deprecationReason": null
           },
           {
-            "name": "occupyingRooms",
+            "name": "occupyingActiveRooms",
             "description": null,
             "args": [],
             "type": {
@@ -2792,7 +2792,7 @@
             "deprecationReason": null
           },
           {
-            "name": "occupyingRooms",
+            "name": "occupyingActiveRooms",
             "description": null,
             "args": [],
             "type": {

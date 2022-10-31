@@ -114,8 +114,8 @@ export type Mutation = {
   deckEdit: Deck;
   deckRemoveSubdeck: Deck;
   deckUsed: Deck;
-  finalizeThirdPartyOauthSignin?: Maybe<Scalars['JWT']>;
-  initializeThirdPartyOauthSignin: Scalars['String'];
+  finalizeOauthSignin?: Maybe<Scalars['JWT']>;
+  initializeOauthSignin: Scalars['String'];
   /**
    * @subscriptionsTriggered(
    *     signatures: ["chatMsgsOfRoomUpdates"]
@@ -239,7 +239,7 @@ export type MutationDeckUsedArgs = {
 };
 
 
-export type MutationFinalizeThirdPartyOauthSigninArgs = {
+export type MutationFinalizeOauthSigninArgs = {
   code: Scalars['String'];
   nonce: Scalars['String'];
   provider: Scalars['String'];
@@ -303,7 +303,7 @@ export type Query = {
   health: Scalars['String'];
   message: Message;
   messagesOfRoom: Array<Message>;
-  occupyingRooms: Array<Room>;
+  occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
   room: Room;
   user: User;
@@ -384,7 +384,7 @@ export type User = {
   id: Scalars['ID'];
   isPublic: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
-  occupyingRooms: Array<Room>;
+  occupyingActiveRooms: Array<Room>;
   ownedRooms: Array<Room>;
   roles: Array<Scalars['String']>;
 };
@@ -511,7 +511,7 @@ export type DecksQueryVariables = Exact<{
 
 export type DecksQuery = { __typename?: 'Query', decks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }> };
 
-export type FinalizeThirdPartyOauthSigninMutationVariables = Exact<{
+export type FinalizeOauthSigninMutationVariables = Exact<{
   code: Scalars['String'];
   provider: Scalars['String'];
   nonce: Scalars['String'];
@@ -519,22 +519,22 @@ export type FinalizeThirdPartyOauthSigninMutationVariables = Exact<{
 }>;
 
 
-export type FinalizeThirdPartyOauthSigninMutation = { __typename?: 'Mutation', finalizeThirdPartyOauthSignin?: any | null };
+export type FinalizeOauthSigninMutation = { __typename?: 'Mutation', finalizeOauthSignin?: any | null };
 
 export type HealthQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type HealthQueryQuery = { __typename?: 'Query', health: string };
 
-export type InitializeThirdPartyOauthSigninMutationVariables = Exact<{ [key: string]: never; }>;
+export type InitializeOauthSigninMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type InitializeThirdPartyOauthSigninMutation = { __typename?: 'Mutation', initializeThirdPartyOauthSignin: string };
+export type InitializeOauthSigninMutation = { __typename?: 'Mutation', initializeOauthSignin: string };
 
-export type OccupyingRoomsQueryVariables = Exact<{ [key: string]: never; }>;
+export type OccupyingActiveRoomsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OccupyingRoomsQuery = { __typename?: 'Query', occupyingRooms: Array<{ __typename?: 'Room', createdAt: any, deckId?: string | null, id: string, internalConfig: any, messageCount: number, occupantsCount: number, ownerConfig: any, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string, name: string } | null }> };
+export type OccupyingActiveRoomsQuery = { __typename?: 'Query', occupyingActiveRooms: Array<{ __typename?: 'Room', createdAt: any, deckId?: string | null, id: string, internalConfig: any, messageCount: number, occupantsCount: number, ownerConfig: any, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string, name: string } | null }> };
 
 export type RepeatHealthSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -587,10 +587,10 @@ export const DeckCreateDocument = {"kind":"Document","definitions":[{"kind":"Ope
 export const DeckEditDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeckEdit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"answerLang"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"JSONObject"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"promptLang"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"published"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deckEdit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"answerLang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"answerLang"}}},{"kind":"Argument","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}},{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"promptLang"},"value":{"kind":"Variable","name":{"kind":"Name","value":"promptLang"}}},{"kind":"Argument","name":{"kind":"Name","value":"published"},"value":{"kind":"Variable","name":{"kind":"Name","value":"published"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"deckDetail"}}]}}]}},...DeckDetailFragmentDoc.definitions]} as unknown as DocumentNode<DeckEditMutation, DeckEditMutationVariables>;
 export const DeckRemoveSubdeckDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeckRemoveSubdeck"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"subdeckId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deckRemoveSubdeck"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}},{"kind":"Argument","name":{"kind":"Name","value":"subdeckId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"subdeckId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"deckSubdecks"}}]}}]}},...DeckSubdecksFragmentDoc.definitions]} as unknown as DocumentNode<DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables>;
 export const DecksDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Decks"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"scope"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"DecksQueryScope"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"take"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"titleFilter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"decks"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"cursor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"cursor"}}},{"kind":"Argument","name":{"kind":"Name","value":"scope"},"value":{"kind":"Variable","name":{"kind":"Name","value":"scope"}}},{"kind":"Argument","name":{"kind":"Name","value":"take"},"value":{"kind":"Variable","name":{"kind":"Name","value":"take"}}},{"kind":"Argument","name":{"kind":"Name","value":"titleFilter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"titleFilter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"deckSummary"}}]}}]}},...DeckSummaryFragmentDoc.definitions]} as unknown as DocumentNode<DecksQuery, DecksQueryVariables>;
-export const FinalizeThirdPartyOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FinalizeThirdPartyOauthSignin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"code"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nonce"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"redirect_uri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"finalizeThirdPartyOauthSignin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"code"},"value":{"kind":"Variable","name":{"kind":"Name","value":"code"}}},{"kind":"Argument","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}},{"kind":"Argument","name":{"kind":"Name","value":"nonce"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nonce"}}},{"kind":"Argument","name":{"kind":"Name","value":"redirect_uri"},"value":{"kind":"Variable","name":{"kind":"Name","value":"redirect_uri"}}}]}]}}]} as unknown as DocumentNode<FinalizeThirdPartyOauthSigninMutation, FinalizeThirdPartyOauthSigninMutationVariables>;
+export const FinalizeOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"FinalizeOauthSignin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"code"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"provider"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"nonce"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"redirect_uri"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"finalizeOauthSignin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"code"},"value":{"kind":"Variable","name":{"kind":"Name","value":"code"}}},{"kind":"Argument","name":{"kind":"Name","value":"provider"},"value":{"kind":"Variable","name":{"kind":"Name","value":"provider"}}},{"kind":"Argument","name":{"kind":"Name","value":"nonce"},"value":{"kind":"Variable","name":{"kind":"Name","value":"nonce"}}},{"kind":"Argument","name":{"kind":"Name","value":"redirect_uri"},"value":{"kind":"Variable","name":{"kind":"Name","value":"redirect_uri"}}}]}]}}]} as unknown as DocumentNode<FinalizeOauthSigninMutation, FinalizeOauthSigninMutationVariables>;
 export const HealthQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HealthQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"health"}}]}}]} as unknown as DocumentNode<HealthQueryQuery, HealthQueryQueryVariables>;
-export const InitializeThirdPartyOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializeThirdPartyOauthSignin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializeThirdPartyOauthSignin"}}]}}]} as unknown as DocumentNode<InitializeThirdPartyOauthSigninMutation, InitializeThirdPartyOauthSigninMutationVariables>;
-export const OccupyingRoomsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OccupyingRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"occupyingRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomSummary"}}]}}]}},...RoomSummaryFragmentDoc.definitions]} as unknown as DocumentNode<OccupyingRoomsQuery, OccupyingRoomsQueryVariables>;
+export const InitializeOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializeOauthSignin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializeOauthSignin"}}]}}]} as unknown as DocumentNode<InitializeOauthSigninMutation, InitializeOauthSigninMutationVariables>;
+export const OccupyingActiveRoomsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OccupyingActiveRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"occupyingActiveRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomSummary"}}]}}]}},...RoomSummaryFragmentDoc.definitions]} as unknown as DocumentNode<OccupyingActiveRoomsQuery, OccupyingActiveRoomsQueryVariables>;
 export const RepeatHealthSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RepeatHealthSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"repeatHealth"}}]}}]} as unknown as DocumentNode<RepeatHealthSubscriptionSubscription, RepeatHealthSubscriptionSubscriptionVariables>;
 export const RoomCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomCreate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomCreate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomDetail"}}]}}]}},...RoomDetailFragmentDoc.definitions]} as unknown as DocumentNode<RoomCreateMutation, RoomCreateMutationVariables>;
 export const UserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"User"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"facebookId"}},{"kind":"Field","name":{"kind":"Name","value":"googleId"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UserQuery, UserQueryVariables>;
