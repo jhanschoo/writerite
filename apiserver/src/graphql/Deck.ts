@@ -1,20 +1,37 @@
-import { Prisma } from "@prisma/client";
-import { arg, booleanArg, enumType, idArg, intArg, list, mutationField, nonNull, objectType, queryField, stringArg } from "nexus";
-import { userLacksPermissionsErrorFactory } from "../error";
-import { guardValidUser } from "../service/authorization/guardValidUser";
-import { getDescendantsOfDeck } from "../service/deckFamily";
-import { jsonObjectArg } from "./scalarUtil";
-import { z } from "zod";
+import { Prisma } from '@prisma/client';
+import {
+  arg,
+  booleanArg,
+  enumType,
+  idArg,
+  intArg,
+  list,
+  mutationField,
+  nonNull,
+  objectType,
+  queryField,
+  stringArg,
+} from 'nexus';
+import { userLacksPermissionsErrorFactory } from '../error';
+import { guardValidUser } from '../service/authorization/guardValidUser';
+import { getDescendantsOfDeck } from '../service/deckFamily';
+import { jsonObjectArg } from './scalarUtil';
+import { z } from 'zod';
 
 const DEFAULT_TAKE = 60;
 
-function cursorParams(cursor?: string | null, take?: number | null): {
-  cursor: { id: string },
-  skip: number,
-  take: number,
-} | {
-  take: number
-} {
+function cursorParams(
+  cursor?: string | null,
+  take?: number | null
+):
+  | {
+      cursor: { id: string };
+      skip: number;
+      take: number;
+    }
+  | {
+      take: number;
+    } {
   const actualTake = Math.min(take ?? DEFAULT_TAKE, DEFAULT_TAKE);
   if (cursor) {
     return {
@@ -29,93 +46,98 @@ function cursorParams(cursor?: string | null, take?: number | null): {
 }
 
 export const Deck = objectType({
-  name: "Deck",
+  name: 'Deck',
   definition(t) {
-    t.nonNull.id("id");
-    t.nonNull.id("ownerId");
-    t.nonNull.string("name");
-    t.nonNull.jsonObject("description", {
+    t.nonNull.id('id');
+    t.nonNull.id('ownerId');
+    t.nonNull.string('name');
+    t.nonNull.jsonObject('description', {
       resolve({ description }) {
         return description as Prisma.InputJsonObject;
       },
     });
-    t.nonNull.string("promptLang");
-    t.nonNull.string("answerLang");
-    t.nonNull.boolean("published");
-    t.nonNull.list.nonNull.string("sortData");
-    t.nonNull.dateTime("createdAt");
-    t.nonNull.dateTime("editedAt");
-    t.nonNull.dateTime("usedAt");
+    t.nonNull.string('promptLang');
+    t.nonNull.string('answerLang');
+    t.nonNull.boolean('published');
+    t.nonNull.list.nonNull.string('sortData');
+    t.nonNull.dateTime('createdAt');
+    t.nonNull.dateTime('editedAt');
+    t.nonNull.dateTime('usedAt');
 
-    t.nonNull.field("owner", {
-      type: "User",
+    t.nonNull.field('owner', {
+      type: 'User',
       async resolve({ ownerId: id }, _args, { prisma }) {
         const user = await prisma.user.findUnique({ where: { id } });
         if (!user) {
-          throw userLacksPermissionsErrorFactory("If such a user exists, you are not authorized to view it");
+          throw userLacksPermissionsErrorFactory(
+            'If such a user exists, you are not authorized to view it'
+          );
         }
         return user;
       },
     });
-    t.nonNull.list.nonNull.field("subdecks", {
-      type: "Deck",
-      description: "all direct subdecks of this deck",
+    t.nonNull.list.nonNull.field('subdecks', {
+      type: 'Deck',
+      description: 'all direct subdecks of this deck',
       async resolve({ id: parentDeckId }, _args, { prisma }) {
         return prisma.deck.findMany({ where: { parentDecks: { some: { parentDeckId } } } });
       },
     });
-    t.nonNull.int("subdecksCount", {
-      description: "count of all direct subdecks of this deck",
+    t.nonNull.int('subdecksCount', {
+      description: 'count of all direct subdecks of this deck',
       async resolve({ id: parentDeckId }, _args, { prisma }) {
         return prisma.deck.count({ where: { parentDecks: { some: { parentDeckId } } } });
       },
     });
-    t.nonNull.list.nonNull.field("descendantDecks", {
-      type: "Deck",
-      description: "all descendant (reflexive, transitive closure of subdeck) decks of this deck",
+    t.nonNull.list.nonNull.field('descendantDecks', {
+      type: 'Deck',
+      description: 'all descendant (reflexive, transitive closure of subdeck) decks of this deck',
       async resolve({ id }, _args, { prisma }) {
         return getDescendantsOfDeck(prisma, id);
       },
     });
-    t.nonNull.list.nonNull.field("cardsDirect", {
-      type: "Card",
-      description: "all cards directly belonging to this deck",
+    t.nonNull.list.nonNull.field('cardsDirect', {
+      type: 'Card',
+      description: 'all cards directly belonging to this deck',
       async resolve({ id: deckId }, _args, { prisma }) {
         return prisma.card.findMany({ where: { deckId } });
       },
     });
-    t.nonNull.int("cardsDirectCount", {
-      description: "number of all cards directly belonging to this deck",
+    t.nonNull.int('cardsDirectCount', {
+      description: 'number of all cards directly belonging to this deck',
       async resolve({ id: deckId }, _args, { prisma }) {
         return prisma.card.count({ where: { deckId } });
       },
     });
-    t.nonNull.list.nonNull.field("cardsAllUnder", {
-      type: "Card",
-      description: "all cards directly belonging to some descendant (reflexive, transitive closure of subdeck) deck of this deck",
+    t.nonNull.list.nonNull.field('cardsAllUnder', {
+      type: 'Card',
+      description:
+        'all cards directly belonging to some descendant (reflexive, transitive closure of subdeck) deck of this deck',
       async resolve({ id }, _args, { prisma }) {
         const decks = await getDescendantsOfDeck(prisma, id);
         // eslint-disable-next-line @typescript-eslint/no-shadow
         return prisma.card.findMany({ where: { deckId: { in: decks.map(({ id }) => id) } } });
       },
     });
-    t.field("ownRecord", {
-      type: "UserDeckRecord",
+    t.field('ownRecord', {
+      type: 'UserDeckRecord',
       async resolve({ id: deckId }, _args, { prisma, sub }) {
         if (!sub) {
           return null;
         }
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        return prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } });
+        return prisma.userDeckRecord.findUnique({
+          where: { userId_deckId: { userId: sub.id, deckId } },
+        });
       },
     });
   },
 });
 
 export const UserDeckRecord = objectType({
-  name: "UserDeckRecord",
+  name: 'UserDeckRecord',
   definition(t) {
-    t.nonNull.jsonObject("notes", {
+    t.nonNull.jsonObject('notes', {
       resolve({ notes }) {
         return notes as Prisma.JsonObject;
       },
@@ -123,8 +145,8 @@ export const UserDeckRecord = objectType({
   },
 });
 
-export const DeckQuery = queryField("deck", {
-  type: nonNull("Deck"),
+export const DeckQuery = queryField('deck', {
+  type: nonNull('Deck'),
   args: {
     id: nonNull(idArg()),
   },
@@ -134,78 +156,88 @@ export const DeckQuery = queryField("deck", {
       { cards: { some: { records: { some: { userId: sub.id } } } } },
       { published: true },
     ];
-    const deck = await prisma.deck.findUnique({ where: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      id, OR,
-    } });
+    const deck = await prisma.deck.findUnique({
+      where: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        id,
+        OR,
+      },
+    });
 
     if (!deck) {
-      throw userLacksPermissionsErrorFactory("If such a deck exists, you are not authorized to view it");
+      throw userLacksPermissionsErrorFactory(
+        'If such a deck exists, you are not authorized to view it'
+      );
     }
     return deck;
   }),
 });
 
-export const DecksQuery = queryField("decks", {
-  type: nonNull(list(nonNull("Deck"))),
+export const DecksQuery = queryField('decks', {
+  type: nonNull(list(nonNull('Deck'))),
   args: {
     cursor: idArg({ undefinedOnly: true }),
     take: intArg({ undefinedOnly: true }),
     titleFilter: stringArg({ undefinedOnly: true }),
     scope: arg({
-      type: "DecksQueryScope",
+      type: 'DecksQueryScope',
       undefinedOnly: true,
     }),
   },
-  description: "implicit limit of 60",
-  resolve: guardValidUser(async (_root, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) => {
-    const OR = [
-      { ownerId: sub.id },
-      { cards: { some: { records: { some: { userId: sub.id } } } } },
-      { published: true },
-    ];
-    switch (scope) {
-      case "PARTICIPATED":
-        OR.length = 3;
-        break;
-      case "VISIBLE":
-        OR.length = 2;
-        break;
-      case "OWNED":
+  description: 'implicit limit of 60',
+  resolve: guardValidUser(
+    async (_root, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) => {
+      const OR = [
+        { ownerId: sub.id },
+        { cards: { some: { records: { some: { userId: sub.id } } } } },
+        { published: true },
+      ];
+      switch (scope) {
+        case 'PARTICIPATED':
+          OR.length = 3;
+          break;
+        case 'VISIBLE':
+          OR.length = 2;
+          break;
+        case 'OWNED':
         // falls through
-      default:
-        OR.length = 1;
+        default:
+          OR.length = 1;
+      }
+      return prisma.deck.findMany({
+        ...cursorParams(cursor, take),
+        where: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          OR,
+          name: titleFilter
+            ? {
+                contains: titleFilter,
+              }
+            : undefined,
+        },
+        include: {
+          owner: true,
+          cards: true,
+        },
+      });
     }
-    return prisma.deck.findMany({
-      ...cursorParams(cursor, take),
-      where: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        OR,
-        name: titleFilter ? {
-          contains: titleFilter,
-        } : undefined,
-      },
-      include: {
-        owner: true,
-        cards: true,
-      },
-    });
-  }),
+  ),
 });
 
 export const DecksQueryScope = enumType({
-  name: "DecksQueryScope",
-  members: ["OWNED", "PARTICIPATED", "VISIBLE"],
+  name: 'DecksQueryScope',
+  members: ['OWNED', 'PARTICIPATED', 'VISIBLE'],
 });
 
-export const OwnDeckRecordQuery = queryField("ownDeckRecord", {
-  type: "UserDeckRecord",
+export const OwnDeckRecordQuery = queryField('ownDeckRecord', {
+  type: 'UserDeckRecord',
   args: {
     deckId: nonNull(idArg()),
   },
   resolve: guardValidUser(async (_root, { deckId }, { sub, prisma }) =>
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } })),
+    prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } })
+  ),
 });
 
 export const deckCreateSchema = z.object({
@@ -214,35 +246,45 @@ export const deckCreateSchema = z.object({
   promptLang: z.string().trim().min(2).optional(),
   answerLang: z.string().trim().min(2).optional(),
   published: z.boolean().optional(),
-  cards: z.array(z.object({
-    answers: z.array(z.string()),
-    fullAnswer: z.object({}),
-    prompt: z.object({}),
-    template: z.boolean().optional(),
-  })).optional(),
+  cards: z
+    .array(
+      z.object({
+        answers: z.array(z.string()),
+        fullAnswer: z.object({}),
+        prompt: z.object({}),
+        template: z.boolean().optional(),
+      })
+    )
+    .optional(),
 });
 
-export const DeckCreateMutation = mutationField("deckCreate", {
-  type: nonNull("Deck"),
+export const DeckCreateMutation = mutationField('deckCreate', {
+  type: nonNull('Deck'),
   args: {
     name: stringArg({ undefinedOnly: true }),
     description: jsonObjectArg({ undefinedOnly: true }),
     promptLang: stringArg({ undefinedOnly: true }),
     answerLang: stringArg({ undefinedOnly: true }),
     published: booleanArg({ undefinedOnly: true }),
-    cards: list(nonNull(arg({
-      type: "CardCreateInput",
-      undefinedOnly: true,
-    }))),
+    cards: list(
+      nonNull(
+        arg({
+          type: 'CardCreateInput',
+          undefinedOnly: true,
+        })
+      )
+    ),
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
     const { cards, ...rest } = deckCreateSchema.parse(args);
 
-    return prisma.deck.create({ data: {
-      ownerId: sub.id,
-      ...rest,
-      cards: { create: cards },
-    } });
+    return prisma.deck.create({
+      data: {
+        ownerId: sub.id,
+        ...rest,
+        cards: { create: cards },
+      },
+    });
   }),
 });
 
@@ -255,8 +297,8 @@ export const deckEditSchema = z.object({
   published: z.boolean().optional(),
 });
 
-export const DeckEditMutation = mutationField("deckEdit", {
-  type: nonNull("Deck"),
+export const DeckEditMutation = mutationField('deckEdit', {
+  type: nonNull('Deck'),
   args: {
     id: nonNull(idArg()),
     name: stringArg({ undefinedOnly: true }),
@@ -267,15 +309,18 @@ export const DeckEditMutation = mutationField("deckEdit", {
   },
   resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
     const { id, ...data } = deckEditSchema.parse(args);
-    return prisma.deck.update({ where: { id, ownerId: sub.id }, data: { ...data, editedAt: new Date() } });
+    return prisma.deck.update({
+      where: { id, ownerId: sub.id },
+      data: { ...data, editedAt: new Date() },
+    });
   }),
 });
 
-export const DeckAddCardsMutation = mutationField("deckAddCards", {
-  type: nonNull("Deck"),
+export const DeckAddCardsMutation = mutationField('deckAddCards', {
+  type: nonNull('Deck'),
   args: {
     deckId: nonNull(idArg()),
-    cards: nonNull(list(nonNull("CardCreateInput"))),
+    cards: nonNull(list(nonNull('CardCreateInput'))),
   },
   resolve: guardValidUser(async (_root, { deckId, cards }, { sub, prisma }) => {
     const defaultCards = cards.map(({ prompt, fullAnswer, answers, template }) => ({
@@ -295,76 +340,91 @@ export const DeckAddCardsMutation = mutationField("deckAddCards", {
   }),
 });
 
-export const DeckAddSubdeckMutation = mutationField("deckAddSubdeck", {
-  type: nonNull("Deck"),
+export const DeckAddSubdeckMutation = mutationField('deckAddSubdeck', {
+  type: nonNull('Deck'),
   args: {
     id: nonNull(idArg()),
     subdeckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) => prisma.deck.update({
-    where: { id, ownerId: sub.id },
-    data: {
-      subdecks: { connectOrCreate: {
+  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) =>
+    prisma.deck.update({
+      where: { id, ownerId: sub.id },
+      data: {
+        subdecks: {
+          connectOrCreate: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            where: {
+              parentDeckId_subdeckId: { parentDeckId: id, subdeckId },
+              subdeck: { id: subdeckId, ownerId: sub.id },
+            },
+            create: { subdeck: { connect: { id: subdeckId, ownerId: sub.id } } },
+          },
+        },
+      },
+    })
+  ),
+});
+
+export const DeckRemoveSubdeckMutation = mutationField('deckRemoveSubdeck', {
+  type: nonNull('Deck'),
+  args: {
+    id: nonNull(idArg()),
+    subdeckId: nonNull(idArg()),
+  },
+  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) =>
+    prisma.deck.update({
+      where: { id, ownerId: sub.id },
+      data: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        where: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId }, subdeck: { id: subdeckId, ownerId: sub.id } },
-        create: { subdeck: { connect: { id: subdeckId, ownerId: sub.id } } },
-      } },
-    },
-  })),
+        subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
+      },
+    })
+  ),
 });
 
-export const DeckRemoveSubdeckMutation = mutationField("deckRemoveSubdeck", {
-  type: nonNull("Deck"),
-  args: {
-    id: nonNull(idArg()),
-    subdeckId: nonNull(idArg()),
-  },
-  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) => prisma.deck.update({
-    where: { id, ownerId: sub.id },
-    data: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
-    },
-  })),
-});
-
-export const DeckUsedMutation = mutationField("deckUsed", {
-  type: nonNull("Deck"),
+export const DeckUsedMutation = mutationField('deckUsed', {
+  type: nonNull('Deck'),
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => prisma.deck.update({
-    where: { id, ownerId: sub.id },
-    data: {
-      usedAt: new Date(),
-    },
-  })),
+  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) =>
+    prisma.deck.update({
+      where: { id, ownerId: sub.id },
+      data: {
+        usedAt: new Date(),
+      },
+    })
+  ),
 });
 
-export const DeckDeleteMutation = mutationField("deckDelete", {
-  type: nonNull("Deck"),
+export const DeckDeleteMutation = mutationField('deckDelete', {
+  type: nonNull('Deck'),
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => prisma.deck.delete({ where: { id, ownerId: sub.id } })),
+  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) =>
+    prisma.deck.delete({ where: { id, ownerId: sub.id } })
+  ),
 });
 
-export const OwnDeckRecordSetMutation = mutationField("ownDeckRecordSet", {
-  type: nonNull("UserDeckRecord"),
+export const OwnDeckRecordSetMutation = mutationField('ownDeckRecordSet', {
+  type: nonNull('UserDeckRecord'),
   args: {
     deckId: nonNull(idArg()),
     notes: nonNull(jsonObjectArg()),
   },
-  resolve: guardValidUser((_source, { deckId, notes }, { sub, prisma }) => prisma.userDeckRecord.upsert({
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    where: { userId_deckId: { userId: sub.id, deckId } },
-    create: {
-      deck: { connect: { id: deckId } },
-      user: { connect: { id: sub.id } },
-      notes: notes as Prisma.InputJsonObject,
-    },
-    update: {
-      notes: notes as Prisma.InputJsonObject,
-    },
-  })),
+  resolve: guardValidUser((_source, { deckId, notes }, { sub, prisma }) =>
+    prisma.userDeckRecord.upsert({
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      where: { userId_deckId: { userId: sub.id, deckId } },
+      create: {
+        deck: { connect: { id: deckId } },
+        user: { connect: { id: sub.id } },
+        notes: notes as Prisma.InputJsonObject,
+      },
+      update: {
+        notes: notes as Prisma.InputJsonObject,
+      },
+    })
+  ),
 });

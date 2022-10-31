@@ -3,10 +3,7 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "typeRoots": ["./node_modules/@types", "./typings"],
-    "skipLibCheck": true,                           /* Skip type checking of declaration files. */
+    "skipLibCheck": true /* Skip type checking of declaration files. */
   },
-  "include": [
-    "generated/**/*",
-    "src/**/*",
-  ]
+  "include": ["generated/**/*", "src/**/*"]
 }

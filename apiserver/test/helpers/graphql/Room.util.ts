@@ -1,6 +1,11 @@
-import { WrServer } from "../../../src/graphqlApp";
-import { gql, testQuery } from "../misc";
-import { RoomAddOccupantMutationVariables, RoomQueryVariables, RoomSetDeckMutationVariables, RoomSetStateMutationVariables } from "../../../generated/typescript-operations";
+import { WrServer } from '../../../src/graphqlApp';
+import { gql, testQuery } from '../misc';
+import {
+  RoomAddOccupantMutationVariables,
+  RoomQueryVariables,
+  RoomSetDeckMutationVariables,
+  RoomSetStateMutationVariables,
+} from '../../../generated/typescript-operations';
 
 export function mutationRoomCreate(server: WrServer) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -69,7 +74,10 @@ export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMu
   });
 }
 
-export function mutationRoomAddOccupant(server: WrServer, variables: RoomAddOccupantMutationVariables) {
+export function mutationRoomAddOccupant(
+  server: WrServer,
+  variables: RoomAddOccupantMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomAddOccupantMutationVariables>({
     server,
@@ -115,7 +123,7 @@ export function queryOccupyingRooms(server: WrServer) {
   return testQuery<undefined>({
     server,
     document: gql`
-      query OccupyingRooms{
+      query OccupyingRooms {
         occupyingRooms {
           id
           state

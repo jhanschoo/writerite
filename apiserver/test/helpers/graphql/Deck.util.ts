@@ -1,6 +1,12 @@
-import { WrServer } from "../../../src/graphqlApp";
-import { gql, testQuery } from "../misc";
-import { DeckAddSubdeckMutationVariables, DeckEditNameMutationVariables, DeckQueryVariables, DeckRemoveSubdeckMutationVariables, DeckUsedMutationVariables } from "../../../generated/typescript-operations";
+import { WrServer } from '../../../src/graphqlApp';
+import { gql, testQuery } from '../misc';
+import {
+  DeckAddSubdeckMutationVariables,
+  DeckEditNameMutationVariables,
+  DeckQueryVariables,
+  DeckRemoveSubdeckMutationVariables,
+  DeckUsedMutationVariables,
+} from '../../../generated/typescript-operations';
 
 export function mutationDeckCreateEmpty(server: WrServer) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -26,7 +32,10 @@ export function mutationDeckCreateEmpty(server: WrServer) {
   });
 }
 
-export function mutationDeckAddSubdeck(server: WrServer, variables: DeckAddSubdeckMutationVariables) {
+export function mutationDeckAddSubdeck(
+  server: WrServer,
+  variables: DeckAddSubdeckMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckAddSubdeckMutationVariables>({
     server,
@@ -41,7 +50,10 @@ export function mutationDeckAddSubdeck(server: WrServer, variables: DeckAddSubde
   });
 }
 
-export function mutationDeckRemoveSubdeck(server: WrServer, variables: DeckRemoveSubdeckMutationVariables) {
+export function mutationDeckRemoveSubdeck(
+  server: WrServer,
+  variables: DeckRemoveSubdeckMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckRemoveSubdeckMutationVariables>({
     server,
@@ -116,7 +128,7 @@ export function queryDecks(server: WrServer) {
   return testQuery<undefined>({
     server,
     document: gql`
-      query Decks{
+      query Decks {
         decks {
           id
         }

@@ -8,14 +8,9 @@
       "type": "pwa-node",
       "name": "Start local dev server",
       "request": "launch",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
+      "runtimeArgs": ["run", "dev"],
       "runtimeExecutable": "npm",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "cwd": "${workspaceFolder}"
     },
     {
@@ -27,11 +22,7 @@
       "internalConsoleOptions": "neverOpen",
       "cwd": "${workspaceFolder}",
       "runtimeExecutable": "npm",
-      "args": [
-        "run",
-        "test:integration",
-        "--"
-      ],
+      "args": ["run", "test:integration", "--"],
       "preLaunchTask": "${defaultBuildTask}"
     }
   ]

@@ -1,11 +1,13 @@
-import { Context, LoggedInContext } from "../../context";
-import { userNotLoggedInErrorFactory } from "../../error";
+import { Context, LoggedInContext } from '../../context';
+import { userNotLoggedInErrorFactory } from '../../error';
 
 export function notLoggedIn(context: Context) {
   return !context.sub;
 }
 
-export function guardLoggedIn<T, U, V, W>(f: (parent: T, args: U, context: LoggedInContext, info: V) => W) {
+export function guardLoggedIn<T, U, V, W>(
+  f: (parent: T, args: U, context: LoggedInContext, info: V) => W
+) {
   return (parent: T, args: U, context: Context, info: V): W => {
     if (notLoggedIn(context)) {
       throw userNotLoggedInErrorFactory();

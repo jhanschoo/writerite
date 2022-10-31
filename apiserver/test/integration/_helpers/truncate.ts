@@ -1,6 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { run } from "promise-dag";
-
+import { PrismaClient } from '@prisma/client';
+import { run } from 'promise-dag';
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function cascadingDelete(prisma: PrismaClient) {
@@ -11,9 +10,17 @@ export function cascadingDelete(prisma: PrismaClient) {
     subdeck: [() => prisma.subdeck.deleteMany({})],
     occupant: [() => prisma.occupant.deleteMany({})],
     message: [() => prisma.message.deleteMany({})],
-    room: ["message", "occupant", () => prisma.room.deleteMany({})],
-    card: ["userCardRecord", () => prisma.card.deleteMany({})],
-    deck: ["card", "userDeckRecord", "subdeck", () => prisma.deck.deleteMany({})],
-    user: ["deck", "room", "message", "occupant", "userDeckRecord", "userCardRecord", () => prisma.user.deleteMany({})],
+    room: ['message', 'occupant', () => prisma.room.deleteMany({})],
+    card: ['userCardRecord', () => prisma.card.deleteMany({})],
+    deck: ['card', 'userDeckRecord', 'subdeck', () => prisma.deck.deleteMany({})],
+    user: [
+      'deck',
+      'room',
+      'message',
+      'occupant',
+      'userDeckRecord',
+      'userCardRecord',
+      () => prisma.user.deleteMany({}),
+    ],
   });
 }

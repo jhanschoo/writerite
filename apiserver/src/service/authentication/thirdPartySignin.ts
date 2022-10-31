@@ -1,22 +1,32 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { PrismaClient, User } from "@prisma/client";
-import { Roles } from "../../types";
-import { getDevelopmentProfile } from "./getDevelopmentProfile";
-import { getFacebookProfile } from "./getFacebookProfile";
-import { getGoogleProfile } from "./getGoogleProfile";
-import { ThirdPartyProfileInformation } from "./types";
+import type { PrismaClient, User } from '@prisma/client';
+import { Roles } from '../../types';
+import { getDevelopmentProfile } from './getDevelopmentProfile';
+import { getFacebookProfile } from './getFacebookProfile';
+import { getGoogleProfile } from './getGoogleProfile';
+import { ThirdPartyProfileInformation } from './types';
 
-const GOOGLE_PROVIDER = "google";
-const FACEBOOK_PROVIDER = "facebook";
-const DEVELOPMENT_PROVIDER = "development";
+const GOOGLE_PROVIDER = 'google';
+const FACEBOOK_PROVIDER = 'facebook';
+const DEVELOPMENT_PROVIDER = 'development';
 
 const providerStrategies = {
-  [GOOGLE_PROVIDER]: [getGoogleProfile, "googleId"],
-  [FACEBOOK_PROVIDER]: [getFacebookProfile, "facebookId"],
-  [DEVELOPMENT_PROVIDER]: [getDevelopmentProfile, "name"],
+  [GOOGLE_PROVIDER]: [getGoogleProfile, 'googleId'],
+  [FACEBOOK_PROVIDER]: [getFacebookProfile, 'facebookId'],
+  [DEVELOPMENT_PROVIDER]: [getDevelopmentProfile, 'name'],
 } as const;
 
-export async function thirdPartySignin({ code, provider, redirect_uri, prisma }: { code: string; provider: string; redirect_uri: string; prisma: PrismaClient }): Promise<User | null> {
+export async function thirdPartySignin({
+  code,
+  provider,
+  redirect_uri,
+  prisma,
+}: {
+  code: string;
+  provider: string;
+  redirect_uri: string;
+  prisma: PrismaClient;
+}): Promise<User | null> {
   let profile: ThirdPartyProfileInformation | null = null;
   let user: User | null = null;
   if (Object.prototype.hasOwnProperty.call(providerStrategies, provider)) {
@@ -27,10 +37,12 @@ export async function thirdPartySignin({ code, provider, redirect_uri, prisma }:
     }
     user = await prisma.user.findFirst({ where: { [idField]: profile.id } });
     if (!user) {
-      user = await prisma.user.create({ data: {
-        [idField]: profile.id,
-        roles: [Roles.User],
-      } });
+      user = await prisma.user.create({
+        data: {
+          [idField]: profile.id,
+          roles: [Roles.User],
+        },
+      });
     }
   }
   if (!user) {

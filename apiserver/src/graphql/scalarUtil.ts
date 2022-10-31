@@ -1,46 +1,50 @@
-import { arg, core } from "nexus";
+import { arg, core } from 'nexus';
 
 export const scalarMapping = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  DateTime: "Date",
+  DateTime: 'Date',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  EmailAddress: "string",
+  EmailAddress: 'string',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  JSON: "unknown",
+  JSON: 'unknown',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  JSONObject: "Record<string, unknown>",
+  JSONObject: 'Record<string, unknown>',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  JWT: "string",
+  JWT: 'string',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  UUID: "string",
+  UUID: 'string',
 };
 
-export const dateTimeArg = (opts?: core.ScalarArgConfig<Date>): core.NexusArgDef<"DateTime"> =>
+export const dateTimeArg = (opts?: core.ScalarArgConfig<Date>): core.NexusArgDef<'DateTime'> =>
   arg({
-    type: "DateTime",
+    type: 'DateTime',
     ...opts,
-  }) as core.NexusArgDef<"DateTime">;
+  }) as core.NexusArgDef<'DateTime'>;
 
-export const emailAddressArg = (opts?: core.ScalarArgConfig<string>): core.NexusArgDef<"EmailAddress"> =>
+export const emailAddressArg = (
+  opts?: core.ScalarArgConfig<string>
+): core.NexusArgDef<'EmailAddress'> =>
   arg({
-    type: "EmailAddress",
+    type: 'EmailAddress',
     ...opts,
-  }) as core.NexusArgDef<"EmailAddress">;
+  }) as core.NexusArgDef<'EmailAddress'>;
 
-export const uuidArg = (opts?: core.ScalarArgConfig<string>): core.NexusArgDef<"UUID"> =>
+export const uuidArg = (opts?: core.ScalarArgConfig<string>): core.NexusArgDef<'UUID'> =>
   arg({
-    type: "UUID",
+    type: 'UUID',
     ...opts,
-  }) as core.NexusArgDef<"UUID">;
+  }) as core.NexusArgDef<'UUID'>;
 
-export const jsonArg = (opts?: core.ScalarArgConfig<unknown>): core.NexusArgDef<"JSON"> =>
+export const jsonArg = (opts?: core.ScalarArgConfig<unknown>): core.NexusArgDef<'JSON'> =>
   arg({
-    type: "JSON",
+    type: 'JSON',
     ...opts,
-  }) as core.NexusArgDef<"JSON">;
+  }) as core.NexusArgDef<'JSON'>;
 
-export const jsonObjectArg = (opts?: core.ScalarArgConfig<Record<string, unknown>>): core.NexusArgDef<"JSONObject"> =>
+export const jsonObjectArg = (
+  opts?: core.ScalarArgConfig<Record<string, unknown>>
+): core.NexusArgDef<'JSONObject'> =>
   arg({
-    type: "JSONObject",
+    type: 'JSONObject',
     ...opts,
-  }) as core.NexusArgDef<"JSONObject">;
+  }) as core.NexusArgDef<'JSONObject'>;

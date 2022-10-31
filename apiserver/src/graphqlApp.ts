@@ -1,6 +1,6 @@
-import { YogaInitialContext, createYoga } from "graphql-yoga";
-import { Context } from "./context";
-import { schema } from "./schema";
+import { YogaInitialContext, createYoga } from 'graphql-yoga';
+import { Context } from './context';
+import { schema } from './schema';
 
 const { NODE_ENV } = process.env;
 
@@ -27,9 +27,9 @@ export function createGraphQLApp(opts: GraphQLServerFactoryOpts) {
   return createYoga<Record<string, unknown>, Context>({
     schema,
     graphiql: {
-      subscriptionsProtocol: "WS",
+      subscriptionsProtocol: 'WS',
     },
-    maskedErrors: NODE_ENV === "production",
+    maskedErrors: NODE_ENV === 'production',
     ...opts,
   });
 }

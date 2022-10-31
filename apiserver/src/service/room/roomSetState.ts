@@ -1,13 +1,15 @@
-import { PrismaClient } from "@prisma/client";
-import { RoomState } from "../../../generated/typescript-operations";
-import { invalidArgumentsErrorFactory } from "../../error";
+import { PrismaClient } from '@prisma/client';
+import { RoomState } from '../../../generated/typescript-operations';
+import { invalidArgumentsErrorFactory } from '../../error';
 
-type RoomSetStateProps = [PrismaClient, { id: string, state: RoomState, currentUserId: string }];
+type RoomSetStateProps = [PrismaClient, { id: string; state: RoomState; currentUserId: string }];
 
-export const roomSetState = async (...[prisma, { id, state, currentUserId }]: RoomSetStateProps) => {
+export const roomSetState = async (
+  ...[prisma, { id, state, currentUserId }]: RoomSetStateProps
+) => {
   switch (state) {
     case RoomState.Waiting: {
-      throw invalidArgumentsErrorFactory("Transitioning to an initial state is illegal.");
+      throw invalidArgumentsErrorFactory('Transitioning to an initial state is illegal.');
     }
     case RoomState.Serving: {
       return prisma.room.update({

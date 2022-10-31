@@ -1,8 +1,9 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from '@prisma/client';
 
-type RoomSetDeckProps = [PrismaClient, { id: string, ownerConfig: Prisma.InputJsonObject }];
+type RoomSetDeckProps = [PrismaClient, { id: string; ownerConfig: Prisma.InputJsonObject }];
 
-export const roomEditOwnerConfig = async (...[prisma, { id, ownerConfig }]: RoomSetDeckProps) => prisma.room.update({
-  where: { id, state: "WAITING" },
-  data: { ownerConfig },
-});
+export const roomEditOwnerConfig = async (...[prisma, { id, ownerConfig }]: RoomSetDeckProps) =>
+  prisma.room.update({
+    where: { id, state: 'WAITING' },
+    data: { ownerConfig },
+  });

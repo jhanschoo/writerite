@@ -1,9 +1,14 @@
-import { PrismaClient } from "@prisma/client";
-import { RoomState } from "../../../generated/typescript-operations";
+import { PrismaClient } from '@prisma/client';
+import { RoomState } from '../../../generated/typescript-operations';
 
-type RoomAddOccupantProps = [PrismaClient, { roomId: string, occupantId: string, currentUserId?: string }];
+type RoomAddOccupantProps = [
+  PrismaClient,
+  { roomId: string; occupantId: string; currentUserId?: string }
+];
 
-export const roomAddOccupant = (...[prisma, { roomId, occupantId, currentUserId }]: RoomAddOccupantProps) => {
+export const roomAddOccupant = (
+  ...[prisma, { roomId, occupantId, currentUserId }]: RoomAddOccupantProps
+) => {
   const commonRoomWhere = { id: roomId, state: RoomState.Waiting };
   const data = {
     occupants: {

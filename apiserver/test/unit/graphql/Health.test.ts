@@ -1,23 +1,28 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "@prisma/client";
-import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
-import Redis from "ioredis";
+import type { PrismaClient } from '@prisma/client';
+import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
+import Redis from 'ioredis';
 
-import { queryHealth, testContextFactory } from "../../helpers";
-import { CurrentUser, Roles } from "../../../src/types";
-import { Context, PubSubPublishArgsByKey } from "../../../src/context";
-import { PubSub, YogaInitialContext, YogaServerInstance, createPubSub, createYoga } from "graphql-yoga";
-import { WrServer } from "../../../src/graphqlApp";
-import { schema } from "../../../src/schema";
+import { queryHealth, testContextFactory } from '../../helpers';
+import { CurrentUser, Roles } from '../../../src/types';
+import { Context, PubSubPublishArgsByKey } from '../../../src/context';
+import {
+  PubSub,
+  YogaInitialContext,
+  YogaServerInstance,
+  createPubSub,
+  createYoga,
+} from 'graphql-yoga';
+import { WrServer } from '../../../src/graphqlApp';
+import { schema } from '../../../src/schema';
 
 export const DEFAULT_CURRENT_USER = {
-  id: "fake-id",
-  name: "fake-name",
+  id: 'fake-id',
+  name: 'fake-name',
   roles: [Roles.User],
 };
 
-describe("graphql/Health.ts", () => {
-
+describe('graphql/Health.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
@@ -49,12 +54,12 @@ describe("graphql/Health.ts", () => {
     mockReset(redis);
   });
 
-  describe("Query", () => {
-    describe("health", () => {
-      it("should return a string \"OK\"", async () => {
+  describe('Query', () => {
+    describe('health', () => {
+      it('should return a string "OK"', async () => {
         expect.assertions(1);
         const response = await queryHealth(server as unknown as WrServer);
-        expect(response).toHaveProperty("data.health", "OK");
+        expect(response).toHaveProperty('data.health', 'OK');
       });
     });
   });

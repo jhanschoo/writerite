@@ -1,5 +1,5 @@
-import type { WrServer } from "../../../src/graphqlApp";
-import { gql, testQuery } from "../misc";
+import type { WrServer } from '../../../src/graphqlApp';
+import { gql, testQuery } from '../misc';
 
 export function queryHealth(server: WrServer) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
