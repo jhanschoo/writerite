@@ -15,7 +15,7 @@ import {
   mutationRoomCreate,
   mutationRoomSetDeck,
   mutationRoomSetState,
-  queryOccupyingRooms,
+  queryOccupyingActiveRooms,
   queryRoom,
 } from '../../helpers/graphql/Room.util';
 import { RoomState } from '../../../generated/typescript-operations';
@@ -678,7 +678,7 @@ describe('graphql/Room.ts', () => {
       });
     });
 
-    describe('occupyingRooms', () => {
+    describe('occupyingActiveRooms', () => {
       it('should be able to return ids of owned rooms and rooms you are occupying state', async () => {
         expect.assertions(5);
         // create owner user
@@ -736,9 +736,9 @@ describe('graphql/Room.ts', () => {
         const roomBefore2 = roomAddOccupantResponse2.data.roomAddOccupant;
 
         // query room
-        const occupyingRoomsResponse = await queryOccupyingRooms(app);
-        expect(occupyingRoomsResponse).toHaveProperty(
-          'data.occupyingRooms',
+        const occupyingActiveRoomsResponse = await queryOccupyingActiveRooms(app);
+        expect(occupyingActiveRoomsResponse).toHaveProperty(
+          'data.occupyingActiveRooms',
           expect.arrayContaining([
             expect.objectContaining({ id: roomBefore1.id }),
             expect.objectContaining({ id: roomBefore2.id }),

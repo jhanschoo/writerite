@@ -186,7 +186,7 @@ type Query {
   health: String!
   message(id: ID!): Message!
   messagesOfRoom(id: ID!): [Message!]!
-  occupyingRooms: [Room!]!
+  occupyingActiveRooms: [Room!]!
   ownDeckRecord(deckId: ID!): UserDeckRecord
   room(id: ID!): Room!
   user(id: ID): User!
@@ -231,7 +231,7 @@ type User {
   id: ID!
   isPublic: Boolean!
   name: String
-  occupyingRooms: [Room!]!
+  occupyingActiveRooms: [Room!]!
   ownedRooms: [Room!]!
   roles: [String!]!
 }

@@ -195,7 +195,7 @@ export interface NexusGenFieldTypes {
     health: string; // String!
     message: NexusGenRootTypes['Message']; // Message!
     messagesOfRoom: NexusGenRootTypes['Message'][]; // [Message!]!
-    occupyingRooms: NexusGenRootTypes['Room'][]; // [Room!]!
+    occupyingActiveRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownDeckRecord: NexusGenRootTypes['UserDeckRecord'] | null; // UserDeckRecord
     room: NexusGenRootTypes['Room']; // Room!
     user: NexusGenRootTypes['User']; // User!
@@ -226,7 +226,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     isPublic: boolean; // Boolean!
     name: string | null; // String
-    occupyingRooms: NexusGenRootTypes['Room'][]; // [Room!]!
+    occupyingActiveRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownedRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     roles: string[]; // [String!]!
   }
@@ -312,7 +312,7 @@ export interface NexusGenFieldTypeNames {
     health: 'String'
     message: 'Message'
     messagesOfRoom: 'Message'
-    occupyingRooms: 'Room'
+    occupyingActiveRooms: 'Room'
     ownDeckRecord: 'UserDeckRecord'
     room: 'Room'
     user: 'User'
@@ -343,7 +343,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     isPublic: 'Boolean'
     name: 'String'
-    occupyingRooms: 'Room'
+    occupyingActiveRooms: 'Room'
     ownedRooms: 'Room'
     roles: 'String'
   }

@@ -118,13 +118,13 @@ export function queryRoom(server: WrServer, id: string) {
   });
 }
 
-export function queryOccupyingRooms(server: WrServer) {
+export function queryOccupyingActiveRooms(server: WrServer) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
     server,
     document: gql`
-      query OccupyingRooms {
-        occupyingRooms {
+      query OccupyingActiveRooms {
+        occupyingActiveRooms {
           id
           state
           ownerId

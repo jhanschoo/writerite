@@ -302,7 +302,7 @@ export type Query = {
   health: Scalars['String'];
   message: Message;
   messagesOfRoom: Array<Message>;
-  occupyingRooms: Array<Room>;
+  occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
   room: Room;
   user: User;
@@ -383,7 +383,7 @@ export type User = {
   id: Scalars['ID'];
   isPublic: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
-  occupyingRooms: Array<Room>;
+  occupyingActiveRooms: Array<Room>;
   ownedRooms: Array<Room>;
   roles: Array<Scalars['String']>;
 };
@@ -487,10 +487,10 @@ export type RoomQueryVariables = Exact<{
 
 export type RoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, state: RoomState, ownerId: string } };
 
-export type OccupyingRoomsQueryVariables = Exact<{ [key: string]: never; }>;
+export type OccupyingActiveRoomsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OccupyingRoomsQuery = { __typename?: 'Query', occupyingRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, ownerId: string }> };
+export type OccupyingActiveRoomsQuery = { __typename?: 'Query', occupyingActiveRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, ownerId: string }> };
 
 export type CreateUserMutationVariables = Exact<{
   code: Scalars['String'];

@@ -10,6 +10,7 @@ import {
 import type { Context } from '../context';
 import { userLacksPermissionsErrorFactory, userNotLoggedInErrorFactory } from '../error';
 import { guardLoggedIn } from '../service/authorization/guardLoggedIn';
+import { roomFindOccupyingActiveOfUser } from '../service/room/roomFindOccupyingActiveOfUser';
 
 const isPublicOrLoggedInOrAdmin = (
   { id, isPublic }: { id: string; isPublic: boolean },
@@ -41,11 +42,11 @@ export const User = objectType({
         return prisma.room.findMany({ where: { ownerId: id } });
       },
     });
-    t.nonNull.list.nonNull.field('occupyingRooms', {
+    t.nonNull.list.nonNull.field('occupyingActiveRooms', {
       type: 'Room',
       authorize: isPublicOrLoggedInOrAdmin,
       resolve({ id }, _args, { prisma }) {
-        return prisma.room.findMany({ where: { occupants: { some: { occupantId: id } } } });
+        return roomFindOccupyingActiveOfUser(prisma, { occupantId: id });
       },
     });
   },

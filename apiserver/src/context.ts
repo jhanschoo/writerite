@@ -98,14 +98,17 @@ export function contextFactory<
 ): ContextFactoryReturnType<T, U> {
   const useDefaultPrisma = !opts?.prisma;
   const useDefaultRedis = !opts?.redis;
+  const useDefaultPubsub = !opts?.pubsub;
+  const publishClient = useDefaultPubsub ? new Redis(pubSubRedisOptions) : undefined;
+  const subscribeClient = useDefaultPubsub ? new Redis(pubSubRedisOptions) : undefined;
   const prisma = opts?.prisma ?? new PrismaClient();
   const pubsub = pubsubFn
     ? pubsubFn()
     : opts?.pubsub ??
       createPubSub({
         eventTarget: createRedisEventTarget({
-          publishClient: new Redis(pubSubRedisOptions),
-          subscribeClient: new Redis(pubSubRedisOptions),
+          publishClient: publishClient as Redis,
+          subscribeClient: subscribeClient as Redis,
         }),
       });
   const redis = opts?.redis ?? new Redis(redisOptions);
@@ -133,6 +136,8 @@ export function contextFactory<
       Promise.allSettled([
         useDefaultPrisma ? prisma.$disconnect() : Promise.resolve('custom prisma used'),
         useDefaultRedis ? redis.disconnect() : Promise.resolve('custom redis used'),
+        publishClient?.disconnect() ?? Promise.resolve('custom pubsub used'),
+        subscribeClient?.disconnect() ?? Promise.resolve('custom pubsub used'),
       ]),
     { prisma: prisma as T, pubsub, redis: redis as R },
   ];

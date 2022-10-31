@@ -3,7 +3,13 @@ import { enumType, idArg, list, mutationField, nonNull, objectType, queryField }
 import { RoomState as GeneratedRoomState } from '../../generated/typescript-operations';
 import { userLacksPermissionsErrorFactory } from '../error';
 import { guardValidUser } from '../service/authorization/guardValidUser';
-import { roomAddOccupant, roomEditOwnerConfig, roomSetDeck, roomSetState } from '../service/room';
+import {
+  WillNotServeRoomStates,
+  roomAddOccupant,
+  roomEditOwnerConfig,
+  roomSetDeck,
+  roomSetState,
+} from '../service/room';
 import { slug } from '../util';
 import { jsonObjectArg } from './scalarUtil';
 
@@ -96,11 +102,14 @@ export const RoomQuery = queryField('room', {
   }),
 });
 
-export const OccupyingRoomsQuery = queryField('occupyingRooms', {
+export const OccupyingActiveRoomsQuery = queryField('occupyingActiveRooms', {
   type: nonNull(list(nonNull('Room'))),
   resolve: guardValidUser((_source, _args, { sub, prisma }) =>
     prisma.room.findMany({
-      where: { occupants: { some: { occupantId: sub.id } } },
+      where: {
+        occupants: { some: { occupantId: sub.id } },
+        state: { notIn: WillNotServeRoomStates },
+      },
     })
   ),
 });
