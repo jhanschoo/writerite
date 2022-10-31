@@ -1,7 +1,6 @@
 import { PubSub } from 'graphql-yoga';
 import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
-import request from 'supertest';
 import { JWTPayload } from 'jose';
 import {
   Context,
@@ -10,8 +9,8 @@ import {
   contextFactory,
 } from '../../src/context';
 import { WrServer } from '../../src/graphqlApp';
-import { parseArbitraryJWT } from '../../src/service/crypto/jwtUtil';
-import { CurrentUser } from '../../src/types';
+import { parseArbitraryJWT } from '../../src/service/crypto';
+import { CurrentUser } from '../../src/service/userJWT';
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

@@ -31,6 +31,6 @@ describe('server', () => {
   it.skip('should be able to respond to a basic create user', async () => {
     expect.assertions(1);
     const response = await createUser(server);
-    expect(response).toHaveProperty('data.finalizeThirdPartyOauthSignin', expect.any(String));
+    expect(response).toHaveProperty('data.finalizeOauthSignin', expect.any(String));
   });
 });

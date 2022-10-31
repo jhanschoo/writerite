@@ -7,12 +7,6 @@ export enum AuthorizerType {
   DEVELOPMENT = 'DEVELOPMENT',
 }
 
-export enum Roles {
-  User = 'User',
-  Admin = 'Admin',
-  Wright = 'Wright',
-}
-
 export interface FileUpload {
   filename: string;
   mimetype: string;
@@ -21,11 +15,6 @@ export interface FileUpload {
 }
 
 export type Upload = Promise<FileUpload>;
-
-export interface CurrentUser {
-  id: string;
-  roles: Roles[];
-}
 
 export enum UpdateType {
   CREATED = 'CREATED',

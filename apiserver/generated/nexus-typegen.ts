@@ -176,8 +176,8 @@ export interface NexusGenFieldTypes {
     deckEdit: NexusGenRootTypes['Deck']; // Deck!
     deckRemoveSubdeck: NexusGenRootTypes['Deck']; // Deck!
     deckUsed: NexusGenRootTypes['Deck']; // Deck!
-    finalizeThirdPartyOauthSignin: NexusGenScalars['JWT'] | null; // JWT
-    initializeThirdPartyOauthSignin: string; // String!
+    finalizeOauthSignin: NexusGenScalars['JWT'] | null; // JWT
+    initializeOauthSignin: string; // String!
     messageCreate: NexusGenRootTypes['Message']; // Message!
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
@@ -293,8 +293,8 @@ export interface NexusGenFieldTypeNames {
     deckEdit: 'Deck'
     deckRemoveSubdeck: 'Deck'
     deckUsed: 'Deck'
-    finalizeThirdPartyOauthSignin: 'JWT'
-    initializeThirdPartyOauthSignin: 'String'
+    finalizeOauthSignin: 'JWT'
+    initializeOauthSignin: 'String'
     messageCreate: 'Message'
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
@@ -410,7 +410,7 @@ export interface NexusGenArgTypes {
     deckUsed: { // args
       id: string; // ID!
     }
-    finalizeThirdPartyOauthSignin: { // args
+    finalizeOauthSignin: { // args
       code: string; // String!
       nonce: string; // String!
       provider: string; // String!

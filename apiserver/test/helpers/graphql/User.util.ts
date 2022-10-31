@@ -1,5 +1,4 @@
 import { WrServer } from '../../../src/graphqlApp';
-import { CurrentUser } from '../../../src/types';
 import { gql, testQuery, unsafeJwtToCurrentUser } from '../misc';
 import {
   CreateUserMutationVariables,
@@ -8,6 +7,7 @@ import {
   UserEditMutationVariables,
   UserPublicScalarsQueryVariables,
 } from '../../../generated/typescript-operations';
+import { CurrentUser } from '../../../src/service/userJWT';
 
 export const DEFAULT_CREATE_USER_VALUES = {
   name: 'abcxyz',
@@ -27,7 +27,7 @@ export function createUser(
         $provider: String!
         $redirect_uri: String!
       ) {
-        finalizeThirdPartyOauthSignin(
+        finalizeOauthSignin(
           code: $code
           nonce: $nonce
           provider: $provider
@@ -67,7 +67,7 @@ export async function loginAsNewlyCreatedUser(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const response = await (name ? createUser(server, { name }) : createUser(server));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const currentUser = unsafeJwtToCurrentUser(response.data.finalizeThirdPartyOauthSignin as string);
+  const currentUser = unsafeJwtToCurrentUser(response.data.finalizeOauthSignin as string);
   setSub(currentUser);
   return currentUser;
 }

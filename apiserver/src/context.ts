@@ -4,9 +4,11 @@ import { PubSub, YogaInitialContext, createPubSub } from 'graphql-yoga';
 
 import { PrismaClient } from '@prisma/client';
 
-import { FETCH_DEPTH, getClaims } from './util';
-import { CurrentUser, Roles } from './types';
+import { Roles } from './service/userJWT/Roles';
+import { CurrentUser } from './service/userJWT/CurrentUser';
 import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
+import { FETCH_DEPTH } from './constants';
+import { getClaims } from './util';
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 

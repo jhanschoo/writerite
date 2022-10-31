@@ -46,10 +46,8 @@ describe('graphql/User.ts', () => {
 
         // create user
         const response = await createUser(server);
-        expect(response).toHaveProperty('data.finalizeThirdPartyOauthSignin', expect.any(String));
-        const currentUser = unsafeJwtToCurrentUser(
-          response.data.finalizeThirdPartyOauthSignin as string
-        );
+        expect(response).toHaveProperty('data.finalizeOauthSignin', expect.any(String));
+        const currentUser = unsafeJwtToCurrentUser(response.data.finalizeOauthSignin as string);
         expect(currentUser).toEqual({
           id: expect.any(String),
           roles: [Roles.User],
@@ -69,7 +67,7 @@ describe('graphql/User.ts', () => {
         // create user
         const createUserResponse = await createUser(server);
         const currentUserBefore = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse.data.finalizeOauthSignin as string
         );
 
         // login as user
@@ -94,7 +92,7 @@ describe('graphql/User.ts', () => {
         // create user
         const createUserResponse = await createUser(server);
         const { id } = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse.data.finalizeOauthSignin as string
         );
 
         // query user
@@ -109,13 +107,13 @@ describe('graphql/User.ts', () => {
         // create other user
         const createUserResponse1 = await createUser(server, { name: 'user1' });
         const { id } = unsafeJwtToCurrentUser(
-          createUserResponse1.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse1.data.finalizeOauthSignin as string
         );
 
         // create user
         const createUserResponse2 = await createUser(server, { name: 'user2' });
         const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse2.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse2.data.finalizeOauthSignin as string
         );
         // log in as user
         setSub(currentUser);
@@ -131,7 +129,7 @@ describe('graphql/User.ts', () => {
         // create user
         const createUserResponse = await createUser(server);
         const { id } = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse.data.finalizeOauthSignin as string
         );
 
         // query user
@@ -147,13 +145,13 @@ describe('graphql/User.ts', () => {
         // create other user
         const createUserResponse1 = await createUser(server, { name: 'user1' });
         const { id } = unsafeJwtToCurrentUser(
-          createUserResponse1.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse1.data.finalizeOauthSignin as string
         );
 
         // create user
         const createUserResponse2 = await createUser(server, { name: 'user2' });
         const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse2.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse2.data.finalizeOauthSignin as string
         );
 
         // log in as user
@@ -172,7 +170,7 @@ describe('graphql/User.ts', () => {
         // create user
         const createUserResponse = await createUser(server);
         const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse.data.finalizeOauthSignin as string
         );
 
         // log in as user
@@ -197,7 +195,7 @@ describe('graphql/User.ts', () => {
         // create target user
         const createUserResponse1 = await createUser(server, { name: 'user1' });
         const targetUser = unsafeJwtToCurrentUser(
-          createUserResponse1.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse1.data.finalizeOauthSignin as string
         );
 
         // log in as target user
@@ -209,7 +207,7 @@ describe('graphql/User.ts', () => {
         // create user
         const createUserResponse2 = await createUser(server, { name: 'user2' });
         const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse2.data.finalizeThirdPartyOauthSignin as string
+          createUserResponse2.data.finalizeOauthSignin as string
         );
 
         // log in as user

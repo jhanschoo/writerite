@@ -113,8 +113,8 @@ export type Mutation = {
   deckEdit: Deck;
   deckRemoveSubdeck: Deck;
   deckUsed: Deck;
-  finalizeThirdPartyOauthSignin?: Maybe<Scalars['JWT']>;
-  initializeThirdPartyOauthSignin: Scalars['String'];
+  finalizeOauthSignin?: Maybe<Scalars['JWT']>;
+  initializeOauthSignin: Scalars['String'];
   /**
    * @subscriptionsTriggered(
    *     signatures: ["chatMsgsOfRoomUpdates"]
@@ -238,7 +238,7 @@ export type MutationDeckUsedArgs = {
 };
 
 
-export type MutationFinalizeThirdPartyOauthSigninArgs = {
+export type MutationFinalizeOauthSigninArgs = {
   code: Scalars['String'];
   nonce: Scalars['String'];
   provider: Scalars['String'];
@@ -500,7 +500,7 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', finalizeThirdPartyOauthSignin?: any | null };
+export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: any | null };
 
 export type NameUserMutationVariables = Exact<{
   name: Scalars['String'];

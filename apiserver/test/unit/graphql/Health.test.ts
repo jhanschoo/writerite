@@ -4,7 +4,6 @@ import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import Redis from 'ioredis';
 
 import { queryHealth, testContextFactory } from '../../helpers';
-import { CurrentUser, Roles } from '../../../src/types';
 import { Context, PubSubPublishArgsByKey } from '../../../src/context';
 import {
   PubSub,
@@ -15,6 +14,7 @@ import {
 } from 'graphql-yoga';
 import { WrServer } from '../../../src/graphqlApp';
 import { schema } from '../../../src/schema';
+import { CurrentUser, Roles } from '../../../src/service/userJWT';
 
 export const DEFAULT_CURRENT_USER = {
   id: 'fake-id',

@@ -14,15 +14,16 @@ import {
   queryDecks,
   testContextFactory,
 } from '../../helpers';
-import { CurrentUser, Roles } from '../../../src/types';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
 import { PubSub, YogaInitialContext, createPubSub } from 'graphql-yoga';
 import { Context, PubSubPublishArgsByKey } from '../../../src/context';
+import { CurrentUser, Roles } from '../../../src/service/userJWT';
 
 export const DEFAULT_CURRENT_USER = {
   id: 'fake-id',
   name: 'fake-name',
   roles: [Roles.User],
+  occupyingActiveRoomSlugs: [],
 };
 
 describe('graphql/Deck.ts', () => {

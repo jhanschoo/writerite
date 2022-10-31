@@ -2,19 +2,20 @@
 import { mutationField, nonNull, stringArg } from 'nexus';
 
 import { getNonce, validateNonce } from '../service/crypto/nonce';
-import { thirdPartySignin } from '../service/authentication/thirdPartySignin';
-import { userToJWT } from '../service/authentication/util';
+import { finalizeOauthSignin } from '../service/authentication/finalizeOauthSignin';
+import { currentUserSourceToCurrentUser } from '../service/authentication/util';
+import { currentUserToUserJWT } from '../service/userJWT';
 
 const { NODE_ENV } = process.env;
 
-export const InitializeThirdPartySigninMutation = mutationField('initializeThirdPartyOauthSignin', {
+export const InitializeOauthSigninMutation = mutationField('initializeOauthSignin', {
   type: nonNull('String'),
   resolve(_parent, _args, { redis }) {
     return getNonce(redis);
   },
 });
 
-export const FinalizeThirdPartySigninMutation = mutationField('finalizeThirdPartyOauthSignin', {
+export const FinalizeOauthSigninMutation = mutationField('finalizeOauthSignin', {
   type: 'JWT',
   args: {
     code: nonNull(stringArg()),
@@ -26,7 +27,7 @@ export const FinalizeThirdPartySigninMutation = mutationField('finalizeThirdPart
     if (NODE_ENV === 'production' && !(await validateNonce(redis, nonce))) {
       return null;
     }
-    const user = await thirdPartySignin({ code, provider, redirect_uri, prisma });
-    return user && userToJWT({ user, persist: true });
+    const user = await finalizeOauthSignin({ code, provider, redirect_uri, prisma });
+    return user && currentUserToUserJWT(currentUserSourceToCurrentUser(user));
   },
 });

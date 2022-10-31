@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import env from '../../safeEnv';
-import { parseArbitraryJWT } from '../crypto/jwtUtil';
+import env from '../../../safeEnv';
+import { parseArbitraryJWT } from '../../crypto';
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { URL } from 'url';
-import { setSearchParams } from '../../util';
-import { ThirdPartyProfileInformation } from './types';
+import { setSearchParams } from '../../../util';
+import { ExternalProfileInformation, ExternalProfileInformationProvider } from './types';
 import { JWTPayload } from 'jose';
 
 const GOOGLE_OAUTH_TOKEN_BASE_URL = new URL('https://oauth2.googleapis.com/token');
@@ -31,13 +31,10 @@ interface GoogleIdTokenWithEmailOpenIDAndProfile extends JWTPayload {
   picture?: string; // URL to Google's profile picture
 }
 
-export async function getGoogleProfile({
+export const getGoogleProfile: ExternalProfileInformationProvider = async ({
   code,
   redirect_uri,
-}: {
-  code: string;
-  redirect_uri: string;
-}): Promise<ThirdPartyProfileInformation | null> {
+}) => {
   const url = setSearchParams(new URL(GOOGLE_OAUTH_TOKEN_BASE_URL.toString()), {
     code,
     client_id: GAPI_CLIENT_ID,
@@ -53,4 +50,4 @@ export async function getGoogleProfile({
   const parsedJWT = parseArbitraryJWT<GoogleIdTokenWithEmailOpenIDAndProfile>(id_token);
   const { sub, email } = parsedJWT;
   return { email, id: sub };
-}
+};

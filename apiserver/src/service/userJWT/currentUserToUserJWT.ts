@@ -1,0 +1,14 @@
+import { SignJWT } from 'jose';
+import { nanoid } from 'nanoid';
+import { CurrentUser } from './CurrentUser';
+import { PRIVATE_KEY_P, alg, issuer } from './constants';
+
+export async function currentUserToUserJWT(sub: CurrentUser): Promise<string> {
+  return new SignJWT({ sub: JSON.stringify(sub) })
+    .setProtectedHeader({ alg, cty: 'JWT' })
+    .setIssuedAt()
+    .setIssuer(issuer)
+    .setExpirationTime('1week')
+    .setJti(nanoid())
+    .sign(await PRIVATE_KEY_P);
+}

@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { FinalizeThirdPartyOauthSigninDocument } from '@generated/graphql';
+import { FinalizeOauthSigninDocument } from '@generated/graphql';
 import { initDefaultServerSideUrqlClient } from '@lib/urql/initDefaultServerSideUrqlClient';
 
 type Data = {
@@ -24,14 +24,14 @@ export default async function handler(
     }
     const [client] = initDefaultServerSideUrqlClient();
     const mutationRes = await client
-      .mutation(FinalizeThirdPartyOauthSigninDocument, {
+      .mutation(FinalizeOauthSigninDocument, {
         code,
         provider,
         nonce,
         redirect_uri,
       })
       .toPromise();
-    const token = mutationRes?.data?.finalizeThirdPartyOauthSignin;
+    const token = mutationRes?.data?.finalizeOauthSignin;
     if (token) {
       return res.redirect(303, `/?token=${token}`), undefined;
     }

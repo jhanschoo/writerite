@@ -122,8 +122,8 @@ type Mutation {
   deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckUsed(id: ID!): Deck!
-  finalizeThirdPartyOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): JWT
-  initializeThirdPartyOauthSignin: String!
+  finalizeOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): JWT
+  initializeOauthSignin: String!
 
   """
   @subscriptionsTriggered(
