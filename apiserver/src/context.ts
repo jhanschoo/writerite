@@ -8,7 +8,7 @@ import { Roles } from './service/userJWT/Roles';
 import { CurrentUser } from './service/userJWT/CurrentUser';
 import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
 import { FETCH_DEPTH } from './constants';
-import { getClaims } from './util';
+import { getClaims } from './service/session';
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 
@@ -81,12 +81,12 @@ export function contextFactory<
   R extends Redis
 >(
   opts?: Partial<Context> & Pick<Context<T, U, R>, 'prisma' | 'pubsub' | 'redis'>,
-  subFn?: (initialContext: YogaInitialContext) => Promise<CurrentUser | undefined>,
+  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>,
   pubsubFn?: () => PubSub<U>
 ): ContextFactoryReturnType<T, U>;
 export function contextFactory(
   opts?: Partial<Context>,
-  subFn?: (initialContext: YogaInitialContext) => Promise<CurrentUser | undefined>,
+  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>,
   pubsubFn?: () => PubSub<PubSubPublishArgsByKey>
 ): ContextFactoryReturnType<PrismaClient, PubSubPublishArgsByKey>;
 export function contextFactory<
@@ -95,7 +95,7 @@ export function contextFactory<
   R extends Redis = Redis
 >(
   opts?: Partial<Context<T, U, R>>,
-  subFn?: (initialContext: YogaInitialContext) => Promise<CurrentUser | undefined>,
+  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>,
   pubsubFn?: () => PubSub<U>
 ): ContextFactoryReturnType<T, U> {
   const useDefaultPrisma = !opts?.prisma;
@@ -116,7 +116,7 @@ export function contextFactory<
   const redis = opts?.redis ?? new Redis(redisOptions);
   return [
     async (ctx: YogaInitialContext): Promise<Context> => {
-      const sub = (await subFn?.(ctx)) ?? opts?.sub ?? (await getClaims(ctx));
+      const sub = (await subFn?.(ctx, redis)) ?? opts?.sub ?? (await getClaims(ctx, redis));
       return {
         ...ctx,
         fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,

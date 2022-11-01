@@ -13,10 +13,10 @@ import {
   queryDecks,
   testContextFactory,
 } from '../../helpers';
-import type { CurrentUser } from '../../../src/types';
 import { YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
+import { CurrentUser } from '../../../src/service/userJWT';
 
 describe('graphql/Deck.ts', () => {
   let setSub: (sub?: CurrentUser) => void;

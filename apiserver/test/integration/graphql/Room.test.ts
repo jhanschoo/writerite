@@ -6,7 +6,6 @@ import { PrismaClient } from '@prisma/client';
 import { cascadingDelete } from '../_helpers/truncate';
 import { loginAsNewlyCreatedUser } from '../../helpers/graphql/User.util';
 import { mutationDeckCreateEmpty, testContextFactory } from '../../helpers';
-import type { CurrentUser } from '../../../src/types';
 import { YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
@@ -20,6 +19,7 @@ import {
 } from '../../helpers/graphql/Room.util';
 import { RoomState } from '../../../generated/typescript-operations';
 import { nanoid } from 'nanoid';
+import { CurrentUser } from '../../../src/service/userJWT';
 
 describe('graphql/Room.ts', () => {
   let setSub: (sub?: CurrentUser) => void;

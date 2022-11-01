@@ -51,6 +51,7 @@
       "!Select sequence",
       "!Split",
       "!Split sequence"
-    ]
+    ],
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 }

@@ -13,9 +13,9 @@ import {
   testContextFactory,
   unsafeJwtToCurrentUser,
 } from '../../helpers';
-import { CurrentUser, Roles } from '../../../src/types';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
+import { CurrentUser, Roles } from '../../../src/service/userJWT';
 
 describe('graphql/User.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -40,16 +40,19 @@ describe('graphql/User.ts', () => {
   });
 
   describe('Mutation', () => {
-    describe('signin', () => {
+    describe('finalizeOauthSignin', () => {
       it('should be able to create a user with development authentication in test environment', async () => {
         expect.assertions(2);
 
+        const name = 'user1';
         // create user
-        const response = await createUser(server);
+        const response = await createUser(server, { name });
         expect(response).toHaveProperty('data.finalizeOauthSignin', expect.any(String));
         const currentUser = unsafeJwtToCurrentUser(response.data.finalizeOauthSignin as string);
         expect(currentUser).toEqual({
           id: expect.any(String),
+          name: expect.any(String),
+          occupyingActiveRoomSlugs: [],
           roles: [Roles.User],
         });
       });
