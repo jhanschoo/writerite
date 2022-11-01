@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Signin, useLogin } from '@features/signin';
 import HeroHeading from '@components/HeroHeading';
 import BrandText from '@components/typography/BrandText';
-import { Box, Center, Stack } from '@mantine/core';
+import { Center, Stack } from '@mantine/core';
 
 const Home: NextPage = () => {
   const router = useRouter();

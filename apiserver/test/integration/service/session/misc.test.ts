@@ -19,6 +19,7 @@ import {
   invalidateByUserId,
 } from '../../../../src/service/session';
 import { mutationRoomCreate } from '../../../helpers/graphql/Room.util';
+import { sleep } from '../../../../src/util';
 
 describe('service/session', () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -28,9 +29,10 @@ describe('service/session', () => {
   let redis: Redis;
   let app: WrServer;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     [setSub, , context, stopContext, { prisma, redis }] = testContextFactory();
     app = createGraphQLApp({ context, logging: false });
+    await redis.flushdb();
   });
 
   afterAll(async () => {
@@ -99,6 +101,7 @@ describe('service/session', () => {
     const userJWT = await currentUserToUserJWT(currentUser);
 
     // invalidate JWT
+    await sleep(1010);
     await invalidateByUserId(redis, currentUser.id);
 
     // check JWT validity
@@ -133,6 +136,7 @@ describe('service/session', () => {
     const userJWT = await currentUserToUserJWT(currentUser);
 
     // invalidate JWT
+    await sleep(1010);
     await invalidateByRoomSlug(redis, roomCreateResponse.data.roomCreate.slug as string);
 
     // check JWT validity

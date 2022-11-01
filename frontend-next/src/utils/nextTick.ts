@@ -1,10 +1,3 @@
-export const nextTick = <T>(callback: () => T) =>
-  new Promise<T>((resolve, reject) => {
-    setTimeout(() => {
-      try {
-        resolve(callback());
-      } catch (error) {
-        reject(error);
-      }
-    }, 0);
-  });
+import { sleep } from "./sleep";
+
+export const nextTick = <T> (callback: () => T) => sleep(0, callback);

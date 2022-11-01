@@ -133,6 +133,7 @@ type Mutation {
   messageCreate(content: JSON, roomId: ID!, type: MessageContentType!): Message!
   ownCardRecordSet(cardId: ID!, correctRecordAppend: [DateTime!]!): UserCardRecord
   ownDeckRecordSet(deckId: ID!, notes: JSONObject!): UserDeckRecord!
+  refresh(token: JWT!): JWT
 
   """
   @invalidatesTokens(
@@ -197,7 +198,6 @@ type Query {
   messagesOfRoom(id: ID!): [Message!]!
   occupyingActiveRooms: [Room!]!
   ownDeckRecord(deckId: ID!): UserDeckRecord
-  refresh(token: JWT!): JWT
   room(id: ID!): Room!
   user(id: ID): User!
 }

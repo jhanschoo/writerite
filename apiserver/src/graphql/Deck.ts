@@ -125,8 +125,8 @@ export const Deck = objectType({
         if (!sub) {
           return null;
         }
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         return prisma.userDeckRecord.findUnique({
+          // eslint-disable-next-line @typescript-eslint/naming-convention
           where: { userId_deckId: { userId: sub.id, deckId } },
         });
       },
@@ -158,8 +158,8 @@ export const DeckQuery = queryField('deck', {
     ];
     const deck = await prisma.deck.findUnique({
       where: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         id,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         OR,
       },
     });
@@ -187,7 +187,8 @@ export const DecksQuery = queryField('decks', {
   description: 'implicit limit of 60',
   resolve: guardValidUser(
     async (_root, { cursor, take, titleFilter, scope }, { prisma, sub }, _info) => {
-      const OR = [
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const OR: any[] = [
         { ownerId: sub.id },
         { cards: { some: { records: { some: { userId: sub.id } } } } },
         { published: true },

@@ -4,7 +4,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { YogaInitialContext } from 'graphql-yoga';
 import { CurrentUser, verifyUserJWT } from '../userJWT';
-import { handleError } from '../../util/handleError';
 import Redis from 'ioredis';
 import { isInvalidated } from './isInvalidated';
 
@@ -33,7 +32,6 @@ export async function getClaims(
       }
       return sub;
     } catch (e: unknown) {
-      handleError(e);
       return undefined;
     }
   }

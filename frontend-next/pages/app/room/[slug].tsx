@@ -16,6 +16,7 @@ import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';
 import { ManageDeck } from '@/features/manageDeck';
 import { PaperPlaneIcon } from '@radix-ui/react-icons';
+import { usePeriodicallyRefreshToken } from '@/features/signin';
 
 const useStyles = createStyles((theme) => {
   const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
@@ -34,6 +35,7 @@ const useStyles = createStyles((theme) => {
 const Home: NextPage = () => {
   const { motionProps } = useMotionContext();
   const router = useRouter();
+  usePeriodicallyRefreshToken();
   const slug = router.query.slug as string;
   // const [{ data, fetching, error }] = useQuery({
   //   query: DeckDocument,

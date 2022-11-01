@@ -181,6 +181,7 @@ export interface NexusGenFieldTypes {
     messageCreate: NexusGenRootTypes['Message']; // Message!
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
+    refresh: NexusGenScalars['JWT'] | null; // JWT
     roomAddOccupant: NexusGenRootTypes['Room']; // Room!
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
@@ -197,7 +198,6 @@ export interface NexusGenFieldTypes {
     messagesOfRoom: NexusGenRootTypes['Message'][]; // [Message!]!
     occupyingActiveRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownDeckRecord: NexusGenRootTypes['UserDeckRecord'] | null; // UserDeckRecord
-    refresh: NexusGenScalars['JWT'] | null; // JWT
     room: NexusGenRootTypes['Room']; // Room!
     user: NexusGenRootTypes['User']; // User!
   }
@@ -299,6 +299,7 @@ export interface NexusGenFieldTypeNames {
     messageCreate: 'Message'
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
+    refresh: 'JWT'
     roomAddOccupant: 'Room'
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
@@ -315,7 +316,6 @@ export interface NexusGenFieldTypeNames {
     messagesOfRoom: 'Message'
     occupyingActiveRooms: 'Room'
     ownDeckRecord: 'UserDeckRecord'
-    refresh: 'JWT'
     room: 'Room'
     user: 'User'
   }
@@ -431,6 +431,9 @@ export interface NexusGenArgTypes {
       deckId: string; // ID!
       notes: NexusGenScalars['JSONObject']; // JSONObject!
     }
+    refresh: { // args
+      token: NexusGenScalars['JWT']; // JWT!
+    }
     roomAddOccupant: { // args
       id: string; // ID!
       occupantId: string; // ID!
@@ -470,9 +473,6 @@ export interface NexusGenArgTypes {
     }
     ownDeckRecord: { // args
       deckId: string; // ID!
-    }
-    refresh: { // args
-      token: NexusGenScalars['JWT']; // JWT!
     }
     room: { // args
       id: string; // ID!

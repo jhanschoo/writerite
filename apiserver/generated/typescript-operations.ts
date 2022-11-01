@@ -123,6 +123,7 @@ export type Mutation = {
   messageCreate: Message;
   ownCardRecordSet?: Maybe<UserCardRecord>;
   ownDeckRecordSet: UserDeckRecord;
+  refresh?: Maybe<Scalars['JWT']>;
   /**
    * @invalidatesTokens(
    *     reason: "occupying existing room"
@@ -274,6 +275,11 @@ export type MutationOwnDeckRecordSetArgs = {
 };
 
 
+export type MutationRefreshArgs = {
+  token: Scalars['JWT'];
+};
+
+
 export type MutationRoomAddOccupantArgs = {
   id: Scalars['ID'];
   occupantId: Scalars['ID'];
@@ -313,7 +319,6 @@ export type Query = {
   messagesOfRoom: Array<Message>;
   occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
-  refresh?: Maybe<Scalars['JWT']>;
   room: Room;
   user: User;
 };
@@ -344,11 +349,6 @@ export type QueryMessagesOfRoomArgs = {
 
 export type QueryOwnDeckRecordArgs = {
   deckId: Scalars['ID'];
-};
-
-
-export type QueryRefreshArgs = {
-  token: Scalars['JWT'];
 };
 
 

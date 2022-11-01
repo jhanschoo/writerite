@@ -1,4 +1,4 @@
-import { nonNull, queryField } from 'nexus';
+import { mutationField, nonNull } from 'nexus';
 import {
   currentUserSourceToCurrentUser,
   findOrCreateCurrentUserSourceWithProfile,
@@ -6,7 +6,8 @@ import {
 import { currentUserToUserJWT, verifyStaleUserJWT } from '../service/userJWT';
 import { jwtArg } from './scalarUtil';
 
-export const RefreshQuery = queryField('refresh', {
+// This is just a query, but needs to be a mutation field for technical reasons
+export const RefreshMutation = mutationField('refresh', {
   type: 'JWT',
   args: {
     token: nonNull(jwtArg()),

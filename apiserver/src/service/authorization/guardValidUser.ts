@@ -6,18 +6,9 @@ export async function notValidUser({ prisma, sub }: LoggedInContext) {
   const user = await prisma.user.findUnique({
     where: {
       id: sub.id,
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      OR: [
-        {
-          name: null,
-        },
-        {
-          name: '',
-        },
-      ],
     },
   });
-  return Boolean(user);
+  return Boolean(!user?.name);
 }
 
 export function guardValidUser<T, U, V, W>(

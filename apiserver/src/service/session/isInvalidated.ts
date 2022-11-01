@@ -22,5 +22,6 @@ export async function isInvalidated(params: InvalidatedGuardParams) {
   if (!iat) {
     return true;
   }
-  return timestamps.some((timestamp) => timestamp && iat <= Number(timestamp));
+  // Note: consistency assumption: there have been no tokens issued in the last 1 second and there is no drift.
+  return timestamps.some((timestamp) => timestamp && iat < Number(timestamp));
 }

@@ -3,13 +3,13 @@ import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } fro
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange, Data, NullArray } from '@urql/exchange-graphcache';
-import { getAccessKey } from '@lib/tokenManagement';
+import { getAccessToken, removeAccessToken, setAccessToken } from '@lib/tokenManagement';
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
 import { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
 import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
-import { DeckCardsDirectCountFragmentDoc, Mutation } from '@generated/graphql';
+import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
@@ -24,8 +24,9 @@ const wsClient = createClient({
 });
 
 const auth = authExchange<string | null>({
-  addAuthToOperation({ authState, operation }) {
-    if (isSSRContext() || !authState) {
+  addAuthToOperation({ operation }) {
+    const token = getAccessToken()
+    if (isSSRContext() || !token) {
       return operation;
     }
     const prevFetchOptions =
@@ -36,7 +37,7 @@ const auth = authExchange<string | null>({
       ...prevFetchOptions,
       headers: {
         ...prevFetchOptions.headers,
-        Authorization: `Bearer ${authState}`,
+        Authorization: `Bearer ${token}`,
       },
     };
 
@@ -45,8 +46,24 @@ const auth = authExchange<string | null>({
       fetchOptions,
     });
   },
-  async getAuth({ authState }) {
-    return authState || getAccessKey();
+  async getAuth({ authState, mutate }) {
+    console.log("attempting to refresh token")
+    const token = getAccessToken();
+    if (!token) {
+      return null;
+    }
+    console.log("token found", token)
+    // c.f. implementation in useRefreshToken.ts
+    //   unfortunately, there is no way to DRY due to signature differences.
+    const result = await mutate(RefreshDocument, { token });
+    const newToken = result.data?.refresh;
+    if (!newToken) {
+      removeAccessToken();
+      return null;
+    }
+    setAccessToken(newToken);
+    console.log("refresh token success")
+    return newToken;
   },
   didAuthError({ error }) {
     return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');
