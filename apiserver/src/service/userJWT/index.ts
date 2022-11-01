@@ -7,3 +7,4 @@ export * from './CurrentUser';
 export * from './currentUserToUserJWT';
 export * from './Roles';
 export * from './verifyUserJWT';
+export * from './verifyStaleUserJWT';

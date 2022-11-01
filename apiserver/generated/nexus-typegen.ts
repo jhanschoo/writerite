@@ -197,6 +197,7 @@ export interface NexusGenFieldTypes {
     messagesOfRoom: NexusGenRootTypes['Message'][]; // [Message!]!
     occupyingActiveRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownDeckRecord: NexusGenRootTypes['UserDeckRecord'] | null; // UserDeckRecord
+    refresh: NexusGenScalars['JWT'] | null; // JWT
     room: NexusGenRootTypes['Room']; // Room!
     user: NexusGenRootTypes['User']; // User!
   }
@@ -314,6 +315,7 @@ export interface NexusGenFieldTypeNames {
     messagesOfRoom: 'Message'
     occupyingActiveRooms: 'Room'
     ownDeckRecord: 'UserDeckRecord'
+    refresh: 'JWT'
     room: 'Room'
     user: 'User'
   }
@@ -468,6 +470,9 @@ export interface NexusGenArgTypes {
     }
     ownDeckRecord: { // args
       deckId: string; // ID!
+    }
+    refresh: { // args
+      token: NexusGenScalars['JWT']; // JWT!
     }
     room: { // args
       id: string; // ID!

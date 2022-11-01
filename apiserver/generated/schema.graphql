@@ -197,6 +197,7 @@ type Query {
   messagesOfRoom(id: ID!): [Message!]!
   occupyingActiveRooms: [Room!]!
   ownDeckRecord(deckId: ID!): UserDeckRecord
+  refresh(token: JWT!): JWT
   room(id: ID!): Room!
   user(id: ID): User!
 }
