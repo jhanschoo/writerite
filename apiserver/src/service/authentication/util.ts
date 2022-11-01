@@ -29,7 +29,7 @@ export const findOrCreateCurrentUserSourceWithProfile = async (
       },
       where: {
         room: {
-          state: { in: WillNotServeRoomStates },
+          state: { notIn: WillNotServeRoomStates },
         },
       },
     },

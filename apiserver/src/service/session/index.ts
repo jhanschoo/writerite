@@ -3,3 +3,5 @@
  * redis, and verifies JWT tokens against redis.
  */
 export * from './getClaims';
+export * from './invalidate';
+export * from './isInvalidated';

@@ -7,5 +7,5 @@ export const roomFindOccupyingActiveOfUser = async (
   ...[prisma, { occupantId }]: RoomSetDeckProps
 ) =>
   prisma.room.findMany({
-    where: { state: { in: WillNotServeRoomStates }, occupants: { some: { occupantId } } },
+    where: { state: { notIn: WillNotServeRoomStates }, occupants: { some: { occupantId } } },
   });
