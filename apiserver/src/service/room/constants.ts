@@ -1,3 +1,3 @@
-import { RoomState } from '../../../generated/typescript-operations';
+import { RoomState } from '@prisma/client';
 
-export const WillNotServeRoomStates = [RoomState.Served];
+export const WillNotServeRoomStates: RoomState[] = [RoomState.SERVED];

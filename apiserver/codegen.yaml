@@ -5,3 +5,11 @@ generates:
     plugins:
       - typescript
       - typescript-operations
+config:
+  scalars:
+    DateTime: string
+    EmailAddress: string
+    JSON: string
+    JSONObject: string
+    JWT: string
+    UUID: string

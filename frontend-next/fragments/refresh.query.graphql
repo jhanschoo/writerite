@@ -1,0 +1,3 @@
+query Refresh($token: JWT!) {
+  refresh(token: $token)
+}

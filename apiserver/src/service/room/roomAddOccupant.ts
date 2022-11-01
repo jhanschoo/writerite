@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client';
-import { RoomState } from '../../../generated/typescript-operations';
+import { PrismaClient, RoomState } from '@prisma/client';
 
 type RoomAddOccupantProps = [
   PrismaClient,
@@ -9,7 +8,7 @@ type RoomAddOccupantProps = [
 export const roomAddOccupant = (
   ...[prisma, { roomId, occupantId, currentUserId }]: RoomAddOccupantProps
 ) => {
-  const commonRoomWhere = { id: roomId, state: RoomState.Waiting };
+  const commonRoomWhere = { id: roomId, state: RoomState.WAITING };
   const data = {
     occupants: {
       upsert: {

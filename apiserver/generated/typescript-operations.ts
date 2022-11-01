@@ -11,17 +11,17 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
+  DateTime: string;
   /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
-  EmailAddress: any;
+  EmailAddress: string;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: any;
+  JSON: string;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: any;
+  JSONObject: string;
   /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
-  JWT: any;
+  JWT: string;
   /** A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
-  UUID: any;
+  UUID: string;
 };
 
 export type Card = {
@@ -124,21 +124,21 @@ export type Mutation = {
   ownCardRecordSet?: Maybe<UserCardRecord>;
   ownDeckRecordSet: UserDeckRecord;
   /**
-   * @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   *   @invalidatesTokens(
+   * @invalidatesTokens(
    *     reason: "occupying existing room"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomAddOccupant: Room;
   roomCleanUpDead: Scalars['Int'];
   /**
-   * @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   *   @invalidatesTokens(
+   * @invalidatesTokens(
    *     reason: "occupying newly created room"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomCreate: Room;
@@ -155,11 +155,11 @@ export type Mutation = {
    */
   roomSetDeck: Room;
   /**
-   * @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   *   @invalidatesTokens(
+   * @invalidatesTokens(
    *     reason: "room may no longer be active"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomSetState: Room;
@@ -313,6 +313,7 @@ export type Query = {
   messagesOfRoom: Array<Message>;
   occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
+  refresh?: Maybe<Scalars['JWT']>;
   room: Room;
   user: User;
 };
@@ -343,6 +344,11 @@ export type QueryMessagesOfRoomArgs = {
 
 export type QueryOwnDeckRecordArgs = {
   deckId: Scalars['ID'];
+};
+
+
+export type QueryRefreshArgs = {
+  token: Scalars['JWT'];
 };
 
 
@@ -410,7 +416,7 @@ export type UserDeckRecord = {
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: any } };
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description: string, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -448,7 +454,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description: any, editedAt: any, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: any } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description: string, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -509,7 +515,7 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: any | null };
+export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: string | null };
 
 export type NameUserMutationVariables = Exact<{
   name: Scalars['String'];

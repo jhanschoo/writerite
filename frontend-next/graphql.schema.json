@@ -1621,7 +1621,7 @@
           },
           {
             "name": "messageCreate",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"chatMsgsOfRoomUpdates\"]\n  )",
+            "description": "@triggersSubscriptions(\n    signatures: [\"messagesOfRoomUpdates\"]\n  )",
             "args": [
               {
                 "name": "content",
@@ -1784,7 +1784,7 @@
           },
           {
             "name": "roomAddOccupant",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"roomUpdates\", \"roomsUpdates\"]\n  )",
+            "description": "@invalidatesTokens(\n    reason: \"occupying existing room\"\n  )\n  @triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
             "args": [
               {
                 "name": "id",
@@ -1833,7 +1833,7 @@
           },
           {
             "name": "roomCleanUpDead",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"roomUpdates\", \"roomsUpdates\"]\n  )",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1849,7 +1849,7 @@
           },
           {
             "name": "roomCreate",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"roomUpdates\", \"roomsUpdates\"]\n  )",
+            "description": "@invalidatesTokens(\n    reason: \"occupying newly created room\"\n  )\n  @triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -1865,7 +1865,7 @@
           },
           {
             "name": "roomEditOwnerConfig",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"roomUpdates\", \"roomsUpdates\"]\n  )",
+            "description": "@triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
             "args": [
               {
                 "name": "id",
@@ -1914,7 +1914,7 @@
           },
           {
             "name": "roomSetDeck",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"roomUpdates\", \"roomsUpdates\"]\n  )",
+            "description": "@triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
             "args": [
               {
                 "name": "deckId",
@@ -1963,7 +1963,7 @@
           },
           {
             "name": "roomSetState",
-            "description": "@subscriptionsTriggered(\n    signatures: [\"roomUpdates\", \"roomsUpdates\"]\n  )",
+            "description": "@invalidatesTokens(\n    reason: \"room may no longer be active\"\n  )\n  @triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
             "args": [
               {
                 "name": "id",
@@ -2012,7 +2012,7 @@
           },
           {
             "name": "userEdit",
-            "description": null,
+            "description": "@invalidatesTokens(\n    reason: \"name may be changed\"\n  )",
             "args": [
               {
                 "name": "isPublic",
@@ -2306,6 +2306,35 @@
             "type": {
               "kind": "OBJECT",
               "name": "UserDeckRecord",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "refresh",
+            "description": null,
+            "args": [
+              {
+                "name": "token",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "JWT",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JWT",
               "ofType": null
             },
             "isDeprecated": false,

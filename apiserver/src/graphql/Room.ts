@@ -1,6 +1,5 @@
-import { Room as PRoom, Prisma } from '@prisma/client';
+import { Room as PRoom, RoomState as PRoomState, Prisma } from '@prisma/client';
 import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from 'nexus';
-import { RoomState as GeneratedRoomState } from '../../generated/typescript-operations';
 import { userLacksPermissionsErrorFactory } from '../error';
 import { guardValidUser } from '../service/authorization/guardValidUser';
 import {
@@ -130,7 +129,7 @@ export const RoomCreateMutation = mutationField('roomCreate', {
       data: {
         owner: { connect: { id } },
         occupants: { create: { occupantId: id } },
-        state: GeneratedRoomState.Waiting,
+        state: PRoomState.WAITING,
         slug: slug(),
       },
     });
@@ -181,12 +180,12 @@ export const RoomSetStateMutation = mutationField('roomSetState', {
   )`,
   resolve: guardValidUser(async (_parent, { id, state }, { prisma, redis, sub }) => {
     let previousRoom: PRoom | null | undefined;
-    if (WillNotServeRoomStates.includes(state as GeneratedRoomState)) {
+    if (WillNotServeRoomStates.includes(state)) {
       previousRoom = await prisma.room.findUnique({ where: { id } });
     }
     const roomRes = await roomSetState(prisma, {
       id,
-      state: state as GeneratedRoomState,
+      state,
       currentUserId: sub.id,
     });
     if (previousRoom?.slug) {

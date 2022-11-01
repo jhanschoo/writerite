@@ -10,3 +10,11 @@ generates:
   ./graphql.schema.json:
     plugins:
       - "introspection"
+config:
+  scalars:
+    DateTime: string
+    EmailAddress: string
+    JSON: string
+    JSONObject: string
+    JWT: string
+    UUID: string

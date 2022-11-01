@@ -12,17 +12,17 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
-  DateTime: any;
+  DateTime: string;
   /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
-  EmailAddress: any;
+  EmailAddress: string;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: any;
+  JSON: string;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: any;
+  JSONObject: string;
   /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
-  JWT: any;
+  JWT: string;
   /** A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
-  UUID: any;
+  UUID: string;
 };
 
 export type Card = {
@@ -117,49 +117,58 @@ export type Mutation = {
   finalizeOauthSignin?: Maybe<Scalars['JWT']>;
   initializeOauthSignin: Scalars['String'];
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["chatMsgsOfRoomUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["messagesOfRoomUpdates"]
    *   )
    */
   messageCreate: Message;
   ownCardRecordSet?: Maybe<UserCardRecord>;
   ownDeckRecordSet: UserDeckRecord;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @invalidatesTokens(
+   *     reason: "occupying existing room"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomAddOccupant: Room;
-  /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
-   *   )
-   */
   roomCleanUpDead: Scalars['Int'];
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @invalidatesTokens(
+   *     reason: "occupying newly created room"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomCreate: Room;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomEditOwnerConfig: Room;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomSetDeck: Room;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @invalidatesTokens(
+   *     reason: "room may no longer be active"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomSetState: Room;
+  /**
+   * @invalidatesTokens(
+   *     reason: "name may be changed"
+   *   )
+   */
   userEdit: User;
 };
 
@@ -305,6 +314,7 @@ export type Query = {
   messagesOfRoom: Array<Message>;
   occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
+  refresh?: Maybe<Scalars['JWT']>;
   room: Room;
   user: User;
 };
@@ -335,6 +345,11 @@ export type QueryMessagesOfRoomArgs = {
 
 export type QueryOwnDeckRecordArgs = {
   deckId: Scalars['ID'];
+};
+
+
+export type QueryRefreshArgs = {
+  token: Scalars['JWT'];
 };
 
 
@@ -406,16 +421,16 @@ export type CardCreateMutationVariables = Exact<{
 }>;
 
 
-export type CardCreateMutation = { __typename?: 'Mutation', cardCreate: { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null } };
+export type CardCreateMutation = { __typename?: 'Mutation', cardCreate: { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null } };
 
 export type CardDeleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type CardDeleteMutation = { __typename?: 'Mutation', cardDelete: { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null } };
+export type CardDeleteMutation = { __typename?: 'Mutation', cardDelete: { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null } };
 
-export type CardDetailFragment = { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null };
+export type CardDetailFragment = { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null };
 
 export type CardEditMutationVariables = Exact<{
   answers?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
@@ -427,7 +442,7 @@ export type CardEditMutationVariables = Exact<{
 }>;
 
 
-export type CardEditMutation = { __typename?: 'Mutation', cardEdit: { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null } };
+export type CardEditMutation = { __typename?: 'Mutation', cardEdit: { __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null } };
 
 export type DashboardQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -441,7 +456,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', answerLang: string, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', answerLang: string, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } };
 
 export type DeckAddCardsMutationVariables = Exact<{
   deckId: Scalars['ID'];
@@ -449,7 +464,7 @@ export type DeckAddCardsMutationVariables = Exact<{
 }>;
 
 
-export type DeckAddCardsMutation = { __typename?: 'Mutation', deckAddCards: { __typename?: 'Deck', answerLang: string, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } };
+export type DeckAddCardsMutation = { __typename?: 'Mutation', deckAddCards: { __typename?: 'Deck', answerLang: string, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -457,7 +472,7 @@ export type DeckAddSubdeckMutationVariables = Exact<{
 }>;
 
 
-export type DeckAddSubdeckMutation = { __typename?: 'Mutation', deckAddSubdeck: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } };
+export type DeckAddSubdeckMutation = { __typename?: 'Mutation', deckAddSubdeck: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } };
 
 export type DeckCardsDirectCountFragment = { __typename?: 'Deck', cardsDirectCount: number, id: string };
 
@@ -471,9 +486,9 @@ export type DeckCreateMutationVariables = Exact<{
 }>;
 
 
-export type DeckCreateMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', answerLang: string, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } };
+export type DeckCreateMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', answerLang: string, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } };
 
-export type DeckDetailFragment = { __typename?: 'Deck', answerLang: string, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null };
+export type DeckDetailFragment = { __typename?: 'Deck', answerLang: string, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null };
 
 export type DeckEditMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -485,7 +500,7 @@ export type DeckEditMutationVariables = Exact<{
 }>;
 
 
-export type DeckEditMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', answerLang: string, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: any, fullAnswer: any, id: string, mainTemplate: boolean, prompt: any, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<any> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } };
+export type DeckEditMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', answerLang: string, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, cardsDirect: Array<{ __typename?: 'Card', answers: Array<string>, deckId: string, editedAt: string, fullAnswer: string, id: string, mainTemplate: boolean, prompt: string, template: boolean, ownRecord?: { __typename?: 'UserCardRecord', correctRecord: Array<string> } | null }>, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } };
 
 export type DeckNameFragment = { __typename?: 'Deck', id: string, name: string };
 
@@ -495,11 +510,11 @@ export type DeckRemoveSubdeckMutationVariables = Exact<{
 }>;
 
 
-export type DeckRemoveSubdeckMutation = { __typename?: 'Mutation', deckRemoveSubdeck: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } };
+export type DeckRemoveSubdeckMutation = { __typename?: 'Mutation', deckRemoveSubdeck: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } };
 
-export type DeckSubdecksFragment = { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null };
+export type DeckSubdecksFragment = { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, subdecks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }>, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null };
 
-export type DeckSummaryFragment = { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null };
+export type DeckSummaryFragment = { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null };
 
 export type DecksQueryVariables = Exact<{
   cursor?: InputMaybe<Scalars['ID']>;
@@ -509,7 +524,7 @@ export type DecksQueryVariables = Exact<{
 }>;
 
 
-export type DecksQuery = { __typename?: 'Query', decks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null }> };
+export type DecksQuery = { __typename?: 'Query', decks: Array<{ __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null }> };
 
 export type FinalizeOauthSigninMutationVariables = Exact<{
   code: Scalars['String'];
@@ -519,7 +534,7 @@ export type FinalizeOauthSigninMutationVariables = Exact<{
 }>;
 
 
-export type FinalizeOauthSigninMutation = { __typename?: 'Mutation', finalizeOauthSignin?: any | null };
+export type FinalizeOauthSigninMutation = { __typename?: 'Mutation', finalizeOauthSignin?: string | null };
 
 export type HealthQueryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -534,7 +549,14 @@ export type InitializeOauthSigninMutation = { __typename?: 'Mutation', initializ
 export type OccupyingActiveRoomsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OccupyingActiveRoomsQuery = { __typename?: 'Query', occupyingActiveRooms: Array<{ __typename?: 'Room', createdAt: any, deckId?: string | null, id: string, internalConfig: any, messageCount: number, occupantsCount: number, ownerConfig: any, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string, name: string } | null }> };
+export type OccupyingActiveRoomsQuery = { __typename?: 'Query', occupyingActiveRooms: Array<{ __typename?: 'Room', createdAt: string, deckId?: string | null, id: string, internalConfig: string, messageCount: number, occupantsCount: number, ownerConfig: string, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string, name: string } | null }> };
+
+export type RefreshQueryVariables = Exact<{
+  token: Scalars['JWT'];
+}>;
+
+
+export type RefreshQuery = { __typename?: 'Query', refresh?: string | null };
 
 export type RepeatHealthSubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -544,11 +566,11 @@ export type RepeatHealthSubscriptionSubscription = { __typename?: 'Subscription'
 export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', deckId?: string | null, id: string, internalConfig: any, messageCount: number, occupantsCount: number, ownerConfig: any, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } | null, occupants: Array<{ __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> }>, owner: { __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> } } };
+export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', deckId?: string | null, id: string, internalConfig: string, messageCount: number, occupantsCount: number, ownerConfig: string, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } | null, occupants: Array<{ __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> }>, owner: { __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> } } };
 
-export type RoomDetailFragment = { __typename?: 'Room', deckId?: string | null, id: string, internalConfig: any, messageCount: number, occupantsCount: number, ownerConfig: any, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: any, editedAt: any, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: any } | null } | null, occupants: Array<{ __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> }>, owner: { __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> } };
+export type RoomDetailFragment = { __typename?: 'Room', deckId?: string | null, id: string, internalConfig: string, messageCount: number, occupantsCount: number, ownerConfig: string, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: string, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: string } | null } | null, occupants: Array<{ __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> }>, owner: { __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> } };
 
-export type RoomSummaryFragment = { __typename?: 'Room', createdAt: any, deckId?: string | null, id: string, internalConfig: any, messageCount: number, occupantsCount: number, ownerConfig: any, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string, name: string } | null };
+export type RoomSummaryFragment = { __typename?: 'Room', createdAt: string, deckId?: string | null, id: string, internalConfig: string, messageCount: number, occupantsCount: number, ownerConfig: string, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string, name: string } | null };
 
 export type UserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -591,6 +613,7 @@ export const FinalizeOauthSigninDocument = {"kind":"Document","definitions":[{"k
 export const HealthQueryDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"HealthQuery"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"health"}}]}}]} as unknown as DocumentNode<HealthQueryQuery, HealthQueryQueryVariables>;
 export const InitializeOauthSigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"InitializeOauthSignin"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"initializeOauthSignin"}}]}}]} as unknown as DocumentNode<InitializeOauthSigninMutation, InitializeOauthSigninMutationVariables>;
 export const OccupyingActiveRoomsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OccupyingActiveRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"occupyingActiveRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomSummary"}}]}}]}},...RoomSummaryFragmentDoc.definitions]} as unknown as DocumentNode<OccupyingActiveRoomsQuery, OccupyingActiveRoomsQueryVariables>;
+export const RefreshDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Refresh"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JWT"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refresh"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<RefreshQuery, RefreshQueryVariables>;
 export const RepeatHealthSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RepeatHealthSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"repeatHealth"}}]}}]} as unknown as DocumentNode<RepeatHealthSubscriptionSubscription, RepeatHealthSubscriptionSubscriptionVariables>;
 export const RoomCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomCreate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomCreate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomDetail"}}]}}]}},...RoomDetailFragmentDoc.definitions]} as unknown as DocumentNode<RoomCreateMutation, RoomCreateMutationVariables>;
 export const UserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"User"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"facebookId"}},{"kind":"Field","name":{"kind":"Name","value":"googleId"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UserQuery, UserQueryVariables>;
