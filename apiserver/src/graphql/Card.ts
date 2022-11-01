@@ -38,7 +38,7 @@ export const Card = objectType({
 
     t.field('ownRecord', {
       type: 'UserCardRecord',
-      resolve: guardValidUser(async ({ id: cardId }, _args, { sub, prisma }) =>
+      resolve: guardValidUser(async ({ id: cardId }, _args, { prisma, sub }) =>
         // eslint-disable-next-line @typescript-eslint/naming-convention
         prisma.userCardRecord.findUnique({ where: { userId_cardId: { userId: sub.id, cardId } } })
       ),
@@ -136,7 +136,7 @@ export const CardEditMutation = mutationField('cardEdit', {
     mainTemplate: booleanArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(
-    async (_source, { id, prompt, fullAnswer, answers, template }, { sub, prisma }) =>
+    async (_source, { id, prompt, fullAnswer, answers, template }, { prisma, sub }) =>
       prisma.card.update({
         where: {
           id,
@@ -159,7 +159,7 @@ export const CardUnsetMainTemplateMutation = mutationField('cardUnsetMainTemplat
   args: {
     deckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { deckId }, { sub, prisma }) => {
+  resolve: guardValidUser(async (_source, { deckId }, { prisma, sub }) => {
     const whereDeck = {
       id: deckId,
       ownerId: sub.id,
@@ -187,7 +187,7 @@ export const CardDeleteMutation = mutationField('cardDelete', {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) =>
     prisma.card.delete({
       where: { id, deck: { ownerId: sub.id } },
     })
@@ -200,7 +200,7 @@ export const OwnCardRecordSetMutation = mutationField('ownCardRecordSet', {
     cardId: nonNull(idArg()),
     correctRecordAppend: nonNull(list(nonNull(dateTimeArg()))),
   },
-  resolve: guardValidUser((_source, { cardId, correctRecordAppend }, { sub, prisma }) =>
+  resolve: guardValidUser((_source, { cardId, correctRecordAppend }, { prisma, sub }) =>
     prisma.userCardRecord.upsert({
       // eslint-disable-next-line @typescript-eslint/naming-convention
       where: { userId_cardId: { userId: sub.id, cardId } },

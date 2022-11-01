@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import { Room as PRoom, Prisma } from '@prisma/client';
 import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from 'nexus';
 import { RoomState as GeneratedRoomState } from '../../generated/typescript-operations';
 import { userLacksPermissionsErrorFactory } from '../error';
@@ -10,6 +10,7 @@ import {
   roomSetDeck,
   roomSetState,
 } from '../service/room';
+import { invalidateByRoomSlug, invalidateByUserId } from '../service/session';
 import { slug } from '../util';
 import { jsonObjectArg } from './scalarUtil';
 
@@ -91,7 +92,7 @@ export const RoomState = enumType({
 export const RoomQuery = queryField('room', {
   type: nonNull('Room'),
   args: { id: nonNull(idArg()) },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
+  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) => {
     const res = await prisma.room.findUnique({
       where: { id, ownerId: sub.id },
     });
@@ -104,7 +105,7 @@ export const RoomQuery = queryField('room', {
 
 export const OccupyingActiveRoomsQuery = queryField('occupyingActiveRooms', {
   type: nonNull(list(nonNull('Room'))),
-  resolve: guardValidUser((_source, _args, { sub, prisma }) =>
+  resolve: guardValidUser((_source, _args, { prisma, sub }) =>
     prisma.room.findMany({
       where: {
         occupants: { some: { occupantId: sub.id } },
@@ -116,11 +117,15 @@ export const OccupyingActiveRoomsQuery = queryField('occupyingActiveRooms', {
 
 export const RoomCreateMutation = mutationField('roomCreate', {
   type: nonNull('Room'),
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
+  description: `@invalidatesTokens(
+    reason: "occupying newly created room"
+  )
+  @triggersSubscriptions(
+    signatures: ["activeRoomUpdates"]
   )`,
-  resolve: guardValidUser((_parent, _args, { sub, prisma }) => {
+  resolve: guardValidUser(async (_parent, _args, { prisma, redis, sub }) => {
     const { id } = sub;
+    await invalidateByUserId(redis, id);
     return prisma.room.create({
       data: {
         owner: { connect: { id } },
@@ -139,8 +144,8 @@ export const RoomSetDeckMutation = mutationField('roomSetDeck', {
     id: nonNull(idArg()),
     deckId: nonNull(idArg()),
   },
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
+  description: `@triggersSubscriptions(
+    signatures: ["activeRoomUpdates"]
   )`,
   resolve: guardValidUser(async (_parent, { id: roomId, deckId }, { prisma, sub }) =>
     roomSetDeck(prisma, { roomId, deckId, currentUserId: sub.id })
@@ -154,8 +159,8 @@ export const RoomEditOwnerConfigMutation = mutationField('roomEditOwnerConfig', 
     id: nonNull(idArg()),
     ownerConfig: nonNull(jsonObjectArg()),
   },
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
+  description: `@triggersSubscriptions(
+    signatures: ["activeRoomUpdates"]
   )`,
   async resolve(_parent, { id, ownerConfig }, { prisma }) {
     return roomEditOwnerConfig(prisma, { id, ownerConfig: ownerConfig as Prisma.InputJsonObject });
@@ -168,19 +173,31 @@ export const RoomSetStateMutation = mutationField('roomSetState', {
     id: nonNull(idArg()),
     state: nonNull('RoomState'),
   },
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
+  description: `@invalidatesTokens(
+    reason: "room may no longer be active"
+  )
+  @triggersSubscriptions(
+    signatures: ["activeRoomUpdates"]
   )`,
-  resolve: guardValidUser((_parent, { id, state }, { prisma, sub }) =>
-    roomSetState(prisma, { id, state: state as GeneratedRoomState, currentUserId: sub.id })
-  ),
+  resolve: guardValidUser(async (_parent, { id, state }, { prisma, redis, sub }) => {
+    let previousRoom: PRoom | null | undefined;
+    if (WillNotServeRoomStates.includes(state as GeneratedRoomState)) {
+      previousRoom = await prisma.room.findUnique({ where: { id } });
+    }
+    const roomRes = await roomSetState(prisma, {
+      id,
+      state: state as GeneratedRoomState,
+      currentUserId: sub.id,
+    });
+    if (previousRoom?.slug) {
+      await invalidateByRoomSlug(redis, previousRoom.slug);
+    }
+    return roomRes;
+  }),
 });
 
 export const RoomCleanUpDeadMutation = mutationField('roomCleanUpDead', {
   type: nonNull('Int'),
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
-  )`,
   resolve() {
     throw Error('not implemented yet');
   },
@@ -193,8 +210,11 @@ export const RoomAddOccupantMutation = mutationField('roomAddOccupant', {
     id: nonNull(idArg()),
     occupantId: nonNull(idArg()),
   },
-  description: `@subscriptionsTriggered(
-    signatures: ["roomUpdates", "roomsUpdates"]
+  description: `@invalidatesTokens(
+    reason: "occupying existing room"
+  )
+  @triggersSubscriptions(
+    signatures: ["activeRoomUpdates"]
   )`,
   resolve: guardValidUser((_parent, { id, occupantId }, { prisma, sub }) =>
     roomAddOccupant(prisma, { roomId: id, occupantId, currentUserId: sub.id })

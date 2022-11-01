@@ -4,10 +4,7 @@ import type { PrismaClient } from '@prisma/client';
 import { YogaInitialContext } from 'graphql-yoga';
 
 import { cascadingDelete } from '../../_helpers/truncate';
-import {
-  loginAsNewlyCreatedUser,
-  testContextFactory,
-} from '../../../helpers';
+import { loginAsNewlyCreatedUser, testContextFactory } from '../../../helpers';
 import { Context } from '../../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../../src/graphqlApp';
 import { CurrentUser, Roles, currentUserToUserJWT } from '../../../../src/service/userJWT';
@@ -16,7 +13,11 @@ import {
   currentUserSourceToCurrentUser,
   findOrCreateCurrentUserSourceWithProfile,
 } from '../../../../src/service/authentication/util';
-import { getClaims, invalidateByRoomSlug, invalidateByUserId } from '../../../../src/service/session';
+import {
+  getClaims,
+  invalidateByRoomSlug,
+  invalidateByUserId,
+} from '../../../../src/service/session';
 import { mutationRoomCreate } from '../../../helpers/graphql/Room.util';
 
 describe('service/session', () => {

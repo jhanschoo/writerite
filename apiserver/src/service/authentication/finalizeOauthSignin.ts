@@ -4,7 +4,6 @@ import { ProviderKey, providerStrategies } from './providerStrategies';
 import { PrismaCurrentUserSourceType } from './types';
 import { findOrCreateCurrentUserSourceWithProfile } from './util';
 
-
 export async function finalizeOauthSignin({
   code,
   provider,

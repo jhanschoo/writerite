@@ -186,7 +186,7 @@ export const DecksQuery = queryField('decks', {
   },
   description: 'implicit limit of 60',
   resolve: guardValidUser(
-    async (_root, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) => {
+    async (_root, { cursor, take, titleFilter, scope }, { prisma, sub }, _info) => {
       const OR = [
         { ownerId: sub.id },
         { cards: { some: { records: { some: { userId: sub.id } } } } },
@@ -234,7 +234,7 @@ export const OwnDeckRecordQuery = queryField('ownDeckRecord', {
   args: {
     deckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_root, { deckId }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_root, { deckId }, { prisma, sub }) =>
     // eslint-disable-next-line @typescript-eslint/naming-convention
     prisma.userDeckRecord.findUnique({ where: { userId_deckId: { userId: sub.id, deckId } } })
   ),
@@ -275,7 +275,7 @@ export const DeckCreateMutation = mutationField('deckCreate', {
       )
     ),
   },
-  resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
+  resolve: guardValidUser(async (_root, args, { prisma, sub }) => {
     const { cards, ...rest } = deckCreateSchema.parse(args);
 
     return prisma.deck.create({
@@ -307,7 +307,7 @@ export const DeckEditMutation = mutationField('deckEdit', {
     answerLang: stringArg({ undefinedOnly: true }),
     published: booleanArg({ undefinedOnly: true }),
   },
-  resolve: guardValidUser(async (_root, args, { sub, prisma }) => {
+  resolve: guardValidUser(async (_root, args, { prisma, sub }) => {
     const { id, ...data } = deckEditSchema.parse(args);
     return prisma.deck.update({
       where: { id, ownerId: sub.id },
@@ -322,7 +322,7 @@ export const DeckAddCardsMutation = mutationField('deckAddCards', {
     deckId: nonNull(idArg()),
     cards: nonNull(list(nonNull('CardCreateInput'))),
   },
-  resolve: guardValidUser(async (_root, { deckId, cards }, { sub, prisma }) => {
+  resolve: guardValidUser(async (_root, { deckId, cards }, { prisma, sub }) => {
     const defaultCards = cards.map(({ prompt, fullAnswer, answers, template }) => ({
       prompt: prompt as Prisma.InputJsonObject,
       fullAnswer: fullAnswer as Prisma.InputJsonObject,
@@ -346,14 +346,14 @@ export const DeckAddSubdeckMutation = mutationField('deckAddSubdeck', {
     id: nonNull(idArg()),
     subdeckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_source, { id, subdeckId }, { prisma, sub }) =>
     prisma.deck.update({
       where: { id, ownerId: sub.id },
       data: {
         subdecks: {
           connectOrCreate: {
-            // eslint-disable-next-line @typescript-eslint/naming-convention
             where: {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
               parentDeckId_subdeckId: { parentDeckId: id, subdeckId },
               subdeck: { id: subdeckId, ownerId: sub.id },
             },
@@ -371,7 +371,7 @@ export const DeckRemoveSubdeckMutation = mutationField('deckRemoveSubdeck', {
     id: nonNull(idArg()),
     subdeckId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id, subdeckId }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_source, { id, subdeckId }, { prisma, sub }) =>
     prisma.deck.update({
       where: { id, ownerId: sub.id },
       data: {
@@ -387,7 +387,7 @@ export const DeckUsedMutation = mutationField('deckUsed', {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) =>
     prisma.deck.update({
       where: { id, ownerId: sub.id },
       data: {
@@ -402,7 +402,7 @@ export const DeckDeleteMutation = mutationField('deckDelete', {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) =>
     prisma.deck.delete({ where: { id, ownerId: sub.id } })
   ),
 });
@@ -413,7 +413,7 @@ export const OwnDeckRecordSetMutation = mutationField('ownDeckRecordSet', {
     deckId: nonNull(idArg()),
     notes: nonNull(jsonObjectArg()),
   },
-  resolve: guardValidUser((_source, { deckId, notes }, { sub, prisma }) =>
+  resolve: guardValidUser((_source, { deckId, notes }, { prisma, sub }) =>
     prisma.userDeckRecord.upsert({
       // eslint-disable-next-line @typescript-eslint/naming-convention
       where: { userId_deckId: { userId: sub.id, deckId } },

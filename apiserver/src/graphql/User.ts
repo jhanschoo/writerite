@@ -11,6 +11,7 @@ import type { Context } from '../context';
 import { userLacksPermissionsErrorFactory, userNotLoggedInErrorFactory } from '../error';
 import { guardLoggedIn } from '../service/authorization/guardLoggedIn';
 import { roomFindOccupyingActiveOfUser } from '../service/room/roomFindOccupyingActiveOfUser';
+import { invalidateByUserId } from '../service/session';
 
 const isPublicOrLoggedInOrAdmin = (
   { id, isPublic }: { id: string; isPublic: boolean },
@@ -78,13 +79,20 @@ export const UserEditMutation = mutationField('userEdit', {
     name: stringArg({ undefinedOnly: true }),
     isPublic: booleanArg({ undefinedOnly: true }),
   },
-  resolve: guardLoggedIn(async (_source, { name, isPublic }, { sub, prisma }) => {
+  description: `@invalidatesTokens(
+    reason: "name may be changed"
+  )`,
+  resolve: guardLoggedIn(async (_source, { name, isPublic }, { prisma, redis, sub }) => {
     try {
-      return await prisma.user.update({
+      if (name !== undefined && sub.name !== name) {
+        await invalidateByUserId(redis, sub.id);
+      }
+      const userRes = await prisma.user.update({
         where: { id: sub.id },
         // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
         data: { name: name?.trim() || undefined, isPublic: isPublic ?? undefined },
       });
+      return userRes;
     } catch (err) {
       throw userLacksPermissionsErrorFactory();
     }

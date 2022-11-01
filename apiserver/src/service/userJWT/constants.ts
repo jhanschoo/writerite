@@ -12,7 +12,8 @@ export const issuer = 'writerite.site';
 export const PRIVATE_KEY_P = importJWK(JWT_PRIVATE_KEY, alg);
 export const PUBLIC_KEY_P = importJWK(JWT_PUBLIC_KEY, alg);
 
-export const ttlInSeconds = (process.env.NODE_ENV === 'production')
-  // 1 week
-  ? 60 * 60 * 24 * 7
-  : 60;
+export const ttlInSeconds =
+  process.env.NODE_ENV === 'production'
+    ? // 1 week
+      60 * 60 * 24 * 7
+    : 60;

@@ -116,49 +116,58 @@ export type Mutation = {
   finalizeOauthSignin?: Maybe<Scalars['JWT']>;
   initializeOauthSignin: Scalars['String'];
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["chatMsgsOfRoomUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["messagesOfRoomUpdates"]
    *   )
    */
   messageCreate: Message;
   ownCardRecordSet?: Maybe<UserCardRecord>;
   ownDeckRecordSet: UserDeckRecord;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
+   *   )
+   *   @invalidatesTokens(
+   *     reason: "occupying existing room"
    *   )
    */
   roomAddOccupant: Room;
-  /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
-   *   )
-   */
   roomCleanUpDead: Scalars['Int'];
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
+   *   )
+   *   @invalidatesTokens(
+   *     reason: "occupying newly created room"
    *   )
    */
   roomCreate: Room;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomEditOwnerConfig: Room;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
    *   )
    */
   roomSetDeck: Room;
   /**
-   * @subscriptionsTriggered(
-   *     signatures: ["roomUpdates", "roomsUpdates"]
+   * @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
+   *   )
+   *   @invalidatesTokens(
+   *     reason: "room may no longer be active"
    *   )
    */
   roomSetState: Room;
+  /**
+   * @invalidatesTokens(
+   *     reason: "name may be changed"
+   *   )
+   */
   userEdit: User;
 };
 

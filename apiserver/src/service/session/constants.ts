@@ -1,7 +1,8 @@
-import { WRITERITE_TOPIC } from "../redis";
+import { WRITERITE_TOPIC } from '../redis';
 
 export const SESSION_INVALIDATION_TOPIC = `${WRITERITE_TOPIC}si:` as const;
 
 export const SESSION_INVALIDATION_BY_USERID_TOPIC = `${SESSION_INVALIDATION_TOPIC}uid:` as const;
 
-export const SESSION_INVALIDATION_BY_ROOM_SLUG_TOPIC = `${SESSION_INVALIDATION_TOPIC}slug:` as const;
+export const SESSION_INVALIDATION_BY_ROOM_SLUG_TOPIC =
+  `${SESSION_INVALIDATION_TOPIC}slug:` as const;

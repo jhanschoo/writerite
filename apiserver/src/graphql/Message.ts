@@ -51,7 +51,7 @@ export const MessageQuery = queryField('message', {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) => {
+  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) => {
     const res = await prisma.message.findFirst({
       where: { id, room: { occupants: { some: { occupantId: sub.id } } } },
     });
@@ -67,7 +67,7 @@ export const MessagesOfRoomQuery = queryField('messagesOfRoom', {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { id }, { sub, prisma }) =>
+  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) =>
     prisma.message.findMany({
       where: { room: { id, occupants: { some: { occupantId: sub.id } } } },
     })
@@ -84,7 +84,7 @@ export const MessageCreateMutation = mutationField('messageCreate', {
   resolve() {
     throw Error('not implemented yet');
   },
-  description: `@subscriptionsTriggered(
-    signatures: ["chatMsgsOfRoomUpdates"]
+  description: `@triggersSubscriptions(
+    signatures: ["messagesOfRoomUpdates"]
   )`,
 });

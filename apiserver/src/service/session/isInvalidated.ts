@@ -19,6 +19,8 @@ export async function isInvalidated(params: InvalidatedGuardParams) {
     getInvalidationByUserIdTopic(id),
     ...(occupyingActiveRoomSlugs ?? []).map(getInvalidationByRoomSlugTopic)
   );
-  if (!iat) { return true; }
+  if (!iat) {
+    return true;
+  }
   return timestamps.some((timestamp) => timestamp && iat <= Number(timestamp));
 }

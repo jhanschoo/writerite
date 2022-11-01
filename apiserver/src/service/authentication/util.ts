@@ -5,7 +5,12 @@ import { PrismaClient } from '@prisma/client';
 import { ProviderPrismaFieldKeys } from './providerStrategies';
 import type { CurrentUser } from '../userJWT/CurrentUser';
 
-export function currentUserSourceToCurrentUser({ id, name, roles, occupyingRooms }: PrismaCurrentUserSourceType): CurrentUser {
+export function currentUserSourceToCurrentUser({
+  id,
+  name,
+  roles,
+  occupyingRooms,
+}: PrismaCurrentUserSourceType): CurrentUser {
   return {
     id,
     name,
@@ -13,7 +18,7 @@ export function currentUserSourceToCurrentUser({ id, name, roles, occupyingRooms
     occupyingActiveRoomSlugs: occupyingRooms
       .map((occupant) => occupant.room.slug)
       .filter((slug): slug is string => Boolean(slug)),
-  }
+  };
 }
 
 export const findOrCreateCurrentUserSourceWithProfile = async (
@@ -43,6 +48,6 @@ export const findOrCreateCurrentUserSourceWithProfile = async (
       roles: [Roles.User],
     },
     include,
-  })
+  });
   return user;
 };

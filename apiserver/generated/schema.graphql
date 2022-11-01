@@ -126,8 +126,8 @@ type Mutation {
   initializeOauthSignin: String!
 
   """
-  @subscriptionsTriggered(
-      signatures: ["chatMsgsOfRoomUpdates"]
+  @triggersSubscriptions(
+      signatures: ["messagesOfRoomUpdates"]
     )
   """
   messageCreate(content: JSON, roomId: ID!, type: MessageContentType!): Message!
@@ -135,46 +135,55 @@ type Mutation {
   ownDeckRecordSet(deckId: ID!, notes: JSONObject!): UserDeckRecord!
 
   """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
+  @invalidatesTokens(
+      reason: "occupying existing room"
+    )
+    @triggersSubscriptions(
+      signatures: ["activeRoomUpdates"]
     )
   """
   roomAddOccupant(id: ID!, occupantId: ID!): Room!
-
-  """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
-    )
-  """
   roomCleanUpDead: Int!
 
   """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
+  @invalidatesTokens(
+      reason: "occupying newly created room"
+    )
+    @triggersSubscriptions(
+      signatures: ["activeRoomUpdates"]
     )
   """
   roomCreate: Room!
 
   """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
+  @triggersSubscriptions(
+      signatures: ["activeRoomUpdates"]
     )
   """
   roomEditOwnerConfig(id: ID!, ownerConfig: JSONObject!): Room!
 
   """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
+  @triggersSubscriptions(
+      signatures: ["activeRoomUpdates"]
     )
   """
   roomSetDeck(deckId: ID!, id: ID!): Room!
 
   """
-  @subscriptionsTriggered(
-      signatures: ["roomUpdates", "roomsUpdates"]
+  @invalidatesTokens(
+      reason: "room may no longer be active"
+    )
+    @triggersSubscriptions(
+      signatures: ["activeRoomUpdates"]
     )
   """
   roomSetState(id: ID!, state: RoomState!): Room!
+
+  """
+  @invalidatesTokens(
+      reason: "name may be changed"
+    )
+  """
   userEdit(isPublic: Boolean, name: String): User!
 }
 
