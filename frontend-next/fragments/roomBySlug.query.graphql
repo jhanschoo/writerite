@@ -1,0 +1,5 @@
+query RoomBySlug($slug: String!) {
+  roomBySlug(slug: $slug) {
+    ...roomDetail
+  }
+}

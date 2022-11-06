@@ -4,12 +4,13 @@ import {
   MouseEvent,
   MouseEventHandler,
 } from 'react';
-import { DeckCreateDocument, DecksDocument, DecksQueryScope } from '@generated/graphql';
+import { DeckCreateDocument, DecksQueryScope, RoomBySlugDocument } from '@generated/graphql';
 import { useMutation, useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
 import {
   ActionIcon,
+  Box,
   Button,
   Card,
   Center,
@@ -21,54 +22,34 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { motionThemes } from '@/lib/framer-motion/motionThemes';
-import { useMotionContext } from '@/hooks';
-import { useRouter } from 'next/router';
+import { PaperPlaneIcon } from '@radix-ui/react-icons';
 
-const useStyles = createStyles(({ breakpoints }, _params, getRef) => ({
-  root: {
-    width: '100%',
-    maxWidth: `${breakpoints.lg}px`,
-  },
-  group: {
-    [`& > .${getRef('growable')}`]: { flexGrow: 1 },
-  },
-  growable: {
-    ref: getRef('growable'),
-  },
-}));
+const useStyles = createStyles((theme) => {
+  const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
+  // https://github.com/mantinedev/mantine/blob/c7d080c2133b0196e3a8382ec6134838632c8f9a/src/mantine-core/src/Tabs/Tab/Tab.styles.ts#L49
+  const borderColor = theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3];
+  const { breakpoints } = theme;
+  return {
+    inputPanel: {
+      backgroundColor,
+      borderTop: `1px solid ${borderColor}`,
+      width: '100%',
+    },
+  };
+});
 
-// TODO: pagination
-export const ManageDecks: FC = () => {
-  const router = useRouter();
-  const { setMotionProps } = useMotionContext();
+interface Props {
+  slug: string;
+}
+
+export const ManageRoom: FC<Props> = ({ slug }) => {
   const { classes } = useStyles();
-  const [titleFilter, setTitleFilter] = useState('');
-  const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS);
-  const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
-  const [cursor, setCursor] = useState<string | undefined>();
-  const [{ data }, refetchDecks] = useQuery({
-    query: DecksDocument,
+  const [{ data }, refetchRoom] = useQuery({
+    query: RoomBySlugDocument,
     variables: {
-      scope: scopeFilter,
-      take: MANAGE_DECKS_DECKS_NUM,
-      titleFilter: debouncedTitleFilter,
-      cursor,
+      slug
     },
   });
-  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
-  const handleCreateDeck: MouseEventHandler = (e) => {
-    (async () => {
-      e.stopPropagation();
-      setMotionProps(motionThemes.forward);
-      const createdDeck = await deckCreateMutation(emptyNewDeckInput);
-      refetchDecks();
-      if (createdDeck.data?.deckCreate.id) {
-        router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
-      }
-    })();
-  };
-  const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
   return (
     <Stack sx={{ height: '100%' }} align="center">
     <Stack
@@ -95,6 +76,9 @@ export const ManageDecks: FC = () => {
         voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
         cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est
         laborum."
+      </Text>
+      <Text>
+        {JSON.stringify(data)}
       </Text>
     </Stack>
     <Group p="md" className={classes.inputPanel} position="center">

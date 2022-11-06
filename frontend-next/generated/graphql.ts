@@ -321,6 +321,7 @@ export type Query = {
   occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
   room: Room;
+  roomBySlug: Room;
   user: User;
 };
 
@@ -355,6 +356,11 @@ export type QueryOwnDeckRecordArgs = {
 
 export type QueryRoomArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryRoomBySlugArgs = {
+  slug: Scalars['String'];
 };
 
 
@@ -563,6 +569,13 @@ export type RepeatHealthSubscriptionSubscriptionVariables = Exact<{ [key: string
 
 export type RepeatHealthSubscriptionSubscription = { __typename?: 'Subscription', repeatHealth: string };
 
+export type RoomBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type RoomBySlugQuery = { __typename?: 'Query', roomBySlug: { __typename?: 'Room', deckId?: string | null, id: string, internalConfig: Record<string, unknown>, messageCount: number, occupantsCount: number, ownerConfig: Record<string, unknown>, ownerId: string, slug?: string | null, state: RoomState, deck?: { __typename?: 'Deck', answerLang: string, cardsDirectCount: number, subdecksCount: number, description: Record<string, unknown>, editedAt: string, id: string, name: string, promptLang: string, published: boolean, ownRecord?: { __typename?: 'UserDeckRecord', notes: Record<string, unknown> } | null } | null, occupants: Array<{ __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> }>, owner: { __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> } } };
+
 export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -615,6 +628,7 @@ export const InitializeOauthSigninDocument = {"kind":"Document","definitions":[{
 export const OccupyingActiveRoomsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"OccupyingActiveRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"occupyingActiveRooms"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomSummary"}}]}}]}},...RoomSummaryFragmentDoc.definitions]} as unknown as DocumentNode<OccupyingActiveRoomsQuery, OccupyingActiveRoomsQueryVariables>;
 export const RefreshDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Refresh"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"token"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JWT"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"refresh"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"token"},"value":{"kind":"Variable","name":{"kind":"Name","value":"token"}}}]}]}}]} as unknown as DocumentNode<RefreshMutation, RefreshMutationVariables>;
 export const RepeatHealthSubscriptionDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"RepeatHealthSubscription"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"repeatHealth"}}]}}]} as unknown as DocumentNode<RepeatHealthSubscriptionSubscription, RepeatHealthSubscriptionSubscriptionVariables>;
+export const RoomBySlugDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"RoomBySlug"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"slug"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomBySlug"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"slug"},"value":{"kind":"Variable","name":{"kind":"Name","value":"slug"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomDetail"}}]}}]}},...RoomDetailFragmentDoc.definitions]} as unknown as DocumentNode<RoomBySlugQuery, RoomBySlugQueryVariables>;
 export const RoomCreateDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RoomCreate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"roomCreate"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"roomDetail"}}]}}]}},...RoomDetailFragmentDoc.definitions]} as unknown as DocumentNode<RoomCreateMutation, RoomCreateMutationVariables>;
 export const UserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"User"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"facebookId"}},{"kind":"Field","name":{"kind":"Name","value":"googleId"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UserQuery, UserQueryVariables>;
 export const UserEditDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"UserEdit"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isPublic"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userEdit"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"isPublic"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isPublic"}}},{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"facebookId"}},{"kind":"Field","name":{"kind":"Name","value":"googleId"}},{"kind":"Field","name":{"kind":"Name","value":"isPublic"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]} as unknown as DocumentNode<UserEditMutation, UserEditMutationVariables>;
