@@ -15,9 +15,9 @@ export type Scalars = {
   /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
   EmailAddress: string;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: string;
+  JSON: string | number | Record<string, unknown> | boolean | null;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: string;
+  JSONObject: Record<string, unknown>;
   /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
   JWT: string;
   /** A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
@@ -416,7 +416,7 @@ export type UserDeckRecord = {
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description: string, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description: Record<string, unknown>, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -454,7 +454,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description: string, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description: Record<string, unknown>, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 

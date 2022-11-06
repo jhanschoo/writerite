@@ -10,7 +10,8 @@ import {
   LoadingOverlay,
   Text,
 } from '@mantine/core';
-import { Delta } from 'quill';
+import type { Delta as QuillDelta } from 'quill';
+import Delta, { Op } from 'quill-delta';
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
@@ -22,6 +23,12 @@ import { useMutation } from 'urql';
 import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { RichTextEditorProps } from '@mantine/rte';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
+
+/* Note: unfortunately quill types and quill-delta have different typing even though they should be the same.
+ *   For this reason we have to do some type munging.
+ */
+
+type DeltaPojo = { ops: Op[]; };
 
 const useEditorStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -73,8 +80,8 @@ interface Props {
 }
 
 interface State {
-  prompt: Delta;
-  fullAnswer: Delta;
+  prompt: QuillDelta;
+  fullAnswer: QuillDelta;
   answers: string[];
 }
 
@@ -124,16 +131,20 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     fullAnswer: fullAnswer as unknown,
     answers,
   } as State;
-  const [promptContent, setPromptContent] = useState<Delta>(prompt);
-  const [fullAnswerContent, setFullAnswerContent] = useState<Delta>(fullAnswer);
+  const [promptContent, setPromptContent] = useState<QuillDelta>(new Delta(prompt as DeltaPojo) as unknown as QuillDelta);
+  const [fullAnswerContent, setFullAnswerContent] = useState<QuillDelta>(new Delta(fullAnswer as DeltaPojo) as unknown as QuillDelta);
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
-  const updateStateToServer = (newState: State) =>
-    cardEdit({
+  const updateStateToServer = (newState: State) =>{
+    console.log(newState);
+    return cardEdit({
       id,
       ...newState,
+      fullAnswer: newState.fullAnswer ? { ...newState.fullAnswer } : undefined,
+      prompt: newState.prompt ? { ...newState.prompt } : undefined,
     });
+  };
   const handleCardDelete = () => {
     debounced.cancel();
     cardDelete({ id });
@@ -155,7 +166,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     _sources,
     editor
   ) => {
-    const latestPromptContent = editor.getContents();
+    const latestPromptContent = new Delta(editor.getContents().ops) as unknown as QuillDelta;
     const latestState = {
       prompt: latestPromptContent,
       fullAnswer: fullAnswerContent,
@@ -170,7 +181,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     _sources,
     editor
   ) => {
-    const latestFullAnswerContent = editor.getContents();
+    const latestFullAnswerContent = new Delta(editor.getContents().ops) as unknown as QuillDelta;
     const latestState = {
       prompt: promptContent,
       fullAnswer: latestFullAnswerContent,
@@ -213,7 +224,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
           <RichTextEditor
-            value={promptContent}
+            value={promptContent as unknown as QuillDelta}
             onChange={handlePromptChange}
             classNames={editorClasses}
           />
@@ -226,7 +237,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         </Card.Section>
         <Card.Section>
           <RichTextEditor
-            value={fullAnswerContent}
+            value={fullAnswerContent as unknown as QuillDelta}
             onChange={handleFullAnswerChange}
             classNames={editorClasses}
           />

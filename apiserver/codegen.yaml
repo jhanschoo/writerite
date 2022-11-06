@@ -9,7 +9,7 @@ config:
   scalars:
     DateTime: string
     EmailAddress: string
-    JSON: string
-    JSONObject: string
+    JSON: string | number | Record<string, unknown> | boolean | null
+    JSONObject: Record<string, unknown>
     JWT: string
     UUID: string

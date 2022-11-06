@@ -1,7 +1,7 @@
-import { Delta } from 'quill';
+import { DeltaPojo } from '@/features/manageDeck/components/ManageDeckDescription';
 
 export interface NewCardData {
-  prompt: Delta;
-  fullAnswer: Delta;
+  prompt: DeltaPojo;
+  fullAnswer: DeltaPojo;
   answers: string[];
 }

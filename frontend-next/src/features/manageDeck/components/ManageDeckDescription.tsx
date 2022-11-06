@@ -6,11 +6,15 @@ import { Box, LoadingOverlay, Text } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 import RichTextEditor from '@/components/RichTextEditor';
+import Delta, { Op } from 'quill-delta';
+import type { Delta as QuillDelta } from 'quill';
+
+export type DeltaPojo = { ops: Op[]; };
 
 export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, description } }) => {
   const [{ fetching }, mutateDeck] = useMutation(DeckEditDocument);
   const [writableMode, setWritableMode] = useState(false);
-  const [htmlValue, setHtmlValue] = useState<RichTextEditorProps['value']>(description);
+  const [htmlValue, setHtmlValue] = useState<RichTextEditorProps['value']>(new Delta(description as DeltaPojo) as unknown as QuillDelta);
   const editorRef = useRef<any>(null);
   const { hovered, ref } = useHover();
   const handleBlur = async () => {

@@ -1,6 +1,5 @@
 import Papa from 'papaparse';
 import Delta from 'quill-delta';
-import { Delta as DeltaType } from 'quill';
 import { nextTick, NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
 import type { NewCardData } from '../types';
 
@@ -18,8 +17,8 @@ export const useParseCsv = () => async (file: File) =>
             }
             newCards = newCards.concat(
               results.data.map(([prompt, fullAnswer, ...answers]) => ({
-                prompt: new Delta().insert(prompt ?? '') as unknown as DeltaType,
-                fullAnswer: new Delta().insert(fullAnswer ?? '') as unknown as DeltaType,
+                prompt: new Delta().insert(prompt ?? ''),
+                fullAnswer: new Delta().insert(fullAnswer ?? ''),
                 answers: answers.filter((answer) => answer.trim()),
               }))
             );

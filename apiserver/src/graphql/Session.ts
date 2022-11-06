@@ -14,7 +14,7 @@ export const RefreshMutation = mutationField('refresh', {
   },
   async resolve(_parent, { token }, { prisma }) {
     try {
-      const { sub } = await verifyStaleUserJWT(token as string);
+      const { sub } = await verifyStaleUserJWT(token);
       const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
         prisma,
         sub.id,

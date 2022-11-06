@@ -3,9 +3,9 @@ import { useMutation } from 'urql';
 import { Button, Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '@/features/manageDeck';
-import { Delta } from 'quill';
 import { ManageCard } from '@/features/manageCard';
 import { CardCreateDocument } from '@generated/graphql';
+import { DeltaPojo } from '@/features/manageDeck/components/ManageDeckDescription';
 
 type Card = ManageDeckProps['deck']['cardsDirect'][number];
 
@@ -18,7 +18,7 @@ const dummyCard: Card = {
   __typename: 'Card',
   answers: [],
   deckId: '',
-  editedAt: undefined,
+  editedAt: '',
   fullAnswer: {},
   id: '',
   mainTemplate: false,
@@ -50,15 +50,11 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
             prompt,
             fullAnswer,
             answers,
-          }: {
-            prompt: Delta;
-            fullAnswer: Delta;
-            answers: string[];
           }) =>
-            prompt.ops?.some(
+            (prompt as DeltaPojo).ops?.some(
               ({ insert }) => typeof insert === 'string' && insert.includes(filter)
             ) ||
-            fullAnswer.ops?.some(
+            (fullAnswer as DeltaPojo).ops?.some(
               ({ insert }) => typeof insert === 'string' && insert.includes(filter)
             ) ||
             answers.some((answer) => answer.includes(filter))

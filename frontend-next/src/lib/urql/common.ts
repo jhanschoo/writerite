@@ -46,13 +46,11 @@ const auth = authExchange<string | null>({
       fetchOptions,
     });
   },
-  async getAuth({ authState, mutate }) {
-    console.log("attempting to refresh token")
+  async getAuth({ mutate }) {
     const token = getAccessToken();
     if (!token) {
       return null;
     }
-    console.log("token found", token)
     // c.f. implementation in useRefreshToken.ts
     //   unfortunately, there is no way to DRY due to signature differences.
     const result = await mutate(RefreshDocument, { token });
@@ -62,7 +60,6 @@ const auth = authExchange<string | null>({
       return null;
     }
     setAccessToken(newToken);
-    console.log("refresh token success")
     return newToken;
   },
   didAuthError({ error }) {
