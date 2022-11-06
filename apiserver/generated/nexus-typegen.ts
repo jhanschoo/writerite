@@ -199,6 +199,7 @@ export interface NexusGenFieldTypes {
     occupyingActiveRooms: NexusGenRootTypes['Room'][]; // [Room!]!
     ownDeckRecord: NexusGenRootTypes['UserDeckRecord'] | null; // UserDeckRecord
     room: NexusGenRootTypes['Room']; // Room!
+    roomBySlug: NexusGenRootTypes['Room']; // Room!
     user: NexusGenRootTypes['User']; // User!
   }
   Room: { // field return type
@@ -317,6 +318,7 @@ export interface NexusGenFieldTypeNames {
     occupyingActiveRooms: 'Room'
     ownDeckRecord: 'UserDeckRecord'
     room: 'Room'
+    roomBySlug: 'Room'
     user: 'User'
   }
   Room: { // field return type name
@@ -476,6 +478,9 @@ export interface NexusGenArgTypes {
     }
     room: { // args
       id: string; // ID!
+    }
+    roomBySlug: { // args
+      slug: string; // String!
     }
     user: { // args
       id?: string | null; // ID

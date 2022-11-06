@@ -199,6 +199,7 @@ type Query {
   occupyingActiveRooms: [Room!]!
   ownDeckRecord(deckId: ID!): UserDeckRecord
   room(id: ID!): Room!
+  roomBySlug(slug: String!): Room!
   user(id: ID): User!
 }
 

@@ -1,5 +1,5 @@
 import { Room as PRoom, RoomState as PRoomState, Prisma } from '@prisma/client';
-import { enumType, idArg, list, mutationField, nonNull, objectType, queryField } from 'nexus';
+import { enumType, idArg, list, mutationField, nonNull, objectType, queryField, stringArg } from 'nexus';
 import { userLacksPermissionsErrorFactory } from '../error';
 import { guardValidUser } from '../service/authorization/guardValidUser';
 import {
@@ -10,7 +10,7 @@ import {
   roomSetState,
 } from '../service/room';
 import { invalidateByRoomSlug, invalidateByUserId } from '../service/session';
-import { slug } from '../util';
+import { slug as genSlug } from '../util';
 import { jsonObjectArg } from './scalarUtil';
 
 export const Room = objectType({
@@ -102,6 +102,20 @@ export const RoomQuery = queryField('room', {
   }),
 });
 
+export const RoomBySlugQuery = queryField('roomBySlug', {
+  type: nonNull('Room'),
+  args: { slug: nonNull(stringArg()) },
+  resolve: guardValidUser(async (_source, { slug }, { prisma, sub }) => {
+    const res = await prisma.room.findUnique({
+      where: { slug, ownerId: sub.id },
+    });
+    if (!res) {
+      throw userLacksPermissionsErrorFactory();
+    }
+    return res;
+  }),
+});
+
 export const OccupyingActiveRoomsQuery = queryField('occupyingActiveRooms', {
   type: nonNull(list(nonNull('Room'))),
   resolve: guardValidUser((_source, _args, { prisma, sub }) =>
@@ -130,7 +144,7 @@ export const RoomCreateMutation = mutationField('roomCreate', {
         owner: { connect: { id } },
         occupants: { create: { occupantId: id } },
         state: PRoomState.WAITING,
-        slug: slug(),
+        slug: genSlug(),
       },
     });
   }),
