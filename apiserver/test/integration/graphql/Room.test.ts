@@ -6,7 +6,7 @@ import { PrismaClient } from '@prisma/client';
 import { cascadingDelete } from '../_helpers/truncate';
 import { loginAsNewlyCreatedUser } from '../../helpers/graphql/User.util';
 import { mutationDeckCreateEmpty, testContextFactory } from '../../helpers';
-import { YogaInitialContext } from 'graphql-yoga';
+import { PubSub, YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
 import {
@@ -20,16 +20,18 @@ import {
 import { RoomState } from '../../../generated/typescript-operations';
 import { nanoid } from 'nanoid';
 import { CurrentUser } from '../../../src/service/userJWT';
+import { PubSubPublishArgs } from '../../../src/typings/PubSubPublishArgs';
 
 describe('graphql/Room.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
+  let pubsub: PubSub<PubSubPublishArgs>;
   let app: WrServer;
 
   beforeAll(() => {
-    [setSub, , context, stopContext, { prisma }] = testContextFactory();
+    [setSub, context, stopContext, { prisma, pubsub }] = testContextFactory();
     app = createGraphQLApp({ context, logging: false });
   });
 

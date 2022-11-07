@@ -320,6 +320,7 @@ export type Query = {
   occupyingActiveRooms: Array<Room>;
   ownDeckRecord?: Maybe<UserDeckRecord>;
   room: Room;
+  roomBySlug: Room;
   user: User;
 };
 
@@ -357,6 +358,11 @@ export type QueryRoomArgs = {
 };
 
 
+export type QueryRoomBySlugArgs = {
+  slug: Scalars['String'];
+};
+
+
 export type QueryUserArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -385,9 +391,27 @@ export enum RoomState {
   Waiting = 'WAITING'
 }
 
+export type RoomUpdate = {
+  __typename?: 'RoomUpdate';
+  operation: RoomUpdateOperation;
+  value: Room;
+};
+
+export enum RoomUpdateOperation {
+  RoomAddOccupant = 'roomAddOccupant',
+  RoomSetDeck = 'roomSetDeck',
+  RoomSetState = 'roomSetState'
+}
+
 export type Subscription = {
   __typename?: 'Subscription';
   repeatHealth: Scalars['String'];
+  roomUpdatesByRoomSlug: RoomUpdate;
+};
+
+
+export type SubscriptionRoomUpdatesByRoomSlugArgs = {
+  id: Scalars['ID'];
 };
 
 export type User = {

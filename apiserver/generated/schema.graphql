@@ -226,8 +226,20 @@ enum RoomState {
   WAITING
 }
 
+type RoomUpdate {
+  operation: RoomUpdateOperation!
+  value: Room!
+}
+
+enum RoomUpdateOperation {
+  roomAddOccupant
+  roomSetDeck
+  roomSetState
+}
+
 type Subscription {
   repeatHealth: String!
+  roomUpdatesByRoomSlug(id: ID!): RoomUpdate!
 }
 
 """

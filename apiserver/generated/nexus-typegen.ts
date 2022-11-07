@@ -82,6 +82,7 @@ export interface NexusGenEnums {
   DecksQueryScope: "OWNED" | "PARTICIPATED" | "VISIBLE"
   MessageContentType: "CONFIG" | "CONTEST_SCORE" | "ROUND_SCORE" | "ROUND_START" | "ROUND_WIN" | "TEXT"
   RoomState: p.RoomState
+  RoomUpdateOperation: "roomAddOccupant" | "roomSetDeck" | "roomSetState"
 }
 
 export interface NexusGenScalars {
@@ -105,6 +106,10 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Room: p.Room;
+  RoomUpdate: { // root type
+    operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
+    value: NexusGenRootTypes['Room']; // Room!
+  }
   Subscription: {};
   User: p.User;
   UserCardRecord: p.UserCardRecord;
@@ -218,8 +223,13 @@ export interface NexusGenFieldTypes {
     slug: string | null; // String
     state: NexusGenEnums['RoomState']; // RoomState!
   }
+  RoomUpdate: { // field return type
+    operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
+    value: NexusGenRootTypes['Room']; // Room!
+  }
   Subscription: { // field return type
     repeatHealth: string; // String!
+    roomUpdatesByRoomSlug: NexusGenRootTypes['RoomUpdate']; // RoomUpdate!
   }
   User: { // field return type
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
@@ -337,8 +347,13 @@ export interface NexusGenFieldTypeNames {
     slug: 'String'
     state: 'RoomState'
   }
+  RoomUpdate: { // field return type name
+    operation: 'RoomUpdateOperation'
+    value: 'Room'
+  }
   Subscription: { // field return type name
     repeatHealth: 'String'
+    roomUpdatesByRoomSlug: 'RoomUpdate'
   }
   User: { // field return type name
     decks: 'Deck'
@@ -484,6 +499,11 @@ export interface NexusGenArgTypes {
     }
     user: { // args
       id?: string | null; // ID
+    }
+  }
+  Subscription: {
+    roomUpdatesByRoomSlug: { // args
+      id: string; // ID!
     }
   }
 }

@@ -15,8 +15,8 @@ import {
   testContextFactory,
 } from '../../helpers';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
-import { PubSub, YogaInitialContext, createPubSub } from 'graphql-yoga';
-import { Context, PubSubPublishArgsByKey } from '../../../src/context';
+import { YogaInitialContext, createPubSub } from 'graphql-yoga';
+import { Context } from '../../../src/context';
 import { CurrentUser, Roles } from '../../../src/service/userJWT';
 
 export const DEFAULT_CURRENT_USER = {
@@ -33,15 +33,15 @@ describe('graphql/Deck.ts', () => {
   let prisma: DeepMockProxy<PrismaClient>;
   let server: WrServer;
   let redis: DeepMockProxy<Redis>;
-  let setPubsub: (pubsub: PubSub<PubSubPublishArgsByKey>) => void;
+  const pubsub = createPubSub();
 
   // eslint-disable-next-line @typescript-eslint/require-await
   beforeAll(async () => {
     prisma = mockDeep<PrismaClient>();
     redis = mockDeep<Redis>();
-    [setSub, setPubsub, context, stopContext] = testContextFactory({
+    [setSub, context, stopContext] = testContextFactory({
       prisma: prisma as unknown as PrismaClient,
-      pubsub: createPubSub(),
+      pubsub,
       redis,
     });
     server = createGraphQLApp({ context, logging: false });
@@ -53,7 +53,6 @@ describe('graphql/Deck.ts', () => {
 
   afterEach(() => {
     setSub();
-    setPubsub(createPubSub());
     mockReset(prisma);
     mockReset(redis);
   });

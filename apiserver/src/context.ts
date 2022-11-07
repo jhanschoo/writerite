@@ -9,14 +9,9 @@ import { CurrentUser } from './service/userJWT/CurrentUser';
 import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
 import { FETCH_DEPTH } from './constants';
 import { getClaims } from './service/session';
+import { PubSubPublishArgs } from './typings/PubSubPublishArgs';
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
-
-// PubSubPublishArgsByKey is declared here since GraphQL Yoga doesn't export it
-export type PubSubPublishArgsByKey = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: [] | [any] | [number | string, any];
-};
 
 const commonRedisOptions = {
   host: REDIS_HOST,
@@ -45,7 +40,7 @@ export interface AuthorizationHelpers {
 
 export interface Context<
   T extends PrismaClient = PrismaClient,
-  U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey,
+  U extends PubSubPublishArgs = PubSubPublishArgs,
   R extends Redis = Redis
 > extends YogaInitialContext {
   fetchDepth: number;
@@ -62,7 +57,7 @@ export interface LoggedInContext extends Context {
 
 export type ContextFactoryReturnType<
   T extends PrismaClient = PrismaClient,
-  U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey,
+  U extends PubSubPublishArgs = PubSubPublishArgs,
   R extends Redis = Redis
 > = [
   (initialContext: YogaInitialContext) => Promise<Context>,
@@ -77,26 +72,23 @@ export type ContextFactoryReturnType<
  */
 export function contextFactory<
   T extends PrismaClient,
-  U extends PubSubPublishArgsByKey,
+  U extends PubSubPublishArgs,
   R extends Redis
 >(
   opts?: Partial<Context> & Pick<Context<T, U, R>, 'prisma' | 'pubsub' | 'redis'>,
-  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>,
-  pubsubFn?: () => PubSub<U>
+  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>
 ): ContextFactoryReturnType<T, U>;
 export function contextFactory(
   opts?: Partial<Context>,
-  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>,
-  pubsubFn?: () => PubSub<PubSubPublishArgsByKey>
-): ContextFactoryReturnType<PrismaClient, PubSubPublishArgsByKey>;
+  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>
+): ContextFactoryReturnType<PrismaClient, PubSubPublishArgs>;
 export function contextFactory<
   T extends PrismaClient = PrismaClient,
-  U extends PubSubPublishArgsByKey = PubSubPublishArgsByKey,
+  U extends PubSubPublishArgs = PubSubPublishArgs,
   R extends Redis = Redis
 >(
   opts?: Partial<Context<T, U, R>>,
-  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>,
-  pubsubFn?: () => PubSub<U>
+  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>
 ): ContextFactoryReturnType<T, U> {
   const useDefaultPrisma = !opts?.prisma;
   const useDefaultRedis = !opts?.redis;
@@ -104,15 +96,14 @@ export function contextFactory<
   const publishClient = useDefaultPubsub ? new Redis(pubSubRedisOptions) : undefined;
   const subscribeClient = useDefaultPubsub ? new Redis(pubSubRedisOptions) : undefined;
   const prisma = opts?.prisma ?? new PrismaClient();
-  const pubsub = pubsubFn
-    ? pubsubFn()
-    : opts?.pubsub ??
-      createPubSub({
-        eventTarget: createRedisEventTarget({
-          publishClient: publishClient as Redis,
-          subscribeClient: subscribeClient as Redis,
-        }),
-      });
+  const pubsub =
+    opts?.pubsub ??
+    createPubSub({
+      eventTarget: createRedisEventTarget({
+        publishClient: publishClient as Redis,
+        subscribeClient: subscribeClient as Redis,
+      }),
+    });
   const redis = opts?.redis ?? new Redis(redisOptions);
   return [
     async (ctx: YogaInitialContext): Promise<Context> => {
@@ -122,7 +113,7 @@ export function contextFactory<
         fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
         sub,
         prisma,
-        pubsub: pubsubFn?.() ?? pubsub,
+        pubsub,
         redis,
         auth: {
           isLoggedInAs(id: string): boolean {

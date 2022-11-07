@@ -13,7 +13,7 @@ describe('server', () => {
   let server: WrServer;
 
   beforeAll(() => {
-    [, , context, stopContext, { prisma }] = testContextFactory();
+    [, context, stopContext, { prisma }] = testContextFactory();
     server = createGraphQLApp({ context, logging: false });
   });
 

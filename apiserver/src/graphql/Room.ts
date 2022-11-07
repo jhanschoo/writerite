@@ -1,8 +1,19 @@
 import { Room as PRoom, RoomState as PRoomState, Prisma } from '@prisma/client';
-import { enumType, idArg, list, mutationField, nonNull, objectType, queryField, stringArg } from 'nexus';
+import {
+  enumType,
+  idArg,
+  list,
+  mutationField,
+  nonNull,
+  objectType,
+  queryField,
+  stringArg,
+  subscriptionField,
+} from 'nexus';
 import { userLacksPermissionsErrorFactory } from '../error';
 import { guardValidUser } from '../service/authorization/guardValidUser';
 import {
+  ROOM_UPDATES_BY_ROOM_SLUG_TOPIC,
   WillNotServeRoomStates,
   roomAddOccupant,
   roomEditOwnerConfig,
@@ -12,6 +23,21 @@ import {
 import { invalidateByRoomSlug, invalidateByUserId } from '../service/session';
 import { slug as genSlug } from '../util';
 import { jsonObjectArg } from './scalarUtil';
+
+const ROOM_SET_DECK_KEY = 'roomSetDeck';
+const ROOM_ADD_OCCUPANT_KEY = 'roomAddOccupant';
+const ROOM_SET_STATE_KEY = 'roomSetState';
+
+const ROOM_UPDATE_KEYS = [ROOM_SET_DECK_KEY, ROOM_ADD_OCCUPANT_KEY, ROOM_SET_STATE_KEY] as const;
+
+export interface RoomUpdatePublishArgs {
+  [ROOM_UPDATES_BY_ROOM_SLUG_TOPIC]: [slug: string, payload: RoomUpdateBase];
+}
+
+export interface RoomUpdateBase {
+  operation: (typeof ROOM_UPDATE_KEYS)[number];
+  value: PRoom;
+}
 
 export const Room = objectType({
   name: 'Room',
@@ -151,7 +177,7 @@ export const RoomCreateMutation = mutationField('roomCreate', {
 });
 
 // Only legal when room state is WAITING
-export const RoomSetDeckMutation = mutationField('roomSetDeck', {
+export const RoomSetDeckMutation = mutationField(ROOM_SET_DECK_KEY, {
   type: nonNull('Room'),
   args: {
     id: nonNull(idArg()),
@@ -160,9 +186,16 @@ export const RoomSetDeckMutation = mutationField('roomSetDeck', {
   description: `@triggersSubscriptions(
     signatures: ["activeRoomUpdates"]
   )`,
-  resolve: guardValidUser(async (_parent, { id: roomId, deckId }, { prisma, sub }) =>
-    roomSetDeck(prisma, { roomId, deckId, currentUserId: sub.id })
-  ),
+  resolve: guardValidUser(async (_parent, { id: roomId, deckId }, { prisma, pubsub, sub }) => {
+    const roomRes = await roomSetDeck(prisma, { roomId, deckId, currentUserId: sub.id });
+    if (roomRes.slug) {
+      pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, roomRes.slug, {
+        operation: ROOM_SET_DECK_KEY,
+        value: roomRes,
+      });
+    }
+    return roomRes;
+  }),
 });
 
 // Only legal when room state is WAITING
@@ -180,7 +213,7 @@ export const RoomEditOwnerConfigMutation = mutationField('roomEditOwnerConfig', 
   },
 });
 
-export const RoomSetStateMutation = mutationField('roomSetState', {
+export const RoomSetStateMutation = mutationField(ROOM_SET_STATE_KEY, {
   type: nonNull('Room'),
   args: {
     id: nonNull(idArg()),
@@ -192,7 +225,7 @@ export const RoomSetStateMutation = mutationField('roomSetState', {
   @triggersSubscriptions(
     signatures: ["activeRoomUpdates"]
   )`,
-  resolve: guardValidUser(async (_parent, { id, state }, { prisma, redis, sub }) => {
+  resolve: guardValidUser(async (_parent, { id, state }, { prisma, pubsub, redis, sub }) => {
     let previousRoom: PRoom | null | undefined;
     if (WillNotServeRoomStates.includes(state)) {
       previousRoom = await prisma.room.findUnique({ where: { id } });
@@ -204,6 +237,10 @@ export const RoomSetStateMutation = mutationField('roomSetState', {
     });
     if (previousRoom?.slug) {
       await invalidateByRoomSlug(redis, previousRoom.slug);
+      pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, previousRoom.slug, {
+        operation: ROOM_SET_STATE_KEY,
+        value: roomRes,
+      });
     }
     return roomRes;
   }),
@@ -217,7 +254,7 @@ export const RoomCleanUpDeadMutation = mutationField('roomCleanUpDead', {
 });
 
 // Only legal when room state is WAITING
-export const RoomAddOccupantMutation = mutationField('roomAddOccupant', {
+export const RoomAddOccupantMutation = mutationField(ROOM_ADD_OCCUPANT_KEY, {
   type: nonNull('Room'),
   args: {
     id: nonNull(idArg()),
@@ -229,7 +266,45 @@ export const RoomAddOccupantMutation = mutationField('roomAddOccupant', {
   @triggersSubscriptions(
     signatures: ["activeRoomUpdates"]
   )`,
-  resolve: guardValidUser((_parent, { id, occupantId }, { prisma, sub }) =>
-    roomAddOccupant(prisma, { roomId: id, occupantId, currentUserId: sub.id })
+  resolve: guardValidUser(async (_parent, { id, occupantId }, { prisma, pubsub, sub }) => {
+    const roomRes = await roomAddOccupant(prisma, { roomId: id, occupantId, currentUserId: sub.id });
+    if (roomRes.slug) {
+      pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, roomRes.slug, {
+        operation: ROOM_ADD_OCCUPANT_KEY,
+        value: roomRes,
+      });
+    }
+    return roomRes;
+  }
   ),
+});
+
+export const RoomUpdateOperation = enumType({
+  name: 'RoomUpdateOperation',
+  members: ROOM_UPDATE_KEYS,
+});
+
+export const RoomUpdate = objectType({
+  name: 'RoomUpdate',
+  definition(t) {
+    t.nonNull.field('operation', {
+      type: 'RoomUpdateOperation',
+    });
+    t.nonNull.field('value', {
+      type: 'Room',
+    });
+  },
+});
+
+export const RoomUpdatesByRoomSlugSubscription = subscriptionField('roomUpdatesByRoomSlug', {
+  type: nonNull('RoomUpdate'),
+  args: {
+    id: nonNull(idArg()),
+  },
+  subscribe(_parent, { id }, { pubsub }, _info) {
+    return pubsub.subscribe(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, id);
+  },
+  resolve(parent) {
+    return parent;
+  },
 });

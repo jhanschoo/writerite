@@ -1,16 +1,11 @@
-import { PubSub } from 'graphql-yoga';
 import { PrismaClient } from '@prisma/client';
 import Redis from 'ioredis';
 import { JWTPayload } from 'jose';
-import {
-  Context,
-  ContextFactoryReturnType,
-  PubSubPublishArgsByKey,
-  contextFactory,
-} from '../../src/context';
+import { Context, ContextFactoryReturnType, contextFactory } from '../../src/context';
 import { WrServer } from '../../src/graphqlApp';
 import { parseArbitraryJWT } from '../../src/service/crypto';
 import { CurrentUser } from '../../src/service/userJWT';
+import { PubSubPublishArgs } from '../../src/typings/PubSubPublishArgs';
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -19,43 +14,23 @@ export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
 
 export function testContextFactory<
   T extends PrismaClient,
-  U extends PubSubPublishArgsByKey,
+  U extends PubSubPublishArgs,
   R extends Redis
 >(
   opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, 'prisma' | 'pubsub' | 'redis'>
-): [
-  (sub?: CurrentUser) => void,
-  (pubsub: PubSub<PubSubPublishArgsByKey>) => void,
-  ...ContextFactoryReturnType<T, U, R>
-];
+): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType<T, U, R>];
 export function testContextFactory(
   opts?: Partial<Context>
-): [
-  (sub?: CurrentUser) => void,
-  (pubsub: PubSub<PubSubPublishArgsByKey>) => void,
-  ...ContextFactoryReturnType
-];
+): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType];
 export function testContextFactory(
   opts?: Partial<Context>
-): [
-  (sub?: CurrentUser) => void,
-  (pubsub: PubSub<PubSubPublishArgsByKey>) => void,
-  ...ContextFactoryReturnType
-] {
+): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType] {
   let sub: CurrentUser | undefined;
-  let pubsub: PubSub<PubSubPublishArgsByKey>;
   return [
     (newSub) => {
       sub = newSub;
     },
-    (newPubsub) => {
-      pubsub = newPubsub;
-    },
-    ...contextFactory(
-      opts,
-      () => Promise.resolve(sub),
-      () => pubsub
-    ),
+    ...contextFactory(opts, () => Promise.resolve(sub)),
   ];
 }
 
@@ -81,6 +56,26 @@ export async function testQuery<TVariables>({
       body: JSON.stringify({ query: document, variables }),
     })
   ).json();
+}
+
+export async function testSubscription<TVariables>({
+  server,
+  document,
+  variables,
+}: {
+  server: WrServer;
+  document: string;
+  variables: TVariables;
+}) {
+  const uri = encodeURI(`http://localhost:4000/graphql?query=${document}${variables ? `&variables=${JSON.stringify(variables)}` : ''}`)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+  const ret = server.fetch(uri, {
+    method: 'GET',
+    headers: {
+      accept: 'text/event-stream',
+    },
+  });
+  return ret;
 }
 
 // dummy gql tag for codegen

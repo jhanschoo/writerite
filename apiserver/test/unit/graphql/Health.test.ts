@@ -3,10 +3,9 @@ import type { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import Redis from 'ioredis';
 
-import { queryHealth, testContextFactory } from '../../helpers';
-import { Context, PubSubPublishArgsByKey } from '../../../src/context';
+import { queryHealth, queryRepeatHealth, testContextFactory } from '../../helpers';
+import { Context } from '../../../src/context';
 import {
-  PubSub,
   YogaInitialContext,
   YogaServerInstance,
   createPubSub,
@@ -29,15 +28,15 @@ describe('graphql/Health.ts', () => {
   let prisma: DeepMockProxy<PrismaClient>;
   let server: YogaServerInstance<Record<string, never>, Context>;
   let redis: DeepMockProxy<Redis>;
-  let setPubsub: (pubsub: PubSub<PubSubPublishArgsByKey>) => void;
+  const pubsub = createPubSub();
 
   // eslint-disable-next-line @typescript-eslint/require-await
   beforeAll(async () => {
     prisma = mockDeep<PrismaClient>();
     redis = mockDeep<Redis>();
-    [setSub, setPubsub, context, stopContext] = testContextFactory({
+    [setSub, context, stopContext] = testContextFactory({
       prisma: prisma as unknown as PrismaClient,
-      pubsub: createPubSub(),
+      pubsub,
       redis,
     });
     server = createYoga({ context, schema, logging: false });
@@ -49,9 +48,9 @@ describe('graphql/Health.ts', () => {
 
   afterEach(() => {
     setSub();
-    setPubsub(createPubSub());
     mockReset(prisma);
     mockReset(redis);
+    jest.useRealTimers();
   });
 
   describe('Query', () => {
@@ -63,4 +62,27 @@ describe('graphql/Health.ts', () => {
       });
     });
   });
+
+  describe('Subscription', () => {
+    describe('repeatHealth', () => {
+      it('should do stuff', async () => {
+        jest.useFakeTimers();
+        expect.assertions(5);
+        const response = await queryRepeatHealth(server as unknown as WrServer);
+        if (!response.body) {
+          return;
+        }
+        jest.advanceTimersByTime(2000);
+        jest.runAllTimers();
+        let counter = 4;
+        for await (const chunk of response.body) {
+          jest.advanceTimersByTime(2000);
+          jest.runAllTimers();
+          const event = JSON.parse(chunk.toString().slice(6));
+          expect(event).toHaveProperty("data.repeatHealth", String(counter));
+          --counter;
+        }
+      });
+    })
+  })
 });
