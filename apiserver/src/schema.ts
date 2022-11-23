@@ -18,7 +18,7 @@ export const schema = makeSchema({
     debug: NODE_ENV !== 'test',
     modules: [
       {
-        module: join(process.cwd(), 'node_modules', '.prisma', 'client', 'index.d.ts'),
+        module: join(process.cwd(), 'src', 'types', 'backingTypes.ts'),
         alias: 'p',
       },
     ],
@@ -27,7 +27,7 @@ export const schema = makeSchema({
     },
   },
   contextType: {
-    module: join(process.cwd(), 'src', '/context.ts'),
+    module: join(process.cwd(), 'src', 'context.ts'),
     export: 'Context',
   },
 });

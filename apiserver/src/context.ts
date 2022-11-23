@@ -9,7 +9,7 @@ import { CurrentUser } from './service/userJWT/CurrentUser';
 import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
 import { FETCH_DEPTH } from './constants';
 import { getClaims } from './service/session';
-import { PubSubPublishArgs } from './typings/PubSubPublishArgs';
+import { PubSubPublishArgs } from './types/PubSubPublishArgs';
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 

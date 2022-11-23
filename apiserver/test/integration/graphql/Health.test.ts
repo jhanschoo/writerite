@@ -1,63 +1,44 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from '@prisma/client';
-import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
-import Redis from 'ioredis';
 
 import { queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
 import { Context } from '../../../src/context';
 import {
   YogaInitialContext,
-  YogaServerInstance,
-  createPubSub,
-  createYoga,
 } from 'graphql-yoga';
-import { WrServer } from '../../../src/graphqlApp';
-import { schema } from '../../../src/schema';
-import { CurrentUser, Roles } from '../../../src/service/userJWT';
-
-export const DEFAULT_CURRENT_USER = {
-  id: 'fake-id',
-  name: 'fake-name',
-  roles: [Roles.User],
-};
+import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
+import { cascadingDelete } from '../_helpers/truncate';
+import Redis from 'ioredis';
 
 describe('graphql/Health.ts', () => {
-  let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
-  let prisma: DeepMockProxy<PrismaClient>;
-  let server: YogaServerInstance<Record<string, never>, Context>;
-  let redis: DeepMockProxy<Redis>;
-  const pubsub = createPubSub();
+  let prisma: PrismaClient;
+  let redis: Redis;
+  let app: WrServer;
 
   // eslint-disable-next-line @typescript-eslint/require-await
   beforeAll(async () => {
-    prisma = mockDeep<PrismaClient>();
-    redis = mockDeep<Redis>();
-    [setSub, context, stopContext] = testContextFactory({
-      prisma: prisma as unknown as PrismaClient,
-      pubsub,
-      redis,
-    });
-    server = createYoga({ context, schema, logging: false });
+    [, context, stopContext, { prisma, redis }] = testContextFactory();
+    app = createGraphQLApp({ context, logging: false });
   });
 
   afterAll(async () => {
-    await Promise.allSettled([stopContext()]);
+    await cascadingDelete(prisma).user;
+    await stopContext();
   });
 
-  afterEach(() => {
-    setSub();
-    mockReset(prisma);
-    mockReset(redis);
+  afterEach(async () => {
+    await cascadingDelete(prisma).user;
     jest.useRealTimers();
+    await redis.flushdb();
   });
 
   describe('Query', () => {
     describe('health', () => {
       it('should return a string "OK"', async () => {
         expect.assertions(1);
-        const response = await queryHealth(server as unknown as WrServer);
+        const response = await queryHealth(app);
         expect(response).toHaveProperty('data.health', 'OK');
       });
     });
@@ -68,7 +49,7 @@ describe('graphql/Health.ts', () => {
       it('should do stuff', async () => {
         jest.useFakeTimers();
         expect.assertions(5);
-        const response = await subscriptionRepeatHealth(server as unknown as WrServer);
+        const response = await subscriptionRepeatHealth(app);
         if (!response.body) {
           return;
         }

@@ -1,10 +1,11 @@
 import { WrServer } from '../../../src/graphqlApp';
-import { gql, testQuery } from '../misc';
+import { gql, testQuery, testSubscription } from '../misc';
 import {
-  RoomAddOccupantMutationVariables,
-  RoomQueryVariables,
-  RoomSetDeckMutationVariables,
-  RoomSetStateMutationVariables,
+  MutationRoomAddOccupantArgs,
+  MutationRoomSetDeckArgs,
+  MutationRoomSetStateArgs,
+  QueryRoomArgs,
+  SubscriptionRoomUpdatesByRoomSlugArgs,
 } from '../../../generated/typescript-operations';
 
 export function mutationRoomCreate(server: WrServer) {
@@ -32,9 +33,9 @@ export function mutationRoomCreate(server: WrServer) {
   });
 }
 
-export function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMutationVariables) {
+export function mutationRoomSetDeck(server: WrServer, variables: MutationRoomSetDeckArgs) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomSetDeckMutationVariables>({
+  return testQuery<MutationRoomSetDeckArgs>({
     server,
     document: gql`
       mutation RoomSetDeck($id: ID!, $deckId: ID!) {
@@ -53,9 +54,9 @@ export function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMuta
   });
 }
 
-export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMutationVariables) {
+export function mutationRoomSetState(server: WrServer, variables: MutationRoomSetStateArgs) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomSetStateMutationVariables>({
+  return testQuery<MutationRoomSetStateArgs>({
     server,
     document: gql`
       mutation RoomSetState($id: ID!, $state: RoomState!) {
@@ -76,10 +77,10 @@ export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMu
 
 export function mutationRoomAddOccupant(
   server: WrServer,
-  variables: RoomAddOccupantMutationVariables
+  variables: MutationRoomAddOccupantArgs
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomAddOccupantMutationVariables>({
+  return testQuery<MutationRoomAddOccupantArgs>({
     server,
     document: gql`
       mutation RoomAddOccupant($id: ID!, $occupantId: ID!) {
@@ -103,7 +104,7 @@ export function mutationRoomAddOccupant(
 
 export function queryRoom(server: WrServer, id: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomQueryVariables>({
+  return testQuery<QueryRoomArgs>({
     server,
     document: gql`
       query Room($id: ID!) {
@@ -132,5 +133,32 @@ export function queryOccupyingActiveRooms(server: WrServer) {
       }
     `,
     variables: undefined,
+  });
+}
+
+export function subscriptionRoomUpdatesByRoomSlug(server: WrServer, slug: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testSubscription<SubscriptionRoomUpdatesByRoomSlugArgs>({
+    server,
+    document: gql`
+      subscription RoomUpdatesByRoomSlug($slug: String!) {
+        roomUpdatesByRoomSlug(slug: $slug) {
+          operation
+          value {
+            id
+            deckId
+            deck {
+              id
+            }
+            userIdOfLastAddedOccupantForSubscription
+            userOfLastAddedOccupantForSubscription {
+              id
+            }
+            state
+          }
+        }
+      }
+    `,
+    variables: { slug },
   });
 }

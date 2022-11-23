@@ -5,7 +5,7 @@ import { Context, ContextFactoryReturnType, contextFactory } from '../../src/con
 import { WrServer } from '../../src/graphqlApp';
 import { parseArbitraryJWT } from '../../src/service/crypto';
 import { CurrentUser } from '../../src/service/userJWT';
-import { PubSubPublishArgs } from '../../src/typings/PubSubPublishArgs';
+import { PubSubPublishArgs } from '../../src/types/PubSubPublishArgs';
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access

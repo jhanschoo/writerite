@@ -383,6 +383,10 @@ export type Room = {
   ownerId: Scalars['ID'];
   slug?: Maybe<Scalars['String']>;
   state: RoomState;
+  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomAddOccupant */
+  userIdOfLastAddedOccupantForSubscription?: Maybe<Scalars['ID']>;
+  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomAddOccupant */
+  userOfLastAddedOccupantForSubscription?: Maybe<User>;
 };
 
 export enum RoomState {
@@ -411,7 +415,7 @@ export type Subscription = {
 
 
 export type SubscriptionRoomUpdatesByRoomSlugArgs = {
-  id: Scalars['ID'];
+  slug: Scalars['String'];
 };
 
 export type User = {
@@ -490,6 +494,11 @@ export type HealthQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type HealthQuery = { __typename?: 'Query', health: string };
 
+export type RepeatHealthSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RepeatHealthSubscription = { __typename?: 'Subscription', repeatHealth: string };
+
 export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -530,6 +539,13 @@ export type OccupyingActiveRoomsQueryVariables = Exact<{ [key: string]: never; }
 
 
 export type OccupyingActiveRoomsQuery = { __typename?: 'Query', occupyingActiveRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, ownerId: string }> };
+
+export type RoomUpdatesByRoomSlugSubscriptionVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type RoomUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', roomUpdatesByRoomSlug: { __typename?: 'RoomUpdate', operation: RoomUpdateOperation, value: { __typename?: 'Room', id: string, deckId?: string | null, userIdOfLastAddedOccupantForSubscription?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string } | null, userOfLastAddedOccupantForSubscription?: { __typename?: 'User', id: string } | null } } };
 
 export type CreateUserMutationVariables = Exact<{
   code: Scalars['String'];

@@ -2,6 +2,7 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist/",
+    "baseUrl": "./",
     "typeRoots": ["./node_modules/@types", "./typings"],
     "skipLibCheck": true /* Skip type checking of declaration files. */
   },

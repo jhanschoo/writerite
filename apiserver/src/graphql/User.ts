@@ -7,6 +7,7 @@ import {
   queryField,
   stringArg,
 } from 'nexus';
+import { Occupant, Room } from 'src/types/backingTypes';
 import type { Context } from '../context';
 import { userLacksPermissionsErrorFactory, userNotLoggedInErrorFactory } from '../error';
 import { guardLoggedIn } from '../service/authorization/guardLoggedIn';
@@ -46,7 +47,15 @@ export const User = objectType({
     t.nonNull.list.nonNull.field('occupyingActiveRooms', {
       type: 'Room',
       authorize: isPublicOrLoggedInOrAdmin,
-      resolve({ id }, _args, { prisma }) {
+      resolve({ occupyingRooms, id }, _args, { prisma }) {
+        if (occupyingRooms) {
+          /*
+           * assumption: occupyingRooms has been filtered to only contain those whose states are not in WillNotServeRoomStates
+           * see e.g. src/service/authentication/util.ts#32
+           */
+          const rooms = occupyingRooms.map(({ room }) => room).filter((optionalRoom): optionalRoom is Room => Boolean(optionalRoom));
+          return rooms;
+        }
         return roomFindOccupyingActiveOfUser(prisma, { occupantId: id });
       },
     });

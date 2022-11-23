@@ -25,7 +25,7 @@ describe('graphql/User.ts', () => {
   let server: WrServer;
 
   beforeAll(() => {
-    [setSub, , context, stopContext, { prisma }] = testContextFactory();
+    [setSub, context, stopContext, { prisma }] = testContextFactory();
     server = createGraphQLApp({ context, logging: false });
   });
 

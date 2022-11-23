@@ -14,7 +14,7 @@ export function queryHealth(server: WrServer) {
   });
 }
 
-export function queryRepeatHealth(server: WrServer) {
+export function subscriptionRepeatHealth(server: WrServer) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testSubscription<undefined>({
     server,

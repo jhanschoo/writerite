@@ -218,6 +218,16 @@ type Room {
   ownerId: ID!
   slug: String
   state: RoomState!
+
+  """
+  guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomAddOccupant
+  """
+  userIdOfLastAddedOccupantForSubscription: ID
+
+  """
+  guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomAddOccupant
+  """
+  userOfLastAddedOccupantForSubscription: User
 }
 
 enum RoomState {
@@ -239,7 +249,7 @@ enum RoomUpdateOperation {
 
 type Subscription {
   repeatHealth: String!
-  roomUpdatesByRoomSlug(id: ID!): RoomUpdate!
+  roomUpdatesByRoomSlug(slug: String!): RoomUpdate!
 }
 
 """

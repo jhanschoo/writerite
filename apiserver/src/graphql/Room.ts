@@ -1,4 +1,5 @@
 import { Room as PRoom, RoomState as PRoomState, Prisma } from '@prisma/client';
+import { Room as BaseRoom } from '../types/backingTypes';
 import {
   enumType,
   idArg,
@@ -36,7 +37,7 @@ export interface RoomUpdatePublishArgs {
 
 export interface RoomUpdateBase {
   operation: (typeof ROOM_UPDATE_KEYS)[number];
-  value: PRoom;
+  value: BaseRoom;
 }
 
 export const Room = objectType({
@@ -84,6 +85,22 @@ export const Room = objectType({
       resolve({ id }, _args, { prisma }) {
         return prisma.message.count({ where: { roomId: id } });
       },
+    });
+    t.id('userIdOfLastAddedOccupantForSubscription', {
+      resolve({ userIdOfLastAddedOccupantForSubscription }) {
+        return userIdOfLastAddedOccupantForSubscription ?? null;
+      },
+      description: `guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful ${ROOM_ADD_OCCUPANT_KEY}`,
+    });
+    t.field('userOfLastAddedOccupantForSubscription', {
+      type: 'User',
+      resolve({ userIdOfLastAddedOccupantForSubscription }, _args, { prisma }) {
+        if (userIdOfLastAddedOccupantForSubscription) {
+          return prisma.user.findUnique({ where: { id: userIdOfLastAddedOccupantForSubscription } });
+        }
+        return null;
+      },
+      description: `guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful ${ROOM_ADD_OCCUPANT_KEY}`,
     });
     t.nonNull.list.nonNull.field('occupants', {
       type: 'User',
@@ -235,9 +252,10 @@ export const RoomSetStateMutation = mutationField(ROOM_SET_STATE_KEY, {
       state,
       currentUserId: sub.id,
     });
-    if (previousRoom?.slug) {
-      await invalidateByRoomSlug(redis, previousRoom.slug);
-      pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, previousRoom.slug, {
+    const slug = roomRes.slug ?? previousRoom?.slug;
+    if (slug) {
+      await invalidateByRoomSlug(redis, slug);
+      pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, slug, {
         operation: ROOM_SET_STATE_KEY,
         value: roomRes,
       });
@@ -271,7 +289,7 @@ export const RoomAddOccupantMutation = mutationField(ROOM_ADD_OCCUPANT_KEY, {
     if (roomRes.slug) {
       pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, roomRes.slug, {
         operation: ROOM_ADD_OCCUPANT_KEY,
-        value: roomRes,
+        value: { ...roomRes, userIdOfLastAddedOccupantForSubscription: occupantId },
       });
     }
     return roomRes;
@@ -299,10 +317,10 @@ export const RoomUpdate = objectType({
 export const RoomUpdatesByRoomSlugSubscription = subscriptionField('roomUpdatesByRoomSlug', {
   type: nonNull('RoomUpdate'),
   args: {
-    id: nonNull(idArg()),
+    slug: nonNull(stringArg()),
   },
-  subscribe(_parent, { id }, { pubsub }, _info) {
-    return pubsub.subscribe(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, id);
+  subscribe(_parent, { slug }, { pubsub }, _info) {
+    return pubsub.subscribe(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, slug);
   },
   resolve(parent) {
     return parent;

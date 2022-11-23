@@ -66,7 +66,10 @@ export const Deck = objectType({
 
     t.nonNull.field('owner', {
       type: 'User',
-      async resolve({ ownerId: id }, _args, { prisma }) {
+      async resolve({ ownerId: id, owner }, _args, { prisma }) {
+        if (owner) {
+          return owner;
+        }
         const user = await prisma.user.findUnique({ where: { id } });
         if (!user) {
           throw userLacksPermissionsErrorFactory(
@@ -99,7 +102,10 @@ export const Deck = objectType({
     t.nonNull.list.nonNull.field('cardsDirect', {
       type: 'Card',
       description: 'all cards directly belonging to this deck',
-      async resolve({ id: deckId }, _args, { prisma }) {
+      async resolve({ id: deckId, cards }, _args, { prisma }) {
+        if (cards) {
+          return cards;
+        }
         return prisma.card.findMany({ where: { deckId } });
       },
     });

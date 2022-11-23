@@ -16,11 +16,12 @@ import {
   mutationRoomSetState,
   queryOccupyingActiveRooms,
   queryRoom,
+  subscriptionRoomUpdatesByRoomSlug,
 } from '../../helpers/graphql/Room.util';
 import { RoomState } from '../../../generated/typescript-operations';
 import { nanoid } from 'nanoid';
 import { CurrentUser } from '../../../src/service/userJWT';
-import { PubSubPublishArgs } from '../../../src/typings/PubSubPublishArgs';
+import { PubSubPublishArgs } from '../../../src/types/PubSubPublishArgs';
 
 describe('graphql/Room.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -750,4 +751,243 @@ describe('graphql/Room.ts', () => {
       });
     });
   });
+
+  describe('Subscription', () => {
+    describe('roomUpdatesByRoomSlug', () => {
+      it('should yield an appropriate integration event when the room it is subscribed to has roomSetDeck run on it', async () => {
+        expect.assertions(4);
+
+        // create user
+        await loginAsNewlyCreatedUser(app, setSub);
+
+        // create room
+        const roomCreateResponse = await mutationRoomCreate(app);
+        expect(roomCreateResponse).toHaveProperty(
+          'data.roomCreate',
+          expect.objectContaining({
+            id: expect.any(String),
+            slug: expect.any(String),
+            state: RoomState.Waiting,
+            deck: null,
+            deckId: null,
+          })
+        );
+        const roomBefore = roomCreateResponse.data.roomCreate;
+
+        // create deck
+        const deckCreateResponse = await mutationDeckCreateEmpty(app);
+        const deckBefore = deckCreateResponse.data.deckCreate;
+
+        // create subscription
+        const roomUpdates = await subscriptionRoomUpdatesByRoomSlug(app, roomBefore.slug);
+        expect(roomUpdates.body).toBeTruthy();
+        if (!roomUpdates.body) {
+          return;
+        }
+
+        // set deck
+        const roomSetDeckResponse = await mutationRoomSetDeck(app, {
+          id: roomBefore.id,
+          deckId: deckBefore.id,
+        });
+        expect(roomSetDeckResponse).toHaveProperty(
+          'data.roomSetDeck',
+          expect.objectContaining({
+            id: roomBefore.id,
+            state: RoomState.Waiting,
+            deckId: deckBefore.id,
+            deck: {
+              id: deckBefore.id,
+            },
+          })
+        );
+
+        // assert subscription result
+        const readResult = await roomUpdates.body[Symbol.asyncIterator]().next();
+        if (!readResult.done) {
+          const event = JSON.parse(readResult.value.toString().slice(6));
+          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
+            operation: "roomSetDeck",
+            value: {
+              id: roomBefore.id,
+              deckId: deckBefore.id,
+              deck: {
+                id: deckBefore.id,
+              },
+              state: RoomState.Waiting,
+              userIdOfLastAddedOccupantForSubscription: null,
+              userOfLastAddedOccupantForSubscription: null,
+            },
+          }));
+        }
+      });
+
+      it('should yield an appropriate integration event when the room it is subscribed to has roomAddOccupant run on it', async () => {
+        expect.assertions(4);
+
+        // create occupant user
+        const occupantBefore = await loginAsNewlyCreatedUser(app, setSub, 'user2');
+
+        // create owner user
+        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+
+        // create room
+        const roomCreateResponse = await mutationRoomCreate(app);
+        expect(roomCreateResponse).toHaveProperty(
+          'data.roomCreate',
+          expect.objectContaining({
+            id: expect.any(String),
+            state: RoomState.Waiting,
+            ownerId: user1.id,
+            occupants: expect.arrayContaining([{ id: user1.id }]),
+          })
+        );
+        const roomBefore = roomCreateResponse.data.roomCreate;
+
+        // create subscription
+        const roomUpdates = await subscriptionRoomUpdatesByRoomSlug(app, roomBefore.slug);
+        expect(roomUpdates.body).toBeTruthy();
+        if (!roomUpdates.body) {
+          return;
+        }
+
+        // add occupant to room
+        const roomAddOccupantResponse = await mutationRoomAddOccupant(app, {
+          id: roomBefore.id,
+          occupantId: occupantBefore.id,
+        });
+        expect(roomAddOccupantResponse).toHaveProperty(
+          'data.roomAddOccupant',
+          expect.objectContaining({
+            id: roomBefore.id,
+            state: RoomState.Waiting,
+            ownerId: user1.id,
+            occupants: expect.arrayContaining([{ id: user1.id }, { id: occupantBefore.id }]),
+          })
+        );
+
+        // assert subscription result
+        const readResult = await roomUpdates.body[Symbol.asyncIterator]().next();
+        if (!readResult.done) {
+          const event = JSON.parse(readResult.value.toString().slice(6));
+          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
+            operation: "roomAddOccupant",
+            value: {
+              id: roomBefore.id,
+              deckId: null,
+              deck: null,
+              state: RoomState.Waiting,
+              userIdOfLastAddedOccupantForSubscription: occupantBefore.id,
+              userOfLastAddedOccupantForSubscription: {
+                id: occupantBefore.id,
+              },
+            },
+          }));
+        }
+      });
+
+      it('should yield an appropriate integration event when the room it is subscribed to changes state by roomSetState', async () => {
+        expect.assertions(6);
+        // create user
+        const user = await loginAsNewlyCreatedUser(app, setSub);
+
+        // create room
+        const roomCreateResponse = await mutationRoomCreate(app);
+        expect(roomCreateResponse).toHaveProperty(
+          'data.roomCreate',
+          expect.objectContaining({
+            id: expect.any(String),
+            state: RoomState.Waiting,
+            ownerId: user.id,
+          })
+        );
+        const roomBefore = roomCreateResponse.data.roomCreate;
+
+        // create deck
+        const deckCreateResponse = await mutationDeckCreateEmpty(app);
+        const deckBefore = deckCreateResponse.data.deckCreate;
+
+        // create subscription
+        const roomUpdates = await subscriptionRoomUpdatesByRoomSlug(app, roomBefore.slug);
+        expect(roomUpdates.body).toBeTruthy();
+        if (!roomUpdates.body) {
+          return;
+        }
+
+        // set deck
+        const roomSetDeckResponse = await mutationRoomSetDeck(app, {
+          id: roomBefore.id,
+          deckId: deckBefore.id,
+        });
+        expect(roomSetDeckResponse).toHaveProperty(
+          'data.roomSetDeck',
+          expect.objectContaining({
+            id: roomBefore.id,
+            state: RoomState.Waiting,
+            deckId: deckBefore.id,
+            deck: {
+              id: deckBefore.id,
+            },
+          })
+        );
+
+        // assert subscription result for deck
+        const iterator = roomUpdates.body[Symbol.asyncIterator]()
+        const readResultOne = await iterator.next();
+        if (!readResultOne.done) {
+          const event = JSON.parse(readResultOne.value.toString().slice(6));
+          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
+            operation: "roomSetDeck",
+            value: {
+              id: roomBefore.id,
+              deckId: deckBefore.id,
+              deck: {
+                id: deckBefore.id,
+              },
+              state: RoomState.Waiting,
+              userIdOfLastAddedOccupantForSubscription: null,
+              userOfLastAddedOccupantForSubscription: null,
+            },
+          }));
+        }
+
+        // transition state
+        const roomSetStateResponse = await mutationRoomSetState(app, {
+          id: roomBefore.id,
+          state: RoomState.Serving,
+        });
+        expect(roomSetStateResponse).toHaveProperty(
+          'data.roomSetState',
+          expect.objectContaining({
+            id: roomBefore.id,
+            state: RoomState.Serving,
+            ownerId: user.id,
+            deckId: deckBefore.id,
+            deck: {
+              id: deckBefore.id,
+            },
+          })
+        );
+
+        // assert subscription result
+        const readResultTwo = await iterator.next();
+        if (!readResultTwo.done) {
+          const event = JSON.parse(readResultTwo.value.toString().slice(6));
+          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
+            operation: "roomSetState",
+            value: {
+              id: roomBefore.id,
+              deckId: deckBefore.id,
+              deck: {
+                id: deckBefore.id,
+              },
+              state: RoomState.Serving,
+              userIdOfLastAddedOccupantForSubscription: null,
+              userOfLastAddedOccupantForSubscription: null,
+            },
+          }));
+        }
+      });
+    })
+  })
 });

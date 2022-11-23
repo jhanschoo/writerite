@@ -3,7 +3,7 @@
  * Do not make changes to this file directly
  */
 
-import type * as p from "./../node_modules/.prisma/client/index"
+import type * as p from "./../src/types/backingTypes"
 import type { Context } from "./../src/context"
 import type { FieldAuthorizeResolver } from "nexus/dist/plugins/fieldAuthorizePlugin"
 import type { core } from "nexus"
@@ -81,7 +81,7 @@ export interface NexusGenInputs {
 export interface NexusGenEnums {
   DecksQueryScope: "OWNED" | "PARTICIPATED" | "VISIBLE"
   MessageContentType: "CONFIG" | "CONTEST_SCORE" | "ROUND_SCORE" | "ROUND_START" | "ROUND_WIN" | "TEXT"
-  RoomState: p.RoomState
+  RoomState: "SERVED" | "SERVING" | "WAITING"
   RoomUpdateOperation: "roomAddOccupant" | "roomSetDeck" | "roomSetState"
 }
 
@@ -222,6 +222,8 @@ export interface NexusGenFieldTypes {
     ownerId: string; // ID!
     slug: string | null; // String
     state: NexusGenEnums['RoomState']; // RoomState!
+    userIdOfLastAddedOccupantForSubscription: string | null; // ID
+    userOfLastAddedOccupantForSubscription: NexusGenRootTypes['User'] | null; // User
   }
   RoomUpdate: { // field return type
     operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
@@ -346,6 +348,8 @@ export interface NexusGenFieldTypeNames {
     ownerId: 'ID'
     slug: 'String'
     state: 'RoomState'
+    userIdOfLastAddedOccupantForSubscription: 'ID'
+    userOfLastAddedOccupantForSubscription: 'User'
   }
   RoomUpdate: { // field return type name
     operation: 'RoomUpdateOperation'
@@ -503,7 +507,7 @@ export interface NexusGenArgTypes {
   }
   Subscription: {
     roomUpdatesByRoomSlug: { // args
-      id: string; // ID!
+      slug: string; // String!
     }
   }
 }

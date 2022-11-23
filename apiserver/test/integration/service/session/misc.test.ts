@@ -30,7 +30,7 @@ describe('service/session', () => {
   let app: WrServer;
 
   beforeAll(async () => {
-    [setSub, , context, stopContext, { prisma, redis }] = testContextFactory();
+    [setSub, context, stopContext, { prisma, redis }] = testContextFactory();
     app = createGraphQLApp({ context, logging: false });
     await redis.flushdb();
   });
