@@ -17,7 +17,7 @@ export async function isInvalidated(params: InvalidatedGuardParams) {
   } = params;
   const timestamps = await redis.mget(
     getInvalidationByUserIdTopic(id),
-    ...(occupyingActiveRoomSlugs ?? []).map(getInvalidationByRoomSlugTopic)
+    ...Object.keys(occupyingActiveRoomSlugs).map(getInvalidationByRoomSlugTopic)
   );
   if (!iat) {
     return true;

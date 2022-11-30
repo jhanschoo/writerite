@@ -110,6 +110,15 @@ enum MessageContentType {
   TEXT
 }
 
+type MessageUpdate {
+  operation: MessageUpdateOperation!
+  value: Message!
+}
+
+enum MessageUpdateOperation {
+  messageCreate
+}
+
 type Mutation {
   cardCreate(card: CardCreateInput!, deckId: ID!, mainTemplate: Boolean): Card!
   cardDelete(id: ID!): Card!
@@ -130,7 +139,7 @@ type Mutation {
       signatures: ["messagesOfRoomUpdates"]
     )
   """
-  messageCreate(content: JSON, roomId: ID!, type: MessageContentType!): Message!
+  messageCreate(content: JSON, slug: String!, type: MessageContentType!): Message!
   ownCardRecordSet(cardId: ID!, correctRecordAppend: [DateTime!]!): UserCardRecord
   ownDeckRecordSet(deckId: ID!, notes: JSONObject!): UserDeckRecord!
   refresh(token: JWT!): JWT
@@ -248,6 +257,7 @@ enum RoomUpdateOperation {
 }
 
 type Subscription {
+  messageUpdatesByRoomSlug(slug: String!): MessageUpdate!
   repeatHealth: String!
   roomUpdatesByRoomSlug(slug: String!): RoomUpdate!
 }

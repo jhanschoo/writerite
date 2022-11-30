@@ -67,7 +67,11 @@ export async function testSubscription<TVariables>({
   document: string;
   variables: TVariables;
 }) {
-  const uri = encodeURI(`http://localhost:4000/graphql?query=${document}${variables ? `&variables=${JSON.stringify(variables)}` : ''}`)
+  const uri = encodeURI(
+    `http://localhost:4000/graphql?query=${document}${
+      variables ? `&variables=${JSON.stringify(variables)}` : ''
+    }`
+  );
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const ret = server.fetch(uri, {
     method: 'GET',

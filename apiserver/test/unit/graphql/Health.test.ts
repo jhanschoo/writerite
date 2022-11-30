@@ -5,12 +5,7 @@ import Redis from 'ioredis';
 
 import { queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
 import { Context } from '../../../src/context';
-import {
-  YogaInitialContext,
-  YogaServerInstance,
-  createPubSub,
-  createYoga,
-} from 'graphql-yoga';
+import { YogaInitialContext, YogaServerInstance, createPubSub, createYoga } from 'graphql-yoga';
 import { WrServer } from '../../../src/graphqlApp';
 import { schema } from '../../../src/schema';
 import { CurrentUser, Roles } from '../../../src/service/userJWT';
@@ -79,10 +74,10 @@ describe('graphql/Health.ts', () => {
           jest.advanceTimersByTime(2000);
           jest.runAllTimers();
           const event = JSON.parse(chunk.toString().slice(6));
-          expect(event).toHaveProperty("data.repeatHealth", String(counter));
+          expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         }
       });
-    })
-  })
+    });
+  });
 });

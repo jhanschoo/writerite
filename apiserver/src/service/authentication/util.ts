@@ -11,13 +11,19 @@ export function currentUserSourceToCurrentUser({
   roles,
   occupyingRooms,
 }: PrismaCurrentUserSourceType): CurrentUser {
+  const occupyingActiveRoomSlugs: Record<string, string> = {};
+  for (const {
+    room: { id: roomId, slug },
+  } of occupyingRooms) {
+    if (slug) {
+      occupyingActiveRoomSlugs[slug] = roomId;
+    }
+  }
   return {
     id,
     name,
     roles: roles as Roles[],
-    occupyingActiveRoomSlugs: occupyingRooms
-      .map((occupant) => occupant.room.slug)
-      .filter((slug): slug is string => Boolean(slug)),
+    occupyingActiveRoomSlugs,
   };
 }
 

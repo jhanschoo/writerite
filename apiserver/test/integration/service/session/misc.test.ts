@@ -51,7 +51,7 @@ describe('service/session', () => {
     expect.assertions(2);
 
     // setup currentUser
-    const user = await loginAsNewlyCreatedUser(app, setSub);
+    const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
     const roomCreateResponse = await mutationRoomCreate(app);
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
@@ -66,7 +66,9 @@ describe('service/session', () => {
       id: user.id,
       name: user.name,
       roles: [Roles.User],
-      occupyingActiveRoomSlugs: [roomCreateResponse.data.roomCreate.slug],
+      occupyingActiveRoomSlugs: {
+        [roomCreateResponse.data.roomCreate.slug]: roomCreateResponse.data.roomCreate.id,
+      },
     });
 
     // validate JWT
@@ -88,7 +90,7 @@ describe('service/session', () => {
     expect.assertions(1);
 
     // setup currentUser
-    const user = await loginAsNewlyCreatedUser(app, setSub);
+    const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
     await mutationRoomCreate(app);
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
@@ -123,7 +125,7 @@ describe('service/session', () => {
     expect.assertions(1);
 
     // setup currentUser
-    const user = await loginAsNewlyCreatedUser(app, setSub);
+    const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
     const roomCreateResponse = await mutationRoomCreate(app);
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,

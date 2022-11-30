@@ -20,7 +20,7 @@ describe('currentUserToUserJWT and getClaims', () => {
   // Note: this is an integration test involving `getClaims` and the `userJWT` service
   test('currentUserToUserJWT generates a JWT compatible with getClaims', async () => {
     expect.assertions(1);
-    const sub = { hello: 'world' } as unknown as CurrentUser;
+    const sub: CurrentUser = { id: 'foo', name: 'bar', roles: [], occupyingActiveRoomSlugs: {} };
     const jwt = `Bearer ${await currentUserToUserJWT(sub)}`;
     redis.mget.mockResolvedValue(Promise.resolve([null]));
     await expect(

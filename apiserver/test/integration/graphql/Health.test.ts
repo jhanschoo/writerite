@@ -3,9 +3,7 @@ import type { PrismaClient } from '@prisma/client';
 
 import { queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
 import { Context } from '../../../src/context';
-import {
-  YogaInitialContext,
-} from 'graphql-yoga';
+import { YogaInitialContext } from 'graphql-yoga';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
 import { cascadingDelete } from '../_helpers/truncate';
 import Redis from 'ioredis';
@@ -60,10 +58,10 @@ describe('graphql/Health.ts', () => {
           jest.advanceTimersByTime(2000);
           jest.runAllTimers();
           const event = JSON.parse(chunk.toString().slice(6));
-          expect(event).toHaveProperty("data.repeatHealth", String(counter));
+          expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         }
       });
-    })
-  })
+    });
+  });
 });

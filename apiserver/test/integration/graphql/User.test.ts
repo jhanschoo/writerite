@@ -6,7 +6,7 @@ import { YogaInitialContext } from 'graphql-yoga';
 import { cascadingDelete } from '../_helpers/truncate';
 import {
   DEFAULT_CREATE_USER_VALUES,
-  createUser,
+  mutationCreateUser,
   mutationUserEdit,
   queryAllUserAccessibleUserScalars,
   queryUserPublicScalars,
@@ -46,13 +46,13 @@ describe('graphql/User.ts', () => {
 
         const name = 'user1';
         // create user
-        const response = await createUser(server, { name });
+        const response = await mutationCreateUser(server, { name });
         expect(response).toHaveProperty('data.finalizeOauthSignin', expect.any(String));
         const currentUser = unsafeJwtToCurrentUser(response.data.finalizeOauthSignin as string);
         expect(currentUser).toEqual({
           id: expect.any(String),
           name: expect.any(String),
-          occupyingActiveRoomSlugs: [],
+          occupyingActiveRoomSlugs: {},
           roles: [Roles.User],
         });
       });
@@ -68,7 +68,7 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create user
-        const createUserResponse = await createUser(server);
+        const createUserResponse = await mutationCreateUser(server);
         const currentUserBefore = unsafeJwtToCurrentUser(
           createUserResponse.data.finalizeOauthSignin as string
         );
@@ -93,7 +93,7 @@ describe('graphql/User.ts', () => {
         expect.assertions(2);
 
         // create user
-        const createUserResponse = await createUser(server);
+        const createUserResponse = await mutationCreateUser(server);
         const { id } = unsafeJwtToCurrentUser(
           createUserResponse.data.finalizeOauthSignin as string
         );
@@ -108,13 +108,13 @@ describe('graphql/User.ts', () => {
         expect.assertions(2);
 
         // create other user
-        const createUserResponse1 = await createUser(server, { name: 'user1' });
+        const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
         const { id } = unsafeJwtToCurrentUser(
           createUserResponse1.data.finalizeOauthSignin as string
         );
 
         // create user
-        const createUserResponse2 = await createUser(server, { name: 'user2' });
+        const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
         const currentUser = unsafeJwtToCurrentUser(
           createUserResponse2.data.finalizeOauthSignin as string
         );
@@ -130,7 +130,7 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create user
-        const createUserResponse = await createUser(server);
+        const createUserResponse = await mutationCreateUser(server);
         const { id } = unsafeJwtToCurrentUser(
           createUserResponse.data.finalizeOauthSignin as string
         );
@@ -146,13 +146,13 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create other user
-        const createUserResponse1 = await createUser(server, { name: 'user1' });
+        const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
         const { id } = unsafeJwtToCurrentUser(
           createUserResponse1.data.finalizeOauthSignin as string
         );
 
         // create user
-        const createUserResponse2 = await createUser(server, { name: 'user2' });
+        const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
         const currentUser = unsafeJwtToCurrentUser(
           createUserResponse2.data.finalizeOauthSignin as string
         );
@@ -171,7 +171,7 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create user
-        const createUserResponse = await createUser(server);
+        const createUserResponse = await mutationCreateUser(server);
         const currentUser = unsafeJwtToCurrentUser(
           createUserResponse.data.finalizeOauthSignin as string
         );
@@ -196,7 +196,7 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create target user
-        const createUserResponse1 = await createUser(server, { name: 'user1' });
+        const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
         const targetUser = unsafeJwtToCurrentUser(
           createUserResponse1.data.finalizeOauthSignin as string
         );
@@ -208,7 +208,7 @@ describe('graphql/User.ts', () => {
         await mutationUserEdit(server, { isPublic: true });
 
         // create user
-        const createUserResponse2 = await createUser(server, { name: 'user2' });
+        const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
         const currentUser = unsafeJwtToCurrentUser(
           createUserResponse2.data.finalizeOauthSignin as string
         );

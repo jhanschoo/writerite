@@ -81,6 +81,7 @@ export interface NexusGenInputs {
 export interface NexusGenEnums {
   DecksQueryScope: "OWNED" | "PARTICIPATED" | "VISIBLE"
   MessageContentType: "CONFIG" | "CONTEST_SCORE" | "ROUND_SCORE" | "ROUND_START" | "ROUND_WIN" | "TEXT"
+  MessageUpdateOperation: "messageCreate"
   RoomState: "SERVED" | "SERVING" | "WAITING"
   RoomUpdateOperation: "roomAddOccupant" | "roomSetDeck" | "roomSetState"
 }
@@ -103,6 +104,10 @@ export interface NexusGenObjects {
   Card: p.Card;
   Deck: p.Deck;
   Message: p.Message;
+  MessageUpdate: { // root type
+    operation: NexusGenEnums['MessageUpdateOperation']; // MessageUpdateOperation!
+    value: NexusGenRootTypes['Message']; // Message!
+  }
   Mutation: {};
   Query: {};
   Room: p.Room;
@@ -169,6 +174,10 @@ export interface NexusGenFieldTypes {
     senderId: string | null; // ID
     type: NexusGenEnums['MessageContentType']; // MessageContentType!
   }
+  MessageUpdate: { // field return type
+    operation: NexusGenEnums['MessageUpdateOperation']; // MessageUpdateOperation!
+    value: NexusGenRootTypes['Message']; // Message!
+  }
   Mutation: { // field return type
     cardCreate: NexusGenRootTypes['Card']; // Card!
     cardDelete: NexusGenRootTypes['Card']; // Card!
@@ -230,6 +239,7 @@ export interface NexusGenFieldTypes {
     value: NexusGenRootTypes['Room']; // Room!
   }
   Subscription: { // field return type
+    messageUpdatesByRoomSlug: NexusGenRootTypes['MessageUpdate']; // MessageUpdate!
     repeatHealth: string; // String!
     roomUpdatesByRoomSlug: NexusGenRootTypes['RoomUpdate']; // RoomUpdate!
   }
@@ -295,6 +305,10 @@ export interface NexusGenFieldTypeNames {
     senderId: 'ID'
     type: 'MessageContentType'
   }
+  MessageUpdate: { // field return type name
+    operation: 'MessageUpdateOperation'
+    value: 'Message'
+  }
   Mutation: { // field return type name
     cardCreate: 'Card'
     cardDelete: 'Card'
@@ -356,6 +370,7 @@ export interface NexusGenFieldTypeNames {
     value: 'Room'
   }
   Subscription: { // field return type name
+    messageUpdatesByRoomSlug: 'MessageUpdate'
     repeatHealth: 'String'
     roomUpdatesByRoomSlug: 'RoomUpdate'
   }
@@ -441,7 +456,7 @@ export interface NexusGenArgTypes {
     }
     messageCreate: { // args
       content?: NexusGenScalars['JSON'] | null; // JSON
-      roomId: string; // ID!
+      slug: string; // String!
       type: NexusGenEnums['MessageContentType']; // MessageContentType!
     }
     ownCardRecordSet: { // args
@@ -506,6 +521,9 @@ export interface NexusGenArgTypes {
     }
   }
   Subscription: {
+    messageUpdatesByRoomSlug: { // args
+      slug: string; // String!
+    }
     roomUpdatesByRoomSlug: { // args
       slug: string; // String!
     }

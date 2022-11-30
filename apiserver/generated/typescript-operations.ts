@@ -15,7 +15,7 @@ export type Scalars = {
   /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
   EmailAddress: string;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: string | number | Record<string, unknown> | boolean | null;
+  JSON: string | number | Record<string, unknown> | unknown[] | boolean | null;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: Record<string, unknown>;
   /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
@@ -98,6 +98,16 @@ export enum MessageContentType {
   RoundStart = 'ROUND_START',
   RoundWin = 'ROUND_WIN',
   Text = 'TEXT'
+}
+
+export type MessageUpdate = {
+  __typename?: 'MessageUpdate';
+  operation: MessageUpdateOperation;
+  value: Message;
+};
+
+export enum MessageUpdateOperation {
+  MessageCreate = 'messageCreate'
 }
 
 export type Mutation = {
@@ -258,7 +268,7 @@ export type MutationFinalizeOauthSigninArgs = {
 
 export type MutationMessageCreateArgs = {
   content?: InputMaybe<Scalars['JSON']>;
-  roomId: Scalars['ID'];
+  slug: Scalars['String'];
   type: MessageContentType;
 };
 
@@ -409,8 +419,14 @@ export enum RoomUpdateOperation {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  messageUpdatesByRoomSlug: MessageUpdate;
   repeatHealth: Scalars['String'];
   roomUpdatesByRoomSlug: RoomUpdate;
+};
+
+
+export type SubscriptionMessageUpdatesByRoomSlugArgs = {
+  slug: Scalars['String'];
 };
 
 
@@ -499,6 +515,22 @@ export type RepeatHealthSubscriptionVariables = Exact<{ [key: string]: never; }>
 
 export type RepeatHealthSubscription = { __typename?: 'Subscription', repeatHealth: string };
 
+export type MessageCreateMutationVariables = Exact<{
+  content?: InputMaybe<Scalars['JSON']>;
+  slug: Scalars['String'];
+  type: MessageContentType;
+}>;
+
+
+export type MessageCreateMutation = { __typename?: 'Mutation', messageCreate: { __typename?: 'Message', content: string | number | Record<string, unknown> | unknown[] | boolean | null, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } };
+
+export type MessageUpdatesByRoomSlugSubscriptionVariables = Exact<{
+  slug: Scalars['String'];
+}>;
+
+
+export type MessageUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', messageUpdatesByRoomSlug: { __typename?: 'MessageUpdate', operation: MessageUpdateOperation, value: { __typename?: 'Message', content: string | number | Record<string, unknown> | unknown[] | boolean | null, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } } };
+
 export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -563,6 +595,13 @@ export type NameUserMutationVariables = Exact<{
 
 
 export type NameUserMutation = { __typename?: 'Mutation', userEdit: { __typename?: 'User', id: string, name?: string | null } };
+
+export type RefreshMutationVariables = Exact<{
+  token: Scalars['JWT'];
+}>;
+
+
+export type RefreshMutation = { __typename?: 'Mutation', refresh?: string | null };
 
 export type UserAccessibleUserScalarsQueryVariables = Exact<{
   id: Scalars['ID'];

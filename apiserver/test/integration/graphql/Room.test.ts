@@ -4,7 +4,7 @@
 import { PrismaClient } from '@prisma/client';
 
 import { cascadingDelete } from '../_helpers/truncate';
-import { loginAsNewlyCreatedUser } from '../../helpers/graphql/User.util';
+import { loginAsNewlyCreatedUser, refreshLogin } from '../../helpers/graphql/User.util';
 import { mutationDeckCreateEmpty, testContextFactory } from '../../helpers';
 import { PubSub, YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
@@ -51,10 +51,10 @@ describe('graphql/Room.ts', () => {
         expect.assertions(2);
 
         // create occupant user
-        const occupantBefore = await loginAsNewlyCreatedUser(app, setSub, 'user2');
+        const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(app, setSub, 'user2');
 
         // create owner user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -89,10 +89,10 @@ describe('graphql/Room.ts', () => {
         expect.assertions(2);
 
         // create occupant user
-        const occupantBefore = await loginAsNewlyCreatedUser(app, setSub, 'user2');
+        const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(app, setSub, 'user2');
 
         // create owner user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -134,7 +134,7 @@ describe('graphql/Room.ts', () => {
         expect.assertions(3);
 
         // create owner user
-        const user = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -161,7 +161,7 @@ describe('graphql/Room.ts', () => {
         expect.assertions(3);
 
         // create user
-        const userBefore = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: userBefore } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -206,7 +206,7 @@ describe('graphql/Room.ts', () => {
         expect.assertions(2);
 
         // create occupant user
-        const occupantBefore = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(app, setSub);
         const response = await mutationRoomAddOccupant(app, {
           id: nanoid(),
           occupantId: occupantBefore.id,
@@ -220,10 +220,14 @@ describe('graphql/Room.ts', () => {
 
         // create occupant user
         await loginAsNewlyCreatedUser(app, setSub);
-        const occupantBefore = await loginAsNewlyCreatedUser(app, setSub, 'occupantBefore');
+        const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(
+          app,
+          setSub,
+          'occupantBefore'
+        );
 
         // create room owner user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -256,7 +260,7 @@ describe('graphql/Room.ts', () => {
     describe('roomCreate', () => {
       it('should be able to create an empty room in WAITING state', async () => {
         expect.assertions(1);
-        const user = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
         const response = await mutationRoomCreate(app);
         expect(response).toHaveProperty(
           'data.roomCreate',
@@ -477,7 +481,7 @@ describe('graphql/Room.ts', () => {
         expect.assertions(3);
 
         // create room owner user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -514,7 +518,7 @@ describe('graphql/Room.ts', () => {
       it('should transition the state of an owned room in WAITING state to SERVING state with the deck set', async () => {
         expect.assertions(3);
         // create user
-        const user = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -571,7 +575,7 @@ describe('graphql/Room.ts', () => {
       it('should fail to transition the state of an owned room in WAITING state to SERVING state without any deck set', async () => {
         expect.assertions(3);
         // create user
-        const user = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -599,7 +603,7 @@ describe('graphql/Room.ts', () => {
       it("should fail to transition the state of an another user's room in WAITING state to SERVING state", async () => {
         expect.assertions(4);
         // create user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -654,7 +658,7 @@ describe('graphql/Room.ts', () => {
         expect.assertions(2);
 
         // create user
-        const user = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -685,7 +689,7 @@ describe('graphql/Room.ts', () => {
       it('should be able to return ids of owned rooms and rooms you are occupying state', async () => {
         expect.assertions(5);
         // create owner user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse1 = await mutationRoomCreate(app);
@@ -696,7 +700,7 @@ describe('graphql/Room.ts', () => {
         const room2 = roomCreateResponse2.data.roomCreate;
 
         // create owner and occupant user
-        const user2 = await loginAsNewlyCreatedUser(app, setSub, 'user2');
+        const { currentUser: user2 } = await loginAsNewlyCreatedUser(app, setSub, 'user2');
 
         expect(user2.id).not.toEqual(user1.id);
         // create room
@@ -755,10 +759,10 @@ describe('graphql/Room.ts', () => {
   describe('Subscription', () => {
     describe('roomUpdatesByRoomSlug', () => {
       it('should yield an appropriate integration event when the room it is subscribed to has roomSetDeck run on it', async () => {
-        expect.assertions(4);
+        expect.assertions(5);
 
         // create user
-        await loginAsNewlyCreatedUser(app, setSub);
+        const { token } = await loginAsNewlyCreatedUser(app, setSub);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -777,6 +781,10 @@ describe('graphql/Room.ts', () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(app);
         const deckBefore = deckCreateResponse.data.deckCreate;
+
+        // we have to update our claims before we can establish a subscription
+        const { currentUser } = await refreshLogin(app, setSub, token);
+        expect(Object.keys(currentUser.occupyingActiveRoomSlugs)).toHaveLength(1);
 
         // create subscription
         const roomUpdates = await subscriptionRoomUpdatesByRoomSlug(app, roomBefore.slug);
@@ -806,30 +814,33 @@ describe('graphql/Room.ts', () => {
         const readResult = await roomUpdates.body[Symbol.asyncIterator]().next();
         if (!readResult.done) {
           const event = JSON.parse(readResult.value.toString().slice(6));
-          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
-            operation: "roomSetDeck",
-            value: {
-              id: roomBefore.id,
-              deckId: deckBefore.id,
-              deck: {
-                id: deckBefore.id,
+          expect(event).toHaveProperty(
+            'data.roomUpdatesByRoomSlug',
+            expect.objectContaining({
+              operation: 'roomSetDeck',
+              value: {
+                id: roomBefore.id,
+                deckId: deckBefore.id,
+                deck: {
+                  id: deckBefore.id,
+                },
+                state: RoomState.Waiting,
+                userIdOfLastAddedOccupantForSubscription: null,
+                userOfLastAddedOccupantForSubscription: null,
               },
-              state: RoomState.Waiting,
-              userIdOfLastAddedOccupantForSubscription: null,
-              userOfLastAddedOccupantForSubscription: null,
-            },
-          }));
+            })
+          );
         }
       });
 
       it('should yield an appropriate integration event when the room it is subscribed to has roomAddOccupant run on it', async () => {
-        expect.assertions(4);
+        expect.assertions(5);
 
         // create occupant user
-        const occupantBefore = await loginAsNewlyCreatedUser(app, setSub, 'user2');
+        const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(app, setSub, 'user2');
 
         // create owner user
-        const user1 = await loginAsNewlyCreatedUser(app, setSub, 'user1');
+        const { token, currentUser: user1 } = await loginAsNewlyCreatedUser(app, setSub, 'user1');
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -843,6 +854,10 @@ describe('graphql/Room.ts', () => {
           })
         );
         const roomBefore = roomCreateResponse.data.roomCreate;
+
+        // we have to update our claims before we can establish a subscription
+        const { currentUser } = await refreshLogin(app, setSub, token);
+        expect(Object.keys(currentUser.occupyingActiveRoomSlugs)).toHaveLength(1);
 
         // create subscription
         const roomUpdates = await subscriptionRoomUpdatesByRoomSlug(app, roomBefore.slug);
@@ -870,26 +885,29 @@ describe('graphql/Room.ts', () => {
         const readResult = await roomUpdates.body[Symbol.asyncIterator]().next();
         if (!readResult.done) {
           const event = JSON.parse(readResult.value.toString().slice(6));
-          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
-            operation: "roomAddOccupant",
-            value: {
-              id: roomBefore.id,
-              deckId: null,
-              deck: null,
-              state: RoomState.Waiting,
-              userIdOfLastAddedOccupantForSubscription: occupantBefore.id,
-              userOfLastAddedOccupantForSubscription: {
-                id: occupantBefore.id,
+          expect(event).toHaveProperty(
+            'data.roomUpdatesByRoomSlug',
+            expect.objectContaining({
+              operation: 'roomAddOccupant',
+              value: {
+                id: roomBefore.id,
+                deckId: null,
+                deck: null,
+                state: RoomState.Waiting,
+                userIdOfLastAddedOccupantForSubscription: occupantBefore.id,
+                userOfLastAddedOccupantForSubscription: {
+                  id: occupantBefore.id,
+                },
               },
-            },
-          }));
+            })
+          );
         }
       });
 
       it('should yield an appropriate integration event when the room it is subscribed to changes state by roomSetState', async () => {
-        expect.assertions(6);
+        expect.assertions(7);
         // create user
-        const user = await loginAsNewlyCreatedUser(app, setSub);
+        const { currentUser: user, token } = await loginAsNewlyCreatedUser(app, setSub);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -906,6 +924,10 @@ describe('graphql/Room.ts', () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(app);
         const deckBefore = deckCreateResponse.data.deckCreate;
+
+        // we have to update our claims before we can establish a subscription
+        const { currentUser } = await refreshLogin(app, setSub, token);
+        expect(Object.keys(currentUser.occupyingActiveRoomSlugs)).toHaveLength(1);
 
         // create subscription
         const roomUpdates = await subscriptionRoomUpdatesByRoomSlug(app, roomBefore.slug);
@@ -932,23 +954,26 @@ describe('graphql/Room.ts', () => {
         );
 
         // assert subscription result for deck
-        const iterator = roomUpdates.body[Symbol.asyncIterator]()
+        const iterator = roomUpdates.body[Symbol.asyncIterator]();
         const readResultOne = await iterator.next();
         if (!readResultOne.done) {
           const event = JSON.parse(readResultOne.value.toString().slice(6));
-          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
-            operation: "roomSetDeck",
-            value: {
-              id: roomBefore.id,
-              deckId: deckBefore.id,
-              deck: {
-                id: deckBefore.id,
+          expect(event).toHaveProperty(
+            'data.roomUpdatesByRoomSlug',
+            expect.objectContaining({
+              operation: 'roomSetDeck',
+              value: {
+                id: roomBefore.id,
+                deckId: deckBefore.id,
+                deck: {
+                  id: deckBefore.id,
+                },
+                state: RoomState.Waiting,
+                userIdOfLastAddedOccupantForSubscription: null,
+                userOfLastAddedOccupantForSubscription: null,
               },
-              state: RoomState.Waiting,
-              userIdOfLastAddedOccupantForSubscription: null,
-              userOfLastAddedOccupantForSubscription: null,
-            },
-          }));
+            })
+          );
         }
 
         // transition state
@@ -973,21 +998,24 @@ describe('graphql/Room.ts', () => {
         const readResultTwo = await iterator.next();
         if (!readResultTwo.done) {
           const event = JSON.parse(readResultTwo.value.toString().slice(6));
-          expect(event).toHaveProperty("data.roomUpdatesByRoomSlug", expect.objectContaining({
-            operation: "roomSetState",
-            value: {
-              id: roomBefore.id,
-              deckId: deckBefore.id,
-              deck: {
-                id: deckBefore.id,
+          expect(event).toHaveProperty(
+            'data.roomUpdatesByRoomSlug',
+            expect.objectContaining({
+              operation: 'roomSetState',
+              value: {
+                id: roomBefore.id,
+                deckId: deckBefore.id,
+                deck: {
+                  id: deckBefore.id,
+                },
+                state: RoomState.Serving,
+                userIdOfLastAddedOccupantForSubscription: null,
+                userOfLastAddedOccupantForSubscription: null,
               },
-              state: RoomState.Serving,
-              userIdOfLastAddedOccupantForSubscription: null,
-              userOfLastAddedOccupantForSubscription: null,
-            },
-          }));
+            })
+          );
         }
       });
-    })
-  })
+    });
+  });
 });

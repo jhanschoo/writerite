@@ -23,7 +23,7 @@ export const DEFAULT_CURRENT_USER = {
   id: 'fake-id',
   name: 'fake-name',
   roles: [Roles.User],
-  occupyingActiveRoomSlugs: [],
+  occupyingActiveRoomSlugs: {},
 };
 
 describe('graphql/Deck.ts', () => {
@@ -183,7 +183,7 @@ describe('graphql/Deck.ts', () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const id = 'deck-id-with-20-plus-chars';
-        prisma.user.findUnique.mockResolvedValue({ name: "abc" } as User);
+        prisma.user.findUnique.mockResolvedValue({ name: 'abc' } as User);
         prisma.deck.findUnique.mockResolvedValue({
           id,
           answerLang: '',
@@ -222,7 +222,7 @@ describe('graphql/Deck.ts', () => {
         const id1 = 'deck-id-with-20-plus-chars-1';
         const id2 = 'deck-id-with-20-plus-chars-2';
         setSub(DEFAULT_CURRENT_USER);
-        prisma.user.findUnique.mockResolvedValue({ name: "abc" } as User);
+        prisma.user.findUnique.mockResolvedValue({ name: 'abc' } as User);
         prisma.deck.findMany.mockResolvedValue([{ id: id1 } as Deck, { id: id2 } as Deck]);
         const queryDecksResponse = await queryDecks(server);
         expect(queryDecksResponse.data.decks).toHaveLength(2);

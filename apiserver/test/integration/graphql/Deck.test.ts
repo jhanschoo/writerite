@@ -81,7 +81,7 @@ describe('graphql/Deck.ts', () => {
         expect.assertions(2);
 
         // create user
-        const user = await loginAsNewlyCreatedUser(server, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(server, setSub);
 
         // create deck
         const createDeckResponse = await mutationDeckCreateEmpty(server);

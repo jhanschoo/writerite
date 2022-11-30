@@ -1,5 +1,5 @@
 import { Room as PRoom, RoomState as PRoomState, Prisma } from '@prisma/client';
-import { Room as BaseRoom } from '../types/backingTypes';
+import { Room as BackingRoom } from '../types/backingTypes';
 import {
   enumType,
   idArg,
@@ -36,8 +36,8 @@ export interface RoomUpdatePublishArgs {
 }
 
 export interface RoomUpdateBase {
-  operation: (typeof ROOM_UPDATE_KEYS)[number];
-  value: BaseRoom;
+  operation: typeof ROOM_UPDATE_KEYS[number];
+  value: BackingRoom;
 }
 
 export const Room = objectType({
@@ -96,7 +96,9 @@ export const Room = objectType({
       type: 'User',
       resolve({ userIdOfLastAddedOccupantForSubscription }, _args, { prisma }) {
         if (userIdOfLastAddedOccupantForSubscription) {
-          return prisma.user.findUnique({ where: { id: userIdOfLastAddedOccupantForSubscription } });
+          return prisma.user.findUnique({
+            where: { id: userIdOfLastAddedOccupantForSubscription },
+          });
         }
         return null;
       },
@@ -285,7 +287,11 @@ export const RoomAddOccupantMutation = mutationField(ROOM_ADD_OCCUPANT_KEY, {
     signatures: ["activeRoomUpdates"]
   )`,
   resolve: guardValidUser(async (_parent, { id, occupantId }, { prisma, pubsub, sub }) => {
-    const roomRes = await roomAddOccupant(prisma, { roomId: id, occupantId, currentUserId: sub.id });
+    const roomRes = await roomAddOccupant(prisma, {
+      roomId: id,
+      occupantId,
+      currentUserId: sub.id,
+    });
     if (roomRes.slug) {
       pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, roomRes.slug, {
         operation: ROOM_ADD_OCCUPANT_KEY,
@@ -293,8 +299,7 @@ export const RoomAddOccupantMutation = mutationField(ROOM_ADD_OCCUPANT_KEY, {
       });
     }
     return roomRes;
-  }
-  ),
+  }),
 });
 
 export const RoomUpdateOperation = enumType({
@@ -319,10 +324,13 @@ export const RoomUpdatesByRoomSlugSubscription = subscriptionField('roomUpdatesB
   args: {
     slug: nonNull(stringArg()),
   },
-  subscribe(_parent, { slug }, { pubsub }, _info) {
+  subscribe: guardValidUser((_parent, { slug }, { pubsub, sub }, _info) => {
+    if (!sub.occupyingActiveRoomSlugs[slug]) {
+      throw userLacksPermissionsErrorFactory();
+    }
     return pubsub.subscribe(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, slug);
-  },
-  resolve(parent) {
+  }),
+  resolve(parent: RoomUpdateBase) {
     return parent;
   },
 });

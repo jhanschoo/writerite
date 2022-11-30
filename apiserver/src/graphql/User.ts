@@ -53,7 +53,9 @@ export const User = objectType({
            * assumption: occupyingRooms has been filtered to only contain those whose states are not in WillNotServeRoomStates
            * see e.g. src/service/authentication/util.ts#32
            */
-          const rooms = occupyingRooms.map(({ room }) => room).filter((optionalRoom): optionalRoom is Room => Boolean(optionalRoom));
+          const rooms = occupyingRooms
+            .map(({ room }) => room)
+            .filter((optionalRoom): optionalRoom is Room => Boolean(optionalRoom));
           return rooms;
         }
         return roomFindOccupyingActiveOfUser(prisma, { occupantId: id });

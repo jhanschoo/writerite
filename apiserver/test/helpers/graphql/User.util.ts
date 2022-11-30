@@ -2,7 +2,9 @@ import { WrServer } from '../../../src/graphqlApp';
 import { gql, testQuery, unsafeJwtToCurrentUser } from '../misc';
 import {
   CreateUserMutationVariables,
+  MutationRefreshArgs,
   NameUserMutationVariables,
+  RefreshMutationVariables,
   UserAccessibleUserScalarsQueryVariables,
   UserEditMutationVariables,
   UserPublicScalarsQueryVariables,
@@ -13,7 +15,7 @@ export const DEFAULT_CREATE_USER_VALUES = {
   name: 'abcxyz',
 };
 
-export function createUser(
+export function mutationCreateUser(
   server: WrServer,
   { name }: { name: string } = DEFAULT_CREATE_USER_VALUES
 ) {
@@ -40,7 +42,7 @@ export function createUser(
   });
 }
 
-export function nameUser(
+export function mutationNameUser(
   server: WrServer,
   { name }: { name: string } = DEFAULT_CREATE_USER_VALUES
 ) {
@@ -63,13 +65,41 @@ export async function loginAsNewlyCreatedUser(
   server: WrServer,
   setSub: (sub?: CurrentUser) => void,
   name?: string
-): Promise<CurrentUser> {
+): Promise<{ currentUser: CurrentUser; token: string }> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const response = await (name ? createUser(server, { name }) : createUser(server));
+  const response = await (name ? mutationCreateUser(server, { name }) : mutationCreateUser(server));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const currentUser = unsafeJwtToCurrentUser(response.data.finalizeOauthSignin as string);
+  const token = response.data.finalizeOauthSignin as string;
+  const currentUser = unsafeJwtToCurrentUser(token);
   setSub(currentUser);
-  return currentUser;
+  return { currentUser, token };
+}
+
+export async function refreshLogin(
+  server: WrServer,
+  setSub: (sub?: CurrentUser) => void,
+  token: string
+): Promise<{ currentUser: CurrentUser; token: string }> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const response = await mutationRefresh(server, token);
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  const updatedToken = response.data.refresh as string;
+  const currentUser = unsafeJwtToCurrentUser(updatedToken);
+  setSub(currentUser);
+  return { currentUser, token };
+}
+
+export async function mutationRefresh(server: WrServer, token: string) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery<RefreshMutationVariables>({
+    server,
+    document: gql`
+      mutation Refresh($token: JWT!) {
+        refresh(token: $token)
+      }
+    `,
+    variables: { token },
+  });
 }
 
 export function queryAllUserAccessibleUserScalars(server: WrServer, id: string) {

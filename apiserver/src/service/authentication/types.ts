@@ -4,6 +4,7 @@ import { Occupant, User } from '@prisma/client';
 export type PrismaCurrentUserSourceType = User & {
   occupyingRooms: (Occupant & {
     room: {
+      id: string;
       slug: string | null;
     };
   })[];
