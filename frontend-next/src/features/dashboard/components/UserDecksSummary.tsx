@@ -3,7 +3,12 @@ import { FC, MouseEvent, MouseEventHandler } from 'react';
 import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
-import { DeckCreateDocument, DecksDocument, DecksQuery, DecksQueryScope } from '@generated/graphql';
+import {
+  DeckCreateDocument,
+  DecksDocument,
+  DecksQueryScope,
+  DeckSummaryFragment,
+} from '@generated/graphql';
 import {
   Button,
   Card,
@@ -47,7 +52,7 @@ const NewDeckItem = () => {
   );
 };
 
-const DeckItem = ({ deck }: { deck: DecksQuery['decks'][number] }) => {
+const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
   return (
     <Link href={`/app/deck/${deck.id}`}>
       <UnstyledButton sx={{ height: 'unset' }} onClick={(e) => e.stopPropagation()} component="div">

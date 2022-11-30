@@ -6,7 +6,14 @@ mutation DeckEdit(
   $promptLang: String
   $published: Boolean
 ) {
-  deckEdit(answerLang: $answerLang, description: $description, id: $id, name: $name, promptLang: $promptLang, published: $published) {
+  deckEdit(
+    answerLang: $answerLang
+    description: $description
+    id: $id
+    name: $name
+    promptLang: $promptLang
+    published: $published
+  ) {
     ...deckDetail
   }
 }

@@ -1,13 +1,13 @@
 fragment cardDetail on Card {
-    answers
-    deckId
-    editedAt
-    fullAnswer
-    id
-    mainTemplate
-    ownRecord {
-      correctRecord
-    }
-    prompt
-    template
+  answers
+  deckId
+  editedAt
+  fullAnswer
+  id
+  mainTemplate
+  ownRecord {
+    correctRecord
+  }
+  prompt
+  template
 }

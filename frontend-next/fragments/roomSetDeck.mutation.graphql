@@ -1,0 +1,6 @@
+mutation RoomSetDeck($deckId: ID!, $id: ID!) {
+  roomSetDeck(deckId: $deckId, id: $id) {
+    # we do not specify properties since we want the FE Room state to be updated by subscriptions
+    id
+  }
+}

@@ -25,7 +25,7 @@ const wsClient = createClient({
 
 const auth = authExchange<string | null>({
   addAuthToOperation({ operation }) {
-    const token = getAccessToken()
+    const token = getAccessToken();
     if (isSSRContext() || !token) {
       return operation;
     }

@@ -1,0 +1,5 @@
+mutation MessageCreate($content: JSON, $slug: String!, $type: MessageContentType!) {
+  messageCreate(content: $content, slug: $slug, type: $type) {
+    ...basicMessage
+  }
+}

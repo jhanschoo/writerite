@@ -1,3 +1,8 @@
-mutation FinalizeOauthSignin($code: String! $provider: String! $nonce: String! $redirect_uri: String!) {
-  finalizeOauthSignin(code: $code provider: $provider nonce: $nonce redirect_uri: $redirect_uri)
+mutation FinalizeOauthSignin(
+  $code: String!
+  $provider: String!
+  $nonce: String!
+  $redirect_uri: String!
+) {
+  finalizeOauthSignin(code: $code, provider: $provider, nonce: $nonce, redirect_uri: $redirect_uri)
 }

@@ -1,7 +1,4 @@
-mutation DeckAddSubdeck(
-  $id: ID!
-  $subdeckId: ID!
-) {
+mutation DeckAddSubdeck($id: ID!, $subdeckId: ID!) {
   deckAddSubdeck(id: $id, subdeckId: $subdeckId) {
     ...deckSubdecks
   }

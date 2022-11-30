@@ -19,7 +19,7 @@ import {
 } from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import { DecksList, DeckItemComponentProps } from '@/components/deck';
-import { CheckIcon, EyeOpenIcon, Link2Icon } from '@radix-ui/react-icons';
+import { CheckIcon, Link2Icon } from '@radix-ui/react-icons';
 import { useHover } from '@mantine/hooks';
 import { NextLinkButton } from '@/components/link/NextLinkButton';
 

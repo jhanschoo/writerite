@@ -28,7 +28,7 @@ import { ManageCardAltAnswers } from './ManageCardAltAnswers';
  *   For this reason we have to do some type munging.
  */
 
-type DeltaPojo = { ops: Op[]; };
+type DeltaPojo = { ops: Op[] };
 
 const useEditorStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -131,12 +131,16 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     fullAnswer: fullAnswer as unknown,
     answers,
   } as State;
-  const [promptContent, setPromptContent] = useState<QuillDelta>(new Delta(prompt as DeltaPojo) as unknown as QuillDelta);
-  const [fullAnswerContent, setFullAnswerContent] = useState<QuillDelta>(new Delta(fullAnswer as DeltaPojo) as unknown as QuillDelta);
+  const [promptContent, setPromptContent] = useState<QuillDelta>(
+    new Delta(prompt as DeltaPojo) as unknown as QuillDelta
+  );
+  const [fullAnswerContent, setFullAnswerContent] = useState<QuillDelta>(
+    new Delta(fullAnswer as DeltaPojo) as unknown as QuillDelta
+  );
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
-  const updateStateToServer = (newState: State) =>{
+  const updateStateToServer = (newState: State) => {
     console.log(newState);
     return cardEdit({
       id,

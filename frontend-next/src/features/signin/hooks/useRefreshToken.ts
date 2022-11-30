@@ -8,17 +8,15 @@ export function useRefreshToken(client: Client) {
   return async () => {
     const token = getAccessToken();
     if (!token) {
-      console.log("refresh failed: no token");
+      console.error('token refresh failed: no token');
       return;
     }
-    console.log(token);
     const result = await client.mutation(RefreshDocument, { token }).toPromise();
     const newToken = result.data?.refresh;
     if (!newToken) {
-      console.log("refresh failed: no token response");
+      console.error('token refresh failed: no token response');
       return;
     }
     setAccessToken(newToken);
-    console.log("refresh success");
-  }
+  };
 }

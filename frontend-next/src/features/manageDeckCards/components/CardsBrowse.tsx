@@ -46,11 +46,7 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
   const currentCards = useMemo(() => {
     const filteredCards = filter
       ? deck.cardsDirect.filter(
-          ({
-            prompt,
-            fullAnswer,
-            answers,
-          }) =>
+          ({ prompt, fullAnswer, answers }) =>
             (prompt as DeltaPojo).ops?.some(
               ({ insert }) => typeof insert === 'string' && insert.includes(filter)
             ) ||

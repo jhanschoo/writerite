@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
-import { useQuery } from 'urql';
 
-import { UserDocument } from '@generated/graphql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { ManageDecks } from '@/features/manageDecks';
 import { StandardLayout } from '@/features/standardLayout';

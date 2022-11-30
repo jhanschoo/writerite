@@ -46,7 +46,11 @@ const NewRoomItem = () => {
   );
 };
 
-const RoomItem = ({ room }: { room: OccupyingActiveRoomsQuery['occupyingActiveRooms'][number] }) => {
+const RoomItem = ({
+  room,
+}: {
+  room: OccupyingActiveRoomsQuery['occupyingActiveRooms'][number];
+}) => {
   return (
     <Link href={`/app/room/${room.slug || room.id}`}>
       <UnstyledButton sx={{ height: 'unset' }} onClick={(e) => e.stopPropagation()} component="div">

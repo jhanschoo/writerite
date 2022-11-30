@@ -16,7 +16,6 @@ import {
 
 import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
 import { usePeriodicallyRefreshToken } from '@/features/signin';
 import { ManageRoom } from '@/features/manageRoom/components/ManageRoom';
 
@@ -24,19 +23,19 @@ const Home: NextPage = () => {
   const { motionProps } = useMotionContext();
   const router = useRouter();
   usePeriodicallyRefreshToken();
-  const slug = router.query.slug as string;
+  const slug = router.query.slug as string | undefined;
 
   return (
     <StandardLayout
       breadcrumbs={[
         ['/app', 'Home'],
-        ['/app/deck', 'Rooms'],
-        [`/app/room/${slug}`, slug],
+        ['/app/room', 'Rooms'],
+        [`/app/room/${slug}`, slug || ''],
       ]}
       vhHeight
     >
       <motion.div {...motionProps}>
-        <ManageRoom slug={slug} />
+        {slug && <ManageRoom slug={slug} />}
       </motion.div>
     </StandardLayout>
   );

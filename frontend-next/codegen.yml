@@ -1,20 +1,20 @@
 overwrite: true
-schema: "../apiserver/generated/schema.graphql"
-documents: "fragments/**/*.graphql"
+schema: '../apiserver/generated/schema.graphql'
+documents: 'fragments/**/*.graphql'
 generates:
   generated/graphql.ts:
     plugins:
-      - "typescript"
-      - "typescript-operations"
-      - "typed-document-node"
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typed-document-node'
   ./graphql.schema.json:
     plugins:
-      - "introspection"
+      - 'introspection'
 config:
   scalars:
     DateTime: string
     EmailAddress: string
-    JSON: string | number | Record<string, unknown> | boolean | null
+    JSON: string | number | Record<string, unknown> | unknown[] | boolean | null
     JSONObject: Record<string, unknown>
     JWT: string
     UUID: string
