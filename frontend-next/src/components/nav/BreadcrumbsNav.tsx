@@ -2,7 +2,7 @@ import router from 'next/router';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { Breadcrumbs, Button, Divider, Group, GroupProps, Text } from '@mantine/core';
-import { NextLinkAnchor } from '../link/NextLinkAnchor';
+import Link from 'next/link';
 
 export interface BreadcrumbsNavProps {
   showBack?: boolean;
@@ -20,9 +20,9 @@ const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavPro
     breadcrumbs &&
     breadcrumbs.length &&
     breadcrumbs.map(([href, name], index) => (
-      <NextLinkAnchor key={index} href={href} variant="text">
+      <Link key={index} href={href}>
         {typeof name === 'string' ? <Text>{name}</Text> : name}
-      </NextLinkAnchor>
+      </Link>
     ));
   return (
     <Group {...groupProps}>

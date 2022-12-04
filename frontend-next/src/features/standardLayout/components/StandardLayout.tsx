@@ -12,7 +12,7 @@ import { useLogout } from '@features/signin/hooks/useLogout';
 import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
 import { FC, PropsWithChildren } from 'react';
 import BrandText from '@/components/typography/BrandText';
-import { NextLinkAnchor } from '@/components/link/NextLinkAnchor';
+import Link from 'next/link';
 
 interface Props {
   breadcrumbs?: [string, string | JSX.Element][];
@@ -70,9 +70,9 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({
                 zIndex: 100,
               })}
             >
-              <NextLinkAnchor variant="text" href="/app">
+              <Link href="/app">
                 <BrandText full />
-              </NextLinkAnchor>
+              </Link>
             </Center>
           </Group>
         </Header>

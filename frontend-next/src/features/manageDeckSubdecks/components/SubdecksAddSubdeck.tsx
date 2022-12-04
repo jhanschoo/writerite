@@ -5,7 +5,6 @@ import type { ManageDeckProps } from '@/features/manageDeck';
 import { useDebounce } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import {
-  Box,
   Button,
   Card,
   LoadingOverlay,
@@ -21,7 +20,7 @@ import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import { DecksList, DeckItemComponentProps } from '@/components/deck';
 import { CheckIcon, Link2Icon } from '@radix-ui/react-icons';
 import { useHover } from '@mantine/hooks';
-import { NextLinkButton } from '@/components/link/NextLinkButton';
+import Link from 'next/link';
 
 export const MANAGE_DECKS_DECKS_NUM = 12;
 
@@ -125,14 +124,11 @@ const DeckItem =
           {...(thisAdded && addedProps(variantOutput))}
         />
         <Card.Section>
-          <NextLinkButton
-            to={`/app/deck/${deck.id}`}
-            fullWidth
-            variant="subtle"
-            sx={{ borderRadius: 0 }}
-          >
-            View
-          </NextLinkButton>
+          <Link href={`/app/deck/${deck.id}`}>
+            <Button fullWidth variant="subtle" sx={{ borderRadius: 0 }}>
+              View
+            </Button>
+          </Link>
         </Card.Section>
       </Card>
     );
