@@ -17,6 +17,7 @@ import { guardValidUser } from '../service/authorization/guardValidUser';
 import { getDescendantsOfDeck } from '../service/deckFamily';
 import { jsonObjectArg } from './scalarUtil';
 import { z } from 'zod';
+import { jsonObjectSchema } from '../service/validation/jsonSchema';
 
 const DEFAULT_TAKE = 60;
 
@@ -298,7 +299,7 @@ export const DeckCreateMutation = mutationField('deckCreate', {
 export const deckEditSchema = z.object({
   id: z.string().min(20),
   name: z.string().trim().optional(),
-  description: z.object({}).optional(),
+  description: jsonObjectSchema.optional(),
   promptLang: z.string().trim().min(2).optional(),
   answerLang: z.string().trim().min(2).optional(),
   published: z.boolean().optional(),
