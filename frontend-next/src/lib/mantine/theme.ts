@@ -1,12 +1,14 @@
-import type { MantineThemeOverride } from '@mantine/core';
+import type { ColorScheme, MantineThemeOverride } from '@mantine/core';
 
 const fontFamily = ['"Noto Sans"', 'sans-serif'].join(',');
 
-export const theme: MantineThemeOverride = {
-  fontFamily,
-  primaryColor: 'dark',
-  colorScheme: 'dark',
-  headings: {
+export function theme(colorScheme: ColorScheme): MantineThemeOverride {
+  return {
+    colorScheme,
     fontFamily,
-  },
-};
+    primaryColor: colorScheme === 'light' ? 'dark' : 'gray',
+    headings: {
+      fontFamily,
+    },
+  };
+}

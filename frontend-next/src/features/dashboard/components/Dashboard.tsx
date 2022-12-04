@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Box, createStyles, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, createStyles, Title } from '@mantine/core';
 import { UserDecksSummary } from './UserDecksSummary';
 import { RoomNotifications } from './RoomNotifications';
 import { DashboardStats } from './DashboardStats';
@@ -57,7 +57,3 @@ export const Dashboard: FC = () => {
     </Box>
   );
 };
-
-// <Stack p="md">
-//   <UserRoomsSummary />
-// </Stack>

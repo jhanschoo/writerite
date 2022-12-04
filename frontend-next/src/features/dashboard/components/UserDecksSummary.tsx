@@ -142,7 +142,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
         <Title order={2} mb="md">
           Decks
         </Title>
-        <Button variant="default" leftIcon={<MagnifyingGlassIcon />}>
+        <Button variant="outline" leftIcon={<MagnifyingGlassIcon />}>
           Find Decks
         </Button>
       </Box>
