@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { FC, MouseEvent, MouseEventHandler } from 'react';
+import { FC, MouseEvent } from 'react';
 import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
@@ -10,23 +10,53 @@ import {
   DeckSummaryFragment,
 } from '@generated/graphql';
 import {
+  Box,
   Button,
   Card,
   createStyles,
   Divider,
-  Group,
-  Paper,
   Text,
   Title,
   UnstyledButton,
 } from '@mantine/core';
-import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import Link from 'next/link';
+import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons';
+import { formatISO, parseISO } from 'date-fns';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
+const useStyles = createStyles((theme) => {
+  const { background: backgroundColor, hover } = theme.fn.variant({ variant: 'default' });
+  return {
+    card: {
+      overflow: 'visible',
+    },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+    buttonSection: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      overflow: 'visible',
+    },
+    deckItem: {
+      backgroundColor,
+      ...theme.fn.hover({
+        backgroundColor: hover,
+      }),
+    },
+    createDeckButton: {
+      position: 'relative',
+      bottom: '-1rem',
+    },
+  };
+});
+
 const NewDeckItem = () => {
   const router = useRouter();
+  const { classes } = useStyles();
   const { setMotionProps } = useMotionContext();
   const [, deckCreateMutation] = useMutation(DeckCreateDocument);
   const handleCreateDeck = async (e: MouseEvent) => {
@@ -46,59 +76,48 @@ const NewDeckItem = () => {
   };
 
   return (
-    <Button onClick={handleCreateDeck} size="md" radius="xl" mb="md">
-      Create a new Deck
+    <Button
+      onClick={handleCreateDeck}
+      size="md"
+      radius="xl"
+      className={classes.createDeckButton}
+      leftIcon={<PlusIcon width={20} height={20} />}
+    >
+      New Deck
     </Button>
   );
 };
 
 const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
+  const editedAtDisplay = formatISO(parseISO(deck.editedAt), { representation: 'date' });
+  const { classes } = useStyles();
   return (
     <Link href={`/app/deck/${deck.id}`}>
-      <UnstyledButton sx={{ height: 'unset' }} onClick={(e) => e.stopPropagation()} component="div">
-        <Card
-          shadow="md"
-          radius="md"
-          p="md"
-          withBorder
-          sx={(theme) => {
-            const { border, background, color, hover } = theme.fn.variant({ variant: 'default' });
-            return {
-              backgroundColor: background,
-              color,
-              height: '100%',
-              display: 'flex',
-              flexDirection: 'column',
-              borderColor: border,
-              ...theme.fn.hover({ backgroundColor: hover }),
-            };
-          }}
-        >
-          <DeckSummaryContent deck={deck} />
-        </Card>
+      <UnstyledButton
+        onClick={(e) => e.stopPropagation()}
+        component="div"
+        p="md"
+        className={classes.deckItem}
+      >
+        {deck.name ? (
+          <Title order={3} size="lg" weight="bold">
+            {deck.name}
+          </Title>
+        ) : (
+          <Title order={3} color="dimmed" sx={{ fontStyle: 'italic' }}>
+            Untitled Deck
+          </Title>
+        )}
+        <Text>
+          {deck.subdecksCount} subdecks / {deck.cardsDirectCount} cards / last edited at{' '}
+          {editedAtDisplay}
+        </Text>
       </UnstyledButton>
     </Link>
   );
 };
 
-const useStyles = createStyles((_theme, _params, getRef) => ({
-  group: {
-    alignItems: 'flex-end',
-    marginRight: '-5rem',
-    [`& > .${getRef('heading')}`]: {
-      flexGrow: 1,
-    },
-  },
-  heading: {
-    ref: getRef('heading'),
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-}));
-
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
-  const router = useRouter();
   const { classes } = useStyles();
   const [{ data, fetching, error }, refetchDecks] = useQuery({
     query: DecksDocument,
@@ -107,22 +126,31 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
       take: USER_DECK_SUMMARY_DECKS_NUM,
     },
   });
-  const decks = (data?.decks || []).map((deck, index) => <DeckItem key={index} deck={deck} />);
+  const decks = (data?.decks || []).flatMap((deck, index) => [
+    <Divider key={`${index}-divider`} />,
+    <Card.Section key={index}>
+      <DeckItem deck={deck} />
+    </Card.Section>,
+    <Divider key={`${index}-divider1`} />,
+    <Card.Section key={index + '-1'}>
+      <DeckItem deck={deck} />
+    </Card.Section>,
+  ]);
   return (
-    <UnstyledButton component="div" mr="5rem" onClick={() => router.push('/app/deck')}>
-      <Paper shadow="md" radius="md" p="md">
-        <Group className={classes.group}>
-          <Title order={2} className={classes.heading} mb="md">
-            Decks
-          </Title>
-          <NewDeckItem />
-        </Group>
-        <Divider mb="md" />
-        <Group>
-          {decks}
-          <Text>{decks.length ? 'View more...' : 'You have no decks to show.'}</Text>
-        </Group>
-      </Paper>
-    </UnstyledButton>
+    <Card shadow="xl" radius="lg" px="md" pt="md" className={classes.card}>
+      <Box className={classes.header}>
+        <Title order={2} mb="md">
+          Decks
+        </Title>
+        <Button variant="default" leftIcon={<MagnifyingGlassIcon />}>
+          Find Decks
+        </Button>
+      </Box>
+      {decks}
+      {decks.length ? '' : <Text>You have no decks to show.</Text>}
+      <Card.Section className={classes.buttonSection}>
+        <NewDeckItem />
+      </Card.Section>
+    </Card>
   );
 };

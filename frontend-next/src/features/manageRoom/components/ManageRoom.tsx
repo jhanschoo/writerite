@@ -16,9 +16,8 @@ import { ManageRoomPrimaryInput } from './ManageRoomPrimaryInput';
 import { ManageRoomContextual } from './ManageRoomContextual';
 
 const useStyles = createStyles((theme) => {
-  const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
   // https://github.com/mantinedev/mantine/blob/c7d080c2133b0196e3a8382ec6134838632c8f9a/src/mantine-core/src/Tabs/Tab/Tab.styles.ts#L49
-  const borderColor = theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3];
+  // const borderColor = theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3];
   return {
     gridTemplate: {
       display: 'grid',
