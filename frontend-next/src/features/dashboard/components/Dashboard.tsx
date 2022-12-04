@@ -42,11 +42,7 @@ export const Dashboard: FC = () => {
         </Title>
       </Box>
       <RoomNotifications
-        wrapper={({ children, key }) => (
-          <Box className={classes.roomNotificationsPanel} key={key}>
-            {children}
-          </Box>
-        )}
+        wrapper={({ children }) => <Box className={classes.roomNotificationsPanel}>{children}</Box>}
       />
       <Box className={classes.statsPanel}>
         <DashboardStats />

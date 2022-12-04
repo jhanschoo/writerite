@@ -4,10 +4,13 @@ import { Button, Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '@/features/manageDeck';
 import { ManageCard } from '@/features/manageCard';
+import type { EditorOptions, JSONContent } from '@tiptap/core';
 import { CardCreateDocument } from '@generated/graphql';
-import { DeltaPojo } from '@/features/manageDeck/components/ManageDeckDescription';
+import { accumulateContentText } from '@/components/RichTextEditor';
 
 type Card = ManageDeckProps['deck']['cardsDirect'][number];
+
+const WHITESPACE_REGEX = /\s+/;
 
 const sortCards = (cards: Card[]) =>
   cards.sort((a, b) =>
@@ -43,19 +46,22 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
     setFilter(e.target.value);
     setActivePage(1);
   };
+  const filterWords = filter
+    .trim()
+    .split(WHITESPACE_REGEX)
+    .filter((word) => Boolean(word));
+  // .filter(...) is necessary since "".split(/\s+/) === ['']
   const currentCards = useMemo(() => {
-    const filteredCards = filter
-      ? deck.cardsDirect.filter(
-          ({ prompt, fullAnswer, answers }) =>
-            (prompt as DeltaPojo).ops?.some(
-              ({ insert }) => typeof insert === 'string' && insert.includes(filter)
-            ) ||
-            (fullAnswer as DeltaPojo).ops?.some(
-              ({ insert }) => typeof insert === 'string' && insert.includes(filter)
-            ) ||
-            answers.some((answer) => answer.includes(filter))
-        )
-      : Array.from(deck.cardsDirect);
+    const filteredCards = deck.cardsDirect.filter(({ prompt, fullAnswer, answers }) => {
+      const promptString = accumulateContentText(prompt);
+      const fullAnswerString = accumulateContentText(fullAnswer);
+      return filterWords.every(
+        (word) =>
+          promptString.includes(word) ||
+          fullAnswerString.includes(word) ||
+          answers.some((answer) => answer.includes(word))
+      );
+    });
     sortCards(filteredCards);
     return filteredCards.slice((activePage - 1) * 10, activePage * 10);
   }, [deck.cardsDirect, activePage, filter]);

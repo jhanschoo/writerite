@@ -73,11 +73,11 @@ export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
           ) : undefined
         }
       </Group>
-      {currentlyEditing && (
+      {currentlyEditing !== null ? (
         <Text size="xs" color="dimmed">
           Press 'Esc' to cancel edits, or 'Return' to confirm edits.
         </Text>
-      )}
+      ) : undefined}
     </Stack>
   );
 };

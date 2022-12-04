@@ -1,4 +1,4 @@
-import { FC, Key } from 'react';
+import { FC, Key, PropsWithChildren } from 'react';
 import { useQuery } from 'urql';
 import { OccupyingActiveRoomsDocument, OccupyingActiveRoomsQuery } from '@generated/graphql';
 import { Avatar, Button, Card, createStyles, Text, UnstyledButton } from '@mantine/core';
@@ -94,7 +94,7 @@ const RoomItem = ({
 };
 
 interface Props {
-  wrapper(props: { children: React.ReactNode; key: Key }): JSX.Element;
+  wrapper: FC<PropsWithChildren>;
 }
 
 export const RoomNotifications: FC<Props> = ({ wrapper: Wrapper }) => {
@@ -102,7 +102,7 @@ export const RoomNotifications: FC<Props> = ({ wrapper: Wrapper }) => {
     query: OccupyingActiveRoomsDocument,
   });
   const rooms = (data?.occupyingActiveRooms || []).map((room, index) => (
-    <Wrapper key={index + '1'}>
+    <Wrapper key={index}>
       <RoomItem room={room} />
     </Wrapper>
   ));

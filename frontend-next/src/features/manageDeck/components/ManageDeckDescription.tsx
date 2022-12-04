@@ -1,83 +1,66 @@
 import { DeckEditDocument } from '@generated/graphql';
-import { FC, KeyboardEvent, useRef, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useMutation } from 'urql';
-import { RichTextEditorProps } from '@mantine/rte';
 import { Box, LoadingOverlay, Text } from '@mantine/core';
-import { useHover } from '@mantine/hooks';
 import { ManageDeckProps } from '../types/ManageDeckProps';
-import RichTextEditor from '@/components/RichTextEditor';
-import Delta, { Op } from 'quill-delta';
-import type { Delta as QuillDelta } from 'quill';
+import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
+import type { Editor } from '@tiptap/core';
+import Placeholder from '@tiptap/extension-placeholder';
+import { DebouncedState, useDebouncedCallback } from 'use-debounce';
+import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
+import stringify from 'fast-json-stable-stringify';
 
-export type DeltaPojo = { ops: Op[] };
+function debounceIfDeltaExists(
+  debounced: DebouncedState<(nextSContent: Record<string, unknown>) => unknown>,
+  initialState: Record<string, unknown>,
+  latestState: Record<string, unknown>
+) {
+  if (stringify(initialState) !== stringify(latestState)) {
+    debounced(latestState);
+  } else {
+    debounced.cancel();
+  }
+}
 
 export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, description } }) => {
   const [{ fetching }, mutateDeck] = useMutation(DeckEditDocument);
-  const [writableMode, setWritableMode] = useState(false);
-  const [htmlValue, setHtmlValue] = useState<RichTextEditorProps['value']>(
-    new Delta(description as DeltaPojo) as unknown as QuillDelta
-  );
-  const editorRef = useRef<any>(null);
-  const { hovered, ref } = useHover();
-  const handleBlur = async () => {
-    if (!writableMode || hovered) {
-      return;
-    }
-    const reactQuill = editorRef.current;
-    if (!reactQuill) {
-      return;
-    }
-    const unprivilegedEditor = reactQuill.makeUnprivilegedEditor(reactQuill.getEditor());
-    const delta = unprivilegedEditor.getContents();
-    await mutateDeck({ id, description: delta });
-    setWritableMode(false);
+  const content = Object.keys(description).length ? description : undefined;
+  const [jsonContent, setJsonContent] = useState(content);
+  const updateStateToServer = (jsonContent: Record<string, unknown>) => {
+    return mutateDeck({ id, description: jsonContent });
   };
+  const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, {
+    maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS,
+  });
+  useEffect(
+    () => () => {
+      debounced.flush();
+    },
+    [debounced]
+  );
+  const hasUnsavedChanges = fetching || debounced.isPending();
   return (
     <Box
       sx={({ spacing: { md } }) => ({
         width: `100%`,
         position: 'relative',
       })}
-      ref={ref}
     >
-      <LoadingOverlay visible={fetching} />
       <RichTextEditor
-        styles={
-          writableMode
-            ? {
-                root: {
-                  width: '100%',
-                },
-              }
-            : ({ fn }) => {
-                const { background, hover, border, color } = fn.variant({ variant: 'subtle' });
-                return {
-                  root: {
-                    backgroundColor: background,
-                    borderColor: border,
-                    width: '100%',
-                    color,
-                    ...fn.hover({
-                      backgroundColor: hover,
-                    }),
-                  },
-                };
-              }
-        }
-        value={htmlValue}
-        forwardedRef={editorRef}
-        onChange={setHtmlValue}
-        onClick={() => setWritableMode(true)}
-        readOnly={!writableMode}
-        onBlur={handleBlur}
-        onKeyDown={(e: KeyboardEvent<unknown>) => e.key === 'Escape' && setWritableMode(false)}
-        placeholder="Enter a description for the deck..."
+        editorProps={{
+          ...DEFAULT_EDITOR_PROPS,
+          extensions: [
+            ...(DEFAULT_EDITOR_PROPS.extensions || []),
+            Placeholder.configure({ placeholder: 'Write a description...' }),
+          ],
+          content,
+          onUpdate({ editor }) {
+            const updatedJsonContent = editor.getJSON();
+            setJsonContent(updatedJsonContent);
+            debounceIfDeltaExists(debounced, description, updatedJsonContent);
+          },
+        }}
       />
-      {writableMode && (
-        <Text color="dimmed" size="xs" sx={{ marginTop: '7px', padding: '0 8px' }}>
-          Press &lsquo;esc&rsquo; to save changes and stop editing
-        </Text>
-      )}
     </Box>
   );
 };

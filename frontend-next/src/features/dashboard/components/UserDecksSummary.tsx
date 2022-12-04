@@ -131,10 +131,6 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
     <Card.Section key={index}>
       <DeckItem deck={deck} />
     </Card.Section>,
-    <Divider key={`${index}-divider1`} />,
-    <Card.Section key={index + '-1'}>
-      <DeckItem deck={deck} />
-    </Card.Section>,
   ]);
   return (
     <Card shadow="xl" radius="lg" px="md" pt="md" className={classes.card}>

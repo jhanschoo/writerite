@@ -10,25 +10,16 @@ import {
   LoadingOverlay,
   Text,
 } from '@mantine/core';
-import type { Delta as QuillDelta } from 'quill';
-import Delta, { Op } from 'quill-delta';
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import RichTextEditor from '@/components/RichTextEditor';
+import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
 import { TrashIcon } from '@radix-ui/react-icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
 import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
-import { RichTextEditorProps } from '@mantine/rte';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
-
-/* Note: unfortunately quill types and quill-delta have different typing even though they should be the same.
- *   For this reason we have to do some type munging.
- */
-
-type DeltaPojo = { ops: Op[] };
 
 const useEditorStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -51,11 +42,27 @@ const useEditorStyles = createStyles(({ fn }) => {
   };
 });
 
-const useStyles = createStyles((_theme, _params, getRef) => {
+const useStyles = createStyles(({ fn }, _params, getRef) => {
+  const { background, hover, border, color } = fn.variant({ variant: 'default' });
   return {
     cardRoot: {
       [`&:hover .${getRef('cardCloseButton')}`]: {
         visibility: 'visible',
+      },
+      // workaround for non-static Styles API for @mantine/tiptap@5.9.0 not being supported
+      '& .mantine-RichTextEditor-root': {
+        border: 'none',
+        color,
+        ...fn.hover({
+          backgroundColor: hover,
+        }),
+      },
+      '& .mantine-RichTextEditor-toolbar': {
+        border: 'none',
+        background: 'transparent',
+      },
+      '& .mantine-RichTextEditor-content': {
+        background: 'transparent',
       },
     },
     cardCloseButton: {
@@ -80,8 +87,8 @@ interface Props {
 }
 
 interface State {
-  prompt: QuillDelta;
-  fullAnswer: QuillDelta;
+  prompt: Record<string, unknown>;
+  fullAnswer: Record<string, unknown>;
   answers: string[];
 }
 
@@ -124,24 +131,18 @@ function debounceIfStateDeltaExists(
  */
 export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const { id, prompt, fullAnswer, answers } = card;
-  const { classes: editorClasses } = useEditorStyles();
-  const { classes: cardDeleteButtonClasses } = useStyles();
+  const { classes } = useStyles();
   const initialState = {
-    prompt: prompt as unknown,
-    fullAnswer: fullAnswer as unknown,
+    prompt,
+    fullAnswer,
     answers,
   } as State;
-  const [promptContent, setPromptContent] = useState<QuillDelta>(
-    new Delta(prompt as DeltaPojo) as unknown as QuillDelta
-  );
-  const [fullAnswerContent, setFullAnswerContent] = useState<QuillDelta>(
-    new Delta(fullAnswer as DeltaPojo) as unknown as QuillDelta
-  );
+  const [promptContent, setPromptContent] = useState(prompt);
+  const [fullAnswerContent, setFullAnswerContent] = useState(fullAnswer);
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
   const updateStateToServer = (newState: State) => {
-    console.log(newState);
     return cardEdit({
       id,
       ...newState,
@@ -164,36 +165,6 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   );
   const hasUnsavedChanges = fetching || debounced.isPending();
 
-  const handlePromptChange: RichTextEditorProps['onChange'] = (
-    _value,
-    _delta,
-    _sources,
-    editor
-  ) => {
-    const latestPromptContent = new Delta(editor.getContents().ops) as unknown as QuillDelta;
-    const latestState = {
-      prompt: latestPromptContent,
-      fullAnswer: fullAnswerContent,
-      answers: answerValues,
-    };
-    setPromptContent(latestPromptContent);
-    debounceIfStateDeltaExists(debounced, initialState, latestState);
-  };
-  const handleFullAnswerChange: RichTextEditorProps['onChange'] = (
-    _value,
-    _delta,
-    _sources,
-    editor
-  ) => {
-    const latestFullAnswerContent = new Delta(editor.getContents().ops) as unknown as QuillDelta;
-    const latestState = {
-      prompt: promptContent,
-      fullAnswer: latestFullAnswerContent,
-      answers: answerValues,
-    };
-    setFullAnswerContent(latestFullAnswerContent);
-    debounceIfStateDeltaExists(debounced, initialState, latestState);
-  };
   const handleAnswersSave = (latestAnswers: string[]) => {
     debounced.cancel();
     const latestState = {
@@ -205,8 +176,8 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     updateStateToServer(latestState);
   };
   return (
-    <Box className={cardDeleteButtonClasses.boxRoot}>
-      <Card withBorder shadow="sm" radius="md" className={cardDeleteButtonClasses.cardRoot}>
+    <Box className={classes.boxRoot}>
+      <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
         <Card.Section inheritPadding pt="sm">
           <Button
             size="xs"
@@ -214,7 +185,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
             compact
             rightIcon={<TrashIcon />}
             variant="filled"
-            className={cardDeleteButtonClasses.cardCloseButton}
+            className={classes.cardCloseButton}
             disabled={hasUnsavedChanges || fetchingDelete}
             onClick={handleCardDelete}
           >
@@ -228,9 +199,21 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
           <RichTextEditor
-            value={promptContent as unknown as QuillDelta}
-            onChange={handlePromptChange}
-            classNames={editorClasses}
+            editorProps={{
+              ...DEFAULT_EDITOR_PROPS,
+              content: Object.keys(promptContent).length ? promptContent : undefined,
+              onUpdate({ editor }) {
+                const latestPromptContent = editor.getJSON();
+                const latestState = {
+                  prompt: latestPromptContent,
+                  fullAnswer: fullAnswerContent,
+                  answers: answerValues,
+                };
+                setPromptContent(latestPromptContent);
+                debounceIfStateDeltaExists(debounced, initialState, latestState);
+              },
+            }}
+            // classNames={editorClasses}
           />
         </Card.Section>
         <Divider />
@@ -241,9 +224,21 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         </Card.Section>
         <Card.Section>
           <RichTextEditor
-            value={fullAnswerContent as unknown as QuillDelta}
-            onChange={handleFullAnswerChange}
-            classNames={editorClasses}
+            editorProps={{
+              ...DEFAULT_EDITOR_PROPS,
+              content: Object.keys(fullAnswerContent).length ? fullAnswerContent : undefined,
+              onUpdate({ editor }) {
+                const latestFullAnswerContent = editor.getJSON();
+                const latestState = {
+                  prompt: promptContent,
+                  fullAnswer: latestFullAnswerContent,
+                  answers: answerValues,
+                };
+                setFullAnswerContent(latestFullAnswerContent);
+                debounceIfStateDeltaExists(debounced, initialState, latestState);
+              },
+            }}
+            // classNames={editorClasses}
           />
         </Card.Section>
         <Divider />
