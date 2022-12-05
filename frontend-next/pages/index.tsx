@@ -10,9 +10,9 @@ const Home: NextPage = () => {
   const router = useRouter();
   const login = useLogin();
   useEffect(() => {
-    const { token } = router.query;
-    if (window?.localStorage) {
-      login(token as string | undefined);
+    const { token, currentUser } = router.query;
+    if (window?.localStorage && typeof token === 'string' && typeof currentUser === 'string') {
+      login({ token, currentUser });
     }
   }, [router, login]);
   return (

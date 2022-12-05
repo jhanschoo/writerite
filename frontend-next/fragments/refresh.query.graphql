@@ -1,3 +1,6 @@
 mutation Refresh($token: JWT!) {
-  refresh(token: $token)
+  refresh(token: $token) {
+    currentUser
+    token
+  }
 }

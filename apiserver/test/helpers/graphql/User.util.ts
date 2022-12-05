@@ -1,8 +1,7 @@
 import { WrServer } from '../../../src/graphqlApp';
-import { gql, testQuery, unsafeJwtToCurrentUser } from '../misc';
+import { gql, testQuery } from '../misc';
 import {
   CreateUserMutationVariables,
-  MutationRefreshArgs,
   NameUserMutationVariables,
   RefreshMutationVariables,
   UserAccessibleUserScalarsQueryVariables,
@@ -34,7 +33,10 @@ export function mutationCreateUser(
           nonce: $nonce
           provider: $provider
           redirect_uri: $redirect_uri
-        )
+        ) {
+          currentUser
+          token
+        }
       }
     `,
     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -69,10 +71,12 @@ export async function loginAsNewlyCreatedUser(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const response = await (name ? mutationCreateUser(server, { name }) : mutationCreateUser(server));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const token = response.data.finalizeOauthSignin as string;
-  const currentUser = unsafeJwtToCurrentUser(token);
-  setSub(currentUser);
-  return { currentUser, token };
+  const sessionInfo = response.data.finalizeOauthSignin as {
+    currentUser: CurrentUser;
+    token: string;
+  };
+  setSub(sessionInfo.currentUser);
+  return sessionInfo;
 }
 
 export async function refreshLogin(
@@ -83,10 +87,9 @@ export async function refreshLogin(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const response = await mutationRefresh(server, token);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const updatedToken = response.data.refresh as string;
-  const currentUser = unsafeJwtToCurrentUser(updatedToken);
-  setSub(currentUser);
-  return { currentUser, token };
+  const sessionInfo = response.data.refresh as { currentUser: CurrentUser; token: string };
+  setSub(sessionInfo.currentUser);
+  return sessionInfo;
 }
 
 export async function mutationRefresh(server: WrServer, token: string) {
@@ -95,7 +98,10 @@ export async function mutationRefresh(server: WrServer, token: string) {
     server,
     document: gql`
       mutation Refresh($token: JWT!) {
-        refresh(token: $token)
+        refresh(token: $token) {
+          currentUser
+          token
+        }
       }
     `,
     variables: { token },

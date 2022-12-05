@@ -3,7 +3,7 @@ import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } fro
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange, Data, NullArray } from '@urql/exchange-graphcache';
-import { getAccessToken, removeAccessToken, setAccessToken } from '@lib/tokenManagement';
+import { getAccessToken, unsetSessionInfo, setSessionInfo } from '@lib/tokenManagement';
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
@@ -54,13 +54,16 @@ const auth = authExchange<string | null>({
     // c.f. implementation in useRefreshToken.ts
     //   unfortunately, there is no way to DRY due to signature differences.
     const result = await mutate(RefreshDocument, { token });
-    const newToken = result.data?.refresh;
-    if (!newToken) {
-      removeAccessToken();
+    const sessionInfo = result.data?.refresh;
+    if (!sessionInfo) {
+      unsetSessionInfo();
       return null;
     }
-    setAccessToken(newToken);
-    return newToken;
+    setSessionInfo({
+      token: sessionInfo.token,
+      currentUser: JSON.stringify(sessionInfo.currentUser),
+    });
+    return sessionInfo.token;
   },
   didAuthError({ error }) {
     return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');

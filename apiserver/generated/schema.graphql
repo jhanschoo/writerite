@@ -131,7 +131,7 @@ type Mutation {
   deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
   deckUsed(id: ID!): Deck!
-  finalizeOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): JWT
+  finalizeOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): SessionInfo
   initializeOauthSignin: String!
 
   """
@@ -142,7 +142,7 @@ type Mutation {
   messageCreate(content: JSON, slug: String!, type: MessageContentType!): Message!
   ownCardRecordSet(cardId: ID!, correctRecordAppend: [DateTime!]!): UserCardRecord
   ownDeckRecordSet(deckId: ID!, notes: JSONObject!): UserDeckRecord!
-  refresh(token: JWT!): JWT
+  refresh(token: JWT!): SessionInfo
 
   """
   @invalidatesTokens(
@@ -254,6 +254,11 @@ enum RoomUpdateOperation {
   roomAddOccupant
   roomSetDeck
   roomSetState
+}
+
+type SessionInfo {
+  currentUser: JSONObject!
+  token: JWT!
 }
 
 type Subscription {

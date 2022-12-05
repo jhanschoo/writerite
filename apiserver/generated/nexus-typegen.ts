@@ -115,6 +115,10 @@ export interface NexusGenObjects {
     operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
     value: NexusGenRootTypes['Room']; // Room!
   }
+  SessionInfo: { // root type
+    currentUser: NexusGenScalars['JSONObject']; // JSONObject!
+    token: NexusGenScalars['JWT']; // JWT!
+  }
   Subscription: {};
   User: p.User;
   UserCardRecord: p.UserCardRecord;
@@ -190,12 +194,12 @@ export interface NexusGenFieldTypes {
     deckEdit: NexusGenRootTypes['Deck']; // Deck!
     deckRemoveSubdeck: NexusGenRootTypes['Deck']; // Deck!
     deckUsed: NexusGenRootTypes['Deck']; // Deck!
-    finalizeOauthSignin: NexusGenScalars['JWT'] | null; // JWT
+    finalizeOauthSignin: NexusGenRootTypes['SessionInfo'] | null; // SessionInfo
     initializeOauthSignin: string; // String!
     messageCreate: NexusGenRootTypes['Message']; // Message!
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
-    refresh: NexusGenScalars['JWT'] | null; // JWT
+    refresh: NexusGenRootTypes['SessionInfo'] | null; // SessionInfo
     roomAddOccupant: NexusGenRootTypes['Room']; // Room!
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
@@ -237,6 +241,10 @@ export interface NexusGenFieldTypes {
   RoomUpdate: { // field return type
     operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
     value: NexusGenRootTypes['Room']; // Room!
+  }
+  SessionInfo: { // field return type
+    currentUser: NexusGenScalars['JSONObject']; // JSONObject!
+    token: NexusGenScalars['JWT']; // JWT!
   }
   Subscription: { // field return type
     messageUpdatesByRoomSlug: NexusGenRootTypes['MessageUpdate']; // MessageUpdate!
@@ -321,12 +329,12 @@ export interface NexusGenFieldTypeNames {
     deckEdit: 'Deck'
     deckRemoveSubdeck: 'Deck'
     deckUsed: 'Deck'
-    finalizeOauthSignin: 'JWT'
+    finalizeOauthSignin: 'SessionInfo'
     initializeOauthSignin: 'String'
     messageCreate: 'Message'
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
-    refresh: 'JWT'
+    refresh: 'SessionInfo'
     roomAddOccupant: 'Room'
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
@@ -368,6 +376,10 @@ export interface NexusGenFieldTypeNames {
   RoomUpdate: { // field return type name
     operation: 'RoomUpdateOperation'
     value: 'Room'
+  }
+  SessionInfo: { // field return type name
+    currentUser: 'JSONObject'
+    token: 'JWT'
   }
   Subscription: { // field return type name
     messageUpdatesByRoomSlug: 'MessageUpdate'

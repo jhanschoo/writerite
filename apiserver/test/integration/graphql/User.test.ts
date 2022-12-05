@@ -11,7 +11,6 @@ import {
   queryAllUserAccessibleUserScalars,
   queryUserPublicScalars,
   testContextFactory,
-  unsafeJwtToCurrentUser,
 } from '../../helpers';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
@@ -47,8 +46,8 @@ describe('graphql/User.ts', () => {
         const name = 'user1';
         // create user
         const response = await mutationCreateUser(server, { name });
-        expect(response).toHaveProperty('data.finalizeOauthSignin', expect.any(String));
-        const currentUser = unsafeJwtToCurrentUser(response.data.finalizeOauthSignin as string);
+        expect(response).toHaveProperty('data.finalizeOauthSignin.token', expect.any(String));
+        const currentUser = response.data.finalizeOauthSignin.currentUser as CurrentUser;
         expect(currentUser).toEqual({
           id: expect.any(String),
           name: expect.any(String),
@@ -69,9 +68,8 @@ describe('graphql/User.ts', () => {
 
         // create user
         const createUserResponse = await mutationCreateUser(server);
-        const currentUserBefore = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeOauthSignin as string
-        );
+        const currentUserBefore = createUserResponse.data.finalizeOauthSignin
+          .currentUser as CurrentUser;
 
         // login as user
         setSub(currentUserBefore);
@@ -94,9 +92,7 @@ describe('graphql/User.ts', () => {
 
         // create user
         const createUserResponse = await mutationCreateUser(server);
-        const { id } = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeOauthSignin as string
-        );
+        const id = createUserResponse.data.finalizeOauthSignin.currentUser.id as string;
 
         // query user
         const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
@@ -109,15 +105,11 @@ describe('graphql/User.ts', () => {
 
         // create other user
         const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
-        const { id } = unsafeJwtToCurrentUser(
-          createUserResponse1.data.finalizeOauthSignin as string
-        );
+        const id = createUserResponse1.data.finalizeOauthSignin.currentUser.id as string;
 
         // create user
         const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
-        const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse2.data.finalizeOauthSignin as string
-        );
+        const currentUser = createUserResponse2.data.finalizeOauthSignin as CurrentUser;
         // log in as user
         setSub(currentUser);
 
@@ -131,9 +123,7 @@ describe('graphql/User.ts', () => {
 
         // create user
         const createUserResponse = await mutationCreateUser(server);
-        const { id } = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeOauthSignin as string
-        );
+        const id = createUserResponse.data.finalizeOauthSignin.currentUser.id as string;
 
         // query user
         const queryUserResponse = await queryUserPublicScalars(server, id);
@@ -147,15 +137,11 @@ describe('graphql/User.ts', () => {
 
         // create other user
         const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
-        const { id } = unsafeJwtToCurrentUser(
-          createUserResponse1.data.finalizeOauthSignin as string
-        );
+        const id = createUserResponse1.data.finalizeOauthSignin.currentUser.id as string;
 
         // create user
         const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
-        const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse2.data.finalizeOauthSignin as string
-        );
+        const currentUser = createUserResponse2.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as user
         setSub(currentUser);
@@ -172,9 +158,7 @@ describe('graphql/User.ts', () => {
 
         // create user
         const createUserResponse = await mutationCreateUser(server);
-        const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse.data.finalizeOauthSignin as string
-        );
+        const currentUser = createUserResponse.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as user
         setSub(currentUser);
@@ -197,9 +181,7 @@ describe('graphql/User.ts', () => {
 
         // create target user
         const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
-        const targetUser = unsafeJwtToCurrentUser(
-          createUserResponse1.data.finalizeOauthSignin as string
-        );
+        const targetUser = createUserResponse1.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as target user
         setSub(targetUser);
@@ -209,9 +191,7 @@ describe('graphql/User.ts', () => {
 
         // create user
         const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
-        const currentUser = unsafeJwtToCurrentUser(
-          createUserResponse2.data.finalizeOauthSignin as string
-        );
+        const currentUser = createUserResponse2.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as user
         setSub(currentUser);

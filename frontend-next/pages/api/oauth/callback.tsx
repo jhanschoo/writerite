@@ -31,9 +31,14 @@ export default async function handler(
         redirect_uri,
       })
       .toPromise();
-    const token = mutationRes?.data?.finalizeOauthSignin;
-    if (token) {
-      return res.redirect(303, `/?token=${token}`), undefined;
+    const sessionInfo = mutationRes?.data?.finalizeOauthSignin;
+    if (sessionInfo) {
+      const { currentUser, token } = sessionInfo;
+      const queryParams = new URLSearchParams({
+        token,
+        currentUser: JSON.stringify(currentUser),
+      });
+      return res.redirect(303, `/?${queryParams.toString()}`), undefined;
     }
   }
   return res.redirect(303, '/'), undefined;

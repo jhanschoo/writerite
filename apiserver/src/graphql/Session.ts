@@ -1,4 +1,4 @@
-import { mutationField, nonNull } from 'nexus';
+import { mutationField, nonNull, objectType } from 'nexus';
 import {
   currentUserSourceToCurrentUser,
   findOrCreateCurrentUserSourceWithProfile,
@@ -8,7 +8,7 @@ import { jwtArg } from './scalarUtil';
 
 // This is just a query, but needs to be a mutation field for technical reasons
 export const RefreshMutation = mutationField('refresh', {
-  type: 'JWT',
+  type: 'SessionInfo',
   args: {
     token: nonNull(jwtArg()),
   },
@@ -21,9 +21,24 @@ export const RefreshMutation = mutationField('refresh', {
         'id'
       );
       const currentUser = currentUserSourceToCurrentUser(currentUserSource);
-      return await currentUserToUserJWT(currentUser);
+      return {
+        currentUser: currentUser as unknown as Record<string, unknown>,
+        token: await currentUserToUserJWT(currentUser),
+      };
     } catch (e) {
       return null;
     }
+  },
+});
+
+export const SessionInfo = objectType({
+  name: 'SessionInfo',
+  definition(t) {
+    t.nonNull.field('token', {
+      type: 'JWT',
+    });
+    t.nonNull.field('currentUser', {
+      type: 'JSONObject',
+    });
   },
 });

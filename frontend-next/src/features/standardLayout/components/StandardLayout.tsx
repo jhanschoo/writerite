@@ -1,18 +1,24 @@
 import {
+  ActionIcon,
   AppShell,
+  Avatar,
   Button,
   Center,
   createStyles,
   Footer,
   Group,
   Header,
+  Space,
   Stack,
+  useMantineColorScheme,
 } from '@mantine/core';
 import { useLogout } from '@features/signin/hooks/useLogout';
 import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
 import { FC, PropsWithChildren } from 'react';
 import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
+import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { useCurrentUser } from '@/hooks';
 
 interface Props {
   breadcrumbs?: [string, string | JSX.Element][];
@@ -34,47 +40,36 @@ const useStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'>) =>
   };
 });
 
-export const StandardLayout: FC<PropsWithChildren<Props>> = ({
-  breadcrumbs,
-  children,
-  vhHeight,
-}) => {
+export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeight }) => {
   const logout = useLogout();
+  const currentUser = useCurrentUser();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const { classes } = useStyles({ vhHeight });
   return (
     <AppShell
       padding={0}
       header={
-        <Header height={50}>
-          <Group
-            sx={({ spacing: { md } }) => ({
-              position: 'relative',
-              width: `calc(100% - ${md * 2}px)`,
-              height: '100%',
-              padding: `0 ${md}px`,
-              justifyContent: 'space-between',
-              zIndex: 0,
-            })}
-          >
-            <BreadcrumbsNav breadcrumbs={breadcrumbs} groupProps={{ sx: { zIndex: 200 } }} />
-            <Group sx={{ justifyContent: 'flex-end', zIndex: 200 }}>
-              <Button onClick={logout} size="xs">
-                logout
-              </Button>
-            </Group>
-            <Center
-              sx={({ spacing: { md } }) => ({
-                position: 'absolute',
-                width: `calc(100% - ${md * 2}px)`,
-                height: '100%',
-                zIndex: 100,
-              })}
-            >
-              <Link href="/app">
-                <BrandText full />
-              </Link>
-            </Center>
-          </Group>
+        <Header
+          height={50}
+          px="md"
+          sx={({ spacing }) => ({
+            display: 'flex',
+            flexDirection: 'row',
+            height: '100%',
+            alignItems: 'center',
+            columnGap: `${spacing.sm}px`,
+          })}
+        >
+          <Link href="/app">
+            <BrandText />
+          </Link>
+          <Space sx={{ flexGrow: 1 }} />
+          <ActionIcon variant="outline" onClick={() => toggleColorScheme()}>
+            {colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
+          </ActionIcon>
+          <Avatar variant="outline" radius="xl" onClick={logout}>
+            A
+          </Avatar>
         </Header>
       }
       // footer={<Footer height={40}><Center><Text>Hello, World!</Text></Center></Footer>}

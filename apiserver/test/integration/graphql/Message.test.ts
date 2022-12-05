@@ -14,9 +14,7 @@ import { testContextFactory, unsafeJwtToCurrentUser } from '../../helpers';
 import { PubSub, YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
-import {
-  mutationRoomCreate,
-} from '../../helpers/graphql/Room.util';
+import { mutationRoomCreate } from '../../helpers/graphql/Room.util';
 import {
   mutationMessageCreate,
   subscriptionMessageUpdatesByRoomSlug,
@@ -53,8 +51,9 @@ describe('graphql/Message.ts', () => {
         expect.assertions(3);
         // create user
         const createUserResponse = await mutationCreateUser(app, { name: 'user1' });
-        const token = createUserResponse.data.finalizeOauthSignin as string;
-        setSub(unsafeJwtToCurrentUser(token));
+        const currentUser1 = createUserResponse.data.finalizeOauthSignin.currentUser as CurrentUser;
+        const token = createUserResponse.data.finalizeOauthSignin.token as string;
+        setSub(currentUser1);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(app);
@@ -72,10 +71,9 @@ describe('graphql/Message.ts', () => {
 
         // we have to update our claims before we can create/send messages
         const refreshResponse = await mutationRefresh(app, token);
-        const updatedToken = refreshResponse.data.refresh as string;
-        const currentUser = unsafeJwtToCurrentUser(updatedToken);
-        expect(Object.keys(currentUser.occupyingActiveRoomSlugs)).toHaveLength(1);
-        setSub(currentUser);
+        const currentUser2 = refreshResponse.data.refresh.currentUser as CurrentUser;
+        expect(Object.keys(currentUser2.occupyingActiveRoomSlugs)).toHaveLength(1);
+        setSub(currentUser2);
 
         // create message
         const messageCreateResponse = await mutationMessageCreate(
@@ -91,7 +89,7 @@ describe('graphql/Message.ts', () => {
             createdAt: expect.any(String),
             id: expect.any(String),
             roomId: roomBefore.id,
-            senderId: currentUser.id,
+            senderId: currentUser2.id,
             type: MessageContentType.Text,
           })
         );

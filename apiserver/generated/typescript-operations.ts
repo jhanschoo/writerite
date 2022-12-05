@@ -123,7 +123,7 @@ export type Mutation = {
   deckEdit: Deck;
   deckRemoveSubdeck: Deck;
   deckUsed: Deck;
-  finalizeOauthSignin?: Maybe<Scalars['JWT']>;
+  finalizeOauthSignin?: Maybe<SessionInfo>;
   initializeOauthSignin: Scalars['String'];
   /**
    * @triggersSubscriptions(
@@ -133,7 +133,7 @@ export type Mutation = {
   messageCreate: Message;
   ownCardRecordSet?: Maybe<UserCardRecord>;
   ownDeckRecordSet: UserDeckRecord;
-  refresh?: Maybe<Scalars['JWT']>;
+  refresh?: Maybe<SessionInfo>;
   /**
    * @invalidatesTokens(
    *     reason: "occupying existing room"
@@ -417,6 +417,12 @@ export enum RoomUpdateOperation {
   RoomSetState = 'roomSetState'
 }
 
+export type SessionInfo = {
+  __typename?: 'SessionInfo';
+  currentUser: Scalars['JSONObject'];
+  token: Scalars['JWT'];
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
   messageUpdatesByRoomSlug: MessageUpdate;
@@ -587,7 +593,7 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: string | null };
+export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: { __typename?: 'SessionInfo', currentUser: Record<string, unknown>, token: string } | null };
 
 export type NameUserMutationVariables = Exact<{
   name: Scalars['String'];
@@ -601,7 +607,7 @@ export type RefreshMutationVariables = Exact<{
 }>;
 
 
-export type RefreshMutation = { __typename?: 'Mutation', refresh?: string | null };
+export type RefreshMutation = { __typename?: 'Mutation', refresh?: { __typename?: 'SessionInfo', currentUser: Record<string, unknown>, token: string } | null };
 
 export type UserAccessibleUserScalarsQueryVariables = Exact<{
   id: Scalars['ID'];

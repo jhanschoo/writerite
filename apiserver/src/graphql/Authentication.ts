@@ -16,7 +16,7 @@ export const InitializeOauthSigninMutation = mutationField('initializeOauthSigni
 });
 
 export const FinalizeOauthSigninMutation = mutationField('finalizeOauthSignin', {
-  type: 'JWT',
+  type: 'SessionInfo',
   args: {
     code: nonNull(stringArg()),
     provider: nonNull(stringArg()),
@@ -28,6 +28,14 @@ export const FinalizeOauthSigninMutation = mutationField('finalizeOauthSignin', 
       return null;
     }
     const user = await finalizeOauthSignin({ code, provider, redirect_uri, prisma });
-    return user && currentUserToUserJWT(currentUserSourceToCurrentUser(user));
+    if (user) {
+      const currentUser = currentUserSourceToCurrentUser(user);
+      const token = await currentUserToUserJWT(currentUser);
+      return {
+        currentUser: currentUser as unknown as Record<string, unknown>,
+        token,
+      };
+    }
+    return null;
   },
 });

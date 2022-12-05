@@ -3,7 +3,7 @@ import { YogaInitialContext } from 'graphql-yoga';
 import { PrismaClient } from '@prisma/client';
 import { Context } from '../../src/context';
 import { WrServer, createGraphQLApp } from '../../src/graphqlApp';
-import { createUser, queryHealth, testContextFactory } from '../helpers';
+import { mutationCreateUser, queryHealth, testContextFactory } from '../helpers';
 import { cascadingDelete } from './_helpers/truncate';
 
 describe('server', () => {
@@ -28,9 +28,9 @@ describe('server', () => {
     expect(response).toHaveProperty('data.health', 'OK');
   });
 
-  it.skip('should be able to respond to a basic create user', async () => {
+  it('should be able to respond to a basic create user', async () => {
     expect.assertions(1);
-    const response = await createUser(server);
-    expect(response).toHaveProperty('data.finalizeOauthSignin', expect.any(String));
+    const response = await mutationCreateUser(server);
+    expect(response).toHaveProperty('data.finalizeOauthSignin.token', expect.any(String));
   });
 });

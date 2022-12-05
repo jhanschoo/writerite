@@ -4,5 +4,13 @@ mutation FinalizeOauthSignin(
   $nonce: String!
   $redirect_uri: String!
 ) {
-  finalizeOauthSignin(code: $code, provider: $provider, nonce: $nonce, redirect_uri: $redirect_uri)
+  finalizeOauthSignin(
+    code: $code
+    provider: $provider
+    nonce: $nonce
+    redirect_uri: $redirect_uri
+  ) {
+    currentUser
+    token
+  }
 }
