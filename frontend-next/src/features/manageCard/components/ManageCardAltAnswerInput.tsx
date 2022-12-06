@@ -33,7 +33,7 @@ export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, o
       variant="filled"
       aria-label="input new alternate answer"
       rightSection={
-        <ActionIcon onClick={() => onSave(answerInput)}>
+        <ActionIcon onClick={() => onSave(answerInput)} title="Save">
           <PaperPlaneIcon />
         </ActionIcon>
       }

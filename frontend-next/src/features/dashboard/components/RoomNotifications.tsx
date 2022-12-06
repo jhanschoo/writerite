@@ -1,9 +1,11 @@
 import { FC, Key, PropsWithChildren } from 'react';
 import { useQuery } from 'urql';
 import { OccupyingActiveRoomsDocument, OccupyingActiveRoomsQuery } from '@generated/graphql';
-import { Avatar, Button, Card, createStyles, Text, UnstyledButton } from '@mantine/core';
+import { Avatar, Button, Card, createStyles, Text, Tooltip, UnstyledButton } from '@mantine/core';
 import Link from 'next/link';
 import { alertGradient, alertGradientHover } from '@/lib/mantine/fns';
+import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
+import { ProfilePicture } from '@/features/profilePicture/components';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -78,9 +80,9 @@ const RoomItem = ({
           <Text fw="bolder" ta="center" m="md" className={classes.roomItemText}>
             You are currently in room {roomName} with{' '}
             <Avatar.Group spacing="xl" className={classes.avatarGroup}>
-              <Avatar radius="xl">A</Avatar>
-              <Avatar radius="xl">B</Avatar>
-              <Avatar radius="xl">C</Avatar>
+              <ProfilePicture user={{ id: 'adwwerooWEowowww', name: 'A' }} showTooltip />
+              <ProfilePicture user={{ id: 'adwderooWqadfvowww', name: 'B' }} showTooltip />
+              <ProfilePicture user={{ id: 'agwwewfwfweEowowww', name: 'C' }} showTooltip />
             </Avatar.Group>
             .
           </Text>

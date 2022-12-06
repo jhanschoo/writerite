@@ -38,7 +38,7 @@ export default async function handler(
         token,
         currentUser: JSON.stringify(currentUser),
       });
-      return res.redirect(303, `/?${queryParams.toString()}`), undefined;
+      return res.redirect(303, `/?${queryParams}`), undefined;
     }
   }
   return res.redirect(303, '/'), undefined;

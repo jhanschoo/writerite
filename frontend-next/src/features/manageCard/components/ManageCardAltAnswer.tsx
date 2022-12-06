@@ -17,12 +17,13 @@ export const ManageCardAltAnswer: FC<Props> = ({ answer, editable, onRemove, onS
         <Text size="sm">{answer}</Text>
         {editable && (
           <>
-            <ActionIcon size="sm" variant="subtle">
+            <ActionIcon size="sm" title="Edit Answer" variant="subtle">
               <Pencil1Icon />
             </ActionIcon>
             <Divider orientation="vertical" />
             <ActionIcon
               size="sm"
+              title="Remove Answer"
               variant="subtle"
               onClick={(e: MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();

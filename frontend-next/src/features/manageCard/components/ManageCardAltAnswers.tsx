@@ -56,7 +56,7 @@ export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
           // Button to add a new answer
           currentlyEditing === null && (
             <Paper withBorder px="8px" py="3px" onClick={() => setCurrentlyEditing(answers.length)}>
-              <ActionIcon size="sm" variant="transparent">
+              <ActionIcon size="sm" title="Add New Answer" variant="transparent">
                 <PlusIcon />
               </ActionIcon>
             </Paper>

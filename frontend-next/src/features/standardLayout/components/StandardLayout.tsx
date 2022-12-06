@@ -19,6 +19,8 @@ import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { useCurrentUser } from '@/hooks';
+import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
+import { ProfilePicture } from '@/features/profilePicture/components';
 
 interface Props {
   breadcrumbs?: [string, string | JSX.Element][];
@@ -64,12 +66,19 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
             <BrandText />
           </Link>
           <Space sx={{ flexGrow: 1 }} />
-          <ActionIcon variant="outline" onClick={() => toggleColorScheme()}>
+          <ActionIcon
+            onClick={() => toggleColorScheme()}
+            title="Toggle Light/Dark Mode"
+            variant="outline"
+          >
             {colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
           </ActionIcon>
-          <Avatar variant="outline" radius="xl" onClick={logout}>
-            A
-          </Avatar>
+          {currentUser && (
+            <>
+              <ProfilePicture user={currentUser} />
+              <Button onClick={logout}>logout</Button>
+            </>
+          )}
         </Header>
       }
       // footer={<Footer height={40}><Center><Text>Hello, World!</Text></Center></Footer>}
