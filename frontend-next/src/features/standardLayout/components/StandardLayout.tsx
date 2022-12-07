@@ -8,19 +8,24 @@ import {
   Footer,
   Group,
   Header,
+  Menu,
   Space,
   Stack,
+  Text,
+  UnstyledButton,
   useMantineColorScheme,
+  useMantineTheme,
 } from '@mantine/core';
 import { useLogout } from '@features/signin/hooks/useLogout';
 import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useState } from 'react';
 import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
-import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { ExitIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
 import { useCurrentUser } from '@/hooks';
 import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
 import { ProfilePicture } from '@/features/profilePicture/components';
+import { useMediaQuery } from '@mantine/hooks';
 
 interface Props {
   breadcrumbs?: [string, string | JSX.Element][];
@@ -46,7 +51,10 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
   const logout = useLogout();
   const currentUser = useCurrentUser();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const theme = useMantineTheme();
+  const useDrawer = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
   const { classes } = useStyles({ vhHeight });
+  const [showProfileOptions, setShowProfileOptions] = useState(false);
   return (
     <AppShell
       padding={0}
@@ -66,18 +74,26 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
             <BrandText />
           </Link>
           <Space sx={{ flexGrow: 1 }} />
-          <ActionIcon
-            onClick={() => toggleColorScheme()}
-            title="Toggle Light/Dark Mode"
-            variant="outline"
-          >
-            {colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
-          </ActionIcon>
           {currentUser && (
-            <>
-              <ProfilePicture user={currentUser} />
-              <Button onClick={logout}>logout</Button>
-            </>
+            <Menu opened={!useDrawer && showProfileOptions} onChange={setShowProfileOptions}>
+              <Menu.Target>
+                <UnstyledButton onClick={() => setShowProfileOptions(!showProfileOptions)}>
+                  <ProfilePicture user={currentUser} />
+                </UnstyledButton>
+              </Menu.Target>
+              <Menu.Dropdown>
+                <Menu.Item icon={<ProfilePicture user={currentUser} />}>
+                  <Text fw="bolder">{currentUser.name}</Text>
+                </Menu.Item>
+                <Menu.Item
+                  icon={colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
+                  onClick={() => toggleColorScheme()}
+                >
+                  <Text>Use{colorScheme === 'light' ? ' dark ' : ' light '}theme</Text>
+                </Menu.Item>
+                <Menu.Item icon={<ExitIcon />}>Logout</Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
           )}
         </Header>
       }
