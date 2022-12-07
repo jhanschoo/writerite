@@ -9,6 +9,11 @@ export const DEFAULT_EDITOR_PROPS: Partial<EditorOptions> = {
   extensions: [StarterKit, Underline, Link],
 };
 
+export const DEFAULT_UNEDITABLE_EDITOR_PROPS: Partial<EditorOptions> = {
+  extensions: [StarterKit, Underline, Link],
+  editable: false,
+};
+
 export interface RichTextEditorProps {
   editorProps: Partial<EditorOptions>;
 }
@@ -27,6 +32,16 @@ export function accumulateContentText(item: JSONContent): string {
   }
   return strs.join('');
 }
+
+const UneditableRichTextEditor: FC<RichTextEditorProps> = ({ editorProps }) => {
+  const editor = useEditor(editorProps);
+
+  return (
+    <RichTextEditor editor={editor}>
+      <RichTextEditor.Content />
+    </RichTextEditor>
+  );
+};
 
 const RichTextEditorComponent: FC<RichTextEditorProps> = ({ editorProps }) => {
   const editor = useEditor(editorProps);
@@ -68,4 +83,4 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({ editorProps }) => {
   );
 };
 
-export { RichTextEditorComponent as RichTextEditor };
+export { RichTextEditorComponent as RichTextEditor, UneditableRichTextEditor };

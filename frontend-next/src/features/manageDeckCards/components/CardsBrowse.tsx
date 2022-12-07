@@ -71,22 +71,13 @@ export const ManageDeckCardsBrowse: FC<ManageDeckProps> = ({ deck }) => {
     activePage === 1;
   return (
     <Stack align="stretch">
+      {canAddANewCard && <Button onClick={handleAddNewCard}>New Card</Button>}
       <TextInput
         value={filter}
         onChange={handleFilterChange}
         label="Search for cards containing..."
         sx={{ flexGrow: 1 }}
       />
-      {total ? (
-        <Pagination
-          page={activePage}
-          onChange={setActivePage}
-          total={total}
-          radius="lg"
-          sx={{ alignSelf: 'center' }}
-        />
-      ) : undefined}
-      {canAddANewCard && <Button onClick={handleAddNewCard}>New Card</Button>}
       {fetching && <ManageCard card={dummyCard} onDelete={() => undefined} forceLoading={true} />}
       {currentCards.map((card) => (
         <ManageCard card={card} key={card.id} onDelete={() => undefined} forceLoading={false} />

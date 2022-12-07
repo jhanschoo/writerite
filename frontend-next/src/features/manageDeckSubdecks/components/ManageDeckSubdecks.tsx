@@ -10,15 +10,15 @@ import { ManageDeckSubdecksBrowse } from './SubdecksBrowse';
 export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck }) => {
   const [activeTab, setActiveTab] = useState<string | null>('view');
   const theme = useMantineTheme();
-  const matches = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
+  const showText = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
   return (
     <Tabs orientation="vertical" value={activeTab} onTabChange={setActiveTab} keepMounted={false}>
       <Tabs.List>
         <Tabs.Tab value="view" icon={<MagnifyingGlassIcon />} aria-label="View Subdecks">
-          {matches && 'View Subdecks'}
+          {showText && 'View Subdecks'}
         </Tabs.Tab>
         <Tabs.Tab value="add" icon={<UploadIcon />} arial-label="Add More Subdecks">
-          {matches && 'Add More Subdecks'}
+          {showText && 'Add More Subdecks'}
         </Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="view" pl="md">

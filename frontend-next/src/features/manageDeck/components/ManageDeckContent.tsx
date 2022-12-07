@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { createStyles, Group, Stack, Tabs } from '@mantine/core';
 import { ManageDeckProps } from '../types/ManageDeckProps';
-import { ManageDeckCards } from '../../manageDeckCards/components/Cards';
+import { ManageDeckCards } from '../../manageDeckCards/components/ManageDeckCards';
 import { ManageDeckSubdecks } from '../../manageDeckSubdecks/components/ManageDeckSubdecks';
 
 const useStyles = createStyles((theme, _params, getRef) => {
