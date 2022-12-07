@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Button, Stack, Table, Text } from '@mantine/core';
-import { ArrowRightIcon } from '@radix-ui/react-icons';
+import { IconArrowRight } from '@tabler/icons';
 
 export const ManageDeckCardsUploadInstructions: FC<{ onNextStep: () => unknown }> = ({
   onNextStep,
@@ -82,7 +82,7 @@ export const ManageDeckCardsUploadInstructions: FC<{ onNextStep: () => unknown }
           </li>
         </ul>
       </ul>
-      <Button fullWidth onClick={onNextStep} rightIcon={<ArrowRightIcon />}>
+      <Button fullWidth onClick={onNextStep} rightIcon={<IconArrowRight />}>
         Proceed
       </Button>
     </Stack>

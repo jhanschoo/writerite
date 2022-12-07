@@ -18,7 +18,7 @@ import {
 } from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import { DecksList, DeckItemComponentProps } from '@/components/deck';
-import { CheckIcon, Link2Icon } from '@radix-ui/react-icons';
+import { IconCheck, IconLink } from '@tabler/icons';
 import { useHover } from '@mantine/hooks';
 import Link from 'next/link';
 
@@ -38,7 +38,7 @@ const addSubdeckProps: LoadingOverlayProps = {
   visible: true,
   loader: (
     <Stack align="center" spacing={1}>
-      <Link2Icon width="40" height="40" />
+      <IconLink size={40} />
       <Text size="xl" weight="bold">
         Link
       </Text>
@@ -63,7 +63,7 @@ const addedProps = ({
   visible: true,
   loader: (
     <Stack align="center" spacing={1}>
-      <CheckIcon width="40" height="40" color={color} />
+      <IconCheck size={40} color={color} />
       <Text color={color} size="xl" weight="bold">
         Added
       </Text>

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Button, Group, Stack, Table, Text } from '@mantine/core';
-import { ArrowLeftIcon, UploadIcon } from '@radix-ui/react-icons';
+import { IconArrowLeft, IconUpload } from '@tabler/icons';
 import type { ImportCardsData } from '../types';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
@@ -57,11 +57,11 @@ export const ManageDeckCardsUploadReview: FC<Props> = ({
         </tbody>
       </Table>
       <Group>
-        <Button variant="subtle" onClick={onPreviousStep} leftIcon={<ArrowLeftIcon />}>
+        <Button variant="subtle" onClick={onPreviousStep} leftIcon={<IconArrowLeft />}>
           Choose another file for import
         </Button>
         <Button
-          leftIcon={<UploadIcon />}
+          leftIcon={<IconUpload />}
           sx={{ flexGrow: 1 }}
           onClick={async () => {
             await deckAddCardsMutation({ deckId: deck.id, cards: cardsToImport });

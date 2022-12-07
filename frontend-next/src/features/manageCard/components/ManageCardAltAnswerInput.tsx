@@ -1,6 +1,6 @@
 import { FC, useState, KeyboardEvent } from 'react';
-import { ActionIcon, TextInput, Group } from '@mantine/core';
-import { Cross1Icon, PaperPlaneIcon } from '@radix-ui/react-icons';
+import { ActionIcon, TextInput } from '@mantine/core';
+import { IconCheck } from '@tabler/icons';
 
 interface Props {
   initialAnswer: string;
@@ -34,7 +34,7 @@ export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, o
       aria-label="input new alternate answer"
       rightSection={
         <ActionIcon onClick={() => onSave(answerInput)} title="Save">
-          <PaperPlaneIcon />
+          <IconCheck />
         </ActionIcon>
       }
     />

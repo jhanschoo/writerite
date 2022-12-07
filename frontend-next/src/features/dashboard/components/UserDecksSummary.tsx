@@ -20,7 +20,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import Link from 'next/link';
-import { MagnifyingGlassIcon, PlusIcon } from '@radix-ui/react-icons';
+import { IconSearch, IconPlus } from '@tabler/icons';
 import { formatISO, parseISO } from 'date-fns';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
@@ -81,7 +81,7 @@ const NewDeckItem = () => {
       size="md"
       radius="xl"
       className={classes.createDeckButton}
-      leftIcon={<PlusIcon width={20} height={20} />}
+      leftIcon={<IconPlus />}
     >
       New Deck
     </Button>
@@ -138,7 +138,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
         <Title order={2} mb="md">
           Decks
         </Title>
-        <Button variant="outline" leftIcon={<MagnifyingGlassIcon />}>
+        <Button variant="outline" leftIcon={<IconSearch size={21} />}>
           Find Decks
         </Button>
       </Box>

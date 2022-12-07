@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import { createStyles, Tabs, useMantineTheme } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { MagnifyingGlassIcon, UploadIcon } from '@radix-ui/react-icons';
+import { IconSearch, IconUpload } from '@tabler/icons';
 import { ManageDeckCardsBrowse } from './CardsBrowse';
 import { ManageDeckCardsUpload } from './CardsUpload';
 import { useMediaQuery } from '@mantine/hooks';
@@ -31,10 +31,10 @@ export const ManageDeckCards: FC<ManageDeckProps> = ({ deck }) => {
   return (
     <Tabs orientation="vertical" value={activeTab} onTabChange={setActiveTab} classNames={classes}>
       <Tabs.List>
-        <Tabs.Tab value="browse" icon={<MagnifyingGlassIcon />} aria-label="Browse Cards">
+        <Tabs.Tab value="browse" icon={<IconSearch />} aria-label="Browse Cards">
           Browse Cards
         </Tabs.Tab>
-        <Tabs.Tab value="upload" icon={<UploadIcon />} arial-label="Import from file">
+        <Tabs.Tab value="upload" icon={<IconUpload />} arial-label="Import from file">
           Import from file
         </Tabs.Tab>
       </Tabs.List>

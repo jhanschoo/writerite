@@ -14,7 +14,7 @@ import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
-import { TrashIcon } from '@radix-ui/react-icons';
+import { IconTrash } from '@tabler/icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
@@ -183,7 +183,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
             size="xs"
             radius="xs"
             compact
-            rightIcon={<TrashIcon />}
+            rightIcon={<IconTrash size={18} />}
             variant="filled"
             className={classes.cardCloseButton}
             disabled={hasUnsavedChanges || fetchingDelete}

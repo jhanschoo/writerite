@@ -1,18 +1,6 @@
 import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useQuery } from 'urql';
-import {
-  ActionIcon,
-  Box,
-  createStyles,
-  Divider,
-  Group,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
 
 import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';

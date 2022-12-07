@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
-import { ActionIcon, Group, Paper, Stack, Text } from '@mantine/core';
+import { ActionIcon, Button, Group, Paper, Stack, Text } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { PlusIcon } from '@radix-ui/react-icons';
 import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
 import { ManageCardAltAnswer } from './ManageCardAltAnswer';
+import { IconPlus } from '@tabler/icons';
 
 interface Props {
   answers: ManageDeckProps['deck']['cardsDirect'][number]['answers'];
@@ -55,11 +55,9 @@ export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
         {
           // Button to add a new answer
           currentlyEditing === null && (
-            <Paper withBorder px="8px" py="3px" onClick={() => setCurrentlyEditing(answers.length)}>
-              <ActionIcon size="sm" title="Add New Answer" variant="transparent">
-                <PlusIcon />
-              </ActionIcon>
-            </Paper>
+            <Button compact onClick={() => setCurrentlyEditing(answers.length)} variant="default">
+              <IconPlus size={18} />
+            </Button>
           )
         }
         {

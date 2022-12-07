@@ -1,6 +1,6 @@
 import { createStyles, Tabs, useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { MagnifyingGlassIcon, UploadIcon } from '@radix-ui/react-icons';
+import { IconSearch, IconUpload } from '@tabler/icons';
 import { FC, useState } from 'react';
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { ManageDeckSubdecksAddSubdeck } from './SubdecksAddSubdeck';
@@ -14,10 +14,10 @@ export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck }) => {
   return (
     <Tabs orientation="vertical" value={activeTab} onTabChange={setActiveTab} keepMounted={false}>
       <Tabs.List>
-        <Tabs.Tab value="view" icon={<MagnifyingGlassIcon />} aria-label="View Subdecks">
+        <Tabs.Tab value="view" icon={<IconSearch />} aria-label="View Subdecks">
           {showText && 'View Subdecks'}
         </Tabs.Tab>
-        <Tabs.Tab value="add" icon={<UploadIcon />} arial-label="Add More Subdecks">
+        <Tabs.Tab value="add" icon={<IconUpload />} arial-label="Add More Subdecks">
           {showText && 'Add More Subdecks'}
         </Tabs.Tab>
       </Tabs.List>

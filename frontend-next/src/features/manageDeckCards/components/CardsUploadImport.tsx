@@ -3,7 +3,7 @@ import { Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
 import type { NewCardData } from '../types';
-import { ArrowLeftIcon } from '@radix-ui/react-icons';
+import { IconArrowLeft } from '@tabler/icons';
 import { useParseCsv } from '../hooks/useParseCsv';
 
 const MAX_SIZE_MIB = 3;
@@ -86,7 +86,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
         sx={{ alignSelf: 'flex-start' }}
         variant="subtle"
         onClick={onPreviousStep}
-        leftIcon={<ArrowLeftIcon />}
+        leftIcon={<IconArrowLeft />}
       >
         Back to instructions
       </Button>

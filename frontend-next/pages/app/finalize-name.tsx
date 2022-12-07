@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import { useMutation } from 'urql';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
+import { IconSend } from '@tabler/icons';
 
 import { UserEditDocument } from '@generated/graphql';
 import { useRouter } from 'next/router';
@@ -31,7 +31,7 @@ const FinalizeName: NextPage = () => {
             placeholder="Enter a username..."
             rightSection={
               <Button compact type="submit" variant="subtle">
-                <PaperPlaneIcon />
+                <IconSend />
               </Button>
             }
             description="Please enter a username that will be displayed publicly."

@@ -5,7 +5,7 @@ import type { ManageDeckProps } from '@/features/manageDeck';
 import { Button, Card, createStyles, LoadingOverlay, Stack, UnstyledButton } from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import { DecksList, DeckItemComponentProps } from '@/components/deck';
-import { LinkBreak2Icon } from '@radix-ui/react-icons';
+import { IconLinkOff } from '@tabler/icons';
 import Link, { LinkProps } from 'next/link';
 
 interface DeckItemProps extends DeckItemComponentProps {
@@ -67,7 +67,7 @@ const DeckItem: (parentId: string) => FC<DeckItemProps> =
                 size="xs"
                 radius="xs"
                 compact
-                rightIcon={<LinkBreak2Icon />}
+                rightIcon={<IconLinkOff />}
                 variant="filled"
                 className={classes.cardCloseButton}
                 disabled={fetching}

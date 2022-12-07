@@ -10,7 +10,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
+import { IconSend } from '@tabler/icons';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'urql';
 import { ManageDeckProps } from '../types/ManageDeckProps';
@@ -90,7 +90,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
               }
               rightSection={
                 <ActionIcon type="submit" size={48} variant="subtle" color="dark" title="Save">
-                  <PaperPlaneIcon />
+                  <IconSend />
                 </ActionIcon>
               }
               rightSectionWidth={60}

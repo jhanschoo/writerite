@@ -18,13 +18,11 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useLogout } from '@features/signin/hooks/useLogout';
-import BreadcrumbsNav from '@components/nav/BreadcrumbsNav';
 import { FC, PropsWithChildren, useState } from 'react';
 import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
-import { ExitIcon, MoonIcon, SunIcon } from '@radix-ui/react-icons';
+import { IconLogout, IconMoonStars, IconSun } from '@tabler/icons';
 import { useCurrentUser } from '@/hooks';
-import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
 import { ProfilePicture } from '@/features/profilePicture/components';
 import { useMediaQuery } from '@mantine/hooks';
 
@@ -97,12 +95,12 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
                     <Text fw="bolder">{currentUser.name}</Text>
                   </Menu.Item>
                   <Menu.Item
-                    icon={colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
+                    icon={colorScheme === 'light' ? <IconMoonStars /> : <IconSun />}
                     onClick={() => toggleColorScheme()}
                   >
                     <Text>Use{colorScheme === 'light' ? ' dark ' : ' light '}theme</Text>
                   </Menu.Item>
-                  <Menu.Item icon={<ExitIcon />} onClick={logout}>Logout</Menu.Item>
+                  <Menu.Item icon={<IconLogout />} onClick={logout}>Logout</Menu.Item>
                 </Menu.Dropdown>
               </Menu>
               <Drawer
@@ -114,10 +112,10 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
                 size="100%"
               >
                 <Stack spacing={0}>
-                  <Button size="xl" variant="subtle" onClick={() => toggleColorScheme()} leftIcon={colorScheme === 'light' ? <MoonIcon height={20} width={20} /> : <SunIcon height={20} width={20} />} classNames={drawerButtonClasses}>
+                  <Button size="xl" variant="subtle" onClick={() => toggleColorScheme()} leftIcon={colorScheme === 'light' ? <IconMoonStars size={20} /> : <IconSun size={20} />} classNames={drawerButtonClasses}>
                   Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
                   </Button>
-                  <Button size="xl" variant="subtle" onClick={logout} leftIcon={<ExitIcon height={20} width={20} />} classNames={drawerButtonClasses}>Logout</Button>
+                  <Button size="xl" variant="subtle" onClick={logout} leftIcon={<IconLogout size={20} />} classNames={drawerButtonClasses}>Logout</Button>
                 </Stack>
               </Drawer>
             </>

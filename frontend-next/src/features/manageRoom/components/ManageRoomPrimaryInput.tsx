@@ -1,7 +1,7 @@
 import { FC, KeyboardEvent } from 'react';
 import { MessageContentType, MessageCreateDocument, RoomDetailFragment } from '@generated/graphql';
 import { ActionIcon, createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
-import { PaperPlaneIcon } from '@radix-ui/react-icons';
+import { IconSend } from '@tabler/icons';
 import { useForm } from '@mantine/form';
 import { useMutation } from 'urql';
 
@@ -61,7 +61,7 @@ export const ManageRoomPrimaryInput: FC<Props> = ({ room }) => {
             rightSection={
               <Group>
                 <ActionIcon type="submit" variant="subtle" color="dark" title="Save">
-                  <PaperPlaneIcon />
+                  <IconSend />
                 </ActionIcon>
               </Group>
             }
