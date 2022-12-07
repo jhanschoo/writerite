@@ -21,6 +21,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
       '&[data-active]': {
         backgroundColor,
       },
+      '&[data-active]::before': {
+        backgroundColor,
+      },
     },
     tabsListWrapper: {
       borderBottom: `1px solid ${borderColor}`,
