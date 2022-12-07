@@ -25,7 +25,6 @@ function debounceIfDeltaExists(
 export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, description } }) => {
   const [{ fetching }, mutateDeck] = useMutation(DeckEditDocument);
   const content = Object.keys(description).length ? description : undefined;
-  const [jsonContent, setJsonContent] = useState(content);
   const updateStateToServer = (jsonContent: Record<string, unknown>) => {
     return mutateDeck({ id, description: jsonContent });
   };
@@ -56,7 +55,6 @@ export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, descrip
           content,
           onUpdate({ editor }) {
             const updatedJsonContent = editor.getJSON();
-            setJsonContent(updatedJsonContent);
             debounceIfDeltaExists(debounced, description, updatedJsonContent);
           },
         }}
