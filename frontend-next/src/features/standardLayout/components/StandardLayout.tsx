@@ -5,6 +5,7 @@ import {
   Button,
   Center,
   createStyles,
+  Drawer,
   Footer,
   Group,
   Header,
@@ -32,7 +33,7 @@ interface Props {
   vhHeight?: boolean;
 }
 
-const useStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'>) => {
+const useShellStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'>) => {
   const { background } = theme.fn.variant({ variant: 'light', color: 'gray' });
   return {
     main: {
@@ -47,13 +48,22 @@ const useStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'>) =>
   };
 });
 
+const useDrawerButtonStyles = createStyles((theme) => {
+  return {
+    inner: {
+      justifyContent: 'flex-start'
+    },
+  };
+});
+
 export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeight }) => {
   const logout = useLogout();
   const currentUser = useCurrentUser();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const useDrawer = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
-  const { classes } = useStyles({ vhHeight });
+  const { classes: shellClasses } = useShellStyles({ vhHeight });
+  const { classes: drawerButtonClasses } = useDrawerButtonStyles();
   const [showProfileOptions, setShowProfileOptions] = useState(false);
   return (
     <AppShell
@@ -75,30 +85,47 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
           </Link>
           <Space sx={{ flexGrow: 1 }} />
           {currentUser && (
-            <Menu opened={!useDrawer && showProfileOptions} onChange={setShowProfileOptions}>
-              <Menu.Target>
-                <UnstyledButton onClick={() => setShowProfileOptions(!showProfileOptions)}>
-                  <ProfilePicture user={currentUser} />
-                </UnstyledButton>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item icon={<ProfilePicture user={currentUser} />}>
-                  <Text fw="bolder">{currentUser.name}</Text>
-                </Menu.Item>
-                <Menu.Item
-                  icon={colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
-                  onClick={() => toggleColorScheme()}
-                >
-                  <Text>Use{colorScheme === 'light' ? ' dark ' : ' light '}theme</Text>
-                </Menu.Item>
-                <Menu.Item icon={<ExitIcon />}>Logout</Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
+            <>
+              <Menu opened={!useDrawer && showProfileOptions} onChange={setShowProfileOptions}>
+                <Menu.Target>
+                  <UnstyledButton onClick={() => setShowProfileOptions(!showProfileOptions)}>
+                    <ProfilePicture user={currentUser} />
+                  </UnstyledButton>
+                </Menu.Target>
+                <Menu.Dropdown>
+                  <Menu.Item icon={<ProfilePicture user={currentUser} />}>
+                    <Text fw="bolder">{currentUser.name}</Text>
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={colorScheme === 'light' ? <MoonIcon /> : <SunIcon />}
+                    onClick={() => toggleColorScheme()}
+                  >
+                    <Text>Use{colorScheme === 'light' ? ' dark ' : ' light '}theme</Text>
+                  </Menu.Item>
+                  <Menu.Item icon={<ExitIcon />} onClick={logout}>Logout</Menu.Item>
+                </Menu.Dropdown>
+              </Menu>
+              <Drawer
+                opened={useDrawer && showProfileOptions}
+                onClose={() => setShowProfileOptions(false)}
+                position="right"
+                title={<Group><ProfilePicture user={currentUser} /><Text fw="bolder">{currentUser.name}</Text></Group>}
+                padding="xl"
+                size="100%"
+              >
+                <Stack spacing={0}>
+                  <Button size="xl" variant="subtle" onClick={() => toggleColorScheme()} leftIcon={colorScheme === 'light' ? <MoonIcon height={20} width={20} /> : <SunIcon height={20} width={20} />} classNames={drawerButtonClasses}>
+                  Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
+                  </Button>
+                  <Button size="xl" variant="subtle" onClick={logout} leftIcon={<ExitIcon height={20} width={20} />} classNames={drawerButtonClasses}>Logout</Button>
+                </Stack>
+              </Drawer>
+            </>
           )}
         </Header>
       }
       // footer={<Footer height={40}><Center><Text>Hello, World!</Text></Center></Footer>}
-      classNames={classes}
+      classNames={shellClasses}
     >
       <Stack spacing={2} sx={{ flexGrow: 1, height: vhHeight ? '100%' : undefined }}>
         {children}
