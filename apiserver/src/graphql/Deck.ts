@@ -52,9 +52,9 @@ export const Deck = objectType({
     t.nonNull.id('id');
     t.nonNull.id('ownerId');
     t.nonNull.string('name');
-    t.nonNull.jsonObject('description', {
+    t.jsonObject('description', {
       resolve({ description }) {
-        return description as Prisma.InputJsonObject;
+        return description as Prisma.JsonObject | null;
       },
     });
     t.nonNull.string('promptLang');

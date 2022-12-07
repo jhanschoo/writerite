@@ -16,14 +16,14 @@ export const Card = objectType({
   name: 'Card',
   definition(t) {
     t.nonNull.id('id');
-    t.nonNull.jsonObject('prompt', {
+    t.jsonObject('prompt', {
       resolve({ prompt }) {
-        return prompt as Prisma.JsonObject;
+        return prompt as Prisma.JsonObject | null;
       },
     });
-    t.nonNull.jsonObject('fullAnswer', {
+    t.jsonObject('fullAnswer', {
       resolve({ fullAnswer }) {
-        return fullAnswer as Prisma.JsonObject;
+        return fullAnswer as Prisma.JsonObject | null;
       },
     });
     t.nonNull.list.nonNull.string('answers');

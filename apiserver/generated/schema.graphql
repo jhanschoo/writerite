@@ -6,11 +6,11 @@ type Card {
   answers: [String!]!
   deckId: ID!
   editedAt: DateTime!
-  fullAnswer: JSONObject!
+  fullAnswer: JSONObject
   id: ID!
   mainTemplate: Boolean!
   ownRecord: UserCardRecord
-  prompt: JSONObject!
+  prompt: JSONObject
   template: Boolean!
 }
 
@@ -45,7 +45,7 @@ type Deck {
   all descendant (reflexive, transitive closure of subdeck) decks of this deck
   """
   descendantDecks: [Deck!]!
-  description: JSONObject!
+  description: JSONObject
   editedAt: DateTime!
   id: ID!
   name: String!
@@ -170,13 +170,6 @@ type Mutation {
       signatures: ["activeRoomUpdates"]
     )
   """
-  roomEditOwnerConfig(id: ID!, ownerConfig: JSONObject!): Room!
-
-  """
-  @triggersSubscriptions(
-      signatures: ["activeRoomUpdates"]
-    )
-  """
   roomSetDeck(deckId: ID!, id: ID!): Room!
 
   """
@@ -188,6 +181,7 @@ type Mutation {
     )
   """
   roomSetState(id: ID!, state: RoomState!): Room!
+  userBefriendUser(befriendedId: ID!): User!
 
   """
   @invalidatesTokens(
@@ -217,13 +211,11 @@ type Room {
   deck: Deck
   deckId: ID
   id: ID!
-  internalConfig: JSONObject!
   messageCount: Int!
   messages: [Message!]!
   occupants: [User!]!
   occupantsCount: Int!
   owner: User!
-  ownerConfig: JSONObject!
   ownerId: ID!
   slug: String
   state: RoomState!
@@ -273,8 +265,29 @@ A field whose value is a generic Universally Unique Identifier: https://en.wikip
 scalar UUID
 
 type User {
+  """users who this user have unilaterally befriended without reciprocation"""
+  befriendeds: [User!]!
+
+  """
+  count of users unilaterally befriended by this user without reciprocation
+  """
+  befriendedsCount: Int!
+
+  """users who have unilaterally befriended this user without reciprocation"""
+  befrienders: [User!]!
+
+  """
+  count of users who have unilaterally befriended this user without reciprocation
+  """
+  befriendersCount: Int!
   decks: [Deck!]!
   facebookId: String
+
+  """users who are mutual friends of this user"""
+  friends: [User!]!
+
+  """count of users who are mutual friends of this user"""
+  friendsCount: Int!
   googleId: String
   id: ID!
   isPublic: Boolean!

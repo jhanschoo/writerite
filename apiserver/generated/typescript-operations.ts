@@ -29,11 +29,11 @@ export type Card = {
   answers: Array<Scalars['String']>;
   deckId: Scalars['ID'];
   editedAt: Scalars['DateTime'];
-  fullAnswer: Scalars['JSONObject'];
+  fullAnswer?: Maybe<Scalars['JSONObject']>;
   id: Scalars['ID'];
   mainTemplate: Scalars['Boolean'];
   ownRecord?: Maybe<UserCardRecord>;
-  prompt: Scalars['JSONObject'];
+  prompt?: Maybe<Scalars['JSONObject']>;
   template: Scalars['Boolean'];
 };
 
@@ -56,7 +56,7 @@ export type Deck = {
   createdAt: Scalars['DateTime'];
   /** all descendant (reflexive, transitive closure of subdeck) decks of this deck */
   descendantDecks: Array<Deck>;
-  description: Scalars['JSONObject'];
+  description?: Maybe<Scalars['JSONObject']>;
   editedAt: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
@@ -158,12 +158,6 @@ export type Mutation = {
    *     signatures: ["activeRoomUpdates"]
    *   )
    */
-  roomEditOwnerConfig: Room;
-  /**
-   * @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   */
   roomSetDeck: Room;
   /**
    * @invalidatesTokens(
@@ -174,6 +168,7 @@ export type Mutation = {
    *   )
    */
   roomSetState: Room;
+  userBefriendUser: User;
   /**
    * @invalidatesTokens(
    *     reason: "name may be changed"
@@ -296,12 +291,6 @@ export type MutationRoomAddOccupantArgs = {
 };
 
 
-export type MutationRoomEditOwnerConfigArgs = {
-  id: Scalars['ID'];
-  ownerConfig: Scalars['JSONObject'];
-};
-
-
 export type MutationRoomSetDeckArgs = {
   deckId: Scalars['ID'];
   id: Scalars['ID'];
@@ -311,6 +300,11 @@ export type MutationRoomSetDeckArgs = {
 export type MutationRoomSetStateArgs = {
   id: Scalars['ID'];
   state: RoomState;
+};
+
+
+export type MutationUserBefriendUserArgs = {
+  befriendedId: Scalars['ID'];
 };
 
 
@@ -383,13 +377,11 @@ export type Room = {
   deck?: Maybe<Deck>;
   deckId?: Maybe<Scalars['ID']>;
   id: Scalars['ID'];
-  internalConfig: Scalars['JSONObject'];
   messageCount: Scalars['Int'];
   messages: Array<Message>;
   occupants: Array<User>;
   occupantsCount: Scalars['Int'];
   owner: User;
-  ownerConfig: Scalars['JSONObject'];
   ownerId: Scalars['ID'];
   slug?: Maybe<Scalars['String']>;
   state: RoomState;
@@ -442,8 +434,20 @@ export type SubscriptionRoomUpdatesByRoomSlugArgs = {
 
 export type User = {
   __typename?: 'User';
+  /** users who this user have unilaterally befriended without reciprocation */
+  befriendeds: Array<User>;
+  /** count of users unilaterally befriended by this user without reciprocation */
+  befriendedsCount: Scalars['Int'];
+  /** users who have unilaterally befriended this user without reciprocation */
+  befrienders: Array<User>;
+  /** count of users who have unilaterally befriended this user without reciprocation */
+  befriendersCount: Scalars['Int'];
   decks: Array<Deck>;
   facebookId?: Maybe<Scalars['String']>;
+  /** users who are mutual friends of this user */
+  friends: Array<User>;
+  /** count of users who are mutual friends of this user */
+  friendsCount: Scalars['Int'];
   googleId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   isPublic: Scalars['Boolean'];
@@ -466,7 +470,7 @@ export type UserDeckRecord = {
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description: Record<string, unknown>, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: Record<string, unknown> | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -504,7 +508,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description: Record<string, unknown>, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description?: Record<string, unknown> | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 

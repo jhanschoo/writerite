@@ -7,7 +7,9 @@ import {
   queryField,
   stringArg,
 } from 'nexus';
-import { Occupant, Room } from 'src/types/backingTypes';
+import { guardValidUser } from '../service/authorization';
+import { Roles } from '../service/userJWT';
+import { Occupant, Room } from '../types/backingTypes';
 import type { Context } from '../context';
 import { userLacksPermissionsErrorFactory, userNotLoggedInErrorFactory } from '../error';
 import { guardLoggedIn } from '../service/authorization/guardLoggedIn';
@@ -61,6 +63,89 @@ export const User = objectType({
         return roomFindOccupyingActiveOfUser(prisma, { occupantId: id });
       },
     });
+    t.nonNull.list.nonNull.field('befriendeds', {
+      type: 'User',
+      description: 'users who this user have unilaterally befriended without reciprocation',
+      resolve: guardValidUser(({ id: befrienderId }, _args, { prisma, sub }) => {
+        if (!sub.roles.includes(Roles.Admin) && befrienderId !== sub.id) {
+          throw userLacksPermissionsErrorFactory();
+        }
+        return prisma.user.findMany({ where: {
+          befrienders: { some: { befrienderId } },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          NOT: { befriendeds: { some: { befriendedId: befrienderId } } },
+        } });
+      }),
+    });
+    t.nonNull.int('befriendedsCount', {
+      description: 'count of users unilaterally befriended by this user without reciprocation',
+      resolve: guardValidUser(({ id: befrienderId }, _args, { prisma, sub }) => {
+        if (!sub.roles.includes(Roles.Admin) && befrienderId !== sub.id) {
+          throw userLacksPermissionsErrorFactory();
+        }
+        return prisma.user.count({ where: {
+          befrienders: { some: { befrienderId } },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          NOT: { befriendeds: { some: { befriendedId: befrienderId } } },
+        } });
+      }),
+    });
+    t.nonNull.list.nonNull.field('befrienders', {
+      type: 'User',
+      description: 'users who have unilaterally befriended this user without reciprocation',
+      resolve: guardValidUser(({ id: befriendedId }, _args, { prisma, sub }) => {
+        if (!sub.roles.includes(Roles.Admin) && befriendedId !== sub.id) {
+          throw userLacksPermissionsErrorFactory();
+        }
+        return prisma.user.findMany({ where: {
+          befriendeds: { some: { befriendedId } },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          NOT: { befrienders: { some: { befrienderId: befriendedId } } },
+        } });
+      }),
+    });
+    t.nonNull.int('befriendersCount', {
+      description: 'count of users who have unilaterally befriended this user without reciprocation',
+      resolve: guardValidUser(({ id: befriendedId }, _args, { prisma, sub }) => {
+        if (!sub.roles.includes(Roles.Admin) && befriendedId !== sub.id) {
+          throw userLacksPermissionsErrorFactory();
+        }
+        return prisma.user.count({ where: {
+          befriendeds: { some: { befriendedId } },
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          NOT: { befrienders: { some: { befrienderId: befriendedId } } },
+        } });
+      }),
+    });
+    t.nonNull.list.nonNull.field('friends', {
+      type: 'User',
+      description: 'users who are mutual friends of this user',
+      resolve: guardValidUser(({ id: userId }, _args, { prisma, sub }) => {
+        if (!sub.roles.includes(Roles.Admin) && userId !== sub.id) {
+          throw userLacksPermissionsErrorFactory();
+        }
+        return prisma.user.findMany({
+          where: {
+            befriendeds: { some: { befriendedId: userId } },
+            befrienders: { some: { befrienderId: userId } },
+          },
+        });
+      }),
+    });
+    t.nonNull.int('friendsCount', {
+      description: 'count of users who are mutual friends of this user',
+      resolve: guardValidUser(({ id: userId }, _args, { prisma, sub }) => {
+        if (!sub.roles.includes(Roles.Admin) && userId !== sub.id) {
+          throw userLacksPermissionsErrorFactory();
+        }
+        return prisma.user.count({
+          where: {
+            befriendeds: { some: { befriendedId: userId } },
+            befrienders: { some: { befrienderId: userId } },
+          },
+        });
+      }),
+    });
   },
 });
 
@@ -108,4 +193,27 @@ export const UserEditMutation = mutationField('userEdit', {
       throw userLacksPermissionsErrorFactory();
     }
   }),
+});
+
+export const UserBefriendUserMutation = mutationField('userBefriendUser', {
+  type: nonNull('User'),
+  args: {
+    befriendedId: nonNull(idArg()),
+  },
+  resolve: guardValidUser(async (_source, { befriendedId }, { prisma, sub: { id } }) =>
+    prisma.user.update({
+      where: { id },
+      data: {
+        befriendeds: {
+          connectOrCreate: {
+            where: {
+              // eslint-disable-next-line @typescript-eslint/naming-convention
+              befrienderId_befriendedId: { befrienderId: id, befriendedId },
+            },
+            create: { befriended: { connect: { id: befriendedId } } },
+          },
+        },
+      },
+    })
+  ),
 });

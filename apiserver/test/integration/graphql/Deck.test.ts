@@ -88,7 +88,7 @@ describe('graphql/Deck.ts', () => {
         expect(createDeckResponse).toHaveProperty('data.deckCreate', {
           id: expect.any(String),
           answerLang: '',
-          description: {},
+          description: null,
           editedAt: expect.stringMatching(isoTimestampMatcher),
           name: '',
           ownerId: user.id,
@@ -104,7 +104,7 @@ describe('graphql/Deck.ts', () => {
         expect(queryDeckResponse).toHaveProperty('data.deck', {
           id: deckBefore.id,
           answerLang: '',
-          description: {},
+          description: null,
           editedAt: deckBefore.editedAt,
           name: '',
           ownerId: user.id,

@@ -22,9 +22,9 @@ model Card {
   id         String           @default(cuid()) @id
   deckId     String
   // prompt is a JsonObject
-  prompt     Json             @default("{}")
+  prompt     Json?
   // fullAnswer is a JsonObject
-  fullAnswer Json             @default("{}")
+  fullAnswer Json?
   answers    String[]
   template   Boolean          @default(false)
   default    Unit?
@@ -58,10 +58,8 @@ model Deck {
   id          String           @default(cuid()) @id
   ownerId     String
   name        String           @default("")
-  // I don't want to test if 'null'::jsonb works.
-  // Also interferes with optional.
-  // description is a JsonObject
-  description Json             @default("{}")
+  // description is a JsonObject if not null
+  description Json?
   promptLang  String           @default("")
   answerLang  String           @default("")
   published   Boolean          @default(false)
@@ -113,10 +111,6 @@ model Room {
   // when state is terminal, slug is null
   slug           String?    @unique
   deckId         String?
-  // ownerConfig is a JsonObject
-  ownerConfig    Json       @default("{}")
-  // internalConfig is a JsonObject
-  internalConfig Json       @default("{}")
   state          RoomState  @default(WAITING)
 
   createdAt      DateTime   @default(now())
@@ -162,6 +156,24 @@ model User {
   sentChatMsgs   Message[]
   cardRecords    UserCardRecord[]
   deckRecords    UserDeckRecord[]
+
+  befriendeds    Friendship[]        @relation("UserTo_Friendship_befrienderId")
+  befrienders    Friendship[]        @relation("UserTo_Friendship_befriendedId")
+}
+
+model Friendship {
+  id           String   @default(cuid()) @id
+  befrienderId String
+  befriendedId String
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  befriender   User?    @relation("UserTo_Friendship_befrienderId", fields: [befrienderId], references: [id], onDelete: Cascade)
+  befriended   User?    @relation("UserTo_Friendship_befriendedId", fields: [befriendedId], references: [id], onDelete: Cascade)
+
+  @@unique([befrienderId, befriendedId])
+  @@index([befriendedId])
 }
 
 model UserCardRecord {

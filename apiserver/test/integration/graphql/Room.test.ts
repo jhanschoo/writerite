@@ -274,10 +274,6 @@ describe('graphql/Room.ts', () => {
       });
     });
 
-    describe.skip('roomEditOwnerConfig', () => {
-      // TODO: implement
-    });
-
     describe('roomSetDeck', () => {
       it('should be able to set the deck of an owned room in WAITING state', async () => {
         expect.assertions(2);

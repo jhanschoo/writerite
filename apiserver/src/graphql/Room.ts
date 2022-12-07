@@ -17,13 +17,11 @@ import {
   ROOM_UPDATES_BY_ROOM_SLUG_TOPIC,
   WillNotServeRoomStates,
   roomAddOccupant,
-  roomEditOwnerConfig,
   roomSetDeck,
   roomSetState,
 } from '../service/room';
 import { invalidateByRoomSlug, invalidateByUserId } from '../service/session';
 import { slug as genSlug } from '../util';
-import { jsonObjectArg } from './scalarUtil';
 
 const ROOM_SET_DECK_KEY = 'roomSetDeck';
 const ROOM_ADD_OCCUPANT_KEY = 'roomAddOccupant';
@@ -46,16 +44,6 @@ export const Room = objectType({
     t.nonNull.id('id');
     t.nonNull.id('ownerId');
     t.id('deckId');
-    t.nonNull.jsonObject('ownerConfig', {
-      resolve({ ownerConfig }) {
-        return ownerConfig as Prisma.JsonObject;
-      },
-    });
-    t.nonNull.jsonObject('internalConfig', {
-      resolve({ internalConfig }) {
-        return internalConfig as Prisma.JsonObject;
-      },
-    });
     t.string('slug');
     t.nonNull.field('state', {
       type: 'RoomState',
@@ -215,21 +203,6 @@ export const RoomSetDeckMutation = mutationField(ROOM_SET_DECK_KEY, {
     }
     return roomRes;
   }),
-});
-
-// Only legal when room state is WAITING
-export const RoomEditOwnerConfigMutation = mutationField('roomEditOwnerConfig', {
-  type: nonNull('Room'),
-  args: {
-    id: nonNull(idArg()),
-    ownerConfig: nonNull(jsonObjectArg()),
-  },
-  description: `@triggersSubscriptions(
-    signatures: ["activeRoomUpdates"]
-  )`,
-  async resolve(_parent, { id, ownerConfig }, { prisma }) {
-    return roomEditOwnerConfig(prisma, { id, ownerConfig: ownerConfig as Prisma.InputJsonObject });
-  },
 });
 
 export const RoomSetStateMutation = mutationField(ROOM_SET_STATE_KEY, {

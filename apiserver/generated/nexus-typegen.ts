@@ -140,11 +140,11 @@ export interface NexusGenFieldTypes {
     answers: string[]; // [String!]!
     deckId: string; // ID!
     editedAt: NexusGenScalars['DateTime']; // DateTime!
-    fullAnswer: NexusGenScalars['JSONObject']; // JSONObject!
+    fullAnswer: NexusGenScalars['JSONObject'] | null; // JSONObject
     id: string; // ID!
     mainTemplate: boolean; // Boolean!
     ownRecord: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
-    prompt: NexusGenScalars['JSONObject']; // JSONObject!
+    prompt: NexusGenScalars['JSONObject'] | null; // JSONObject
     template: boolean; // Boolean!
   }
   Deck: { // field return type
@@ -154,7 +154,7 @@ export interface NexusGenFieldTypes {
     cardsDirectCount: number; // Int!
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     descendantDecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
-    description: NexusGenScalars['JSONObject']; // JSONObject!
+    description: NexusGenScalars['JSONObject'] | null; // JSONObject
     editedAt: NexusGenScalars['DateTime']; // DateTime!
     id: string; // ID!
     name: string; // String!
@@ -203,9 +203,9 @@ export interface NexusGenFieldTypes {
     roomAddOccupant: NexusGenRootTypes['Room']; // Room!
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
-    roomEditOwnerConfig: NexusGenRootTypes['Room']; // Room!
     roomSetDeck: NexusGenRootTypes['Room']; // Room!
     roomSetState: NexusGenRootTypes['Room']; // Room!
+    userBefriendUser: NexusGenRootTypes['User']; // User!
     userEdit: NexusGenRootTypes['User']; // User!
   }
   Query: { // field return type
@@ -225,13 +225,11 @@ export interface NexusGenFieldTypes {
     deck: NexusGenRootTypes['Deck'] | null; // Deck
     deckId: string | null; // ID
     id: string; // ID!
-    internalConfig: NexusGenScalars['JSONObject']; // JSONObject!
     messageCount: number; // Int!
     messages: NexusGenRootTypes['Message'][]; // [Message!]!
     occupants: NexusGenRootTypes['User'][]; // [User!]!
     occupantsCount: number; // Int!
     owner: NexusGenRootTypes['User']; // User!
-    ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
     ownerId: string; // ID!
     slug: string | null; // String
     state: NexusGenEnums['RoomState']; // RoomState!
@@ -252,8 +250,14 @@ export interface NexusGenFieldTypes {
     roomUpdatesByRoomSlug: NexusGenRootTypes['RoomUpdate']; // RoomUpdate!
   }
   User: { // field return type
+    befriendeds: NexusGenRootTypes['User'][]; // [User!]!
+    befriendedsCount: number; // Int!
+    befrienders: NexusGenRootTypes['User'][]; // [User!]!
+    befriendersCount: number; // Int!
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     facebookId: string | null; // String
+    friends: NexusGenRootTypes['User'][]; // [User!]!
+    friendsCount: number; // Int!
     googleId: string | null; // String
     id: string; // ID!
     isPublic: boolean; // Boolean!
@@ -338,9 +342,9 @@ export interface NexusGenFieldTypeNames {
     roomAddOccupant: 'Room'
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
-    roomEditOwnerConfig: 'Room'
     roomSetDeck: 'Room'
     roomSetState: 'Room'
+    userBefriendUser: 'User'
     userEdit: 'User'
   }
   Query: { // field return type name
@@ -360,13 +364,11 @@ export interface NexusGenFieldTypeNames {
     deck: 'Deck'
     deckId: 'ID'
     id: 'ID'
-    internalConfig: 'JSONObject'
     messageCount: 'Int'
     messages: 'Message'
     occupants: 'User'
     occupantsCount: 'Int'
     owner: 'User'
-    ownerConfig: 'JSONObject'
     ownerId: 'ID'
     slug: 'String'
     state: 'RoomState'
@@ -387,8 +389,14 @@ export interface NexusGenFieldTypeNames {
     roomUpdatesByRoomSlug: 'RoomUpdate'
   }
   User: { // field return type name
+    befriendeds: 'User'
+    befriendedsCount: 'Int'
+    befrienders: 'User'
+    befriendersCount: 'Int'
     decks: 'Deck'
     facebookId: 'String'
+    friends: 'User'
+    friendsCount: 'Int'
     googleId: 'String'
     id: 'ID'
     isPublic: 'Boolean'
@@ -486,10 +494,6 @@ export interface NexusGenArgTypes {
       id: string; // ID!
       occupantId: string; // ID!
     }
-    roomEditOwnerConfig: { // args
-      id: string; // ID!
-      ownerConfig: NexusGenScalars['JSONObject']; // JSONObject!
-    }
     roomSetDeck: { // args
       deckId: string; // ID!
       id: string; // ID!
@@ -497,6 +501,9 @@ export interface NexusGenArgTypes {
     roomSetState: { // args
       id: string; // ID!
       state: NexusGenEnums['RoomState']; // RoomState!
+    }
+    userBefriendUser: { // args
+      befriendedId: string; // ID!
     }
     userEdit: { // args
       isPublic?: boolean | null; // Boolean
