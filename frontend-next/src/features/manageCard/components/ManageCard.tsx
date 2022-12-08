@@ -13,7 +13,11 @@ import {
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
+import {
+  DEFAULT_EDITOR_PROPS,
+  RichTextEditor,
+  UneditableRichTextEditor,
+} from '@/components/RichTextEditor';
 import { IconTrash } from '@tabler/icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
@@ -198,20 +202,20 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
-          <RichTextEditor
+          <UneditableRichTextEditor
             editorProps={{
               ...DEFAULT_EDITOR_PROPS,
               content: Object.keys(promptContent).length ? promptContent : undefined,
-              onUpdate({ editor }) {
-                const latestPromptContent = editor.getJSON();
-                const latestState = {
-                  prompt: latestPromptContent,
-                  fullAnswer: fullAnswerContent,
-                  answers: answerValues,
-                };
-                setPromptContent(latestPromptContent);
-                debounceIfStateDeltaExists(debounced, initialState, latestState);
-              },
+              // onUpdate({ editor }) {
+              //   const latestPromptContent = editor.getJSON();
+              //   const latestState = {
+              //     prompt: latestPromptContent,
+              //     fullAnswer: fullAnswerContent,
+              //     answers: answerValues,
+              //   };
+              //   setPromptContent(latestPromptContent);
+              //   debounceIfStateDeltaExists(debounced, initialState, latestState);
+              // },
             }}
             // classNames={editorClasses}
           />
@@ -223,20 +227,20 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
           </Text>
         </Card.Section>
         <Card.Section>
-          <RichTextEditor
+          <UneditableRichTextEditor
             editorProps={{
               ...DEFAULT_EDITOR_PROPS,
               content: Object.keys(fullAnswerContent).length ? fullAnswerContent : undefined,
-              onUpdate({ editor }) {
-                const latestFullAnswerContent = editor.getJSON();
-                const latestState = {
-                  prompt: promptContent,
-                  fullAnswer: latestFullAnswerContent,
-                  answers: answerValues,
-                };
-                setFullAnswerContent(latestFullAnswerContent);
-                debounceIfStateDeltaExists(debounced, initialState, latestState);
-              },
+              // onUpdate({ editor }) {
+              //   const latestFullAnswerContent = editor.getJSON();
+              //   const latestState = {
+              //     prompt: promptContent,
+              //     fullAnswer: latestFullAnswerContent,
+              //     answers: answerValues,
+              //   };
+              //   setFullAnswerContent(latestFullAnswerContent);
+              //   debounceIfStateDeltaExists(debounced, initialState, latestState);
+              // },
             }}
             // classNames={editorClasses}
           />
