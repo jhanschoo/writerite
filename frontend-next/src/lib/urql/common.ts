@@ -3,7 +3,12 @@ import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } fro
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange, Data, NullArray } from '@urql/exchange-graphcache';
-import { getAccessToken, unsetSessionInfo, setSessionInfo } from '@lib/tokenManagement';
+import {
+  getAccessToken,
+  unsetSessionInfo,
+  setSessionInfo,
+  sessionNeedsRefreshing,
+} from '@lib/tokenManagement';
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
@@ -65,6 +70,7 @@ const auth = authExchange<string | null>({
     });
     return sessionInfo.token;
   },
+  willAuthError: sessionNeedsRefreshing,
   didAuthError({ error }) {
     return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');
   },
