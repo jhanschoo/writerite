@@ -1,6 +1,6 @@
 import { ChangeEvent, FC, useMemo, useState } from 'react';
 import { useMutation } from 'urql';
-import { Box, Button, Pagination, Stack, TextInput } from '@mantine/core';
+import { Box, Button, Flex, Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '@/features/manageDeck';
 import { ManageCard } from '@/features/manageCard';
@@ -76,7 +76,7 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
     activePage === 1;
   return (
     <Stack align="stretch">
-      <Box sx={({ spacing }) => ({ display: 'flex', gap: spacing.md })}>
+      <Flex gap="md">
         <Button
           onClick={handleAddNewCard}
           disabled={!canAddANewCard}
@@ -93,7 +93,7 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
         >
           Import from file
         </Button>
-      </Box>
+      </Flex>
       <TextInput
         value={filter}
         onChange={handleFilterChange}

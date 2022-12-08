@@ -1,6 +1,6 @@
 import { DeckSummaryFragment } from '@generated/graphql';
 import { FC } from 'react';
-import { Box } from '@mantine/core';
+import { Flex } from '@mantine/core';
 
 export interface DeckItemComponentProps {
   deck: DeckSummaryFragment;
@@ -20,28 +20,12 @@ export const DecksList: FC<Props> = ({
   const decksList =
     decks?.map((deck, index) => <DeckItemComponent key={index} deck={deck} />) || [];
   if (!justifyLeading) {
-    return (
-      <Box
-        sx={({ spacing }) => ({
-          display: 'flex',
-          gap: `${spacing.sm}px`,
-        })}
-      >
-        {decksList}
-      </Box>
-    );
+    return <Flex gap="sm">{decksList}</Flex>;
   }
   decksList.reverse();
   return (
-    <Box
-      sx={({ spacing }) => ({
-        display: 'flex',
-        flexWrap: 'wrap-reverse',
-        flexDirection: 'row-reverse',
-        gap: `${spacing.sm}px`,
-      })}
-    >
+    <Flex wrap="wrap-reverse" direction="row-reverse" gap="sm">
       {decksList}
-    </Box>
+    </Flex>
   );
 };

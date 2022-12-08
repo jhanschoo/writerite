@@ -106,6 +106,7 @@ export const getExchanges = (ssr: SSRExchange) => [
               cardsDirect as NullArray<Data>
             );
             cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
+              __typename: 'Deck',
               id: deckId as string,
               cardsDirectCount: cardsDirect.length,
             });
@@ -124,6 +125,7 @@ export const getExchanges = (ssr: SSRExchange) => [
             const updatedCards = cardsDirect.filter((cardKey) => cardKey !== deletedCardKey);
             cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
             cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
+              __typename: 'Deck',
               id: deckId as string,
               cardsDirectCount: updatedCards.length,
             });
