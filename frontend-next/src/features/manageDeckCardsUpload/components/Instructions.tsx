@@ -1,8 +1,9 @@
 import { FC } from 'react';
-import { Button, Stack, Table, Text } from '@mantine/core';
+import { Box, Button, Stack, Table, Text } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons';
 
-export const ManageDeckCardsUploadInstructions: FC<{ onNextStep: () => unknown }> = ({
+export const Instructions: FC<{ onCancel(): unknown; onNextStep(): unknown }> = ({
+  onCancel,
   onNextStep,
 }) => {
   return (
@@ -82,9 +83,14 @@ export const ManageDeckCardsUploadInstructions: FC<{ onNextStep: () => unknown }
           </li>
         </ul>
       </ul>
-      <Button fullWidth onClick={onNextStep} rightIcon={<IconArrowRight />}>
-        Proceed
-      </Button>
+      <Box sx={({ spacing }) => ({ display: 'flex', gap: spacing.xs, flexWrap: 'wrap-reverse' })}>
+        <Button onClick={onCancel} variant="subtle">
+          Cancel
+        </Button>
+        <Button onClick={onNextStep} rightIcon={<IconArrowRight />} sx={{ flexGrow: 1 }}>
+          Proceed
+        </Button>
+      </Box>
     </Stack>
   );
 };

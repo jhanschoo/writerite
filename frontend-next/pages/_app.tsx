@@ -1,4 +1,3 @@
-import 'draft-js/dist/Draft.css';
 import '@styles/globals.css';
 
 import { AnimatePresence } from 'framer-motion';

@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Divider, Stack, Text } from '@mantine/core';
+import { Box, Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
 import type { NewCardData } from '../types';
@@ -9,11 +9,12 @@ import { useParseCsv } from '../hooks/useParseCsv';
 const MAX_SIZE_MIB = 3;
 
 interface Props {
-  onPreviousStep: () => unknown;
-  onSuccessfulImport: (cards: NewCardData[]) => unknown;
+  onCancel(): unknown;
+  onPreviousStep(): unknown;
+  onSuccessfulImport(cards: NewCardData[]): unknown;
 }
 
-export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSuccessfulImport }) => {
+export const Import: FC<Props> = ({ onCancel, onPreviousStep, onSuccessfulImport }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
   const parseCsv = useParseCsv();
@@ -24,6 +25,7 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
     const [csvFile] = files;
     setLoading(true);
     try {
+      console.log('trying to parse');
       const newCards = await parseCsv(csvFile);
       onSuccessfulImport(newCards);
       setHasErrors(false);
@@ -82,14 +84,14 @@ export const ManageDeckCardsUploadImport: FC<Props> = ({ onPreviousStep, onSucce
           )}
         </Stack>
       </Dropzone>
-      <Button
-        sx={{ alignSelf: 'flex-start' }}
-        variant="subtle"
-        onClick={onPreviousStep}
-        leftIcon={<IconArrowLeft />}
-      >
-        Back to instructions
-      </Button>
+      <Box sx={({ spacing }) => ({ display: 'flex', gap: spacing.xs, flexWrap: 'wrap-reverse' })}>
+        <Button onClick={onCancel} variant="subtle">
+          Cancel
+        </Button>
+        <Button variant="outline" onClick={onPreviousStep} leftIcon={<IconArrowLeft />}>
+          Review instructions
+        </Button>
+      </Box>
     </Stack>
   );
 };

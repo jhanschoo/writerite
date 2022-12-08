@@ -1,23 +1,20 @@
 import { FC } from 'react';
-import { Button, Group, Stack, Table, Text } from '@mantine/core';
+import { Box, Button, Stack, Table, Text } from '@mantine/core';
 import { IconArrowLeft, IconUpload } from '@tabler/icons';
 import type { ImportCardsData } from '../types';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
 import { DeckAddCardsDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
+import { accumulateContentText } from '@/components/RichTextEditor';
 
 interface Props extends ImportCardsData, ManageDeckProps {
-  onPreviousStep: () => unknown;
-  onUploadCompleted: () => unknown;
+  onCancel(): unknown;
+  onPreviousStep(): unknown;
+  onUploadCompleted(): unknown;
 }
 
-export const ManageDeckCardsUploadReview: FC<Props> = ({
-  onPreviousStep,
-  cards,
-  deck,
-  onUploadCompleted,
-}) => {
+export const Review: FC<Props> = ({ onCancel, onPreviousStep, cards, deck, onUploadCompleted }) => {
   const [, deckAddCardsMutation] = useMutation(DeckAddCardsDocument);
   const numDeckCards = deck.cardsDirect.length;
   const numCards = cards.length;
@@ -49,14 +46,17 @@ export const ManageDeckCardsUploadReview: FC<Props> = ({
         <tbody>
           {cards.slice(0, 10).map(({ prompt, fullAnswer, answers }, index) => (
             <tr key={index}>
-              <td>{prompt.ops?.length ? prompt.ops[0].insert?.toString() : ''}</td>
-              <td>{fullAnswer.ops?.length ? fullAnswer.ops[0].insert?.toString() : ''}</td>
+              <td>{accumulateContentText(prompt)}</td>
+              <td>{accumulateContentText(fullAnswer)}</td>
               <td>{answers.length ? `+${answers.length} answers` : undefined}</td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <Group>
+      <Box sx={({ spacing }) => ({ display: 'flex', gap: spacing.xs, flexWrap: 'wrap-reverse' })}>
+        <Button onClick={onCancel} variant="subtle">
+          Cancel
+        </Button>
         <Button variant="subtle" onClick={onPreviousStep} leftIcon={<IconArrowLeft />}>
           Choose another file for import
         </Button>
@@ -70,7 +70,7 @@ export const ManageDeckCardsUploadReview: FC<Props> = ({
         >
           Add {cardsToImport.length} cards
         </Button>
-      </Group>
+      </Box>
     </Stack>
   );
 };

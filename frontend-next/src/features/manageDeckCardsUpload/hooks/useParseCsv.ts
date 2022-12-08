@@ -1,8 +1,24 @@
 import Papa from 'papaparse';
-import Delta from 'quill-delta';
 import { nextTick, NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
 import type { NewCardData } from '../types';
+import { JSONContent } from '@tiptap/core';
 
+const textToJsonContent = (textContent: string): JSONContent => {
+  const lines = textContent
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => Boolean(line));
+  const content = lines.map((text) => ({
+    type: 'paragraph',
+    content: [{ text, type: 'text' }],
+  }));
+  return {
+    type: 'doc',
+    content,
+  };
+};
+
+// TODO: revise to output
 export const useParseCsv = () => async (file: File) =>
   nextTick(
     async () =>
@@ -17,8 +33,8 @@ export const useParseCsv = () => async (file: File) =>
             }
             newCards = newCards.concat(
               results.data.map(([prompt, fullAnswer, ...answers]) => ({
-                prompt: new Delta().insert(prompt ?? ''),
-                fullAnswer: new Delta().insert(fullAnswer ?? ''),
+                prompt: textToJsonContent(prompt),
+                fullAnswer: textToJsonContent(fullAnswer),
                 answers: answers.filter((answer) => answer.trim()),
               }))
             );
