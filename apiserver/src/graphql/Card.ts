@@ -108,8 +108,8 @@ export const CardCreateMutation = mutationField('cardCreate', {
 export const CardCreateInput = inputObjectType({
   name: 'CardCreateInput',
   definition(t) {
-    t.nonNull.jsonObject('prompt');
-    t.nonNull.jsonObject('fullAnswer');
+    t.jsonObject('prompt');
+    t.jsonObject('fullAnswer');
     t.nonNull.list.nonNull.string('answers');
     t.boolean('template', { undefinedOnly: true });
   },

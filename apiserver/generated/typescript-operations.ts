@@ -1,3 +1,4 @@
+import { JSONValue, JSONObject } from '../src/types/jsonTypes'
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -15,9 +16,9 @@ export type Scalars = {
   /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
   EmailAddress: string;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: string | number | Record<string, unknown> | unknown[] | boolean | null;
+  JSON: JSONValue;
   /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSONObject: Record<string, unknown>;
+  JSONObject: JSONObject;
   /** A field whose value is a JSON Web Token (JWT): https://jwt.io/introduction. */
   JWT: string;
   /** A field whose value is a generic Universally Unique Identifier: https://en.wikipedia.org/wiki/Universally_unique_identifier. */
@@ -39,8 +40,8 @@ export type Card = {
 
 export type CardCreateInput = {
   answers: Array<Scalars['String']>;
-  fullAnswer: Scalars['JSONObject'];
-  prompt: Scalars['JSONObject'];
+  fullAnswer?: InputMaybe<Scalars['JSONObject']>;
+  prompt?: InputMaybe<Scalars['JSONObject']>;
   template?: InputMaybe<Scalars['Boolean']>;
 };
 
@@ -470,7 +471,7 @@ export type UserDeckRecord = {
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: Record<string, unknown> | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -508,7 +509,7 @@ export type DeckQueryVariables = Exact<{
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description?: Record<string, unknown> | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -532,14 +533,14 @@ export type MessageCreateMutationVariables = Exact<{
 }>;
 
 
-export type MessageCreateMutation = { __typename?: 'Mutation', messageCreate: { __typename?: 'Message', content: string | number | Record<string, unknown> | unknown[] | boolean | null, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } };
+export type MessageCreateMutation = { __typename?: 'Mutation', messageCreate: { __typename?: 'Message', content: JSONValue, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } };
 
 export type MessageUpdatesByRoomSlugSubscriptionVariables = Exact<{
   slug: Scalars['String'];
 }>;
 
 
-export type MessageUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', messageUpdatesByRoomSlug: { __typename?: 'MessageUpdate', operation: MessageUpdateOperation, value: { __typename?: 'Message', content: string | number | Record<string, unknown> | unknown[] | boolean | null, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } } };
+export type MessageUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', messageUpdatesByRoomSlug: { __typename?: 'MessageUpdate', operation: MessageUpdateOperation, value: { __typename?: 'Message', content: JSONValue, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } } };
 
 export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -597,7 +598,7 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: { __typename?: 'SessionInfo', currentUser: Record<string, unknown>, token: string } | null };
+export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: { __typename?: 'SessionInfo', currentUser: JSONObject, token: string } | null };
 
 export type NameUserMutationVariables = Exact<{
   name: Scalars['String'];
@@ -611,7 +612,7 @@ export type RefreshMutationVariables = Exact<{
 }>;
 
 
-export type RefreshMutation = { __typename?: 'Mutation', refresh?: { __typename?: 'SessionInfo', currentUser: Record<string, unknown>, token: string } | null };
+export type RefreshMutation = { __typename?: 'Mutation', refresh?: { __typename?: 'SessionInfo', currentUser: JSONObject, token: string } | null };
 
 export type UserAccessibleUserScalarsQueryVariables = Exact<{
   id: Scalars['ID'];

@@ -1,1 +1,1 @@
-export * from './components/ManageCard';
+export * from './components';

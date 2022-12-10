@@ -72,8 +72,8 @@ declare global {
 export interface NexusGenInputs {
   CardCreateInput: { // input type
     answers: string[]; // [String!]!
-    fullAnswer: NexusGenScalars['JSONObject']; // JSONObject!
-    prompt: NexusGenScalars['JSONObject']; // JSONObject!
+    fullAnswer?: NexusGenScalars['JSONObject'] | null; // JSONObject
+    prompt?: NexusGenScalars['JSONObject'] | null; // JSONObject
     template?: boolean | null; // Boolean
   }
 }

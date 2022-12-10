@@ -11,7 +11,7 @@ const useStyles = createStyles((theme, _params, getRef) => {
   const borderColor = theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3];
   const { breakpoints, spacing } = theme;
   return {
-    tabsRoot: {
+    root: {
       position: 'relative',
       width: '100%',
       display: 'flex',
@@ -38,12 +38,13 @@ const useStyles = createStyles((theme, _params, getRef) => {
     panelWrapper: {
       backgroundColor,
       flexGrow: 1,
+      alignItems: 'center',
     },
     panel: {
       maxWidth: `${breakpoints.lg}px`,
-      width: `calc(100% - ${spacing.md}px)`,
       flexGrow: 1,
-      margin: '0 auto',
+      padding: `${spacing.md}px`,
+      width: '100%',
     },
   };
 });
@@ -62,31 +63,31 @@ export const ManageDeckContent: FC<ManageDeckProps> = ({ deck }) => {
       variant="outline"
       value={activeTab}
       onTabChange={(tabValue) => setActiveTab(tabValue as TabValues | null)}
-      className={classes.tabsRoot}
+      classNames={classes}
     >
       <Group className={classes.tabsListWrapper}>
-        <Tabs.List className={classes.tabsList}>
-          <Tabs.Tab value={TabValues.Cards} className={classes.tab}>
+        <Tabs.List>
+          <Tabs.Tab value={TabValues.Cards}>
             {deck.cardsDirect.length} Cards
           </Tabs.Tab>
-          <Tabs.Tab value={TabValues.Subdecks} className={classes.tab}>
+          <Tabs.Tab value={TabValues.Subdecks}>
             {deck.subdecks.length} Subdecks
           </Tabs.Tab>
-          <Tabs.Tab value={TabValues.Upload} className={classes.tab}>
+          <Tabs.Tab value={TabValues.Upload}>
             Import
           </Tabs.Tab>
         </Tabs.List>
       </Group>
       <Stack className={classes.panelWrapper}>
-        <Tabs.Panel value={TabValues.Cards} pt="xs" className={classes.panel}>
+        <Tabs.Panel value={TabValues.Cards}>
           <ManageDeckCards deck={deck} startUpload={() => setActiveTab(TabValues.Upload)} />
         </Tabs.Panel>
 
-        <Tabs.Panel value={TabValues.Subdecks} pt="xs" className={classes.panel}>
+        <Tabs.Panel value={TabValues.Subdecks}>
           <ManageDeckSubdecks deck={deck} />
         </Tabs.Panel>
 
-        <Tabs.Panel value={TabValues.Upload} pt="xs" className={classes.panel}>
+        <Tabs.Panel value={TabValues.Upload}>
           <ManageDeckCardsUpload deck={deck} onUploadEnded={() => setActiveTab(TabValues.Cards)} />
         </Tabs.Panel>
       </Stack>

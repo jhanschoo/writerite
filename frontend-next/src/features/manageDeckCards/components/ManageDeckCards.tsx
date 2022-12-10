@@ -1,13 +1,11 @@
 import { ChangeEvent, FC, useMemo, useState } from 'react';
-import { useMutation } from 'urql';
-import { Box, Button, Flex, Pagination, Stack, TextInput } from '@mantine/core';
+import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '@/features/manageDeck';
-import { ManageCard } from '@/features/manageCard';
-import type { EditorOptions, JSONContent } from '@tiptap/core';
-import { CardCreateDocument } from '@generated/graphql';
+import { AddNewCard, ManageCard } from '@/features/manageCard';
 import { accumulateContentText } from '@/components/RichTextEditor';
 import { IconPlus, IconUpload } from '@tabler/icons';
+import { JSONContent } from '@tiptap/core';
 
 type Card = ManageDeckProps['deck']['cardsDirect'][number];
 
@@ -18,18 +16,6 @@ const sortCards = (cards: Card[]) =>
     a.editedAt > b.editedAt ? -1 : a.editedAt < b.editedAt ? 1 : a.id > b.id ? 1 : -1
   );
 
-const dummyCard: Card = {
-  __typename: 'Card',
-  answers: [],
-  deckId: '',
-  editedAt: '',
-  fullAnswer: {},
-  id: '',
-  mainTemplate: false,
-  prompt: {},
-  template: false,
-};
-
 interface Props extends ManageDeckProps {
   startUpload(): void;
 }
@@ -37,16 +23,7 @@ interface Props extends ManageDeckProps {
 export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
   const [filter, setFilter] = useState('');
   const [activePage, setActivePage] = useState<number>(1);
-  const [{ fetching }, deckAddCards] = useMutation(CardCreateDocument);
-  const handleAddNewCard = () =>
-    deckAddCards({
-      deckId: deck.id,
-      card: {
-        prompt: {},
-        fullAnswer: {},
-        answers: [],
-      },
-    });
+  const [showAddCard, setShowAddCard] = useState<boolean>(false);
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
     setActivePage(1);
@@ -58,8 +35,9 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
   // .filter(...) is necessary since "".split(/\s+/) === ['']
   const currentCards = useMemo(() => {
     const filteredCards = deck.cardsDirect.filter(({ prompt, fullAnswer, answers }) => {
-      const promptString = accumulateContentText(prompt);
-      const fullAnswerString = accumulateContentText(fullAnswer);
+      const promptString = (prompt && accumulateContentText(prompt as JSONContent)) ?? '';
+      const fullAnswerString =
+        (fullAnswer && accumulateContentText(fullAnswer as JSONContent)) ?? '';
       return filterWords.every(
         (word) =>
           promptString.includes(word) ||
@@ -75,12 +53,12 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
     deck.cardsDirect.length < parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) &&
     activePage === 1;
   return (
-    <Stack align="stretch">
+    <Stack spacing="xs" align="stretch">
       <Flex gap="md">
         <Button
-          onClick={handleAddNewCard}
-          disabled={!canAddANewCard}
-          sx={{ flexGrow: 2 }}
+          onClick={() => setShowAddCard(!showAddCard)}
+          disabled={!canAddANewCard || showAddCard}
+          sx={{ flexGrow: 1 }}
           leftIcon={<IconPlus size={18} />}
         >
           Add new cards
@@ -94,13 +72,14 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
           Import from file
         </Button>
       </Flex>
+      {showAddCard && <AddNewCard deck={deck} />}
+      <Divider />
       <TextInput
         value={filter}
         onChange={handleFilterChange}
         label="Search for cards containing..."
         sx={{ flexGrow: 1 }}
       />
-      {fetching && <ManageCard card={dummyCard} onDelete={() => undefined} forceLoading={true} />}
       {currentCards.map((card) => (
         <ManageCard card={card} key={card.id} onDelete={() => undefined} forceLoading={false} />
       ))}

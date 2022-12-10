@@ -5,46 +5,22 @@ import {
   Card,
   createStyles,
   Divider,
-  Group,
   Loader,
   LoadingOverlay,
   Text,
+  Flex,
 } from '@mantine/core';
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import {
-  DEFAULT_EDITOR_PROPS,
-  RichTextEditor,
-  UneditableRichTextEditor,
-} from '@/components/RichTextEditor';
+import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
 import { IconTrash } from '@tabler/icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
 import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
-
-const useEditorStyles = createStyles(({ fn }) => {
-  const { background, hover, border, color } = fn.variant({ variant: 'default' });
-  return {
-    root: {
-      backgroundColor: background,
-      borderColor: border,
-      borderRadius: 0,
-      border: 'none',
-      color,
-      ...fn.hover({
-        backgroundColor: hover,
-      }),
-    },
-    toolbar: {
-      borderRadius: 0,
-      border: 'none',
-      background: 'transparent',
-    },
-  };
-});
+import { JSONContent } from '@tiptap/core';
 
 const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -91,8 +67,8 @@ interface Props {
 }
 
 interface State {
-  prompt: Record<string, unknown>;
-  fullAnswer: Record<string, unknown>;
+  prompt: JSONContent | null;
+  fullAnswer: JSONContent | null;
   answers: string[];
 }
 
@@ -141,8 +117,10 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     fullAnswer,
     answers,
   } as State;
-  const [promptContent, setPromptContent] = useState(prompt);
-  const [fullAnswerContent, setFullAnswerContent] = useState(fullAnswer);
+  const [promptContent, setPromptContent] = useState<JSONContent | null>(prompt ?? null);
+  const [fullAnswerContent, setFullAnswerContent] = useState<JSONContent | null>(
+    fullAnswer ?? null
+  );
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
@@ -202,22 +180,21 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
-          <UneditableRichTextEditor
+          <RichTextEditor
             editorProps={{
               ...DEFAULT_EDITOR_PROPS,
-              content: Object.keys(promptContent).length ? promptContent : undefined,
-              // onUpdate({ editor }) {
-              //   const latestPromptContent = editor.getJSON();
-              //   const latestState = {
-              //     prompt: latestPromptContent,
-              //     fullAnswer: fullAnswerContent,
-              //     answers: answerValues,
-              //   };
-              //   setPromptContent(latestPromptContent);
-              //   debounceIfStateDeltaExists(debounced, initialState, latestState);
-              // },
+              content: promptContent,
+              onUpdate({ editor }) {
+                const latestPromptContent = editor.getJSON();
+                const latestState = {
+                  prompt: latestPromptContent,
+                  fullAnswer: fullAnswerContent,
+                  answers: answerValues,
+                };
+                setPromptContent(latestPromptContent);
+                debounceIfStateDeltaExists(debounced, initialState, latestState);
+              },
             }}
-            // classNames={editorClasses}
           />
         </Card.Section>
         <Divider />
@@ -227,30 +204,29 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
           </Text>
         </Card.Section>
         <Card.Section>
-          <UneditableRichTextEditor
+          <RichTextEditor
             editorProps={{
               ...DEFAULT_EDITOR_PROPS,
-              content: Object.keys(fullAnswerContent).length ? fullAnswerContent : undefined,
-              // onUpdate({ editor }) {
-              //   const latestFullAnswerContent = editor.getJSON();
-              //   const latestState = {
-              //     prompt: promptContent,
-              //     fullAnswer: latestFullAnswerContent,
-              //     answers: answerValues,
-              //   };
-              //   setFullAnswerContent(latestFullAnswerContent);
-              //   debounceIfStateDeltaExists(debounced, initialState, latestState);
-              // },
+              content: fullAnswerContent,
+              onUpdate({ editor }) {
+                const latestFullAnswerContent = editor.getJSON();
+                const latestState = {
+                  prompt: promptContent,
+                  fullAnswer: latestFullAnswerContent,
+                  answers: answerValues,
+                };
+                setFullAnswerContent(latestFullAnswerContent);
+                debounceIfStateDeltaExists(debounced, initialState, latestState);
+              },
             }}
-            // classNames={editorClasses}
           />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding py="sm">
-          <Group>
+          <Flex>
             <ManageCardAltAnswers answers={answerValues} onAnswersSave={handleAnswersSave} />
             <Loader visibility={hasUnsavedChanges ? 'visible' : 'hidden'} />
-          </Group>
+          </Flex>
         </Card.Section>
       </Card>
     </Box>

@@ -4,7 +4,6 @@ fragment roomDetail on Room {
   }
   deckId
   id
-  internalConfig
   messageCount
   occupants {
     ...userUserAccessibleScalars
@@ -13,7 +12,6 @@ fragment roomDetail on Room {
   owner {
     ...userUserAccessibleScalars
   }
-  ownerConfig
   ownerId
   slug
   state

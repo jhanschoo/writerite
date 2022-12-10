@@ -16,8 +16,8 @@ type Card {
 
 input CardCreateInput {
   answers: [String!]!
-  fullAnswer: JSONObject!
-  prompt: JSONObject!
+  fullAnswer: JSONObject
+  prompt: JSONObject
   template: Boolean
 }
 

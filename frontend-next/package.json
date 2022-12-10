@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@emotion/server": "^11.4.0",
+    "@graphql-codegen/add": "^3.2.3",
     "@mantine/core": "^5.0.2",
     "@mantine/dates": "^5.0.2",
     "@mantine/dropzone": "^5.0.2",

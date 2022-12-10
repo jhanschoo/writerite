@@ -5,10 +5,8 @@ fragment roomSummary on Room {
   }
   deckId
   id
-  internalConfig
   messageCount
   occupantsCount
-  ownerConfig
   ownerId
   slug
   state

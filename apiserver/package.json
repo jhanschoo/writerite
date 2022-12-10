@@ -8,6 +8,7 @@
   "license": "AGPL-3.0-or-later",
   "private": false,
   "dependencies": {
+    "@graphql-codegen/add": "^3.2.3",
     "@graphql-codegen/cli": "^2.6.2",
     "@graphql-codegen/typescript": "^2.4.11",
     "@graphql-codegen/typescript-operations": "^2.4.0",

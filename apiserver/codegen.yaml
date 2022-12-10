@@ -5,11 +5,13 @@ generates:
     plugins:
       - typescript
       - typescript-operations
+      - add:
+          content: "import { JSONValue, JSONObject } from '../src/types/jsonTypes'"
 config:
   scalars:
     DateTime: string
     EmailAddress: string
-    JSON: string | number | Record<string, unknown> | unknown[] | boolean | null
-    JSONObject: Record<string, unknown>
+    JSON: JSONValue
+    JSONObject: JSONObject
     JWT: string
     UUID: string
