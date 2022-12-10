@@ -56,7 +56,7 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
     <Stack spacing="xs" align="stretch">
       <Flex gap="md">
         <Button
-          onClick={() => setShowAddCard(!showAddCard)}
+          onClick={() => setShowAddCard(true)}
           disabled={!canAddANewCard || showAddCard}
           sx={{ flexGrow: 1 }}
           leftIcon={<IconPlus size={18} />}
@@ -72,7 +72,7 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
           Import from file
         </Button>
       </Flex>
-      {showAddCard && <AddNewCard deck={deck} />}
+      {showAddCard && <AddNewCard deck={deck} onDone={() => setShowAddCard(false)} />}
       <Divider />
       <TextInput
         value={filter}

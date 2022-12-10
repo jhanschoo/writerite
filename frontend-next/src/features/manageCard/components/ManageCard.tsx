@@ -13,7 +13,7 @@ import {
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
+import { DEFAULT_EDITOR_PROPS, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
 import { IconTrash } from '@tabler/icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
@@ -21,6 +21,7 @@ import { useMutation } from 'urql';
 import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 import { JSONContent } from '@tiptap/core';
+import { useEditor } from '@tiptap/react';
 
 const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -124,6 +125,34 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
+  const promptEditor = useEditor({
+    ...DEFAULT_EDITOR_PROPS,
+    content: promptContent,
+    onUpdate({ editor }) {
+      const latestPromptContent = editor.getJSON();
+      const latestState = {
+        prompt: latestPromptContent,
+        fullAnswer: fullAnswerContent,
+        answers: answerValues,
+      };
+      setPromptContent(latestPromptContent);
+      debounceIfStateDeltaExists(debounced, initialState, latestState);
+    },
+  });
+  const fullAnswerEditor = useEditor({
+    ...DEFAULT_EDITOR_PROPS,
+    content: fullAnswerContent,
+    onUpdate({ editor }) {
+      const latestFullAnswerContent = editor.getJSON();
+      const latestState = {
+        prompt: promptContent,
+        fullAnswer: latestFullAnswerContent,
+        answers: answerValues,
+      };
+      setFullAnswerContent(latestFullAnswerContent);
+      debounceIfStateDeltaExists(debounced, initialState, latestState);
+    },
+  });
   const updateStateToServer = (newState: State) => {
     return cardEdit({
       id,
@@ -180,22 +209,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
-          <RichTextEditor
-            editorProps={{
-              ...DEFAULT_EDITOR_PROPS,
-              content: promptContent,
-              onUpdate({ editor }) {
-                const latestPromptContent = editor.getJSON();
-                const latestState = {
-                  prompt: latestPromptContent,
-                  fullAnswer: fullAnswerContent,
-                  answers: answerValues,
-                };
-                setPromptContent(latestPromptContent);
-                debounceIfStateDeltaExists(debounced, initialState, latestState);
-              },
-            }}
-          />
+          <ToolbaredRichTextEditor editor={promptEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding pt="sm">
@@ -204,22 +218,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
           </Text>
         </Card.Section>
         <Card.Section>
-          <RichTextEditor
-            editorProps={{
-              ...DEFAULT_EDITOR_PROPS,
-              content: fullAnswerContent,
-              onUpdate({ editor }) {
-                const latestFullAnswerContent = editor.getJSON();
-                const latestState = {
-                  prompt: promptContent,
-                  fullAnswer: latestFullAnswerContent,
-                  answers: answerValues,
-                };
-                setFullAnswerContent(latestFullAnswerContent);
-                debounceIfStateDeltaExists(debounced, initialState, latestState);
-              },
-            }}
-          />
+          <ToolbaredRichTextEditor editor={fullAnswerEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding py="sm">

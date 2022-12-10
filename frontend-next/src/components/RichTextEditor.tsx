@@ -1,6 +1,5 @@
 import { RichTextEditor, Link } from '@mantine/tiptap';
-import type { EditorOptions, JSONContent } from '@tiptap/core';
-import { useEditor } from '@tiptap/react';
+import type { Editor, EditorOptions, JSONContent } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { FC } from 'react';
@@ -9,13 +8,8 @@ export const DEFAULT_EDITOR_PROPS: Partial<EditorOptions> = {
   extensions: [StarterKit, Underline, Link],
 };
 
-export const DEFAULT_UNEDITABLE_EDITOR_PROPS: Partial<EditorOptions> = {
-  extensions: [StarterKit, Underline, Link],
-  editable: false,
-};
-
 export interface RichTextEditorProps {
-  editorProps: Partial<EditorOptions>;
+  editor: Editor | null;
 }
 
 export function accumulateContentText(item: JSONContent): string {
@@ -33,9 +27,7 @@ export function accumulateContentText(item: JSONContent): string {
   return strs.join('');
 }
 
-const UneditableRichTextEditor: FC<RichTextEditorProps> = ({ editorProps }) => {
-  const editor = useEditor(editorProps);
-
+export const BareRichTextEditor: FC<RichTextEditorProps> = ({ editor }) => {
   return (
     <RichTextEditor editor={editor}>
       <RichTextEditor.Content />
@@ -43,9 +35,7 @@ const UneditableRichTextEditor: FC<RichTextEditorProps> = ({ editorProps }) => {
   );
 };
 
-const RichTextEditorComponent: FC<RichTextEditorProps> = ({ editorProps }) => {
-  const editor = useEditor(editorProps);
-
+export const ToolbaredRichTextEditor: FC<RichTextEditorProps> = ({ editor }) => {
   return (
     <RichTextEditor editor={editor}>
       <RichTextEditor.Toolbar>
@@ -82,5 +72,3 @@ const RichTextEditorComponent: FC<RichTextEditorProps> = ({ editorProps }) => {
     </RichTextEditor>
   );
 };
-
-export { RichTextEditorComponent as RichTextEditor, UneditableRichTextEditor };

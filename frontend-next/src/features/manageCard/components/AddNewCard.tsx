@@ -1,24 +1,22 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useState } from 'react';
 import {
   Button,
   Box,
   Card,
   createStyles,
   Divider,
-  Group,
-  Loader,
   LoadingOverlay,
   Text,
   Flex,
 } from '@mantine/core';
-import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { DEFAULT_EDITOR_PROPS, RichTextEditor } from '@/components/RichTextEditor';
+import { DEFAULT_EDITOR_PROPS, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
 import { useMutation } from 'urql';
 import { CardCreateDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 import { JSONContent } from '@tiptap/core';
+import { useEditor } from '@tiptap/react';
 
 const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -58,7 +56,11 @@ const useStyles = createStyles(({ fn }, _params, getRef) => {
   };
 });
 
-export const AddNewCard: FC<ManageDeckProps> = ({ deck: { id: deckId } }) => {
+interface Props extends ManageDeckProps {
+  onDone(): void;
+}
+
+export const AddNewCard: FC<Props> = ({ deck: { id: deckId }, onDone }) => {
   const { classes } = useStyles();
   const [promptContent, setPromptContent] = useState<JSONContent | null>(null);
   const [fullAnswerContent, setFullAnswerContent] = useState<JSONContent | null>(null);
@@ -74,10 +76,37 @@ export const AddNewCard: FC<ManageDeckProps> = ({ deck: { id: deckId } }) => {
       },
     });
   };
+  const handleSave = async () => {
+    await updateStateToServer();
+    onDone();
+  };
+  const handleSaveAndAddAnother = async () => {
+    await updateStateToServer();
+    setPromptContent(null);
+    setFullAnswerContent(null);
+    setAnswerValues([]);
+  };
+  const promptEditor = useEditor({
+    ...DEFAULT_EDITOR_PROPS,
+    content: promptContent,
+    onUpdate({ editor }) {
+      const latestPromptContent = editor.getJSON();
+      setPromptContent(latestPromptContent);
+    },
+  });
+  const fullAnswerEditor = useEditor({
+    ...DEFAULT_EDITOR_PROPS,
+    content: fullAnswerContent,
+    onUpdate({ editor }) {
+      const latestFullAnswerContent = editor.getJSON();
+      setFullAnswerContent(latestFullAnswerContent);
+    },
+  });
 
   return (
     <Box className={classes.boxRoot}>
       <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
+        <LoadingOverlay visible={fetching} />
         <Card.Section inheritPadding pt="sm">
           <Text size="xs" weight="bold">
             Front
@@ -86,16 +115,7 @@ export const AddNewCard: FC<ManageDeckProps> = ({ deck: { id: deckId } }) => {
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={fetching} />
         <Card.Section>
-          <RichTextEditor
-            editorProps={{
-              ...DEFAULT_EDITOR_PROPS,
-              content: promptContent,
-              onUpdate({ editor }) {
-                const latestPromptContent = editor.getJSON();
-                setPromptContent(latestPromptContent);
-              },
-            }}
-          />
+          <ToolbaredRichTextEditor editor={promptEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding pt="sm">
@@ -104,24 +124,21 @@ export const AddNewCard: FC<ManageDeckProps> = ({ deck: { id: deckId } }) => {
           </Text>
         </Card.Section>
         <Card.Section>
-          <RichTextEditor
-            editorProps={{
-              ...DEFAULT_EDITOR_PROPS,
-              content: fullAnswerContent,
-              onUpdate({ editor }) {
-                const latestFullAnswerContent = editor.getJSON();
-                setFullAnswerContent(latestFullAnswerContent);
-              },
-            }}
-          />
+          <ToolbaredRichTextEditor editor={fullAnswerEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding py="sm">
-          <Flex gap="xs" wrap="wrap">
+          <Flex gap="xs" wrap="wrap" align="flex-end">
             <ManageCardAltAnswers answers={answerValues} onAnswersSave={setAnswerValues} />
-            <Button variant="subtle">Cancel</Button>
-            <Button variant="default">Save</Button>
-            <Button variant="filled">Save and add another</Button>
+            <Button variant="subtle" onClick={onDone}>
+              Cancel
+            </Button>
+            <Button variant="default" onClick={handleSave}>
+              Save
+            </Button>
+            <Button variant="filled" onClick={handleSaveAndAddAnother}>
+              Save and add another
+            </Button>
           </Flex>
         </Card.Section>
       </Card>
