@@ -14,7 +14,7 @@ const textToJsonContent = (textContent: string): JSONContent => {
   }));
   return {
     type: 'doc',
-    content,
+    content: content.length ? content : undefined,
   };
 };
 

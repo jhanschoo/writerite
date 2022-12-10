@@ -1,7 +1,7 @@
 mutation DeckCreate(
   $answerLang: String!
   $cards: [CardCreateInput!]!
-  $description: JSONObject!
+  $description: JSONObject
   $name: String!
   $promptLang: String!
   $published: Boolean!

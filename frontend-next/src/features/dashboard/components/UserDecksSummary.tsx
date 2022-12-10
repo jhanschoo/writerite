@@ -65,7 +65,7 @@ const NewDeckItem = () => {
     const createdDeck = await deckCreateMutation({
       answerLang: 'en',
       cards: [],
-      description: {},
+      description: null,
       name: '',
       promptLang: 'en',
       published: false,
