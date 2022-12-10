@@ -13,7 +13,7 @@ import {
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { DEFAULT_EDITOR_PROPS, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/RichTextEditor';
 import { IconTrash } from '@tabler/icons';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
@@ -209,7 +209,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={forceLoading || fetchingDelete} />
         <Card.Section>
-          <ToolbaredRichTextEditor editor={promptEditor} />
+          <BareRichTextEditor editor={promptEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding pt="sm">
@@ -218,7 +218,7 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
           </Text>
         </Card.Section>
         <Card.Section>
-          <ToolbaredRichTextEditor editor={fullAnswerEditor} />
+          <BareRichTextEditor editor={fullAnswerEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding py="sm">

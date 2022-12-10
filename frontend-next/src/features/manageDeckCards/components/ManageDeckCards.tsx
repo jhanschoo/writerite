@@ -4,7 +4,7 @@ import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/co
 import { ManageDeckProps } from '@/features/manageDeck';
 import { AddNewCard, ManageCard } from '@/features/manageCard';
 import { accumulateContentText } from '@/components/RichTextEditor';
-import { IconPlus, IconUpload } from '@tabler/icons';
+import { IconPlus, IconSearch, IconUpload } from '@tabler/icons';
 import { JSONContent } from '@tiptap/core';
 
 type Card = ManageDeckProps['deck']['cardsDirect'][number];
@@ -77,7 +77,8 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
       <TextInput
         value={filter}
         onChange={handleFilterChange}
-        label="Search for cards containing..."
+        icon={<IconSearch size={16} />}
+        label="Search"
         sx={{ flexGrow: 1 }}
       />
       {currentCards.map((card) => (
