@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from 'react';
 import {
   Button,
-  Box,
   Card,
   createStyles,
   Divider,
@@ -27,6 +26,7 @@ const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
   return {
     cardRoot: {
+      position: 'relative',
       [`&:hover .${getRef('cardCloseButton')}`]: {
         visibility: 'visible',
       },
@@ -54,9 +54,6 @@ const useStyles = createStyles(({ fn }, _params, getRef) => {
       visibility: 'hidden',
       borderTopLeftRadius: 0,
       borderBottomRightRadius: 0,
-    },
-    boxRoot: {
-      position: 'relative',
     },
   };
 });
@@ -187,47 +184,45 @@ export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
     updateStateToServer(latestState);
   };
   return (
-    <Box className={classes.boxRoot}>
-      <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
-        <Card.Section inheritPadding pt="sm">
-          <Button
-            size="xs"
-            radius="xs"
-            compact
-            rightIcon={<IconTrash size={18} />}
-            variant="filled"
-            className={classes.cardCloseButton}
-            disabled={hasUnsavedChanges || fetchingDelete}
-            onClick={handleCardDelete}
-          >
-            delete card
-          </Button>
-          <Text size="xs" weight="bold">
-            Front
-          </Text>
-        </Card.Section>
-        {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
-        <LoadingOverlay visible={forceLoading || fetchingDelete} />
-        <Card.Section>
-          <BareRichTextEditor editor={promptEditor} />
-        </Card.Section>
-        <Divider />
-        <Card.Section inheritPadding pt="sm">
-          <Text size="xs" weight="bold">
-            Back
-          </Text>
-        </Card.Section>
-        <Card.Section>
-          <BareRichTextEditor editor={fullAnswerEditor} />
-        </Card.Section>
-        <Divider />
-        <Card.Section inheritPadding py="sm">
-          <Flex>
-            <ManageCardAltAnswers answers={answerValues} onAnswersSave={handleAnswersSave} />
-            <Loader visibility={hasUnsavedChanges ? 'visible' : 'hidden'} />
-          </Flex>
-        </Card.Section>
-      </Card>
-    </Box>
+    <Card withBorder shadow="sm" radius="md" className={classes.cardRoot}>
+      <Card.Section inheritPadding pt="sm">
+        <Button
+          size="xs"
+          radius="xs"
+          compact
+          rightIcon={<IconTrash size={18} />}
+          variant="filled"
+          className={classes.cardCloseButton}
+          disabled={hasUnsavedChanges || fetchingDelete}
+          onClick={handleCardDelete}
+        >
+          delete card
+        </Button>
+        <Text size="xs" weight="bold">
+          Front
+        </Text>
+      </Card.Section>
+      {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
+      <LoadingOverlay visible={forceLoading || fetchingDelete} />
+      <Card.Section>
+        <BareRichTextEditor editor={promptEditor} />
+      </Card.Section>
+      <Divider />
+      <Card.Section inheritPadding pt="sm">
+        <Text size="xs" weight="bold">
+          Back
+        </Text>
+      </Card.Section>
+      <Card.Section>
+        <BareRichTextEditor editor={fullAnswerEditor} />
+      </Card.Section>
+      <Divider />
+      <Card.Section inheritPadding py="sm">
+        <Flex>
+          <ManageCardAltAnswers answers={answerValues} onAnswersSave={handleAnswersSave} />
+          <Loader visibility={hasUnsavedChanges ? 'visible' : 'hidden'} />
+        </Flex>
+      </Card.Section>
+    </Card>
   );
 };
