@@ -24,10 +24,10 @@ import { invalidateByRoomSlug, invalidateByUserId } from '../service/session';
 import { slug as genSlug } from '../util';
 
 const ROOM_SET_DECK_KEY = 'roomSetDeck';
-const ROOM_ADD_OCCUPANT_KEY = 'roomAddOccupant';
+const ROOM_JOIN_KEY = 'roomJoin';
 const ROOM_SET_STATE_KEY = 'roomSetState';
 
-const ROOM_UPDATE_KEYS = [ROOM_SET_DECK_KEY, ROOM_ADD_OCCUPANT_KEY, ROOM_SET_STATE_KEY] as const;
+const ROOM_UPDATE_KEYS = [ROOM_SET_DECK_KEY, ROOM_JOIN_KEY, ROOM_SET_STATE_KEY] as const;
 
 export interface RoomUpdatePublishArgs {
   [ROOM_UPDATES_BY_ROOM_SLUG_TOPIC]: [slug: string, payload: RoomUpdateBase];
@@ -78,7 +78,7 @@ export const Room = objectType({
       resolve({ userIdOfLastAddedOccupantForSubscription }) {
         return userIdOfLastAddedOccupantForSubscription ?? null;
       },
-      description: `guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful ${ROOM_ADD_OCCUPANT_KEY}`,
+      description: `guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful ${ROOM_JOIN_KEY}`,
     });
     t.field('userOfLastAddedOccupantForSubscription', {
       type: 'User',
@@ -90,7 +90,7 @@ export const Room = objectType({
         }
         return null;
       },
-      description: `guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful ${ROOM_ADD_OCCUPANT_KEY}`,
+      description: `guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful ${ROOM_JOIN_KEY}`,
     });
     t.nonNull.list.nonNull.field('occupants', {
       type: 'User',
@@ -247,11 +247,10 @@ export const RoomCleanUpDeadMutation = mutationField('roomCleanUpDead', {
 });
 
 // Only legal when room state is WAITING
-export const RoomAddOccupantMutation = mutationField(ROOM_ADD_OCCUPANT_KEY, {
+export const RoomJoinMutation = mutationField(ROOM_JOIN_KEY, {
   type: nonNull('Room'),
   args: {
     id: nonNull(idArg()),
-    occupantId: nonNull(idArg()),
   },
   description: `@invalidatesTokens(
     reason: "occupying existing room"
@@ -259,16 +258,15 @@ export const RoomAddOccupantMutation = mutationField(ROOM_ADD_OCCUPANT_KEY, {
   @triggersSubscriptions(
     signatures: ["activeRoomUpdates"]
   )`,
-  resolve: guardValidUser(async (_parent, { id, occupantId }, { prisma, pubsub, sub }) => {
+  resolve: guardValidUser(async (_parent, { id }, { prisma, pubsub, sub }) => {
     const roomRes = await roomAddOccupant(prisma, {
       roomId: id,
-      occupantId,
-      currentUserId: sub.id,
+      occupantId: sub.id,
     });
     if (roomRes.slug) {
       pubsub.publish(ROOM_UPDATES_BY_ROOM_SLUG_TOPIC, roomRes.slug, {
-        operation: ROOM_ADD_OCCUPANT_KEY,
-        value: { ...roomRes, userIdOfLastAddedOccupantForSubscription: occupantId },
+        operation: ROOM_JOIN_KEY,
+        value: { ...roomRes, userIdOfLastAddedOccupantForSubscription: sub.id },
       });
     }
     return roomRes;

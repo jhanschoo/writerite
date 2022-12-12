@@ -7,7 +7,7 @@ export async function getDescendantsOfDeck(prisma: PrismaClient, deckId: string)
   while (frontier.length) {
     const frontierObjects = await prisma.deck.findMany({
       include: {
-        subdecks: {
+        parentDeckIn: {
           select: {
             subdeckId: true,
           },
@@ -20,11 +20,11 @@ export async function getDescendantsOfDeck(prisma: PrismaClient, deckId: string)
       },
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for (const { subdecks, ...deck } of frontierObjects) {
+    for (const { parentDeckIn, ...deck } of frontierObjects) {
       seen[deck.id] = deck;
     }
     frontier = frontierObjects
-      .flatMap(({ subdecks }) => subdecks.map(({ subdeckId }) => subdeckId))
+      .flatMap(({ parentDeckIn }) => parentDeckIn.map(({ subdeckId }) => subdeckId))
       .filter((id) => !(id in seen));
   }
   return Object.values(seen);

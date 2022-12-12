@@ -84,13 +84,13 @@ export const Deck = objectType({
       type: 'Deck',
       description: 'all direct subdecks of this deck',
       async resolve({ id: parentDeckId }, _args, { prisma }) {
-        return prisma.deck.findMany({ where: { parentDecks: { some: { parentDeckId } } } });
+        return prisma.deck.findMany({ where: { subdeckIn: { some: { parentDeckId } } } });
       },
     });
     t.nonNull.int('subdecksCount', {
       description: 'count of all direct subdecks of this deck',
       async resolve({ id: parentDeckId }, _args, { prisma }) {
-        return prisma.deck.count({ where: { parentDecks: { some: { parentDeckId } } } });
+        return prisma.subdeck.count({ where: { parentDeckId } });
       },
     });
     t.nonNull.list.nonNull.field('descendantDecks', {
@@ -358,7 +358,7 @@ export const DeckAddSubdeckMutation = mutationField('deckAddSubdeck', {
     prisma.deck.update({
       where: { id, ownerId: sub.id },
       data: {
-        subdecks: {
+        parentDeckIn: {
           connectOrCreate: {
             where: {
               // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -384,7 +384,7 @@ export const DeckRemoveSubdeckMutation = mutationField('deckRemoveSubdeck', {
       where: { id, ownerId: sub.id },
       data: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
-        subdecks: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
+        parentDeckIn: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
       },
     })
   ),

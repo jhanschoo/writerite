@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["extendedWhereUnique", "interactiveTransactions"]
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 datasource postgresql {
@@ -44,8 +44,8 @@ model Message {
   id        String   @default(cuid()) @id
   roomId    String
   senderId  String?
-  type      String   @default("TEXT")
-  content   Json     @default("\"\"")
+  type      String
+  content   Json
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -55,36 +55,36 @@ model Message {
 }
 
 model Deck {
-  id          String           @default(cuid()) @id
-  ownerId     String
-  name        String           @default("")
+  id           String           @default(cuid()) @id
+  ownerId      String
+  name         String           @default("")
   // description is a JsonObject if not null
-  description Json?
-  promptLang  String           @default("")
-  answerLang  String           @default("")
-  published   Boolean          @default(false)
+  description  Json?
+  promptLang   String           @default("")
+  answerLang   String           @default("")
+  published    Boolean          @default(false)
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
   // unenforced constraint: editedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
-  editedAt    DateTime         @default(now())
+  editedAt     DateTime         @default(now())
   // usedAt represents the time the deck was last served in a room, or edited, etc.
   // unenforced constraint: usedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
-  usedAt      DateTime         @default(now()) @updatedAt
+  usedAt       DateTime         @default(now()) @updatedAt
 
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @default(now()) @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @default(now()) @updatedAt
 
-  owner       User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  cards       Card[]
-  rooms       Room[]
+  owner        User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  cards        Card[]
+  rooms        Room[]
   // sortData is an array of IDs, indicating that cards of this deck with IDs
   //   in this array should be displayed in the order they appear in the array.
-  sortData    String[]
-  subdecks    Subdeck[]        @relation("DeckTo_Subdeck_parentDeckId")
-  parentDecks Subdeck[]        @relation("DeckTo_Subdeck_subdeckId")
-  records     UserDeckRecord[]
+  sortData     String[]
+  parentDeckIn Subdeck[]        @relation("DeckTo_Subdeck_parentDeckId")
+  subdeckIn    Subdeck[]        @relation("DeckTo_Subdeck_subdeckId")
+  records      UserDeckRecord[]
 }
 
 //See: https://github.com/prisma/prisma/issues/2057
@@ -104,22 +104,39 @@ model Occupant {
 }
 
 model Room {
-  id             String     @default(cuid()) @id
-  ownerId        String
+  id              String     @default(cuid()) @id
+  ownerId         String
   // slug is a string for the URL with the following property
   // when state is non-terminal, slug is some short cuid
   // when state is terminal, slug is null
-  slug           String?    @unique
-  deckId         String?
-  state          RoomState  @default(WAITING)
+  slug            String?    @unique
+  deckId          String?
+  state           RoomState  @default(WAITING)
 
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @default(now()) @updatedAt
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @default(now()) @updatedAt
 
-  deck           Deck?      @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  owner          User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  occupants      Occupant[] @relation("RoomTo_Occupant")
-  chatMsgs       Message[]
+  deck            Deck?      @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  owner           User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  occupants       Occupant[] @relation("RoomTo_Occupant")
+  chatMsgs        Message[]
+  roomInvitations RoomInvitation[]
+}
+
+model RoomInvitation {
+  id         String     @default(cuid()) @id
+  senderId   String
+  receiverId String
+  roomId     String
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  sender     User     @relation("UserTo_RoomInvitation_senderId", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User     @relation("UserTo_RoomInvitation_receiverId", fields: [receiverId], references: [id], onDelete: Cascade)
+  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  @@unique([senderId, receiverId, roomId])
+  @@index([receiverId])
 }
 
 //See: https://github.com/prisma/prisma/issues/2057
@@ -131,8 +148,8 @@ model Subdeck {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
 
-  parentDeck   Deck?    @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id], onDelete: Cascade)
-  subdeck      Deck?    @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id], onDelete: Cascade)
+  parentDeck   Deck     @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id], onDelete: Cascade)
+  subdeck      Deck     @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id], onDelete: Cascade)
 
   @@unique([parentDeckId, subdeckId])
   @@index([subdeckId])
@@ -157,8 +174,10 @@ model User {
   cardRecords    UserCardRecord[]
   deckRecords    UserDeckRecord[]
 
-  befriendeds    Friendship[]        @relation("UserTo_Friendship_befrienderId")
-  befrienders    Friendship[]        @relation("UserTo_Friendship_befriendedId")
+  befrienderIn   Friendship[]        @relation("UserTo_Friendship_befrienderId")
+  befriendedIn   Friendship[]        @relation("UserTo_Friendship_befriendedId")
+  sentRoomInvitations     RoomInvitation[]        @relation("UserTo_RoomInvitation_senderId")
+  receivedRoomInvitations RoomInvitation[]        @relation("UserTo_RoomInvitation_receiverId")
 }
 
 model Friendship {
@@ -196,7 +215,7 @@ model UserDeckRecord {
   userId    String
   deckId    String
   // notes is a JsonObject
-  notes     Json     @default("{}")
+  notes     Json?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

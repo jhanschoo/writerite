@@ -7,3 +7,4 @@ export * from './Room';
 export * from './Session';
 export * from './User';
 export * from './scalars';
+export * from './RoomInvitation';

@@ -9,9 +9,13 @@ import {
 } from 'nexus';
 import { guardValidUser } from '../service/authorization';
 import { Roles } from '../service/userJWT';
-import { Occupant, Room } from '../types/backingTypes';
+import { Room } from '../types/backingTypes';
 import type { Context } from '../context';
-import { userLacksPermissionsErrorFactory, userNotLoggedInErrorFactory } from '../error';
+import {
+  invalidArgumentsErrorFactory,
+  userLacksPermissionsErrorFactory,
+  userNotLoggedInErrorFactory,
+} from '../error';
 import { guardLoggedIn } from '../service/authorization/guardLoggedIn';
 import { roomFindOccupyingActiveOfUser } from '../service/room/roomFindOccupyingActiveOfUser';
 import { invalidateByUserId } from '../service/session';
@@ -70,11 +74,13 @@ export const User = objectType({
         if (!sub.roles.includes(Roles.Admin) && befrienderId !== sub.id) {
           throw userLacksPermissionsErrorFactory();
         }
-        return prisma.user.findMany({ where: {
-          befrienders: { some: { befrienderId } },
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          NOT: { befriendeds: { some: { befriendedId: befrienderId } } },
-        } });
+        return prisma.user.findMany({
+          where: {
+            befriendedIn: { some: { befrienderId } },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            NOT: { befrienderIn: { some: { befriendedId: befrienderId } } },
+          },
+        });
       }),
     });
     t.nonNull.int('befriendedsCount', {
@@ -83,11 +89,13 @@ export const User = objectType({
         if (!sub.roles.includes(Roles.Admin) && befrienderId !== sub.id) {
           throw userLacksPermissionsErrorFactory();
         }
-        return prisma.user.count({ where: {
-          befrienders: { some: { befrienderId } },
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          NOT: { befriendeds: { some: { befriendedId: befrienderId } } },
-        } });
+        return prisma.user.count({
+          where: {
+            befriendedIn: { some: { befrienderId } },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            NOT: { befrienderIn: { some: { befriendedId: befrienderId } } },
+          },
+        });
       }),
     });
     t.nonNull.list.nonNull.field('befrienders', {
@@ -97,24 +105,29 @@ export const User = objectType({
         if (!sub.roles.includes(Roles.Admin) && befriendedId !== sub.id) {
           throw userLacksPermissionsErrorFactory();
         }
-        return prisma.user.findMany({ where: {
-          befriendeds: { some: { befriendedId } },
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          NOT: { befrienders: { some: { befrienderId: befriendedId } } },
-        } });
+        return prisma.user.findMany({
+          where: {
+            befrienderIn: { some: { befriendedId } },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            NOT: { befriendedIn: { some: { befrienderId: befriendedId } } },
+          },
+        });
       }),
     });
     t.nonNull.int('befriendersCount', {
-      description: 'count of users who have unilaterally befriended this user without reciprocation',
+      description:
+        'count of users who have unilaterally befriended this user without reciprocation',
       resolve: guardValidUser(({ id: befriendedId }, _args, { prisma, sub }) => {
         if (!sub.roles.includes(Roles.Admin) && befriendedId !== sub.id) {
           throw userLacksPermissionsErrorFactory();
         }
-        return prisma.user.count({ where: {
-          befriendeds: { some: { befriendedId } },
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          NOT: { befrienders: { some: { befrienderId: befriendedId } } },
-        } });
+        return prisma.user.count({
+          where: {
+            befrienderIn: { some: { befriendedId } },
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            NOT: { befriendedIn: { some: { befrienderId: befriendedId } } },
+          },
+        });
       }),
     });
     t.nonNull.list.nonNull.field('friends', {
@@ -126,8 +139,8 @@ export const User = objectType({
         }
         return prisma.user.findMany({
           where: {
-            befriendeds: { some: { befriendedId: userId } },
-            befrienders: { some: { befrienderId: userId } },
+            befrienderIn: { some: { befriendedId: userId } },
+            befriendedIn: { some: { befrienderId: userId } },
           },
         });
       }),
@@ -140,8 +153,8 @@ export const User = objectType({
         }
         return prisma.user.count({
           where: {
-            befriendeds: { some: { befriendedId: userId } },
-            befrienders: { some: { befrienderId: userId } },
+            befrienderIn: { some: { befriendedId: userId } },
+            befriendedIn: { some: { befrienderId: userId } },
           },
         });
       }),
@@ -200,20 +213,23 @@ export const UserBefriendUserMutation = mutationField('userBefriendUser', {
   args: {
     befriendedId: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_source, { befriendedId }, { prisma, sub: { id } }) =>
-    prisma.user.update({
-      where: { id },
+  resolve: guardValidUser(async (_source, { befriendedId }, { prisma, sub: { id } }) => {
+    if (befriendedId === id) {
+      throw invalidArgumentsErrorFactory('Yor cannot befriend yourself!');
+    }
+    return prisma.user.update({
+      where: { id: befriendedId },
       data: {
-        befriendeds: {
+        befriendedIn: {
           connectOrCreate: {
             where: {
               // eslint-disable-next-line @typescript-eslint/naming-convention
               befrienderId_befriendedId: { befrienderId: id, befriendedId },
             },
-            create: { befriended: { connect: { id: befriendedId } } },
+            create: { befriender: { connect: { id } } },
           },
         },
       },
-    })
-  ),
+    });
+  }),
 });

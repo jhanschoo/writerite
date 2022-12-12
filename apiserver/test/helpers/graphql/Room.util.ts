@@ -1,7 +1,7 @@
 import { WrServer } from '../../../src/graphqlApp';
 import { gql, testQuery, testSubscription } from '../misc';
 import {
-  RoomAddOccupantMutationVariables,
+  RoomJoinMutationVariables,
   RoomQueryVariables,
   RoomSetDeckMutationVariables,
   RoomSetStateMutationVariables,
@@ -75,16 +75,13 @@ export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMu
   });
 }
 
-export function mutationRoomAddOccupant(
-  server: WrServer,
-  variables: RoomAddOccupantMutationVariables
-) {
+export function mutationRoomJoin(server: WrServer, variables: RoomJoinMutationVariables) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomAddOccupantMutationVariables>({
+  return testQuery<RoomJoinMutationVariables>({
     server,
     document: gql`
-      mutation RoomAddOccupant($id: ID!, $occupantId: ID!) {
-        roomAddOccupant(id: $id, occupantId: $occupantId) {
+      mutation RoomJoin($id: ID!) {
+        roomJoin(id: $id) {
           id
           ownerId
           state

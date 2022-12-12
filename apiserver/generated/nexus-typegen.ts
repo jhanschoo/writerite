@@ -83,7 +83,7 @@ export interface NexusGenEnums {
   MessageContentType: "CONFIG" | "CONTEST_SCORE" | "ROUND_SCORE" | "ROUND_START" | "ROUND_WIN" | "TEXT"
   MessageUpdateOperation: "messageCreate"
   RoomState: "SERVED" | "SERVING" | "WAITING"
-  RoomUpdateOperation: "roomAddOccupant" | "roomSetDeck" | "roomSetState"
+  RoomUpdateOperation: "roomJoin" | "roomSetDeck" | "roomSetState"
 }
 
 export interface NexusGenScalars {
@@ -111,6 +111,12 @@ export interface NexusGenObjects {
   Mutation: {};
   Query: {};
   Room: p.Room;
+  RoomInvitation: { // root type
+    id: string; // ID!
+    receiverId: string; // ID!
+    roomId: string; // ID!
+    senderId: string; // ID!
+  }
   RoomUpdate: { // root type
     operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
     value: NexusGenRootTypes['Room']; // Room!
@@ -200,9 +206,10 @@ export interface NexusGenFieldTypes {
     ownCardRecordSet: NexusGenRootTypes['UserCardRecord'] | null; // UserCardRecord
     ownDeckRecordSet: NexusGenRootTypes['UserDeckRecord']; // UserDeckRecord!
     refresh: NexusGenRootTypes['SessionInfo'] | null; // SessionInfo
-    roomAddOccupant: NexusGenRootTypes['Room']; // Room!
     roomCleanUpDead: number; // Int!
     roomCreate: NexusGenRootTypes['Room']; // Room!
+    roomInvitationSend: NexusGenRootTypes['RoomInvitation'] | null; // RoomInvitation
+    roomJoin: NexusGenRootTypes['Room']; // Room!
     roomSetDeck: NexusGenRootTypes['Room']; // Room!
     roomSetState: NexusGenRootTypes['Room']; // Room!
     userBefriendUser: NexusGenRootTypes['User']; // User!
@@ -235,6 +242,12 @@ export interface NexusGenFieldTypes {
     state: NexusGenEnums['RoomState']; // RoomState!
     userIdOfLastAddedOccupantForSubscription: string | null; // ID
     userOfLastAddedOccupantForSubscription: NexusGenRootTypes['User'] | null; // User
+  }
+  RoomInvitation: { // field return type
+    id: string; // ID!
+    receiverId: string; // ID!
+    roomId: string; // ID!
+    senderId: string; // ID!
   }
   RoomUpdate: { // field return type
     operation: NexusGenEnums['RoomUpdateOperation']; // RoomUpdateOperation!
@@ -339,9 +352,10 @@ export interface NexusGenFieldTypeNames {
     ownCardRecordSet: 'UserCardRecord'
     ownDeckRecordSet: 'UserDeckRecord'
     refresh: 'SessionInfo'
-    roomAddOccupant: 'Room'
     roomCleanUpDead: 'Int'
     roomCreate: 'Room'
+    roomInvitationSend: 'RoomInvitation'
+    roomJoin: 'Room'
     roomSetDeck: 'Room'
     roomSetState: 'Room'
     userBefriendUser: 'User'
@@ -374,6 +388,12 @@ export interface NexusGenFieldTypeNames {
     state: 'RoomState'
     userIdOfLastAddedOccupantForSubscription: 'ID'
     userOfLastAddedOccupantForSubscription: 'User'
+  }
+  RoomInvitation: { // field return type name
+    id: 'ID'
+    receiverId: 'ID'
+    roomId: 'ID'
+    senderId: 'ID'
   }
   RoomUpdate: { // field return type name
     operation: 'RoomUpdateOperation'
@@ -490,9 +510,12 @@ export interface NexusGenArgTypes {
     refresh: { // args
       token: NexusGenScalars['JWT']; // JWT!
     }
-    roomAddOccupant: { // args
+    roomInvitationSend: { // args
+      receiverId: string; // ID!
+      roomId: string; // ID!
+    }
+    roomJoin: { // args
       id: string; // ID!
-      occupantId: string; // ID!
     }
     roomSetDeck: { // args
       deckId: string; // ID!

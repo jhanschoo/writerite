@@ -135,15 +135,6 @@ export type Mutation = {
   ownCardRecordSet?: Maybe<UserCardRecord>;
   ownDeckRecordSet: UserDeckRecord;
   refresh?: Maybe<SessionInfo>;
-  /**
-   * @invalidatesTokens(
-   *     reason: "occupying existing room"
-   *   )
-   *   @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   */
-  roomAddOccupant: Room;
   roomCleanUpDead: Scalars['Int'];
   /**
    * @invalidatesTokens(
@@ -154,6 +145,16 @@ export type Mutation = {
    *   )
    */
   roomCreate: Room;
+  roomInvitationSend?: Maybe<RoomInvitation>;
+  /**
+   * @invalidatesTokens(
+   *     reason: "occupying existing room"
+   *   )
+   *   @triggersSubscriptions(
+   *     signatures: ["activeRoomUpdates"]
+   *   )
+   */
+  roomJoin: Room;
   /**
    * @triggersSubscriptions(
    *     signatures: ["activeRoomUpdates"]
@@ -286,9 +287,14 @@ export type MutationRefreshArgs = {
 };
 
 
-export type MutationRoomAddOccupantArgs = {
+export type MutationRoomInvitationSendArgs = {
+  receiverId: Scalars['ID'];
+  roomId: Scalars['ID'];
+};
+
+
+export type MutationRoomJoinArgs = {
   id: Scalars['ID'];
-  occupantId: Scalars['ID'];
 };
 
 
@@ -386,10 +392,18 @@ export type Room = {
   ownerId: Scalars['ID'];
   slug?: Maybe<Scalars['String']>;
   state: RoomState;
-  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomAddOccupant */
+  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomJoin */
   userIdOfLastAddedOccupantForSubscription?: Maybe<Scalars['ID']>;
-  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomAddOccupant */
+  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomJoin */
   userOfLastAddedOccupantForSubscription?: Maybe<User>;
+};
+
+export type RoomInvitation = {
+  __typename?: 'RoomInvitation';
+  id: Scalars['ID'];
+  receiverId: Scalars['ID'];
+  roomId: Scalars['ID'];
+  senderId: Scalars['ID'];
 };
 
 export enum RoomState {
@@ -405,7 +419,7 @@ export type RoomUpdate = {
 };
 
 export enum RoomUpdateOperation {
-  RoomAddOccupant = 'roomAddOccupant',
+  RoomJoin = 'roomJoin',
   RoomSetDeck = 'roomSetDeck',
   RoomSetState = 'roomSetState'
 }
@@ -516,6 +530,13 @@ export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type DecksQuery = { __typename?: 'Query', decks: Array<{ __typename?: 'Deck', id: string }> };
 
+export type UserBefriendUserMutationVariables = Exact<{
+  befriendedId: Scalars['ID'];
+}>;
+
+
+export type UserBefriendUserMutation = { __typename?: 'Mutation', userBefriendUser: { __typename?: 'User', id: string } };
+
 export type HealthQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -563,13 +584,12 @@ export type RoomSetStateMutationVariables = Exact<{
 
 export type RoomSetStateMutation = { __typename?: 'Mutation', roomSetState: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null } };
 
-export type RoomAddOccupantMutationVariables = Exact<{
+export type RoomJoinMutationVariables = Exact<{
   id: Scalars['ID'];
-  occupantId: Scalars['ID'];
 }>;
 
 
-export type RoomAddOccupantMutation = { __typename?: 'Mutation', roomAddOccupant: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+export type RoomJoinMutation = { __typename?: 'Mutation', roomJoin: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
 
 export type RoomQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -589,6 +609,14 @@ export type RoomUpdatesByRoomSlugSubscriptionVariables = Exact<{
 
 
 export type RoomUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', roomUpdatesByRoomSlug: { __typename?: 'RoomUpdate', operation: RoomUpdateOperation, value: { __typename?: 'Room', id: string, deckId?: string | null, userIdOfLastAddedOccupantForSubscription?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string } | null, userOfLastAddedOccupantForSubscription?: { __typename?: 'User', id: string } | null } } };
+
+export type RoomInvitationSendMutationVariables = Exact<{
+  receiverId: Scalars['ID'];
+  roomId: Scalars['ID'];
+}>;
+
+
+export type RoomInvitationSendMutation = { __typename?: 'Mutation', roomInvitationSend?: { __typename?: 'RoomInvitation', id: string } | null };
 
 export type CreateUserMutationVariables = Exact<{
   code: Scalars['String'];
