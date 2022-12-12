@@ -21,7 +21,7 @@ import { useLogout } from '@features/signin/hooks/useLogout';
 import { FC, PropsWithChildren, useState } from 'react';
 import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
-import { IconLogout, IconMoonStars, IconSun } from '@tabler/icons';
+import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons';
 import { useCurrentUser } from '@/hooks';
 import { ProfilePicture } from '@/features/profilePicture/components';
 import { useMediaQuery } from '@mantine/hooks';
@@ -49,7 +49,7 @@ const useShellStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'
 const useDrawerButtonStyles = createStyles((theme) => {
   return {
     inner: {
-      justifyContent: 'flex-start'
+      justifyContent: 'flex-start',
     },
   };
 });
@@ -82,6 +82,9 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
             <BrandText />
           </Link>
           <Space sx={{ flexGrow: 1 }} />
+          <ActionIcon>
+            <IconBell />
+          </ActionIcon>
           {currentUser && (
             <>
               <Menu opened={!useDrawer && showProfileOptions} onChange={setShowProfileOptions}>
@@ -100,22 +103,45 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
                   >
                     <Text>Use{colorScheme === 'light' ? ' dark ' : ' light '}theme</Text>
                   </Menu.Item>
-                  <Menu.Item icon={<IconLogout />} onClick={logout}>Logout</Menu.Item>
+                  <Menu.Item icon={<IconLogout />} onClick={logout}>
+                    Logout
+                  </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
               <Drawer
                 opened={useDrawer && showProfileOptions}
                 onClose={() => setShowProfileOptions(false)}
                 position="right"
-                title={<Group><ProfilePicture user={currentUser} /><Text fw="bolder">{currentUser.name}</Text></Group>}
+                title={
+                  <Group>
+                    <ProfilePicture user={currentUser} />
+                    <Text fw="bolder">{currentUser.name}</Text>
+                  </Group>
+                }
                 padding="xl"
                 size="100%"
               >
                 <Stack spacing={0}>
-                  <Button size="xl" variant="subtle" onClick={() => toggleColorScheme()} leftIcon={colorScheme === 'light' ? <IconMoonStars size={20} /> : <IconSun size={20} />} classNames={drawerButtonClasses}>
-                  Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
+                  <Button
+                    size="xl"
+                    variant="subtle"
+                    onClick={() => toggleColorScheme()}
+                    leftIcon={
+                      colorScheme === 'light' ? <IconMoonStars size={20} /> : <IconSun size={20} />
+                    }
+                    classNames={drawerButtonClasses}
+                  >
+                    Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
                   </Button>
-                  <Button size="xl" variant="subtle" onClick={logout} leftIcon={<IconLogout size={20} />} classNames={drawerButtonClasses}>Logout</Button>
+                  <Button
+                    size="xl"
+                    variant="subtle"
+                    onClick={logout}
+                    leftIcon={<IconLogout size={20} />}
+                    classNames={drawerButtonClasses}
+                  >
+                    Logout
+                  </Button>
                 </Stack>
               </Drawer>
             </>
