@@ -540,6 +540,7 @@ export interface NexusGenArgTypes {
     decks: { // args
       cursor?: string | null; // ID
       scope?: NexusGenEnums['DecksQueryScope'] | null; // DecksQueryScope
+      stoplist?: string[] | null; // [ID!]
       take?: number | null; // Int
       titleFilter?: string | null; // String
     }

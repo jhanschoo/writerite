@@ -344,6 +344,7 @@ export type QueryDeckArgs = {
 export type QueryDecksArgs = {
   cursor?: InputMaybe<Scalars['ID']>;
   scope?: InputMaybe<DecksQueryScope>;
+  stoplist?: InputMaybe<Array<Scalars['ID']>>;
   take?: InputMaybe<Scalars['Int']>;
   titleFilter?: InputMaybe<Scalars['String']>;
 };

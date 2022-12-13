@@ -196,7 +196,7 @@ type Query {
   deck(id: ID!): Deck!
 
   """implicit limit of 60"""
-  decks(cursor: ID, scope: DecksQueryScope, take: Int, titleFilter: String): [Deck!]!
+  decks(cursor: ID, scope: DecksQueryScope, stoplist: [ID!], take: Int, titleFilter: String): [Deck!]!
   health: String!
   message(id: ID!): Message!
   messagesOfRoom(id: ID!): [Message!]!

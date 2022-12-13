@@ -186,6 +186,7 @@ export const DecksQuery = queryField('decks', {
     cursor: idArg({ undefinedOnly: true }),
     take: intArg({ undefinedOnly: true }),
     titleFilter: stringArg({ undefinedOnly: true }),
+    stoplist: list(nonNull(idArg())),
     scope: arg({
       type: 'DecksQueryScope',
       undefinedOnly: true,
@@ -193,7 +194,7 @@ export const DecksQuery = queryField('decks', {
   },
   description: 'implicit limit of 60',
   resolve: guardValidUser(
-    async (_root, { cursor, take, titleFilter, scope }, { prisma, sub }, _info) => {
+    async (_root, { cursor, take, titleFilter, stoplist, scope }, { prisma, sub }, _info) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const OR: any[] = [
         { ownerId: sub.id },
@@ -222,6 +223,7 @@ export const DecksQuery = queryField('decks', {
                 contains: titleFilter,
               }
             : undefined,
+          id: stoplist ? { notIn: stoplist } : undefined,
         },
         include: {
           owner: true,
