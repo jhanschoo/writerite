@@ -5,7 +5,6 @@ import {
   DeckEditNameMutationVariables,
   DeckQueryVariables,
   DeckRemoveSubdeckMutationVariables,
-  DeckUsedMutationVariables,
 } from '../../../generated/typescript-operations';
 
 export function mutationDeckCreateEmpty(server: WrServer) {
@@ -24,7 +23,6 @@ export function mutationDeckCreateEmpty(server: WrServer) {
           promptLang
           published
           sortData
-          usedAt
         }
       }
     `,
@@ -84,21 +82,6 @@ export function mutationDeckEditName(server: WrServer, variables: DeckEditNameMu
   });
 }
 
-export function mutationDeckUsed(server: WrServer, variables: DeckUsedMutationVariables) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<DeckUsedMutationVariables>({
-    server,
-    document: gql`
-      mutation DeckUsed($id: ID!) {
-        deckUsed(id: $id) {
-          id
-        }
-      }
-    `,
-    variables,
-  });
-}
-
 export function queryDeckScalars(server: WrServer, id: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckQueryVariables>({
@@ -115,7 +98,6 @@ export function queryDeckScalars(server: WrServer, id: string) {
           promptLang
           published
           sortData
-          usedAt
         }
       }
     `,

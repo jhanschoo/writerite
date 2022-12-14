@@ -71,8 +71,12 @@ export type Deck = {
   subdecks: Array<Deck>;
   /** count of all direct subdecks of this deck */
   subdecksCount: Scalars['Int'];
-  usedAt: Scalars['DateTime'];
 };
+
+export enum DecksQueryOrder {
+  EditedRecency = 'EDITED_RECENCY',
+  UsedRecency = 'USED_RECENCY'
+}
 
 export enum DecksQueryScope {
   Owned = 'OWNED',
@@ -123,7 +127,6 @@ export type Mutation = {
   deckDelete: Deck;
   deckEdit: Deck;
   deckRemoveSubdeck: Deck;
-  deckUsed: Deck;
   finalizeOauthSignin?: Maybe<SessionInfo>;
   initializeOauthSignin: Scalars['String'];
   /**
@@ -250,11 +253,6 @@ export type MutationDeckRemoveSubdeckArgs = {
 };
 
 
-export type MutationDeckUsedArgs = {
-  id: Scalars['ID'];
-};
-
-
 export type MutationFinalizeOauthSigninArgs = {
   code: Scalars['String'];
   nonce: Scalars['String'];
@@ -343,6 +341,7 @@ export type QueryDeckArgs = {
 
 export type QueryDecksArgs = {
   cursor?: InputMaybe<Scalars['ID']>;
+  order?: InputMaybe<DecksQueryOrder>;
   scope?: InputMaybe<DecksQueryScope>;
   stoplist?: InputMaybe<Array<Scalars['ID']>>;
   take?: InputMaybe<Scalars['Int']>;
@@ -486,7 +485,7 @@ export type UserDeckRecord = {
 export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string> } };
 
 export type DeckAddSubdeckMutationVariables = Exact<{
   id: Scalars['ID'];
@@ -512,19 +511,12 @@ export type DeckEditNameMutationVariables = Exact<{
 
 export type DeckEditNameMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', id: string, name: string } };
 
-export type DeckUsedMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type DeckUsedMutation = { __typename?: 'Mutation', deckUsed: { __typename?: 'Deck', id: string } };
-
 export type DeckQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string>, usedAt: string } };
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string> } };
 
 export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
 

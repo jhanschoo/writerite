@@ -68,10 +68,6 @@ model Deck {
   // unenforced constraint: editedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
   editedAt     DateTime         @default(now())
-  // usedAt represents the time the deck was last served in a room, or edited, etc.
-  // unenforced constraint: usedAt > UserCardRecord.updatedAt,
-  //   for all UserCardRecords belonging to cards of this deck.
-  usedAt       DateTime         @default(now()) @updatedAt
 
   createdAt    DateTime         @default(now())
   updatedAt    DateTime         @default(now()) @updatedAt
@@ -211,17 +207,18 @@ model UserCardRecord {
 }
 
 model UserDeckRecord {
-  id        String   @default(cuid()) @id
-  userId    String
-  deckId    String
+  id         String   @default(cuid()) @id
+  userId     String
+  deckId     String
   // notes is a JsonObject
-  notes     Json?
+  notes      Json?
+  deckUsedAt DateTime @default(now())
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
 
-  deck      Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck       Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, deckId])
 }

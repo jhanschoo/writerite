@@ -63,7 +63,6 @@ export const Deck = objectType({
     t.nonNull.list.nonNull.string('sortData');
     t.nonNull.dateTime('createdAt');
     t.nonNull.dateTime('editedAt');
-    t.nonNull.dateTime('usedAt');
 
     t.nonNull.field('owner', {
       type: 'User',
@@ -184,28 +183,40 @@ export const DecksQuery = queryField('decks', {
   type: nonNull(list(nonNull('Deck'))),
   args: {
     cursor: idArg({ undefinedOnly: true }),
-    take: intArg({ undefinedOnly: true }),
-    titleFilter: stringArg({ undefinedOnly: true }),
-    stoplist: list(nonNull(idArg())),
+    order: arg({
+      type: 'DecksQueryOrder',
+      description: 'how results are ordered; if undefined, defaults to USED_RECENCY',
+    }),
     scope: arg({
       type: 'DecksQueryScope',
       undefinedOnly: true,
     }),
+    stoplist: list(nonNull(idArg())),
+    take: intArg({ undefinedOnly: true }),
+    titleFilter: stringArg({ undefinedOnly: true }),
   },
   description: 'implicit limit of 60',
   resolve: guardValidUser(
-    async (_root, { cursor, take, titleFilter, stoplist, scope }, { prisma, sub }, _info) => {
+    async (
+      _root,
+      { cursor, order, scope, stoplist, take, titleFilter },
+      { prisma, sub },
+      _info
+    ) => {
+      if (order === 'USED_RECENCY') {
+        throw new Error('not implemented');
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const OR: any[] = [
+      const OR = [
         { ownerId: sub.id },
         { cards: { some: { records: { some: { userId: sub.id } } } } },
         { published: true },
       ];
       switch (scope) {
-        case 'PARTICIPATED':
+        case 'VISIBLE':
           OR.length = 3;
           break;
-        case 'VISIBLE':
+        case 'PARTICIPATED':
           OR.length = 2;
           break;
         case 'OWNED':
@@ -225,6 +236,7 @@ export const DecksQuery = queryField('decks', {
             : undefined,
           id: stoplist ? { notIn: stoplist } : undefined,
         },
+        orderBy: { editedAt: 'desc' },
         include: {
           owner: true,
           cards: true,
@@ -237,6 +249,11 @@ export const DecksQuery = queryField('decks', {
 export const DecksQueryScope = enumType({
   name: 'DecksQueryScope',
   members: ['OWNED', 'PARTICIPATED', 'VISIBLE'],
+});
+
+export const DecksQueryOrder = enumType({
+  name: 'DecksQueryOrder',
+  members: ['EDITED_RECENCY', 'USED_RECENCY'],
 });
 
 export const OwnDeckRecordQuery = queryField('ownDeckRecord', {
@@ -392,21 +409,6 @@ export const DeckRemoveSubdeckMutation = mutationField('deckRemoveSubdeck', {
       data: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         parentDeckIn: { delete: { parentDeckId_subdeckId: { parentDeckId: id, subdeckId } } },
-      },
-    })
-  ),
-});
-
-export const DeckUsedMutation = mutationField('deckUsed', {
-  type: nonNull('Deck'),
-  args: {
-    id: nonNull(idArg()),
-  },
-  resolve: guardValidUser(async (_source, { id }, { prisma, sub }) =>
-    prisma.deck.update({
-      where: { id, ownerId: sub.id },
-      data: {
-        usedAt: new Date(),
       },
     })
   ),

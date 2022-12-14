@@ -61,7 +61,11 @@ type Deck {
 
   """count of all direct subdecks of this deck"""
   subdecksCount: Int!
-  usedAt: DateTime!
+}
+
+enum DecksQueryOrder {
+  EDITED_RECENCY
+  USED_RECENCY
 }
 
 enum DecksQueryScope {
@@ -130,7 +134,6 @@ type Mutation {
   deckDelete(id: ID!): Deck!
   deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!
-  deckUsed(id: ID!): Deck!
   finalizeOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): SessionInfo
   initializeOauthSignin: String!
 
@@ -196,7 +199,16 @@ type Query {
   deck(id: ID!): Deck!
 
   """implicit limit of 60"""
-  decks(cursor: ID, scope: DecksQueryScope, stoplist: [ID!], take: Int, titleFilter: String): [Deck!]!
+  decks(
+    cursor: ID
+
+    """how results are ordered; if undefined, defaults to USED_RECENCY"""
+    order: DecksQueryOrder
+    scope: DecksQueryScope
+    stoplist: [ID!]
+    take: Int
+    titleFilter: String
+  ): [Deck!]!
   health: String!
   message(id: ID!): Message!
   messagesOfRoom(id: ID!): [Message!]!

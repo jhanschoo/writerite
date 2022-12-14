@@ -79,6 +79,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  DecksQueryOrder: "EDITED_RECENCY" | "USED_RECENCY"
   DecksQueryScope: "OWNED" | "PARTICIPATED" | "VISIBLE"
   MessageContentType: "CONFIG" | "CONTEST_SCORE" | "ROUND_SCORE" | "ROUND_START" | "ROUND_WIN" | "TEXT"
   MessageUpdateOperation: "messageCreate"
@@ -172,7 +173,6 @@ export interface NexusGenFieldTypes {
     sortData: string[]; // [String!]!
     subdecks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     subdecksCount: number; // Int!
-    usedAt: NexusGenScalars['DateTime']; // DateTime!
   }
   Message: { // field return type
     content: NexusGenScalars['JSON']; // JSON!
@@ -199,7 +199,6 @@ export interface NexusGenFieldTypes {
     deckDelete: NexusGenRootTypes['Deck']; // Deck!
     deckEdit: NexusGenRootTypes['Deck']; // Deck!
     deckRemoveSubdeck: NexusGenRootTypes['Deck']; // Deck!
-    deckUsed: NexusGenRootTypes['Deck']; // Deck!
     finalizeOauthSignin: NexusGenRootTypes['SessionInfo'] | null; // SessionInfo
     initializeOauthSignin: string; // String!
     messageCreate: NexusGenRootTypes['Message']; // Message!
@@ -318,7 +317,6 @@ export interface NexusGenFieldTypeNames {
     sortData: 'String'
     subdecks: 'Deck'
     subdecksCount: 'Int'
-    usedAt: 'DateTime'
   }
   Message: { // field return type name
     content: 'JSON'
@@ -345,7 +343,6 @@ export interface NexusGenFieldTypeNames {
     deckDelete: 'Deck'
     deckEdit: 'Deck'
     deckRemoveSubdeck: 'Deck'
-    deckUsed: 'Deck'
     finalizeOauthSignin: 'SessionInfo'
     initializeOauthSignin: 'String'
     messageCreate: 'Message'
@@ -485,9 +482,6 @@ export interface NexusGenArgTypes {
       id: string; // ID!
       subdeckId: string; // ID!
     }
-    deckUsed: { // args
-      id: string; // ID!
-    }
     finalizeOauthSignin: { // args
       code: string; // String!
       nonce: string; // String!
@@ -539,6 +533,7 @@ export interface NexusGenArgTypes {
     }
     decks: { // args
       cursor?: string | null; // ID
+      order?: NexusGenEnums['DecksQueryOrder'] | null; // DecksQueryOrder
       scope?: NexusGenEnums['DecksQueryScope'] | null; // DecksQueryScope
       stoplist?: string[] | null; // [ID!]
       take?: number | null; // Int
