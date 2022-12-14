@@ -1,9 +1,10 @@
 import { FC, KeyboardEvent } from 'react';
 import { MessageContentType, MessageCreateDocument, RoomDetailFragment } from '@generated/graphql';
-import { ActionIcon, createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
+import { createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
 import { IconSend } from '@tabler/icons';
 import { useForm } from '@mantine/form';
 import { useMutation } from 'urql';
+import { ActionIcon } from '@/components/ActionIcon';
 
 interface Props {
   room?: RoomDetailFragment;
@@ -60,7 +61,7 @@ export const ManageRoomPrimaryInput: FC<Props> = ({ room }) => {
             classNames={classes}
             rightSection={
               <Group>
-                <ActionIcon type="submit" variant="subtle" color="dark" title="Save">
+                <ActionIcon type="submit" variant="subtle" title="Save">
                   <IconSend />
                 </ActionIcon>
               </Group>

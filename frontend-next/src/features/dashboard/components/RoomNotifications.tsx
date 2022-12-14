@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { alertGradient, alertGradientHover } from '@/lib/mantine/fns';
 import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
 import { ProfilePicture } from '@/features/profilePicture/components';
+import { FriendActivity } from './FriendActivity';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -108,5 +109,8 @@ export const RoomNotifications: FC<Props> = ({ wrapper: Wrapper }) => {
       <RoomItem room={room} />
     </Wrapper>
   ));
-  return <>{rooms}</>;
+  if (rooms.length) {
+    return <>{rooms}</>;
+  }
+  return <FriendActivity />;
 };

@@ -1,5 +1,17 @@
-query Decks($cursor: ID, $scope: DecksQueryScope, $take: Int, $titleFilter: String) {
-  decks(cursor: $cursor, scope: $scope, take: $take, titleFilter: $titleFilter) {
+query Decks(
+  $cursor: ID
+  $scope: DecksQueryScope
+  $stoplist: [ID!]
+  $take: Int
+  $titleFilter: String
+) {
+  decks(
+    cursor: $cursor
+    scope: $scope
+    stoplist: $stoplist
+    take: $take
+    titleFilter: $titleFilter
+  ) {
     ...deckSummary
   }
 }

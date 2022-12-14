@@ -22,6 +22,7 @@ import {
 import Link from 'next/link';
 import { IconSearch, IconPlus } from '@tabler/icons';
 import { formatISO, parseISO } from 'date-fns';
+import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -119,13 +120,7 @@ const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
 
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const { classes } = useStyles();
-  const [{ data, fetching, error }, refetchDecks] = useQuery({
-    query: DecksDocument,
-    variables: {
-      scope: DecksQueryScope.Owned,
-      take: USER_DECK_SUMMARY_DECKS_NUM,
-    },
-  });
+  const [{ data, fetching, error }, refetchDecks] = useQueryRecentDecks();
   const decks = (data?.decks || []).flatMap((deck, index) => [
     <Divider key={`${index}-divider`} />,
     <Card.Section key={index}>

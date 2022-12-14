@@ -252,7 +252,7 @@ export const OwnDeckRecordQuery = queryField('ownDeckRecord', {
 
 export const deckCreateSchema = z.object({
   name: z.string().trim().optional(),
-  description: z.object({}).optional(),
+  description: jsonObjectSchema.nullable().optional(),
   promptLang: z.string().trim().min(2).optional(),
   answerLang: z.string().trim().min(2).optional(),
   published: z.boolean().optional(),
@@ -272,7 +272,7 @@ export const DeckCreateMutation = mutationField('deckCreate', {
   type: nonNull('Deck'),
   args: {
     name: stringArg({ undefinedOnly: true }),
-    description: jsonObjectArg({ undefinedOnly: true }),
+    description: jsonObjectArg(),
     promptLang: stringArg({ undefinedOnly: true }),
     answerLang: stringArg({ undefinedOnly: true }),
     published: booleanArg({ undefinedOnly: true }),
@@ -286,11 +286,12 @@ export const DeckCreateMutation = mutationField('deckCreate', {
     ),
   },
   resolve: guardValidUser(async (_root, args, { prisma, sub }) => {
-    const { cards, ...rest } = deckCreateSchema.parse(args);
+    const { cards, description, ...rest } = deckCreateSchema.parse(args);
 
     return prisma.deck.create({
       data: {
         ownerId: sub.id,
+        description: description === null ? Prisma.DbNull : description,
         ...rest,
         cards: { create: cards },
       },
@@ -301,7 +302,7 @@ export const DeckCreateMutation = mutationField('deckCreate', {
 export const deckEditSchema = z.object({
   id: z.string().min(20),
   name: z.string().trim().optional(),
-  description: jsonObjectSchema.optional(),
+  description: jsonObjectSchema.nullable().optional(),
   promptLang: z.string().trim().min(2).optional(),
   answerLang: z.string().trim().min(2).optional(),
   published: z.boolean().optional(),
@@ -312,16 +313,20 @@ export const DeckEditMutation = mutationField('deckEdit', {
   args: {
     id: nonNull(idArg()),
     name: stringArg({ undefinedOnly: true }),
-    description: jsonObjectArg({ undefinedOnly: true }),
+    description: jsonObjectArg(),
     promptLang: stringArg({ undefinedOnly: true }),
     answerLang: stringArg({ undefinedOnly: true }),
     published: booleanArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(async (_root, args, { prisma, sub }) => {
-    const { id, ...data } = deckEditSchema.parse(args);
+    const { id, description, ...data } = deckEditSchema.parse(args);
     return prisma.deck.update({
       where: { id, ownerId: sub.id },
-      data: { ...data, editedAt: new Date() },
+      data: {
+        ...data,
+        description: description === null ? Prisma.DbNull : description,
+        editedAt: new Date(),
+      },
     });
   }),
 });
@@ -333,9 +338,9 @@ export const DeckAddCardsMutation = mutationField('deckAddCards', {
     cards: nonNull(list(nonNull('CardCreateInput'))),
   },
   resolve: guardValidUser(async (_root, { deckId, cards }, { prisma, sub }) => {
-    const defaultCards = cards.map(({ prompt, fullAnswer, answers, template }) => ({
-      prompt: prompt as Prisma.InputJsonObject,
-      fullAnswer: fullAnswer as Prisma.InputJsonObject,
+    const newCards = cards.map(({ prompt, fullAnswer, answers, template }) => ({
+      prompt: prompt ?? Prisma.DbNull,
+      fullAnswer: fullAnswer ?? Prisma.DbNull,
       answers,
       template: template ?? undefined,
     }));
@@ -343,7 +348,7 @@ export const DeckAddCardsMutation = mutationField('deckAddCards', {
       where: { id: deckId, ownerId: sub.id },
       data: {
         cards: {
-          create: defaultCards,
+          create: newCards,
         },
       },
     });

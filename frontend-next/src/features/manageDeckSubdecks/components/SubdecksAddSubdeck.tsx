@@ -7,9 +7,12 @@ import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import {
   Button,
   Card,
+  Divider,
+  Flex,
   LoadingOverlay,
   LoadingOverlayProps,
   MantineTheme,
+  Space,
   Stack,
   Text,
   TextInput,
@@ -18,11 +21,13 @@ import {
 } from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
 import { DecksList, DeckItemComponentProps } from '@/components/deck';
-import { IconCheck, IconLink } from '@tabler/icons';
+import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload, IconX } from '@tabler/icons';
 import { useHover } from '@mantine/hooks';
 import Link from 'next/link';
+import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
+import { BasicList } from '@/components/BasicList';
 
-export const MANAGE_DECKS_DECKS_NUM = 12;
+export const INITIAL_RECENT_DECKS = 5;
 
 interface DeckItemFactoryProps {
   parentId: string;
@@ -134,40 +139,90 @@ const DeckItem =
     );
   };
 
-export const ManageDeckSubdecksAddSubdeck: FC<ManageDeckProps> = ({
+interface Props extends ManageDeckProps {
+  onFinishedAddingSubdecks(): void;
+}
+
+export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
   deck: { id: deckId, subdecks },
+  onFinishedAddingSubdecks,
 }) => {
+  const stoplist = subdecks.map(({ id }) => id);
+  stoplist.push(deckId);
   const [titleFilter, setTitleFilter] = useState('');
-  const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS);
+  const [recentShowMore, setRecentShowMore] = useState(false);
   const [added, setAdded] = useState<string[]>([]);
-  const [cursor, setCursor] = useState<string | undefined>();
-  const [{ data, fetching, error }, refetchDecks] = useQuery({
-    query: DecksDocument,
-    variables: {
-      scope: DecksQueryScope.Owned,
-      take: MANAGE_DECKS_DECKS_NUM,
-      titleFilter: debouncedTitleFilter,
-      cursor,
-    },
-  });
+  const [{ data, fetching, error }] = useQueryRecentDecks(stoplist);
   const onAdded = (subdeckId: string) => {
     setAdded(added.concat([subdeckId]));
   };
-  const candidateDecks = data?.decks.filter(
-    ({ name, id }) =>
-      // if title filter is specified, filter deck names by it
-      (!titleFilter || name.includes(titleFilter)) &&
-      // never show ownself as subdeck candidate
-      id !== deckId &&
-      // if a subdeck candidate is already a subdeck, show with special formatting if presently added
-      //   else don't show
-      (added.includes(id) || !subdecks.some((subdeck) => subdeck.id === id))
+  const recentDeckItems = (data?.decks ?? []).map(
+    ({ id, name, cardsDirectCount, subdecksCount }, index) => (
+      <>
+        <Text sx={{ flexGrow: 1 }}>
+          <Text component="span" fw="bold">
+            {name}
+          </Text>
+          <br />
+          {cardsDirectCount ? `${cardsDirectCount} cards` : ''}
+          {cardsDirectCount && subdecksCount ? ' / ' : ''}
+          {subdecksCount ? `${subdecksCount} subdecks` : ''}
+          {!(cardsDirectCount || subdecksCount) ? 'Empty deck' : ''}
+        </Text>
+        <Link href={`/app/deck/${id}`}>
+          <Button variant="subtle" compact>
+            Visit
+          </Button>
+        </Link>
+        <Button
+          leftIcon={added.includes(id) ? <IconCheck /> : <IconLink />}
+          variant="subtle"
+          compact
+          disabled={added.includes(id)}
+          onClick={() => onAdded(id)}
+        >
+          {added.includes(id) ? 'Linked' : 'Link'}
+        </Button>
+      </>
+    )
   );
+  const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS && !recentShowMore;
+  if (canShowMoreRecentDecks) {
+    recentDeckItems.length = INITIAL_RECENT_DECKS;
+  }
   return (
-    <Stack p="md" spacing={2}>
+    <Stack p="sm">
+      <BasicList borderTop borderBottom data={recentDeckItems} />
+      {canShowMoreRecentDecks && (
+        <Button fullWidth variant="subtle" onClick={() => setRecentShowMore(true)}>
+          Show more
+        </Button>
+      )}
+      <Flex justify="space-between" align="center">
+        <Button variant="subtle" onClick={onFinishedAddingSubdecks} leftIcon={<IconArrowLeft />}>
+          Back
+        </Button>
+        <Flex gap="md" wrap="wrap" justify="flex-end">
+          <Button
+            variant="filled"
+            onClick={() => console.log('new subdeck')}
+            leftIcon={<IconPlus />}
+          >
+            New
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => console.log('new subdeck')}
+            leftIcon={<IconUpload />}
+          >
+            Import
+          </Button>
+        </Flex>
+      </Flex>
+      <Divider />
       <TextInput
         variant="filled"
-        label="title must contain..."
+        label="Find more decks"
         placeholder="e.g. ocabular"
         size="md"
         mb="md"
@@ -176,10 +231,6 @@ export const ManageDeckSubdecksAddSubdeck: FC<ManageDeckProps> = ({
           setTitleFilter(e.target.value);
           setAdded([]);
         }}
-      />
-      <DecksList
-        decks={candidateDecks}
-        component={DeckItem({ parentId: deckId, added, onAdded })}
       />
     </Stack>
   );

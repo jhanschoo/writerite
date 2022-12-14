@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   AppShell,
   Avatar,
   Button,
@@ -25,6 +24,7 @@ import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons';
 import { useCurrentUser } from '@/hooks';
 import { ProfilePicture } from '@/features/profilePicture/components';
 import { useMediaQuery } from '@mantine/hooks';
+import { ActionIcon } from '@/components/ActionIcon';
 
 interface Props {
   breadcrumbs?: [string, string | JSX.Element][];

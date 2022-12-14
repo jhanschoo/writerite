@@ -1,8 +1,9 @@
 import { FC } from 'react';
-import { Box, createStyles, Title } from '@mantine/core';
+import { Box, createStyles, Stack, Title } from '@mantine/core';
 import { UserDecksSummary } from './UserDecksSummary';
 import { RoomNotifications } from './RoomNotifications';
 import { DashboardStats } from './DashboardStats';
+import { FriendActivity } from './FriendActivity';
 
 const useStyles = createStyles((theme, _params, getRef) => ({
   gridBox: {
@@ -15,10 +16,16 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   headerPanel: {
     gridColumn: 'span 12',
   },
-  roomNotificationsPanel: {
+  activityPanel: {
     gridColumn: 'span 12',
   },
   statsPanel: {
+    gridColumn: 'span 8',
+    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
+      gridColumn: 'span 12',
+    },
+  },
+  friendActivityPanel: {
     gridColumn: 'span 8',
     [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
       gridColumn: 'span 12',
@@ -42,11 +49,13 @@ export const Dashboard: FC = () => {
         </Title>
       </Box>
       <RoomNotifications
-        wrapper={({ children }) => <Box className={classes.roomNotificationsPanel}>{children}</Box>}
+        wrapper={({ children }) => <Box className={classes.activityPanel}>{children}</Box>}
       />
-      <Box className={classes.statsPanel}>
-        <DashboardStats />
-      </Box>
+      <Stack className={classes.statsPanel}>
+        <Box>
+          <DashboardStats />
+        </Box>
+      </Stack>
       <Box className={classes.decksPanel}>
         <UserDecksSummary />
       </Box>

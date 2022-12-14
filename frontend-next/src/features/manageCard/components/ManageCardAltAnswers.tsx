@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { ActionIcon, Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { Button, Group, Paper, Stack, Text } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';

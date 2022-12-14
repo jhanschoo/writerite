@@ -1,6 +1,6 @@
+import { ActionIcon } from '@/components/ActionIcon';
 import { DeckEditDocument } from '@generated/graphql';
 import {
-  ActionIcon,
   createStyles,
   Group,
   Input,
@@ -89,7 +89,7 @@ export const ManageDeckTitle: FC<ManageDeckProps> = ({ deck: { id, name } }) => 
                 e.key === 'Escape' && setShowNameInput(false)
               }
               rightSection={
-                <ActionIcon type="submit" size={48} variant="subtle" color="dark" title="Save">
+                <ActionIcon type="submit" size={48} variant="subtle" title="Save">
                   <IconSend />
                 </ActionIcon>
               }

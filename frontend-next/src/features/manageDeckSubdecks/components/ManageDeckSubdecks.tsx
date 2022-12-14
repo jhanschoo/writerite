@@ -1,32 +1,25 @@
-import { createStyles, Tabs, useMantineTheme } from '@mantine/core';
-import { useMediaQuery } from '@mantine/hooks';
-import { IconSearch, IconUpload } from '@tabler/icons';
 import { FC, useState } from 'react';
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { ManageDeckSubdecksAddSubdeck } from './SubdecksAddSubdeck';
 import { ManageDeckSubdecksBrowse } from './SubdecksBrowse';
 
+enum Subpage {
+  Browse = 'browse',
+  Add = 'add',
+}
+
 // TODO: WIP
 export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck }) => {
-  const [activeTab, setActiveTab] = useState<string | null>('view');
-  const theme = useMantineTheme();
-  const showText = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
-  return (
-    <Tabs orientation="vertical" value={activeTab} onTabChange={setActiveTab} keepMounted={false}>
-      <Tabs.List>
-        <Tabs.Tab value="view" icon={<IconSearch />} aria-label="View Subdecks">
-          {showText && 'View Subdecks'}
-        </Tabs.Tab>
-        <Tabs.Tab value="add" icon={<IconUpload />} arial-label="Add More Subdecks">
-          {showText && 'Add More Subdecks'}
-        </Tabs.Tab>
-      </Tabs.List>
-      <Tabs.Panel value="view" pl="md">
-        <ManageDeckSubdecksBrowse deck={deck} />
-      </Tabs.Panel>
-      <Tabs.Panel value="add" pl="md">
-        <ManageDeckSubdecksAddSubdeck deck={deck} />
-      </Tabs.Panel>
-    </Tabs>
-  );
+  const [subpage, setSubpage] = useState<Subpage>(Subpage.Browse);
+  switch (subpage) {
+    case Subpage.Browse:
+      return <ManageDeckSubdecksBrowse deck={deck} onAddSubdeck={() => setSubpage(Subpage.Add)} />;
+    case Subpage.Add:
+      return (
+        <ManageDeckSubdecksAddSubdeck
+          deck={deck}
+          onFinishedAddingSubdecks={() => setSubpage(Subpage.Browse)}
+        />
+      );
+  }
 };
