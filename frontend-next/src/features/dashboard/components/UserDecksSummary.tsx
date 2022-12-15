@@ -1,15 +1,9 @@
 import { useRouter } from 'next/router';
-import { FC, MouseEvent } from 'react';
-import { useMutation, useQuery } from 'urql';
+import { FC } from 'react';
+import { useMutation } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
-import {
-  DeckCreateDocument,
-  DecksDocument,
-  DecksQueryOrder,
-  DecksQueryScope,
-  DeckSummaryFragment,
-} from '@generated/graphql';
+import { DeckCreateDocument, DecksQueryOrder, DeckSummaryFragment } from '@generated/graphql';
 import {
   Box,
   Button,
@@ -61,8 +55,7 @@ const NewDeckItem = () => {
   const { classes } = useStyles();
   const { setMotionProps } = useMotionContext();
   const [, deckCreateMutation] = useMutation(DeckCreateDocument);
-  const handleCreateDeck = async (e: MouseEvent) => {
-    e.stopPropagation();
+  const handleCreateDeck = async () => {
     setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation({
       answerLang: 'en',

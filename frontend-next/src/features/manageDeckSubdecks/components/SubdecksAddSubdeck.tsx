@@ -1,14 +1,12 @@
 import {
   DeckAddSubdeckDocument,
-  DecksDocument,
+  DeckCreateDocument,
   DecksQueryOrder,
-  DecksQueryScope,
+  DeckSummaryFragment,
 } from '@generated/graphql';
-import { FC, useState, ChangeEvent, MouseEvent } from 'react';
-import { useMutation, useQuery } from 'urql';
+import { FC, useState, ChangeEvent, MouseEvent, useEffect } from 'react';
+import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
-import { useDebounce } from 'use-debounce';
-import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import {
   Button,
   Card,
@@ -17,7 +15,6 @@ import {
   LoadingOverlay,
   LoadingOverlayProps,
   MantineTheme,
-  Space,
   Stack,
   Text,
   TextInput,
@@ -25,12 +22,14 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
-import { DecksList, DeckItemComponentProps } from '@/components/deck';
+import { DeckItemComponentProps } from '@/components/deck';
 import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload, IconX } from '@tabler/icons';
 import { useHover } from '@mantine/hooks';
 import Link from 'next/link';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { BasicList } from '@/components/BasicList';
+import { SubdeckListItemContent } from './SubdeckListItemContent';
+import { useRouter } from 'next/router';
 
 export const INITIAL_RECENT_DECKS = 5;
 
@@ -154,46 +153,52 @@ export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
 }) => {
   const stoplist = subdecks.map(({ id }) => id);
   stoplist.push(deckId);
+  const router = useRouter();
   const [titleFilter, setTitleFilter] = useState('');
   const [recentShowMore, setRecentShowMore] = useState(false);
   const [added, setAdded] = useState<string[]>([]);
+  const [persistedRecentDecks, setPersistedDecks] = useState<DeckSummaryFragment[]>([]);
   const [{ data, fetching, error }] = useQueryRecentDecks({
     stoplist,
     order: DecksQueryOrder.EditedRecency,
   });
-  const onAdded = (subdeckId: string) => {
+  useEffect(() => {
+    if (data && persistedRecentDecks.length === 0) {
+      setPersistedDecks(data.decks);
+    }
+  }, [data]);
+  const [, addSubdeck] = useMutation(DeckAddSubdeckDocument);
+  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+  const handleCreateSubdeck = async () => {
+    const createdDeck = await deckCreateMutation({
+      answerLang: 'en',
+      cards: [],
+      description: null,
+      name: '',
+      promptLang: 'en',
+      published: false,
+      parentDeckId: deckId,
+    });
+    if (createdDeck.data?.deckCreate.id) {
+      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+    }
+  };
+  const handleAddSubdeck = async (subdeckId: string) => {
+    await addSubdeck({ id: deckId, subdeckId });
     setAdded(added.concat([subdeckId]));
   };
-  const recentDeckItems = (data?.decks ?? []).map(
-    ({ id, name, cardsDirectCount, subdecksCount }, index) => (
-      <>
-        <Text sx={{ flexGrow: 1 }}>
-          <Text component="span" fw="bold">
-            {name}
-          </Text>
-          <br />
-          {cardsDirectCount ? `${cardsDirectCount} cards` : ''}
-          {cardsDirectCount && subdecksCount ? ' / ' : ''}
-          {subdecksCount ? `${subdecksCount} subdecks` : ''}
-          {!(cardsDirectCount || subdecksCount) ? 'Empty deck' : ''}
-        </Text>
-        <Link href={`/app/deck/${id}`}>
-          <Button variant="subtle" compact>
-            Visit
-          </Button>
-        </Link>
-        <Button
-          leftIcon={added.includes(id) ? <IconCheck /> : <IconLink />}
-          variant="subtle"
-          compact
-          disabled={added.includes(id)}
-          onClick={() => onAdded(id)}
-        >
-          {added.includes(id) ? 'Linked' : 'Link'}
-        </Button>
-      </>
-    )
-  );
+  const recentDeckItems = (persistedRecentDecks ?? []).map((deck, index) => (
+    <SubdeckListItemContent
+      key={index}
+      deck={deck}
+      onAction={() => handleAddSubdeck(deck.id)}
+      actioned={added.includes(deck.id)}
+      actionText="Link"
+      actionedText="Linked"
+      actionIcon={<IconLink />}
+      actionedIcon={<IconCheck />}
+    />
+  ));
   const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS && !recentShowMore;
   if (canShowMoreRecentDecks) {
     recentDeckItems.length = INITIAL_RECENT_DECKS;
@@ -211,11 +216,7 @@ export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
           Back
         </Button>
         <Flex gap="md" wrap="wrap" justify="flex-end">
-          <Button
-            variant="filled"
-            onClick={() => console.log('new subdeck')}
-            leftIcon={<IconPlus />}
-          >
+          <Button variant="filled" onClick={handleCreateSubdeck} leftIcon={<IconPlus />}>
             New
           </Button>
           <Button

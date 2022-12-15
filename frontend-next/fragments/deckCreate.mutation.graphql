@@ -3,6 +3,7 @@ mutation DeckCreate(
   $cards: [CardCreateInput!]!
   $description: JSONObject
   $name: String!
+  $parentDeckId: ID
   $promptLang: String!
   $published: Boolean!
 ) {
@@ -11,6 +12,7 @@ mutation DeckCreate(
     cards: $cards
     description: $description
     name: $name
+    parentDeckId: $parentDeckId
     promptLang: $promptLang
     published: $published
   ) {
