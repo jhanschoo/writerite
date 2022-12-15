@@ -1,5 +1,6 @@
 query Decks(
   $cursor: ID
+  $order: DecksQueryOrder
   $scope: DecksQueryScope
   $stoplist: [ID!]
   $take: Int
@@ -7,6 +8,7 @@ query Decks(
 ) {
   decks(
     cursor: $cursor
+    order: $order
     scope: $scope
     stoplist: $stoplist
     take: $take

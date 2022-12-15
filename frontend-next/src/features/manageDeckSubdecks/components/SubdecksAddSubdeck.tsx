@@ -1,4 +1,9 @@
-import { DeckAddSubdeckDocument, DecksDocument, DecksQueryScope } from '@generated/graphql';
+import {
+  DeckAddSubdeckDocument,
+  DecksDocument,
+  DecksQueryOrder,
+  DecksQueryScope,
+} from '@generated/graphql';
 import { FC, useState, ChangeEvent, MouseEvent } from 'react';
 import { useMutation, useQuery } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
@@ -152,7 +157,10 @@ export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
   const [titleFilter, setTitleFilter] = useState('');
   const [recentShowMore, setRecentShowMore] = useState(false);
   const [added, setAdded] = useState<string[]>([]);
-  const [{ data, fetching, error }] = useQueryRecentDecks(stoplist);
+  const [{ data, fetching, error }] = useQueryRecentDecks({
+    stoplist,
+    order: DecksQueryOrder.EditedRecency,
+  });
   const onAdded = (subdeckId: string) => {
     setAdded(added.concat([subdeckId]));
   };
