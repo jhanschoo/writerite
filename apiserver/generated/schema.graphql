@@ -130,7 +130,7 @@ type Mutation {
   cardUnsetMainTemplate(deckId: ID!): Card
   deckAddCards(cards: [CardCreateInput!]!, deckId: ID!): Deck!
   deckAddSubdeck(id: ID!, subdeckId: ID!): Deck!
-  deckCreate(answerLang: String, cards: [CardCreateInput!], description: JSONObject, name: String, promptLang: String, published: Boolean): Deck!
+  deckCreate(answerLang: String, cards: [CardCreateInput!], description: JSONObject, name: String, parentDeckId: ID, promptLang: String, published: Boolean): Deck!
   deckDelete(id: ID!): Deck!
   deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, promptLang: String, published: Boolean): Deck!
   deckRemoveSubdeck(id: ID!, subdeckId: ID!): Deck!

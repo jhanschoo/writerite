@@ -464,6 +464,7 @@ export interface NexusGenArgTypes {
       cards?: NexusGenInputs['CardCreateInput'][] | null; // [CardCreateInput!]
       description?: NexusGenScalars['JSONObject'] | null; // JSONObject
       name?: string | null; // String
+      parentDeckId?: string | null; // ID
       promptLang?: string | null; // String
       published?: boolean | null; // Boolean
     }

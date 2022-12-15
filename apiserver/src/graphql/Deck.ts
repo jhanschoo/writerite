@@ -14,10 +14,11 @@ import {
 } from 'nexus';
 import { userLacksPermissionsErrorFactory } from '../error';
 import { guardValidUser } from '../service/authorization/guardValidUser';
-import { getDescendantsOfDeck } from '../service/deckFamily';
+import { getDeck, getDeckAsUser, getDescendantsOfDeck } from '../service/deck';
 import { jsonObjectArg } from './scalarUtil';
 import { z } from 'zod';
 import { jsonObjectSchema } from '../service/validation/jsonSchema';
+import { Roles } from '../service/userJWT';
 
 const DEFAULT_TAKE = 60;
 
@@ -156,19 +157,10 @@ export const DeckQuery = queryField('deck', {
   args: {
     id: nonNull(idArg()),
   },
-  resolve: guardValidUser(async (_root, { id }, { prisma, sub }) => {
-    const OR = [
-      { ownerId: sub.id },
-      { cards: { some: { records: { some: { userId: sub.id } } } } },
-      { published: true },
-    ];
-    const deck = await prisma.deck.findUnique({
-      where: {
-        id,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        OR,
-      },
-    });
+  resolve: guardValidUser(async (_root, { id: deckId }, { prisma, sub }) => {
+    const deck = sub.roles.includes(Roles.Admin)
+      ? await getDeck(prisma, { deckId })
+      : await getDeckAsUser(prisma, { deckId, userId: sub.id });
 
     if (!deck) {
       throw userLacksPermissionsErrorFactory(
@@ -272,6 +264,7 @@ export const deckCreateSchema = z.object({
   description: jsonObjectSchema.nullable().optional(),
   promptLang: z.string().trim().min(2).optional(),
   answerLang: z.string().trim().min(2).optional(),
+  parentDeckId: z.string().optional(),
   published: z.boolean().optional(),
   cards: z
     .array(
@@ -301,9 +294,10 @@ export const DeckCreateMutation = mutationField('deckCreate', {
         })
       )
     ),
+    parentDeckId: idArg({ undefinedOnly: true }),
   },
   resolve: guardValidUser(async (_root, args, { prisma, sub }) => {
-    const { cards, description, ...rest } = deckCreateSchema.parse(args);
+    const { cards, description, parentDeckId, ...rest } = deckCreateSchema.parse(args);
 
     return prisma.deck.create({
       data: {
@@ -311,6 +305,9 @@ export const DeckCreateMutation = mutationField('deckCreate', {
         description: description === null ? Prisma.DbNull : description,
         ...rest,
         cards: { create: cards },
+        subdeckIn: parentDeckId
+          ? { create: { parentDeck: { connect: { id: parentDeckId, ownerId: sub.id } } } }
+          : undefined,
       },
     });
   }),

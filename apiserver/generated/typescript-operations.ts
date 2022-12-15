@@ -227,6 +227,7 @@ export type MutationDeckCreateArgs = {
   cards?: InputMaybe<Array<CardCreateInput>>;
   description?: InputMaybe<Scalars['JSONObject']>;
   name?: InputMaybe<Scalars['String']>;
+  parentDeckId?: InputMaybe<Scalars['ID']>;
   promptLang?: InputMaybe<Scalars['String']>;
   published?: InputMaybe<Scalars['Boolean']>;
 };

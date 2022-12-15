@@ -1,6 +1,7 @@
 import { Deck, PrismaClient } from '@prisma/client';
 
 // Returns a list of decks that are descendants (reflexive) of the deck with the provided deck id.
+
 export async function getDescendantsOfDeck(prisma: PrismaClient, deckId: string): Promise<Deck[]> {
   let frontier = [deckId];
   const seen: Record<string, Deck> = {};
