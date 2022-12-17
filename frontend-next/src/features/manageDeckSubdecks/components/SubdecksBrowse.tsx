@@ -2,7 +2,7 @@ import { DeckRemoveSubdeckDocument, DeckSummaryFragment } from '@generated/graph
 import { FC, useState } from 'react';
 import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
-import { Button, Stack } from '@mantine/core';
+import { Button, Stack, Text } from '@mantine/core';
 import { IconCheck, IconLinkOff, IconPlus } from '@tabler/icons';
 import { BasicList } from '@/components/BasicList';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
@@ -33,6 +33,7 @@ export const ManageDeckSubdecksBrowse: FC<Props> = ({ deck: { id, subdecks }, on
   ));
   return (
     <Stack spacing="md">
+      {decks.length ? undefined : <Text>No subdecks to show.</Text>}
       <BasicList borderTop borderBottom data={decks} />
       <Button
         radius="xl"

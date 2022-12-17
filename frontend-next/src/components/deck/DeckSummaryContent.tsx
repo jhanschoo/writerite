@@ -1,20 +1,30 @@
 import { DeckSummaryFragment } from '@generated/graphql';
-import { Text } from '@mantine/core';
+import { createStyles, Text, TextProps } from '@mantine/core';
 import { formatISO, parseISO } from 'date-fns';
 import { FC } from 'react';
 import { DeckName } from './DeckName';
 
+const useStyles = createStyles({
+  name: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+});
+
 interface Props {
   deck: DeckSummaryFragment;
+  rootProps?: TextProps;
 }
 
 export const DeckSummaryContent: FC<Props> = ({
   deck: { name, editedAt, subdecksCount, cardsDirectCount },
+  rootProps,
 }) => {
+  const { classes } = useStyles();
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
-    <>
-      <Text size="lg" weight="bold">
+    <Text {...rootProps}>
+      <Text fz="lg" fw="bold" className={classes.name}>
         <DeckName name={name} />
       </Text>
       <Text>
@@ -24,6 +34,6 @@ export const DeckSummaryContent: FC<Props> = ({
         <br />
         last edited at {editedAtDisplay}
       </Text>
-    </>
+    </Text>
   );
 };

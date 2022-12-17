@@ -1,8 +1,7 @@
-import { DeckName } from '@/components/deck/DeckName';
+import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
 import { DECK_DETAIL_PATH } from '@/paths';
 import { DeckSummaryFragment } from '@generated/graphql';
 import { Button, Text } from '@mantine/core';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC, ReactNode, useState } from 'react';
 
@@ -38,16 +37,7 @@ export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
   };
   return (
     <>
-      <Text sx={{ flexGrow: 1 }}>
-        <Text component="span" fw="bold">
-          <DeckName name={name} />
-        </Text>
-        <br />
-        {cardsDirectCount ? `${cardsDirectCount} cards` : ''}
-        {cardsDirectCount && subdecksCount ? ' / ' : ''}
-        {subdecksCount ? `${subdecksCount} subdecks` : ''}
-        {!(cardsDirectCount || subdecksCount) ? 'Empty deck' : ''}
-      </Text>
+      <DeckCompactSummaryContent deck={deck} rootProps={{ sx: { flexGrow: 1 } }} />
       <Button variant="subtle" compact onClick={() => router.push(DECK_DETAIL_PATH(id))}>
         Visit
       </Button>

@@ -7,26 +7,8 @@ import {
 import { FC, useState, ChangeEvent, MouseEvent, useEffect } from 'react';
 import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
-import {
-  Button,
-  Card,
-  Divider,
-  Flex,
-  LoadingOverlay,
-  LoadingOverlayProps,
-  MantineTheme,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-  UnstyledButton,
-  useMantineTheme,
-} from '@mantine/core';
-import { DeckSummaryContent } from '@/components/deck/DeckSummaryContent';
-import { DeckItemComponentProps } from '@/components/deck';
-import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload, IconX } from '@tabler/icons';
-import { useHover } from '@mantine/hooks';
-import Link from 'next/link';
+import { Button, Divider, Flex, Stack, TextInput, Title } from '@mantine/core';
+import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload } from '@tabler/icons';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { BasicList } from '@/components/BasicList';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
@@ -34,120 +16,6 @@ import { useRouter } from 'next/router';
 import { DECK_DETAIL_PATH } from '@/paths';
 
 export const INITIAL_RECENT_DECKS = 5;
-
-interface DeckItemFactoryProps {
-  parentId: string;
-  added: string[];
-  onAdded: (subdeckId: string) => void;
-}
-
-interface DeckItemProps extends DeckItemComponentProps {
-  added?: boolean;
-}
-
-const addSubdeckProps: LoadingOverlayProps = {
-  visible: true,
-  loader: (
-    <Stack align="center" spacing={1}>
-      <IconLink size={40} />
-      <Text size="xl" weight="bold">
-        Link
-      </Text>
-    </Stack>
-  ),
-};
-
-const fetchingProps: LoadingOverlayProps = {
-  onClick(e) {
-    e.stopPropagation();
-  },
-  visible: true,
-};
-
-const addedProps = ({
-  background,
-  color,
-}: ReturnType<MantineTheme['fn']['variant']>): LoadingOverlayProps => ({
-  onClick(e) {
-    e.stopPropagation();
-  },
-  visible: true,
-  loader: (
-    <Stack align="center" spacing={1}>
-      <IconCheck size={40} color={color} />
-      <Text color={color} size="xl" weight="bold">
-        Added
-      </Text>
-    </Stack>
-  ),
-  overlayColor: background,
-});
-
-const DeckItem =
-  ({ parentId, added, onAdded }: DeckItemFactoryProps): FC<DeckItemProps> =>
-  ({ deck }) => {
-    const theme = useMantineTheme();
-    const variantOutput = theme.fn.variant({ variant: 'filled' });
-    const { hovered: cardHovered, ref: cardRef } = useHover();
-    const router = useRouter();
-    const [{ fetching }, deckAddSubdeck] = useMutation(DeckAddSubdeckDocument);
-    const handleAddSubdeck = async (e: MouseEvent<HTMLDivElement>) => {
-      e.stopPropagation();
-      await deckAddSubdeck({ id: parentId, subdeckId: deck.id });
-      onAdded(deck.id);
-    };
-    const thisAdded = added.includes(deck.id);
-    const readyState = !thisAdded && !fetching;
-    return (
-      <Card
-        shadow="md"
-        radius="md"
-        p="md"
-        withBorder
-        sx={(theme) => {
-          const { border, background, color, hover } = theme.fn.variant({ variant: 'default' });
-          return {
-            backgroundColor: background,
-            color,
-            height: 'unset',
-            display: 'flex',
-            flexDirection: 'column',
-            borderColor: border,
-            ...theme.fn.hover({ backgroundColor: hover }),
-          };
-        }}
-      >
-        <Card.Section ref={cardRef}>
-          <UnstyledButton
-            sx={{ position: 'relative' }}
-            component="div"
-            p="md"
-            onClick={handleAddSubdeck}
-          >
-            <LoadingOverlay
-              {...(readyState && cardHovered ? addSubdeckProps : { visible: false })}
-            />
-            <DeckSummaryContent deck={deck} />
-          </UnstyledButton>
-        </Card.Section>
-        <LoadingOverlay
-          visible={false}
-          {...(fetching && fetchingProps)}
-          {...(thisAdded && addedProps(variantOutput))}
-        />
-        <Card.Section>
-          <Button
-            fullWidth
-            variant="subtle"
-            sx={{ borderRadius: 0 }}
-            onClick={() => router.push(DECK_DETAIL_PATH(deck.id))}
-          >
-            View
-          </Button>
-        </Card.Section>
-      </Card>
-    );
-  };
 
 interface Props extends ManageDeckProps {
   onFinishedLinkingSubdecks(): void;
@@ -205,8 +73,8 @@ export const ManageDeckSubdecksLinkSubdeck: FC<Props> = ({
       actionedIcon={<IconCheck />}
     />
   ));
-  const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS && !recentShowMore;
-  if (canShowMoreRecentDecks) {
+  const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS;
+  if (canShowMoreRecentDecks && !recentShowMore) {
     recentDeckItems.length = INITIAL_RECENT_DECKS;
   }
   return (
@@ -216,8 +84,9 @@ export const ManageDeckSubdecksLinkSubdeck: FC<Props> = ({
       </Title>
       <BasicList borderTop borderBottom data={recentDeckItems} />
       {canShowMoreRecentDecks && (
-        <Button fullWidth variant="subtle" onClick={() => setRecentShowMore(true)}>
-          Show more
+        <Button fullWidth variant="subtle" onClick={() => setRecentShowMore(!recentShowMore)}>
+          {recentShowMore && 'Show less'}
+          {!recentShowMore && 'Show more'}
         </Button>
       )}
       <Flex justify="space-between" align="center">

@@ -1,5 +1,5 @@
 import { ActionIcon } from '@/components/ActionIcon';
-import { DeckName } from '@/components/deck/DeckName';
+import { DeckName } from '@/components/deck';
 import { DeckEditDocument } from '@generated/graphql';
 import {
   createStyles,

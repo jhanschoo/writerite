@@ -30,13 +30,12 @@ const DeckItemFactory =
   ({ deck }) => {
     return (
       <UnstyledButton
-        sx={{ height: 'unset', flex: '1 0 auto' }}
+        sx={{ height: 'unset', flexGrow: 1, maxWidth: '100%' }}
         onClick={onClickFactory(deck)}
         component="div"
       >
         <Card
           shadow="md"
-          radius="md"
           p="md"
           withBorder
           sx={(theme) => {
@@ -79,18 +78,6 @@ export const SearchDecks: FC<Props> = ({ onClickFactory }) => {
       cursor,
     },
   });
-  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
-  const handleCreateDeck: MouseEventHandler = (e) => {
-    (async () => {
-      e.stopPropagation();
-      setMotionProps(motionThemes.forward);
-      const createdDeck = await deckCreateMutation(emptyNewDeckInput);
-      refetchDecks();
-      if (createdDeck.data?.deckCreate.id) {
-        router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
-      }
-    })();
-  };
   const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
   return (
     <>
@@ -99,14 +86,14 @@ export const SearchDecks: FC<Props> = ({ onClickFactory }) => {
         value={scopeFilter}
         onChange={setScopeFilter as Dispatch<SetStateAction<string>>}
         data={[
-          { label: 'Owned decks', value: DecksQueryScope.Owned },
-          { label: 'Relevant decks', value: DecksQueryScope.Participated },
-          { label: 'Public decks', value: DecksQueryScope.Visible },
+          { label: 'Owned', value: DecksQueryScope.Owned },
+          { label: 'Relevant', value: DecksQueryScope.Participated },
+          { label: 'Public', value: DecksQueryScope.Visible },
         ]}
       />
       <TextInput
         variant="filled"
-        label="title must contain..."
+        label="title contains..."
         placeholder="e.g. ocabular"
         size="md"
         mb="md"

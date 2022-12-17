@@ -17,8 +17,8 @@ import {
 import { IconSearch, IconPlus } from '@tabler/icons';
 import { formatISO, parseISO } from 'date-fns';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
-import { DECK_DETAIL_PATH } from '@/paths';
-import { DeckName } from '@/components/deck/DeckName';
+import { DECK_DETAIL_PATH, DECK_PATH } from '@/paths';
+import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 5;
 
@@ -95,19 +95,14 @@ const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
       p="md"
       className={classes.deckItem}
     >
-      <Title order={3} size="lg" weight="bold">
-        <DeckName name={deck.name} />
-      </Title>
-      <Text>
-        {deck.subdecksCount} subdecks / {deck.cardsDirectCount} cards / last edited at{' '}
-        {editedAtDisplay}
-      </Text>
+      <DeckCompactSummaryContent deck={deck} />
     </UnstyledButton>
   );
 };
 
 export const UserDecksSummary: FC<Record<string, unknown>> = () => {
   const { classes } = useStyles();
+  const router = useRouter();
   const [{ data, fetching, error }, refetchDecks] = useQueryRecentDecks({
     order: DecksQueryOrder.EditedRecency,
     take: USER_DECK_SUMMARY_DECKS_NUM,
@@ -124,12 +119,16 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
         <Title order={2} mb="md">
           Decks
         </Title>
-        <Button variant="outline" leftIcon={<IconSearch size={21} />}>
+        <Button
+          variant="outline"
+          leftIcon={<IconSearch size={21} />}
+          onClick={() => router.push(DECK_PATH)}
+        >
           Find Decks
         </Button>
       </Box>
       {decks}
-      {decks.length ? '' : <Text>You have no decks to show.</Text>}
+      {decks.length ? undefined : <Text>You have no decks to show.</Text>}
       <Card.Section className={classes.buttonSection}>
         <NewDeckItem />
       </Card.Section>

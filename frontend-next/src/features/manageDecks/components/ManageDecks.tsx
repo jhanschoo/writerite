@@ -7,6 +7,7 @@ import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
 import { SearchDecks } from './SearchDecks';
 import { DECK_DETAIL_PATH } from '@/paths';
+import { RecentDecks } from './RecentDecks';
 
 const emptyNewDeckInput = {
   answerLang: 'en',
@@ -43,7 +44,6 @@ export const ManageDecks: FC = () => {
   const { classes } = useStyles();
   const [, deckCreateMutation] = useMutation(DeckCreateDocument);
   const handleCreateDeck: MouseEventHandler = async (e) => {
-    e.stopPropagation();
     setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation(emptyNewDeckInput);
     if (createdDeck.data?.deckCreate.id) {
@@ -60,9 +60,13 @@ export const ManageDecks: FC = () => {
           <NewDeckItem onClick={handleCreateDeck} />
         </Group>
         <Divider mb="md" />
+        <Title order={2} size="h4">
+          Recent
+        </Title>
+        <RecentDecks />
+        <Divider mb="md" />
         <SearchDecks
           onClickFactory={(deck) => (e: MouseEvent<HTMLDivElement>) => {
-            e.stopPropagation();
             router.push(DECK_DETAIL_PATH(deck.id));
           }}
         />
