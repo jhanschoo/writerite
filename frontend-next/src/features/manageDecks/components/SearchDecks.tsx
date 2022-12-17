@@ -8,6 +8,7 @@ import { DeckItemComponentProps, DecksList, DeckSummaryContent } from '@/compone
 import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
@@ -86,7 +87,7 @@ export const SearchDecks: FC<Props> = ({ onClickFactory }) => {
       const createdDeck = await deckCreateMutation(emptyNewDeckInput);
       refetchDecks();
       if (createdDeck.data?.deckCreate.id) {
-        router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+        router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
       }
     })();
   };

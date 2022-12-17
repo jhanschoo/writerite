@@ -9,10 +9,8 @@ import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';
 import { ManageDeck } from '@/features/manageDeck';
 
-const Home: NextPage = () => {
+const HomeComponent = ({ id, path }: { id: string; path: string[] }) => {
   const { motionProps } = useMotionContext();
-  const router = useRouter();
-  const id = router.query.id as string;
   const [{ data, fetching, error }] = useQuery({
     query: DeckDocument,
     variables: { id },
@@ -21,26 +19,23 @@ const Home: NextPage = () => {
     return null;
   }
   const { deck } = data;
-  const { name } = deck;
-  const nameBreadcrumb: string | JSX.Element = name || (
-    <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
-      Untitled Deck
-    </Text>
-  );
 
   return (
-    <StandardLayout
-      breadcrumbs={[
-        ['/app', 'Home'],
-        ['/app/deck', 'Decks'],
-        [`/app/deck/${id}`, nameBreadcrumb],
-      ]}
-    >
+    <StandardLayout>
       <motion.div {...motionProps}>
-        <ManageDeck deck={deck} />
+        <ManageDeck deck={deck} path={path} />
       </motion.div>
     </StandardLayout>
   );
+};
+
+const Home: NextPage = () => {
+  const router = useRouter();
+  if (!router.isReady) {
+    return null;
+  }
+  const [id, ...rest] = (router.query.param ?? []) as string[];
+  return <HomeComponent id={id} path={rest} />;
 };
 
 export default Home;

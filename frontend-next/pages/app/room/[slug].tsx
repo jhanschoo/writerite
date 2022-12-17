@@ -15,11 +15,6 @@ const Home: NextPage = () => {
 
   return (
     <StandardLayout
-      breadcrumbs={[
-        ['/app', 'Home'],
-        ['/app/room', 'Rooms'],
-        [`/app/room/${slug}`, slug || ''],
-      ]}
       vhHeight
     >
       <motion.div {...motionProps}>

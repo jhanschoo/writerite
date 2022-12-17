@@ -7,7 +7,7 @@ import { ManageDeckContent } from './ManageDeckContent';
 import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
 
 // TODO: pagination
-export const ManageDeck: FC<ManageDeckProps> = ({ deck }) => (
+export const ManageDeck: FC<ManageDeckProps> = ({ deck, path }) => (
   <Stack spacing={2} align="center" sx={{ height: '100%' }}>
     <Stack
       sx={({ breakpoints }) => ({ maxWidth: `${breakpoints.lg}px`, width: '100%' })}
@@ -18,6 +18,6 @@ export const ManageDeck: FC<ManageDeckProps> = ({ deck }) => (
       <ManageDeckDescription deck={deck} />
       <ManageDeckAdditionalInfo deck={deck} />
     </Stack>
-    <ManageDeckContent deck={deck} />
+    <ManageDeckContent deck={deck} path={path} />
   </Stack>
 );

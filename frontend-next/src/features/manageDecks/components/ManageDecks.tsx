@@ -6,6 +6,7 @@ import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
 import { SearchDecks } from './SearchDecks';
+import { DECK_DETAIL_PATH } from '@/paths';
 
 const emptyNewDeckInput = {
   answerLang: 'en',
@@ -46,7 +47,7 @@ export const ManageDecks: FC = () => {
     setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation(emptyNewDeckInput);
     if (createdDeck.data?.deckCreate.id) {
-      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+      router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
     }
   };
   return (
@@ -62,7 +63,7 @@ export const ManageDecks: FC = () => {
         <SearchDecks
           onClickFactory={(deck) => (e: MouseEvent<HTMLDivElement>) => {
             e.stopPropagation();
-            router.push(`/app/deck/${deck.id}`);
+            router.push(DECK_DETAIL_PATH(deck.id));
           }}
         />
       </Stack>

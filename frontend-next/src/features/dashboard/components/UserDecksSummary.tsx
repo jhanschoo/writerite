@@ -14,10 +14,11 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
-import Link from 'next/link';
 import { IconSearch, IconPlus } from '@tabler/icons';
 import { formatISO, parseISO } from 'date-fns';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
+import { DECK_DETAIL_PATH } from '@/paths';
+import { DeckName } from '@/components/deck/DeckName';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 5;
 
@@ -66,7 +67,7 @@ const NewDeckItem = () => {
       published: false,
     });
     if (createdDeck.data?.deckCreate.id) {
-      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+      router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
     }
   };
 
@@ -86,29 +87,22 @@ const NewDeckItem = () => {
 const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
   const editedAtDisplay = formatISO(parseISO(deck.editedAt), { representation: 'date' });
   const { classes } = useStyles();
+  const router = useRouter();
   return (
-    <Link href={`/app/deck/${deck.id}`}>
-      <UnstyledButton
-        onClick={(e) => e.stopPropagation()}
-        component="div"
-        p="md"
-        className={classes.deckItem}
-      >
-        {deck.name ? (
-          <Title order={3} size="lg" weight="bold">
-            {deck.name}
-          </Title>
-        ) : (
-          <Title order={3} color="dimmed" sx={{ fontStyle: 'italic' }}>
-            Untitled Deck
-          </Title>
-        )}
-        <Text>
-          {deck.subdecksCount} subdecks / {deck.cardsDirectCount} cards / last edited at{' '}
-          {editedAtDisplay}
-        </Text>
-      </UnstyledButton>
-    </Link>
+    <UnstyledButton
+      onClick={(e) => router.push(DECK_DETAIL_PATH(deck.id))}
+      component="div"
+      p="md"
+      className={classes.deckItem}
+    >
+      <Title order={3} size="lg" weight="bold">
+        <DeckName name={deck.name} />
+      </Title>
+      <Text>
+        {deck.subdecksCount} subdecks / {deck.cardsDirectCount} cards / last edited at{' '}
+        {editedAtDisplay}
+      </Text>
+    </UnstyledButton>
   );
 };
 

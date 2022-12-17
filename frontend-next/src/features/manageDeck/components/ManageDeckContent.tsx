@@ -4,6 +4,8 @@ import { ManageDeckProps } from '../types/ManageDeckProps';
 import { ManageDeckCards } from '../../manageDeckCards/components/ManageDeckCards';
 import { ManageDeckSubdecks } from '../../manageDeckSubdecks/components/ManageDeckSubdecks';
 import { ManageDeckCardsUpload } from '@/features/manageDeckCardsUpload';
+import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH, DECK_DETAIL_IMPORT_PATH, DECK_DETAIL_SUBDECK_PATH } from '@/paths';
 
 const useStyles = createStyles((theme, _params, getRef) => {
   const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
@@ -49,46 +51,56 @@ const useStyles = createStyles((theme, _params, getRef) => {
   };
 });
 
-enum TabValues {
-  Cards = 'cards',
-  Subdecks = 'subdecks',
-  Upload = 'upload',
+enum Subpage {
+  Card = 'card',
+  Subdeck = 'subdeck',
+  Import = 'import',
 }
 
-export const ManageDeckContent: FC<ManageDeckProps> = ({ deck }) => {
+export const ManageDeckContent: FC<ManageDeckProps> = ({ deck, path }) => {
   const { classes } = useStyles();
-  const [activeTab, setActiveTab] = useState<TabValues | null>(TabValues.Cards);
+  const router = useRouter();
+  const [subpath, ...rest] = path ?? [];
+  const subpage = subpath || 'card';
+  const handleTabChange = (tabValue: Subpage | null) => {
+    switch (tabValue) {
+      case Subpage.Card:
+        router.replace(DECK_DETAIL_PATH(deck.id));
+        break;
+      case Subpage.Subdeck:
+        router.replace(DECK_DETAIL_SUBDECK_PATH(deck.id));
+        break;
+      case Subpage.Import:
+        router.replace(DECK_DETAIL_IMPORT_PATH(deck.id));
+        break;
+    }
+  };
   return (
-    <Tabs
-      variant="outline"
-      value={activeTab}
-      onTabChange={(tabValue) => setActiveTab(tabValue as TabValues | null)}
-      classNames={classes}
-    >
+    <Tabs variant="outline" value={subpage} onTabChange={handleTabChange} classNames={classes}>
       <Group className={classes.tabsListWrapper}>
         <Tabs.List>
-          <Tabs.Tab value={TabValues.Cards}>
-            {deck.cardsDirect.length} Cards
-          </Tabs.Tab>
-          <Tabs.Tab value={TabValues.Subdecks}>
-            {deck.subdecks.length} Subdecks
-          </Tabs.Tab>
-          <Tabs.Tab value={TabValues.Upload}>
-            Import
-          </Tabs.Tab>
+          <Tabs.Tab value={Subpage.Card}>{deck.cardsDirect.length} Cards</Tabs.Tab>
+          <Tabs.Tab value={Subpage.Subdeck}>{deck.subdecks.length} Subdecks</Tabs.Tab>
+          <Tabs.Tab value={Subpage.Import}>Import</Tabs.Tab>
         </Tabs.List>
       </Group>
       <Stack className={classes.panelWrapper}>
-        <Tabs.Panel value={TabValues.Cards}>
-          <ManageDeckCards deck={deck} startUpload={() => setActiveTab(TabValues.Upload)} />
+        <Tabs.Panel value={Subpage.Card}>
+          <ManageDeckCards
+            deck={deck}
+            startUpload={() => router.replace(DECK_DETAIL_IMPORT_PATH(deck.id))}
+          />
         </Tabs.Panel>
 
-        <Tabs.Panel value={TabValues.Subdecks}>
-          <ManageDeckSubdecks deck={deck} />
+        <Tabs.Panel value={Subpage.Subdeck}>
+          <ManageDeckSubdecks deck={deck} path={rest} />
         </Tabs.Panel>
 
-        <Tabs.Panel value={TabValues.Upload}>
-          <ManageDeckCardsUpload deck={deck} onUploadEnded={() => setActiveTab(TabValues.Cards)} />
+        <Tabs.Panel value={Subpage.Import}>
+          <ManageDeckCardsUpload
+            deck={deck}
+            onUploadEnded={() => router.replace(DECK_DETAIL_PATH(deck.id))}
+          />
         </Tabs.Panel>
       </Stack>
     </Tabs>

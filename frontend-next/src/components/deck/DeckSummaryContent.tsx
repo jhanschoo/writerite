@@ -2,6 +2,7 @@ import { DeckSummaryFragment } from '@generated/graphql';
 import { Text } from '@mantine/core';
 import { formatISO, parseISO } from 'date-fns';
 import { FC } from 'react';
+import { DeckName } from './DeckName';
 
 interface Props {
   deck: DeckSummaryFragment;
@@ -13,15 +14,9 @@ export const DeckSummaryContent: FC<Props> = ({
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
     <>
-      {name ? (
-        <Text size="lg" weight="bold">
-          {name}
-        </Text>
-      ) : (
-        <Text color="dimmed" sx={{ fontStyle: 'italic' }}>
-          Untitled Deck
-        </Text>
-      )}
+      <Text size="lg" weight="bold">
+        <DeckName name={name} />
+      </Text>
       <Text>
         {subdecksCount} subdecks
         <br />

@@ -1,6 +1,9 @@
+import { DeckName } from '@/components/deck/DeckName';
+import { DECK_DETAIL_PATH } from '@/paths';
 import { DeckSummaryFragment } from '@generated/graphql';
 import { Button, Text } from '@mantine/core';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { FC, ReactNode, useState } from 'react';
 
 interface SubdeckListItemContentProps {
@@ -24,6 +27,7 @@ export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
 }) => {
   const { id, name, cardsDirectCount, subdecksCount } = deck;
   const [isAdding, setIsAdding] = useState(false);
+  const router = useRouter();
   const handleClick = async () => {
     try {
       setIsAdding(true);
@@ -36,7 +40,7 @@ export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
     <>
       <Text sx={{ flexGrow: 1 }}>
         <Text component="span" fw="bold">
-          {name}
+          <DeckName name={name} />
         </Text>
         <br />
         {cardsDirectCount ? `${cardsDirectCount} cards` : ''}
@@ -44,11 +48,9 @@ export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
         {subdecksCount ? `${subdecksCount} subdecks` : ''}
         {!(cardsDirectCount || subdecksCount) ? 'Empty deck' : ''}
       </Text>
-      <Link href={`/app/deck/${id}`}>
-        <Button variant="subtle" compact>
-          Visit
-        </Button>
-      </Link>
+      <Button variant="subtle" compact onClick={() => router.push(DECK_DETAIL_PATH(id))}>
+        Visit
+      </Button>
       <Button
         leftIcon={actioned ? actionedIcon : actionIcon}
         variant="subtle"

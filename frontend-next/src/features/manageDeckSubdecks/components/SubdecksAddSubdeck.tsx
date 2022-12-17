@@ -18,6 +18,7 @@ import {
   Stack,
   Text,
   TextInput,
+  Title,
   UnstyledButton,
   useMantineTheme,
 } from '@mantine/core';
@@ -30,6 +31,7 @@ import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { BasicList } from '@/components/BasicList';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
 import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
 
 export const INITIAL_RECENT_DECKS = 5;
 
@@ -85,8 +87,9 @@ const DeckItem =
   ({ parentId, added, onAdded }: DeckItemFactoryProps): FC<DeckItemProps> =>
   ({ deck }) => {
     const theme = useMantineTheme();
-    const { hovered: cardHovered, ref: cardRef } = useHover();
     const variantOutput = theme.fn.variant({ variant: 'filled' });
+    const { hovered: cardHovered, ref: cardRef } = useHover();
+    const router = useRouter();
     const [{ fetching }, deckAddSubdeck] = useMutation(DeckAddSubdeckDocument);
     const handleAddSubdeck = async (e: MouseEvent<HTMLDivElement>) => {
       e.stopPropagation();
@@ -133,23 +136,26 @@ const DeckItem =
           {...(thisAdded && addedProps(variantOutput))}
         />
         <Card.Section>
-          <Link href={`/app/deck/${deck.id}`}>
-            <Button fullWidth variant="subtle" sx={{ borderRadius: 0 }}>
-              View
-            </Button>
-          </Link>
+          <Button
+            fullWidth
+            variant="subtle"
+            sx={{ borderRadius: 0 }}
+            onClick={() => router.push(DECK_DETAIL_PATH(deck.id))}
+          >
+            View
+          </Button>
         </Card.Section>
       </Card>
     );
   };
 
 interface Props extends ManageDeckProps {
-  onFinishedAddingSubdecks(): void;
+  onFinishedLinkingSubdecks(): void;
 }
 
-export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
+export const ManageDeckSubdecksLinkSubdeck: FC<Props> = ({
   deck: { id: deckId, subdecks },
-  onFinishedAddingSubdecks,
+  onFinishedLinkingSubdecks,
 }) => {
   const stoplist = subdecks.map(({ id }) => id);
   stoplist.push(deckId);
@@ -180,7 +186,7 @@ export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
       parentDeckId: deckId,
     });
     if (createdDeck.data?.deckCreate.id) {
-      router.push(`/app/deck/${createdDeck.data.deckCreate.id}`);
+      router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
     }
   };
   const handleAddSubdeck = async (subdeckId: string) => {
@@ -205,6 +211,9 @@ export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
   }
   return (
     <Stack p="sm">
+      <Title order={2} size="h4">
+        Link subdecks
+      </Title>
       <BasicList borderTop borderBottom data={recentDeckItems} />
       {canShowMoreRecentDecks && (
         <Button fullWidth variant="subtle" onClick={() => setRecentShowMore(true)}>
@@ -212,7 +221,7 @@ export const ManageDeckSubdecksAddSubdeck: FC<Props> = ({
         </Button>
       )}
       <Flex justify="space-between" align="center">
-        <Button variant="subtle" onClick={onFinishedAddingSubdecks} leftIcon={<IconArrowLeft />}>
+        <Button variant="subtle" onClick={onFinishedLinkingSubdecks} leftIcon={<IconArrowLeft />}>
           Back
         </Button>
         <Flex gap="md" wrap="wrap" justify="flex-end">
