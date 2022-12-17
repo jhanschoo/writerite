@@ -198,12 +198,15 @@ describe('graphql/User.ts', () => {
 
         // query target user
         const queryUserResponse = await queryAllUserAccessibleUserScalars(server, targetUser.id);
-        expect(queryUserResponse).toHaveProperty('data.user', {
-          id: targetUser.id,
-          name: 'user1',
-          isPublic: true,
-          roles: [Roles.User],
-        });
+        expect(queryUserResponse).toHaveProperty(
+          'data.user',
+          expect.objectContaining({
+            id: targetUser.id,
+            name: 'user1',
+            isPublic: true,
+            roles: [Roles.User],
+          })
+        );
       });
     });
   });

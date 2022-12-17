@@ -95,7 +95,6 @@ describe('graphql/Deck.ts', () => {
           promptLang: '',
           published: false,
           sortData: [],
-          usedAt: expect.stringMatching(isoTimestampMatcher),
         });
         const deckBefore = createDeckResponse.data.deckCreate;
 

@@ -192,7 +192,7 @@ type Mutation {
       reason: "name may be changed"
     )
   """
-  userEdit(isPublic: Boolean, name: String): User!
+  userEdit(bio: JSONObject, id: String, isPublic: Boolean, name: String): User!
 }
 
 type Query {
@@ -300,6 +300,7 @@ type User {
   count of users who have unilaterally befriended this user without reciprocation
   """
   befriendersCount: Int!
+  bio: JSONObject
   decks: [Deck!]!
   facebookId: String
 

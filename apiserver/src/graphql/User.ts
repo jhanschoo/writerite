@@ -19,6 +19,10 @@ import {
 import { guardLoggedIn } from '../service/authorization/guardLoggedIn';
 import { roomFindOccupyingActiveOfUser } from '../service/room/roomFindOccupyingActiveOfUser';
 import { invalidateByUserId } from '../service/session';
+import { Prisma } from '@prisma/client';
+import { jsonObjectArg } from './scalarUtil';
+import { z } from 'zod';
+import { jsonObjectSchema } from '../service/validation/jsonSchema';
 
 const isPublicOrLoggedInOrAdmin = (
   { id, isPublic }: { id: string; isPublic: boolean },
@@ -26,13 +30,22 @@ const isPublicOrLoggedInOrAdmin = (
   { auth }: Context
 ) => isPublic || auth.isLoggedInAs(id) || auth.isAdmin;
 
+const isLoggedInOrAdmin = ({ id }: { id: string }, _args: unknown, { auth }: Context) =>
+  auth.isLoggedInAs(id) || auth.isAdmin;
+
 export const User = objectType({
   name: 'User',
   definition(t) {
     t.nonNull.id('id');
     t.string('name', { authorize: isPublicOrLoggedInOrAdmin });
-    t.string('googleId', { authorize: isPublicOrLoggedInOrAdmin });
-    t.string('facebookId', { authorize: isPublicOrLoggedInOrAdmin });
+    t.string('googleId', { authorize: isLoggedInOrAdmin });
+    t.string('facebookId', { authorize: isLoggedInOrAdmin });
+    t.jsonObject('bio', {
+      authorize: isPublicOrLoggedInOrAdmin,
+      resolve({ bio }) {
+        return bio as Prisma.JsonObject | null;
+      },
+    });
     t.nonNull.list.nonNull.string('roles', { authorize: isPublicOrLoggedInOrAdmin });
     t.nonNull.boolean('isPublic');
 
@@ -182,25 +195,40 @@ export const UserQuery = queryField('user', {
   },
 });
 
+export const userEditSchema = z.object({
+  id: z.string().min(20).optional(),
+  name: z.string().trim().optional(),
+  bio: jsonObjectSchema.nullable().optional(),
+  isPublic: z.boolean().optional(),
+});
+
 export const UserEditMutation = mutationField('userEdit', {
   type: nonNull('User'),
   args: {
+    id: stringArg({ undefinedOnly: true }),
     name: stringArg({ undefinedOnly: true }),
+    bio: jsonObjectArg(),
     isPublic: booleanArg({ undefinedOnly: true }),
   },
   description: `@invalidatesTokens(
     reason: "name may be changed"
   )`,
-  resolve: guardLoggedIn(async (_source, { name, isPublic }, { prisma, redis, sub }) => {
+  resolve: guardLoggedIn(async (_source, args, { prisma, redis, sub }) => {
+    args.id = args.id ?? sub.id;
+    const { id, name, bio, isPublic } = userEditSchema.parse(args);
+    if (id !== sub.id && !sub.roles.includes(Roles.Admin)) {
+      throw userLacksPermissionsErrorFactory();
+    }
     try {
-      if (name !== undefined && sub.name !== name) {
-        await invalidateByUserId(redis, sub.id);
-      }
       const userRes = await prisma.user.update({
-        where: { id: sub.id },
-        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-        data: { name: name?.trim() || undefined, isPublic: isPublic ?? undefined },
+        where: { id },
+        data: {
+          name,
+          bio: bio === null ? Prisma.DbNull : bio,
+          isPublic,
+        },
       });
+      await invalidateByUserId(redis, sub.id);
       return userRes;
     } catch (err) {
       throw userLacksPermissionsErrorFactory();

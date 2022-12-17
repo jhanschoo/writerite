@@ -157,6 +157,8 @@ model User {
   googleId       String?          @unique
   name           String?          @unique
   passwordHash   String?
+  // description is a JsonObject if not null
+  bio            Json?
   roles          String[]
   isPublic       Boolean          @default(false)
 

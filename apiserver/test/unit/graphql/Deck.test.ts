@@ -9,7 +9,6 @@ import {
   mutationDeckCreateEmpty,
   mutationDeckEditName,
   mutationDeckRemoveSubdeck,
-  mutationDeckUsed,
   queryDeckScalars,
   queryDecks,
   testContextFactory,
@@ -154,27 +153,6 @@ describe('graphql/Deck.ts', () => {
         expect(response).toHaveProperty('data.deckRemoveSubdeck.id', id);
       });
     });
-    describe('deckUsed', () => {
-      it('should ask the db to update the usedAt field of a deck to a recent time', async () => {
-        const id = 'deck-id-with-20-plus-chars';
-        setSub(DEFAULT_CURRENT_USER);
-        prisma.user.findUnique.mockResolvedValue(null);
-        prisma.deck.count.mockResolvedValue(1);
-        prisma.deck.update.mockResolvedValue({ id } as Deck);
-        const response = await mutationDeckUsed(server, { id });
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        expect(prisma.deck.update).toHaveBeenCalledWith(
-          expect.objectContaining({
-            where: { id },
-            data: {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-              usedAt: expect.any(Date),
-            },
-          })
-        );
-        expect(response).toHaveProperty('data.deckUsed.id', id);
-      });
-    });
   });
 
   describe('Query', () => {
@@ -194,7 +172,6 @@ describe('graphql/Deck.ts', () => {
           promptLang: '',
           published: false,
           sortData: [],
-          usedAt: new Date(),
           createdAt: new Date(),
           updatedAt: new Date(),
         });
@@ -210,8 +187,6 @@ describe('graphql/Deck.ts', () => {
           promptLang: '',
           published: false,
           sortData: [],
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          usedAt: expect.any(String),
         });
       });
     });

@@ -266,6 +266,7 @@ export interface NexusGenFieldTypes {
     befriendedsCount: number; // Int!
     befrienders: NexusGenRootTypes['User'][]; // [User!]!
     befriendersCount: number; // Int!
+    bio: NexusGenScalars['JSONObject'] | null; // JSONObject
     decks: NexusGenRootTypes['Deck'][]; // [Deck!]!
     facebookId: string | null; // String
     friends: NexusGenRootTypes['User'][]; // [User!]!
@@ -410,6 +411,7 @@ export interface NexusGenFieldTypeNames {
     befriendedsCount: 'Int'
     befrienders: 'User'
     befriendersCount: 'Int'
+    bio: 'JSONObject'
     decks: 'Deck'
     facebookId: 'String'
     friends: 'User'
@@ -524,6 +526,8 @@ export interface NexusGenArgTypes {
       befriendedId: string; // ID!
     }
     userEdit: { // args
+      bio?: NexusGenScalars['JSONObject'] | null; // JSONObject
+      id?: string | null; // String
       isPublic?: boolean | null; // Boolean
       name?: string | null; // String
     }

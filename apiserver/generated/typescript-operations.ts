@@ -315,6 +315,8 @@ export type MutationUserBefriendUserArgs = {
 
 
 export type MutationUserEditArgs = {
+  bio?: InputMaybe<Scalars['JSONObject']>;
+  id?: InputMaybe<Scalars['String']>;
   isPublic?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
 };
@@ -458,6 +460,7 @@ export type User = {
   befrienders: Array<User>;
   /** count of users who have unilaterally befriended this user without reciprocation */
   befriendersCount: Scalars['Int'];
+  bio?: Maybe<Scalars['JSONObject']>;
   decks: Array<Deck>;
   facebookId?: Maybe<Scalars['String']>;
   /** users who are mutual friends of this user */
