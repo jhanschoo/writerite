@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 import { Dashboard } from '@/features/dashboard';
 import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 
-const Home: NextPage = () => {
+const Profile: NextPage = () => {
   const router = useRouter();
   const { motionProps } = useMotionContext();
   const [userResult] = useQuery({
@@ -30,4 +30,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Profile;

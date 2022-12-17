@@ -52,19 +52,22 @@ export const ManageDecks: FC = () => {
   };
   return (
     <Center>
-      <Stack p="md" className={classes.root} spacing={2}>
-        <Group align="end" mb="sm" className={classes.group}>
+      <Stack p="md" className={classes.root} spacing="sm">
+        <Group align="end" className={classes.group}>
           <Title order={1} className={classes.growable}>
             Manage Decks
           </Title>
           <NewDeckItem onClick={handleCreateDeck} />
         </Group>
-        <Divider mb="md" />
+        <Divider />
         <Title order={2} size="h4">
           Recent
         </Title>
         <RecentDecks />
-        <Divider mb="md" />
+        <Divider />
+        <Title order={2} size="h4">
+          Search
+        </Title>
         <SearchDecks
           onClickFactory={(deck) => (e: MouseEvent<HTMLDivElement>) => {
             router.push(DECK_DETAIL_PATH(deck.id));

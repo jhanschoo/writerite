@@ -7,4 +7,5 @@ export const DECK_DETAIL_SUBDECK_IMPORT_PATH = (id: string) =>
   `${DECK_DETAIL_SUBDECK_PATH(id)}/import`;
 export const DECK_DETAIL_IMPORT_PATH = (id: string) => `${DECK_DETAIL_PATH(id)}/import`;
 export const ROOM_PATH = `${APP_PATH}/room`;
-export const ROOM_DETAIL_PATH = (idOrSlug: string) => `${ROOM_PATH}/{idOrSlug}`;
+export const ROOM_DETAIL_PATH = (idOrSlug: string) => `${ROOM_PATH}/${idOrSlug}`;
+export const PROFILE_PATH = `${APP_PATH}/user`;

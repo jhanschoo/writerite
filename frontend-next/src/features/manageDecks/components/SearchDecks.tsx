@@ -81,7 +81,6 @@ export const SearchDecks: FC<Props> = ({ onClickFactory }) => {
   const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
   return (
     <>
-      <Text>Search decks</Text>
       <SegmentedControl
         value={scopeFilter}
         onChange={setScopeFilter as Dispatch<SetStateAction<string>>}

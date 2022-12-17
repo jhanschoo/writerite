@@ -45,7 +45,7 @@ export const RecentDecks: FC = () => {
   }
   recentDeckItems.reverse();
   return (
-    <Stack p="sm">
+    <Stack>
       <Flex direction="row-reverse" wrap="wrap-reverse" gap="xs" justify="stretch">
         {recentDeckItems}
       </Flex>

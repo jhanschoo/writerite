@@ -1,12 +1,9 @@
 import {
   AppShell,
-  Avatar,
   Button,
-  Center,
   createStyles,
   Drawer,
-  Footer,
-  Group,
+  Flex,
   Header,
   Menu,
   Space,
@@ -25,6 +22,8 @@ import { useCurrentUser } from '@/hooks';
 import { ProfilePicture } from '@/features/profilePicture/components';
 import { useMediaQuery } from '@mantine/hooks';
 import { ActionIcon } from '@/components/ActionIcon';
+import { useRouter } from 'next/router';
+import { PROFILE_PATH } from '@/paths';
 
 interface Props {
   breadcrumbs?: [string, string | JSX.Element][];
@@ -57,12 +56,14 @@ const useDrawerButtonStyles = createStyles((theme) => {
 export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeight }) => {
   const logout = useLogout();
   const currentUser = useCurrentUser();
+  const router = useRouter();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
   const useMenu = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
   const { classes: shellClasses } = useShellStyles({ vhHeight });
   const { classes: drawerButtonClasses } = useDrawerButtonStyles();
   const [showProfileOptions, setShowProfileOptions] = useState(false);
+  const handleGoToProfile = () => router.push(PROFILE_PATH);
   return (
     <AppShell
       padding={0}
@@ -94,8 +95,12 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
                   </UnstyledButton>
                 </Menu.Target>
                 <Menu.Dropdown>
-                  <Menu.Item icon={<ProfilePicture user={currentUser} />}>
+                  <Menu.Item
+                    icon={<ProfilePicture user={currentUser} />}
+                    onClick={handleGoToProfile}
+                  >
                     <Text fw="bolder">{currentUser.name}</Text>
+                    <Text>View profile & friends</Text>
                   </Menu.Item>
                   <Menu.Item
                     icon={colorScheme === 'light' ? <IconMoonStars /> : <IconSun />}
@@ -113,10 +118,13 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
                 onClose={() => setShowProfileOptions(false)}
                 position="right"
                 title={
-                  <Group>
+                  <Flex gap="sm" onClick={handleGoToProfile}>
                     <ProfilePicture user={currentUser} />
-                    <Text fw="bolder">{currentUser.name}</Text>
-                  </Group>
+                    <Text fw="normal">
+                      <Text fw="bolder">{currentUser.name}</Text>
+                      <Text fz="sm">View profile & friends</Text>
+                    </Text>
+                  </Flex>
                 }
                 padding="xl"
                 size="100%"
