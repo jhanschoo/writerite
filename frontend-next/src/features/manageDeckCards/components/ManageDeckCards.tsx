@@ -54,7 +54,7 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
     activePage === 1;
   return (
     <Stack spacing="xs" align="stretch">
-      <Flex gap="md">
+      <Flex gap="md" wrap="wrap" justify="stretch">
         <Button
           onClick={() => setShowAddCard(true)}
           disabled={!canAddANewCard || showAddCard}

@@ -38,7 +38,6 @@ export const ManageDeckDescription: FC<ManageDeckProps> = ({ deck: { id, descrip
     },
     [debounced]
   );
-  const hasUnsavedChanges = fetching || debounced.isPending();
   const editor = useEditor({
     ...DEFAULT_EDITOR_PROPS,
     extensions: [

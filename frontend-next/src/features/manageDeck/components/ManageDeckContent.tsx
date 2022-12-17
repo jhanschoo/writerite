@@ -61,7 +61,7 @@ export const ManageDeckContent: FC<ManageDeckProps> = ({ deck, path }) => {
   const { classes } = useStyles();
   const router = useRouter();
   const [subpath, ...rest] = path ?? [];
-  const subpage = subpath || 'card';
+  const subpage = (subpath || 'card') as Subpage;
   const handleTabChange = (tabValue: Subpage | null) => {
     switch (tabValue) {
       case Subpage.Card:

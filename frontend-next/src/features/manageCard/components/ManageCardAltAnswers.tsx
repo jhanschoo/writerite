@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Button, Group, Paper, Stack, Text } from '@mantine/core';
+import { Button, Flex, Stack, Text } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
@@ -23,10 +23,10 @@ export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
   };
   return (
     <Stack spacing={0} sx={{ flexGrow: 1 }}>
-      <Text size="xs" weight="bold">
-        Accepted answers
-      </Text>
-      <Group spacing="xs" py="xs">
+      <Flex gap="xs" py="xs" align="center" wrap="wrap">
+        <Text size="xs" weight="bold">
+          Accepted answers
+        </Text>
         {answers.map((answer, index) => {
           if (index === currentlyEditing) {
             return (
@@ -70,7 +70,7 @@ export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
             />
           ) : undefined
         }
-      </Group>
+      </Flex>
       {currentlyEditing !== null ? (
         <Text size="xs" color="dimmed">
           Press 'Esc' to cancel edits, or 'Return' to confirm edits.

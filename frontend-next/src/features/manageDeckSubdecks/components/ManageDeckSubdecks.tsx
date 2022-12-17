@@ -15,8 +15,8 @@ enum Subpage {
 // TODO: WIP
 export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck, path }) => {
   const router = useRouter();
-  const [subpath, ...rest] = path ?? [];
-  const subpage = subpath || 'browse';
+  const [subpath] = path ?? [];
+  const subpage = (subpath || 'browse') as Subpage;
   switch (subpage) {
     case Subpage.Link:
       return (
@@ -33,8 +33,6 @@ export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck, path }) => {
         </p>
       );
     case Subpage.Browse:
-    // fallthrough
-    default:
       return (
         <ManageDeckSubdecksBrowse
           deck={deck}

@@ -59,7 +59,7 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
   const currentUser = useCurrentUser();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
-  const useDrawer = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`);
+  const useMenu = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
   const { classes: shellClasses } = useShellStyles({ vhHeight });
   const { classes: drawerButtonClasses } = useDrawerButtonStyles();
   const [showProfileOptions, setShowProfileOptions] = useState(false);
@@ -87,7 +87,7 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
           </ActionIcon>
           {currentUser && (
             <>
-              <Menu opened={!useDrawer && showProfileOptions} onChange={setShowProfileOptions}>
+              <Menu opened={useMenu && showProfileOptions} onChange={setShowProfileOptions}>
                 <Menu.Target>
                   <UnstyledButton onClick={() => setShowProfileOptions(!showProfileOptions)}>
                     <ProfilePicture user={currentUser} />
@@ -109,7 +109,7 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
                 </Menu.Dropdown>
               </Menu>
               <Drawer
-                opened={useDrawer && showProfileOptions}
+                opened={!useMenu && showProfileOptions}
                 onClose={() => setShowProfileOptions(false)}
                 position="right"
                 title={

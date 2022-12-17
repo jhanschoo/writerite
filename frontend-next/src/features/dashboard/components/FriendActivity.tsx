@@ -3,12 +3,12 @@ import { FC } from 'react';
 
 const useStyles = createStyles((theme) => ({
   emptyStatsText: {
-    fontSize: theme.fontSizes.xl * 2,
-    [`@media (max-width: ${theme.breakpoints.md}px)`]: {
+    fontSize: theme.fontSizes.xl,
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
       fontSize: theme.fontSizes.xl * 1.5,
     },
-    [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
-      fontSize: theme.fontSizes.xl,
+    [`@media (min-width: ${theme.breakpoints.md}px)`]: {
+      fontSize: theme.fontSizes.xl * 2,
     },
   },
 }));

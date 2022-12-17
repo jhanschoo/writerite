@@ -11,7 +11,11 @@ import {
 } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { DEFAULT_EDITOR_PROPS, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
+import {
+  BareRichTextEditor,
+  DEFAULT_EDITOR_PROPS,
+  ToolbaredRichTextEditor,
+} from '@/components/RichTextEditor';
 import { useMutation } from 'urql';
 import { CardCreateDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
@@ -80,12 +84,6 @@ export const AddNewCard: FC<Props> = ({ deck: { id: deckId }, onDone }) => {
     await updateStateToServer();
     onDone();
   };
-  const handleSaveAndAddAnother = async () => {
-    await updateStateToServer();
-    setPromptContent(null);
-    setFullAnswerContent(null);
-    setAnswerValues([]);
-  };
   const promptEditor = useEditor({
     ...DEFAULT_EDITOR_PROPS,
     content: promptContent,
@@ -102,6 +100,14 @@ export const AddNewCard: FC<Props> = ({ deck: { id: deckId }, onDone }) => {
       setFullAnswerContent(latestFullAnswerContent);
     },
   });
+  const handleSaveAndAddAnother = async () => {
+    await updateStateToServer();
+    promptEditor?.commands.clearContent();
+    setPromptContent(null);
+    fullAnswerEditor?.commands.clearContent();
+    setFullAnswerContent(null);
+    setAnswerValues([]);
+  };
 
   return (
     <Box className={classes.boxRoot}>
@@ -115,7 +121,7 @@ export const AddNewCard: FC<Props> = ({ deck: { id: deckId }, onDone }) => {
         {/* The LoadingOverlay is not placed first due to special formatting for first and last children of Card if those elements are Card.Section */}
         <LoadingOverlay visible={fetching} />
         <Card.Section>
-          <ToolbaredRichTextEditor editor={promptEditor} />
+          <BareRichTextEditor editor={promptEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding pt="sm">
@@ -124,21 +130,23 @@ export const AddNewCard: FC<Props> = ({ deck: { id: deckId }, onDone }) => {
           </Text>
         </Card.Section>
         <Card.Section>
-          <ToolbaredRichTextEditor editor={fullAnswerEditor} />
+          <BareRichTextEditor editor={fullAnswerEditor} />
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding py="sm">
-          <Flex gap="xs" wrap="wrap" align="flex-end">
+          <Flex gap="xs" direction={{ base: 'column', md: 'row' }} align={{ md: 'flex-end' }}>
             <ManageCardAltAnswers answers={answerValues} onAnswersSave={setAnswerValues} />
-            <Button variant="subtle" onClick={onDone}>
-              Cancel
-            </Button>
-            <Button variant="default" onClick={handleSave}>
-              Save
-            </Button>
-            <Button variant="filled" onClick={handleSaveAndAddAnother}>
-              Save and add another
-            </Button>
+            <Flex gap="xs" wrap={{ base: 'wrap', sm: 'nowrap' }} justify="flex-end">
+              <Button variant="subtle" onClick={onDone}>
+                Cancel
+              </Button>
+              <Button variant="default" onClick={handleSave}>
+                Save
+              </Button>
+              <Button variant="filled" onClick={handleSaveAndAddAnother}>
+                Save and add another
+              </Button>
+            </Flex>
           </Flex>
         </Card.Section>
       </Card>

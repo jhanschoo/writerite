@@ -20,21 +20,21 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     gridColumn: 'span 12',
   },
   statsPanel: {
-    gridColumn: 'span 8',
-    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: 'span 12',
+    gridColumn: 'span 12',
+    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridColumn: 'span 8',
     },
   },
   friendActivityPanel: {
-    gridColumn: 'span 8',
-    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: 'span 12',
+    gridColumn: 'span 12',
+    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridColumn: 'span 8',
     },
   },
   decksPanel: {
-    gridColumn: 'span 4',
-    [`@media (max-width: ${theme.breakpoints.lg}px)`]: {
-      gridColumn: 'span 12',
+    gridColumn: 'span 12',
+    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridColumn: 'span 4',
     },
   },
 }));
