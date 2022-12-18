@@ -57,3 +57,10 @@ The room object:
 * Solo evanescent room from deck detail.
 
 ## Consistency guarantees under improper termination
+
+* On service down, clients will keep trying to resubscribe.
+* Clients do not maintain more than X displayable messages in history, hence clients' views are eventually consistent upon view change or enough new displayable messages being sent. (non-displayable messages don't affect view state).
+* For Perpetual rooms, it is on room subscription that the room determines if it should spin up a quizconductor (in a distributed-safe fashion). Quizconductors regularly send a heartbeat to the singleton DB, and this log gives the quizconductor an ephemeral lock.
+* For Evanescent rooms, quizconductors will not be recreated.
+  * Thus there may exist Evanescent rooms that do no get to run the full quiz the quizmaster intended to run, and that may not have a return message near its end.
+* Each instance on a very long timeout cleans up old quizconductor heartbeats and closes rooms without quizconductors.
