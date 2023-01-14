@@ -9,6 +9,7 @@ export interface InvalidatedGuardParams {
   sub: CurrentUser;
 }
 
+// TODO: invalidation checking should also consider tokens issued by other redis instances invalidated.
 export async function isInvalidated(params: InvalidatedGuardParams) {
   const {
     redis,
