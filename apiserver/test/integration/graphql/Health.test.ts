@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from '@prisma/client';
 
-import { queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
+import { jestForAwaitOf, queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
 import { Context } from '../../../src/context';
 import { YogaInitialContext } from 'graphql-yoga';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
@@ -51,16 +51,13 @@ describe('graphql/Health.ts', () => {
         if (!response.body) {
           return;
         }
-        jest.advanceTimersByTime(2000);
-        jest.runAllTimers();
         let counter = 4;
-        for await (const chunk of response.body) {
-          jest.advanceTimersByTime(2000);
-          jest.runAllTimers();
+        // eslint-disable-next-line @typescript-eslint/require-await
+        await jestForAwaitOf(response.body, () => jest.advanceTimersByTime(1000), async (chunk) => {
           const event = JSON.parse(chunk.toString().slice(6));
           expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
-        }
+        });
       });
     });
   });

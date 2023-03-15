@@ -74,7 +74,6 @@ describe('graphql/Health.ts', () => {
         }
         // eslint-disable-next-line @typescript-eslint/require-await
         await jestForAwaitOf(iter as AsyncIterable<string>, () => jest.advanceTimersByTime(2000), async (chunk) => {
-          console.log(chunk);
           expect(chunk).toEqual(String(counter));
           --counter;
         });
@@ -88,12 +87,28 @@ describe('graphql/Health.ts', () => {
         }
         let counter = 4;
         // eslint-disable-next-line @typescript-eslint/require-await
-        await jestForAwaitOf(response.body, () => jest.advanceTimersByTime(2000), async (chunk) => {
+        await jestForAwaitOf(response.body, () => jest.advanceTimersByTime(1000), async (chunk) => {
           const event = JSON.parse(chunk.toString().slice(6));
           expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         });
       });
+      it.skip('should do stuff if we advance the timers', async () => {
+        jest.useFakeTimers({ advanceTimers: true });
+        expect.assertions(5);
+        const response = await subscriptionRepeatHealth(server as unknown as WrServer);
+        if (!response.body) {
+          return;
+        }
+        let counter = 4;
+        // eslint-disable-next-line @typescript-eslint/require-await
+        for await (const chunk of response.body) {
+          console.log(chunk.toString());
+          const event = JSON.parse(chunk.toString().slice(6));
+          expect(event).toHaveProperty('data.repeatHealth', String(counter));
+          --counter;
+        }
+      }, 10000);
     });
   });
 });
