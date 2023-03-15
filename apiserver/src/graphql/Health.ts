@@ -10,8 +10,8 @@ export const HealthQuery = queryField('health', {
 export const RepeatHealthSubscription = subscriptionField('repeatHealth', {
   type: nonNull('String'),
   subscribe(_root, _args, { sub }) {
-    let times = 5;
     return (async function* repeatHealth() {
+      let times = 5;
       while (times--) {
         yield String(times) + (sub?.id ?? '');
         await new Promise((resolve) => {

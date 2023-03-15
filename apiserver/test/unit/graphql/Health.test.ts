@@ -3,12 +3,13 @@ import type { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import Redis from 'ioredis';
 
-import { queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
+import { jestForAwaitOf, queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
 import { Context } from '../../../src/context';
 import { YogaInitialContext, YogaServerInstance, createPubSub, createYoga } from 'graphql-yoga';
 import { WrServer } from '../../../src/graphqlApp';
 import { schema } from '../../../src/schema';
 import { CurrentUser, Roles } from '../../../src/service/userJWT';
+import { GraphQLResolveInfo } from 'graphql';
 
 export const DEFAULT_CURRENT_USER = {
   id: 'fake-id',
@@ -60,6 +61,24 @@ describe('graphql/Health.ts', () => {
 
   describe('Subscription', () => {
     describe('repeatHealth', () => {
+      it('the iterator itself should do stuff', async () => {
+        jest.useFakeTimers();
+        const subscribe = schema.getSubscriptionType()?.getFields().repeatHealth.subscribe;
+        expect.assertions(5);
+        jest.advanceTimersByTime(2000);
+        jest.runAllTimers();
+        let counter = 4;
+        const iter = await subscribe?.(undefined, undefined, {}, {} as GraphQLResolveInfo);
+        if (!iter) {
+          return;
+        }
+        // eslint-disable-next-line @typescript-eslint/require-await
+        await jestForAwaitOf(iter as AsyncIterable<string>, () => jest.advanceTimersByTime(2000), async (chunk) => {
+          console.log(chunk);
+          expect(chunk).toEqual(String(counter));
+          --counter;
+        });
+      });
       it('should do stuff', async () => {
         jest.useFakeTimers();
         expect.assertions(5);
@@ -67,16 +86,13 @@ describe('graphql/Health.ts', () => {
         if (!response.body) {
           return;
         }
-        jest.advanceTimersByTime(2000);
-        jest.runAllTimers();
         let counter = 4;
-        for await (const chunk of response.body) {
-          jest.advanceTimersByTime(2000);
-          jest.runAllTimers();
+        // eslint-disable-next-line @typescript-eslint/require-await
+        await jestForAwaitOf(response.body, () => jest.advanceTimersByTime(2000), async (chunk) => {
           const event = JSON.parse(chunk.toString().slice(6));
           expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
-        }
+        });
       });
     });
   });
