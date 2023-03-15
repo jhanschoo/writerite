@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from '@prisma/client';
 
-import { jestForAwaitOf, queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
+import { jestForAwaitOf, queryHealth, subscriptionRepeatHealth, testContextFactory, trimSubscriptionHeartbeats } from '../../helpers';
 import { Context } from '../../../src/context';
 import { YogaInitialContext } from 'graphql-yoga';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
@@ -53,8 +53,8 @@ describe('graphql/Health.ts', () => {
         }
         let counter = 4;
         // eslint-disable-next-line @typescript-eslint/require-await
-        await jestForAwaitOf(response.body, () => jest.advanceTimersByTime(1000), async (chunk) => {
-          const event = JSON.parse(chunk.toString().slice(6));
+        await jestForAwaitOf(trimSubscriptionHeartbeats(response.body), () => jest.advanceTimersByTime(2000), async (eventStr) => {
+          const event = JSON.parse(eventStr);
           expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         });

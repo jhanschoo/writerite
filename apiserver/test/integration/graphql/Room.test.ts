@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 import { cascadingDelete } from '../_helpers/truncate';
 import { loginAsNewlyCreatedUser, refreshLogin } from '../../helpers/graphql/User.util';
-import { mutationDeckCreateEmpty, testContextFactory } from '../../helpers';
+import { mutationDeckCreateEmpty, testContextFactory, trimSubscriptionHeartbeats } from '../../helpers';
 import { PubSub, YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
 import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
@@ -773,7 +773,7 @@ describe('graphql/Room.ts', () => {
           expect.arrayContaining([
             expect.objectContaining({ id: roomBefore1.id }),
             expect.objectContaining({ id: roomBefore2.id }),
-            expect.objectContaining({ id: roomBefore3.id }),
+            expect.objectContaining({ id: roomBefore3.idf}),
           ])
         );
       });
@@ -835,9 +835,9 @@ describe('graphql/Room.ts', () => {
         );
 
         // assert subscription result
-        const readResult = await roomUpdates.body[Symbol.asyncIterator]().next();
+        const readResult = await trimSubscriptionHeartbeats(roomUpdates.body).next();
         if (!readResult.done) {
-          const event = JSON.parse(readResult.value.toString().slice(6));
+          const event = JSON.parse(readResult.value);
           expect(event).toHaveProperty(
             'data.roomUpdatesByRoomSlug',
             expect.objectContaining({
@@ -924,9 +924,9 @@ describe('graphql/Room.ts', () => {
         );
 
         // assert subscription result
-        const readResult = await roomUpdates.body[Symbol.asyncIterator]().next();
+        const readResult = await trimSubscriptionHeartbeats(roomUpdates.body).next();
         if (!readResult.done) {
-          const event = JSON.parse(readResult.value.toString().slice(6));
+          const event = JSON.parse(readResult.value);
           expect(event).toHaveProperty(
             'data.roomUpdatesByRoomSlug',
             expect.objectContaining({
@@ -996,10 +996,10 @@ describe('graphql/Room.ts', () => {
         );
 
         // assert subscription result for deck
-        const iterator = roomUpdates.body[Symbol.asyncIterator]();
+        const iterator = trimSubscriptionHeartbeats(roomUpdates.body);
         const readResultOne = await iterator.next();
         if (!readResultOne.done) {
-          const event = JSON.parse(readResultOne.value.toString().slice(6));
+          const event = JSON.parse(readResultOne.value);
           expect(event).toHaveProperty(
             'data.roomUpdatesByRoomSlug',
             expect.objectContaining({
@@ -1039,7 +1039,7 @@ describe('graphql/Room.ts', () => {
         // assert subscription result
         const readResultTwo = await iterator.next();
         if (!readResultTwo.done) {
-          const event = JSON.parse(readResultTwo.value.toString().slice(6));
+          const event = JSON.parse(readResultTwo.value);
           expect(event).toHaveProperty(
             'data.roomUpdatesByRoomSlug',
             expect.objectContaining({

@@ -3,7 +3,7 @@ import type { PrismaClient } from '@prisma/client';
 import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
 import Redis from 'ioredis';
 
-import { jestForAwaitOf, queryHealth, subscriptionRepeatHealth, testContextFactory } from '../../helpers';
+import { jestForAwaitOf, queryHealth, subscriptionRepeatHealth, testContextFactory, trimSubscriptionHeartbeats } from '../../helpers';
 import { Context } from '../../../src/context';
 import { YogaInitialContext, YogaServerInstance, createPubSub, createYoga } from 'graphql-yoga';
 import { WrServer } from '../../../src/graphqlApp';
@@ -65,8 +65,6 @@ describe('graphql/Health.ts', () => {
         jest.useFakeTimers();
         const subscribe = schema.getSubscriptionType()?.getFields().repeatHealth.subscribe;
         expect.assertions(5);
-        jest.advanceTimersByTime(2000);
-        jest.runAllTimers();
         let counter = 4;
         const iter = await subscribe?.(undefined, undefined, {}, {} as GraphQLResolveInfo);
         if (!iter) {
@@ -87,13 +85,13 @@ describe('graphql/Health.ts', () => {
         }
         let counter = 4;
         // eslint-disable-next-line @typescript-eslint/require-await
-        await jestForAwaitOf(response.body, () => jest.advanceTimersByTime(1000), async (chunk) => {
-          const event = JSON.parse(chunk.toString().slice(6));
+        await jestForAwaitOf(trimSubscriptionHeartbeats(response.body), () => jest.advanceTimersByTime(2000), async (eventStr) => {
+          const event = JSON.parse(eventStr);
           expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         });
       });
-      it.skip('should do stuff if we advance the timers', async () => {
+      it('should do stuff if we advance the timers', async () => {
         jest.useFakeTimers({ advanceTimers: true });
         expect.assertions(5);
         const response = await subscriptionRepeatHealth(server as unknown as WrServer);
@@ -102,9 +100,8 @@ describe('graphql/Health.ts', () => {
         }
         let counter = 4;
         // eslint-disable-next-line @typescript-eslint/require-await
-        for await (const chunk of response.body) {
-          console.log(chunk.toString());
-          const event = JSON.parse(chunk.toString().slice(6));
+        for await (const eventStr of trimSubscriptionHeartbeats(response.body)) {
+          const event = JSON.parse(eventStr);
           expect(event).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         }
