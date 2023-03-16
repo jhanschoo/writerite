@@ -6,16 +6,17 @@ import {
   MessageUpdatesByRoomSlugSubscriptionVariables,
   Scalars,
 } from '../../../generated/typescript-operations';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 export function mutationMessageCreate(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   content: Scalars['JSON'],
   slug: string,
   type: MessageContentType
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<MessageCreateMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation MessageCreate($content: JSON, $slug: String!, $type: MessageContentType!) {
         messageCreate(content: $content, slug: $slug, type: $type) {
@@ -36,10 +37,10 @@ export function mutationMessageCreate(
   });
 }
 // SubscriptionMessageUpdatesByRoomSlugArgs
-export function subscriptionMessageUpdatesByRoomSlug(server: WrServer, slug: string) {
+export function subscriptionMessageUpdatesByRoomSlug(executor: ReturnType<typeof buildHTTPExecutor>, slug: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testSubscription<MessageUpdatesByRoomSlugSubscriptionVariables>({
-    server,
+    executor,
     document: gql`
       subscription MessageUpdatesByRoomSlug($slug: String!) {
         messageUpdatesByRoomSlug(slug: $slug) {

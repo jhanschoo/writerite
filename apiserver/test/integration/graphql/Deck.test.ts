@@ -15,19 +15,22 @@ import {
 } from '../../helpers';
 import { YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
-import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
+import { createGraphQLApp } from '../../../src/graphqlApp';
 import { CurrentUser } from '../../../src/service/userJWT';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 describe('graphql/Deck.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
-  let server: WrServer;
+  let executor: ReturnType<typeof buildHTTPExecutor>;
 
   beforeAll(() => {
     [setSub, context, stopContext, { prisma }] = testContextFactory();
-    server = createGraphQLApp({ context, logging: false });
+    const server = createGraphQLApp({ context, logging: false });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    executor = buildHTTPExecutor({ fetch: server.fetch });
   });
 
   afterAll(async () => {
@@ -49,10 +52,10 @@ describe('graphql/Deck.ts', () => {
         expect.assertions(1);
 
         // create user
-        await loginAsNewlyCreatedUser(server, setSub);
+        await loginAsNewlyCreatedUser(executor, setSub);
 
         // create deck
-        const response = await mutationDeckCreateEmpty(server);
+        const response = await mutationDeckCreateEmpty(executor);
         expect(response).toHaveProperty(
           'data.deckCreate',
           expect.objectContaining({
@@ -81,10 +84,10 @@ describe('graphql/Deck.ts', () => {
         expect.assertions(2);
 
         // create user
-        const { currentUser: user } = await loginAsNewlyCreatedUser(server, setSub);
+        const { currentUser: user } = await loginAsNewlyCreatedUser(executor, setSub);
 
         // create deck
-        const createDeckResponse = await mutationDeckCreateEmpty(server);
+        const createDeckResponse = await mutationDeckCreateEmpty(executor);
         expect(createDeckResponse).toHaveProperty('data.deckCreate', {
           id: expect.any(String),
           answerLang: '',
@@ -99,7 +102,7 @@ describe('graphql/Deck.ts', () => {
         const deckBefore = createDeckResponse.data.deckCreate;
 
         // query deck
-        const queryDeckResponse = await queryDeckScalars(server, deckBefore.id);
+        const queryDeckResponse = await queryDeckScalars(executor, deckBefore.id);
         expect(queryDeckResponse).toHaveProperty('data.deck', {
           id: deckBefore.id,
           answerLang: '',
@@ -120,10 +123,10 @@ describe('graphql/Deck.ts', () => {
         expect.assertions(3);
 
         // create user
-        await loginAsNewlyCreatedUser(server, setSub);
+        await loginAsNewlyCreatedUser(executor, setSub);
 
         // create deck 1
-        const createDeckResponse1 = await mutationDeckCreateEmpty(server);
+        const createDeckResponse1 = await mutationDeckCreateEmpty(executor);
         expect(createDeckResponse1).toHaveProperty(
           'data.deckCreate',
           expect.objectContaining({
@@ -133,7 +136,7 @@ describe('graphql/Deck.ts', () => {
         const deckBefore1 = createDeckResponse1.data.deckCreate;
 
         // create deck 2
-        const createDeckResponse2 = await mutationDeckCreateEmpty(server);
+        const createDeckResponse2 = await mutationDeckCreateEmpty(executor);
         expect(createDeckResponse2).toHaveProperty(
           'data.deckCreate',
           expect.objectContaining({
@@ -143,7 +146,7 @@ describe('graphql/Deck.ts', () => {
         const deckBefore2 = createDeckResponse2.data.deckCreate;
 
         // query decks
-        const queryDeckResponse = await queryDecks(server);
+        const queryDeckResponse = await queryDecks(executor);
         expect(queryDeckResponse).toHaveProperty(
           'data.decks',
           expect.arrayContaining([

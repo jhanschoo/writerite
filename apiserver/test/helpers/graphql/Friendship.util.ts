@@ -1,14 +1,14 @@
-import { WrServer } from '../../../src/graphqlApp';
 import { gql, testQuery } from '../misc';
 import { UserBefriendUserMutationVariables } from '../../../generated/typescript-operations';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 export function mutationUserBefriendUser(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   variables: UserBefriendUserMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<UserBefriendUserMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation UserBefriendUser($befriendedId: ID!) {
         userBefriendUser(befriendedId: $befriendedId) {

@@ -6,7 +6,7 @@ import { YogaInitialContext } from 'graphql-yoga';
 import { cascadingDelete } from '../../_helpers/truncate';
 import { loginAsNewlyCreatedUser, testContextFactory } from '../../../helpers';
 import { Context } from '../../../../src/context';
-import { WrServer, createGraphQLApp } from '../../../../src/graphqlApp';
+import { createGraphQLApp } from '../../../../src/graphqlApp';
 import { CurrentUser, Roles, currentUserToUserJWT } from '../../../../src/service/userJWT';
 import Redis from 'ioredis';
 import {
@@ -20,6 +20,7 @@ import {
 } from '../../../../src/service/session';
 import { mutationRoomCreate } from '../../../helpers/graphql/Room.util';
 import { sleep } from '../../../../src/util';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 describe('service/session', () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -27,11 +28,13 @@ describe('service/session', () => {
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
   let redis: Redis;
-  let app: WrServer;
+  let executor: ReturnType<typeof buildHTTPExecutor>;
 
   beforeAll(async () => {
     [setSub, context, stopContext, { prisma, redis }] = testContextFactory();
-    app = createGraphQLApp({ context, logging: false });
+    const server = createGraphQLApp({ context, logging: false });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    executor = buildHTTPExecutor({ fetch: server.fetch });
     await redis.flushdb();
   });
 
@@ -51,8 +54,8 @@ describe('service/session', () => {
     expect.assertions(2);
 
     // setup currentUser
-    const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
-    const roomCreateResponse = await mutationRoomCreate(app);
+    const { currentUser: user } = await loginAsNewlyCreatedUser(executor, setSub);
+    const roomCreateResponse = await mutationRoomCreate(executor);
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
       user.name as string,
@@ -90,8 +93,8 @@ describe('service/session', () => {
     expect.assertions(1);
 
     // setup currentUser
-    const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
-    await mutationRoomCreate(app);
+    const { currentUser: user } = await loginAsNewlyCreatedUser(executor, setSub);
+    await mutationRoomCreate(executor);
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
       user.name as string,
@@ -125,8 +128,8 @@ describe('service/session', () => {
     expect.assertions(1);
 
     // setup currentUser
-    const { currentUser: user } = await loginAsNewlyCreatedUser(app, setSub);
-    const roomCreateResponse = await mutationRoomCreate(app);
+    const { currentUser: user } = await loginAsNewlyCreatedUser(executor, setSub);
+    const roomCreateResponse = await mutationRoomCreate(executor);
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
       user.name as string,

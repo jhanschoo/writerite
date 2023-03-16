@@ -7,11 +7,12 @@ import {
   RoomSetStateMutationVariables,
   RoomUpdatesByRoomSlugSubscriptionVariables,
 } from '../../../generated/typescript-operations';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
-export function mutationRoomCreate(server: WrServer) {
+export function mutationRoomCreate(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
-    server,
+    executor,
     document: gql`
       mutation RoomCreate {
         roomCreate {
@@ -33,10 +34,10 @@ export function mutationRoomCreate(server: WrServer) {
   });
 }
 
-export function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMutationVariables) {
+export function mutationRoomSetDeck(executor: ReturnType<typeof buildHTTPExecutor>, variables: RoomSetDeckMutationVariables) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomSetDeckMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation RoomSetDeck($id: ID!, $deckId: ID!) {
         roomSetDeck(id: $id, deckId: $deckId) {
@@ -54,10 +55,10 @@ export function mutationRoomSetDeck(server: WrServer, variables: RoomSetDeckMuta
   });
 }
 
-export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMutationVariables) {
+export function mutationRoomSetState(executor: ReturnType<typeof buildHTTPExecutor>, variables: RoomSetStateMutationVariables) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomSetStateMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation RoomSetState($id: ID!, $state: RoomState!) {
         roomSetState(id: $id, state: $state) {
@@ -75,10 +76,10 @@ export function mutationRoomSetState(server: WrServer, variables: RoomSetStateMu
   });
 }
 
-export function mutationRoomJoin(server: WrServer, variables: RoomJoinMutationVariables) {
+export function mutationRoomJoin(executor: ReturnType<typeof buildHTTPExecutor>, variables: RoomJoinMutationVariables) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomJoinMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation RoomJoin($id: ID!) {
         roomJoin(id: $id) {
@@ -99,10 +100,10 @@ export function mutationRoomJoin(server: WrServer, variables: RoomJoinMutationVa
   });
 }
 
-export function queryRoom(server: WrServer, id: string) {
+export function queryRoom(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomQueryVariables>({
-    server,
+    executor,
     document: gql`
       query Room($id: ID!) {
         room(id: $id) {
@@ -116,10 +117,10 @@ export function queryRoom(server: WrServer, id: string) {
   });
 }
 
-export function queryOccupyingActiveRooms(server: WrServer) {
+export function queryOccupyingActiveRooms(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
-    server,
+    executor,
     document: gql`
       query OccupyingActiveRooms {
         occupyingActiveRooms {
@@ -133,10 +134,10 @@ export function queryOccupyingActiveRooms(server: WrServer) {
   });
 }
 
-export function subscriptionRoomUpdatesByRoomSlug(server: WrServer, slug: string) {
+export function subscriptionRoomUpdatesByRoomSlug(executor: ReturnType<typeof buildHTTPExecutor>, slug: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testSubscription<RoomUpdatesByRoomSlugSubscriptionVariables>({
-    server,
+    executor,
     document: gql`
       subscription RoomUpdatesByRoomSlug($slug: String!) {
         roomUpdatesByRoomSlug(slug: $slug) {

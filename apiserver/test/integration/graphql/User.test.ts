@@ -13,19 +13,22 @@ import {
   testContextFactory,
 } from '../../helpers';
 import { Context } from '../../../src/context';
-import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
+import { createGraphQLApp } from '../../../src/graphqlApp';
 import { CurrentUser, Roles } from '../../../src/service/userJWT';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 describe('graphql/User.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
-  let server: WrServer;
+  let executor: ReturnType<typeof buildHTTPExecutor>;
 
   beforeAll(() => {
     [setSub, context, stopContext, { prisma }] = testContextFactory();
-    server = createGraphQLApp({ context, logging: false });
+    const server = createGraphQLApp({ context, logging: false });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    executor = buildHTTPExecutor({ fetch: server.fetch });
   });
 
   afterAll(async () => {
@@ -45,7 +48,7 @@ describe('graphql/User.ts', () => {
 
         const name = 'user1';
         // create user
-        const response = await mutationCreateUser(server, { name });
+        const response = await mutationCreateUser(executor, { name });
         expect(response).toHaveProperty('data.finalizeOauthSignin.token', expect.any(String));
         const currentUser = response.data.finalizeOauthSignin.currentUser as CurrentUser;
         expect(currentUser).toEqual({
@@ -67,7 +70,7 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create user
-        const createUserResponse = await mutationCreateUser(server);
+        const createUserResponse = await mutationCreateUser(executor);
         const currentUserBefore = createUserResponse.data.finalizeOauthSignin
           .currentUser as CurrentUser;
 
@@ -76,7 +79,7 @@ describe('graphql/User.ts', () => {
 
         // query own user
         const queryUserRequest = await queryAllUserAccessibleUserScalars(
-          server,
+          executor,
           currentUserBefore.id
         );
         expect(queryUserRequest).toHaveProperty('data.user', {
@@ -91,11 +94,11 @@ describe('graphql/User.ts', () => {
         expect.assertions(2);
 
         // create user
-        const createUserResponse = await mutationCreateUser(server);
+        const createUserResponse = await mutationCreateUser(executor);
         const id = createUserResponse.data.finalizeOauthSignin.currentUser.id as string;
 
         // query user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(executor, id);
         expect(queryUserResponse.data).toBeNull();
         expect(queryUserResponse.errors).not.toHaveLength(0);
       });
@@ -104,17 +107,17 @@ describe('graphql/User.ts', () => {
         expect.assertions(2);
 
         // create other user
-        const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
+        const createUserResponse1 = await mutationCreateUser(executor, { name: 'user1' });
         const id = createUserResponse1.data.finalizeOauthSignin.currentUser.id as string;
 
         // create user
-        const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
+        const createUserResponse2 = await mutationCreateUser(executor, { name: 'user2' });
         const currentUser = createUserResponse2.data.finalizeOauthSignin as CurrentUser;
         // log in as user
         setSub(currentUser);
 
         // query other user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, id);
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(executor, id);
         expect(queryUserResponse.data).toBeNull();
         expect(queryUserResponse.errors).not.toHaveLength(0);
       });
@@ -122,11 +125,11 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create user
-        const createUserResponse = await mutationCreateUser(server);
+        const createUserResponse = await mutationCreateUser(executor);
         const id = createUserResponse.data.finalizeOauthSignin.currentUser.id as string;
 
         // query user
-        const queryUserResponse = await queryUserPublicScalars(server, id);
+        const queryUserResponse = await queryUserPublicScalars(executor, id);
         expect(queryUserResponse).toHaveProperty('data.user', {
           id,
           isPublic: false,
@@ -136,18 +139,18 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create other user
-        const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
+        const createUserResponse1 = await mutationCreateUser(executor, { name: 'user1' });
         const id = createUserResponse1.data.finalizeOauthSignin.currentUser.id as string;
 
         // create user
-        const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
+        const createUserResponse2 = await mutationCreateUser(executor, { name: 'user2' });
         const currentUser = createUserResponse2.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as user
         setSub(currentUser);
 
         // query other user
-        const queryUserResponse = await queryUserPublicScalars(server, id);
+        const queryUserResponse = await queryUserPublicScalars(executor, id);
         expect(queryUserResponse).toHaveProperty('data.user', {
           id,
           isPublic: false,
@@ -157,18 +160,18 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create user
-        const createUserResponse = await mutationCreateUser(server);
+        const createUserResponse = await mutationCreateUser(executor);
         const currentUser = createUserResponse.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as user
         setSub(currentUser);
         // make user public
-        await mutationUserEdit(server, { isPublic: true });
+        await mutationUserEdit(executor, { isPublic: true });
         // log out
         setSub(undefined);
 
         // query user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, currentUser.id);
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(executor, currentUser.id);
         expect(queryUserResponse).toHaveProperty('data.user', {
           id: currentUser.id,
           name: DEFAULT_CREATE_USER_VALUES.name,
@@ -180,24 +183,24 @@ describe('graphql/User.ts', () => {
         expect.assertions(1);
 
         // create target user
-        const createUserResponse1 = await mutationCreateUser(server, { name: 'user1' });
+        const createUserResponse1 = await mutationCreateUser(executor, { name: 'user1' });
         const targetUser = createUserResponse1.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as target user
         setSub(targetUser);
 
         // make target user public
-        await mutationUserEdit(server, { isPublic: true });
+        await mutationUserEdit(executor, { isPublic: true });
 
         // create user
-        const createUserResponse2 = await mutationCreateUser(server, { name: 'user2' });
+        const createUserResponse2 = await mutationCreateUser(executor, { name: 'user2' });
         const currentUser = createUserResponse2.data.finalizeOauthSignin.currentUser as CurrentUser;
 
         // log in as user
         setSub(currentUser);
 
         // query target user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(server, targetUser.id);
+        const queryUserResponse = await queryAllUserAccessibleUserScalars(executor, targetUser.id);
         expect(queryUserResponse).toHaveProperty(
           'data.user',
           expect.objectContaining({

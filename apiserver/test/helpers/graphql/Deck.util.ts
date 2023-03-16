@@ -1,4 +1,3 @@
-import { WrServer } from '../../../src/graphqlApp';
 import { gql, testQuery } from '../misc';
 import {
   DeckAddSubdeckMutationVariables,
@@ -6,11 +5,12 @@ import {
   DeckQueryVariables,
   DeckRemoveSubdeckMutationVariables,
 } from '../../../generated/typescript-operations';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
-export function mutationDeckCreateEmpty(server: WrServer) {
+export function mutationDeckCreateEmpty(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
-    server,
+    executor,
     document: gql`
       mutation DeckCreateEmpty {
         deckCreate {
@@ -31,12 +31,12 @@ export function mutationDeckCreateEmpty(server: WrServer) {
 }
 
 export function mutationDeckAddSubdeck(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   variables: DeckAddSubdeckMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckAddSubdeckMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation DeckAddSubdeck($id: ID!, $subdeckId: ID!) {
         deckAddSubdeck(id: $id, subdeckId: $subdeckId) {
@@ -49,12 +49,12 @@ export function mutationDeckAddSubdeck(
 }
 
 export function mutationDeckRemoveSubdeck(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   variables: DeckRemoveSubdeckMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckRemoveSubdeckMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation DeckRemoveSubdeck($id: ID!, $subdeckId: ID!) {
         deckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
@@ -66,10 +66,10 @@ export function mutationDeckRemoveSubdeck(
   });
 }
 
-export function mutationDeckEditName(server: WrServer, variables: DeckEditNameMutationVariables) {
+export function mutationDeckEditName(executor: ReturnType<typeof buildHTTPExecutor>, variables: DeckEditNameMutationVariables) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckEditNameMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation DeckEditName($id: ID!, $name: String!) {
         deckEdit(id: $id, name: $name) {
@@ -82,10 +82,10 @@ export function mutationDeckEditName(server: WrServer, variables: DeckEditNameMu
   });
 }
 
-export function queryDeckScalars(server: WrServer, id: string) {
+export function queryDeckScalars(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckQueryVariables>({
-    server,
+    executor,
     document: gql`
       query Deck($id: ID!) {
         deck(id: $id) {
@@ -105,10 +105,10 @@ export function queryDeckScalars(server: WrServer, id: string) {
   });
 }
 
-export function queryDecks(server: WrServer) {
+export function queryDecks(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
-    server,
+    executor,
     document: gql`
       query Decks {
         decks {

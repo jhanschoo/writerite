@@ -1,10 +1,10 @@
-import type { WrServer } from '../../../src/graphqlApp';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { gql, testQuery, testSubscription } from '../misc';
 
-export function queryHealth(server: WrServer) {
+export function queryHealth(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
-    server,
+    executor,
     document: gql`
       query Health {
         health
@@ -14,10 +14,10 @@ export function queryHealth(server: WrServer) {
   });
 }
 
-export function subscriptionRepeatHealth(server: WrServer) {
+export function subscriptionRepeatHealth(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testSubscription<undefined>({
-    server,
+    executor,
     document: gql`
       subscription RepeatHealth {
         repeatHealth

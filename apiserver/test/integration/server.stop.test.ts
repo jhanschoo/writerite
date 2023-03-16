@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { contextFactory } from '../../src/context';
 import { createGraphQLApp } from '../../src/graphqlApp';
 import { queryHealth } from '../helpers/graphql/Health.util';
@@ -8,7 +9,9 @@ describe('server', () => {
     expect.assertions(1);
     const [ctxFn, stopCtx] = contextFactory();
     const server = createGraphQLApp({ context: ctxFn, logging: false });
-    const response = await queryHealth(server);
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const executor = buildHTTPExecutor({ fetch: server.fetch });
+    const response = await queryHealth(executor);
     expect(response).toHaveProperty('data.health', 'OK');
     await stopCtx();
   });

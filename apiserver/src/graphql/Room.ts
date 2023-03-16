@@ -1,4 +1,4 @@
-import { Room as PRoom, RoomState as PRoomState, Prisma } from '@prisma/client';
+import { Room as PRoom, RoomState as PRoomState } from '@prisma/client';
 import { Room as BackingRoom } from '../types/backingTypes';
 import {
   enumType,
@@ -125,7 +125,7 @@ export const RoomQuery = queryField('room', {
   type: nonNull('Room'),
   args: { id: nonNull(idArg()) },
   resolve: guardValidUser(async (_source, { id }, { prisma, sub }) => {
-    const res = await prisma.room.findUnique({
+    const res: PRoom | null = await prisma.room.findUnique({
       where: { id, ownerId: sub.id },
     });
     if (!res) {

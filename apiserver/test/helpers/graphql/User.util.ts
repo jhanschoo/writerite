@@ -1,4 +1,3 @@
-import { WrServer } from '../../../src/graphqlApp';
 import { gql, testQuery } from '../misc';
 import {
   CreateUserMutationVariables,
@@ -9,18 +8,19 @@ import {
   UserPublicScalarsQueryVariables,
 } from '../../../generated/typescript-operations';
 import { CurrentUser } from '../../../src/service/userJWT';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 export const DEFAULT_CREATE_USER_VALUES = {
   name: 'abcxyz',
 };
 
 export function mutationCreateUser(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   { name }: { name: string } = DEFAULT_CREATE_USER_VALUES
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<CreateUserMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation CreateUser(
         $code: String!
@@ -45,12 +45,12 @@ export function mutationCreateUser(
 }
 
 export function mutationNameUser(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   { name }: { name: string } = DEFAULT_CREATE_USER_VALUES
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<NameUserMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation NameUser($name: String!) {
         userEdit(name: $name) {
@@ -64,12 +64,12 @@ export function mutationNameUser(
 }
 
 export async function loginAsNewlyCreatedUser(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   setSub: (sub?: CurrentUser) => void,
   name?: string
 ): Promise<{ currentUser: CurrentUser; token: string }> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const response = await (name ? mutationCreateUser(server, { name }) : mutationCreateUser(server));
+  const response = await (name ? mutationCreateUser(executor, { name }) : mutationCreateUser(executor));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const sessionInfo = response.data.finalizeOauthSignin as {
     currentUser: CurrentUser;
@@ -80,22 +80,22 @@ export async function loginAsNewlyCreatedUser(
 }
 
 export async function refreshLogin(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   setSub: (sub?: CurrentUser) => void,
   token: string
 ): Promise<{ currentUser: CurrentUser; token: string }> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const response = await mutationRefresh(server, token);
+  const response = await mutationRefresh(executor, token);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const sessionInfo = response.data.refresh as { currentUser: CurrentUser; token: string };
   setSub(sessionInfo.currentUser);
   return sessionInfo;
 }
 
-export async function mutationRefresh(server: WrServer, token: string) {
+export async function mutationRefresh(executor: ReturnType<typeof buildHTTPExecutor>, token: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RefreshMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation Refresh($token: JWT!) {
         refresh(token: $token) {
@@ -108,10 +108,10 @@ export async function mutationRefresh(server: WrServer, token: string) {
   });
 }
 
-export function queryAllUserAccessibleUserScalars(server: WrServer, id: string) {
+export function queryAllUserAccessibleUserScalars(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<UserAccessibleUserScalarsQueryVariables>({
-    server,
+    executor,
     document: gql`
       query UserAccessibleUserScalars($id: ID!) {
         user(id: $id) {
@@ -126,10 +126,10 @@ export function queryAllUserAccessibleUserScalars(server: WrServer, id: string) 
   });
 }
 
-export function queryUserPublicScalars(server: WrServer, id: string) {
+export function queryUserPublicScalars(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<UserPublicScalarsQueryVariables>({
-    server,
+    executor,
     document: gql`
       query UserPublicScalars($id: ID!) {
         user(id: $id) {
@@ -143,12 +143,12 @@ export function queryUserPublicScalars(server: WrServer, id: string) {
 }
 
 export function mutationUserEdit(
-  server: WrServer,
+  executor: ReturnType<typeof buildHTTPExecutor>,
   { name, isPublic }: { name?: string; isPublic?: boolean }
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<UserEditMutationVariables>({
-    server,
+    executor,
     document: gql`
       mutation UserEdit($name: String, $isPublic: Boolean) {
         userEdit(name: $name, isPublic: $isPublic) {

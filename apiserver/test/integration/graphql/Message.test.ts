@@ -10,10 +10,10 @@ import {
   mutationRefresh,
   refreshLogin,
 } from '../../helpers/graphql/User.util';
-import { testContextFactory, trimSubscriptionHeartbeats, unsafeJwtToCurrentUser } from '../../helpers';
-import { PubSub, YogaInitialContext } from 'graphql-yoga';
+import { testContextFactory } from '../../helpers';
+import { YogaInitialContext } from 'graphql-yoga';
 import { Context } from '../../../src/context';
-import { WrServer, createGraphQLApp } from '../../../src/graphqlApp';
+import { createGraphQLApp } from '../../../src/graphqlApp';
 import { mutationRoomCreate } from '../../helpers/graphql/Room.util';
 import {
   mutationMessageCreate,
@@ -21,19 +21,20 @@ import {
 } from '../../helpers/graphql/Message.util';
 import { MessageContentType, RoomState } from '../../../generated/typescript-operations';
 import { CurrentUser } from '../../../src/service/userJWT';
-import { PubSubPublishArgs } from '../../../src/types/PubSubPublishArgs';
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 
 describe('graphql/Message.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
-  let pubsub: PubSub<PubSubPublishArgs>;
-  let app: WrServer;
+  let executor: ReturnType<typeof buildHTTPExecutor>;
 
   beforeAll(() => {
-    [setSub, context, stopContext, { prisma, pubsub }] = testContextFactory();
-    app = createGraphQLApp({ context, logging: false });
+    [setSub, context, stopContext, { prisma }] = testContextFactory();
+    const server = createGraphQLApp({ context, logging: false });
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    executor = buildHTTPExecutor({ fetch: server.fetch });
   });
 
   afterAll(async () => {
@@ -50,13 +51,13 @@ describe('graphql/Message.ts', () => {
       it('should allow the owner-occupant of the rome to create a message for the room', async () => {
         expect.assertions(3);
         // create user
-        const createUserResponse = await mutationCreateUser(app, { name: 'user1' });
+        const createUserResponse = await mutationCreateUser(executor, { name: 'user1' });
         const currentUser1 = createUserResponse.data.finalizeOauthSignin.currentUser as CurrentUser;
         const token = createUserResponse.data.finalizeOauthSignin.token as string;
         setSub(currentUser1);
 
         // create room
-        const roomCreateResponse = await mutationRoomCreate(app);
+        const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
           'data.roomCreate',
           expect.objectContaining({
@@ -70,14 +71,14 @@ describe('graphql/Message.ts', () => {
         const roomBefore = roomCreateResponse.data.roomCreate;
 
         // we have to update our claims before we can create/send messages
-        const refreshResponse = await mutationRefresh(app, token);
+        const refreshResponse = await mutationRefresh(executor, token);
         const currentUser2 = refreshResponse.data.refresh.currentUser as CurrentUser;
         expect(Object.keys(currentUser2.occupyingActiveRoomSlugs)).toHaveLength(1);
         setSub(currentUser2);
 
         // create message
         const messageCreateResponse = await mutationMessageCreate(
-          app,
+          executor,
           { text: 'Hello World' },
           roomBefore.slug as string,
           MessageContentType.Text
@@ -106,10 +107,10 @@ describe('graphql/Message.ts', () => {
       it('should yield an appropriate integration event when the room it is subscribed to has messageCreate run on it', async () => {
         expect.assertions(6);
         // create user
-        const { token } = await loginAsNewlyCreatedUser(app, setSub);
+        const { token } = await loginAsNewlyCreatedUser(executor, setSub);
 
         // create room
-        const roomCreateResponse = await mutationRoomCreate(app);
+        const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
           'data.roomCreate',
           expect.objectContaining({
@@ -123,19 +124,16 @@ describe('graphql/Message.ts', () => {
         const roomBefore = roomCreateResponse.data.roomCreate;
 
         // we have to update our claims before we can create/send messages or establish a subscription
-        const { currentUser } = await refreshLogin(app, setSub, token);
+        const { currentUser } = await refreshLogin(executor, setSub, token);
         expect(Object.keys(currentUser.occupyingActiveRoomSlugs)).toHaveLength(1);
 
         // create subscription on room
-        const roomUpdates = await subscriptionMessageUpdatesByRoomSlug(app, roomBefore.slug);
-        expect(roomUpdates.body).toBeTruthy();
-        if (!roomUpdates.body) {
-          return;
-        }
+        const roomUpdates = await subscriptionMessageUpdatesByRoomSlug(executor, roomBefore.slug);
+        const roomUpdatesIterator = roomUpdates[Symbol.asyncIterator]();
 
         // create message
         const messageCreateResponse = await mutationMessageCreate(
-          app,
+          executor,
           { text: 'Hello World' },
           roomBefore.slug as string,
           MessageContentType.Text
@@ -153,11 +151,9 @@ describe('graphql/Message.ts', () => {
         );
 
         // assert subscription result for message creation
-        const iterator = trimSubscriptionHeartbeats(roomUpdates.body);
-        const readResultOne = await iterator.next();
+        const readResultOne = await roomUpdatesIterator.next();
         if (!readResultOne.done) {
-          const event = JSON.parse(readResultOne.value);
-          expect(event).toHaveProperty(
+          expect(readResultOne.value).toHaveProperty(
             'data.messageUpdatesByRoomSlug',
             expect.objectContaining({
               operation: 'messageCreate',

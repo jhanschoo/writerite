@@ -1,4 +1,6 @@
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
 import { PrismaClient } from '@prisma/client';
+import { DocumentNode, ExecutionResult, parse } from 'graphql';
 import Redis from 'ioredis';
 import { JWTPayload } from 'jose';
 import { Context, ContextFactoryReturnType, contextFactory } from '../../src/context';
@@ -6,6 +8,23 @@ import { WrServer } from '../../src/graphqlApp';
 import { parseArbitraryJWT } from '../../src/service/crypto';
 import { CurrentUser } from '../../src/service/userJWT';
 import { PubSubPublishArgs } from '../../src/types/PubSubPublishArgs';
+
+ 
+function assertSingleValue<TValue extends ExecutionResult<any, any>>(
+  value: TValue | AsyncIterable<TValue>
+): asserts value is TValue {
+  if (Symbol.asyncIterator in value) {
+    throw new Error('Expected single value')
+  }
+}
+function assertStreamValue<TValue extends ExecutionResult<any, any>>(
+  value: TValue | AsyncIterable<TValue>
+): asserts value is AsyncIterable<TValue> {
+  if (Symbol.asyncIterator in value) {
+    return;
+  }
+  throw new Error('Expected single value')
+}
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -36,51 +55,33 @@ export function testContextFactory(
 
 export const isoTimestampMatcher = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
 
-export async function testQuery<TVariables>({
-  server,
+export async function testQuery<TVariables extends Record<string, unknown> | undefined>({
+  executor,
   document,
   variables,
 }: {
-  server: WrServer;
-  document: string;
+  executor: ReturnType<typeof buildHTTPExecutor>;
+  document: DocumentNode;
   variables: TVariables;
 }) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  return (
-    await server.fetch('http://localhost:4000/graphql', {
-      method: 'POST',
-      headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query: document, variables }),
-    })
-  ).json();
+  const result = await executor({ document, variables });
+  assertSingleValue(result);
+  return result;
 }
 
-export async function testSubscription<TVariables>({
-  server,
+export async function testSubscription<TVariables extends Record<string, unknown> | undefined>({
+  executor,
   document,
   variables,
 }: {
-  server: WrServer;
-  document: string;
+  executor: ReturnType<typeof buildHTTPExecutor>;
+  document: DocumentNode;
   variables: TVariables;
 }) {
-  const uri = encodeURI(
-    `http://localhost:4000/graphql?query=${document}${
-      variables ? `&variables=${JSON.stringify(variables)}` : ''
-    }`
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-  const ret = server.fetch(uri, {
-    method: 'GET',
-    headers: {
-      accept: 'text/event-stream',
-    },
-  });
-  return ret;
+  const result = await executor({ document, variables });
+  assertStreamValue(result);
+  return result;
 }
 
-// dummy gql tag for codegen
-export const gql = ([s]: TemplateStringsArray) => s;
+// gql tag for codegen and for parse for executor
+export const gql = ([s]: TemplateStringsArray) => parse(s);
