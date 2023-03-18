@@ -38,6 +38,9 @@ export function expireCurrentSession() {
 }
 
 export function sessionNeedsRefreshing() {
+  if (typeof window === "undefined") {
+    return false;
+  }
   const feExp = window?.localStorage?.getItem(EXPIRY_KEY);
   if (feExp) {
     // expired session needs refreshing
