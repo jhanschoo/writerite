@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Button } from '@mantine/core';
 
-import { IconX } from '@tabler/icons';
+import { IconX } from '@tabler/icons-react';
 
 interface Props {
   answer: string;

@@ -13,7 +13,7 @@ import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/RichTextEditor';
-import { IconTrash } from '@tabler/icons';
+import { IconTrash } from '@tabler/icons-react';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';

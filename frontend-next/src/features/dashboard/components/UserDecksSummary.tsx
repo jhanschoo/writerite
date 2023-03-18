@@ -14,7 +14,7 @@ import {
   Title,
   UnstyledButton,
 } from '@mantine/core';
-import { IconSearch, IconPlus } from '@tabler/icons';
+import { IconSearch, IconPlus } from '@tabler/icons-react';
 import { formatISO, parseISO } from 'date-fns';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { DECK_DETAIL_PATH, DECK_PATH } from '@/paths';

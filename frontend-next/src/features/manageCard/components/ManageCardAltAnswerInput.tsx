@@ -1,6 +1,6 @@
 import { FC, useState, KeyboardEvent } from 'react';
 import { TextInput } from '@mantine/core';
-import { IconCheck } from '@tabler/icons';
+import { IconCheck } from '@tabler/icons-react';
 import { ActionIcon } from '@/components/ActionIcon';
 
 interface Props {

@@ -4,7 +4,7 @@ import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/co
 import { ManageDeckProps } from '@/features/manageDeck';
 import { AddNewCard, ManageCard } from '@/features/manageCard';
 import { accumulateContentText } from '@/components/RichTextEditor';
-import { IconPlus, IconSearch, IconUpload } from '@tabler/icons';
+import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/react';
 
 type Card = ManageDeckProps['deck']['cardsDirect'][number];

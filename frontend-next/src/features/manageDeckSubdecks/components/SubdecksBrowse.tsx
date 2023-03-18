@@ -3,7 +3,7 @@ import { FC, useState } from 'react';
 import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { Button, Stack, Text } from '@mantine/core';
-import { IconCheck, IconLinkOff, IconPlus } from '@tabler/icons';
+import { IconCheck, IconLinkOff, IconPlus } from '@tabler/icons-react';
 import { BasicList } from '@/components/BasicList';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
 

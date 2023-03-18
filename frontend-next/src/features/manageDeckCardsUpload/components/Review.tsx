@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Box, Button, Stack, Table, Text } from '@mantine/core';
-import { IconArrowLeft, IconUpload } from '@tabler/icons';
+import { IconArrowLeft, IconUpload } from '@tabler/icons-react';
 import type { ImportCardsData } from '../types';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';

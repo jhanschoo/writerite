@@ -1,7 +1,7 @@
 import { FC, KeyboardEvent } from 'react';
 import { MessageContentType, MessageCreateDocument, RoomDetailFragment } from '@generated/graphql';
 import { createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
-import { IconSend } from '@tabler/icons';
+import { IconSend } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useMutation } from 'urql';
 import { ActionIcon } from '@/components/ActionIcon';

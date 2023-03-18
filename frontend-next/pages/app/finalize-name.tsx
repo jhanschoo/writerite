@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import { useMutation } from 'urql';
-import { IconSend } from '@tabler/icons';
+import { IconSend } from '@tabler/icons-react';
 
 import { UserEditDocument } from '@generated/graphql';
 import { useRouter } from 'next/router';

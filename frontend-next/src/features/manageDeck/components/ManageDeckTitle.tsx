@@ -11,7 +11,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconSend } from '@tabler/icons';
+import { IconSend } from '@tabler/icons-react';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'urql';
 import { ManageDeckProps } from '../types/ManageDeckProps';

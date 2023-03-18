@@ -3,7 +3,7 @@ import { Box, Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
 import type { NewCardData } from '../types';
-import { IconArrowLeft } from '@tabler/icons';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { useParseCsv } from '../hooks/useParseCsv';
 
 const MAX_SIZE_MIB = 3;

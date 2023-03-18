@@ -17,7 +17,7 @@ import { useLogout } from '@features/signin/hooks/useLogout';
 import { FC, PropsWithChildren, useState } from 'react';
 import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
-import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons';
+import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons-react';
 import { useCurrentUser } from '@/hooks';
 import { ProfilePicture } from '@/features/profilePicture/components';
 import { useMediaQuery } from '@mantine/hooks';

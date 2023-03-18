@@ -8,7 +8,7 @@ import { FC, useState, ChangeEvent, MouseEvent, useEffect } from 'react';
 import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { Button, Divider, Flex, Stack, TextInput, Title } from '@mantine/core';
-import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload } from '@tabler/icons';
+import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload } from '@tabler/icons-react';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { BasicList } from '@/components/BasicList';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
