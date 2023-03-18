@@ -5,10 +5,8 @@ import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
 import { Card, SegmentedControl, Text, TextInput, UnstyledButton } from '@mantine/core';
 import { DeckItemComponentProps, DecksList, DeckSummaryContent } from '@/components/deck';
-import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
-import { DECK_DETAIL_PATH } from '@/paths';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 

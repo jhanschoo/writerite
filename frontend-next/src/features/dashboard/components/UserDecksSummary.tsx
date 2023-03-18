@@ -18,7 +18,7 @@ import { IconSearch, IconPlus } from '@tabler/icons-react';
 import { formatISO, parseISO } from 'date-fns';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { DECK_DETAIL_PATH, DECK_PATH } from '@/paths';
-import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
+import { DeckCompactSummaryContent } from '@/components/deck';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 5;
 

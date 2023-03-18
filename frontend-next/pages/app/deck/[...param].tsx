@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useQuery } from 'urql';
-import { Stack, Text } from '@mantine/core';
 
 import { DeckDocument } from '@generated/graphql';
 import { useMotionContext } from '@hooks/useMotionContext';
