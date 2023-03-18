@@ -1,5 +1,5 @@
 import { RichTextEditor, Link } from '@mantine/tiptap';
-import type { Editor, EditorOptions, JSONContent } from '@tiptap/core';
+import type { Editor, EditorOptions, JSONContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { FC } from 'react';

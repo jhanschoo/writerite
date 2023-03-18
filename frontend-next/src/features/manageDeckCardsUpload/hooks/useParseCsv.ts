@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import { nextTick, NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
 import type { NewCardData } from '../types';
-import { JSONContent } from '@tiptap/core';
+import { JSONContent } from '@tiptap/react';
 
 const textToJsonContent = (textContent: string): JSONContent => {
   const lines = textContent

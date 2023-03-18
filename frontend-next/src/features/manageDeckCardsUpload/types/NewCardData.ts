@@ -1,4 +1,4 @@
-import { JSONContent } from '@tiptap/core';
+import { JSONContent } from '@tiptap/react';
 
 export interface NewCardData {
   prompt: JSONContent;

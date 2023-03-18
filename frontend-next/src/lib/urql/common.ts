@@ -12,9 +12,9 @@ import {
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
-import { IntrospectionData } from '@urql/exchange-graphcache/dist/types/ast';
 import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
 import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
+import { IntrospectionQuery } from 'graphql';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
@@ -28,52 +28,40 @@ const wsClient = createClient({
   webSocketImpl: WebSocket,
 });
 
-const auth = authExchange<string | null>({
-  addAuthToOperation({ operation }) {
-    const token = getAccessToken();
-    if (isSSRContext() || !token) {
-      return operation;
-    }
-    const prevFetchOptions =
-      typeof operation.context.fetchOptions === 'function'
-        ? operation.context.fetchOptions()
-        : operation.context.fetchOptions || {};
-    const fetchOptions = {
-      ...prevFetchOptions,
-      headers: {
-        ...prevFetchOptions.headers,
+const auth = authExchange(async ({ appendHeaders, mutate }) => {
+  let token = getAccessToken();
+  const ssrContext = isSSRContext();
+  return {
+    addAuthToOperation(operation) {
+      if (ssrContext || !token) {
+        return operation;
+      }
+      return appendHeaders(operation, {
         Authorization: `Bearer ${token}`,
-      },
-    };
-
-    return makeOperation(operation.kind, operation, {
-      ...operation.context,
-      fetchOptions,
-    });
-  },
-  async getAuth({ mutate }) {
-    const token = getAccessToken();
-    if (!token) {
-      return null;
-    }
-    // c.f. implementation in useRefreshToken.ts
-    //   unfortunately, there is no way to DRY due to signature differences.
-    const result = await mutate(RefreshDocument, { token });
-    const sessionInfo = result.data?.refresh;
-    if (!sessionInfo) {
-      unsetSessionInfo();
-      return null;
-    }
-    setSessionInfo({
-      token: sessionInfo.token,
-      currentUser: JSON.stringify(sessionInfo.currentUser),
-    });
-    return sessionInfo.token;
-  },
-  willAuthError: sessionNeedsRefreshing,
-  didAuthError({ error }) {
-    return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');
-  },
+      });
+    },
+    willAuthError: sessionNeedsRefreshing,
+    didAuthError(error) {
+      return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');
+    },
+    async refreshAuth() {
+      if (!token) {
+        unsetSessionInfo();
+        return;
+      }
+      const result = await mutate(RefreshDocument, { token });
+      const sessionInfo = result.data?.refresh;
+      if (!sessionInfo) {
+        unsetSessionInfo();
+        return;
+      }
+      setSessionInfo({
+        token: sessionInfo.token,
+        currentUser: JSON.stringify(sessionInfo.currentUser),
+      });
+      token = sessionInfo.token;
+    },
+  };
 });
 
 const subscription = subscriptionExchange({
@@ -88,7 +76,7 @@ export const getExchanges = (ssr: SSRExchange) => [
   devtoolsExchange,
   dedupExchange,
   cacheExchange({
-    schema: schema as IntrospectionData,
+    schema: schema as unknown as IntrospectionQuery, // type mismatch when using graphql.schema.json
     updates: {
       Mutation: {
         cardCreate(result, _args, cache, _info) {

@@ -7,3 +7,17 @@ redis:
   master:
     persistence:
       enabled: false
+  auth:
+    password: writerite
+postgresql:
+  auth:
+    username: writerite
+    password: writerite
+    database: writerite
+writerite-apiserver:
+  database:
+    user: writerite
+    password: writerite
+    database: writerite
+  redis:
+    password: writerite

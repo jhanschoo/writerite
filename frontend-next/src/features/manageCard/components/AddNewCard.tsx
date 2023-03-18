@@ -19,8 +19,7 @@ import {
 import { useMutation } from 'urql';
 import { CardCreateDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
-import { JSONContent } from '@tiptap/core';
-import { useEditor } from '@tiptap/react';
+import { JSONContent, useEditor } from '@tiptap/react';
 
 const useStyles = createStyles(({ fn }, _params, getRef) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });

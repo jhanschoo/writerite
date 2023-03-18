@@ -34,7 +34,7 @@ export const ManageRoomPrimaryInput: FC<Props> = ({ room }) => {
       type: MessageContentType.Text,
     });
   });
-  const handleSubmitAccelerator = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleSubmitAccelerator = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       submitForm();
