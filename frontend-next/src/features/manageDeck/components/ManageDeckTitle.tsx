@@ -3,6 +3,7 @@ import { DeckName } from '@/components/deck';
 import { DeckEditDocument } from '@generated/graphql';
 import {
   createStyles,
+  getStylesRef,
   Group,
   Input,
   LoadingOverlay,
@@ -16,14 +17,14 @@ import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useMutation } from 'urql';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 
-const useStyles = createStyles((_theme, _params, getRef) => ({
+const useStyles = createStyles(() => ({
   editText: {
-    ref: getRef('editText'),
+    ref: getStylesRef('editText'),
     visibility: 'hidden',
   },
 
   titleContainer: {
-    [`&:hover .${getRef('editText')}`]: {
+    [`&:hover .${getStylesRef('editText')}`]: {
       visibility: 'visible',
     },
   },

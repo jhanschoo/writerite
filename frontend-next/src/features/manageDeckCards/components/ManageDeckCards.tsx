@@ -86,7 +86,7 @@ export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
       ))}
       {total ? (
         <Pagination
-          page={activePage}
+          value={activePage}
           onChange={setActivePage}
           total={total}
           radius="lg"

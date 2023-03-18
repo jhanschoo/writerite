@@ -8,6 +8,7 @@ import {
   LoadingOverlay,
   Text,
   Flex,
+  getStylesRef,
 } from '@mantine/core';
 import stringify from 'fast-json-stable-stringify';
 
@@ -21,12 +22,12 @@ import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 import { JSONContent, useEditor } from '@tiptap/react';
 
-const useStyles = createStyles(({ fn }, _params, getRef) => {
+const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
   return {
     cardRoot: {
       position: 'relative',
-      [`&:hover .${getRef('cardCloseButton')}`]: {
+      [`&:hover .${getStylesRef('cardCloseButton')}`]: {
         visibility: 'visible',
       },
       // workaround for non-static Styles API for @mantine/tiptap@5.9.0 not being supported
@@ -46,7 +47,7 @@ const useStyles = createStyles(({ fn }, _params, getRef) => {
       },
     },
     cardCloseButton: {
-      ref: getRef('cardCloseButton'),
+      ref: getStylesRef('cardCloseButton'),
       position: 'absolute',
       top: 0,
       right: 0,

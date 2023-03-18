@@ -23,7 +23,7 @@ const useStyles = createStyles((theme) => {
       display: 'grid',
       gridTemplateColumns: '2fr 1fr',
       gridTemplateRows: 'min-content 1fr min-content',
-      maxWidth: `${theme.breakpoints.lg}px`,
+      maxWidth: theme.breakpoints.lg,
       alignContent: 'end',
       margin: 'auto',
       height: '100%',

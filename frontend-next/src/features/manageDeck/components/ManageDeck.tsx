@@ -10,7 +10,7 @@ import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
 export const ManageDeck: FC<ManageDeckProps> = ({ deck, path }) => (
   <Stack spacing={2} align="center" sx={{ height: '100%' }}>
     <Stack
-      sx={({ breakpoints }) => ({ maxWidth: `${breakpoints.lg}px`, width: '100%' })}
+      sx={({ breakpoints }) => ({ maxWidth: breakpoints.lg, width: '100%' })}
       p="md"
       align="flex-start"
     >

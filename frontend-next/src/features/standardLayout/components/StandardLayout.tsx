@@ -59,7 +59,7 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
   const router = useRouter();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();
-  const useMenu = useMediaQuery(`(min-width: ${theme.breakpoints.sm}px)`);
+  const useMenu = useMediaQuery(`(min-width: ${theme.breakpoints.sm})`);
   const { classes: shellClasses } = useShellStyles({ vhHeight });
   const { classes: drawerButtonClasses } = useDrawerButtonStyles();
   const [showProfileOptions, setShowProfileOptions] = useState(false);
@@ -76,7 +76,7 @@ export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeigh
             flexDirection: 'row',
             height: '100%',
             alignItems: 'center',
-            columnGap: `${spacing.sm}px`,
+            columnGap: spacing.sm,
           })}
         >
           <Link href="/app">

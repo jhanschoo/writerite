@@ -7,7 +7,7 @@ import { ManageDeckCardsUpload } from '@/features/manageDeckCardsUpload';
 import { useRouter } from 'next/router';
 import { DECK_DETAIL_PATH, DECK_DETAIL_IMPORT_PATH, DECK_DETAIL_SUBDECK_PATH } from '@/paths';
 
-const useStyles = createStyles((theme, _params, getRef) => {
+const useStyles = createStyles((theme) => {
   const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
   // https://github.com/mantinedev/mantine/blob/c7d080c2133b0196e3a8382ec6134838632c8f9a/src/mantine-core/src/Tabs/Tab/Tab.styles.ts#L49
   const borderColor = theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3];
@@ -32,8 +32,8 @@ const useStyles = createStyles((theme, _params, getRef) => {
       borderBottom: `1px solid ${borderColor}`,
     },
     tabsList: {
-      maxWidth: `${breakpoints.lg}px`,
-      width: `calc(100% - ${spacing.md * 4}px)`,
+      maxWidth: `${breakpoints.lg}`,
+      width: `calc(100% - ${spacing.md} * 4)`,
       margin: '0 auto',
       border: '0',
     },
@@ -43,9 +43,9 @@ const useStyles = createStyles((theme, _params, getRef) => {
       alignItems: 'center',
     },
     panel: {
-      maxWidth: `${breakpoints.lg}px`,
+      maxWidth: breakpoints.lg,
       flexGrow: 1,
-      padding: `${spacing.md}px`,
+      padding: spacing.md,
       width: '100%',
     },
   };

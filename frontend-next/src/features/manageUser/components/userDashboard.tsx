@@ -2,26 +2,26 @@ import { Box, createStyles, Stack, Title } from '@mantine/core';
 import { FC } from 'react';
 import { Profile } from './Profile';
 
-const useStyles = createStyles((theme, _params, getRef) => ({
+const useStyles = createStyles((theme) => ({
   gridBox: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',
-    maxWidth: `${theme.breakpoints.lg}px`,
+    maxWidth: theme.breakpoints.lg,
     margin: 'auto',
-    gap: `${theme.spacing.md}px`,
+    gap: theme.spacing.md,
   },
   headerPanel: {
     gridColumn: 'span 12',
   },
   profilePanel: {
     gridColumn: 'span 12',
-    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`@media (min-width: ${theme.breakpoints.lg})`]: {
       gridColumn: 'span 6',
     },
   },
   friendsPanel: {
     gridColumn: 'span 12',
-    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`@media (min-width: ${theme.breakpoints.lg})`]: {
       gridColumn: 'span 6',
     },
   },

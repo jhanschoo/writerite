@@ -15,7 +15,7 @@ const BasicPagination = ({ wrapper: Wrapper, children, pageSize, top }: BasicPag
   const paginationComponent = (
     <Pagination
       total={Math.ceil(children.length / pageSize)}
-      page={page}
+      value={page}
       onChange={(nextPage) => setPage(nextPage)}
     />
   );

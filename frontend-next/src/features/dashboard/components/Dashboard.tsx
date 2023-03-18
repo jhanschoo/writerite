@@ -5,13 +5,13 @@ import { RoomNotifications } from './RoomNotifications';
 import { DashboardStats } from './DashboardStats';
 import { FriendActivity } from './FriendActivity';
 
-const useStyles = createStyles((theme, _params, getRef) => ({
+const useStyles = createStyles((theme, _params) => ({
   gridBox: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',
-    maxWidth: `${theme.breakpoints.lg}px`,
+    maxWidth: theme.breakpoints.lg,
     margin: 'auto',
-    gap: `${theme.spacing.md}px`,
+    gap: theme.spacing.md,
   },
   headerPanel: {
     gridColumn: 'span 12',
@@ -21,19 +21,19 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   },
   statsPanel: {
     gridColumn: 'span 12',
-    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`@media (min-width: ${theme.breakpoints.lg})`]: {
       gridColumn: 'span 8',
     },
   },
   friendActivityPanel: {
     gridColumn: 'span 12',
-    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`@media (min-width: ${theme.breakpoints.lg})`]: {
       gridColumn: 'span 8',
     },
   },
   decksPanel: {
     gridColumn: 'span 12',
-    [`@media (min-width: ${theme.breakpoints.lg}px)`]: {
+    [`@media (min-width: ${theme.breakpoints.lg})`]: {
       gridColumn: 'span 4',
     },
   },

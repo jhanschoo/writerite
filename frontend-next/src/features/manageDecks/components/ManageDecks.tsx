@@ -1,7 +1,7 @@
 import { FC, MouseEvent, MouseEventHandler } from 'react';
 import { DeckCreateDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
-import { Button, Center, createStyles, Divider, Group, Stack, Title } from '@mantine/core';
+import { Button, Center, createStyles, Divider, getStylesRef, Group, Stack, Title } from '@mantine/core';
 import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
@@ -24,16 +24,16 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
   </Button>
 );
 
-const useStyles = createStyles(({ breakpoints }, _params, getRef) => ({
+const useStyles = createStyles(({ breakpoints }) => ({
   root: {
     width: '100%',
-    maxWidth: `${breakpoints.lg}px`,
+    maxWidth: breakpoints.lg,
   },
   group: {
-    [`& > .${getRef('growable')}`]: { flexGrow: 1 },
+    [`& > .${getStylesRef('growable')}`]: { flexGrow: 1 },
   },
   growable: {
-    ref: getRef('growable'),
+    ref: getStylesRef('growable'),
   },
 }));
 
