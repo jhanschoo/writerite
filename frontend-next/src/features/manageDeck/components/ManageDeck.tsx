@@ -1,10 +1,9 @@
 import { FC } from 'react';
 import { Stack } from '@mantine/core';
 import { ManageDeckProps } from '../types/ManageDeckProps';
-import { ManageDeckTitle } from './ManageDeckTitle';
-import { ManageDeckDescription } from './ManageDeckDescription';
 import { ManageDeckContent } from './ManageDeckContent';
 import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
+import { ManageDeckFrontMatter } from './ManageDeckFrontMatter';
 
 // TODO: pagination
 export const ManageDeck: FC<ManageDeckProps> = ({ deck, path }) => (
@@ -12,10 +11,9 @@ export const ManageDeck: FC<ManageDeckProps> = ({ deck, path }) => (
     <Stack
       sx={({ breakpoints }) => ({ maxWidth: breakpoints.lg, width: '100%' })}
       p="md"
-      align="flex-start"
+      align="stretch"
     >
-      <ManageDeckTitle deck={deck} />
-      <ManageDeckDescription deck={deck} />
+      <ManageDeckFrontMatter deck={deck} />
       <ManageDeckAdditionalInfo deck={deck} />
     </Stack>
     <ManageDeckContent deck={deck} path={path} />
