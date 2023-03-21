@@ -89,5 +89,7 @@ export const RoomNotifications: FC<Props> = ({ wrapper: Wrapper }) => {
   if (rooms.length) {
     return <>{rooms}</>;
   }
-  return <FriendActivity />;
+  return <Wrapper key="friend-activity">
+    <FriendActivity />
+  </Wrapper>;
 };

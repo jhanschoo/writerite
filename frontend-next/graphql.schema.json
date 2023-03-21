@@ -2083,6 +2083,30 @@
             "description": "@invalidatesTokens(\n    reason: \"name may be changed\"\n  )",
             "args": [
               {
+                "name": "bio",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "JSONObject",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
                 "name": "isPublic",
                 "description": null,
                 "type": {
@@ -3156,6 +3180,18 @@
                 "name": "Int",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "bio",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSONObject",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

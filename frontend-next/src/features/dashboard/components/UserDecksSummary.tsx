@@ -121,6 +121,7 @@ export const UserDecksSummary: FC<Record<string, unknown>> = () => {
         </Title>
         <Button
           variant="outline"
+          radius="xl"
           leftIcon={<IconSearch size={21} />}
           onClick={() => router.push(DECK_PATH)}
         >

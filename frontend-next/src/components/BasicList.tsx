@@ -6,9 +6,9 @@ const useStyles = createStyles(({ fn, spacing }) => {
   return {
     item: {
       borderTop: `1px solid ${border}`,
-      padding: `${spacing.xs}px`,
+      padding: spacing.xs,
       backgroundColor: background,
-      gap: `${spacing.md}px`,
+      gap: spacing.md,
       alignItems: 'center',
       '&:hover': {
         backgroundColor: hover,

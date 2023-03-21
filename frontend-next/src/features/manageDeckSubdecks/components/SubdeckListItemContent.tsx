@@ -1,7 +1,7 @@
 import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
 import { DECK_DETAIL_PATH } from '@/paths';
 import { DeckSummaryFragment } from '@generated/graphql';
-import { Button, Text } from '@mantine/core';
+import { Button, Flex } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { FC, ReactNode, useState } from 'react';
 
@@ -38,18 +38,19 @@ export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
   return (
     <>
       <DeckCompactSummaryContent deck={deck} rootProps={{ sx: { flexGrow: 1 } }} />
-      <Button variant="subtle" compact onClick={() => router.push(DECK_DETAIL_PATH(id))}>
-        Visit
-      </Button>
-      <Button
-        leftIcon={actioned ? actionedIcon : actionIcon}
-        variant="subtle"
-        compact
-        disabled={isAdding || actioned}
-        onClick={handleClick}
-      >
-        {actioned ? actionedText : actionText}
-      </Button>
+      <Flex wrap="wrap" justify="flex-end">
+        <Button variant="subtle" onClick={() => router.push(DECK_DETAIL_PATH(id))}>
+          Visit
+        </Button>
+        <Button
+          leftIcon={actioned ? actionedIcon : actionIcon}
+          variant="subtle"
+          disabled={isAdding || actioned}
+          onClick={handleClick}
+        >
+          {actioned ? actionedText : actionText}
+        </Button>
+      </Flex>
     </>
   );
 };
