@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import {
   BasicMessageFragment,
   MessageContentType,
@@ -8,7 +7,7 @@ import {
   MessageUpdateOperation,
   RoomDetailFragment,
 } from '@generated/graphql';
-import { Box, Divider, Space, Stack, Text, Title } from '@mantine/core';
+import { Divider, Space, Stack, Text, Title } from '@mantine/core';
 import { useSubscription } from 'urql';
 
 interface Props {
@@ -26,7 +25,7 @@ function handleMessageUpdates(
   }
 }
 
-export const ManageRoomMessages: FC<Props> = ({ room }) => {
+export const ManageRoomMessages = ({ room }: Props) => {
   const stackElements: JSX.Element[] = [
     <Space sx={{ height: 0, flexGrow: 100 }} key="spacer" />,
     <Divider

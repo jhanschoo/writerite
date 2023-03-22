@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { RoomDetailFragment, RoomSetDeckDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
 import { Divider, Text, Title } from '@mantine/core';
@@ -8,7 +7,7 @@ interface Props {
   room: RoomDetailFragment;
 }
 
-export const ManageRoomSetDeck: FC<Props> = ({ room: { id } }) => {
+export const ManageRoomSetDeck = ({ room: { id } }: Props) => {
   const [, roomCreateMutation] = useMutation(RoomSetDeckDocument);
   return (
     <>

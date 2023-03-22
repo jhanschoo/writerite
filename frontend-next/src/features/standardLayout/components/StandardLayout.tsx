@@ -14,7 +14,7 @@ import {
   useMantineTheme,
 } from '@mantine/core';
 import { useLogout } from '@features/signin/hooks/useLogout';
-import { FC, PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
 import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons-react';
@@ -53,7 +53,7 @@ const useDrawerButtonStyles = createStyles((theme) => {
   };
 });
 
-export const StandardLayout: FC<PropsWithChildren<Props>> = ({ children, vhHeight }) => {
+export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>) => {
   const logout = useLogout();
   const currentUser = useCurrentUser();
   const router = useRouter();

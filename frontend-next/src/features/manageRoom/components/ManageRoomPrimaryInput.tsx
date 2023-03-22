@@ -1,4 +1,4 @@
-import { FC, KeyboardEvent } from 'react';
+import { KeyboardEvent } from 'react';
 import { MessageContentType, MessageCreateDocument, RoomDetailFragment } from '@generated/graphql';
 import { createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
 import { IconSend } from '@tabler/icons-react';
@@ -18,7 +18,7 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-export const ManageRoomPrimaryInput: FC<Props> = ({ room }) => {
+export const ManageRoomPrimaryInput = ({ room }: Props) => {
   const { classes } = useStyles();
   const form = useForm({
     initialValues: {

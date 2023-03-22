@@ -1,5 +1,4 @@
 import { createStyles, Paper, Text } from '@mantine/core';
-import { FC } from 'react';
 
 const useStyles = createStyles((theme) => ({
   emptyStatsText: {
@@ -13,7 +12,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const DashboardStats: FC<{}> = ({}) => {
+export const DashboardStats = () => {
   const { classes } = useStyles();
   return (
     <Paper radius="lg" p="lg">

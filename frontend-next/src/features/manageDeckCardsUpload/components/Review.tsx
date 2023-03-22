@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Box, Button, Stack, Table, Text } from '@mantine/core';
 import { IconArrowLeft, IconUpload } from '@tabler/icons-react';
 import type { ImportCardsData } from '../types';
@@ -14,7 +13,7 @@ interface Props extends ImportCardsData, ManageDeckProps {
   onUploadCompleted(): unknown;
 }
 
-export const Review: FC<Props> = ({ onCancel, onPreviousStep, cards, deck, onUploadCompleted }) => {
+export const Review = ({ onCancel, onPreviousStep, cards, deck, onUploadCompleted }: Props) => {
   const [, deckAddCardsMutation] = useMutation(DeckAddCardsDocument);
   const numDeckCards = deck.cardsDirect.length;
   const numCards = cards.length;

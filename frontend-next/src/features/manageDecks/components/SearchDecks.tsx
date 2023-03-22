@@ -1,6 +1,6 @@
-import { useState, ChangeEvent, FC, MouseEventHandler, Dispatch, SetStateAction } from 'react';
-import { DeckCreateDocument, DecksDocument, DecksQueryScope } from '@generated/graphql';
-import { useMutation, useQuery } from 'urql';
+import { useState, ChangeEvent, MouseEventHandler, Dispatch, SetStateAction } from 'react';
+import { DecksDocument, DecksQueryScope } from '@generated/graphql';
+import { useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
 import { Card, SegmentedControl, Text, TextInput, UnstyledButton } from '@mantine/core';
@@ -24,8 +24,8 @@ const emptyNewDeckInput = {
 };
 
 const DeckItemFactory =
-  (onClickFactory: OnClickFactoryType): FC<DeckItemComponentProps> =>
-  ({ deck }) => {
+  (onClickFactory: OnClickFactoryType) =>
+  ({ deck }: DeckItemComponentProps) => {
     return (
       <UnstyledButton
         sx={{ height: 'unset', flexGrow: 1, maxWidth: '100%' }}
@@ -60,7 +60,7 @@ interface Props {
 }
 
 // TODO: pagination
-export const SearchDecks: FC<Props> = ({ onClickFactory }) => {
+export const SearchDecks = ({ onClickFactory }: Props) => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
   const [titleFilter, setTitleFilter] = useState('');

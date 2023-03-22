@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import {
   Button,
   Box,
@@ -15,7 +15,6 @@ import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import {
   BareRichTextEditor,
   DEFAULT_EDITOR_PROPS,
-  ToolbaredRichTextEditor,
 } from '@/components/RichTextEditor';
 import { useMutation } from 'urql';
 import { CardCreateDocument } from '@generated/graphql';
@@ -64,7 +63,7 @@ interface Props extends ManageDeckProps {
   onDone(): void;
 }
 
-export const AddNewCard: FC<Props> = ({ deck: { id: deckId }, onDone }) => {
+export const AddNewCard = ({ deck: { id: deckId }, onDone }: Props) => {
   const { classes } = useStyles();
   const [promptContent, setPromptContent] = useState<JSONContent | null>(null);
   const [fullAnswerContent, setFullAnswerContent] = useState<JSONContent | null>(null);

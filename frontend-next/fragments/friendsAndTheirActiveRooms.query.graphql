@@ -1,0 +1,11 @@
+query FriendsAndTheirActiveRooms {
+  user {
+    id
+    friends {
+      ...userUserAccessibleScalars
+      occupyingActiveRooms {
+        ...roomSummary
+      }
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useMemo, useState } from 'react';
+import { ChangeEvent, useMemo, useState } from 'react';
 import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/core';
 
 import { ManageDeckProps } from '@/features/manageDeck';
@@ -20,7 +20,7 @@ interface Props extends ManageDeckProps {
   startUpload(): void;
 }
 
-export const ManageDeckCards: FC<Props> = ({ deck, startUpload }) => {
+export const ManageDeckCards = ({ deck, startUpload }: Props) => {
   const [filter, setFilter] = useState('');
   const [activePage, setActivePage] = useState<number>(1);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);

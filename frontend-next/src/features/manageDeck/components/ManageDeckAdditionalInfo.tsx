@@ -1,9 +1,8 @@
 import { Text } from '@mantine/core';
 import { formatISO, parseISO } from 'date-fns';
-import { FC } from 'react';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 
-export const ManageDeckAdditionalInfo: FC<ManageDeckProps> = ({ deck: { editedAt } }) => {
+export const ManageDeckAdditionalInfo = ({ deck: { editedAt } }: ManageDeckProps) => {
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
     <Text color="dimmed" size="xs">

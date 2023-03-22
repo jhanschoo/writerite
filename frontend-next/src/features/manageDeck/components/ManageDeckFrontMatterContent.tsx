@@ -1,28 +1,18 @@
-import { FC } from 'react';
-import { Box, Button, Flex, Stack, Title } from '@mantine/core';
+import { Button, Flex, Stack, Title } from '@mantine/core';
 import { DeckName } from '@/components/deck';
 import { ManageDeckProps } from '../types/ManageDeckProps';
-import { DEFAULT_EDITOR_PROPS } from '@/components/RichTextEditor';
-import { EditorContent, useEditor } from '@tiptap/react';
 
-export interface ManageDeckFrontMatterContentProps
-  extends Pick<ManageDeckProps['deck'], 'name' | 'description'> {
+export interface ManageDeckFrontMatterContentProps {
+  name: ManageDeckProps['deck']['name'];
   handleEdit?: () => void;
+  descriptionElement: JSX.Element;
 }
 
-export const ManageDeckFrontMatterContent: FC<ManageDeckFrontMatterContentProps> = ({
+export const ManageDeckFrontMatterContent = ({
   name,
-  description,
+  descriptionElement,
   handleEdit,
-}) => {
-  const content = description ?? null;
-  const editor = useEditor({
-    ...DEFAULT_EDITOR_PROPS,
-    editable: false,
-    extensions: [...(DEFAULT_EDITOR_PROPS.extensions || [])],
-    content,
-  });
-  editor?.commands.setContent(content);
+}: ManageDeckFrontMatterContentProps) => {
   return (
     <Stack>
       <Flex justify="space-between">
@@ -35,7 +25,7 @@ export const ManageDeckFrontMatterContent: FC<ManageDeckFrontMatterContentProps>
           </Button>
         )}
       </Flex>
-      <EditorContent editor={editor} />
+      {descriptionElement}
     </Stack>
   );
 };

@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Box, createStyles, Stack, Title } from '@mantine/core';
 import { UserDecksSummary } from './UserDecksSummary';
 import { RoomNotifications } from './RoomNotifications';
@@ -39,7 +38,7 @@ const useStyles = createStyles((theme, _params) => ({
   },
 }));
 
-export const Dashboard: FC = () => {
+export const Dashboard = () => {
   const { classes } = useStyles();
   return (
     <Box className={classes.gridBox} p="md">

@@ -1,5 +1,4 @@
 import { DeckSummaryFragment } from '@generated/graphql';
-import { FC } from 'react';
 import { Flex } from '@mantine/core';
 
 export interface DeckItemComponentProps {
@@ -8,11 +7,11 @@ export interface DeckItemComponentProps {
 
 interface Props {
   decks?: DeckSummaryFragment[];
-  component: FC<DeckItemComponentProps>;
+  component: (props: DeckItemComponentProps) => JSX.Element;
   justifyLeading?: boolean;
 }
 
-export const DecksList: FC<Props> = ({
+export const DecksList = ({
   decks,
   component: DeckItemComponent,
   justifyLeading,

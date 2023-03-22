@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { RoomDetailFragment } from '@generated/graphql';
 import { FineRoomState, getFineRoomState } from '../util';
 import { ManageRoomAddOccupants } from './ManageRoomAddOccupants';
@@ -8,7 +7,7 @@ interface Props {
   room?: RoomDetailFragment;
 }
 
-export const ManageRoomContextual: FC<Props> = ({ room }) => {
+export const ManageRoomContextual = ({ room }: Props) => {
   if (!room) {
     return null;
   }

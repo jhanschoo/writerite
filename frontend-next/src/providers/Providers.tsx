@@ -4,7 +4,7 @@ import { PropsWithChildren, useMemo, useState } from 'react';
 import { initialMotionState, MotionContext } from '@stores/motionContext';
 import { theme } from '@/lib/mantine/theme';
 
-export const Providers: React.FC<PropsWithChildren> = ({ children }) => {
+export const Providers = ({ children }: PropsWithChildren) => {
   const [motionProps, setMotionProps] = useState<MotionProps>(initialMotionState.motionProps);
   const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
   const toggleColorScheme = (value?: ColorScheme) => {

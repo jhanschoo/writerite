@@ -1,4 +1,3 @@
-import { FC, useState } from 'react';
 import { createStyles, Group, Stack, Tabs } from '@mantine/core';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 import { ManageDeckCards } from '../../manageDeckCards/components/ManageDeckCards';
@@ -57,7 +56,7 @@ enum Subpage {
   Import = 'import',
 }
 
-export const ManageDeckContent: FC<ManageDeckProps> = ({ deck, path }) => {
+export const ManageDeckContent = ({ deck, path }: ManageDeckProps) => {
   const { classes } = useStyles();
   const router = useRouter();
   const [subpath, ...rest] = path ?? [];

@@ -1,7 +1,6 @@
 import { DECK_DETAIL_SUBDECK_LINK_PATH, DECK_DETAIL_SUBDECK_PATH } from '@/paths';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC, useState } from 'react';
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { ManageDeckSubdecksLinkSubdeck } from './SubdecksAddSubdeck';
 import { ManageDeckSubdecksBrowse } from './SubdecksBrowse';
@@ -13,7 +12,7 @@ enum Subpage {
 }
 
 // TODO: WIP
-export const ManageDeckSubdecks: FC<ManageDeckProps> = ({ deck, path }) => {
+export const ManageDeckSubdecks = ({ deck, path }: ManageDeckProps) => {
   const router = useRouter();
   const [subpath] = path ?? [];
   const subpage = (subpath || 'browse') as Subpage;

@@ -1,4 +1,4 @@
-import { FC, useState, KeyboardEvent } from 'react';
+import { useState, KeyboardEvent } from 'react';
 import { TextInput } from '@mantine/core';
 import { IconCheck } from '@tabler/icons-react';
 import { ActionIcon } from '@/components/ActionIcon';
@@ -9,7 +9,7 @@ interface Props {
   onSave: (answer: string) => void; // answer.trim() will be nonzero
 }
 
-export const ManageCardAltAnswerInput: FC<Props> = ({ initialAnswer, onCancel, onSave }) => {
+export const ManageCardAltAnswerInput = ({ initialAnswer, onCancel, onSave }: Props) => {
   const [answerInput, setAnswerInput] = useState(initialAnswer);
   return (
     <TextInput

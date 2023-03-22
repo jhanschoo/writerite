@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { RoomBySlugDocument } from '@generated/graphql';
 import { useQuery } from 'urql';
 import {
@@ -50,7 +49,7 @@ interface Props {
   slug: string;
 }
 
-export const ManageRoom: FC<Props> = ({ slug }) => {
+export const ManageRoom = ({ slug }: Props) => {
   const { classes } = useStyles();
   const [{ data }, refetchRoom] = useQuery({
     query: RoomBySlugDocument,

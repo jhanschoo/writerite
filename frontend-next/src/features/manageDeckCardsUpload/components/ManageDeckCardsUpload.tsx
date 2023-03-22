@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { Stack, Stepper } from '@mantine/core';
 
 import { ManageDeckProps } from '@/features/manageDeck';
@@ -13,7 +13,7 @@ interface Props extends ManageDeckProps {
 
 type UploadState = { step: 0 } | { step: 1 } | ({ step: 2 } & ImportCardsData);
 
-export const ManageDeckCardsUpload: FC<Props> = ({ deck, onUploadEnded }) => {
+export const ManageDeckCardsUpload = ({ deck, onUploadEnded }: Props) => {
   const [{ step, ...data }, setUploadState] = useState<UploadState>({ step: 0 });
   return (
     <Stack>

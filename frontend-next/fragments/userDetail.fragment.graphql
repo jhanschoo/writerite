@@ -1,0 +1,18 @@
+fragment userDetail on User {
+  befriendeds {
+    id
+    name
+  }
+  befrienders {
+    id
+    name
+  }
+  bio
+  friends {
+    id
+    name
+  }
+  id
+  isPublic
+  name
+}

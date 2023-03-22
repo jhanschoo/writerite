@@ -1,36 +1,17 @@
-import { DEFAULT_EDITOR_PROPS, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
-import { JSONObject } from '@/utils';
 import { Input, Stack, TextInput } from '@mantine/core';
-import Placeholder from '@tiptap/extension-placeholder';
-import { useEditor } from '@tiptap/react';
-import { FC } from 'react';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 
 export interface ManageDeckFrontMatterEditorProps
   extends Pick<ManageDeckProps['deck'], 'name' | 'description'> {
   setName: (name: string) => void;
-  setDescription: (description: JSONObject) => void;
+  descriptionEditorElement: JSX.Element;
 }
 
-export const ManageDeckFrontMatterEditor: FC<ManageDeckFrontMatterEditorProps> = ({
+export const ManageDeckFrontMatterEditor = ({
   name,
-  description,
   setName,
-  setDescription,
-}) => {
-  const content = description ?? null;
-  const editor = useEditor({
-    ...DEFAULT_EDITOR_PROPS,
-    extensions: [
-      ...(DEFAULT_EDITOR_PROPS.extensions || []),
-      Placeholder.configure({ placeholder: 'Write a description...' }),
-    ],
-    content,
-    onUpdate({ editor }) {
-      const updatedJsonContent = editor.getJSON();
-      setDescription(updatedJsonContent);
-    },
-  });
+  descriptionEditorElement,
+}: ManageDeckFrontMatterEditorProps) => {
   return (
     <Stack>
       <TextInput
@@ -39,7 +20,7 @@ export const ManageDeckFrontMatterEditor: FC<ManageDeckFrontMatterEditorProps> =
         onChange={(event) => setName(event.currentTarget.value)}
       />
       <Input.Wrapper label="Description">
-        <ToolbaredRichTextEditor editor={editor} />
+        {descriptionEditorElement}
       </Input.Wrapper>
     </Stack>
   );

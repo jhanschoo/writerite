@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { Providers } from '@providers/Providers';
 import { withDefaultUrqlClient } from '@lib/urql/withDefaultUrqlClient';
 
-const WrApp: React.FC<AppProps> = ({ Component, pageProps }) => {
+const WrApp = ({ Component, pageProps }: AppProps) => {
   const router = useRouter();
 
   return (

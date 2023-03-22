@@ -1,5 +1,5 @@
 import { DeckRemoveSubdeckDocument, DeckSummaryFragment } from '@generated/graphql';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { Button, Stack, Text } from '@mantine/core';
@@ -11,7 +11,7 @@ interface Props extends ManageDeckProps {
   onAddSubdeck(): void;
 }
 
-export const ManageDeckSubdecksBrowse: FC<Props> = ({ deck: { id, subdecks }, onAddSubdeck }) => {
+export const ManageDeckSubdecksBrowse = ({ deck: { id, subdecks }, onAddSubdeck }: Props) => {
   const [removed, setRemoved] = useState<string[]>([]);
   const [, removeSubdeck] = useMutation(DeckRemoveSubdeckDocument);
   const [persistedSubdecks] = useState<DeckSummaryFragment[]>(subdecks);

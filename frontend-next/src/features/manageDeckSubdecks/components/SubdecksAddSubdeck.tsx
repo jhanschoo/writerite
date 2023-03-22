@@ -4,7 +4,7 @@ import {
   DecksQueryOrder,
   DeckSummaryFragment,
 } from '@generated/graphql';
-import { FC, useState, ChangeEvent, MouseEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { useMutation } from 'urql';
 import type { ManageDeckProps } from '@/features/manageDeck';
 import { Button, Divider, Flex, Stack, TextInput, Title } from '@mantine/core';
@@ -21,10 +21,10 @@ interface Props extends ManageDeckProps {
   onFinishedLinkingSubdecks(): void;
 }
 
-export const ManageDeckSubdecksLinkSubdeck: FC<Props> = ({
+export const ManageDeckSubdecksLinkSubdeck = ({
   deck: { id: deckId, subdecks },
   onFinishedLinkingSubdecks,
-}) => {
+}: Props) => {
   const stoplist = subdecks.map(({ id }) => id);
   stoplist.push(deckId);
   const router = useRouter();

@@ -1,11 +1,10 @@
-import { FC } from 'react';
 import { Box, Button, Flex, Stack, Table, Text } from '@mantine/core';
 import { IconArrowRight } from '@tabler/icons-react';
 
-export const Instructions: FC<{ onCancel(): unknown; onNextStep(): unknown }> = ({
+export const Instructions = ({
   onCancel,
   onNextStep,
-}) => {
+}: { onCancel(): unknown; onNextStep(): unknown }) => {
   return (
     <Stack>
       <Text>

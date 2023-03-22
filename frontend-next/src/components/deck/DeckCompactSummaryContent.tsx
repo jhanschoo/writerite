@@ -1,7 +1,5 @@
 import { DeckSummaryFragment } from '@generated/graphql';
 import { createStyles, Text, TextProps } from '@mantine/core';
-import { PolymorphicComponentProps } from '@mantine/utils';
-import { FC } from 'react';
 import { DeckName } from './DeckName';
 
 interface Props {
@@ -16,10 +14,10 @@ const useStyles = createStyles({
   },
 });
 
-export const DeckCompactSummaryContent: FC<Props> = ({
+export const DeckCompactSummaryContent = ({
   deck: { name, subdecksCount, cardsDirectCount },
   rootProps,
-}) => {
+}: Props) => {
   const { classes } = useStyles();
   return (
     <Text {...rootProps}>

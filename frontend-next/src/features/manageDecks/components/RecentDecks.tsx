@@ -1,5 +1,5 @@
 import { DeckAddSubdeckDocument, DecksQueryOrder } from '@generated/graphql';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from 'urql';
 import { Button, Card, Flex, Stack, Text, UnstyledButton } from '@mantine/core';
 import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
@@ -9,7 +9,7 @@ import { DECK_DETAIL_PATH } from '@/paths';
 
 export const INITIAL_RECENT_DECKS = 6;
 
-export const RecentDecks: FC = () => {
+export const RecentDecks = () => {
   const router = useRouter();
   const [recentShowMore, setRecentShowMore] = useState(false);
   const [{ data, fetching, error }] = useQueryRecentDecks({

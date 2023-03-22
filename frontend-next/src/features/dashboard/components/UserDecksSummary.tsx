@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router';
-import { FC } from 'react';
 import { useMutation } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
@@ -100,7 +99,7 @@ const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
   );
 };
 
-export const UserDecksSummary: FC<Record<string, unknown>> = () => {
+export const UserDecksSummary = () => {
   const { classes } = useStyles();
   const router = useRouter();
   const [{ data, fetching, error }, refetchDecks] = useQueryRecentDecks({

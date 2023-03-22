@@ -1,6 +1,5 @@
 import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
 import { Avatar, AvatarProps, Tooltip } from '@mantine/core';
-import { FC } from 'react';
 import { ProfileUser } from '../types';
 
 interface Props {
@@ -9,7 +8,7 @@ interface Props {
   showTooltip?: boolean;
 }
 
-export const ProfilePicture: FC<Props> = ({ avatarProps, user, showTooltip }) => {
+export const ProfilePicture = ({ avatarProps, user, showTooltip }: Props) => {
   const avatarComponent = (
     <Avatar radius="xl" src={generatedAvatarUrl(user.id)} variant="light" {...avatarProps} />
   );

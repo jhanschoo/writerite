@@ -1,5 +1,5 @@
 import { Box, createStyles, Stack, Title } from '@mantine/core';
-import { FC } from 'react';
+import { ManagePersonalProps } from '../types/ManagePersonalProps';
 import { Profile } from './Profile';
 
 const useStyles = createStyles((theme) => ({
@@ -27,7 +27,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const UserDashboard: FC = () => {
+export const PersonalDashboard = ({ user }: ManagePersonalProps) => {
   const { classes } = useStyles();
   return (
     <Box className={classes.gridBox} p="md">
@@ -38,7 +38,7 @@ export const UserDashboard: FC = () => {
       </Box>
       <Stack className={classes.profilePanel}>
         <Box>
-          <Profile />
+          <Profile user={user} />
         </Box>
       </Stack>
       <Box className={classes.friendsPanel}>Friends panel</Box>

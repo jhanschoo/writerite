@@ -1,22 +1,29 @@
+import { EditorAndViewerFactory, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
 import { DeckEditDocument } from '@generated/graphql';
 import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from 'urql';
 import { ManageDeckProps } from '../types/ManageDeckProps';
 import { ManageDeckFrontMatterContent } from './ManageDeckFrontMatterContent';
 import { ManageDeckFrontMatterEditor } from './ManageDeckFrontMatterEditor';
 
-export const ManageDeckFrontMatter: FC<ManageDeckProps> = ({ deck }) => {
+export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
   const [{ fetching }, mutateDeckInfo] = useMutation(DeckEditDocument);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(deck.name);
-  const [description, setDescription] = useState(deck.description);
+  const [description, setDescription] = useState(deck.description ?? null);
+  const [descriptionEditor, descriptionViewer, resetEditorContent] = EditorAndViewerFactory({
+    editorComponent: ToolbaredRichTextEditor,
+    content: description,
+    setContent: setDescription,
+    placeholder: 'Write a description...',
+  });
   const content = (
     <ManageDeckFrontMatterContent
       name={name}
-      description={description}
+      descriptionElement={descriptionViewer}
       handleEdit={
-        editing /* TODO: add check for owner of deck */ ? undefined : () => setEditing(true)
+        editing /* TODO: add check for owner of deck */ ? undefined : () => { setEditing(true); resetEditorContent(); }
       }
     />
   );
@@ -31,7 +38,7 @@ export const ManageDeckFrontMatter: FC<ManageDeckProps> = ({ deck }) => {
       } = data;
       setEditing(false);
       setName(name);
-      setDescription(description);
+      setDescription(description ?? null);
     }
   };
   return (
@@ -48,16 +55,15 @@ export const ManageDeckFrontMatter: FC<ManageDeckProps> = ({ deck }) => {
         <LoadingOverlay visible={fetching} />
         <ManageDeckFrontMatterEditor
           name={name}
-          description={description}
           setName={setName}
-          setDescription={setDescription}
+          descriptionEditorElement={descriptionEditor}
         />
         <Flex justify="flex-end" pt="xs" gap="xs">
           <Button
             variant="outline"
             onClick={() => {
               setName(deck.name);
-              setDescription(deck.description);
+              setDescription(deck.description ?? null);
               setEditing(false);
             }}
           >

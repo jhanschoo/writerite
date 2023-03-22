@@ -1,4 +1,4 @@
-import { FC, MouseEvent, MouseEventHandler } from 'react';
+import { MouseEvent, MouseEventHandler } from 'react';
 import { DeckCreateDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
 import { Button, Center, createStyles, Divider, getStylesRef, Group, Stack, Title } from '@mantine/core';
@@ -38,7 +38,7 @@ const useStyles = createStyles(({ breakpoints }) => ({
 }));
 
 // TODO: pagination
-export const ManageDecks: FC = () => {
+export const ManageDecks = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
   const { classes } = useStyles();

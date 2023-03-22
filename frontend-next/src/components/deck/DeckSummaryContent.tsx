@@ -1,7 +1,6 @@
 import { DeckSummaryFragment } from '@generated/graphql';
 import { createStyles, Text, TextProps } from '@mantine/core';
 import { formatISO, parseISO } from 'date-fns';
-import { FC } from 'react';
 import { DeckName } from './DeckName';
 
 const useStyles = createStyles({
@@ -16,10 +15,10 @@ interface Props {
   rootProps?: TextProps;
 }
 
-export const DeckSummaryContent: FC<Props> = ({
+export const DeckSummaryContent = ({
   deck: { name, editedAt, subdecksCount, cardsDirectCount },
   rootProps,
-}) => {
+}: Props) => {
   const { classes } = useStyles();
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (

@@ -3,7 +3,7 @@ import { DECK_DETAIL_PATH } from '@/paths';
 import { DeckSummaryFragment } from '@generated/graphql';
 import { Button, Flex } from '@mantine/core';
 import { useRouter } from 'next/router';
-import { FC, ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 interface SubdeckListItemContentProps {
   deck: DeckSummaryFragment;
@@ -15,7 +15,7 @@ interface SubdeckListItemContentProps {
   actionedText: string;
 }
 
-export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
+export const SubdeckListItemContent = ({
   actioned,
   actionText,
   actionedText,
@@ -23,7 +23,7 @@ export const SubdeckListItemContent: FC<SubdeckListItemContentProps> = ({
   actionedIcon,
   deck,
   onAction,
-}) => {
+}: SubdeckListItemContentProps) => {
   const { id, name, cardsDirectCount, subdecksCount } = deck;
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter();

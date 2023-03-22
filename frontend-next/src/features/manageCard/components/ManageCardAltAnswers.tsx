@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { Button, Flex, Stack, Text } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
@@ -11,7 +11,7 @@ interface Props {
   onAnswersSave: (answers: string[]) => void;
 }
 
-export const ManageCardAltAnswers: FC<Props> = ({ answers, onAnswersSave }) => {
+export const ManageCardAltAnswers = ({ answers, onAnswersSave }: Props) => {
   const [currentlyEditing, setCurrentlyEditing] = useState<number | null>(null);
   const existsCurrentlyEditing = currentlyEditing !== null;
   const handleCancel = () => setCurrentlyEditing(null);

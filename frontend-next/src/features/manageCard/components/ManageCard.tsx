@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Button,
   Card,
@@ -107,7 +107,7 @@ function debounceIfStateDeltaExists(
  *   of answers is the latest answers that we have trued to update the server with (or the initial
  *   answers if we have not tried any such thing).
  */
-export const ManageCard: FC<Props> = ({ card, onDelete, forceLoading }) => {
+export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
   const { id, prompt, fullAnswer, answers } = card;
   const { classes } = useStyles();
   const initialState = {

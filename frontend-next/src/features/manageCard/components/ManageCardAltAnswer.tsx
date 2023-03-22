@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import { Button } from '@mantine/core';
 
 import { IconX } from '@tabler/icons-react';
@@ -10,7 +9,7 @@ interface Props {
   onStartEditing: () => void;
 }
 
-export const ManageCardAltAnswer: FC<Props> = ({ answer, editable, onRemove, onStartEditing }) => {
+export const ManageCardAltAnswer = ({ answer, editable, onRemove, onStartEditing }: Props) => {
   if (editable) {
     return (
       <Button.Group>

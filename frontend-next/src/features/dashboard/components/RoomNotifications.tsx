@@ -1,4 +1,4 @@
-import { FC, Key, PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import { useQuery } from 'urql';
 import { OccupyingActiveRoomsDocument, OccupyingActiveRoomsQuery } from '@generated/graphql';
 import { Avatar, Button, Card, createStyles, Text, Tooltip, UnstyledButton } from '@mantine/core';
@@ -74,10 +74,10 @@ const RoomItem = ({
 };
 
 interface Props {
-  wrapper: FC<PropsWithChildren>;
+  wrapper: (props: PropsWithChildren) => JSX.Element;
 }
 
-export const RoomNotifications: FC<Props> = ({ wrapper: Wrapper }) => {
+export const RoomNotifications = ({ wrapper: Wrapper }: Props) => {
   const [{ data, fetching, error }, refetchRooms] = useQuery({
     query: OccupyingActiveRoomsDocument,
   });

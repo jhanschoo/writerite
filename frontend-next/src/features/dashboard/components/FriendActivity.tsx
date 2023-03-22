@@ -1,6 +1,5 @@
 import { Box, Button, createStyles, Paper, Text, Title } from '@mantine/core';
 import { IconFriends } from '@tabler/icons-react';
-import { FC } from 'react';
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -18,7 +17,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const FriendActivity: FC<{}> = ({}) => {
+export const FriendActivity = () => {
   const { classes } = useStyles();
   return (
     <Paper radius="lg" p="md">

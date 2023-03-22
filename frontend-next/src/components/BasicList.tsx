@@ -1,5 +1,5 @@
 import { createStyles, Flex, Stack } from '@mantine/core';
-import { ComponentPropsWithoutRef, FC, ReactNode } from 'react';
+import { ComponentPropsWithoutRef, ReactNode } from 'react';
 
 const useStyles = createStyles(({ fn, spacing }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -31,7 +31,7 @@ interface Props {
   borderBottom?: boolean;
 }
 
-export const BasicList: FC<Props> = ({ borderTop, borderBottom, data, rootProps, stackProps }) => {
+export const BasicList = ({ borderTop, borderBottom, data, rootProps, stackProps }: Props) => {
   const { classes } = useStyles();
   const items = data.map((item, index) => (
     <Flex

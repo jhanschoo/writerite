@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { Box, Button, Divider, Stack, Text } from '@mantine/core';
 import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
 
@@ -14,7 +14,7 @@ interface Props {
   onSuccessfulImport(cards: NewCardData[]): unknown;
 }
 
-export const Import: FC<Props> = ({ onCancel, onPreviousStep, onSuccessfulImport }) => {
+export const Import = ({ onCancel, onPreviousStep, onSuccessfulImport }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
   const parseCsv = useParseCsv();
