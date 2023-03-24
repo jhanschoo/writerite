@@ -5,7 +5,7 @@ import type { ManageDeckProps } from '@/features/manageDeck';
 import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
 import { DeckAddCardsDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
-import { accumulateContentText } from '@/components/RichTextEditor';
+import { accumulateContentText } from '@/components/editor';
 
 interface Props extends ImportCardsData, ManageDeckProps {
   onCancel(): unknown;

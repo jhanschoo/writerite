@@ -1,8 +1,7 @@
-mutation UserEdit($isPublic: Boolean, $name: String) {
-  userEdit(isPublic: $isPublic, name: $name) {
+mutation UserEdit($isPublic: Boolean, $name: String, $bio: JSONObject) {
+  userEdit(isPublic: $isPublic, name: $name, bio: $bio) {
+    bio
     id
-    facebookId
-    googleId
     isPublic
     name
   }

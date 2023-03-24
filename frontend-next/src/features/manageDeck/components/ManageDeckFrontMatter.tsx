@@ -1,4 +1,5 @@
-import { EditorAndViewerFactory, ToolbaredRichTextEditor } from '@/components/RichTextEditor';
+import { ToolbaredRichTextEditor, useContentViewer } from '@/components/editor';
+import { useContentEditor } from '@/components/editor/useContentEditor';
 import { DeckEditDocument } from '@generated/graphql';
 import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
 import { useState } from 'react';
@@ -12,18 +13,19 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(deck.name);
   const [description, setDescription] = useState(deck.description ?? null);
-  const [descriptionEditor, descriptionViewer, resetEditorContent] = EditorAndViewerFactory({
+  const [descriptionEditor, resetEditorContent] = useContentEditor({
     editorComponent: ToolbaredRichTextEditor,
     content: description,
     setContent: setDescription,
     placeholder: 'Write a description...',
   });
+  const [descriptionViewer, viewer] = useContentViewer(description);
   const content = (
     <ManageDeckFrontMatterContent
       name={name}
       descriptionElement={descriptionViewer}
       handleEdit={
-        editing /* TODO: add check for owner of deck */ ? undefined : () => { setEditing(true); resetEditorContent(); }
+        editing /* TODO: add check for owner of deck */ ? undefined : () => { setEditing(true); resetEditorContent(viewer?.getJSON() ?? null); }
       }
     />
   );
@@ -49,6 +51,8 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
           [`@media (min-width: ${theme.breakpoints.md})`]: {
             width: '50%',
           },
+          // for 'LoadingOverlay' to work
+          position: 'relative',
         })}
         p="xs"
       >

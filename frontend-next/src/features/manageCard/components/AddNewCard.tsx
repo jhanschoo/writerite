@@ -15,7 +15,7 @@ import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import {
   BareRichTextEditor,
   DEFAULT_EDITOR_PROPS,
-} from '@/components/RichTextEditor';
+} from '@/components/editor';
 import { useMutation } from 'urql';
 import { CardCreateDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
@@ -54,6 +54,7 @@ const useStyles = createStyles(({ fn }) => {
       borderBottomRightRadius: 0,
     },
     boxRoot: {
+      // for 'LoadingOverlay' to work
       position: 'relative',
     },
   };

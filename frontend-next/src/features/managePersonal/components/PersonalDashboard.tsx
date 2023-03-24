@@ -1,6 +1,7 @@
-import { Box, createStyles, Stack, Title } from '@mantine/core';
+import { Box, Button, createStyles, Stack, Title } from '@mantine/core';
+import { IconPencil } from '@tabler/icons-react';
 import { ManagePersonalProps } from '../types/ManagePersonalProps';
-import { Profile } from './Profile';
+import { PersonalProfile } from './PersonalProfile';
 
 const useStyles = createStyles((theme) => ({
   gridBox: {
@@ -37,9 +38,7 @@ export const PersonalDashboard = ({ user }: ManagePersonalProps) => {
         </Title>
       </Box>
       <Stack className={classes.profilePanel}>
-        <Box>
-          <Profile user={user} />
-        </Box>
+        <PersonalProfile user={user} />
       </Stack>
       <Box className={classes.friendsPanel}>Friends panel</Box>
     </Box>

@@ -1,9 +1,9 @@
 import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
+import { UserProfileFragment } from '@generated/graphql';
 import { Avatar, AvatarProps, Tooltip } from '@mantine/core';
-import { ProfileUser } from '../types';
 
 interface Props {
-  user: ProfileUser;
+  user: UserProfileFragment;
   avatarProps?: AvatarProps;
   showTooltip?: boolean;
 }

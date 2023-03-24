@@ -13,7 +13,7 @@ import {
 import stringify from 'fast-json-stable-stringify';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/RichTextEditor';
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
 import { IconTrash } from '@tabler/icons-react';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
@@ -26,6 +26,7 @@ const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
   return {
     cardRoot: {
+      // for 'LoadingOverlay' to work
       position: 'relative',
       [`&:hover .${getStylesRef('cardCloseButton')}`]: {
         visibility: 'visible',

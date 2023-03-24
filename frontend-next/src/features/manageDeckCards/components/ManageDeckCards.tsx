@@ -3,7 +3,7 @@ import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/co
 
 import { ManageDeckProps } from '@/features/manageDeck';
 import { AddNewCard, ManageCard } from '@/features/manageCard';
-import { accumulateContentText } from '@/components/RichTextEditor';
+import { accumulateContentText } from '@/components/editor';
 import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/react';
 
