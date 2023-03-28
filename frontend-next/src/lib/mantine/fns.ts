@@ -28,7 +28,7 @@ export function alertGradientHover({ fn, colors: { orange, yellow } }: MantineTh
   });
 }
 
-export function grayGradientRight({ fn, colors: { orange, yellow } }: MantineTheme) {
+export function grayGradientRight({ fn }: MantineTheme) {
   return fn.gradient({
     from: 'rgba(0,0,0,0)',
     to: 'rgba(127,127,127,0.1)',

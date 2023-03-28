@@ -1,6 +1,7 @@
 import { Box, Button, createStyles, Stack, Title } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
 import { ManagePersonalProps } from '../types/ManagePersonalProps';
+import { PersonalFriends } from './PersonalFriends';
 import { PersonalProfile } from './PersonalProfile';
 
 const useStyles = createStyles((theme) => ({
@@ -40,7 +41,9 @@ export const PersonalDashboard = ({ user }: ManagePersonalProps) => {
       <Stack className={classes.profilePanel}>
         <PersonalProfile user={user} />
       </Stack>
-      <Box className={classes.friendsPanel}>Friends panel</Box>
+      <Box className={classes.friendsPanel}>
+        <PersonalFriends user={user} />
+      </Box>
     </Box>
   );
 };

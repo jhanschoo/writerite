@@ -15,18 +15,17 @@ import {
 } from '@mantine/core';
 import { useLogout } from '@features/signin/hooks/useLogout';
 import { PropsWithChildren, useState } from 'react';
-import BrandText from '@/components/typography/BrandText';
 import Link from 'next/link';
 import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
+import { useRouter } from 'next/router';
+import BrandText from '@/components/typography/BrandText';
 import { useCurrentUser } from '@/hooks';
 import { ProfilePicture } from '@/features/profilePicture/components';
-import { useMediaQuery } from '@mantine/hooks';
 import { ActionIcon } from '@/components/ActionIcon';
-import { useRouter } from 'next/router';
 import { PROFILE_PATH } from '@/paths';
 
 interface Props {
-  breadcrumbs?: [string, string | JSX.Element][];
   vhHeight?: boolean;
 }
 
@@ -45,13 +44,11 @@ const useShellStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'
   };
 });
 
-const useDrawerButtonStyles = createStyles((theme) => {
-  return {
+const useDrawerButtonStyles = createStyles(() => ({
     inner: {
       justifyContent: 'flex-start',
     },
-  };
-});
+  }));
 
 export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>) => {
   const logout = useLogout();

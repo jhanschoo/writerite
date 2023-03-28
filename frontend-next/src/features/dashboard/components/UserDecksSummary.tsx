@@ -4,11 +4,11 @@ import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
 import { DeckCreateDocument, DecksQueryOrder, DeckSummaryFragment } from '@generated/graphql';
 import {
-  Box,
   Button,
   Card,
   createStyles,
   Divider,
+  Flex,
   Text,
   Title,
   UnstyledButton,
@@ -26,10 +26,6 @@ const useStyles = createStyles((theme) => {
   return {
     card: {
       overflow: 'visible',
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
     },
     buttonSection: {
       display: 'flex',
@@ -114,7 +110,7 @@ export const UserDecksSummary = () => {
   ]);
   return (
     <Card shadow="xl" radius="lg" px="md" pt="md" className={classes.card}>
-      <Box className={classes.header}>
+      <Flex justify="space-between">
         <Title order={2} mb="md">
           Decks
         </Title>
@@ -126,7 +122,7 @@ export const UserDecksSummary = () => {
         >
           Find Decks
         </Button>
-      </Box>
+      </Flex>
       {decks}
       {decks.length ? undefined : <Text>You have no decks to show.</Text>}
       <Card.Section className={classes.buttonSection}>

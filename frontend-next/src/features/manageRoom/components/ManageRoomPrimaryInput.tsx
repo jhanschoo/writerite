@@ -10,13 +10,11 @@ interface Props {
   room?: RoomDetailFragment;
 }
 
-const useStyles = createStyles((theme) => {
-  return {
+const useStyles = createStyles((theme) => ({
     input: {
       overflow: 'hidden',
     },
-  };
-});
+  }));
 
 export const ManageRoomPrimaryInput = ({ room }: Props) => {
   const { classes } = useStyles();
@@ -47,7 +45,7 @@ export const ManageRoomPrimaryInput = ({ room }: Props) => {
           <Text
             fz="xs"
             sx={{
-              visibility: form.values['chatInput'] ? 'visible' : 'hidden',
+              visibility: form.values.chatInput ? 'visible' : 'hidden',
             }}
           >
             (<Kbd>Alt</Kbd>/<Kbd>Shift</Kbd>/<Kbd>Ctrl</Kbd>/<Kbd>Option</Kbd>)+<Kbd>Enter</Kbd> to

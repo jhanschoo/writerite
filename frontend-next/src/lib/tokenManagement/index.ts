@@ -1,5 +1,5 @@
-import { isSSRContext } from '@/utils';
 import { decodeJwt } from 'jose';
+import { isSSRContext } from '@/utils';
 
 const ACCESS_TOKEN_KEY = 'auth_token';
 
@@ -38,7 +38,7 @@ export function expireCurrentSession() {
 }
 
 export function sessionNeedsRefreshing() {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return false;
   }
   const feExp = window?.localStorage?.getItem(EXPIRY_KEY);

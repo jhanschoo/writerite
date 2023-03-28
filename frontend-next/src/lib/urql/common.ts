@@ -1,5 +1,5 @@
 import { SSRExchange } from 'next-urql';
-import { dedupExchange, fetchExchange, makeOperation, subscriptionExchange } from 'urql/core';
+import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql/core';
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange, Data, NullArray } from '@urql/exchange-graphcache';
@@ -12,9 +12,9 @@ import {
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
-import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
 import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
 import { IntrospectionQuery } from 'graphql';
+import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
@@ -79,7 +79,7 @@ export const getExchanges = (ssr: SSRExchange) => [
     schema: schema as unknown as IntrospectionQuery, // type mismatch when using graphql.schema.json
     updates: {
       Mutation: {
-        cardCreate(result, _args, cache, _info) {
+        cardCreate(result, _args, cache) {
           const { cardCreate: card } = result as Mutation;
           const { id, deckId } = card;
           const cardsDirect = cache.resolve(
@@ -100,7 +100,7 @@ export const getExchanges = (ssr: SSRExchange) => [
             });
           }
         },
-        cardDelete(result, _args, cache, _info) {
+        cardDelete(result, _args, cache) {
           const {
             cardDelete: { id, deckId },
           } = result as Mutation;

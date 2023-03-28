@@ -1,7 +1,7 @@
+import { Button, Group, Sx } from '@mantine/core';
 import useFacebookSignin from '../hooks/useFacebookSignin';
 import useGoogleSignin from '../hooks/useGoogleSignin';
 import useDevelopmentSignin from '../hooks/useDevelopmentSignin';
-import { Button, Group, Sx } from '@mantine/core';
 
 interface Props {
   sx?: Sx;

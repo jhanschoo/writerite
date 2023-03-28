@@ -20,6 +20,6 @@
   "root": true,
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "import/extensions": "ignorePackages"
+    "import/extensions": [1, { "pattern": { "@*": "never" } }]
   }
 }

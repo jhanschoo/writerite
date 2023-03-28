@@ -6,6 +6,7 @@ export function useLogout() {
   const router = useRouter();
   return () => {
     unsetSessionInfo();
-    void router.push('/');
+    router.push('/');
+    return undefined;
   };
 }
