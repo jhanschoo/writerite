@@ -1,6 +1,6 @@
-import { JWTPayload, jwtVerify } from 'jose';
-import { CurrentUser } from './CurrentUser';
-import { PUBLIC_KEY_P, alg, issuer } from './constants';
+import { JWTPayload, jwtVerify } from "jose";
+import { CurrentUser } from "./CurrentUser";
+import { PUBLIC_KEY_P, alg, issuer } from "./constants";
 
 export async function verifyUserJWT(
   jwt: string,

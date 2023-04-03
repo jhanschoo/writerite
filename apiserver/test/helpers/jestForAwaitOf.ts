@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-export const jestForAwaitOf = async <T>(ait: AsyncIterable<T>, timerAdvancement: () => unknown, body: (t: T) => Promise<unknown>) => {
+export const jestForAwaitOf = async <T>(
+  ait: AsyncIterable<T>,
+  timerAdvancement: () => unknown,
+  body: (t: T) => Promise<unknown>
+) => {
   const iterator = ait[Symbol.asyncIterator]();
   let nextP = iterator.next();
   timerAdvancement();
@@ -15,4 +19,4 @@ export const jestForAwaitOf = async <T>(ait: AsyncIterable<T>, timerAdvancement:
     await iterator.return?.(e);
     throw e;
   }
-}
+};

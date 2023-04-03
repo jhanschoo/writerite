@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { PrismaClient } from '@prisma/client';
-import { ProviderKey, providerStrategies } from './providerStrategies';
-import { PrismaCurrentUserSourceType } from './types';
-import { findOrCreateCurrentUserSourceWithProfile } from './util';
+import type { PrismaClient } from "@prisma/client";
+import { ProviderKey, providerStrategies } from "./providerStrategies";
+import { PrismaCurrentUserSourceType } from "./types";
+import { findOrCreateCurrentUserSourceWithProfile } from "./util";
 
 export async function finalizeOauthSignin({
   code,
@@ -23,6 +23,11 @@ export async function finalizeOauthSignin({
   if (!profile) {
     return null;
   }
-  const user = await findOrCreateCurrentUserSourceWithProfile(prisma, profile.id, idField);
+  const user = await findOrCreateCurrentUserSourceWithProfile(
+    prisma,
+    profile.id,
+    idField,
+    profile.name
+  );
   return user;
 }

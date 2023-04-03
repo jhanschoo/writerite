@@ -1,9 +1,9 @@
-import { Roles } from '../userJWT/Roles';
-import { PrismaCurrentUserSourceType } from './types';
-import { WillNotServeRoomStates } from '../room';
-import { PrismaClient } from '@prisma/client';
-import { ProviderPrismaFieldKeys } from './providerStrategies';
-import type { CurrentUser } from '../userJWT/CurrentUser';
+import { Roles } from "../userJWT/Roles";
+import { PrismaCurrentUserSourceType } from "./types";
+import { WillNotServeRoomStates } from "../room";
+import { PrismaClient } from "@prisma/client";
+import { ProviderPrismaFieldKeys } from "./providerStrategies";
+import type { CurrentUser } from "../userJWT/CurrentUser";
 
 export function currentUserSourceToCurrentUser({
   id,
@@ -30,7 +30,8 @@ export function currentUserSourceToCurrentUser({
 export const findOrCreateCurrentUserSourceWithProfile = async (
   prisma: PrismaClient,
   profileId: string,
-  idField: ProviderPrismaFieldKeys
+  idField: ProviderPrismaFieldKeys,
+  name?: string
 ) => {
   // Note: this include should behave identically to the User.occupyingActiveRooms field
   const include = {
@@ -47,10 +48,13 @@ export const findOrCreateCurrentUserSourceWithProfile = async (
   };
   const user = await prisma.user.upsert({
     // Note that this coerced type is benignly more strict than expected
-    where: { [idField]: profileId } as { [K in ProviderPrismaFieldKeys]: string },
+    where: { [idField]: profileId } as {
+      [K in ProviderPrismaFieldKeys]: string;
+    },
     update: {},
     create: {
       [idField]: profileId,
+      name: name ?? "New User",
       roles: [Roles.User],
     },
     include,

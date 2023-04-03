@@ -1,25 +1,25 @@
-import { arg, core } from 'nexus';
-import { NexusGenScalars } from '../../generated/nexus-typegen';
+import { arg, core } from "nexus";
+import { NexusGenScalars } from "../../generated/nexus-typegen";
 
 export const scalarMapping = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  DateTime: 'Date',
+  DateTime: "Date",
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  EmailAddress: 'string',
+  EmailAddress: "string",
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  JSON: 'unknown',
+  JSON: "unknown",
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  JSONObject: 'Record<string, unknown>',
+  JSONObject: "Record<string, unknown>",
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  JWT: 'string',
+  JWT: "string",
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  UUID: 'string',
+  UUID: "string",
 };
 
 const argFactory =
   <
     T extends keyof NexusGenScalars,
-    U extends core.GetGen2<'inputTypeShapes', T, unknown> | undefined
+    U extends core.GetGen2<"inputTypeShapes", T, unknown> | undefined
   >(
     type: T
   ) =>
@@ -29,9 +29,9 @@ const argFactory =
       ...opts,
     }) as core.NexusArgDef<T>;
 
-export const dateTimeArg = argFactory('DateTime');
-export const emailAddressArg = argFactory('EmailAddress');
-export const jsonArg = argFactory('JSON');
-export const jsonObjectArg = argFactory('JSONObject');
-export const jwtArg = argFactory('JWT');
-export const uuidArg = argFactory('UUID');
+export const dateTimeArg = argFactory("DateTime");
+export const emailAddressArg = argFactory("EmailAddress");
+export const jsonArg = argFactory("JSON");
+export const jsonObjectArg = argFactory("JSONObject");
+export const jwtArg = argFactory("JWT");
+export const uuidArg = argFactory("UUID");

@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { YogaInitialContext } from 'graphql-yoga';
-import { PrismaClient } from '@prisma/client';
-import { Context } from '../../src/context';
-import { createGraphQLApp } from '../../src/graphqlApp';
-import { mutationCreateUser, queryHealth, testContextFactory } from '../helpers';
-import { cascadingDelete } from './_helpers/truncate';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { YogaInitialContext } from "graphql-yoga";
+import { PrismaClient } from "@prisma/client";
+import { Context } from "../../src/context";
+import { createGraphQLApp } from "../../src/graphqlApp";
+import {
+  mutationCreateUser,
+  queryHealth,
+  testContextFactory,
+} from "../helpers";
+import { cascadingDelete } from "./_helpers/truncate";
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
-describe('server', () => {
+describe("server", () => {
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
@@ -25,15 +29,18 @@ describe('server', () => {
     await stopContext();
   });
 
-  it('should be able to respond to a health check', async () => {
+  it("should be able to respond to a health check", async () => {
     expect.assertions(1);
     const response = await queryHealth(executor);
-    expect(response).toHaveProperty('data.health', 'OK');
+    expect(response).toHaveProperty("data.health", "OK");
   });
 
-  it('should be able to respond to a basic create user', async () => {
+  it("should be able to respond to a basic create user", async () => {
     expect.assertions(1);
     const response = await mutationCreateUser(executor);
-    expect(response).toHaveProperty('data.finalizeOauthSignin.token', expect.any(String));
+    expect(response).toHaveProperty(
+      "data.finalizeOauthSignin.token",
+      expect.any(String)
+    );
   });
 });

@@ -2,10 +2,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { YogaInitialContext } from 'graphql-yoga';
-import { CurrentUser, verifyUserJWT } from '../userJWT';
-import Redis from 'ioredis';
-import { isInvalidated } from './isInvalidated';
+import { YogaInitialContext } from "graphql-yoga";
+import { CurrentUser, verifyUserJWT } from "../userJWT";
+import Redis from "ioredis";
+import { isInvalidated } from "./isInvalidated";
 
 export async function getClaims(
   ctx: YogaInitialContext,
@@ -13,12 +13,13 @@ export async function getClaims(
 ): Promise<CurrentUser | undefined> {
   const authorization =
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    ctx.request?.headers?.get?.('Authorization') ??
+    ctx.request?.headers?.get?.("Authorization") ??
     // path if called from GraphiQL
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (ctx as any).extensions?.payload?.extensions?.headers?.Authorization ??
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ctx as any).extensions?.payload?.context?.fetchOptions?.headers?.Authorization;
+    (ctx as any).extensions?.payload?.context?.fetchOptions?.headers
+      ?.Authorization;
   if (!authorization) {
     return;
   }

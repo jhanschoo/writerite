@@ -1,6 +1,11 @@
-import { z } from 'zod';
+import { z } from "zod";
 
-export const jsonLiteralSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+export const jsonLiteralSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+]);
 export type JsonLiteral = z.infer<typeof jsonLiteralSchema>;
 export type Json = JsonLiteral | JsonObject | Json[];
 export const jsonSchema: z.ZodType<Json> = z.lazy(() =>

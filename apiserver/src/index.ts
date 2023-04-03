@@ -1,20 +1,23 @@
-import { WebSocketServer } from 'ws';
-import { useServer } from 'graphql-ws/lib/use/ws';
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 
-import { contextFactory } from './context';
-import { WrServer, createGraphQLApp } from './graphqlApp';
-import { RequestListener, Server, createServer } from 'http';
+import { contextFactory } from "./context";
+import { WrServer, createGraphQLApp } from "./server";
+import { RequestListener, Server, createServer } from "http";
 
 const { NODE_ENV } = process.env;
 
 export const [contextFn, stopContextServices] = contextFactory();
 
-const graphqlEndpoint = '/graphql';
+const graphqlEndpoint = "/graphql";
 
 export const yoga: WrServer = createGraphQLApp({
   context: contextFn,
   cors: {
-    origin: NODE_ENV === 'production' ? 'https://www.writerite.site' : 'http://localhost:3000',
+    origin:
+      NODE_ENV === "production"
+        ? "https://www.writerite.site"
+        : "http://localhost:3000",
   },
   graphqlEndpoint,
 });
@@ -33,13 +36,14 @@ async function main(): Promise<[Server, WebSocketServer]> {
       subscribe: (args: any) => args.rootValue.subscribe(args),
       onSubscribe: async (ctx, msg) => {
         // eslint-disable-next-line @typescript-eslint/no-shadow, @typescript-eslint/no-unsafe-assignment
-        const { schema, execute, subscribe, contextFactory, parse, validate } = yoga.getEnveloped({
-          // setting the params field is required for compatibility with envelope plugins that assume i guess a http-like request
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-          params: { ...(ctx as any).params, ...msg.payload },
-          ...ctx,
-          extensions: msg,
-        });
+        const { schema, execute, subscribe, contextFactory, parse, validate } =
+          yoga.getEnveloped({
+            // setting the params field is required for compatibility with envelope plugins that assume i guess a http-like request
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+            params: { ...(ctx as any).params, ...msg.payload },
+            ...ctx,
+            extensions: msg,
+          });
         const args = {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           schema,
@@ -69,7 +73,7 @@ async function main(): Promise<[Server, WebSocketServer]> {
   return new Promise((res, rej) => {
     let rejected = false;
     let resolved = false;
-    httpServer.on('error', (err) => {
+    httpServer.on("error", (err) => {
       // eslint-disable-next-line no-console
       console.error(err);
       if (rejected || resolved) {

@@ -1,15 +1,17 @@
-import { WrServer } from '../../../src/graphqlApp';
-import { gql, testQuery, testSubscription } from '../misc';
+import { WrServer } from "../../../src/graphqlApp";
+import { gql, testQuery, testSubscription } from "../misc";
 import {
   RoomJoinMutationVariables,
   RoomQueryVariables,
   RoomSetDeckMutationVariables,
   RoomSetStateMutationVariables,
   RoomUpdatesByRoomSlugSubscriptionVariables,
-} from '../../../generated/typescript-operations';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+} from "../../../generated/typescript-operations";
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
-export function mutationRoomCreate(executor: ReturnType<typeof buildHTTPExecutor>) {
+export function mutationRoomCreate(
+  executor: ReturnType<typeof buildHTTPExecutor>
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
     executor,
@@ -34,7 +36,10 @@ export function mutationRoomCreate(executor: ReturnType<typeof buildHTTPExecutor
   });
 }
 
-export function mutationRoomSetDeck(executor: ReturnType<typeof buildHTTPExecutor>, variables: RoomSetDeckMutationVariables) {
+export function mutationRoomSetDeck(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: RoomSetDeckMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomSetDeckMutationVariables>({
     executor,
@@ -55,7 +60,10 @@ export function mutationRoomSetDeck(executor: ReturnType<typeof buildHTTPExecuto
   });
 }
 
-export function mutationRoomSetState(executor: ReturnType<typeof buildHTTPExecutor>, variables: RoomSetStateMutationVariables) {
+export function mutationRoomSetState(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: RoomSetStateMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomSetStateMutationVariables>({
     executor,
@@ -76,7 +84,10 @@ export function mutationRoomSetState(executor: ReturnType<typeof buildHTTPExecut
   });
 }
 
-export function mutationRoomJoin(executor: ReturnType<typeof buildHTTPExecutor>, variables: RoomJoinMutationVariables) {
+export function mutationRoomJoin(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: RoomJoinMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomJoinMutationVariables>({
     executor,
@@ -100,7 +111,10 @@ export function mutationRoomJoin(executor: ReturnType<typeof buildHTTPExecutor>,
   });
 }
 
-export function queryRoom(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
+export function queryRoom(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  id: string
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RoomQueryVariables>({
     executor,
@@ -117,7 +131,9 @@ export function queryRoom(executor: ReturnType<typeof buildHTTPExecutor>, id: st
   });
 }
 
-export function queryOccupyingActiveRooms(executor: ReturnType<typeof buildHTTPExecutor>) {
+export function queryOccupyingActiveRooms(
+  executor: ReturnType<typeof buildHTTPExecutor>
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
     executor,
@@ -134,7 +150,10 @@ export function queryOccupyingActiveRooms(executor: ReturnType<typeof buildHTTPE
   });
 }
 
-export function subscriptionRoomUpdatesByRoomSlug(executor: ReturnType<typeof buildHTTPExecutor>, slug: string) {
+export function subscriptionRoomUpdatesByRoomSlug(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  slug: string
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testSubscription<RoomUpdatesByRoomSlugSubscriptionVariables>({
     executor,

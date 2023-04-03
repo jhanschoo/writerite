@@ -1,14 +1,14 @@
-import { mutationField, nonNull, objectType } from 'nexus';
+import { mutationField, nonNull, objectType } from "nexus";
 import {
   currentUserSourceToCurrentUser,
   findOrCreateCurrentUserSourceWithProfile,
-} from '../service/authentication';
-import { currentUserToUserJWT, verifyStaleUserJWT } from '../service/userJWT';
-import { jwtArg } from './scalarUtil';
+} from "../service/authentication";
+import { currentUserToUserJWT, verifyStaleUserJWT } from "../service/userJWT";
+import { jwtArg } from "./scalarUtil";
 
 // This is just a query, but needs to be a mutation field for technical reasons
-export const RefreshMutation = mutationField('refresh', {
-  type: 'SessionInfo',
+export const RefreshMutation = mutationField("refresh", {
+  type: "SessionInfo",
   args: {
     token: nonNull(jwtArg()),
   },
@@ -18,7 +18,7 @@ export const RefreshMutation = mutationField('refresh', {
       const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
         prisma,
         sub.id,
-        'id'
+        "id"
       );
       const currentUser = currentUserSourceToCurrentUser(currentUserSource);
       return {
@@ -32,13 +32,13 @@ export const RefreshMutation = mutationField('refresh', {
 });
 
 export const SessionInfo = objectType({
-  name: 'SessionInfo',
+  name: "SessionInfo",
   definition(t) {
-    t.nonNull.field('token', {
-      type: 'JWT',
+    t.nonNull.field("token", {
+      type: "JWT",
     });
-    t.nonNull.field('currentUser', {
-      type: 'JSONObject',
+    t.nonNull.field("currentUser", {
+      type: "JSONObject",
     });
   },
 });

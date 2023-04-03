@@ -6,6 +6,7 @@
     "outDir": "./dist/",
     "baseUrl": "./",
     "typeRoots": ["./node_modules/@types", "./typings"],
+    "noErrorTruncation": true,
     "skipLibCheck": true /* Skip type checking of declaration files. */
   },
   "include": ["generated/**/*", "src/**/*"]

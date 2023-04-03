@@ -1,4 +1,4 @@
-import { MessageUpdatePublishArgs, RoomUpdatePublishArgs } from '../graphql';
+import { MessageUpdatePublishArgs, RoomUpdatePublishArgs } from "../graphql";
 
 // PubSubPublishArgsByKey is declared here since GraphQL Yoga doesn't export it
 export interface PubSubPublishArgsByKey {

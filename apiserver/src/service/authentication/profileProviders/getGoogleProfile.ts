@@ -1,13 +1,15 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import env from '../../../safeEnv';
-import { parseArbitraryJWT } from '../../crypto';
+import env from "../../../safeEnv";
+import { parseArbitraryJWT } from "../../crypto";
 // eslint-disable-next-line @typescript-eslint/no-shadow
-import { URL } from 'url';
-import { setSearchParams } from '../../../util';
-import { ExternalProfileInformation, ExternalProfileInformationProvider } from './types';
-import { JWTPayload } from 'jose';
+import { URL } from "url";
+import { setSearchParams } from "../../../util";
+import { ExternalProfileInformationProvider } from "./types";
+import { JWTPayload } from "jose";
 
-const GOOGLE_OAUTH_TOKEN_BASE_URL = new URL('https://oauth2.googleapis.com/token');
+const GOOGLE_OAUTH_TOKEN_BASE_URL = new URL(
+  "https://oauth2.googleapis.com/token"
+);
 const { GAPI_CLIENT_ID, GAPI_CLIENT_SECRET } = env;
 
 interface GoogleTokenResponse {
@@ -15,14 +17,14 @@ interface GoogleTokenResponse {
   expires_in: number; // seconds integer
   id_token: string; // JWT
   scope: string; // 'openid email profile'
-  token_type: 'Bearer';
+  token_type: "Bearer";
 }
 
 interface GoogleIdTokenWithEmailOpenIDAndProfile extends JWTPayload {
   aud: string; // === GAPI_CLIENT_ID
   exp: number; // seconds since epoch
   iat: number; // seconds since epoch
-  iss: 'https://accounts.google.com' | 'accounts.google.com';
+  iss: "https://accounts.google.com" | "accounts.google.com";
   sub: string; // user id
   email: string;
   email_verified: boolean;
@@ -39,15 +41,16 @@ export const getGoogleProfile: ExternalProfileInformationProvider = async ({
     code,
     client_id: GAPI_CLIENT_ID,
     client_secret: GAPI_CLIENT_SECRET,
-    grant_type: 'authorization_code',
+    grant_type: "authorization_code",
     redirect_uri,
   });
-  const res = await fetch(url.toString(), { method: 'POST' });
+  const res = await fetch(url.toString(), { method: "POST" });
   if (!res.ok) {
     return null;
   }
   const { id_token } = (await res.json()) as GoogleTokenResponse;
-  const parsedJWT = parseArbitraryJWT<GoogleIdTokenWithEmailOpenIDAndProfile>(id_token);
-  const { sub, email } = parsedJWT;
-  return { email, id: sub };
+  const parsedJWT =
+    parseArbitraryJWT<GoogleIdTokenWithEmailOpenIDAndProfile>(id_token);
+  const { sub, email, name } = parsedJWT;
+  return { email, id: sub, name: name ?? email };
 };

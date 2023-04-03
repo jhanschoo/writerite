@@ -1,5 +1,5 @@
-import { Context, LoggedInContext } from '../../context';
-import { userNotLoggedInErrorFactory } from '../../error';
+import { Context, LoggedInContext } from "../../context";
+import { userNotLoggedInErrorFactory } from "../../error";
 
 export function notLoggedIn(context: Context) {
   return !context.sub;

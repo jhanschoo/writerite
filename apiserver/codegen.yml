@@ -1,6 +1,11 @@
 schema: ./generated/schema.graphql
-documents: './test/**/*.ts'
+# documents: './test/**/*.ts'
 generates:
+  ./generated/gql/:
+    preset: client
+    plugins: []
+  ./generated/schema.graphql:
+    plugins: [schema-ast]
   ./generated/typescript-operations.ts:
     plugins:
       - typescript

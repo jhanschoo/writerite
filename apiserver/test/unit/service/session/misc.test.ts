@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import { YogaInitialContext } from 'graphql-yoga';
-import { CurrentUser, currentUserToUserJWT } from '../../../../src/service/userJWT';
-import { getClaims } from '../../../../src/service/session';
-import Redis from 'ioredis';
-import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
+import { YogaInitialContext } from "graphql-yoga";
+import {
+  CurrentUser,
+  currentUserToUserJWT,
+} from "../../../../src/service/userJWT";
+import { getClaims } from "../../../../src/service/session";
+import Redis from "ioredis";
+import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 
-describe('currentUserToUserJWT and getClaims', () => {
+describe("currentUserToUserJWT and getClaims", () => {
   let redis: DeepMockProxy<Redis>;
 
   // eslint-disable-next-line @typescript-eslint/require-await
@@ -18,9 +21,14 @@ describe('currentUserToUserJWT and getClaims', () => {
   });
 
   // Note: this is an integration test involving `getClaims` and the `userJWT` service
-  test('currentUserToUserJWT generates a JWT compatible with getClaims', async () => {
+  test("currentUserToUserJWT generates a JWT compatible with getClaims", async () => {
     expect.assertions(1);
-    const sub: CurrentUser = { id: 'foo', name: 'bar', roles: [], occupyingActiveRoomSlugs: {} };
+    const sub: CurrentUser = {
+      id: "foo",
+      name: "bar",
+      roles: [],
+      occupyingActiveRoomSlugs: {},
+    };
     const jwt = `Bearer ${await currentUserToUserJWT(sub)}`;
     redis.mget.mockResolvedValue(Promise.resolve([null]));
     await expect(
@@ -28,7 +36,8 @@ describe('currentUserToUserJWT and getClaims', () => {
         {
           request: {
             headers: {
-              get: (headerKey: string) => (headerKey === 'Authorization' ? jwt : undefined),
+              get: (headerKey: string) =>
+                headerKey === "Authorization" ? jwt : undefined,
             },
           },
         } as unknown as YogaInitialContext,

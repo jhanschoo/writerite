@@ -1,2 +1,4 @@
 .eslintrc.*
-jest.config.ts
+jest.config.*
+codegen.ts
+scripts/**/*

@@ -8,11 +8,13 @@
   "license": "AGPL-3.0-or-later",
   "private": false,
   "dependencies": {
-    "@graphql-codegen/add": "^4.0.1",
-    "@graphql-codegen/cli": "^3.2.2",
-    "@graphql-codegen/typescript": "^3.0.2",
-    "@graphql-codegen/typescript-operations": "^3.0.2",
     "@graphql-yoga/redis-event-target": "^1.0.0",
+    "@pothos/core": "^3.29.0",
+    "@pothos/plugin-directives": "^3.10.1",
+    "@pothos/plugin-prisma": "^3.47.0",
+    "@pothos/plugin-relay": "^3.39.0",
+    "@pothos/plugin-scope-auth": "^3.19.0",
+    "@pothos/plugin-validation": "^3.9.0",
     "@prisma/client": "^4.7.1",
     "@tsconfig/node18": "^1.0.0",
     "@types/bcrypt": "^5.0.0",
@@ -36,6 +38,11 @@
     "zod": "^3.19.1"
   },
   "devDependencies": {
+    "@graphql-codegen/add": "^4.0.1",
+    "@graphql-codegen/cli": "^3.2.2",
+    "@graphql-codegen/client-preset": "^2.1.1",
+    "@graphql-codegen/typescript": "^3.0.2",
+    "@graphql-codegen/typescript-operations": "^3.0.2",
     "@graphql-tools/executor-http": "^0.1.9",
     "@types/jest": "^29.5.0",
     "@types/supertest": "^2.0.12",
@@ -58,8 +65,8 @@
     "build": "tsc",
     "init:run": "prisma db push --accept-data-loss",
     "app:start": "node dist/src/index.js",
-    "dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --exit-child --transpile-only --respawn src/index.ts",
-    "dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && graphql-codegen && ts-node --transpile-only src/schema",
+    "dev": "export $(xargs -a .env -d '\\n') && ts-node-dev --exit-child --respawn src/index.ts",
+    "dev:init": "export $(xargs -a .env -d '\\n') && prisma db push && prisma generate && ts-node scripts/printSchema.ts && graphql-codegen",
     "test:integration": "export $(xargs -a .env -d '\\n') && graphql-codegen && jest --runInBand --config=\"jest.config.integration.ts\" test/integration",
     "test:unit": "graphql-codegen && jest"
   }

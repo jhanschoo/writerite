@@ -1,6 +1,10 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["extendedWhereUnique"]
+  previewFeatures = ["extendedWhereUnique", "filteredRelationCount"]
+}
+
+generator pothos {
+  provider = "prisma-pothos-types"
 }
 
 datasource postgresql {
@@ -16,6 +20,7 @@ enum RoomState {
   WAITING
   SERVING
   SERVED
+  PERSISTENT
 }
 
 model Card {
@@ -101,11 +106,12 @@ model Occupant {
 
 model Room {
   id              String     @default(cuid()) @id
-  ownerId         String
   // slug is a string for the URL with the following property
   // when state is non-terminal, slug is some short cuid
   // when state is terminal, slug is null
   slug            String?    @unique
+  // TODO: consider refactoring to a weak entity RoomRound unique(roomId, UNIT)
+  // Then the room state is tracked by the existence of a RoomRound and whether UNIT is set on it
   deckId          String?
   state           RoomState  @default(WAITING)
 
@@ -113,26 +119,8 @@ model Room {
   updatedAt       DateTime   @default(now()) @updatedAt
 
   deck            Deck?      @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  owner           User       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   occupants       Occupant[] @relation("RoomTo_Occupant")
   chatMsgs        Message[]
-  roomInvitations RoomInvitation[]
-}
-
-model RoomInvitation {
-  id         String     @default(cuid()) @id
-  senderId   String
-  receiverId String
-  roomId     String
-
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
-
-  sender     User     @relation("UserTo_RoomInvitation_senderId", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver   User     @relation("UserTo_RoomInvitation_receiverId", fields: [receiverId], references: [id], onDelete: Cascade)
-  room       Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  @@unique([senderId, receiverId, roomId])
-  @@index([receiverId])
 }
 
 //See: https://github.com/prisma/prisma/issues/2057
@@ -155,8 +143,7 @@ model User {
   id             String           @default(cuid()) @id
   facebookId     String?          @unique
   googleId       String?          @unique
-  name           String?          @unique
-  passwordHash   String?
+  name           String
   // description is a JsonObject if not null
   bio            Json?
   roles          String[]
@@ -166,7 +153,6 @@ model User {
   updatedAt      DateTime         @default(now()) @updatedAt
 
   decks          Deck[]
-  ownedRooms     Room[]
   occupyingRooms Occupant[]       @relation("UserTo_Occupant")
   sentChatMsgs   Message[]
   cardRecords    UserCardRecord[]
@@ -174,8 +160,6 @@ model User {
 
   befrienderIn   Friendship[]        @relation("UserTo_Friendship_befrienderId")
   befriendedIn   Friendship[]        @relation("UserTo_Friendship_befriendedId")
-  sentRoomInvitations     RoomInvitation[]        @relation("UserTo_RoomInvitation_senderId")
-  receivedRoomInvitations RoomInvitation[]        @relation("UserTo_RoomInvitation_receiverId")
 }
 
 model Friendship {
@@ -186,8 +170,8 @@ model Friendship {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @default(now()) @updatedAt
 
-  befriender   User?    @relation("UserTo_Friendship_befrienderId", fields: [befrienderId], references: [id], onDelete: Cascade)
-  befriended   User?    @relation("UserTo_Friendship_befriendedId", fields: [befriendedId], references: [id], onDelete: Cascade)
+  befriender   User     @relation("UserTo_Friendship_befrienderId", fields: [befrienderId], references: [id], onDelete: Cascade)
+  befriended   User     @relation("UserTo_Friendship_befriendedId", fields: [befriendedId], references: [id], onDelete: Cascade)
 
   @@unique([befrienderId, befriendedId])
   @@index([befriendedId])

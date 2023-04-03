@@ -1,4 +1,4 @@
-import { gql, testQuery } from '../misc';
+import { gql, testQuery } from "../misc";
 import {
   CreateUserMutationVariables,
   NameUserMutationVariables,
@@ -6,12 +6,12 @@ import {
   UserAccessibleUserScalarsQueryVariables,
   UserEditMutationVariables,
   UserPublicScalarsQueryVariables,
-} from '../../../generated/typescript-operations';
-import { CurrentUser } from '../../../src/service/userJWT';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+} from "../../../generated/typescript-operations";
+import { CurrentUser } from "../../../src/service/userJWT";
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
 export const DEFAULT_CREATE_USER_VALUES = {
-  name: 'abcxyz',
+  name: "abcxyz",
 };
 
 export function mutationCreateUser(
@@ -40,7 +40,12 @@ export function mutationCreateUser(
       }
     `,
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    variables: { code: name, nonce: '', provider: 'development', redirect_uri: '' },
+    variables: {
+      code: name,
+      nonce: "",
+      provider: "development",
+      redirect_uri: "",
+    },
   });
 }
 
@@ -69,7 +74,9 @@ export async function loginAsNewlyCreatedUser(
   name?: string
 ): Promise<{ currentUser: CurrentUser; token: string }> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const response = await (name ? mutationCreateUser(executor, { name }) : mutationCreateUser(executor));
+  const response = await (name
+    ? mutationCreateUser(executor, { name })
+    : mutationCreateUser(executor));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   const sessionInfo = response.data.finalizeOauthSignin as {
     currentUser: CurrentUser;
@@ -87,12 +94,18 @@ export async function refreshLogin(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const response = await mutationRefresh(executor, token);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const sessionInfo = response.data.refresh as { currentUser: CurrentUser; token: string };
+  const sessionInfo = response.data.refresh as {
+    currentUser: CurrentUser;
+    token: string;
+  };
   setSub(sessionInfo.currentUser);
   return sessionInfo;
 }
 
-export async function mutationRefresh(executor: ReturnType<typeof buildHTTPExecutor>, token: string) {
+export async function mutationRefresh(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  token: string
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<RefreshMutationVariables>({
     executor,
@@ -108,7 +121,10 @@ export async function mutationRefresh(executor: ReturnType<typeof buildHTTPExecu
   });
 }
 
-export function queryAllUserAccessibleUserScalars(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
+export function queryAllUserAccessibleUserScalars(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  id: string
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<UserAccessibleUserScalarsQueryVariables>({
     executor,
@@ -126,7 +142,10 @@ export function queryAllUserAccessibleUserScalars(executor: ReturnType<typeof bu
   });
 }
 
-export function queryUserPublicScalars(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
+export function queryUserPublicScalars(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  id: string
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<UserPublicScalarsQueryVariables>({
     executor,

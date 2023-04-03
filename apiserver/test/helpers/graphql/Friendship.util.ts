@@ -1,6 +1,6 @@
-import { gql, testQuery } from '../misc';
-import { UserBefriendUserMutationVariables } from '../../../generated/typescript-operations';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { gql, testQuery } from "../misc";
+import { UserBefriendUserMutationVariables } from "../../../generated/typescript-operations";
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
 export function mutationUserBefriendUser(
   executor: ReturnType<typeof buildHTTPExecutor>,

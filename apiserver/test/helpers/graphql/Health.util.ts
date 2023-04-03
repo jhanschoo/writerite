@@ -1,5 +1,5 @@
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
-import { gql, testQuery, testSubscription } from '../misc';
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { gql, testQuery, testSubscription } from "../misc";
 
 export function queryHealth(executor: ReturnType<typeof buildHTTPExecutor>) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -14,7 +14,9 @@ export function queryHealth(executor: ReturnType<typeof buildHTTPExecutor>) {
   });
 }
 
-export function subscriptionRepeatHealth(executor: ReturnType<typeof buildHTTPExecutor>) {
+export function subscriptionRepeatHealth(
+  executor: ReturnType<typeof buildHTTPExecutor>
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testSubscription<undefined>({
     executor,

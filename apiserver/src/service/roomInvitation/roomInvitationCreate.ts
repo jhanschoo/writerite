@@ -1,4 +1,4 @@
-import { PrismaClient, RoomState } from '@prisma/client';
+import { PrismaClient, RoomState } from "@prisma/client";
 
 type RoomNotificationCreateProps = [
   PrismaClient,

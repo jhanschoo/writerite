@@ -1,20 +1,23 @@
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
-import { PrismaClient } from '@prisma/client';
-import { DocumentNode, ExecutionResult, parse } from 'graphql';
-import Redis from 'ioredis';
-import { JWTPayload } from 'jose';
-import { Context, ContextFactoryReturnType, contextFactory } from '../../src/context';
-import { WrServer } from '../../src/graphqlApp';
-import { parseArbitraryJWT } from '../../src/service/crypto';
-import { CurrentUser } from '../../src/service/userJWT';
-import { PubSubPublishArgs } from '../../src/types/PubSubPublishArgs';
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { PrismaClient } from "@prisma/client";
+import { DocumentNode, ExecutionResult, parse } from "graphql";
+import Redis from "ioredis";
+import { JWTPayload } from "jose";
+import {
+  Context,
+  ContextFactoryReturnType,
+  contextFactory,
+} from "../../src/context";
+import { WrServer } from "../../src/graphqlApp";
+import { parseArbitraryJWT } from "../../src/service/crypto";
+import { CurrentUser } from "../../src/service/userJWT";
+import { PubSubPublishArgs } from "../../src/types/PubSubPublishArgs";
 
- 
 function assertSingleValue<TValue extends ExecutionResult<any, any>>(
   value: TValue | AsyncIterable<TValue>
 ): asserts value is TValue {
   if (Symbol.asyncIterator in value) {
-    throw new Error('Expected single value')
+    throw new Error("Expected single value");
   }
 }
 function assertStreamValue<TValue extends ExecutionResult<any, any>>(
@@ -23,12 +26,14 @@ function assertStreamValue<TValue extends ExecutionResult<any, any>>(
   if (Symbol.asyncIterator in value) {
     return;
   }
-  throw new Error('Expected single value')
+  throw new Error("Expected single value");
 }
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  return JSON.parse(parseArbitraryJWT<JWTPayload & { sub: string }>(jwt).sub) as CurrentUser;
+  return JSON.parse(
+    parseArbitraryJWT<JWTPayload & { sub: string }>(jwt).sub
+  ) as CurrentUser;
 }
 
 export function testContextFactory<
@@ -36,7 +41,8 @@ export function testContextFactory<
   U extends PubSubPublishArgs,
   R extends Redis
 >(
-  opts?: Partial<Context<T, U, R>> & Pick<Context<T, U, R>, 'prisma' | 'pubsub' | 'redis'>
+  opts?: Partial<Context<T, U, R>> &
+    Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">
 ): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType<T, U, R>];
 export function testContextFactory(
   opts?: Partial<Context>
@@ -53,9 +59,12 @@ export function testContextFactory(
   ];
 }
 
-export const isoTimestampMatcher = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
+export const isoTimestampMatcher =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
 
-export async function testQuery<TVariables extends Record<string, unknown> | undefined>({
+export async function testQuery<
+  TVariables extends Record<string, unknown> | undefined
+>({
   executor,
   document,
   variables,
@@ -69,7 +78,9 @@ export async function testQuery<TVariables extends Record<string, unknown> | und
   return result;
 }
 
-export async function testSubscription<TVariables extends Record<string, unknown> | undefined>({
+export async function testSubscription<
+  TVariables extends Record<string, unknown> | undefined
+>({
   executor,
   document,
   variables,

@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client';
-import { PubSub } from 'graphql-yoga';
-import { PubSubPublishArgs } from 'src/types/PubSubPublishArgs';
+import { PrismaClient } from "@prisma/client";
+import { PubSub } from "graphql-yoga";
+import { PubSubPublishArgs } from "src/types/PubSubPublishArgs";
 
 export class Room {
   static createHostedPerpetualRoom({

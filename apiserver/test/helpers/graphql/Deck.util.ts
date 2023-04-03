@@ -1,13 +1,15 @@
-import { gql, testQuery } from '../misc';
+import { gql, testQuery } from "../misc";
 import {
   DeckAddSubdeckMutationVariables,
   DeckEditNameMutationVariables,
   DeckQueryVariables,
   DeckRemoveSubdeckMutationVariables,
-} from '../../../generated/typescript-operations';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+} from "../../../generated/typescript-operations";
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
-export function mutationDeckCreateEmpty(executor: ReturnType<typeof buildHTTPExecutor>) {
+export function mutationDeckCreateEmpty(
+  executor: ReturnType<typeof buildHTTPExecutor>
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<undefined>({
     executor,
@@ -66,7 +68,10 @@ export function mutationDeckRemoveSubdeck(
   });
 }
 
-export function mutationDeckEditName(executor: ReturnType<typeof buildHTTPExecutor>, variables: DeckEditNameMutationVariables) {
+export function mutationDeckEditName(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: DeckEditNameMutationVariables
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckEditNameMutationVariables>({
     executor,
@@ -82,7 +87,10 @@ export function mutationDeckEditName(executor: ReturnType<typeof buildHTTPExecut
   });
 }
 
-export function queryDeckScalars(executor: ReturnType<typeof buildHTTPExecutor>, id: string) {
+export function queryDeckScalars(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  id: string
+) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery<DeckQueryVariables>({
     executor,

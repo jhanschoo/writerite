@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-interface */
-import type * as p from '@prisma/client';
+import type * as p from "@prisma/client";
 
 export interface Card extends p.Card {}
 

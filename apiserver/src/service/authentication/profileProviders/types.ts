@@ -1,6 +1,7 @@
 export interface ExternalProfileInformation {
   id: string;
   email?: string;
+  name: string;
 }
 
 export type ExternalProfileInformationProvider = (params: {

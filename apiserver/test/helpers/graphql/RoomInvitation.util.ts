@@ -1,6 +1,6 @@
-import { gql, testQuery } from '../misc';
-import { RoomInvitationSendMutationVariables } from '../../../generated/typescript-operations';
-import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { gql, testQuery } from "../misc";
+import { RoomInvitationSendMutationVariables } from "../../../generated/typescript-operations";
+import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
 export function mutationRoomInvitationSendSubdeck(
   executor: ReturnType<typeof buildHTTPExecutor>,

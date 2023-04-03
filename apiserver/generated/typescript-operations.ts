@@ -13,7 +13,7 @@ export type Scalars = {
   Float: number;
   /** A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar. */
   DateTime: string;
-  /** A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/. */
+  /** A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address. */
   EmailAddress: string;
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: JSONValue;
@@ -25,7 +25,7 @@ export type Scalars = {
   UUID: string;
 };
 
-export type Card = {
+export type Card = Node & {
   __typename?: 'Card';
   answers: Array<Scalars['String']>;
   deckId: Scalars['ID'];
@@ -33,65 +33,121 @@ export type Card = {
   fullAnswer?: Maybe<Scalars['JSONObject']>;
   id: Scalars['ID'];
   mainTemplate: Scalars['Boolean'];
-  ownRecord?: Maybe<UserCardRecord>;
   prompt?: Maybe<Scalars['JSONObject']>;
   template: Scalars['Boolean'];
 };
 
-export type CardCreateInput = {
-  answers: Array<Scalars['String']>;
-  fullAnswer?: InputMaybe<Scalars['JSONObject']>;
-  prompt?: InputMaybe<Scalars['JSONObject']>;
-  template?: InputMaybe<Scalars['Boolean']>;
-};
-
-export type Deck = {
+export type Deck = Node & {
   __typename?: 'Deck';
   answerLang: Scalars['String'];
   /** all cards directly belonging to some descendant (reflexive, transitive closure of subdeck) deck of this deck */
-  cardsAllUnder: Array<Card>;
+  cardsAllUnder: DeckCardsAllUnderConnection;
   /** all cards directly belonging to this deck */
-  cardsDirect: Array<Card>;
+  cardsDirect: DeckCardsDirectConnection;
   /** number of all cards directly belonging to this deck */
   cardsDirectCount: Scalars['Int'];
   createdAt: Scalars['DateTime'];
-  /** all descendant (reflexive, transitive closure of subdeck) decks of this deck */
+  /** all descendant decks (reflexive, transitive closure of subdeck) of this deck */
   descendantDecks: Array<Deck>;
   description?: Maybe<Scalars['JSONObject']>;
   editedAt: Scalars['DateTime'];
   id: Scalars['ID'];
   name: Scalars['String'];
-  ownRecord?: Maybe<UserDeckRecord>;
+  ownRecordNotes?: Maybe<Scalars['JSONObject']>;
   owner: User;
   ownerId: Scalars['ID'];
   promptLang: Scalars['String'];
-  published: Scalars['Boolean'];
   sortData: Array<Scalars['String']>;
-  /** all direct subdecks of this deck */
-  subdecks: Array<Deck>;
-  /** count of all direct subdecks of this deck */
+  /** all subdecks directly belonging to this deck */
+  subdecks: DeckSubdecksConnection;
   subdecksCount: Scalars['Int'];
 };
 
-export enum DecksQueryOrder {
-  EditedRecency = 'EDITED_RECENCY',
-  UsedRecency = 'USED_RECENCY'
-}
 
+export type DeckCardsAllUnderArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type DeckCardsDirectArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type DeckSubdecksArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type DeckCardsAllUnderConnection = {
+  __typename?: 'DeckCardsAllUnderConnection';
+  edges: Array<Maybe<DeckCardsAllUnderConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type DeckCardsAllUnderConnectionEdge = {
+  __typename?: 'DeckCardsAllUnderConnectionEdge';
+  cursor: Scalars['ID'];
+  node: Card;
+};
+
+export type DeckCardsDirectConnection = {
+  __typename?: 'DeckCardsDirectConnection';
+  edges: Array<Maybe<DeckCardsDirectConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type DeckCardsDirectConnectionEdge = {
+  __typename?: 'DeckCardsDirectConnectionEdge';
+  cursor: Scalars['ID'];
+  node: Card;
+};
+
+export type DeckSubdecksConnection = {
+  __typename?: 'DeckSubdecksConnection';
+  edges: Array<Maybe<DeckSubdecksConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type DeckSubdecksConnectionEdge = {
+  __typename?: 'DeckSubdecksConnectionEdge';
+  cursor: Scalars['ID'];
+  node: Deck;
+};
+
+/** ownership type of of decks returned */
 export enum DecksQueryScope {
   Owned = 'OWNED',
-  Participated = 'PARTICIPATED',
   Visible = 'VISIBLE'
 }
 
-export type Message = {
+export type Friendship = Node & {
+  __typename?: 'Friendship';
+  befriended: User;
+  befriendedId: Scalars['ID'];
+  befriender: User;
+  befrienderId: Scalars['ID'];
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type Message = Node & {
   __typename?: 'Message';
-  content: Scalars['JSON'];
+  content?: Maybe<Scalars['JSONObject']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   room: Room;
   roomId: Scalars['ID'];
-  sender?: Maybe<User>;
+  sender: User;
   senderId?: Maybe<Scalars['ID']>;
   type: MessageContentType;
 };
@@ -105,152 +161,10 @@ export enum MessageContentType {
   Text = 'TEXT'
 }
 
-export type MessageUpdate = {
-  __typename?: 'MessageUpdate';
-  operation: MessageUpdateOperation;
-  value: Message;
-};
-
-export enum MessageUpdateOperation {
-  MessageCreate = 'messageCreate'
-}
-
 export type Mutation = {
   __typename?: 'Mutation';
-  cardCreate: Card;
-  cardDelete: Card;
-  cardEdit: Card;
-  cardUnsetMainTemplate?: Maybe<Card>;
-  deckAddCards: Deck;
-  deckAddSubdeck: Deck;
-  deckCreate: Deck;
-  deckDelete: Deck;
-  deckEdit: Deck;
-  deckRemoveSubdeck: Deck;
   finalizeOauthSignin?: Maybe<SessionInfo>;
   initializeOauthSignin: Scalars['String'];
-  /**
-   * @triggersSubscriptions(
-   *     signatures: ["messagesOfRoomUpdates"]
-   *   )
-   */
-  messageCreate: Message;
-  ownCardRecordSet?: Maybe<UserCardRecord>;
-  ownDeckRecordSet: UserDeckRecord;
-  refresh?: Maybe<SessionInfo>;
-  roomCleanUpDead: Scalars['Int'];
-  /**
-   * @invalidatesTokens(
-   *     reason: "occupying newly created room"
-   *   )
-   *   @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   */
-  roomCreate: Room;
-  roomInvitationSend?: Maybe<RoomInvitation>;
-  /**
-   * @invalidatesTokens(
-   *     reason: "occupying existing room"
-   *   )
-   *   @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   */
-  roomJoin: Room;
-  /**
-   * @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   */
-  roomSetDeck: Room;
-  /**
-   * @invalidatesTokens(
-   *     reason: "room may no longer be active"
-   *   )
-   *   @triggersSubscriptions(
-   *     signatures: ["activeRoomUpdates"]
-   *   )
-   */
-  roomSetState: Room;
-  userBefriendUser: User;
-  /**
-   * @invalidatesTokens(
-   *     reason: "name may be changed"
-   *   )
-   */
-  userEdit: User;
-};
-
-
-export type MutationCardCreateArgs = {
-  card: CardCreateInput;
-  deckId: Scalars['ID'];
-  mainTemplate?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCardDeleteArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationCardEditArgs = {
-  answers?: InputMaybe<Array<Scalars['String']>>;
-  fullAnswer?: InputMaybe<Scalars['JSONObject']>;
-  id: Scalars['ID'];
-  mainTemplate?: InputMaybe<Scalars['Boolean']>;
-  prompt?: InputMaybe<Scalars['JSONObject']>;
-  template?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationCardUnsetMainTemplateArgs = {
-  deckId: Scalars['ID'];
-};
-
-
-export type MutationDeckAddCardsArgs = {
-  cards: Array<CardCreateInput>;
-  deckId: Scalars['ID'];
-};
-
-
-export type MutationDeckAddSubdeckArgs = {
-  id: Scalars['ID'];
-  subdeckId: Scalars['ID'];
-};
-
-
-export type MutationDeckCreateArgs = {
-  answerLang?: InputMaybe<Scalars['String']>;
-  cards?: InputMaybe<Array<CardCreateInput>>;
-  description?: InputMaybe<Scalars['JSONObject']>;
-  name?: InputMaybe<Scalars['String']>;
-  parentDeckId?: InputMaybe<Scalars['ID']>;
-  promptLang?: InputMaybe<Scalars['String']>;
-  published?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationDeckDeleteArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationDeckEditArgs = {
-  answerLang?: InputMaybe<Scalars['String']>;
-  description?: InputMaybe<Scalars['JSONObject']>;
-  id: Scalars['ID'];
-  name?: InputMaybe<Scalars['String']>;
-  promptLang?: InputMaybe<Scalars['String']>;
-  published?: InputMaybe<Scalars['Boolean']>;
-};
-
-
-export type MutationDeckRemoveSubdeckArgs = {
-  id: Scalars['ID'];
-  subdeckId: Scalars['ID'];
 };
 
 
@@ -261,79 +175,37 @@ export type MutationFinalizeOauthSigninArgs = {
   redirect_uri: Scalars['String'];
 };
 
-
-export type MutationMessageCreateArgs = {
-  content?: InputMaybe<Scalars['JSON']>;
-  slug: Scalars['String'];
-  type: MessageContentType;
+export type Node = {
+  id: Scalars['ID'];
 };
 
-
-export type MutationOwnCardRecordSetArgs = {
-  cardId: Scalars['ID'];
-  correctRecordAppend: Array<Scalars['DateTime']>;
-};
-
-
-export type MutationOwnDeckRecordSetArgs = {
-  deckId: Scalars['ID'];
-  notes: Scalars['JSONObject'];
-};
-
-
-export type MutationRefreshArgs = {
-  token: Scalars['JWT'];
-};
-
-
-export type MutationRoomInvitationSendArgs = {
-  receiverId: Scalars['ID'];
+export type Occupant = Node & {
+  __typename?: 'Occupant';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  occupant: User;
+  occupantId: Scalars['ID'];
+  room: Room;
   roomId: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
 };
 
-
-export type MutationRoomJoinArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type MutationRoomSetDeckArgs = {
-  deckId: Scalars['ID'];
-  id: Scalars['ID'];
-};
-
-
-export type MutationRoomSetStateArgs = {
-  id: Scalars['ID'];
-  state: RoomState;
-};
-
-
-export type MutationUserBefriendUserArgs = {
-  befriendedId: Scalars['ID'];
-};
-
-
-export type MutationUserEditArgs = {
-  bio?: InputMaybe<Scalars['JSONObject']>;
-  id?: InputMaybe<Scalars['String']>;
-  isPublic?: InputMaybe<Scalars['Boolean']>;
-  name?: InputMaybe<Scalars['String']>;
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['ID']>;
+  hasNextPage: Scalars['Boolean'];
+  hasPreviousPage: Scalars['Boolean'];
+  startCursor?: Maybe<Scalars['ID']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  deck: Deck;
-  /** implicit limit of 60 */
-  decks: Array<Deck>;
+  deck?: Maybe<Deck>;
+  decks: QueryDecksConnection;
   health: Scalars['String'];
-  message: Message;
-  messagesOfRoom: Array<Message>;
-  occupyingActiveRooms: Array<Room>;
-  ownDeckRecord?: Maybe<UserDeckRecord>;
-  room: Room;
-  roomBySlug: Room;
-  user: User;
+  me?: Maybe<User>;
+  node?: Maybe<Node>;
+  nodes: Array<Maybe<Node>>;
 };
 
 
@@ -343,70 +215,64 @@ export type QueryDeckArgs = {
 
 
 export type QueryDecksArgs = {
-  cursor?: InputMaybe<Scalars['ID']>;
-  order?: InputMaybe<DecksQueryOrder>;
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   scope?: InputMaybe<DecksQueryScope>;
   stoplist?: InputMaybe<Array<Scalars['ID']>>;
-  take?: InputMaybe<Scalars['Int']>;
-  titleFilter?: InputMaybe<Scalars['String']>;
 };
 
 
-export type QueryMessageArgs = {
+export type QueryNodeArgs = {
   id: Scalars['ID'];
 };
 
 
-export type QueryMessagesOfRoomArgs = {
-  id: Scalars['ID'];
+export type QueryNodesArgs = {
+  ids: Array<Scalars['ID']>;
 };
 
-
-export type QueryOwnDeckRecordArgs = {
-  deckId: Scalars['ID'];
+export type QueryDecksConnection = {
+  __typename?: 'QueryDecksConnection';
+  edges: Array<Maybe<QueryDecksConnectionEdge>>;
+  pageInfo: PageInfo;
 };
 
-
-export type QueryRoomArgs = {
-  id: Scalars['ID'];
+export type QueryDecksConnectionEdge = {
+  __typename?: 'QueryDecksConnectionEdge';
+  cursor: Scalars['ID'];
+  node: Deck;
 };
 
-
-export type QueryRoomBySlugArgs = {
-  slug: Scalars['String'];
-};
-
-
-export type QueryUserArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-export type Room = {
+export type Room = Node & {
   __typename?: 'Room';
   createdAt: Scalars['DateTime'];
-  deck?: Maybe<Deck>;
+  deck: Deck;
   deckId?: Maybe<Scalars['ID']>;
   id: Scalars['ID'];
-  messageCount: Scalars['Int'];
-  messages: Array<Message>;
-  occupants: Array<User>;
-  occupantsCount: Scalars['Int'];
-  owner: User;
-  ownerId: Scalars['ID'];
+  messages: RoomMessagesConnection;
   slug?: Maybe<Scalars['String']>;
-  state: RoomState;
-  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomJoin */
-  userIdOfLastAddedOccupantForSubscription?: Maybe<Scalars['ID']>;
-  /** guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomJoin */
-  userOfLastAddedOccupantForSubscription?: Maybe<User>;
 };
 
-export type RoomInvitation = {
-  __typename?: 'RoomInvitation';
-  id: Scalars['ID'];
-  receiverId: Scalars['ID'];
-  roomId: Scalars['ID'];
-  senderId: Scalars['ID'];
+
+export type RoomMessagesArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type RoomMessagesConnection = {
+  __typename?: 'RoomMessagesConnection';
+  edges: Array<Maybe<RoomMessagesConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type RoomMessagesConnectionEdge = {
+  __typename?: 'RoomMessagesConnectionEdge';
+  cursor: Scalars['ID'];
+  node: Message;
 };
 
 export enum RoomState {
@@ -415,248 +281,126 @@ export enum RoomState {
   Waiting = 'WAITING'
 }
 
-export type RoomUpdate = {
-  __typename?: 'RoomUpdate';
-  operation: RoomUpdateOperation;
-  value: Room;
-};
-
-export enum RoomUpdateOperation {
-  RoomJoin = 'roomJoin',
-  RoomSetDeck = 'roomSetDeck',
-  RoomSetState = 'roomSetState'
-}
-
+/** A token and its contained information */
 export type SessionInfo = {
   __typename?: 'SessionInfo';
   currentUser: Scalars['JSONObject'];
   token: Scalars['JWT'];
 };
 
+export type Subdeck = Node & {
+  __typename?: 'Subdeck';
+  createdAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  parentDeck: Deck;
+  parentDeckId: Scalars['ID'];
+  subdeck: Deck;
+  subdeckId: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
 export type Subscription = {
   __typename?: 'Subscription';
-  messageUpdatesByRoomSlug: MessageUpdate;
   repeatHealth: Scalars['String'];
-  roomUpdatesByRoomSlug: RoomUpdate;
 };
 
-
-export type SubscriptionMessageUpdatesByRoomSlugArgs = {
-  slug: Scalars['String'];
-};
-
-
-export type SubscriptionRoomUpdatesByRoomSlugArgs = {
-  slug: Scalars['String'];
-};
-
-export type User = {
+export type User = Node & {
   __typename?: 'User';
-  /** users who this user have unilaterally befriended without reciprocation */
-  befriendeds: Array<User>;
-  /** count of users unilaterally befriended by this user without reciprocation */
+  /** users this user has befriended */
+  befriendeds: UserBefriendedsConnection;
   befriendedsCount: Scalars['Int'];
-  /** users who have unilaterally befriended this user without reciprocation */
-  befrienders: Array<User>;
-  /** count of users who have unilaterally befriended this user without reciprocation */
+  /** users that have befriended this user and you */
+  befrienders: UserBefriendersConnection;
   befriendersCount: Scalars['Int'];
   bio?: Maybe<Scalars['JSONObject']>;
-  decks: Array<Deck>;
+  decks: UserDecksConnection;
   facebookId?: Maybe<Scalars['String']>;
-  /** users who are mutual friends of this user */
-  friends: Array<User>;
-  /** count of users who are mutual friends of this user */
-  friendsCount: Scalars['Int'];
   googleId?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
+  /** whether the user's profile information is accessible by non-friends and searchable */
   isPublic: Scalars['Boolean'];
-  name?: Maybe<Scalars['String']>;
-  occupyingActiveRooms: Array<Room>;
-  ownedRooms: Array<Room>;
+  /** users befriending you that this user has befriended; upon own user gives your mutual friends */
+  mutualBefriendeds: UserMutualBefriendedsConnection;
+  name: Scalars['String'];
   roles: Array<Scalars['String']>;
 };
 
-export type UserCardRecord = {
-  __typename?: 'UserCardRecord';
-  correctRecord: Array<Scalars['DateTime']>;
+
+export type UserBefriendedsArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type UserDeckRecord = {
-  __typename?: 'UserDeckRecord';
-  notes: Scalars['JSONObject'];
+
+export type UserBefriendersArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
-export type DeckCreateEmptyMutationVariables = Exact<{ [key: string]: never; }>;
 
-
-export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string> } };
-
-export type DeckAddSubdeckMutationVariables = Exact<{
-  id: Scalars['ID'];
-  subdeckId: Scalars['ID'];
-}>;
-
-
-export type DeckAddSubdeckMutation = { __typename?: 'Mutation', deckAddSubdeck: { __typename?: 'Deck', id: string } };
-
-export type DeckRemoveSubdeckMutationVariables = Exact<{
-  id: Scalars['ID'];
-  subdeckId: Scalars['ID'];
-}>;
-
-
-export type DeckRemoveSubdeckMutation = { __typename?: 'Mutation', deckRemoveSubdeck: { __typename?: 'Deck', id: string } };
-
-export type DeckEditNameMutationVariables = Exact<{
-  id: Scalars['ID'];
-  name: Scalars['String'];
-}>;
-
-
-export type DeckEditNameMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', id: string, name: string } };
-
-export type DeckQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, ownerId: string, promptLang: string, published: boolean, sortData: Array<string> } };
-
-export type DecksQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type DecksQuery = { __typename?: 'Query', decks: Array<{ __typename?: 'Deck', id: string }> };
-
-export type UserBefriendUserMutationVariables = Exact<{
-  befriendedId: Scalars['ID'];
-}>;
-
-
-export type UserBefriendUserMutation = { __typename?: 'Mutation', userBefriendUser: { __typename?: 'User', id: string } };
-
-export type HealthQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type HealthQuery = { __typename?: 'Query', health: string };
-
-export type RepeatHealthSubscriptionVariables = Exact<{ [key: string]: never; }>;
-
-
-export type RepeatHealthSubscription = { __typename?: 'Subscription', repeatHealth: string };
-
-export type MessageCreateMutationVariables = Exact<{
-  content?: InputMaybe<Scalars['JSON']>;
-  slug: Scalars['String'];
-  type: MessageContentType;
-}>;
-
-
-export type MessageCreateMutation = { __typename?: 'Mutation', messageCreate: { __typename?: 'Message', content: JSONValue, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } };
-
-export type MessageUpdatesByRoomSlugSubscriptionVariables = Exact<{
-  slug: Scalars['String'];
-}>;
-
-
-export type MessageUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', messageUpdatesByRoomSlug: { __typename?: 'MessageUpdate', operation: MessageUpdateOperation, value: { __typename?: 'Message', content: JSONValue, createdAt: string, id: string, roomId: string, senderId?: string | null, type: MessageContentType } } };
-
-export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
-
-
-export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', id: string, slug?: string | null, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
-
-export type RoomSetDeckMutationVariables = Exact<{
-  id: Scalars['ID'];
-  deckId: Scalars['ID'];
-}>;
-
-
-export type RoomSetDeckMutation = { __typename?: 'Mutation', roomSetDeck: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null } };
-
-export type RoomSetStateMutationVariables = Exact<{
-  id: Scalars['ID'];
-  state: RoomState;
-}>;
-
-
-export type RoomSetStateMutation = { __typename?: 'Mutation', roomSetState: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null } };
-
-export type RoomJoinMutationVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type RoomJoinMutation = { __typename?: 'Mutation', roomJoin: { __typename?: 'Room', id: string, ownerId: string, state: RoomState, deckId?: string | null, deck?: { __typename?: 'Deck', id: string } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
-
-export type RoomQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type RoomQuery = { __typename?: 'Query', room: { __typename?: 'Room', id: string, state: RoomState, ownerId: string } };
-
-export type OccupyingActiveRoomsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type OccupyingActiveRoomsQuery = { __typename?: 'Query', occupyingActiveRooms: Array<{ __typename?: 'Room', id: string, state: RoomState, ownerId: string }> };
-
-export type RoomUpdatesByRoomSlugSubscriptionVariables = Exact<{
-  slug: Scalars['String'];
-}>;
-
-
-export type RoomUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', roomUpdatesByRoomSlug: { __typename?: 'RoomUpdate', operation: RoomUpdateOperation, value: { __typename?: 'Room', id: string, deckId?: string | null, userIdOfLastAddedOccupantForSubscription?: string | null, state: RoomState, deck?: { __typename?: 'Deck', id: string } | null, userOfLastAddedOccupantForSubscription?: { __typename?: 'User', id: string } | null } } };
-
-export type RoomInvitationSendMutationVariables = Exact<{
-  receiverId: Scalars['ID'];
-  roomId: Scalars['ID'];
-}>;
-
-
-export type RoomInvitationSendMutation = { __typename?: 'Mutation', roomInvitationSend?: { __typename?: 'RoomInvitation', id: string } | null };
-
-export type CreateUserMutationVariables = Exact<{
-  code: Scalars['String'];
-  nonce: Scalars['String'];
-  provider: Scalars['String'];
-  redirect_uri: Scalars['String'];
-}>;
-
-
-export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: { __typename?: 'SessionInfo', currentUser: JSONObject, token: string } | null };
-
-export type NameUserMutationVariables = Exact<{
-  name: Scalars['String'];
-}>;
-
-
-export type NameUserMutation = { __typename?: 'Mutation', userEdit: { __typename?: 'User', id: string, name?: string | null } };
-
-export type RefreshMutationVariables = Exact<{
-  token: Scalars['JWT'];
-}>;
-
-
-export type RefreshMutation = { __typename?: 'Mutation', refresh?: { __typename?: 'SessionInfo', currentUser: JSONObject, token: string } | null };
-
-export type UserAccessibleUserScalarsQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type UserAccessibleUserScalarsQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, isPublic: boolean, name?: string | null, roles: Array<string> } };
-
-export type UserPublicScalarsQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type UserPublicScalarsQuery = { __typename?: 'Query', user: { __typename?: 'User', id: string, isPublic: boolean } };
-
-export type UserEditMutationVariables = Exact<{
-  name?: InputMaybe<Scalars['String']>;
-  isPublic?: InputMaybe<Scalars['Boolean']>;
-}>;
-
-
-export type UserEditMutation = { __typename?: 'Mutation', userEdit: { __typename?: 'User', id: string } };
+export type UserDecksArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type UserMutualBefriendedsArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+export type UserBefriendedsConnection = {
+  __typename?: 'UserBefriendedsConnection';
+  edges: Array<Maybe<UserBefriendedsConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type UserBefriendedsConnectionEdge = {
+  __typename?: 'UserBefriendedsConnectionEdge';
+  cursor: Scalars['ID'];
+  node: User;
+};
+
+export type UserBefriendersConnection = {
+  __typename?: 'UserBefriendersConnection';
+  edges: Array<Maybe<UserBefriendersConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type UserBefriendersConnectionEdge = {
+  __typename?: 'UserBefriendersConnectionEdge';
+  cursor: Scalars['ID'];
+  node: User;
+};
+
+export type UserDecksConnection = {
+  __typename?: 'UserDecksConnection';
+  edges: Array<Maybe<UserDecksConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type UserDecksConnectionEdge = {
+  __typename?: 'UserDecksConnectionEdge';
+  cursor: Scalars['ID'];
+  node: Deck;
+};
+
+export type UserMutualBefriendedsConnection = {
+  __typename?: 'UserMutualBefriendedsConnection';
+  edges: Array<Maybe<UserMutualBefriendedsConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type UserMutualBefriendedsConnectionEdge = {
+  __typename?: 'UserMutualBefriendedsConnectionEdge';
+  cursor: Scalars['ID'];
+  node: User;
+};

@@ -1,3 +1,3 @@
-export * from './getDeck';
-export * from './getDeckAsUser';
-export * from './getDescendantsOfDeck';
+export * from "./getDeck";
+export * from "./getDeckAsUser";
+export * from "./getDescendantsOfDeck";

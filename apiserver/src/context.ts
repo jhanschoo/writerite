@@ -1,15 +1,15 @@
-import env from './safeEnv';
-import Redis from 'ioredis';
-import { PubSub, YogaInitialContext, createPubSub } from 'graphql-yoga';
+import env from "./safeEnv";
+import Redis from "ioredis";
+import { PubSub, YogaInitialContext, createPubSub } from "graphql-yoga";
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
-import { Roles } from './service/userJWT/Roles';
-import { CurrentUser } from './service/userJWT/CurrentUser';
-import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
-import { FETCH_DEPTH } from './constants';
-import { getClaims } from './service/session';
-import { PubSubPublishArgs } from './types/PubSubPublishArgs';
+import { Roles } from "./service/userJWT/Roles";
+import { CurrentUser } from "./service/userJWT/CurrentUser";
+import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
+import { FETCH_DEPTH } from "./constants";
+import { getClaims } from "./service/session";
+import { PubSubPublishArgs } from "./types/PubSubPublishArgs";
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 
@@ -36,17 +36,19 @@ const pubSubRedisOptions = {
 export interface AuthorizationHelpers {
   isLoggedInAs(id: string): boolean;
   get isAdmin(): boolean;
+  isOccupyingActiveRoom(slug: string): boolean;
+  addOccupyingActiveRoom(slug: string, roomId: string): void;
 }
 
 export interface Context<
-  T extends PrismaClient = PrismaClient,
-  U extends PubSubPublishArgs = PubSubPublishArgs,
+  P extends PrismaClient = PrismaClient,
+  Q extends PubSubPublishArgs = PubSubPublishArgs,
   R extends Redis = Redis
 > extends YogaInitialContext {
   fetchDepth: number;
   sub?: CurrentUser;
-  prisma: T;
-  pubsub: PubSub<U>;
+  prisma: P;
+  pubsub: PubSub<Q>;
   redis: R;
   auth: AuthorizationHelpers;
 }
@@ -56,45 +58,60 @@ export interface LoggedInContext extends Context {
 }
 
 export type ContextFactoryReturnType<
-  T extends PrismaClient = PrismaClient,
-  U extends PubSubPublishArgs = PubSubPublishArgs,
+  P extends PrismaClient = PrismaClient,
+  Q extends PubSubPublishArgs = PubSubPublishArgs,
   R extends Redis = Redis
 > = [
   (initialContext: YogaInitialContext) => Promise<Context>,
   () => Promise<PromiseSettledResult<unknown>[]>,
-  { prisma: T; pubsub: PubSub<U>; redis: R }
+  { prisma: P; pubsub: PubSub<Q>; redis: R }
 ];
 
 /**
  * Note: opts.ctx is never used if provided
- * The function when called without params, performs creation and instantiation in the way it should be for development and production, but allows for params to be provided to expose things for testing.
+ * The function, when called without params, performs creation and instantiation in the way it should be for development and production, but allows for params to be provided to expose things for testing.
  * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.
+ * The context function returned should abide by the contract with the Pothos schema builder that it is unique per request and does not mutate in "shape".
  */
 export function contextFactory<
-  T extends PrismaClient,
-  U extends PubSubPublishArgs,
+  P extends PrismaClient,
+  Q extends PubSubPublishArgs,
   R extends Redis
 >(
-  opts?: Partial<Context> & Pick<Context<T, U, R>, 'prisma' | 'pubsub' | 'redis'>,
-  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>
-): ContextFactoryReturnType<T, U>;
+  opts?: Partial<Context> &
+    Pick<Context<P, Q, R>, "prisma" | "pubsub" | "redis">,
+  subFn?: (
+    initialContext: YogaInitialContext,
+    redis?: Redis
+  ) => Promise<CurrentUser | undefined>
+): ContextFactoryReturnType<P, Q>;
 export function contextFactory(
   opts?: Partial<Context>,
-  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>
+  subFn?: (
+    initialContext: YogaInitialContext,
+    redis?: Redis
+  ) => Promise<CurrentUser | undefined>
 ): ContextFactoryReturnType<PrismaClient, PubSubPublishArgs>;
 export function contextFactory<
-  T extends PrismaClient = PrismaClient,
-  U extends PubSubPublishArgs = PubSubPublishArgs,
+  P extends PrismaClient = PrismaClient,
+  Q extends PubSubPublishArgs = PubSubPublishArgs,
   R extends Redis = Redis
 >(
-  opts?: Partial<Context<T, U, R>>,
-  subFn?: (initialContext: YogaInitialContext, redis?: Redis) => Promise<CurrentUser | undefined>
-): ContextFactoryReturnType<T, U> {
+  opts?: Partial<Context<P, Q, R>>,
+  subFn?: (
+    initialContext: YogaInitialContext,
+    redis?: Redis
+  ) => Promise<CurrentUser | undefined>
+): ContextFactoryReturnType<P, Q> {
   const useDefaultPrisma = !opts?.prisma;
   const useDefaultRedis = !opts?.redis;
   const useDefaultPubsub = !opts?.pubsub;
-  const publishClient = useDefaultPubsub ? new Redis(pubSubRedisOptions) : undefined;
-  const subscribeClient = useDefaultPubsub ? new Redis(pubSubRedisOptions) : undefined;
+  const publishClient = useDefaultPubsub
+    ? new Redis(pubSubRedisOptions)
+    : undefined;
+  const subscribeClient = useDefaultPubsub
+    ? new Redis(pubSubRedisOptions)
+    : undefined;
   const prisma = opts?.prisma ?? new PrismaClient();
   const pubsub =
     opts?.pubsub ??
@@ -107,7 +124,11 @@ export function contextFactory<
   const redis = opts?.redis ?? new Redis(redisOptions);
   return [
     async (ctx: YogaInitialContext): Promise<Context> => {
-      const sub = (await subFn?.(ctx, redis)) ?? opts?.sub ?? (await getClaims(ctx, redis));
+      const sub =
+        (await subFn?.(ctx, redis)) ??
+        opts?.sub ??
+        (await getClaims(ctx, redis));
+      const additionalRoomSlugs: Record<string, string> = {};
       return {
         ...ctx,
         fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
@@ -122,16 +143,31 @@ export function contextFactory<
           get isAdmin(): boolean {
             return Boolean(sub?.roles.includes(Roles.Admin));
           },
+          isOccupyingActiveRoom(slug: string): boolean {
+            if (!sub) {
+              return false;
+            }
+            return Boolean(
+              sub.occupyingActiveRoomSlugs[slug] || additionalRoomSlugs[slug]
+            );
+          },
+          addOccupyingActiveRoom(slug, roomId) {
+            additionalRoomSlugs[slug] = roomId;
+          },
         },
       };
     },
     async () =>
       Promise.allSettled([
-        useDefaultPrisma ? prisma.$disconnect() : Promise.resolve('custom prisma used'),
-        useDefaultRedis ? redis.disconnect() : Promise.resolve('custom redis used'),
-        publishClient?.disconnect() ?? Promise.resolve('custom pubsub used'),
-        subscribeClient?.disconnect() ?? Promise.resolve('custom pubsub used'),
+        useDefaultPrisma
+          ? prisma.$disconnect()
+          : Promise.resolve("custom prisma used"),
+        useDefaultRedis
+          ? redis.disconnect()
+          : Promise.resolve("custom redis used"),
+        publishClient?.disconnect() ?? Promise.resolve("custom pubsub used"),
+        subscribeClient?.disconnect() ?? Promise.resolve("custom pubsub used"),
       ]),
-    { prisma: prisma as T, pubsub, redis: redis as R },
+    { prisma: prisma as P, pubsub, redis: redis as R },
   ];
 }
