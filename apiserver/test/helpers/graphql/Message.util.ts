@@ -1,68 +1,58 @@
-import { WrServer } from "../../../src/graphqlApp";
-import { gql, testQuery, testSubscription } from "../misc";
+import { graphql } from "../../../generated/gql";
 import {
-  MessageContentType,
-  MessageCreateMutationVariables,
-  MessageUpdatesByRoomSlugSubscriptionVariables,
-  Scalars,
-} from "../../../generated/typescript-operations";
+  MessageUpdatesByRoomIdSubscriptionVariables,
+  SendTextMessageMutationVariables,
+} from "../../../generated/gql/graphql";
+import { testQuery, testSubscription } from "../misc";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
-export function mutationMessageCreate(
+export function mutationSendTextMessage(
   executor: ReturnType<typeof buildHTTPExecutor>,
-  content: Scalars["JSON"],
-  slug: string,
-  type: MessageContentType
+  variables: SendTextMessageMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<MessageCreateMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
-      mutation MessageCreate(
-        $content: JSON
-        $slug: String!
-        $type: MessageContentType!
-      ) {
-        messageCreate(content: $content, slug: $slug, type: $type) {
+    document: graphql(`
+      mutation SendTextMessage($roomId: ID!, $textContent: String!) {
+        sendTextMessage(roomId: $roomId, textContent: $textContent) {
           content
           createdAt
           id
-          roomId
-          senderId
+          sender {
+            id
+          }
           type
         }
       }
-    `,
-    variables: {
-      content,
-      slug,
-      type,
-    },
+    `),
+    variables,
   });
 }
 // SubscriptionMessageUpdatesByRoomSlugArgs
-export function subscriptionMessageUpdatesByRoomSlug(
+export function subscriptionMessageUpdatesByRoomId(
   executor: ReturnType<typeof buildHTTPExecutor>,
-  slug: string
+  variables: MessageUpdatesByRoomIdSubscriptionVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testSubscription<MessageUpdatesByRoomSlugSubscriptionVariables>({
+  return testSubscription({
     executor,
-    document: gql`
-      subscription MessageUpdatesByRoomSlug($slug: String!) {
-        messageUpdatesByRoomSlug(slug: $slug) {
+    document: graphql(/* GraphQL */ `
+      subscription MessageUpdatesByRoomId($id: ID!) {
+        messageUpdatesByRoomId(id: $id) {
           operation
           value {
             content
             createdAt
             id
-            roomId
-            senderId
+            sender {
+              id
+            }
             type
           }
         }
       }
-    `,
-    variables: { slug },
+    `),
+    variables,
   });
 }

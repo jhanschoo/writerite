@@ -1,6 +1,6 @@
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 import { PrismaClient } from "@prisma/client";
-import { DocumentNode, ExecutionResult, parse } from "graphql";
+import { ExecutionResult } from "graphql";
 import Redis from "ioredis";
 import { JWTPayload } from "jose";
 import {
@@ -8,10 +8,10 @@ import {
   ContextFactoryReturnType,
   contextFactory,
 } from "../../src/context";
-import { WrServer } from "../../src/graphqlApp";
 import { parseArbitraryJWT } from "../../src/service/crypto";
 import { CurrentUser } from "../../src/service/userJWT";
 import { PubSubPublishArgs } from "../../src/types/PubSubPublishArgs";
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 function assertSingleValue<TValue extends ExecutionResult<any, any>>(
   value: TValue | AsyncIterable<TValue>
@@ -63,36 +63,35 @@ export const isoTimestampMatcher =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d*Z$/u;
 
 export async function testQuery<
-  TVariables extends Record<string, unknown> | undefined
+  TResult,
+  TVariables extends Record<string, any>
 >({
   executor,
   document,
   variables,
 }: {
   executor: ReturnType<typeof buildHTTPExecutor>;
-  document: DocumentNode;
+  document: TypedDocumentNode<TResult, TVariables>;
   variables: TVariables;
-}) {
+}): Promise<ExecutionResult<TResult>> {
   const result = await executor({ document, variables });
   assertSingleValue(result);
   return result;
 }
 
 export async function testSubscription<
-  TVariables extends Record<string, unknown> | undefined
+  TResult,
+  TVariables extends Record<string, any>
 >({
   executor,
   document,
   variables,
 }: {
   executor: ReturnType<typeof buildHTTPExecutor>;
-  document: DocumentNode;
+  document: TypedDocumentNode<TResult, TVariables>;
   variables: TVariables;
-}) {
+}): Promise<AsyncIterable<ExecutionResult<TResult>>> {
   const result = await executor({ document, variables });
   assertStreamValue(result);
   return result;
 }
-
-// gql tag for codegen and for parse for executor
-export const gql = ([s]: TemplateStringsArray) => parse(s);

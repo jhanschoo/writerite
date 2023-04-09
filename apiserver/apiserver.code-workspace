@@ -25,7 +25,12 @@
     },
     "editor.tabSize": 2,
     "editor.insertSpaces": true,
-    "jest.disabledWorkspaceFolders": ["charts", "dev-config", "docs", "lets-encrypt"],
+    "jest.disabledWorkspaceFolders": [
+      "charts",
+      "dev-config",
+      "docs",
+      "lets-encrypt"
+    ],
     "yaml.customTags": [
       "!And",
       "!And sequence",
@@ -56,6 +61,9 @@
       "!Split sequence"
     ],
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "[prisma]": {
+      "editor.defaultFormatter": "Prisma.prisma"
+    }
   }
 }

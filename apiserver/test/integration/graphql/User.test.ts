@@ -8,12 +8,11 @@ import {
   DEFAULT_CREATE_USER_VALUES,
   mutationCreateUser,
   mutationUserEdit,
-  queryAllUserAccessibleUserScalars,
-  queryUserPublicScalars,
+  queryMe,
   testContextFactory,
 } from "../../helpers";
 import { Context } from "../../../src/context";
-import { createGraphQLApp } from "../../../src/graphqlApp";
+import { createGraphQLApp } from "../../../src/server";
 import { CurrentUser, Roles } from "../../../src/service/userJWT";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
@@ -53,12 +52,12 @@ describe("graphql/User.ts", () => {
           "data.finalizeOauthSignin.token",
           expect.any(String)
         );
-        const currentUser = response.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
+        const currentUser = response.data?.finalizeOauthSignin
+          ?.currentUser as unknown as CurrentUser;
         expect(currentUser).toEqual({
           id: expect.any(String),
           name: expect.any(String),
-          occupyingActiveRoomSlugs: {},
+          occupyingRoomSlugs: {},
           roles: [Roles.User],
         });
       });
@@ -75,178 +74,19 @@ describe("graphql/User.ts", () => {
 
         // create user
         const createUserResponse = await mutationCreateUser(executor);
-        const currentUserBefore = createUserResponse.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
+        const currentUserBefore = createUserResponse.data?.finalizeOauthSignin
+          ?.currentUser as unknown as CurrentUser;
 
         // login as user
         setSub(currentUserBefore);
 
         // query own user
-        const queryUserRequest = await queryAllUserAccessibleUserScalars(
-          executor,
-          currentUserBefore.id
-        );
-        expect(queryUserRequest).toHaveProperty("data.user", {
-          id: currentUserBefore.id,
+        const queryUserRequest = await queryMe(executor, {});
+        expect(queryUserRequest).toHaveProperty("data.me", {
           name: DEFAULT_CREATE_USER_VALUES.name,
           isPublic: false,
           roles: [Roles.User],
         });
-      });
-
-      it("should not be able to fetch all user-accessible fields of private user if not logged in", async () => {
-        expect.assertions(2);
-
-        // create user
-        const createUserResponse = await mutationCreateUser(executor);
-        const id = createUserResponse.data.finalizeOauthSignin.currentUser
-          .id as string;
-
-        // query user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(
-          executor,
-          id
-        );
-        expect(queryUserResponse.data).toBeNull();
-        expect(queryUserResponse.errors).not.toHaveLength(0);
-      });
-
-      it("should not be able to fetch all user-accessible fields of private user if logged in as another user", async () => {
-        expect.assertions(2);
-
-        // create other user
-        const createUserResponse1 = await mutationCreateUser(executor, {
-          name: "user1",
-        });
-        const id = createUserResponse1.data.finalizeOauthSignin.currentUser
-          .id as string;
-
-        // create user
-        const createUserResponse2 = await mutationCreateUser(executor, {
-          name: "user2",
-        });
-        const currentUser = createUserResponse2.data
-          .finalizeOauthSignin as CurrentUser;
-        // log in as user
-        setSub(currentUser);
-
-        // query other user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(
-          executor,
-          id
-        );
-        expect(queryUserResponse.data).toBeNull();
-        expect(queryUserResponse.errors).not.toHaveLength(0);
-      });
-      it("should be able to fetch public fields of private user if not logged in", async () => {
-        expect.assertions(1);
-
-        // create user
-        const createUserResponse = await mutationCreateUser(executor);
-        const id = createUserResponse.data.finalizeOauthSignin.currentUser
-          .id as string;
-
-        // query user
-        const queryUserResponse = await queryUserPublicScalars(executor, id);
-        expect(queryUserResponse).toHaveProperty("data.user", {
-          id,
-          isPublic: false,
-        });
-      });
-      it("should be able to fetch public fields of private user if logged in as another user", async () => {
-        expect.assertions(1);
-
-        // create other user
-        const createUserResponse1 = await mutationCreateUser(executor, {
-          name: "user1",
-        });
-        const id = createUserResponse1.data.finalizeOauthSignin.currentUser
-          .id as string;
-
-        // create user
-        const createUserResponse2 = await mutationCreateUser(executor, {
-          name: "user2",
-        });
-        const currentUser = createUserResponse2.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
-
-        // log in as user
-        setSub(currentUser);
-
-        // query other user
-        const queryUserResponse = await queryUserPublicScalars(executor, id);
-        expect(queryUserResponse).toHaveProperty("data.user", {
-          id,
-          isPublic: false,
-        });
-      });
-      it("should be able to fetch all fields of public user if not logged in", async () => {
-        expect.assertions(1);
-
-        // create user
-        const createUserResponse = await mutationCreateUser(executor);
-        const currentUser = createUserResponse.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
-
-        // log in as user
-        setSub(currentUser);
-        // make user public
-        await mutationUserEdit(executor, { isPublic: true });
-        // log out
-        setSub(undefined);
-
-        // query user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(
-          executor,
-          currentUser.id
-        );
-        expect(queryUserResponse).toHaveProperty("data.user", {
-          id: currentUser.id,
-          name: DEFAULT_CREATE_USER_VALUES.name,
-          isPublic: true,
-          roles: [Roles.User],
-        });
-      });
-      it("should be able to fetch all fields of public user if logged in as another user", async () => {
-        expect.assertions(1);
-
-        // create target user
-        const createUserResponse1 = await mutationCreateUser(executor, {
-          name: "user1",
-        });
-        const targetUser = createUserResponse1.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
-
-        // log in as target user
-        setSub(targetUser);
-
-        // make target user public
-        await mutationUserEdit(executor, { isPublic: true });
-
-        // create user
-        const createUserResponse2 = await mutationCreateUser(executor, {
-          name: "user2",
-        });
-        const currentUser = createUserResponse2.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
-
-        // log in as user
-        setSub(currentUser);
-
-        // query target user
-        const queryUserResponse = await queryAllUserAccessibleUserScalars(
-          executor,
-          targetUser.id
-        );
-        expect(queryUserResponse).toHaveProperty(
-          "data.user",
-          expect.objectContaining({
-            id: targetUser.id,
-            name: "user1",
-            isPublic: true,
-            roles: [Roles.User],
-          })
-        );
       });
     });
   });

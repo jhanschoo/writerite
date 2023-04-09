@@ -27,7 +27,7 @@ describe("currentUserToUserJWT and getClaims", () => {
       id: "foo",
       name: "bar",
       roles: [],
-      occupyingActiveRoomSlugs: {},
+      occupyingRoomSlugs: {},
     };
     const jwt = `Bearer ${await currentUserToUserJWT(sub)}`;
     redis.mget.mockResolvedValue(Promise.resolve([null]));

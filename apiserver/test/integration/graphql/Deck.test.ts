@@ -9,15 +9,16 @@ import { loginAsNewlyCreatedUser } from "../../helpers/graphql/User.util";
 import {
   isoTimestampMatcher,
   mutationDeckCreateEmpty,
-  queryDeckScalars,
+  queryDeckBasic,
   queryDecks,
   testContextFactory,
 } from "../../helpers";
 import { YogaInitialContext } from "graphql-yoga";
 import { Context } from "../../../src/context";
-import { createGraphQLApp } from "../../../src/graphqlApp";
+import { createGraphQLApp } from "../../../src/server";
 import { CurrentUser } from "../../../src/service/userJWT";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { encodeGlobalID } from "@pothos/plugin-relay";
 
 describe("graphql/Deck.ts", () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -52,10 +53,15 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
 
         // create user
-        await loginAsNewlyCreatedUser(executor, setSub);
+        const me = await loginAsNewlyCreatedUser(executor, setSub);
 
         // create deck
-        const response = await mutationDeckCreateEmpty(executor);
+        const response = await mutationDeckCreateEmpty(executor, {
+          answerLang: "en",
+          cards: [],
+          name: "name",
+          promptLang: "en",
+        });
         expect(response).toHaveProperty(
           "data.deckCreate",
           expect.objectContaining({
@@ -90,36 +96,45 @@ describe("graphql/Deck.ts", () => {
         );
 
         // create deck
-        const createDeckResponse = await mutationDeckCreateEmpty(executor);
+        const createDeckResponse = await mutationDeckCreateEmpty(executor, {
+          answerLang: "en",
+          cards: [],
+          name: "name",
+          promptLang: "en",
+        });
         expect(createDeckResponse).toHaveProperty("data.deckCreate", {
           id: expect.any(String),
-          answerLang: "",
+          answerLang: "en",
           description: null,
           editedAt: expect.stringMatching(isoTimestampMatcher),
-          name: "",
-          ownerId: user.id,
-          promptLang: "",
+          name: "name",
+          owner: {
+            id: encodeGlobalID("User", user.id),
+          },
+          promptLang: "en",
           published: false,
           sortData: [],
         });
-        const deckBefore = createDeckResponse.data.deckCreate;
+        if (!createDeckResponse.data) {
+          throw new Error("createDeckResponse.data is undefined");
+        }
+        const deckBefore = createDeckResponse.data?.deckCreate;
 
         // query deck
-        const queryDeckResponse = await queryDeckScalars(
-          executor,
-          deckBefore.id
-        );
-        expect(queryDeckResponse).toHaveProperty("data.deck", {
+        const queryDeckResponse = await queryDeckBasic(executor, {
           id: deckBefore.id,
-          answerLang: "",
+        });
+        expect(queryDeckResponse).toHaveProperty("data.deck", {
+          answerLang: "en",
           description: null,
           editedAt: deckBefore.editedAt,
-          name: "",
-          ownerId: user.id,
-          promptLang: "",
+          name: "name",
+          owner: {
+            id: encodeGlobalID("User", user.id),
+          },
+          promptLang: "en",
           published: false,
           sortData: [],
-          usedAt: deckBefore.usedAt,
         });
       });
     });
@@ -132,32 +147,48 @@ describe("graphql/Deck.ts", () => {
         await loginAsNewlyCreatedUser(executor, setSub);
 
         // create deck 1
-        const createDeckResponse1 = await mutationDeckCreateEmpty(executor);
+        const createDeckResponse1 = await mutationDeckCreateEmpty(executor, {
+          answerLang: "en",
+          cards: [],
+          name: "name",
+          promptLang: "en",
+        });
         expect(createDeckResponse1).toHaveProperty(
           "data.deckCreate",
           expect.objectContaining({
             id: expect.any(String),
           })
         );
+        if (!createDeckResponse1.data) {
+          throw new Error("createDeckResponse1.data is undefined");
+        }
         const deckBefore1 = createDeckResponse1.data.deckCreate;
 
         // create deck 2
-        const createDeckResponse2 = await mutationDeckCreateEmpty(executor);
+        const createDeckResponse2 = await mutationDeckCreateEmpty(executor, {
+          answerLang: "en",
+          cards: [],
+          name: "name",
+          promptLang: "en",
+        });
         expect(createDeckResponse2).toHaveProperty(
           "data.deckCreate",
           expect.objectContaining({
             id: expect.any(String),
           })
         );
+        if (!createDeckResponse2.data) {
+          throw new Error("createDeckResponse2.data is undefined");
+        }
         const deckBefore2 = createDeckResponse2.data.deckCreate;
 
         // query decks
-        const queryDeckResponse = await queryDecks(executor);
+        const queryDeckResponse = await queryDecks(executor, {});
         expect(queryDeckResponse).toHaveProperty(
-          "data.decks",
+          "data.decks.edges",
           expect.arrayContaining([
-            expect.objectContaining({ id: deckBefore1.id }),
-            expect.objectContaining({ id: deckBefore2.id }),
+            expect.objectContaining({ node: { id: deckBefore1.id } }),
+            expect.objectContaining({ node: { id: deckBefore2.id } }),
           ])
         );
       });

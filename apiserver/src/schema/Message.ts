@@ -1,5 +1,30 @@
-import { Prisma } from "@prisma/client";
+import { Message as PMessage, Prisma } from "@prisma/client";
 import { builder } from "../builder";
+import { MESSAGE_UPDATES_BY_ROOMID_TOPIC } from "../service/message";
+import { nanoid } from "nanoid";
+import { User } from "./User";
+import { decodeGlobalID } from "@pothos/plugin-relay";
+
+export enum MessageUpdateOperations {
+  MESSAGE_CREATE = "messageCreate",
+}
+
+export interface MessageUpdateShape {
+  operation: MessageUpdateOperations;
+  value: PMessage;
+}
+
+export interface MessageUpdatePublishArgs {
+  [MESSAGE_UPDATES_BY_ROOMID_TOPIC]: [
+    slug: string,
+    payload: MessageUpdateShape
+  ];
+}
+
+builder.enumType(MessageUpdateOperations, {
+  name: "MessageUpdateOperations",
+  description: "Names identifying operations that trigger message updates.",
+});
 
 export enum MessageContentType {
   TEXT = "TEXT",
@@ -14,14 +39,22 @@ builder.enumType(MessageContentType, {
   name: "MessageContentType",
 });
 
+/**
+ * A message sent by a user in a room. We do not support querying for relations on messages.
+ */
 export const Message = builder.prismaNode("Message", {
   authScopes: {
     authenticated: true,
   },
   id: { field: "id" },
   fields: (t) => ({
-    roomId: t.exposeID("roomId"),
-    senderId: t.exposeID("senderId", { nullable: true }),
+    // ID's if revealed, need to be converted to global IDs
+    // roomId: t.exposeID("roomId"),
+    // senderId: t.exposeID("senderId", {
+    //   nullable: true,
+    //   description:
+    //     "The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization",
+    // }),
     type: t.field({
       type: MessageContentType,
       resolve: ({ type }) => type as MessageContentType,
@@ -34,6 +67,86 @@ export const Message = builder.prismaNode("Message", {
     createdAt: t.expose("createdAt", { type: "DateTime" }),
 
     sender: t.relation("sender"),
-    room: t.relation("room"),
   }),
 });
+
+builder.mutationFields((t) => ({
+  sendTextMessage: t.withAuth({ authenticated: true }).prismaField({
+    type: Message,
+    args: {
+      roomId: t.arg.id({ required: true }),
+      textContent: t.arg.string({ required: true }),
+    },
+    authScopes: (_root, { roomId }) => ({
+      authenticated: true,
+      inRoomId: roomId,
+    }),
+    resolve: async (
+      query,
+      _root,
+      { roomId, textContent },
+      { prisma, pubsub, sub }
+    ) => {
+      roomId = decodeGlobalID(roomId as string).id;
+      const now = new Date();
+      const message: PMessage & { content: { text: string } } = {
+        id: nanoid(),
+        roomId,
+        senderId: sub.id,
+        type: MessageContentType.TEXT,
+        content: { text: textContent },
+        createdAt: now,
+        updatedAt: now,
+      };
+      pubsub.publish(MESSAGE_UPDATES_BY_ROOMID_TOPIC, roomId, {
+        operation: MessageUpdateOperations.MESSAGE_CREATE,
+        value: { ...message },
+      });
+
+      const res = await prisma.message.create({
+        ...query,
+        data: message,
+      });
+
+      return res;
+    },
+  }),
+}));
+
+export const MessageUpdate = builder
+  .objectRef<MessageUpdateShape>("MessageUpdate")
+  .implement({
+    description: "A message indicating an operation performed on a message.",
+    fields: (t) => ({
+      operation: t.field({
+        type: MessageUpdateOperations,
+        resolve: (root) => root.operation,
+      }),
+      value: t.field({
+        type: Message,
+        resolve: (root) => root.value,
+      }),
+    }),
+  });
+
+builder.subscriptionFields((t) => ({
+  messageUpdatesByRoomId: t.withAuth({ authenticated: true }).field({
+    type: MessageUpdate,
+    args: {
+      id: t.arg.id({ required: true }),
+    },
+    authScopes: (_root, { id }) => {
+      return {
+        authenticated: true,
+        inRoomId: id,
+      };
+    },
+    subscribe: (_root, { id }, { pubsub }) => {
+      id = decodeGlobalID(id as string).id;
+      return pubsub.subscribe(MESSAGE_UPDATES_BY_ROOMID_TOPIC, id);
+    },
+    resolve(parent: MessageUpdateShape) {
+      return parent;
+    },
+  }),
+}));

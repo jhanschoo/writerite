@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 import { contextFactory } from "../../src/context";
-import { createGraphQLApp } from "../../src/graphqlApp";
+import { createGraphQLApp } from "../../src/server";
 import { queryHealth } from "../helpers/graphql/Health.util";
 
 describe("server", () => {

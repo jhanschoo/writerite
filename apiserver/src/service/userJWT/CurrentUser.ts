@@ -4,5 +4,5 @@ export interface CurrentUser {
   id: string;
   name: string;
   roles: Roles[];
-  occupyingActiveRoomSlugs: Record<string, string>;
+  occupyingRoomSlugs: Record<string, string | null>;
 }

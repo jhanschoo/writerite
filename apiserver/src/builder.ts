@@ -16,23 +16,28 @@ import {
   UUIDResolver,
 } from "graphql-scalars";
 import { Roles } from "./service/userJWT";
-import { lit } from "./util/lit";
 
 export const builder = new SchemaBuilder<{
   AuthScopes: {
     always: boolean;
+    admin: boolean;
     authenticated: boolean;
     subIdIs: unknown;
+    inRoomId: unknown;
   };
   AuthContexts: {
     authenticated: Context & { sub: NonNullable<Context["sub"]> };
     admin: Context & { sub: NonNullable<Context["sub"]> };
     subIdIs: Context & { sub: NonNullable<Context["sub"]> };
+    inRoomId: Context & { sub: NonNullable<Context["sub"]> };
   };
   Context: Context;
   Directives: {
     undefinedOnly: {
       locations: "ARGUMENT_DEFINITION" | "INPUT_FIELD_DEFINITION";
+    };
+    invalidatesTokens: {
+      locations: "FIELD_DEFINITION";
     };
   };
   PrismaTypes: PrismaTypes;
@@ -65,9 +70,12 @@ export const builder = new SchemaBuilder<{
 }>({
   authScopes: ({ sub }) => ({
     always: true,
-    authenticated: !sub,
-    admin: sub && sub.roles.includes(Roles.Admin),
+    authenticated: Boolean(sub),
+    admin: (sub && sub.roles.includes(Roles.Admin)) ?? false,
     subIdIs: (id: unknown) => Boolean(sub?.id === id),
+    inRoomId: (roomId: unknown) =>
+      typeof roomId === "string" &&
+      Object.keys(sub?.occupyingRoomSlugs || {}).includes(roomId),
   }),
   plugins: [
     RelayPlugin,

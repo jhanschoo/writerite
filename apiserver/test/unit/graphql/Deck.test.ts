@@ -9,7 +9,7 @@ import {
   mutationDeckCreateEmpty,
   mutationDeckEditName,
   mutationDeckRemoveSubdeck,
-  queryDeckScalars,
+  queryDeckBasic,
   queryDecks,
   testContextFactory,
 } from "../../helpers";
@@ -18,13 +18,18 @@ import { YogaInitialContext, createPubSub } from "graphql-yoga";
 import { Context } from "../../../src/context";
 import { CurrentUser, Roles } from "../../../src/service/userJWT";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { encodeGlobalID } from "@pothos/plugin-relay";
 
 export const DEFAULT_CURRENT_USER = {
   id: "fake-id",
   name: "fake-name",
   roles: [Roles.User],
-  occupyingActiveRoomSlugs: {},
+  occupyingRoomSlugs: {},
 };
+export const DEFAULT_CURRENT_USER_GID = encodeGlobalID(
+  "User",
+  DEFAULT_CURRENT_USER.id
+);
 
 describe("graphql/Deck.ts", () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -66,12 +71,14 @@ describe("graphql/Deck.ts", () => {
         setSub(DEFAULT_CURRENT_USER);
         const id = "parent-id-with-20-plus-chars";
         const subdeckId = "child-id-with-20-plus-chars";
+        const gid = encodeGlobalID("Deck", id);
+        const gsubdeckId = encodeGlobalID("Deck", subdeckId);
         prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.count.mockResolvedValue(2);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
         const response = await mutationDeckAddSubdeck(executor, {
-          id,
-          subdeckId,
+          deckId: gid,
+          subdeckId: gsubdeckId,
         });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.update).toHaveBeenCalledWith({
@@ -96,12 +103,18 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(1);
         setSub(DEFAULT_CURRENT_USER);
         const id = "fake-id-with-20-plus-chars";
+        const gid = encodeGlobalID("Deck", id);
         prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.create.mockResolvedValue({
           id,
         } as Deck);
-        const response = await mutationDeckCreateEmpty(executor);
-        expect(response).toHaveProperty("data.deckCreate.id", id);
+        const response = await mutationDeckCreateEmpty(executor, {
+          answerLang: "en",
+          cards: [],
+          name: "name",
+          promptLang: "en",
+        });
+        expect(response).toHaveProperty("data.deckCreate.id", gid);
       });
     });
     describe("deckDelete", () => {
@@ -118,6 +131,7 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(2);
         setSub(DEFAULT_CURRENT_USER);
         const id = "fake-id-with-20-plus-chars";
+        const gid = encodeGlobalID("Deck", id);
         const nextName = "next-name";
         prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.updateMany.mockResolvedValue({
@@ -128,7 +142,7 @@ describe("graphql/Deck.ts", () => {
           name: nextName,
         } as Deck);
         const response = await mutationDeckEditName(executor, {
-          id,
+          id: gid,
           name: nextName,
         });
         // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -148,13 +162,15 @@ describe("graphql/Deck.ts", () => {
         expect.assertions(2);
         setSub(DEFAULT_CURRENT_USER);
         const id = "parent-id-with-20-plus-chars";
+        const gid = encodeGlobalID("Deck", id);
         const subdeckId = "child-id-with-20-plus-chars";
+        const gsubdeckId = encodeGlobalID("Deck", subdeckId);
         prisma.user.findUnique.mockResolvedValue(null);
         prisma.deck.count.mockResolvedValue(2);
         prisma.deck.update.mockResolvedValue({ id } as Deck);
         const response = await mutationDeckRemoveSubdeck(executor, {
-          id,
-          subdeckId,
+          deckId: gid,
+          subdeckId: gsubdeckId,
         });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.update).toHaveBeenCalledWith({
@@ -182,26 +198,32 @@ describe("graphql/Deck.ts", () => {
         prisma.user.findUnique.mockResolvedValue({ name: "abc" } as User);
         prisma.deck.findUnique.mockResolvedValue({
           id,
-          answerLang: "",
-          description: {},
-          editedAt: new Date(),
-          name: "",
           ownerId: DEFAULT_CURRENT_USER.id,
+          owner: {
+            id: DEFAULT_CURRENT_USER.id as unknown,
+          },
+          name: "",
+          description: {},
           promptLang: "",
+          answerLang: "",
           published: false,
+          editedAt: new Date(),
           sortData: [],
           createdAt: new Date(),
           updatedAt: new Date(),
+        } as Deck & { owner: { id: string } });
+        const queryDeckResponse = await queryDeckBasic(executor, {
+          id: encodeGlobalID("Deck", id),
         });
-        const queryDeckResponse = await queryDeckScalars(executor, id);
         expect(queryDeckResponse).toHaveProperty("data.deck", {
-          id,
           answerLang: "",
           description: {},
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           editedAt: expect.any(String),
+          owner: {
+            id: DEFAULT_CURRENT_USER_GID,
+          },
           name: "",
-          ownerId: DEFAULT_CURRENT_USER.id,
           promptLang: "",
           published: false,
           sortData: [],
@@ -220,8 +242,8 @@ describe("graphql/Deck.ts", () => {
           { id: id1 } as Deck,
           { id: id2 } as Deck,
         ]);
-        const queryDecksResponse = await queryDecks(executor);
-        expect(queryDecksResponse.data.decks).toHaveLength(2);
+        const queryDecksResponse = await queryDecks(executor, {});
+        expect(queryDecksResponse.data?.decks.edges).toHaveLength(2);
       });
     });
   });

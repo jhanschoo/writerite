@@ -33,13 +33,6 @@ const pubSubRedisOptions = {
   db: 2,
 };
 
-export interface AuthorizationHelpers {
-  isLoggedInAs(id: string): boolean;
-  get isAdmin(): boolean;
-  isOccupyingActiveRoom(slug: string): boolean;
-  addOccupyingActiveRoom(slug: string, roomId: string): void;
-}
-
 export interface Context<
   P extends PrismaClient = PrismaClient,
   Q extends PubSubPublishArgs = PubSubPublishArgs,
@@ -50,7 +43,6 @@ export interface Context<
   prisma: P;
   pubsub: PubSub<Q>;
   redis: R;
-  auth: AuthorizationHelpers;
 }
 
 export interface LoggedInContext extends Context {
@@ -128,7 +120,6 @@ export function contextFactory<
         (await subFn?.(ctx, redis)) ??
         opts?.sub ??
         (await getClaims(ctx, redis));
-      const additionalRoomSlugs: Record<string, string> = {};
       return {
         ...ctx,
         fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
@@ -136,25 +127,6 @@ export function contextFactory<
         prisma,
         pubsub,
         redis,
-        auth: {
-          isLoggedInAs(id: string): boolean {
-            return sub?.id === id;
-          },
-          get isAdmin(): boolean {
-            return Boolean(sub?.roles.includes(Roles.Admin));
-          },
-          isOccupyingActiveRoom(slug: string): boolean {
-            if (!sub) {
-              return false;
-            }
-            return Boolean(
-              sub.occupyingActiveRoomSlugs[slug] || additionalRoomSlugs[slug]
-            );
-          },
-          addOccupyingActiveRoom(slug, roomId) {
-            additionalRoomSlugs[slug] = roomId;
-          },
-        },
       };
     },
     async () =>

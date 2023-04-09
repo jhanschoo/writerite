@@ -9,7 +9,7 @@ import {
 } from "../../helpers";
 import { Context } from "../../../src/context";
 import { YogaInitialContext } from "graphql-yoga";
-import { createGraphQLApp } from "../../../src/graphqlApp";
+import { createGraphQLApp } from "../../../src/server";
 import { cascadingDelete } from "../_helpers/truncate";
 import Redis from "ioredis";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";

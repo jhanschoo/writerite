@@ -1,14 +1,11 @@
-import { gql, testQuery } from "../misc";
-import {
-  CreateUserMutationVariables,
-  NameUserMutationVariables,
-  RefreshMutationVariables,
-  UserAccessibleUserScalarsQueryVariables,
-  UserEditMutationVariables,
-  UserPublicScalarsQueryVariables,
-} from "../../../generated/typescript-operations";
+import { graphql } from "../../../generated/gql";
+import { testQuery } from "../misc";
 import { CurrentUser } from "../../../src/service/userJWT";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import {
+  MeQueryVariables,
+  UserEditMutationVariables,
+} from "../../../generated/gql/graphql";
 
 export const DEFAULT_CREATE_USER_VALUES = {
   name: "abcxyz",
@@ -19,9 +16,9 @@ export function mutationCreateUser(
   { name }: { name: string } = DEFAULT_CREATE_USER_VALUES
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<CreateUserMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation CreateUser(
         $code: String!
         $nonce: String!
@@ -38,7 +35,7 @@ export function mutationCreateUser(
           token
         }
       }
-    `,
+    `),
     // eslint-disable-next-line @typescript-eslint/naming-convention
     variables: {
       code: name,
@@ -54,16 +51,16 @@ export function mutationNameUser(
   { name }: { name: string } = DEFAULT_CREATE_USER_VALUES
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<NameUserMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation NameUser($name: String!) {
-        userEdit(name: $name) {
+        ownProfileEdit(name: $name) {
           id
           name
         }
       }
-    `,
+    `),
     variables: { name },
   });
 }
@@ -78,7 +75,7 @@ export async function loginAsNewlyCreatedUser(
     ? mutationCreateUser(executor, { name })
     : mutationCreateUser(executor));
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const sessionInfo = response.data.finalizeOauthSignin as {
+  const sessionInfo = response.data?.finalizeOauthSignin as unknown as {
     currentUser: CurrentUser;
     token: string;
   };
@@ -94,7 +91,7 @@ export async function refreshLogin(
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const response = await mutationRefresh(executor, token);
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const sessionInfo = response.data.refresh as {
+  const sessionInfo = response.data?.refresh as unknown as {
     currentUser: CurrentUser;
     token: string;
   };
@@ -107,74 +104,55 @@ export async function mutationRefresh(
   token: string
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RefreshMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation Refresh($token: JWT!) {
         refresh(token: $token) {
           currentUser
           token
         }
       }
-    `,
+    `),
     variables: { token },
   });
 }
 
-export function queryAllUserAccessibleUserScalars(
+export function queryMe(
   executor: ReturnType<typeof buildHTTPExecutor>,
-  id: string
+  variables: MeQueryVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<UserAccessibleUserScalarsQueryVariables>({
+  return testQuery({
     executor,
-    document: gql`
-      query UserAccessibleUserScalars($id: ID!) {
-        user(id: $id) {
-          id
+    document: graphql(/* GraphQL */ `
+      query Me {
+        me {
           isPublic
           name
           roles
         }
       }
-    `,
-    variables: { id },
-  });
-}
-
-export function queryUserPublicScalars(
-  executor: ReturnType<typeof buildHTTPExecutor>,
-  id: string
-) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<UserPublicScalarsQueryVariables>({
-    executor,
-    document: gql`
-      query UserPublicScalars($id: ID!) {
-        user(id: $id) {
-          id
-          isPublic
-        }
-      }
-    `,
-    variables: { id },
+    `),
+    variables,
   });
 }
 
 export function mutationUserEdit(
   executor: ReturnType<typeof buildHTTPExecutor>,
-  { name, isPublic }: { name?: string; isPublic?: boolean }
+  variables: UserEditMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<UserEditMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation UserEdit($name: String, $isPublic: Boolean) {
-        userEdit(name: $name, isPublic: $isPublic) {
+        ownProfileEdit(name: $name, isPublic: $isPublic) {
           id
+          name
         }
       }
-    `,
-    variables: { name, isPublic },
+    `),
+    variables,
   });
 }

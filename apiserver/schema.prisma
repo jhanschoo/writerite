@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["extendedWhereUnique", "filteredRelationCount"]
 }
 
@@ -16,141 +16,161 @@ enum Unit {
   UNIT
 }
 
-enum RoomState {
-  WAITING
-  SERVING
-  SERVED
+enum RoomType {
+  EPHEMERAL
   PERSISTENT
 }
 
-model Card {
-  id         String           @default(cuid()) @id
-  deckId     String
-  // prompt is a JsonObject
-  prompt     Json?
-  // fullAnswer is a JsonObject
-  fullAnswer Json?
-  answers    String[]
-  template   Boolean          @default(false)
-  default    Unit?
-  editedAt   DateTime         @default(now())
-  deck       Deck             @relation(fields: [deckId], references: [id], onDelete: Cascade)
-
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @default(now()) @updatedAt
-
-  records    UserCardRecord[]
-
-  @@unique([deckId, default])
-  // CHECK ("template" OR "default" IS NULL);
+enum RoundState {
+  WAITING
+  PLAYING
 }
 
-model Message {
-  id        String   @default(cuid()) @id
-  roomId    String
-  senderId  String?
-  type      String
-  content   Json
+// convention: Boolean and Unit fields are verbs and adjectives
+
+model Card {
+  id                String   @id @default(cuid())
+  deckId            String
+  // prompt is a JsonObject
+  prompt            Json?
+  // fullAnswer is a JsonObject
+  fullAnswer        Json?
+  answers           String[]
+  isTemplate        Boolean  @default(false)
+  isPrimaryTemplate Unit?
+  editedAt          DateTime @default(now())
+  deck              Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  sender    User?    @relation(fields: [senderId], references: [id], onDelete: SetNull)
+  records UserCardRecord[]
+  // CHECK ("template" OR "default" IS NULL);
+
+  @@unique([deckId, isPrimaryTemplate])
+}
+
+model Message {
+  id       String  @id @default(cuid())
+  roomId   String
+  senderId String?
+  type     String
+  content  Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  room   Room  @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  sender User? @relation(fields: [senderId], references: [id], onDelete: SetNull)
 }
 
 model Deck {
-  id           String           @default(cuid()) @id
-  ownerId      String
-  name         String           @default("")
+  id          String   @id @default(cuid())
+  ownerId     String
+  name        String   @default("")
   // description is a JsonObject if not null
-  description  Json?
-  promptLang   String           @default("")
-  answerLang   String           @default("")
-  published    Boolean          @default(false)
+  description Json?
+  promptLang  String   @default("")
+  answerLang  String   @default("")
+  published   Boolean  @default(false)
   // editedAt represents the time the deck's content fields (i.e. not
   // usedAt, not updatedAt), or one of its cards was last edited.
   // unenforced constraint: editedAt > UserCardRecord.updatedAt,
   //   for all UserCardRecords belonging to cards of this deck.
-  editedAt     DateTime         @default(now())
+  editedAt    DateTime @default(now())
 
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   owner        User             @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   cards        Card[]
-  rooms        Room[]
   // sortData is an array of IDs, indicating that cards of this deck with IDs
   //   in this array should be displayed in the order they appear in the array.
   sortData     String[]
   parentDeckIn Subdeck[]        @relation("DeckTo_Subdeck_parentDeckId")
   subdeckIn    Subdeck[]        @relation("DeckTo_Subdeck_subdeckId")
   records      UserDeckRecord[]
+  usedInRounds Round[]
 }
 
 //See: https://github.com/prisma/prisma/issues/2057
 model Occupant {
-  id         String   @default(cuid()) @id
+  id         String @id @default(cuid())
   roomId     String
   occupantId String
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  room       Room     @relation("RoomTo_Occupant", fields: [roomId], references: [id], onDelete: Cascade)
-  occupant   User     @relation("UserTo_Occupant", fields: [occupantId], references: [id], onDelete: Cascade)
+  room     Room @relation("RoomTo_Occupant", fields: [roomId], references: [id], onDelete: Cascade)
+  occupant User @relation("UserTo_Occupant", fields: [occupantId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, occupantId])
   @@index([occupantId])
 }
 
 model Room {
-  id              String     @default(cuid()) @id
+  id       String   @id @default(cuid())
+  type     RoomType @default(EPHEMERAL)
+  archived Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  occupants Occupant[] @relation("RoomTo_Occupant")
+  chatMsgs  Message[]
+  rounds    Round[]
+}
+
+model Round {
+  id       String     @id @default(cuid())
   // slug is a string for the URL with the following property
   // when state is non-terminal, slug is some short cuid
   // when state is terminal, slug is null
-  slug            String?    @unique
-  // TODO: consider refactoring to a weak entity RoomRound unique(roomId, UNIT)
-  // Then the room state is tracked by the existence of a RoomRound and whether UNIT is set on it
-  deckId          String?
-  state           RoomState  @default(WAITING)
+  slug     String
+  state    RoundState @default(WAITING)
+  roomId   String
+  deckId   String
+  isActive Unit?      @default(UNIT)
 
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  deck            Deck?      @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  occupants       Occupant[] @relation("RoomTo_Occupant")
-  chatMsgs        Message[]
+  room Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+
+  @@unique([isActive, roomId])
+  @@unique([isActive, slug])
 }
 
 //See: https://github.com/prisma/prisma/issues/2057
 model Subdeck {
-  id           String   @default(cuid()) @id
+  id           String @id @default(cuid())
   parentDeckId String
   subdeckId    String
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  parentDeck   Deck     @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id], onDelete: Cascade)
-  subdeck      Deck     @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id], onDelete: Cascade)
+  parentDeck Deck @relation("DeckTo_Subdeck_parentDeckId", fields: [parentDeckId], references: [id], onDelete: Cascade)
+  subdeck    Deck @relation("DeckTo_Subdeck_subdeckId", fields: [subdeckId], references: [id], onDelete: Cascade)
 
   @@unique([parentDeckId, subdeckId])
   @@index([subdeckId])
 }
 
 model User {
-  id             String           @default(cuid()) @id
-  facebookId     String?          @unique
-  googleId       String?          @unique
-  name           String
+  id         String   @id @default(cuid())
+  facebookId String?  @unique
+  googleId   String?  @unique
+  name       String
   // description is a JsonObject if not null
-  bio            Json?
-  roles          String[]
-  isPublic       Boolean          @default(false)
+  bio        Json?
+  roles      String[]
+  isPublic   Boolean  @default(false)
 
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   decks          Deck[]
   occupyingRooms Occupant[]       @relation("UserTo_Occupant")
@@ -158,53 +178,53 @@ model User {
   cardRecords    UserCardRecord[]
   deckRecords    UserDeckRecord[]
 
-  befrienderIn   Friendship[]        @relation("UserTo_Friendship_befrienderId")
-  befriendedIn   Friendship[]        @relation("UserTo_Friendship_befriendedId")
+  befrienderIn Friendship[] @relation("UserTo_Friendship_befrienderId")
+  befriendedIn Friendship[] @relation("UserTo_Friendship_befriendedId")
 }
 
 model Friendship {
-  id           String   @default(cuid()) @id
+  id           String @id @default(cuid())
   befrienderId String
   befriendedId String
 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  befriender   User     @relation("UserTo_Friendship_befrienderId", fields: [befrienderId], references: [id], onDelete: Cascade)
-  befriended   User     @relation("UserTo_Friendship_befriendedId", fields: [befriendedId], references: [id], onDelete: Cascade)
+  befriender User @relation("UserTo_Friendship_befrienderId", fields: [befrienderId], references: [id], onDelete: Cascade)
+  befriended User @relation("UserTo_Friendship_befriendedId", fields: [befriendedId], references: [id], onDelete: Cascade)
 
   @@unique([befrienderId, befriendedId])
   @@index([befriendedId])
 }
 
 model UserCardRecord {
-  id             String     @default(cuid()) @id
+  id             String     @id @default(cuid())
   userId         String
   cardId         String
-  correctRecord  DateTime[]
+  correctHistory DateTime[]
 
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  card           Card       @relation(fields: [cardId], references: [id], onDelete: Cascade)
-  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, cardId])
 }
 
 model UserDeckRecord {
-  id         String   @default(cuid()) @id
+  id         String   @id @default(cuid())
   userId     String
   deckId     String
   // notes is a JsonObject
   notes      Json?
   deckUsedAt DateTime @default(now())
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-  deck       Deck     @relation(fields: [deckId], references: [id], onDelete: Cascade)
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deck Deck @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, deckId])
 }

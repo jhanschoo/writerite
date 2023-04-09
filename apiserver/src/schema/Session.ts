@@ -1,6 +1,14 @@
 import { Prisma } from "@prisma/client";
 import { builder } from "../builder";
-import { CurrentUser } from "../service/userJWT";
+import {
+  CurrentUser,
+  currentUserToUserJWT,
+  verifyStaleUserJWT,
+} from "../service/userJWT";
+import {
+  findOrCreateCurrentUserSourceWithProfile,
+  currentUserSourceToCurrentUser,
+} from "../service/authentication";
 
 export class SessionInfo {
   public readonly currentUser: Prisma.JsonObject;
@@ -17,3 +25,27 @@ builder.objectType(SessionInfo, {
     currentUser: t.expose("currentUser", { type: "JSONObject" }),
   }),
 });
+
+builder.mutationField("refresh", (t) =>
+  t.field({
+    type: SessionInfo,
+    nullable: true,
+    args: {
+      token: t.arg({ type: "JWT", description: "A JWT token", required: true }),
+    },
+    resolve: async (_parent, { token }, { prisma }) => {
+      try {
+        const { sub } = await verifyStaleUserJWT(token);
+        const currentUserSource =
+          await findOrCreateCurrentUserSourceWithProfile(prisma, sub.id, "id");
+        const currentUser = currentUserSourceToCurrentUser(currentUserSource);
+        return new SessionInfo(
+          await currentUserToUserJWT(currentUser),
+          currentUser
+        );
+      } catch (e) {
+        return null;
+      }
+    },
+  })
+);

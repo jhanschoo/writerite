@@ -1,12 +1,19 @@
 type Card implements Node {
   answers: [String!]!
-  deckId: ID!
   editedAt: DateTime!
   fullAnswer: JSONObject
   id: ID!
-  mainTemplate: Boolean!
+  isPrimaryTemplate: Boolean!
+  isTemplate: Boolean!
+  ownRecordCorrectHistory: [DateTime!]
   prompt: JSONObject
-  template: Boolean!
+}
+
+input CardCreateInput {
+  answers: [String!]!
+  fullAnswer: JSONObject!
+  isTemplate: Boolean!
+  prompt: JSONObject!
 }
 
 """
@@ -39,8 +46,8 @@ type Deck implements Node {
   name: String!
   ownRecordNotes: JSONObject
   owner: User!
-  ownerId: ID!
   promptLang: String!
+  published: Boolean!
   sortData: [String!]!
 
   """all subdecks directly belonging to this deck"""
@@ -91,9 +98,7 @@ scalar EmailAddress
 
 type Friendship implements Node {
   befriended: User!
-  befriendedId: ID!
   befriender: User!
-  befrienderId: ID!
   createdAt: DateTime!
   id: ID!
   updatedAt: DateTime!
@@ -118,10 +123,7 @@ type Message implements Node {
   content: JSONObject
   createdAt: DateTime!
   id: ID!
-  room: Room!
-  roomId: ID!
   sender: User!
-  senderId: ID
   type: MessageContentType!
 }
 
@@ -134,23 +136,67 @@ enum MessageContentType {
   TEXT
 }
 
+"""A message indicating an operation performed on a message."""
+type MessageUpdate {
+  operation: MessageUpdateOperations!
+  value: Message!
+}
+
+"""Names identifying operations that trigger message updates."""
+enum MessageUpdateOperations {
+  MESSAGE_CREATE
+}
+
 type Mutation {
+  """
+  Befriend the `befriendedId` user, then resolves to the user's own profile
+  """
+  befriend(befriendedId: ID!): User!
+  cardCreate(card: CardCreateInput!, deckId: ID!, isPrimaryTemplate: Boolean): Card!
+  cardDelete(id: ID!): Card!
+  cardEdit(cardInput: CardCreateInput, id: ID!, isPrimaryTemplate: Boolean): Card!
+
+  """add cards to a deck"""
+  deckAddCards(cards: [CardCreateInput!]!, deckId: ID!): Deck!
+
+  """add a subdeck to a deck and resolve to the parent deck"""
+  deckAddSubdeck(deckId: ID!, subdeckId: ID!): Deck!
+
+  """create a new deck"""
+  deckCreate(answerLang: String!, cards: [CardCreateInput!]!, description: JSONObject, name: String!, notes: JSONObject, parentDeckId: ID, promptLang: String!, published: Boolean): Deck!
+
+  """delete the specified deck, only if its dependents are deleted"""
+  deckDelete(deckId: ID!): Deck!
+
+  """edit a new deck"""
+  deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, notes: JSONObject, promptLang: String): Deck!
+
+  """add a subdeck to a deck and resolve to the parent deck"""
+  deckRemoveSubdeck(deckId: ID!, subdeckId: ID!): Deck!
   finalizeOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): SessionInfo
   initializeOauthSignin: String!
+
+  """Edit the user's own profile."""
+  ownProfileEdit(bio: JSONObject, isPublic: Boolean, name: String): User!
+  recordCorrectAnswer(id: ID!): Card!
+  refresh(
+    """A JWT token"""
+    token: JWT!
+  ): SessionInfo
+  roomArchive(id: ID!): Room!
+  roomCreate: Room!
+  roomEndRound(id: ID!): Room!
+  roomJoin(id: ID!): Room!
+  roomSetDeck(deckId: ID!, id: ID!): Room!
+  roomStartRound(id: ID!): Room!
+  sendTextMessage(roomId: ID!, textContent: String!): Message!
+
+  """set personal notes for a deck"""
+  setOwnNotes(deckId: ID!, notes: JSONObject!): Deck!
 }
 
 interface Node {
   id: ID!
-}
-
-type Occupant implements Node {
-  createdAt: DateTime!
-  id: ID!
-  occupant: User!
-  occupantId: ID!
-  room: Room!
-  roomId: ID!
-  updatedAt: DateTime!
 }
 
 type PageInfo {
@@ -161,12 +207,15 @@ type PageInfo {
 }
 
 type Query {
-  deck(id: ID!): Deck
+  deck(id: ID!): Deck!
   decks(after: ID, before: ID, first: Int, last: Int, scope: DecksQueryScope, stoplist: [ID!]): QueryDecksConnection!
   health: String!
   me: User
   node(id: ID!): Node
   nodes(ids: [ID!]!): [Node]!
+  occupyingUnarchivedRooms: [Room!]
+  room(id: ID!): Room
+  roomBySlug(slug: String!): Room
 }
 
 type QueryDecksConnection {
@@ -180,12 +229,13 @@ type QueryDecksConnectionEdge {
 }
 
 type Room implements Node {
-  createdAt: DateTime!
-  deck: Deck!
-  deckId: ID
+  activeRound: Round
   id: ID!
+  messageCount: Int!
   messages(after: ID, before: ID, first: Int, last: Int): RoomMessagesConnection!
-  slug: String
+  occupants: [User!]!
+  occupantsCount: Int!
+  type: RoomType!
 }
 
 type RoomMessagesConnection {
@@ -198,9 +248,36 @@ type RoomMessagesConnectionEdge {
   node: Message!
 }
 
-enum RoomState {
-  SERVED
-  SERVING
+enum RoomType {
+  EPHEMERAL
+  PERSISTENT
+}
+
+"""A message indicating an operation performed on a room."""
+type RoomUpdate {
+  operation: RoomUpdateOperations!
+  value: Room!
+}
+
+"""Keys identifying operations that trigger room updates."""
+enum RoomUpdateOperations {
+  ROOM_ARCHIVE
+  ROOM_END_ROUND
+  ROOM_JOIN
+  ROOM_SET_DECK
+  ROOM_START_ROUND
+}
+
+type Round implements Node {
+  deck: Deck!
+  id: ID!
+  isActive: Boolean!
+  slug: String!
+  state: RoundState!
+}
+
+enum RoundState {
+  PLAYING
   WAITING
 }
 
@@ -214,14 +291,14 @@ type Subdeck implements Node {
   createdAt: DateTime!
   id: ID!
   parentDeck: Deck!
-  parentDeckId: ID!
   subdeck: Deck!
-  subdeckId: ID!
   updatedAt: DateTime!
 }
 
 type Subscription {
+  messageUpdatesByRoomId(id: ID!): MessageUpdate!
   repeatHealth: String!
+  roomUpdatesByRoomId(id: ID!): RoomUpdate!
 }
 
 """

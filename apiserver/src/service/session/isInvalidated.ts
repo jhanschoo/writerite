@@ -2,7 +2,7 @@ import Redis from "ioredis";
 import { JWTPayload } from "jose";
 import { CurrentUser } from "../userJWT";
 import {
-  getInvalidationByRoomSlugTopic,
+  getInvalidationByRoomIdTopic,
   getInvalidationByUserIdTopic,
 } from "./util";
 
@@ -17,11 +17,11 @@ export async function isInvalidated(params: InvalidatedGuardParams) {
   const {
     redis,
     payload: { iat },
-    sub: { id, occupyingActiveRoomSlugs },
+    sub: { id, occupyingRoomSlugs },
   } = params;
   const timestamps = await redis.mget(
     getInvalidationByUserIdTopic(id),
-    ...Object.keys(occupyingActiveRoomSlugs).map(getInvalidationByRoomSlugTopic)
+    ...Object.keys(occupyingRoomSlugs).map(getInvalidationByRoomIdTopic)
   );
   if (!iat) {
     return true;

@@ -1,7 +1,6 @@
 import { Roles } from "../userJWT/Roles";
 import { PrismaCurrentUserSourceType } from "./types";
-import { WillNotServeRoomStates } from "../room";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Unit } from "@prisma/client";
 import { ProviderPrismaFieldKeys } from "./providerStrategies";
 import type { CurrentUser } from "../userJWT/CurrentUser";
 
@@ -11,19 +10,17 @@ export function currentUserSourceToCurrentUser({
   roles,
   occupyingRooms,
 }: PrismaCurrentUserSourceType): CurrentUser {
-  const occupyingActiveRoomSlugs: Record<string, string> = {};
+  const occupyingRoomSlugs: Record<string, string | null> = {};
   for (const {
-    room: { id: roomId, slug },
+    room: { id: roomId, rounds },
   } of occupyingRooms) {
-    if (slug) {
-      occupyingActiveRoomSlugs[slug] = roomId;
-    }
+    occupyingRoomSlugs[roomId] = rounds[0]?.slug ?? null;
   }
   return {
     id,
     name,
     roles: roles as Roles[],
-    occupyingActiveRoomSlugs,
+    occupyingRoomSlugs,
   };
 }
 
@@ -33,19 +30,6 @@ export const findOrCreateCurrentUserSourceWithProfile = async (
   idField: ProviderPrismaFieldKeys,
   name?: string
 ) => {
-  // Note: this include should behave identically to the User.occupyingActiveRooms field
-  const include = {
-    occupyingRooms: {
-      include: {
-        room: true,
-      },
-      where: {
-        room: {
-          state: { notIn: WillNotServeRoomStates },
-        },
-      },
-    },
-  };
   const user = await prisma.user.upsert({
     // Note that this coerced type is benignly more strict than expected
     where: { [idField]: profileId } as {
@@ -57,7 +41,29 @@ export const findOrCreateCurrentUserSourceWithProfile = async (
       name: name ?? "New User",
       roles: [Roles.User],
     },
-    include,
+    include: {
+      occupyingRooms: {
+        include: {
+          room: {
+            include: {
+              rounds: {
+                where: {
+                  isActive: Unit.UNIT,
+                },
+                select: {
+                  slug: true,
+                },
+              },
+            },
+          },
+        },
+        where: {
+          room: {
+            archived: false,
+          },
+        },
+      },
+    },
   });
   return user;
 };

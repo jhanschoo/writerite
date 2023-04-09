@@ -1,38 +1,43 @@
-import { WrServer } from "../../../src/graphqlApp";
-import { gql, testQuery, testSubscription } from "../misc";
+import { graphql } from "../../../generated/gql";
 import {
-  RoomJoinMutationVariables,
-  RoomQueryVariables,
   RoomSetDeckMutationVariables,
-  RoomSetStateMutationVariables,
-  RoomUpdatesByRoomSlugSubscriptionVariables,
-} from "../../../generated/typescript-operations";
+  RoomJoinMutationVariables,
+  RoomEndRoundMutationVariables,
+  RoomArchiveMutationVariables,
+  RoomUpdatesByRoomIdSubscriptionVariables,
+  RoomStartRoundMutationVariables,
+  RoomQueryVariables,
+} from "../../../generated/gql/graphql";
+import { testQuery, testSubscription } from "../misc";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
 export function mutationRoomCreate(
   executor: ReturnType<typeof buildHTTPExecutor>
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<undefined>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation RoomCreate {
         roomCreate {
           id
-          slug
-          ownerId
-          state
-          deckId
-          deck {
+          type
+          activeRound {
             id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
           }
           occupants {
             id
           }
         }
       }
-    `,
-    variables: undefined,
+    `),
+    variables: {},
   });
 }
 
@@ -41,45 +46,121 @@ export function mutationRoomSetDeck(
   variables: RoomSetDeckMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomSetDeckMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation RoomSetDeck($id: ID!, $deckId: ID!) {
         roomSetDeck(id: $id, deckId: $deckId) {
           id
-          ownerId
-          state
-          deckId
-          deck {
+          type
+          activeRound {
+            id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
+          }
+          occupants {
             id
           }
         }
       }
-    `,
+    `),
     variables,
   });
 }
 
-export function mutationRoomSetState(
+export function mutationRoomStartRound(
   executor: ReturnType<typeof buildHTTPExecutor>,
-  variables: RoomSetStateMutationVariables
+  variables: RoomStartRoundMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomSetStateMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
-      mutation RoomSetState($id: ID!, $state: RoomState!) {
-        roomSetState(id: $id, state: $state) {
+    document: graphql(/* GraphQL */ `
+      mutation RoomStartRound($id: ID!) {
+        roomStartRound(id: $id) {
           id
-          ownerId
-          state
-          deckId
-          deck {
+          type
+          activeRound {
+            id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
+          }
+          occupants {
             id
           }
         }
       }
-    `,
+    `),
+    variables,
+  });
+}
+
+export function mutationRoomEndRound(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: RoomEndRoundMutationVariables
+) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery({
+    executor,
+    document: graphql(/* GraphQL */ `
+      mutation RoomEndRound($id: ID!) {
+        roomEndRound(id: $id) {
+          id
+          type
+          activeRound {
+            id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
+          }
+          occupants {
+            id
+          }
+        }
+      }
+    `),
+    variables,
+  });
+}
+
+export function mutationRoomArchive(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: RoomArchiveMutationVariables
+) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery({
+    executor,
+    document: graphql(/* GraphQL */ `
+      mutation RoomArchive($id: ID!) {
+        roomArchive(id: $id) {
+          id
+          type
+          activeRound {
+            id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
+          }
+          occupants {
+            id
+          }
+        }
+      }
+    `),
     variables,
   });
 }
@@ -89,93 +170,123 @@ export function mutationRoomJoin(
   variables: RoomJoinMutationVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomJoinMutationVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       mutation RoomJoin($id: ID!) {
         roomJoin(id: $id) {
           id
-          ownerId
-          state
-          deckId
-          deck {
+          type
+          activeRound {
             id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
           }
           occupants {
             id
           }
         }
       }
-    `,
+    `),
     variables,
   });
 }
 
 export function queryRoom(
   executor: ReturnType<typeof buildHTTPExecutor>,
-  id: string
+  variables: RoomQueryVariables
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<RoomQueryVariables>({
+  return testQuery({
     executor,
-    document: gql`
+    document: graphql(/* GraphQL */ `
       query Room($id: ID!) {
         room(id: $id) {
           id
-          state
-          ownerId
-        }
-      }
-    `,
-    variables: { id },
-  });
-}
-
-export function queryOccupyingActiveRooms(
-  executor: ReturnType<typeof buildHTTPExecutor>
-) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testQuery<undefined>({
-    executor,
-    document: gql`
-      query OccupyingActiveRooms {
-        occupyingActiveRooms {
-          id
-          state
-          ownerId
-        }
-      }
-    `,
-    variables: undefined,
-  });
-}
-
-export function subscriptionRoomUpdatesByRoomSlug(
-  executor: ReturnType<typeof buildHTTPExecutor>,
-  slug: string
-) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return testSubscription<RoomUpdatesByRoomSlugSubscriptionVariables>({
-    executor,
-    document: gql`
-      subscription RoomUpdatesByRoomSlug($slug: String!) {
-        roomUpdatesByRoomSlug(slug: $slug) {
-          operation
-          value {
+          type
+          activeRound {
             id
-            deckId
             deck {
               id
             }
-            userIdOfLastAddedOccupantForSubscription
-            userOfLastAddedOccupantForSubscription {
-              id
-            }
+            isActive
             state
+            slug
+          }
+          occupants {
+            id
           }
         }
       }
-    `,
-    variables: { slug },
+    `),
+    variables,
+  });
+}
+
+export function queryOccupyingUnarchivedRooms(
+  executor: ReturnType<typeof buildHTTPExecutor>
+) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testQuery({
+    executor,
+    document: graphql(/* GraphQL */ `
+      query OccupyingUnarchivedRooms {
+        occupyingUnarchivedRooms {
+          id
+          type
+          activeRound {
+            id
+            deck {
+              id
+            }
+            isActive
+            state
+            slug
+          }
+          occupants {
+            id
+          }
+        }
+      }
+    `),
+    variables: {},
+  });
+}
+
+export function subscriptionRoomUpdatesByRoomId(
+  executor: ReturnType<typeof buildHTTPExecutor>,
+  variables: RoomUpdatesByRoomIdSubscriptionVariables
+) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return testSubscription({
+    executor,
+    document: graphql(/* GraphQL */ `
+      subscription RoomUpdatesByRoomId($id: ID!) {
+        roomUpdatesByRoomId(id: $id) {
+          operation
+          value {
+            id
+            type
+            activeRound {
+              id
+              deck {
+                id
+              }
+              isActive
+              state
+              slug
+            }
+            occupants {
+              id
+            }
+          }
+        }
+      }
+    `),
+    variables,
   });
 }

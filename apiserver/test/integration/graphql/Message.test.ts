@@ -6,25 +6,25 @@ import { PrismaClient } from "@prisma/client";
 import { cascadingDelete } from "../_helpers/truncate";
 import {
   loginAsNewlyCreatedUser,
-  mutationCreateUser,
-  mutationRefresh,
   refreshLogin,
 } from "../../helpers/graphql/User.util";
 import { testContextFactory } from "../../helpers";
 import { YogaInitialContext } from "graphql-yoga";
 import { Context } from "../../../src/context";
-import { createGraphQLApp } from "../../../src/graphqlApp";
+import { createGraphQLApp } from "../../../src/server";
 import { mutationRoomCreate } from "../../helpers/graphql/Room.util";
 import {
-  mutationMessageCreate,
-  subscriptionMessageUpdatesByRoomSlug,
+  mutationSendTextMessage,
+  subscriptionMessageUpdatesByRoomId,
 } from "../../helpers/graphql/Message.util";
 import {
   MessageContentType,
-  RoomState,
-} from "../../../generated/typescript-operations";
+  MessageUpdateOperations,
+  RoomType,
+} from "../../../generated/gql/graphql";
 import { CurrentUser } from "../../../src/service/userJWT";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { encodeGlobalID } from "@pothos/plugin-relay";
 
 describe("graphql/Message.ts", () => {
   let setSub: (sub?: CurrentUser) => void;
@@ -50,17 +50,13 @@ describe("graphql/Message.ts", () => {
   });
 
   describe("Mutation", () => {
-    describe("messageCreate", () => {
+    describe("sendTextMessage", () => {
       it("should allow the owner-occupant of the rome to create a message for the room", async () => {
         expect.assertions(3);
         // create user
-        const createUserResponse = await mutationCreateUser(executor, {
-          name: "user1",
-        });
-        const currentUser1 = createUserResponse.data.finalizeOauthSignin
-          .currentUser as CurrentUser;
-        const token = createUserResponse.data.finalizeOauthSignin
-          .token as string;
+        const { currentUser: currentUser1, token } =
+          await loginAsNewlyCreatedUser(executor, setSub, "user1");
+        const currentUsergid = encodeGlobalID("User", currentUser1.id);
         setSub(currentUser1);
 
         // create room
@@ -69,38 +65,36 @@ describe("graphql/Message.ts", () => {
           "data.roomCreate",
           expect.objectContaining({
             id: expect.any(String),
-            slug: expect.any(String),
-            state: RoomState.Waiting,
-            deck: null,
-            deckId: null,
+            activeRound: null,
+            type: RoomType.Ephemeral,
+            occupants: expect.arrayContaining([{ id: currentUsergid }]),
           })
         );
-        const roomBefore = roomCreateResponse.data.roomCreate;
+        const roomBefore = roomCreateResponse.data?.roomCreate;
 
         // we have to update our claims before we can create/send messages
-        const refreshResponse = await mutationRefresh(executor, token);
-        const currentUser2 = refreshResponse.data.refresh
-          .currentUser as CurrentUser;
-        expect(Object.keys(currentUser2.occupyingActiveRoomSlugs)).toHaveLength(
-          1
+        const { currentUser: currentUser2 } = await refreshLogin(
+          executor,
+          setSub,
+          token
         );
+        expect(Object.keys(currentUser2.occupyingRoomSlugs)).toHaveLength(1);
         setSub(currentUser2);
 
         // create message
-        const messageCreateResponse = await mutationMessageCreate(
-          executor,
-          { text: "Hello World" },
-          roomBefore.slug as string,
-          MessageContentType.Text
-        );
+        const messageCreateResponse = await mutationSendTextMessage(executor, {
+          roomId: roomBefore?.id as string,
+          textContent: "Hello World",
+        });
         expect(messageCreateResponse).toHaveProperty(
-          "data.messageCreate",
+          "data.sendTextMessage",
           expect.objectContaining({
             content: { text: "Hello World" },
             createdAt: expect.any(String),
             id: expect.any(String),
-            roomId: roomBefore.id,
-            senderId: currentUser2.id,
+            sender: {
+              id: currentUsergid,
+            },
             type: MessageContentType.Text,
           })
         );
@@ -112,12 +106,16 @@ describe("graphql/Message.ts", () => {
     // TODO: implement
   });
 
-  describe.skip("Subscription", () => {
-    describe("messageUpdatesByRoomSlug", () => {
+  describe("Subscription", () => {
+    describe("messageUpdatesByRoomId", () => {
       it("should yield an appropriate integration event when the room it is subscribed to has messageCreate run on it", async () => {
-        expect.assertions(6);
+        expect.assertions(4);
         // create user
-        const { token } = await loginAsNewlyCreatedUser(executor, setSub);
+        const { currentUser: user, token } = await loginAsNewlyCreatedUser(
+          executor,
+          setSub
+        );
+        const currentUsergid = encodeGlobalID("User", user.id);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
@@ -125,64 +123,66 @@ describe("graphql/Message.ts", () => {
           "data.roomCreate",
           expect.objectContaining({
             id: expect.any(String),
-            slug: expect.any(String),
-            state: RoomState.Waiting,
-            deck: null,
-            deckId: null,
+            activeRound: null,
+            type: RoomType.Ephemeral,
+            occupants: expect.arrayContaining([{ id: currentUsergid }]),
           })
         );
-        const roomBefore = roomCreateResponse.data.roomCreate;
+        const roomBefore = roomCreateResponse.data?.roomCreate;
 
         // we have to update our claims before we can create/send messages or establish a subscription
         const { currentUser } = await refreshLogin(executor, setSub, token);
-        expect(Object.keys(currentUser.occupyingActiveRoomSlugs)).toHaveLength(
-          1
-        );
+        expect(Object.keys(currentUser.occupyingRoomSlugs)).toHaveLength(1);
 
         // create subscription on room
-        const roomUpdates = await subscriptionMessageUpdatesByRoomSlug(
+        const roomMessageUpdates = await subscriptionMessageUpdatesByRoomId(
           executor,
-          roomBefore.slug
+          {
+            id: roomBefore?.id as string,
+          }
         );
-        const roomUpdatesIterator = roomUpdates[Symbol.asyncIterator]();
+        const roomMessageUpdatesIterator =
+          roomMessageUpdates[Symbol.asyncIterator]();
 
+        // assert subscription result for message creation
+        const readResultOneP = roomMessageUpdatesIterator.next();
         // create message
-        const messageCreateResponse = await mutationMessageCreate(
-          executor,
-          { text: "Hello World" },
-          roomBefore.slug as string,
-          MessageContentType.Text
-        );
+        const messageCreateResponse = await mutationSendTextMessage(executor, {
+          roomId: roomBefore?.id as string,
+          textContent: "Hello World",
+        });
         expect(messageCreateResponse).toHaveProperty(
-          "data.messageCreate",
+          "data.sendTextMessage",
           expect.objectContaining({
             content: { text: "Hello World" },
             createdAt: expect.any(String),
             id: expect.any(String),
-            roomId: roomBefore.id,
-            senderId: currentUser.id,
+            sender: {
+              id: currentUsergid,
+            },
             type: MessageContentType.Text,
           })
         );
 
-        // assert subscription result for message creation
-        const readResultOne = await roomUpdatesIterator.next();
+        const readResultOne = await readResultOneP;
         if (!readResultOne.done) {
           expect(readResultOne.value).toHaveProperty(
-            "data.messageUpdatesByRoomSlug",
+            "data.messageUpdatesByRoomId",
             expect.objectContaining({
-              operation: "messageCreate",
+              operation: MessageUpdateOperations.MessageCreate,
               value: {
                 content: { text: "Hello World" },
                 createdAt: expect.any(String),
                 id: expect.any(String),
-                roomId: roomBefore.id,
-                senderId: currentUser.id,
+                sender: {
+                  id: currentUsergid,
+                },
                 type: MessageContentType.Text,
               },
             })
           );
         }
+        await roomMessageUpdatesIterator.return?.();
       });
     });
   });

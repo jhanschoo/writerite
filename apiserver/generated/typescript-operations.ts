@@ -28,13 +28,20 @@ export type Scalars = {
 export type Card = Node & {
   __typename?: 'Card';
   answers: Array<Scalars['String']>;
-  deckId: Scalars['ID'];
   editedAt: Scalars['DateTime'];
   fullAnswer?: Maybe<Scalars['JSONObject']>;
   id: Scalars['ID'];
-  mainTemplate: Scalars['Boolean'];
+  isPrimaryTemplate: Scalars['Boolean'];
+  isTemplate: Scalars['Boolean'];
+  ownRecordCorrectHistory?: Maybe<Array<Scalars['DateTime']>>;
   prompt?: Maybe<Scalars['JSONObject']>;
-  template: Scalars['Boolean'];
+};
+
+export type CardCreateInput = {
+  answers: Array<Scalars['String']>;
+  fullAnswer: Scalars['JSONObject'];
+  isTemplate: Scalars['Boolean'];
+  prompt: Scalars['JSONObject'];
 };
 
 export type Deck = Node & {
@@ -55,8 +62,8 @@ export type Deck = Node & {
   name: Scalars['String'];
   ownRecordNotes?: Maybe<Scalars['JSONObject']>;
   owner: User;
-  ownerId: Scalars['ID'];
   promptLang: Scalars['String'];
+  published: Scalars['Boolean'];
   sortData: Array<Scalars['String']>;
   /** all subdecks directly belonging to this deck */
   subdecks: DeckSubdecksConnection;
@@ -132,9 +139,7 @@ export enum DecksQueryScope {
 export type Friendship = Node & {
   __typename?: 'Friendship';
   befriended: User;
-  befriendedId: Scalars['ID'];
   befriender: User;
-  befrienderId: Scalars['ID'];
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
@@ -145,10 +150,7 @@ export type Message = Node & {
   content?: Maybe<Scalars['JSONObject']>;
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
-  room: Room;
-  roomId: Scalars['ID'];
   sender: User;
-  senderId?: Maybe<Scalars['ID']>;
   type: MessageContentType;
 };
 
@@ -161,10 +163,121 @@ export enum MessageContentType {
   Text = 'TEXT'
 }
 
+/** A message indicating an operation performed on a message. */
+export type MessageUpdate = {
+  __typename?: 'MessageUpdate';
+  operation: MessageUpdateOperations;
+  value: Message;
+};
+
+/** Names identifying operations that trigger message updates. */
+export enum MessageUpdateOperations {
+  MessageCreate = 'MESSAGE_CREATE'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
+  /** Befriend the `befriendedId` user, then resolves to the user's own profile */
+  befriend: User;
+  cardCreate: Card;
+  cardDelete: Card;
+  cardEdit: Card;
+  /** add cards to a deck */
+  deckAddCards: Deck;
+  /** add a subdeck to a deck and resolve to the parent deck */
+  deckAddSubdeck: Deck;
+  /** create a new deck */
+  deckCreate: Deck;
+  /** delete the specified deck, only if its dependents are deleted */
+  deckDelete: Deck;
+  /** edit a new deck */
+  deckEdit: Deck;
+  /** add a subdeck to a deck and resolve to the parent deck */
+  deckRemoveSubdeck: Deck;
   finalizeOauthSignin?: Maybe<SessionInfo>;
   initializeOauthSignin: Scalars['String'];
+  /** Edit the user's own profile. */
+  ownProfileEdit: User;
+  recordCorrectAnswer: Card;
+  refresh?: Maybe<SessionInfo>;
+  roomArchive: Room;
+  roomCreate: Room;
+  roomEndRound: Room;
+  roomJoin: Room;
+  roomSetDeck: Room;
+  roomStartRound: Room;
+  sendTextMessage: Message;
+  /** set personal notes for a deck */
+  setOwnNotes: Deck;
+};
+
+
+export type MutationBefriendArgs = {
+  befriendedId: Scalars['ID'];
+};
+
+
+export type MutationCardCreateArgs = {
+  card: CardCreateInput;
+  deckId: Scalars['ID'];
+  isPrimaryTemplate?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationCardDeleteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationCardEditArgs = {
+  cardInput?: InputMaybe<CardCreateInput>;
+  id: Scalars['ID'];
+  isPrimaryTemplate?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationDeckAddCardsArgs = {
+  cards: Array<CardCreateInput>;
+  deckId: Scalars['ID'];
+};
+
+
+export type MutationDeckAddSubdeckArgs = {
+  deckId: Scalars['ID'];
+  subdeckId: Scalars['ID'];
+};
+
+
+export type MutationDeckCreateArgs = {
+  answerLang: Scalars['String'];
+  cards: Array<CardCreateInput>;
+  description?: InputMaybe<Scalars['JSONObject']>;
+  name: Scalars['String'];
+  notes?: InputMaybe<Scalars['JSONObject']>;
+  parentDeckId?: InputMaybe<Scalars['ID']>;
+  promptLang: Scalars['String'];
+  published?: InputMaybe<Scalars['Boolean']>;
+};
+
+
+export type MutationDeckDeleteArgs = {
+  deckId: Scalars['ID'];
+};
+
+
+export type MutationDeckEditArgs = {
+  answerLang?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['JSONObject']>;
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  notes?: InputMaybe<Scalars['JSONObject']>;
+  promptLang?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationDeckRemoveSubdeckArgs = {
+  deckId: Scalars['ID'];
+  subdeckId: Scalars['ID'];
 };
 
 
@@ -175,19 +288,63 @@ export type MutationFinalizeOauthSigninArgs = {
   redirect_uri: Scalars['String'];
 };
 
-export type Node = {
+
+export type MutationOwnProfileEditArgs = {
+  bio?: InputMaybe<Scalars['JSONObject']>;
+  isPublic?: InputMaybe<Scalars['Boolean']>;
+  name?: InputMaybe<Scalars['String']>;
+};
+
+
+export type MutationRecordCorrectAnswerArgs = {
   id: Scalars['ID'];
 };
 
-export type Occupant = Node & {
-  __typename?: 'Occupant';
-  createdAt: Scalars['DateTime'];
+
+export type MutationRefreshArgs = {
+  token: Scalars['JWT'];
+};
+
+
+export type MutationRoomArchiveArgs = {
   id: Scalars['ID'];
-  occupant: User;
-  occupantId: Scalars['ID'];
-  room: Room;
+};
+
+
+export type MutationRoomEndRoundArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationRoomJoinArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationRoomSetDeckArgs = {
+  deckId: Scalars['ID'];
+  id: Scalars['ID'];
+};
+
+
+export type MutationRoomStartRoundArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationSendTextMessageArgs = {
   roomId: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
+  textContent: Scalars['String'];
+};
+
+
+export type MutationSetOwnNotesArgs = {
+  deckId: Scalars['ID'];
+  notes: Scalars['JSONObject'];
+};
+
+export type Node = {
+  id: Scalars['ID'];
 };
 
 export type PageInfo = {
@@ -200,12 +357,15 @@ export type PageInfo = {
 
 export type Query = {
   __typename?: 'Query';
-  deck?: Maybe<Deck>;
+  deck: Deck;
   decks: QueryDecksConnection;
   health: Scalars['String'];
   me?: Maybe<User>;
   node?: Maybe<Node>;
   nodes: Array<Maybe<Node>>;
+  occupyingUnarchivedRooms?: Maybe<Array<Room>>;
+  room?: Maybe<Room>;
+  roomBySlug?: Maybe<Room>;
 };
 
 
@@ -233,6 +393,16 @@ export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
 };
 
+
+export type QueryRoomArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryRoomBySlugArgs = {
+  slug: Scalars['String'];
+};
+
 export type QueryDecksConnection = {
   __typename?: 'QueryDecksConnection';
   edges: Array<Maybe<QueryDecksConnectionEdge>>;
@@ -247,12 +417,13 @@ export type QueryDecksConnectionEdge = {
 
 export type Room = Node & {
   __typename?: 'Room';
-  createdAt: Scalars['DateTime'];
-  deck: Deck;
-  deckId?: Maybe<Scalars['ID']>;
+  activeRound?: Maybe<Round>;
   id: Scalars['ID'];
+  messageCount: Scalars['Int'];
   messages: RoomMessagesConnection;
-  slug?: Maybe<Scalars['String']>;
+  occupants: Array<User>;
+  occupantsCount: Scalars['Int'];
+  type: RoomType;
 };
 
 
@@ -275,9 +446,38 @@ export type RoomMessagesConnectionEdge = {
   node: Message;
 };
 
-export enum RoomState {
-  Served = 'SERVED',
-  Serving = 'SERVING',
+export enum RoomType {
+  Ephemeral = 'EPHEMERAL',
+  Persistent = 'PERSISTENT'
+}
+
+/** A message indicating an operation performed on a room. */
+export type RoomUpdate = {
+  __typename?: 'RoomUpdate';
+  operation: RoomUpdateOperations;
+  value: Room;
+};
+
+/** Keys identifying operations that trigger room updates. */
+export enum RoomUpdateOperations {
+  RoomArchive = 'ROOM_ARCHIVE',
+  RoomEndRound = 'ROOM_END_ROUND',
+  RoomJoin = 'ROOM_JOIN',
+  RoomSetDeck = 'ROOM_SET_DECK',
+  RoomStartRound = 'ROOM_START_ROUND'
+}
+
+export type Round = Node & {
+  __typename?: 'Round';
+  deck: Deck;
+  id: Scalars['ID'];
+  isActive: Scalars['Boolean'];
+  slug: Scalars['String'];
+  state: RoundState;
+};
+
+export enum RoundState {
+  Playing = 'PLAYING',
   Waiting = 'WAITING'
 }
 
@@ -293,15 +493,25 @@ export type Subdeck = Node & {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   parentDeck: Deck;
-  parentDeckId: Scalars['ID'];
   subdeck: Deck;
-  subdeckId: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
 };
 
 export type Subscription = {
   __typename?: 'Subscription';
+  messageUpdatesByRoomId: MessageUpdate;
   repeatHealth: Scalars['String'];
+  roomUpdatesByRoomId: RoomUpdate;
+};
+
+
+export type SubscriptionMessageUpdatesByRoomIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type SubscriptionRoomUpdatesByRoomIdArgs = {
+  id: Scalars['ID'];
 };
 
 export type User = Node & {
@@ -404,3 +614,193 @@ export type UserMutualBefriendedsConnectionEdge = {
   cursor: Scalars['ID'];
   node: User;
 };
+
+export type DeckCreateEmptyMutationVariables = Exact<{
+  answerLang: Scalars['String'];
+  cards: Array<CardCreateInput> | CardCreateInput;
+  description?: InputMaybe<Scalars['JSONObject']>;
+  name: Scalars['String'];
+  notes?: InputMaybe<Scalars['JSONObject']>;
+  parentDeckId?: InputMaybe<Scalars['ID']>;
+  promptLang: Scalars['String'];
+  published?: InputMaybe<Scalars['Boolean']>;
+}>;
+
+
+export type DeckCreateEmptyMutation = { __typename?: 'Mutation', deckCreate: { __typename?: 'Deck', id: string, answerLang: string, description?: JSONObject | null, editedAt: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, owner: { __typename?: 'User', id: string } } };
+
+export type DeckAddSubdeckMutationVariables = Exact<{
+  deckId: Scalars['ID'];
+  subdeckId: Scalars['ID'];
+}>;
+
+
+export type DeckAddSubdeckMutation = { __typename?: 'Mutation', deckAddSubdeck: { __typename?: 'Deck', id: string } };
+
+export type DeckRemoveSubdeckMutationVariables = Exact<{
+  deckId: Scalars['ID'];
+  subdeckId: Scalars['ID'];
+}>;
+
+
+export type DeckRemoveSubdeckMutation = { __typename?: 'Mutation', deckRemoveSubdeck: { __typename?: 'Deck', id: string } };
+
+export type DeckEditMutationVariables = Exact<{
+  id: Scalars['ID'];
+  name?: InputMaybe<Scalars['String']>;
+  answerLang?: InputMaybe<Scalars['String']>;
+  description?: InputMaybe<Scalars['JSONObject']>;
+  notes?: InputMaybe<Scalars['JSONObject']>;
+  promptLang?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type DeckEditMutation = { __typename?: 'Mutation', deckEdit: { __typename?: 'Deck', id: string, name: string } };
+
+export type DeckQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeckQuery = { __typename?: 'Query', deck: { __typename?: 'Deck', answerLang: string, description?: JSONObject | null, editedAt: string, name: string, promptLang: string, published: boolean, sortData: Array<string>, owner: { __typename?: 'User', id: string } } };
+
+export type DecksQueryVariables = Exact<{
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  scope?: InputMaybe<DecksQueryScope>;
+  stoplist?: InputMaybe<Array<Scalars['ID']> | Scalars['ID']>;
+}>;
+
+
+export type DecksQuery = { __typename?: 'Query', decks: { __typename?: 'QueryDecksConnection', edges: Array<{ __typename?: 'QueryDecksConnectionEdge', cursor: string, node: { __typename?: 'Deck', id: string } } | null>, pageInfo: { __typename?: 'PageInfo', endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null } } };
+
+export type BefriendMutationVariables = Exact<{
+  befriendedId: Scalars['ID'];
+}>;
+
+
+export type BefriendMutation = { __typename?: 'Mutation', befriend: { __typename?: 'User', id: string } };
+
+export type HealthQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type HealthQuery = { __typename?: 'Query', health: string };
+
+export type RepeatHealthSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RepeatHealthSubscription = { __typename?: 'Subscription', repeatHealth: string };
+
+export type SendTextMessageMutationVariables = Exact<{
+  roomId: Scalars['ID'];
+  textContent: Scalars['String'];
+}>;
+
+
+export type SendTextMessageMutation = { __typename?: 'Mutation', sendTextMessage: { __typename?: 'Message', content?: JSONObject | null, createdAt: string, id: string, type: MessageContentType, sender: { __typename?: 'User', id: string } } };
+
+export type MessageUpdatesByRoomSlugSubscriptionVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type MessageUpdatesByRoomSlugSubscription = { __typename?: 'Subscription', messageUpdatesByRoomId: { __typename?: 'MessageUpdate', operation: MessageUpdateOperations, value: { __typename?: 'Message', content?: JSONObject | null, createdAt: string, id: string, type: MessageContentType, sender: { __typename?: 'User', id: string } } } };
+
+export type RoomCreateMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RoomCreateMutation = { __typename?: 'Mutation', roomCreate: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomSetDeckMutationVariables = Exact<{
+  id: Scalars['ID'];
+  deckId: Scalars['ID'];
+}>;
+
+
+export type RoomSetDeckMutation = { __typename?: 'Mutation', roomSetDeck: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomStartRoundMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomStartRoundMutation = { __typename?: 'Mutation', roomStartRound: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomEndRoundMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomEndRoundMutation = { __typename?: 'Mutation', roomEndRound: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomArchiveMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomArchiveMutation = { __typename?: 'Mutation', roomArchive: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomJoinMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomJoinMutation = { __typename?: 'Mutation', roomJoin: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } };
+
+export type RoomQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomQuery = { __typename?: 'Query', room?: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } | null };
+
+export type OccupyingUnarchivedRoomsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OccupyingUnarchivedRoomsQuery = { __typename?: 'Query', occupyingUnarchivedRooms?: Array<{ __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> }> | null };
+
+export type RoomUpdatesByRoomIdSubscriptionVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type RoomUpdatesByRoomIdSubscription = { __typename?: 'Subscription', roomUpdatesByRoomId: { __typename?: 'RoomUpdate', operation: RoomUpdateOperations, value: { __typename?: 'Room', id: string, type: RoomType, activeRound?: { __typename?: 'Round', id: string, isActive: boolean, state: RoundState, slug: string, deck: { __typename?: 'Deck', id: string } } | null, occupants: Array<{ __typename?: 'User', id: string }> } } };
+
+export type CreateUserMutationVariables = Exact<{
+  code: Scalars['String'];
+  nonce: Scalars['String'];
+  provider: Scalars['String'];
+  redirect_uri: Scalars['String'];
+}>;
+
+
+export type CreateUserMutation = { __typename?: 'Mutation', finalizeOauthSignin?: { __typename?: 'SessionInfo', currentUser: JSONObject, token: string } | null };
+
+export type NameUserMutationVariables = Exact<{
+  name: Scalars['String'];
+}>;
+
+
+export type NameUserMutation = { __typename?: 'Mutation', ownProfileEdit: { __typename?: 'User', id: string, name: string } };
+
+export type RefreshMutationVariables = Exact<{
+  token: Scalars['JWT'];
+}>;
+
+
+export type RefreshMutation = { __typename?: 'Mutation', refresh?: { __typename?: 'SessionInfo', currentUser: JSONObject, token: string } | null };
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', isPublic: boolean, name: string, roles: Array<string> } | null };
+
+export type UserEditMutationVariables = Exact<{
+  name?: InputMaybe<Scalars['String']>;
+  isPublic?: InputMaybe<Scalars['Boolean']>;
+}>;
+
+
+export type UserEditMutation = { __typename?: 'Mutation', ownProfileEdit: { __typename?: 'User', id: string, name: string } };

@@ -5,9 +5,6 @@ import { PPRIVATABLE, User } from "../User";
 export const Friendship = builder.prismaNode("Friendship", {
   id: { field: "id" },
   fields: (t) => ({
-    befrienderId: t.exposeID("befrienderId"),
-    befriendedId: t.exposeID("befriendedId"),
-
     createdAt: t.expose("createdAt", { type: "DateTime" }),
     updatedAt: t.expose("updatedAt", { type: "DateTime" }),
 

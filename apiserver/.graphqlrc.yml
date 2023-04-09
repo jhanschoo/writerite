@@ -1,0 +1,22 @@
+schema: ./generated/schema.graphql
+documents:
+  - test/**/*.ts
+extensions:
+  codegen:
+    generates:
+      ./generated/gql/:
+        preset: client-preset
+        plugins:
+          - add:
+              content: import { JSONValue, JSONObject } from '../../src/types/jsonTypes'
+      ./generated/schema.graphql:
+        plugins:
+          - schema-ast
+    config:
+      scalars:
+        DateTime: string
+        EmailAddress: string
+        JSON: JSONValue
+        JSONObject: JSONObject
+        JWT: string
+        UUID: string

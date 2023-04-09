@@ -87,6 +87,7 @@ describe("graphql/Health.ts", () => {
         await jestForAwaitOf(
           iter as AsyncIterable<string>,
           () => jest.advanceTimersByTime(2000),
+          // eslint-disable-next-line @typescript-eslint/require-await
           async (chunk) => {
             expect(chunk).toEqual(String(counter));
             --counter;
@@ -102,6 +103,7 @@ describe("graphql/Health.ts", () => {
         await jestForAwaitOf(
           response,
           () => jest.advanceTimersByTime(2000),
+          // eslint-disable-next-line @typescript-eslint/require-await
           async (result) => {
             expect(result).toHaveProperty("data.repeatHealth", String(counter));
             --counter;

@@ -2,7 +2,7 @@
 import { YogaInitialContext } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
 import { Context } from "../../src/context";
-import { createGraphQLApp } from "../../src/graphqlApp";
+import { createGraphQLApp } from "../../src/server";
 import {
   mutationCreateUser,
   queryHealth,

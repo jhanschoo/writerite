@@ -5,9 +5,6 @@ import { Deck, PPRIVATABLE } from "../Deck";
 export const Subdeck = builder.prismaNode("Subdeck", {
   id: { field: "id" },
   fields: (t) => ({
-    parentDeckId: t.exposeID("parentDeckId"),
-    subdeckId: t.exposeID("subdeckId"),
-
     createdAt: t.expose("createdAt", { type: "DateTime" }),
     updatedAt: t.expose("updatedAt", { type: "DateTime" }),
 

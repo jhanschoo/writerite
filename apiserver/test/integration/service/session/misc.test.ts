@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from "@prisma/client";
 import { YogaInitialContext } from "graphql-yoga";
+import { decodeGlobalID, encodeGlobalID } from "@pothos/plugin-relay";
 
 import { cascadingDelete } from "../../_helpers/truncate";
 import { loginAsNewlyCreatedUser, testContextFactory } from "../../../helpers";
@@ -19,7 +20,7 @@ import {
 } from "../../../../src/service/authentication/util";
 import {
   getClaims,
-  invalidateByRoomSlug,
+  invalidateByRoomId,
   invalidateByUserId,
 } from "../../../../src/service/session";
 import { mutationRoomCreate } from "../../../helpers/graphql/Room.util";
@@ -72,14 +73,14 @@ describe("service/session", () => {
 
     // setup JWT
     const userJWT = await currentUserToUserJWT(currentUser);
+    const rid = decodeGlobalID(
+      roomCreateResponse.data?.roomCreate.id as string
+    );
     expect(currentUser).toEqual({
       id: user.id,
       name: user.name,
       roles: [Roles.User],
-      occupyingActiveRoomSlugs: {
-        [roomCreateResponse.data.roomCreate.slug]:
-          roomCreateResponse.data.roomCreate.id,
-      },
+      occupyingRoomSlugs: { [rid.id]: null },
     });
 
     // validate JWT
@@ -158,10 +159,10 @@ describe("service/session", () => {
 
     // invalidate JWT
     await sleep(1010);
-    await invalidateByRoomSlug(
-      redis,
-      roomCreateResponse.data.roomCreate.slug as string
+    const lid = decodeGlobalID(
+      roomCreateResponse.data?.roomCreate.id as string
     );
+    await invalidateByRoomId(redis, lid.id);
 
     // check JWT validity
     const authorization = `Bearer ${userJWT}`;
