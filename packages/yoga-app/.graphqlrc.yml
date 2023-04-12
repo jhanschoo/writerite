@@ -1,4 +1,4 @@
-schema: node_modules/yoga-app/generated/schema.graphql
+schema: ./generated/schema.graphql
 documents:
   - test/**/*.ts
 extensions:
@@ -9,6 +9,9 @@ extensions:
         plugins:
           - add:
               content: import { JSONValue, JSONObject } from '../../../src/types/jsonTypes'
+      ./generated/schema.graphql:
+        plugins:
+          - schema-ast
     config:
       scalars:
         DateTime: string

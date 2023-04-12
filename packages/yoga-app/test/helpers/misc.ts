@@ -1,15 +1,14 @@
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
-import { PrismaClient } from "database";
-import { ExecutionResult } from "graphql";
-import Redis from "ioredis";
-import { JWTPayload } from "jose";
-import {
-  ContextFactoryReturnType,
-  contextFactory,
-} from "../../src/context";
-import { parseArbitraryJWT } from "yoga-app/src/service/crypto";
-import { Context, CurrentUser, PubSubPublishArgs } from "yoga-app";
-import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import type { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import type { PrismaClient } from "database";
+import type { ExecutionResult } from "graphql";
+import type Redis from "ioredis";
+import type { JWTPayload } from "jose";
+import type { Context } from "../../src/context";
+import { parseArbitraryJWT } from "../../src/service/crypto";
+import type { CurrentUser } from "../../src/service/userJWT";
+import type { PubSubPublishArgs } from "../../src/types/PubSubPublishArgs";
+import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import type { YogaInitialContext } from "graphql-yoga";
 
 function assertSingleValue<TValue extends ExecutionResult<any, any>>(
   value: TValue | AsyncIterable<TValue>
@@ -35,25 +34,26 @@ export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
 }
 
 export function testContextFactory<
-  T extends PrismaClient,
-  U extends PubSubPublishArgs,
+  P extends PrismaClient,
+  Q extends PubSubPublishArgs,
   R extends Redis
 >(
-  opts?: Partial<Context<T, U, R>> &
-    Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">
-): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType<T, U, R>];
-export function testContextFactory(
-  opts?: Partial<Context>
-): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType];
-export function testContextFactory(
-  opts?: Partial<Context>
-): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType] {
+  { prisma, pubsub, redis }: Pick<Context<P, Q, R>, "prisma" | "pubsub" | "redis">,
+): [(sub?: CurrentUser) => void, (initialContext: YogaInitialContext) => Promise<Context>] {
   let sub: CurrentUser | undefined;
   return [
     (newSub) => {
       sub = newSub;
     },
-    ...contextFactory(opts, () => Promise.resolve(sub)),
+    async (ctx: YogaInitialContext): Promise<Context> => {
+      return {
+        ...ctx,
+        sub,
+        prisma,
+        pubsub,
+        redis,
+      };
+    }
   ];
 }
 

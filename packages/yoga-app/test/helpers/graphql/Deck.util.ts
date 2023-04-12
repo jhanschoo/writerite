@@ -1,11 +1,11 @@
 import { graphql } from "../../generated/gql";
-import { DeckQueryVariables } from "../../generated/gql/graphql";
-import { DecksQueryVariables } from "../../generated/gql/graphql";
 import {
   DeckAddSubdeckMutationVariables,
   DeckCreateEmptyMutationVariables,
   DeckEditMutationVariables,
   DeckRemoveSubdeckMutationVariables,
+  DecksQueryVariables,
+  DeckQueryVariables,
 } from "../../generated/gql/graphql";
 import { testQuery } from "../misc";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";

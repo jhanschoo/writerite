@@ -4,12 +4,8 @@ import { PubSub, YogaInitialContext, createPubSub } from "graphql-yoga";
 
 import { PrismaClient } from "database";
 
-import { Roles } from "./service/userJWT/Roles";
-import { CurrentUser } from "./service/userJWT/CurrentUser";
+import { Context, CurrentUser, getClaims, PubSubPublishArgs } from "yoga-app";
 import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
-import { FETCH_DEPTH } from "./constants";
-import { getClaims } from "./service/session";
-import { PubSubPublishArgs } from "./types/PubSubPublishArgs";
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 
@@ -32,22 +28,6 @@ const pubSubRedisOptions = {
   ...commonRedisOptions,
   db: 2,
 };
-
-export interface Context<
-  P extends PrismaClient = PrismaClient,
-  Q extends PubSubPublishArgs = PubSubPublishArgs,
-  R extends Redis = Redis
-> extends YogaInitialContext {
-  fetchDepth: number;
-  sub?: CurrentUser;
-  prisma: P;
-  pubsub: PubSub<Q>;
-  redis: R;
-}
-
-export interface LoggedInContext extends Context {
-  sub: CurrentUser;
-}
 
 export type ContextFactoryReturnType<
   P extends PrismaClient = PrismaClient,
@@ -122,7 +102,6 @@ export function contextFactory<
         (await getClaims(ctx, redis));
       return {
         ...ctx,
-        fetchDepth: opts?.fetchDepth ?? FETCH_DEPTH,
         sub,
         prisma,
         pubsub,

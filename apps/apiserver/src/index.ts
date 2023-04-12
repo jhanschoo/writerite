@@ -2,7 +2,7 @@ import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/lib/use/ws";
 
 import { contextFactory } from "./context";
-import { WrServer, createGraphQLApp } from "./server";
+import { WrServer, createYogaServerApp } from "yoga-app";
 import { RequestListener, Server, createServer } from "http";
 
 const { NODE_ENV } = process.env;
@@ -11,7 +11,7 @@ export const [contextFn, stopContextServices] = contextFactory();
 
 const graphqlEndpoint = "/graphql";
 
-export const yoga: WrServer = createGraphQLApp({
+export const yoga: WrServer = createYogaServerApp({
   context: contextFn,
   cors: {
     origin:

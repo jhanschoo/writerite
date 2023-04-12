@@ -1,6 +1,6 @@
 import { graphql } from "../../generated/gql";
 import { testQuery } from "../misc";
-import { CurrentUser } from "yoga-app";
+import { CurrentUser } from "../../../src/service/userJWT";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 import {
   MeQueryVariables,
