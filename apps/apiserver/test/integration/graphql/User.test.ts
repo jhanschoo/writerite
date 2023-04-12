@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "database";
 import { YogaInitialContext } from "graphql-yoga";
 
 import { cascadingDelete } from "../_helpers/truncate";

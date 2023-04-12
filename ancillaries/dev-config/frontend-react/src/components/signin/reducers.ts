@@ -14,7 +14,10 @@ export const initialState: SigninState = {
 };
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
-export const signin: Reducer<SigninState, AuthorizationAction> = (state = initialState, action: AuthorizationAction): SigninState => {
+export const signin: Reducer<SigninState, AuthorizationAction> = (
+  state = initialState,
+  action: AuthorizationAction
+): SigninState => {
   switch (action.type) {
     case ActionTypes.SIGNIN:
       if (action.session === null) {

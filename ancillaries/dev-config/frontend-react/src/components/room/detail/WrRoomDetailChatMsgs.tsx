@@ -1,8 +1,18 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { useQuery } from "@apollo/client";
-import { CHAT_MSGS_OF_ROOM_QUERY, CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION } from "src/gql";
-import { ChatMsgContentType, ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables, ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables, UpdateType } from "src/gqlTypes";
+import {
+  CHAT_MSGS_OF_ROOM_QUERY,
+  CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
+} from "src/gql";
+import {
+  ChatMsgContentType,
+  ChatMsgsOfRoomQuery,
+  ChatMsgsOfRoomQueryVariables,
+  ChatMsgsOfRoomUpdatesSubscription,
+  ChatMsgsOfRoomUpdatesSubscriptionVariables,
+  UpdateType,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Item, List } from "src/ui";
@@ -39,17 +49,38 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
       }
     }
   }, [fixToBottom]);
-  const { data, subscribeToMore } = useQuery<ChatMsgsOfRoomQuery, ChatMsgsOfRoomQueryVariables>(CHAT_MSGS_OF_ROOM_QUERY, { variables: {
-    roomId,
-  } });
+  const { data, subscribeToMore } = useQuery<
+    ChatMsgsOfRoomQuery,
+    ChatMsgsOfRoomQueryVariables
+  >(CHAT_MSGS_OF_ROOM_QUERY, {
+    variables: {
+      roomId,
+    },
+  });
   useEffect(() => {
-    subscribeToMore<ChatMsgsOfRoomUpdatesSubscription, ChatMsgsOfRoomUpdatesSubscriptionVariables>({
+    subscribeToMore<
+      ChatMsgsOfRoomUpdatesSubscription,
+      ChatMsgsOfRoomUpdatesSubscriptionVariables
+    >({
       document: CHAT_MSGS_OF_ROOM_UPDATES_SUBSCRIPTION,
       variables: { roomId },
-      updateQuery(prev, { subscriptionData: { data: { chatMsgsOfRoomUpdates } } }) {
+      updateQuery(
+        prev,
+        {
+          subscriptionData: {
+            data: { chatMsgsOfRoomUpdates },
+          },
+        }
+      ) {
         switch (chatMsgsOfRoomUpdates?.type) {
           case UpdateType.CREATED:
-            return { ...prev, chatMsgsOfRoom: [...prev.chatMsgsOfRoom ?? [], chatMsgsOfRoomUpdates.data] };
+            return {
+              ...prev,
+              chatMsgsOfRoom: [
+                ...(prev.chatMsgsOfRoom ?? []),
+                chatMsgsOfRoomUpdates.data,
+              ],
+            };
           default:
             return prev;
         }
@@ -70,30 +101,57 @@ const WrRoomDetailChatMsgs = ({ roomId }: Props): JSX.Element => {
     if (!current) {
       return;
     }
-    if (current.scrollTop + current.clientHeight > current.scrollHeight - SCROLL_BUFFER) {
+    if (
+      current.scrollTop + current.clientHeight >
+      current.scrollHeight - SCROLL_BUFFER
+    ) {
       return setFixToBottom(true);
     }
     return setFixToBottom(false);
   };
   const msgItems: JSX.Element[] = [];
-  const msgs = data?.chatMsgsOfRoom?.filter((chatMsg): chatMsg is DiscriminatedChatMsgDetail => Boolean(chatMsg && chatMsg.type !== ChatMsgContentType.ROUND_WIN)).sort((a, b) => a.createdAt === b.createdAt ? 0 : a.createdAt < b.createdAt ? -1 : 1);
+  const msgs = data?.chatMsgsOfRoom
+    ?.filter((chatMsg): chatMsg is DiscriminatedChatMsgDetail =>
+      Boolean(chatMsg && chatMsg.type !== ChatMsgContentType.ROUND_WIN)
+    )
+    .sort((a, b) =>
+      a.createdAt === b.createdAt ? 0 : a.createdAt < b.createdAt ? -1 : 1
+    );
   if (msgs && msgs.length > 0) {
-    let msgItemGroup: [DiscriminatedChatMsgDetail, ...DiscriminatedChatMsgDetail[]] = [msgs[0]];
+    let msgItemGroup: [
+      DiscriminatedChatMsgDetail,
+      ...DiscriminatedChatMsgDetail[]
+    ] = [msgs[0]];
     for (let i = 1; i < msgs.length; ++i) {
-      if (msgs[i].type === msgItemGroup[0].type && msgs[i].senderId === msgItemGroup[0].senderId) {
+      if (
+        msgs[i].type === msgItemGroup[0].type &&
+        msgs[i].senderId === msgItemGroup[0].senderId
+      ) {
         msgItemGroup.push(msgs[i]);
       } else {
-        msgItems.push(<WrRoomDetailChatMsgItem key={`${msgItemGroup[0].id}-group`} chatMsgs={msgItemGroup} />);
+        msgItems.push(
+          <WrRoomDetailChatMsgItem
+            key={`${msgItemGroup[0].id}-group`}
+            chatMsgs={msgItemGroup}
+          />
+        );
         msgItemGroup = [msgs[i]];
       }
     }
-    msgItems.push(<WrRoomDetailChatMsgItem key={`${msgItemGroup[0].id}-group`} chatMsgs={msgItemGroup} />);
+    msgItems.push(
+      <WrRoomDetailChatMsgItem
+        key={`${msgItemGroup[0].id}-group`}
+        chatMsgs={msgItemGroup}
+      />
+    );
   }
 
-  return <ConversationList onScroll={handleScroll} ref={conversationEl}>
-    <SpacerItem key="spacer" />
-    {msgItems}
-  </ConversationList>;
+  return (
+    <ConversationList onScroll={handleScroll} ref={conversationEl}>
+      <SpacerItem key="spacer" />
+      {msgItems}
+    </ConversationList>
+  );
 };
 
 export default WrRoomDetailChatMsgs;

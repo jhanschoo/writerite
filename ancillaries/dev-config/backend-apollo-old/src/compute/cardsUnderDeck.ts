@@ -1,7 +1,13 @@
 import { Card, PrismaClient } from "@prisma/client";
 
 // Further work: filtering of cards may be implemented
-export const cardsUnderDeck = async ({ id: rootDeckId, prisma }: { id: string, prisma: PrismaClient }): Promise<Card[]> => {
+export const cardsUnderDeck = async ({
+  id: rootDeckId,
+  prisma,
+}: {
+  id: string;
+  prisma: PrismaClient;
+}): Promise<Card[]> => {
   const processed = new Set([rootDeckId]);
   const cards: { [id: string]: Card } = {};
   const aux = async (deckId: string): Promise<void> => {

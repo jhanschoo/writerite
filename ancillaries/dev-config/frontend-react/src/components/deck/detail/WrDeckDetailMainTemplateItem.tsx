@@ -6,16 +6,38 @@ import { useDispatch } from "react-redux";
 import { SetOneAction, createSetOne } from "./actions";
 
 import { useMutation } from "@apollo/client";
-import { CARD_CREATE_MUTATION, CARD_DELETE_MUTATION, CARD_EDIT_MUTATION, cardCreateMutationUpdate, cardDeleteMutationUpdate } from "src/gql";
-import type { CardCreateMutation, CardCreateMutationVariables, CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables } from "src/gqlTypes";
+import {
+  CARD_CREATE_MUTATION,
+  CARD_DELETE_MUTATION,
+  CARD_EDIT_MUTATION,
+  cardCreateMutationUpdate,
+  cardDeleteMutationUpdate,
+} from "src/gql";
+import type {
+  CardCreateMutation,
+  CardCreateMutationVariables,
+  CardDeleteMutation,
+  CardDeleteMutationVariables,
+  CardDetail,
+  CardEditMutation,
+  CardEditMutationVariables,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
 import { FrontBackCard, FrontBackCardButtonsBox } from "src/ui-components";
 
 import { emptyFields, emptyRawContent, pushRawContent } from "src/util";
-import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, pushStringArray, rawToAnswer } from "src/components/editor/AnswersEditor";
-import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
+import AnswersEditor, {
+  answersEditorStateFromStringArray,
+  answersEditorStateToStringArray,
+  prependAnswer,
+  pushStringArray,
+  rawToAnswer,
+} from "src/components/editor/AnswersEditor";
+import NotesEditor, {
+  notesEditorStateFromRaw,
+} from "src/components/editor/NotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 import WrDeckDetailFiledTemplatesModal from "./WrDeckDetailFiledTemplatesModal";
 
@@ -84,12 +106,28 @@ interface Fields {
 }
 
 type FieldsEditorStates = [EditorState, EditorState, EditorState];
-type Pusher<T> = (state: EditorState, content: T, changeType: EditorChangeType) => EditorState;
+type Pusher<T> = (
+  state: EditorState,
+  content: T,
+  changeType: EditorChangeType
+) => EditorState;
 const pushEmptyStates = (states: FieldsEditorStates): FieldsEditorStates =>
-  states.map((state) => pushRawContent(state, emptyRawContent, "remove-range")) as FieldsEditorStates;
-const pushContent = <T, U, V>(states: FieldsEditorStates, pushers: [Pusher<T>, Pusher<U>, Pusher<V>], contents: [T, U, V]) =>
-  [null, null, null].map((_null, n: number) => pushers[n](states[n], contents[n] as T & U & V, "insert-fragment")) as FieldsEditorStates;
-const fieldPushers: [Pusher<Record<string, unknown>>, Pusher<Record<string, unknown>>, Pusher<readonly string[]>] = [pushRawContent, pushRawContent, pushStringArray];
+  states.map((state) =>
+    pushRawContent(state, emptyRawContent, "remove-range")
+  ) as FieldsEditorStates;
+const pushContent = <T, U, V>(
+  states: FieldsEditorStates,
+  pushers: [Pusher<T>, Pusher<U>, Pusher<V>],
+  contents: [T, U, V]
+) =>
+  [null, null, null].map((_null, n: number) =>
+    pushers[n](states[n], contents[n] as T & U & V, "insert-fragment")
+  ) as FieldsEditorStates;
+const fieldPushers: [
+  Pusher<Record<string, unknown>>,
+  Pusher<Record<string, unknown>>,
+  Pusher<readonly string[]>
+] = [pushRawContent, pushRawContent, pushStringArray];
 
 const WrDeckDetailMainTemplateItem = ({
   deckId,
@@ -98,28 +136,41 @@ const WrDeckDetailMainTemplateItem = ({
 }: Props): JSX.Element => {
   const {
     // eslint-disable-next-line no-shadow
-    id, prompt, fullAnswer, answers,
+    id,
+    prompt,
+    fullAnswer,
+    answers,
   } = card ?? {
     id: null,
     ...emptyFields,
   };
   const initialFields = { prompt, fullAnswer, answers } as Fields;
   const dispatch = useDispatch<Dispatch<SetOneAction>>();
-  const [promptEditorState, setPromptEditorState] =
-    useState(notesEditorStateFromRaw(prompt as Record<string, unknown>));
-  const [fullAnswerEditorState, setFullAnswerEditorState] =
-    useState(notesEditorStateFromRaw(fullAnswer as Record<string, unknown>));
-  const [answersEditorState, setAnswersEditorState] =
-    useState(answersEditorStateFromStringArray(answers));
+  const [promptEditorState, setPromptEditorState] = useState(
+    notesEditorStateFromRaw(prompt as Record<string, unknown>)
+  );
+  const [fullAnswerEditorState, setFullAnswerEditorState] = useState(
+    notesEditorStateFromRaw(fullAnswer as Record<string, unknown>)
+  );
+  const [answersEditorState, setAnswersEditorState] = useState(
+    answersEditorStateFromStringArray(answers)
+  );
   const [currentFields, setCurrentFields] = useState(initialFields);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showTemplatesModal, setShowTemplatesModal] = useState(false);
-  const setEditorStates = ([promptState, fullAnswerState, answersState]: FieldsEditorStates) => {
+  const setEditorStates = ([
+    promptState,
+    fullAnswerState,
+    answersState,
+  ]: FieldsEditorStates) => {
     setPromptEditorState(promptState);
     setFullAnswerEditorState(fullAnswerState);
     setAnswersEditorState(answersState);
   };
-  const [mutateAddCard] = useMutation<CardCreateMutation, CardCreateMutationVariables>(CARD_CREATE_MUTATION, {
+  const [mutateAddCard] = useMutation<
+    CardCreateMutation,
+    CardCreateMutationVariables
+  >(CARD_CREATE_MUTATION, {
     update: cardCreateMutationUpdate,
     onCompleted(createdData) {
       if (createdData.cardCreate) {
@@ -127,54 +178,98 @@ const WrDeckDetailMainTemplateItem = ({
       }
     },
   });
-  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
+  const [mutateDelete, { loading: loadingDelete }] = useMutation<
+    CardDeleteMutation,
+    CardDeleteMutationVariables
+  >(CARD_DELETE_MUTATION, {
     update: cardDeleteMutationUpdate,
   });
-  const [mutateEditTemplate, { loading: loadingEdit }] =
-    useMutation<CardEditMutation, CardEditMutationVariables>(CARD_EDIT_MUTATION);
-  const [mutateCreateTemplate, { loading: loadingCreate }] =
-    useMutation<CardCreateMutation, CardCreateMutationVariables>(CARD_CREATE_MUTATION, { update: cardCreateMutationUpdate });
+  const [mutateEditTemplate, { loading: loadingEdit }] = useMutation<
+    CardEditMutation,
+    CardEditMutationVariables
+  >(CARD_EDIT_MUTATION);
+  const [mutateCreateTemplate, { loading: loadingCreate }] = useMutation<
+    CardCreateMutation,
+    CardCreateMutationVariables
+  >(CARD_CREATE_MUTATION, { update: cardCreateMutationUpdate });
   const handleAddCard = () => {
-    void mutateAddCard({ variables: {
-      deckId,
-      card: currentFields,
-      mainTemplate: false,
-    } });
+    void mutateAddCard({
+      variables: {
+        deckId,
+        card: currentFields,
+        mainTemplate: false,
+      },
+    });
     setCurrentFields(initialFields);
-    setEditorStates(pushContent(
-      pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]),
-      fieldPushers,
-      [prompt as Record<string, unknown>, fullAnswer as Record<string, unknown>, answers],
-    ));
+    setEditorStates(
+      pushContent(
+        pushEmptyStates([
+          promptEditorState,
+          fullAnswerEditorState,
+          answersEditorState,
+        ]),
+        fieldPushers,
+        [
+          prompt as Record<string, unknown>,
+          fullAnswer as Record<string, unknown>,
+          answers,
+        ]
+      )
+    );
   };
   const handleSave = () => {
     if (id) {
       void mutateEditTemplate({ variables: { id, ...currentFields } });
     } else {
-      void mutateCreateTemplate({ variables: { deckId, card: { ...currentFields, template: true }, mainTemplate: true } });
+      void mutateCreateTemplate({
+        variables: {
+          deckId,
+          card: { ...currentFields, template: true },
+          mainTemplate: true,
+        },
+      });
     }
     // note: id field is wrong value while creation in-flight, thus handleSave, handleFileAway are disabled till it resolves
   };
   const handleFileAway = () => {
     if (id) {
-      void mutateEditTemplate({ variables: { id, ...currentFields, mainTemplate: false } });
+      void mutateEditTemplate({
+        variables: { id, ...currentFields, mainTemplate: false },
+      });
     } else {
-      void mutateCreateTemplate({ variables: { deckId, card: { ...currentFields, template: true }, mainTemplate: false } });
+      void mutateCreateTemplate({
+        variables: {
+          deckId,
+          card: { ...currentFields, template: true },
+          mainTemplate: false,
+        },
+      });
     }
     // note: id field is wrong value while creation in-flight, thus handleSave, handleFileAway are disabled till it resolves
     setCurrentFields(emptyFields);
-    setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
+    setEditorStates(
+      pushEmptyStates([
+        promptEditorState,
+        fullAnswerEditorState,
+        answersEditorState,
+      ])
+    );
   };
-  const handleChange = (newFields: Partial<Fields>) => setCurrentFields({ ...currentFields, ...newFields });
+  const handleChange = (newFields: Partial<Fields>) =>
+    setCurrentFields({ ...currentFields, ...newFields });
   const handlePromptChange = (nextEditorState: EditorState) => {
     handleChange({
-      prompt: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>,
+      prompt: convertToRaw(
+        nextEditorState.getCurrentContent()
+      ) as unknown as Record<string, unknown>,
     });
     return nextEditorState;
   };
   const handleFullAnswerChange = (nextEditorState: EditorState) => {
     handleChange({
-      fullAnswer: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>,
+      fullAnswer: convertToRaw(
+        nextEditorState.getCurrentContent()
+      ) as unknown as Record<string, unknown>,
     });
     return nextEditorState;
   };
@@ -194,61 +289,96 @@ const WrDeckDetailMainTemplateItem = ({
   };
   const handleDelete = () => {
     if (id) {
-      void mutateDelete({ variables: {
-        id,
-      } });
+      void mutateDelete({
+        variables: {
+          id,
+        },
+      });
     }
     setCurrentFields(emptyFields);
-    setEditorStates(pushEmptyStates([promptEditorState, fullAnswerEditorState, answersEditorState]));
+    setEditorStates(
+      pushEmptyStates([
+        promptEditorState,
+        fullAnswerEditorState,
+        answersEditorState,
+      ])
+    );
   };
   const loading = loadingCreate || loadingEdit || loadingDelete;
-  return <StyledItem>
-    {showTemplatesModal && <WrDeckDetailFiledTemplatesModal
-      handleClose={handleHideTemplatesModal}
-      templates={templates}
-    />}
-    {showDeleteModal && <WrDeckDetailCardDeleteModal
-      handleClose={handleHideDeleteModal}
-      handleDelete={handleDelete}
-      template={true}
-      card={card}
-    />}
-    <FrontBackCard
-      header={<StyledHeader>
-        <h4>Current template</h4>
-        <ShowTemplatesButton onClick={handleShowTemplatesModal}>Filed Templates</ShowTemplatesButton>
-      </StyledHeader>}
-      promptContent={<NotesEditor
-        editorState={promptEditorState}
-        setEditorState={setPromptEditorState}
-        handleChange={handlePromptChange}
-        placeholder={"Empty prompt. Try writing something..."}
-      />}
-      fullAnswerContent={<NotesEditor
-        editorState={fullAnswerEditorState}
-        setEditorState={setFullAnswerEditorState}
-        handleChange={handleFullAnswerChange}
-        placeholder={"Empty answer. Try writing something..."}
-      />}
-      beforeAnswersContent={generatedAnswer && !currentFields.answers.includes(generatedAnswer) &&
-        <SecondaryButton onClick={addGeneratedAnswer}>
-          add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
-        </SecondaryButton>
-      }
-      answersContent={<AnswersEditor
-        editorState={answersEditorState}
-        setEditorState={setAnswersEditorState}
-        handleChange={handleAnswersChange}
-      />}
-      footer={<FrontBackCardButtonsBox>
-        <DeleteButton onClick={handleShowDeleteModal} disabled={loading}>delete</DeleteButton>
-        {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
-        <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
-        <SecondaryButton onClick={handleFileAway} disabled={loading}>File away</SecondaryButton>
-        <AddCardButton onClick={handleAddCard} disabled={loading}>Save as Card</AddCardButton>
-      </FrontBackCardButtonsBox>}
-    />
-  </StyledItem>;
+  return (
+    <StyledItem>
+      {showTemplatesModal && (
+        <WrDeckDetailFiledTemplatesModal
+          handleClose={handleHideTemplatesModal}
+          templates={templates}
+        />
+      )}
+      {showDeleteModal && (
+        <WrDeckDetailCardDeleteModal
+          handleClose={handleHideDeleteModal}
+          handleDelete={handleDelete}
+          template={true}
+          card={card}
+        />
+      )}
+      <FrontBackCard
+        header={
+          <StyledHeader>
+            <h4>Current template</h4>
+            <ShowTemplatesButton onClick={handleShowTemplatesModal}>
+              Filed Templates
+            </ShowTemplatesButton>
+          </StyledHeader>
+        }
+        promptContent={
+          <NotesEditor
+            editorState={promptEditorState}
+            setEditorState={setPromptEditorState}
+            handleChange={handlePromptChange}
+            placeholder={"Empty prompt. Try writing something..."}
+          />
+        }
+        fullAnswerContent={
+          <NotesEditor
+            editorState={fullAnswerEditorState}
+            setEditorState={setFullAnswerEditorState}
+            handleChange={handleFullAnswerChange}
+            placeholder={"Empty answer. Try writing something..."}
+          />
+        }
+        beforeAnswersContent={
+          generatedAnswer &&
+          !currentFields.answers.includes(generatedAnswer) && (
+            <SecondaryButton onClick={addGeneratedAnswer}>
+              add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
+            </SecondaryButton>
+          )
+        }
+        answersContent={
+          <AnswersEditor
+            editorState={answersEditorState}
+            setEditorState={setAnswersEditorState}
+            handleChange={handleAnswersChange}
+          />
+        }
+        footer={
+          <FrontBackCardButtonsBox>
+            <DeleteButton onClick={handleShowDeleteModal} disabled={loading}>
+              delete
+            </DeleteButton>
+            {/* Following button intentionally does not become disabled upon loading, since unnecessary */}
+            <SecondaryButton onClick={handleSave}>Save</SecondaryButton>
+            <SecondaryButton onClick={handleFileAway} disabled={loading}>
+              File away
+            </SecondaryButton>
+            <AddCardButton onClick={handleAddCard} disabled={loading}>
+              Save as Card
+            </AddCardButton>
+          </FrontBackCardButtonsBox>
+        }
+      />
+    </StyledItem>
+  );
 };
 
 export default WrDeckDetailMainTemplateItem;

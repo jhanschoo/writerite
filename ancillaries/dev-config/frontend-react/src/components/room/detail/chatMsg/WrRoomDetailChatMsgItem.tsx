@@ -15,7 +15,11 @@ const WrRoomDetailChatMsgItem = ({ chatMsgs }: Props): JSX.Element | null => {
   const [chatMsg] = chatMsgs;
   switch (chatMsg.type) {
     case ChatMsgContentType.TEXT:
-      return <WrRoomDetailTextChatMsgItem chatMsgs={chatMsgs as [TextChatMsgDetail, ...TextChatMsgDetail[]]} />;
+      return (
+        <WrRoomDetailTextChatMsgItem
+          chatMsgs={chatMsgs as [TextChatMsgDetail, ...TextChatMsgDetail[]]}
+        />
+      );
     case ChatMsgContentType.ROUND_START:
       return <WrRoomDetailRoundStartChatMsgItem chatMsg={chatMsg} />;
     case ChatMsgContentType.ROUND_SCORE:

@@ -11,7 +11,7 @@ export interface CardsOfDeckQuery_cardsOfDeck_ownRecord {
   readonly __typename: "UserCardRecord";
   readonly cardId: string;
   readonly userId: string;
-  readonly correctRecord: ReadonlyArray<(GraphQLDateTime | null)>;
+  readonly correctRecord: ReadonlyArray<GraphQLDateTime | null>;
 }
 
 export interface CardsOfDeckQuery_cardsOfDeck {
@@ -29,7 +29,7 @@ export interface CardsOfDeckQuery_cardsOfDeck {
 }
 
 export interface CardsOfDeckQuery {
-  readonly cardsOfDeck: ReadonlyArray<(CardsOfDeckQuery_cardsOfDeck | null)> | null;
+  readonly cardsOfDeck: ReadonlyArray<CardsOfDeckQuery_cardsOfDeck | null> | null;
 }
 
 export interface CardsOfDeckQueryVariables {

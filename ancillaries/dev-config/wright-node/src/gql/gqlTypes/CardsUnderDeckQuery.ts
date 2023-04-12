@@ -21,7 +21,7 @@ export interface CardsUnderDeckQuery_cardsUnderDeck {
 }
 
 export interface CardsUnderDeckQuery {
-  readonly cardsUnderDeck: ReadonlyArray<(CardsUnderDeckQuery_cardsUnderDeck | null)> | null;
+  readonly cardsUnderDeck: ReadonlyArray<CardsUnderDeckQuery_cardsUnderDeck | null> | null;
 }
 
 export interface CardsUnderDeckQueryVariables {

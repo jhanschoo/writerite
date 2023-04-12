@@ -11,7 +11,7 @@ export type FieldResolver<
   TSource,
   TContext,
   TArgs = Record<string, unknown>,
-  TReturn = unknown,
+  TReturn = unknown
 > = (
   source: TSource,
   args: TArgs,

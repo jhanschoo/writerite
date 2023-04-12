@@ -11,11 +11,7 @@ interface Props {
   justifyLeading?: boolean;
 }
 
-export const DecksList = ({
-  decks,
-  component: DeckItemComponent,
-  justifyLeading,
-}: Props) => {
+export const DecksList = ({ decks, component: DeckItemComponent, justifyLeading }: Props) => {
   const decksList =
     decks?.map((deck, index) => <DeckItemComponent key={index} deck={deck} />) || [];
   if (!justifyLeading) {

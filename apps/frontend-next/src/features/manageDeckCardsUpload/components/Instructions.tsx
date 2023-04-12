@@ -4,7 +4,10 @@ import { IconArrowRight } from '@tabler/icons-react';
 export const Instructions = ({
   onCancel,
   onNextStep,
-}: { onCancel(): unknown; onNextStep(): unknown }) => {
+}: {
+  onCancel(): unknown;
+  onNextStep(): unknown;
+}) => {
   return (
     <Stack>
       <Text>

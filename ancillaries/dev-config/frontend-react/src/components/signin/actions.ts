@@ -17,7 +17,9 @@ export interface UserEditAction {
 
 export type AuthorizationAction = SigninAction | UserEditAction;
 
-export const createSignin = (session: CurrentUserAndToken | null): SigninAction => ({
+export const createSignin = (
+  session: CurrentUserAndToken | null
+): SigninAction => ({
   type: ActionTypes.SIGNIN,
   session,
 });

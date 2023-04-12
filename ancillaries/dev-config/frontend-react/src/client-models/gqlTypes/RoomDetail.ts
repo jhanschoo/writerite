@@ -33,5 +33,5 @@ export interface RoomDetail {
   readonly internalConfig: GraphQLJSONObject;
   readonly state: RoomState;
   readonly owner: RoomDetail_owner | null;
-  readonly occupants: ReadonlyArray<(RoomDetail_occupants | null)> | null;
+  readonly occupants: ReadonlyArray<RoomDetail_occupants | null> | null;
 }

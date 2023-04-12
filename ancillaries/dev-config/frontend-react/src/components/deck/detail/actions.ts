@@ -21,7 +21,10 @@ export interface DeleteOneAction {
   readonly id: string;
 }
 
-export type DeckDetailCardsAction = SetOneAction | SetAllAction | DeleteOneAction;
+export type DeckDetailCardsAction =
+  | SetOneAction
+  | SetAllAction
+  | DeleteOneAction;
 
 export const createSetOne = (card: CardScalars): SetOneAction => ({
   type: ActionTypes.SET_ONE,

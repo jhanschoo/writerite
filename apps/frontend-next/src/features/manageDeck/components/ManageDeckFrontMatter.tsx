@@ -25,7 +25,12 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
       name={name}
       descriptionElement={descriptionViewer}
       handleEdit={
-        editing /* TODO: add check for owner of deck */ ? undefined : () => { setEditing(true); resetEditorContent(viewer?.getJSON() ?? null); }
+        editing /* TODO: add check for owner of deck */
+          ? undefined
+          : () => {
+              setEditing(true);
+              resetEditorContent(viewer?.getJSON() ?? null);
+            }
       }
     />
   );
@@ -47,7 +52,7 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
     <Flex wrap="wrap">
       <Box
         sx={(theme) => ({
-          width: "100%",
+          width: '100%',
           [`@media (min-width: ${theme.breakpoints.md})`]: {
             width: '50%',
           },
@@ -78,7 +83,7 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
       </Box>
       <Box
         sx={(theme) => ({
-          width: "100%",
+          width: '100%',
           [`@media (min-width: ${theme.breakpoints.md})`]: {
             width: '50%',
           },

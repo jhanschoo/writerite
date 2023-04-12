@@ -1,14 +1,14 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 // tslint:disable-next-line: variable-name
 export const WrDeckStub = gql`
-fragment WrDeckStub on RwDeck {
-  id
-  name
-  nameLang
-  promptLang
-  answerLang
-}
+  fragment WrDeckStub on RwDeck {
+    id
+    name
+    nameLang
+    promptLang
+    answerLang
+  }
 `;
 
 export interface IWrDeckStub {

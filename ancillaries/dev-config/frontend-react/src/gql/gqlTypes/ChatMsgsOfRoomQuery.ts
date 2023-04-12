@@ -29,7 +29,7 @@ export interface ChatMsgsOfRoomQuery_chatMsgsOfRoom {
 }
 
 export interface ChatMsgsOfRoomQuery {
-  readonly chatMsgsOfRoom: ReadonlyArray<(ChatMsgsOfRoomQuery_chatMsgsOfRoom | null)> | null;
+  readonly chatMsgsOfRoom: ReadonlyArray<ChatMsgsOfRoomQuery_chatMsgsOfRoom | null> | null;
 }
 
 export interface ChatMsgsOfRoomQueryVariables {

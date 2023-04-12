@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { Deck, PrismaClient, User } from "@prisma/client";
+import type { Deck, PrismaClient, User } from "database";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 

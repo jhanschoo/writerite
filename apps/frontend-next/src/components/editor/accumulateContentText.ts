@@ -1,4 +1,3 @@
-
 import { JSONContent } from '@tiptap/react';
 
 export function accumulateContentText(item: JSONContent): string {

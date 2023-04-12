@@ -5,11 +5,26 @@ import { useDebouncedCallback } from "use-debounce";
 
 import { Dispatch } from "redux";
 import { useDispatch } from "react-redux";
-import { DeleteOneAction, SetOneAction, createDeleteOne, createSetOne } from "./actions";
+import {
+  DeleteOneAction,
+  SetOneAction,
+  createDeleteOne,
+  createSetOne,
+} from "./actions";
 
 import { useMutation } from "@apollo/client";
-import { CARD_DELETE_MUTATION, CARD_EDIT_MUTATION, cardDeleteMutationUpdate } from "src/gql";
-import type { CardDeleteMutation, CardDeleteMutationVariables, CardDetail, CardEditMutation, CardEditMutationVariables } from "src/gqlTypes";
+import {
+  CARD_DELETE_MUTATION,
+  CARD_EDIT_MUTATION,
+  cardDeleteMutationUpdate,
+} from "src/gql";
+import type {
+  CardDeleteMutation,
+  CardDeleteMutationVariables,
+  CardDetail,
+  CardEditMutation,
+  CardEditMutationVariables,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Item } from "src/ui";
@@ -17,7 +32,12 @@ import { FrontBackCard, FrontBackCardButtonsBox } from "src/ui-components";
 
 import { DEBOUNCE_DELAY } from "src/util";
 import type { CardFields } from "src/types";
-import AnswersEditor, { answersEditorStateFromStringArray, answersEditorStateToStringArray, prependAnswer, rawToAnswer } from "src/components/editor/AnswersEditor";
+import AnswersEditor, {
+  answersEditorStateFromStringArray,
+  answersEditorStateToStringArray,
+  prependAnswer,
+  rawToAnswer,
+} from "src/components/editor/AnswersEditor";
 import SelfManagedNotesEditor from "src/components/editor/SelfManagedNotesEditor";
 import WrDeckDetailCardDeleteModal from "./WrDeckDetailCardDeleteModal";
 
@@ -46,23 +66,27 @@ interface Props {
   readOnly?: boolean;
 }
 
-const WrDeckDetailCardItem = ({
-  card, readOnly,
-}: Props): JSX.Element => {
+const WrDeckDetailCardItem = ({ card, readOnly }: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow
   const { id, prompt, fullAnswer, answers } = card;
   const initialFields = { prompt, fullAnswer, answers } as CardFields;
   const dispatch = useDispatch<Dispatch<SetOneAction | DeleteOneAction>>();
-  const [answersEditorState, setAnswersEditorState] =
-    useState(answersEditorStateFromStringArray(answers));
+  const [answersEditorState, setAnswersEditorState] = useState(
+    answersEditorStateFromStringArray(answers)
+  );
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentFields, setCurrentFields] = useState(initialFields);
   const [debouncing, setDebouncing] = useState(false);
-  const mutateOpts = { variables: {
-    id,
-    ...currentFields,
-  } };
-  const [mutate, { loading }] = useMutation<CardEditMutation, CardEditMutationVariables>(CARD_EDIT_MUTATION, {
+  const mutateOpts = {
+    variables: {
+      id,
+      ...currentFields,
+    },
+  };
+  const [mutate, { loading }] = useMutation<
+    CardEditMutation,
+    CardEditMutationVariables
+  >(CARD_EDIT_MUTATION, {
     onCompleted(data) {
       if (debouncing) {
         return;
@@ -76,7 +100,10 @@ const WrDeckDetailCardItem = ({
       }
     },
   });
-  const [mutateDelete, { loading: loadingDelete }] = useMutation<CardDeleteMutation, CardDeleteMutationVariables>(CARD_DELETE_MUTATION, {
+  const [mutateDelete, { loading: loadingDelete }] = useMutation<
+    CardDeleteMutation,
+    CardDeleteMutationVariables
+  >(CARD_DELETE_MUTATION, {
     update: cardDeleteMutationUpdate,
     onCompleted(deleteData) {
       if (deleteData.cardDelete) {
@@ -100,11 +127,19 @@ const WrDeckDetailCardItem = ({
     debounce();
   };
   const handlePromptChange = (nextEditorState: EditorState) => {
-    handleChange({ prompt: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown> });
+    handleChange({
+      prompt: convertToRaw(
+        nextEditorState.getCurrentContent()
+      ) as unknown as Record<string, unknown>,
+    });
     return nextEditorState;
   };
   const handleFullAnswerChange = (nextEditorState: EditorState) => {
-    handleChange({ fullAnswer: convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown> });
+    handleChange({
+      fullAnswer: convertToRaw(
+        nextEditorState.getCurrentContent()
+      ) as unknown as Record<string, unknown>,
+    });
     return nextEditorState;
   };
   const handleAnswersChange = (nextEditorState: EditorState) => {
@@ -115,58 +150,80 @@ const WrDeckDetailCardItem = ({
   const handleHideDeleteModal = () => setShowDeleteModal(false);
   const generatedAnswer = rawToAnswer(currentFields.fullAnswer);
   const addGeneratedAnswer = () => {
-    const nextAnswersEditorState = prependAnswer(answersEditorState, generatedAnswer);
+    const nextAnswersEditorState = prependAnswer(
+      answersEditorState,
+      generatedAnswer
+    );
     setAnswersEditorState(nextAnswersEditorState);
     handleAnswersChange(nextAnswersEditorState);
   };
   const handleDelete = () => {
     if (id) {
-      void mutateDelete({ variables: {
-        id,
-      } });
+      void mutateDelete({
+        variables: {
+          id,
+        },
+      });
     }
   };
-  const saveStatus = loading || !equal(currentFields, initialFields)
-    ? "saving"
-    : undefined;
+  const saveStatus =
+    loading || !equal(currentFields, initialFields) ? "saving" : undefined;
   const disabled = readOnly === true || loadingDelete;
-  return <StyledItem>
-    {showDeleteModal && <WrDeckDetailCardDeleteModal
-      handleClose={handleHideDeleteModal}
-      handleDelete={handleDelete}
-      template={false}
-      card={card}
-    />}
-    <FrontBackCard
-      status={saveStatus}
-      promptContent={<SelfManagedNotesEditor
-        initialContent={prompt as Record<string, unknown>}
-        placeholder={readOnly ? "Empty prompt" : "Write a prompt..."}
-        handleChange={handlePromptChange}
-        readOnly={disabled}
-      />}
-      beforeAnswersContent={!readOnly && generatedAnswer && !currentFields.answers.includes(generatedAnswer) &&
-        <AddGeneratedAnswer onClick={addGeneratedAnswer}>
-          add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
-        </AddGeneratedAnswer>
-      }
-      fullAnswerContent={<SelfManagedNotesEditor
-        initialContent={fullAnswer as Record<string, unknown>}
-        placeholder={readOnly ? "Empty answer" : "Write an answer..."}
-        handleChange={handleFullAnswerChange}
-        readOnly={disabled}
-      />}
-      answersContent={<AnswersEditor
-        editorState={answersEditorState}
-        setEditorState={setAnswersEditorState}
-        handleChange={handleAnswersChange}
-        readOnly={disabled}
-      />}
-      footer={<FrontBackCardButtonsBox>
-        <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>delete</DeleteButton>
-      </FrontBackCardButtonsBox>}
-    />
-  </StyledItem>;
+  return (
+    <StyledItem>
+      {showDeleteModal && (
+        <WrDeckDetailCardDeleteModal
+          handleClose={handleHideDeleteModal}
+          handleDelete={handleDelete}
+          template={false}
+          card={card}
+        />
+      )}
+      <FrontBackCard
+        status={saveStatus}
+        promptContent={
+          <SelfManagedNotesEditor
+            initialContent={prompt as Record<string, unknown>}
+            placeholder={readOnly ? "Empty prompt" : "Write a prompt..."}
+            handleChange={handlePromptChange}
+            readOnly={disabled}
+          />
+        }
+        beforeAnswersContent={
+          !readOnly &&
+          generatedAnswer &&
+          !currentFields.answers.includes(generatedAnswer) && (
+            <AddGeneratedAnswer onClick={addGeneratedAnswer}>
+              add answer:&nbsp;<StyledAnswer>{generatedAnswer}</StyledAnswer>
+            </AddGeneratedAnswer>
+          )
+        }
+        fullAnswerContent={
+          <SelfManagedNotesEditor
+            initialContent={fullAnswer as Record<string, unknown>}
+            placeholder={readOnly ? "Empty answer" : "Write an answer..."}
+            handleChange={handleFullAnswerChange}
+            readOnly={disabled}
+          />
+        }
+        answersContent={
+          <AnswersEditor
+            editorState={answersEditorState}
+            setEditorState={setAnswersEditorState}
+            handleChange={handleAnswersChange}
+            readOnly={disabled}
+          />
+        }
+        footer={
+          <FrontBackCardButtonsBox>
+            <DeleteButton onClick={handleShowDeleteModal} disabled={disabled}>
+              delete
+            </DeleteButton>
+          </FrontBackCardButtonsBox>
+        }
+      />
+    </StyledItem>
+  );
 };
 
 export default WrDeckDetailCardItem;

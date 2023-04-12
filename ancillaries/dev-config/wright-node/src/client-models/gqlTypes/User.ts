@@ -27,5 +27,5 @@ export interface User {
   readonly email: string;
   readonly name: string | null;
   readonly roles: ReadonlyArray<string>;
-  readonly decks: ReadonlyArray<(User_decks | null)> | null;
+  readonly decks: ReadonlyArray<User_decks | null> | null;
 }

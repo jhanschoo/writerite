@@ -32,16 +32,24 @@ interface Props {
 const WrDeckDetailFiledTemplatesModal = ({
   handleClose,
   templates,
-}: Props):JSX.Element => {
-  const templateItems = templates.map((template) => <WrDeckDetailTemplateItem key={template.id} template={template} />);
-  return <Modal handleClose={handleClose}>
-    <StyledList>
-      {!templateItems.length && <StyledItem key="empty-message">
-        <StyledEmptyMessage>There are no filed templates to show.</StyledEmptyMessage>
-      </StyledItem>}
-      {templateItems}
-    </StyledList>
-  </Modal>;
+}: Props): JSX.Element => {
+  const templateItems = templates.map((template) => (
+    <WrDeckDetailTemplateItem key={template.id} template={template} />
+  ));
+  return (
+    <Modal handleClose={handleClose}>
+      <StyledList>
+        {!templateItems.length && (
+          <StyledItem key="empty-message">
+            <StyledEmptyMessage>
+              There are no filed templates to show.
+            </StyledEmptyMessage>
+          </StyledItem>
+        )}
+        {templateItems}
+      </StyledList>
+    </Modal>
+  );
 };
 
 export default WrDeckDetailFiledTemplatesModal;

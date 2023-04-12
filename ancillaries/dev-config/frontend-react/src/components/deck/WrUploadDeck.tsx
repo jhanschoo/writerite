@@ -1,5 +1,12 @@
 // eslint-disable-next-line no-shadow
-import React, { ChangeEvent, DragEvent, FormEvent, MouseEvent, useRef, useState } from "react";
+import React, {
+  ChangeEvent,
+  DragEvent,
+  FormEvent,
+  MouseEvent,
+  useRef,
+  useState,
+} from "react";
 import { ContentState, convertToRaw } from "draft-js";
 import Papa from "papaparse";
 
@@ -7,14 +14,21 @@ import { useHistory } from "react-router";
 
 import { useMutation } from "@apollo/client";
 import { DECK_CREATE_MUTATION, deckCreateMutationUpdate } from "src/gql";
-import { CardCreateInput, DeckCreateMutation, DeckCreateMutationVariables } from "src/gqlTypes";
+import {
+  CardCreateInput,
+  DeckCreateMutation,
+  DeckCreateMutationVariables,
+} from "src/gqlTypes";
 
 import type { StyledComponent } from "styled-components";
 import { WrTheme, wrStyled } from "src/theme";
 import { Button, Fieldset, TextInput } from "src/ui";
 import { HDivider } from "src/ui-components";
 
-const rawFromText = (text: string) => convertToRaw(ContentState.createFromText(text)) as unknown as GraphQLJSONObject;
+const rawFromText = (text: string) =>
+  convertToRaw(
+    ContentState.createFromText(text)
+  ) as unknown as GraphQLJSONObject;
 
 enum DraggedFileStatus {
   NONE,
@@ -100,12 +114,18 @@ width: 67%;
 `;
 
 const StyledButton = wrStyled(Button)`
-padding: ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[3]};
+padding: ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) =>
+  space[3]};
 `;
 
-const FileInputLabel = StyledButton as StyledComponent<"label", WrTheme, Record<string, unknown>, never>;
+const FileInputLabel = StyledButton as StyledComponent<
+  "label",
+  WrTheme,
+  Record<string, unknown>,
+  never
+>;
 
-const csvExtension = /\.csv$/ui;
+const csvExtension = /\.csv$/iu;
 
 const WrUploadDeck = (): JSX.Element => {
   // eslint-disable-next-line no-shadow
@@ -114,26 +134,38 @@ const WrUploadDeck = (): JSX.Element => {
   const [nameInput, setNameInput] = useState<string>("");
   const [filename, setFilename] = useState<string | null>(null);
   const [numEntered, setNumEntered] = useState<number>(0);
-  const [draggedFileStatus, setDraggedFileStatus] = useState<DraggedFileStatus>(DraggedFileStatus.NONE);
+  const [draggedFileStatus, setDraggedFileStatus] = useState<DraggedFileStatus>(
+    DraggedFileStatus.NONE
+  );
   const [isEmptyDeck, setIsEmptyDeck] = useState<boolean>(false);
   const dropDivEl = useRef<HTMLDivElement>(null);
-  const [mutate, { loading }] = useMutation<DeckCreateMutation, DeckCreateMutationVariables>(DECK_CREATE_MUTATION, {
+  const [mutate, { loading }] = useMutation<
+    DeckCreateMutation,
+    DeckCreateMutationVariables
+  >(DECK_CREATE_MUTATION, {
     update: deckCreateMutationUpdate,
   });
-  const noFilenameMessage = filename === null && !isEmptyDeck ? <DropDivP>no file selected</DropDivP> : null;
+  const noFilenameMessage =
+    filename === null && !isEmptyDeck ? (
+      <DropDivP>no file selected</DropDivP>
+    ) : null;
   let dragStatusMessage = <DropDivPBold>drag a .csv file here</DropDivPBold>;
   switch (draggedFileStatus) {
     case DraggedFileStatus.MULTIPLE:
-      dragStatusMessage = <DropDivPBold>please drag just a single .csv file here</DropDivPBold>;
+      dragStatusMessage = (
+        <DropDivPBold>please drag just a single .csv file here</DropDivPBold>
+      );
       break;
     case DraggedFileStatus.INVALID:
-      dragStatusMessage = <DropDivPBold>please drag a .csv file here</DropDivPBold>;
+      dragStatusMessage = (
+        <DropDivPBold>please drag a .csv file here</DropDivPBold>
+      );
       break;
     case DraggedFileStatus.VALID:
       dragStatusMessage = <DropDivPBold>drop file here</DropDivPBold>;
       break;
     case DraggedFileStatus.NONE:
-      // fallthrough
+    // fallthrough
     default:
       break;
   }
@@ -150,11 +182,13 @@ const WrUploadDeck = (): JSX.Element => {
           // eslint-disable-next-line no-console
           console.error(errors);
         } else {
-          setCards(data.map((row) => ({
-            prompt: rawFromText(row[0] ?? ""),
-            fullAnswer: rawFromText(row[1] ?? ""),
-            answers: row.slice(2),
-          })));
+          setCards(
+            data.map((row) => ({
+              prompt: rawFromText(row[0] ?? ""),
+              fullAnswer: rawFromText(row[1] ?? ""),
+              answers: row.slice(2),
+            }))
+          );
           setIsEmptyDeck(false);
           handleSetFilename(file.name);
         }
@@ -206,20 +240,26 @@ const WrUploadDeck = (): JSX.Element => {
     setNameInput(e.target.value);
   };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.validity.valid && e.target.files && e.target.files.length === 1) {
+    if (
+      e.target.validity.valid &&
+      e.target.files &&
+      e.target.files.length === 1
+    ) {
       setFile(e.target.files[0]);
     }
   };
   const handleCreateEmpty = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const res = await mutate({ variables: {
-      name: "New Deck",
-      description: {},
-      promptLang: "",
-      answerLang: "",
-      published: false,
-      archived: false,
-    } });
+    const res = await mutate({
+      variables: {
+        name: "New Deck",
+        description: {},
+        promptLang: "",
+        answerLang: "",
+        published: false,
+        archived: false,
+      },
+    });
     const id = res.data?.deckCreate?.id;
     if (id) {
       history.push(`/deck/${id}`, { editTitle: true });
@@ -240,49 +280,53 @@ const WrUploadDeck = (): JSX.Element => {
       }
     }
   };
-  return <StyledForm onSubmit={handleSubmit}>
-    <DropDiv
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      ref={dropDivEl}
-    >
-      {dragStatusMessage}
-      <DividerDiv>
-        <HDivider>OR</HDivider>
-      </DividerDiv>
-      <FileInput
-        type="file"
-        id="deck-upload-file-input"
-        required={true}
-        onChange={handleFileChange}
-        disabled={loading}
-      />
-      <FileInputLabel as="label" htmlFor="deck-upload-file-input">Find A File</FileInputLabel>
-      {noFilenameMessage}
-      <StyledFieldset className={filename === null ? "hidden" : undefined}>
-        <DropDivLabel htmlFor="upload-deck-name">
-          <strong>{filename}</strong> will be uploaded with name
-        </DropDivLabel>
-        <StyledTextInput
-          id="upload-deck-name"
-          value={nameInput}
-          onChange={handleNameChange}
-          className={filename === null ? "hidden" : undefined}
+  return (
+    <StyledForm onSubmit={handleSubmit}>
+      <DropDiv
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        ref={dropDivEl}
+      >
+        {dragStatusMessage}
+        <DividerDiv>
+          <HDivider>OR</HDivider>
+        </DividerDiv>
+        <FileInput
+          type="file"
+          id="deck-upload-file-input"
+          required={true}
+          onChange={handleFileChange}
+          disabled={loading}
         />
-        <StyledButton type="submit" disabled={!cards || loading}>
-        Upload
+        <FileInputLabel as="label" htmlFor="deck-upload-file-input">
+          Find A File
+        </FileInputLabel>
+        {noFilenameMessage}
+        <StyledFieldset className={filename === null ? "hidden" : undefined}>
+          <DropDivLabel htmlFor="upload-deck-name">
+            <strong>{filename}</strong> will be uploaded with name
+          </DropDivLabel>
+          <StyledTextInput
+            id="upload-deck-name"
+            value={nameInput}
+            onChange={handleNameChange}
+            className={filename === null ? "hidden" : undefined}
+          />
+          <StyledButton type="submit" disabled={!cards || loading}>
+            Upload
+          </StyledButton>
+        </StyledFieldset>
+        <DividerDiv>
+          <HDivider>OR</HDivider>
+        </DividerDiv>
+        <StyledButton onClick={handleCreateEmpty} disabled={loading}>
+          Create an Empty Deck
         </StyledButton>
-      </StyledFieldset>
-      <DividerDiv>
-        <HDivider>OR</HDivider>
-      </DividerDiv>
-      <StyledButton onClick={handleCreateEmpty} disabled={loading}>
-      Create an Empty Deck
-      </StyledButton>
-    </DropDiv>
-  </StyledForm>;
+      </DropDiv>
+    </StyledForm>
+  );
 };
 
 export default WrUploadDeck;

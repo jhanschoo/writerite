@@ -89,7 +89,9 @@ export const RoomNotifications = ({ wrapper: Wrapper }: Props) => {
   if (rooms.length) {
     return <>{rooms}</>;
   }
-  return <Wrapper key="friend-activity">
-    <FriendActivity />
-  </Wrapper>;
+  return (
+    <Wrapper key="friend-activity">
+      <FriendActivity />
+    </Wrapper>
+  );
 };

@@ -11,14 +11,18 @@ import { CurrentUser, IntegrationContext } from "./types";
 
 const SALT_ROUNDS = 10;
 
-export const FETCH_DEPTH = process.env.FETCH_DEPTH ? parseInt(process.env.FETCH_DEPTH, 10) : 3;
+export const FETCH_DEPTH = process.env.FETCH_DEPTH
+  ? parseInt(process.env.FETCH_DEPTH, 10)
+  : 3;
 if (isNaN(FETCH_DEPTH) || FETCH_DEPTH < 1) {
   throw Error("envvar FETCH_DEPTH needs to be unset or a positive integer");
 }
 
 export function randomThreeWords(): string {
   return randomWords({
-    exactly: 1, wordsPerString: 3, separator: "-",
+    exactly: 1,
+    wordsPerString: 3,
+    separator: "-",
   })[0] as string;
 }
 
@@ -28,7 +32,10 @@ const { JWT_PRIVATE_KEY, JWT_PUBLIC_KEY } = process.env;
 const PRIVATE_KEY = KEYUTIL.getKey(JSON.parse(JWT_PRIVATE_KEY ?? "fail"));
 const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(JWT_PUBLIC_KEY ?? "fail"));
 
-export function comparePassword(plain: string, hashed: string): Promise<boolean> {
+export function comparePassword(
+  plain: string,
+  hashed: string
+): Promise<boolean> {
   return bcrypt.compare(plain, hashed);
 }
 
@@ -44,7 +51,9 @@ export function generateB64UUID(): string {
 
 export function generateJWT(sub: CurrentUser, persist = false): string {
   const timeNow = KJUR.jws.IntDate.get("now");
-  const expiryTime = KJUR.jws.IntDate.get(persist ? "now + 1year" : "now + 1day",);
+  const expiryTime = KJUR.jws.IntDate.get(
+    persist ? "now + 1year" : "now + 1day"
+  );
 
   const header = {
     alg: "ES256",
@@ -65,7 +74,10 @@ export function generateJWT(sub: CurrentUser, persist = false): string {
 }
 
 export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
-  const authorization = ctx.ctx?.get("Authorization") ?? ctx.connection?.context.Authorization ?? null;
+  const authorization =
+    ctx.ctx?.get("Authorization") ??
+    ctx.connection?.context.Authorization ??
+    null;
   if (!authorization) {
     return;
   }
@@ -73,8 +85,7 @@ export function getClaims(ctx: IntegrationContext): CurrentUser | undefined {
   if (jwt) {
     try {
       if (KJUR.jws.JWS.verify(jwt, PUBLIC_KEY, ["ES256"])) {
-        const sub = KJUR.jws.JWS.parse(jwt)
-          .payloadObj.sub as CurrentUser;
+        const sub = KJUR.jws.JWS.parse(jwt).payloadObj.sub as CurrentUser;
         return sub;
       }
     } catch (e) {

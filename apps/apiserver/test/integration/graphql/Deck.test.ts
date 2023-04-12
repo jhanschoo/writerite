@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "database";
 
 import { cascadingDelete } from "../_helpers/truncate";
 import { loginAsNewlyCreatedUser } from "../../helpers/graphql/User.util";

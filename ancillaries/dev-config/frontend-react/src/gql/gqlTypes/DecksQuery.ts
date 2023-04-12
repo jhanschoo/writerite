@@ -24,7 +24,7 @@ export interface DecksQuery_decks {
 }
 
 export interface DecksQuery {
-  readonly decks: ReadonlyArray<(DecksQuery_decks | null)> | null;
+  readonly decks: ReadonlyArray<DecksQuery_decks | null> | null;
 }
 
 export interface DecksQueryVariables {

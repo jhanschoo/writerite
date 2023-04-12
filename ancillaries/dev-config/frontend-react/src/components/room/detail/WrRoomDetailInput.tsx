@@ -2,7 +2,11 @@ import React, { ChangeEvent, FormEvent, useRef, useState } from "react";
 
 import { useMutation } from "@apollo/client";
 import { CHAT_MSG_CREATE_MUTATION } from "src/gql";
-import { ChatMsgContentType, ChatMsgCreateMutation, ChatMsgCreateMutationVariables } from "src/gqlTypes";
+import {
+  ChatMsgContentType,
+  ChatMsgCreateMutation,
+  ChatMsgCreateMutationVariables,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Button, TextInput } from "src/ui";
@@ -44,36 +48,44 @@ interface Props {
 const WrRoomDetailInput = ({ roomId }: Props): JSX.Element => {
   const [inputValue, setInputValue] = useState("");
   const inputEl = useRef<HTMLInputElement>(null);
-  const [mutate, { loading }] = useMutation<ChatMsgCreateMutation, ChatMsgCreateMutationVariables>(CHAT_MSG_CREATE_MUTATION);
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => setInputValue(e.target.value);
+  const [mutate, { loading }] = useMutation<
+    ChatMsgCreateMutation,
+    ChatMsgCreateMutationVariables
+  >(CHAT_MSG_CREATE_MUTATION);
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setInputValue(e.target.value);
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (loading || !inputValue.trim()) {
       return;
     }
-    void mutate({ variables: {
-      roomId,
-      type: ChatMsgContentType.TEXT,
-      content: inputValue.trim(),
-    } });
+    void mutate({
+      variables: {
+        roomId,
+        type: ChatMsgContentType.TEXT,
+        content: inputValue.trim(),
+      },
+    });
     setInputValue("");
     inputEl.current?.focus();
   };
-  return <StyledForm onSubmit={handleSubmit}>
-    <StyledLabel>Add a message</StyledLabel>
-    <InputRow>
-      <StyledTextInput
-        type="text"
-        value={inputValue}
-        onChange={handleInputChange}
-        placeholder="Type an answer..."
-        ref={inputEl}
-      />
-      <StyledSubmit type="submit" disabled={loading}>
-        Send
-      </StyledSubmit>
-    </InputRow>
-  </StyledForm>;
+  return (
+    <StyledForm onSubmit={handleSubmit}>
+      <StyledLabel>Add a message</StyledLabel>
+      <InputRow>
+        <StyledTextInput
+          type="text"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder="Type an answer..."
+          ref={inputEl}
+        />
+        <StyledSubmit type="submit" disabled={loading}>
+          Send
+        </StyledSubmit>
+      </InputRow>
+    </StyledForm>
+  );
 };
 
 export default WrRoomDetailInput;

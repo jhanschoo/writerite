@@ -22,15 +22,15 @@ const WrRoomDetailTextChatMsgItem = ({ chatMsgs }: Props): JSX.Element => {
   const [{ sender }] = chatMsgs;
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
   const senderName = sender?.name || sender?.email;
-  const items = chatMsgs.map(({ id, content }) => <MsgItem key={id}>
-    {content}
-  </MsgItem>);
-  return <>
-    {sender && <SenderItem key={sender.id}>
-      {senderName ?? ""}
-    </SenderItem>}
-    {items}
-  </>;
+  const items = chatMsgs.map(({ id, content }) => (
+    <MsgItem key={id}>{content}</MsgItem>
+  ));
+  return (
+    <>
+      {sender && <SenderItem key={sender.id}>{senderName ?? ""}</SenderItem>}
+      {items}
+    </>
+  );
 };
 
 export default WrRoomDetailTextChatMsgItem;

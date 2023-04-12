@@ -13,7 +13,7 @@ export interface CardCreateMutation_cardCreate_ownRecord {
   readonly __typename: "UserCardRecord";
   readonly cardId: string;
   readonly userId: string;
-  readonly correctRecord: ReadonlyArray<(GraphQLDateTime | null)>;
+  readonly correctRecord: ReadonlyArray<GraphQLDateTime | null>;
 }
 
 export interface CardCreateMutation_cardCreate {

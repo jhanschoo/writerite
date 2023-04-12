@@ -1,6 +1,6 @@
 import { Roles } from "../userJWT/Roles";
 import { PrismaCurrentUserSourceType } from "./types";
-import { PrismaClient, Unit } from "@prisma/client";
+import { PrismaClient, Unit } from "database";
 import { ProviderPrismaFieldKeys } from "./providerStrategies";
 import type { CurrentUser } from "../userJWT/CurrentUser";
 

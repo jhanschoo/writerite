@@ -57,12 +57,13 @@ margin: ${({ theme: { space } }) => space[3]} 0 0 0;
 // ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 `;
 
-const WrLandingContent = (): JSX.Element =>
+const WrLandingContent = (): JSX.Element => (
   <LandingContent>
     <Article1>
       <HeroHeader>
         <HeroHeading>
-          <em>Study with supercharged flashcards on </em><WrBrandText suffix="." />
+          <em>Study with supercharged flashcards on </em>
+          <WrBrandText suffix="." />
         </HeroHeading>
       </HeroHeader>
       <Aside>
@@ -70,5 +71,6 @@ const WrLandingContent = (): JSX.Element =>
       </Aside>
     </Article1>
     <Footer></Footer>
-  </LandingContent>;
+  </LandingContent>
+);
 export default WrLandingContent;

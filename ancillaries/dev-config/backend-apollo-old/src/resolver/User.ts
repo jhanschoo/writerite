@@ -4,7 +4,8 @@ import { UserSS } from "../model/User";
 import { DeckSS } from "../model/Deck";
 import { RoomSS, roomToSS } from "../model/Room";
 
-interface UserResolver extends IResolverObject<UserSS, WrContext, Record<string, unknown>> {
+interface UserResolver
+  extends IResolverObject<UserSS, WrContext, Record<string, unknown>> {
   // id uses default resolver
 
   // email uses default resolver
@@ -13,11 +14,26 @@ interface UserResolver extends IResolverObject<UserSS, WrContext, Record<string,
 
   // roles uses default resolver
 
-  decks: FieldResolver<UserSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
+  decks: FieldResolver<
+    UserSS,
+    WrContext,
+    Record<string, unknown>,
+    (DeckSS | null)[] | null
+  >;
 
-  ownedRooms: FieldResolver<UserSS, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
+  ownedRooms: FieldResolver<
+    UserSS,
+    WrContext,
+    Record<string, unknown>,
+    (RoomSS | null)[] | null
+  >;
 
-  occupyingRooms: FieldResolver<UserSS, WrContext, Record<string, unknown>, (RoomSS | null)[] | null>;
+  occupyingRooms: FieldResolver<
+    UserSS,
+    WrContext,
+    Record<string, unknown>,
+    (RoomSS | null)[] | null
+  >;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -40,7 +56,9 @@ export const User: UserResolver = {
     if (ownedRooms !== undefined) {
       return ownedRooms;
     }
-    return (await prisma.room.findMany({ where: { ownerId: id } })).map(roomToSS);
+    return (await prisma.room.findMany({ where: { ownerId: id } })).map(
+      roomToSS
+    );
   },
   async occupyingRooms({ id, occupyingRooms }, _args, { prisma, sub }, _info) {
     const subId = sub?.id;
@@ -51,6 +69,10 @@ export const User: UserResolver = {
       return occupyingRooms;
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    return (await prisma.room.findMany({ where: { occupants: { some: { occupantId: id } } } })).map(roomToSS);
+    return (
+      await prisma.room.findMany({
+        where: { occupants: { some: { occupantId: id } } },
+      })
+    ).map(roomToSS);
   },
 };

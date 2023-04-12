@@ -51,11 +51,18 @@ const logLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) =>
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-      console.error(`[GraphQL error]: Message: ${message}, Location: ${locations?.map((loc) => `${loc.column},${loc.line}`).join(" ")}, Path: ${path?.join("|")}`));
+      console.error(
+        `[GraphQL error]: Message: ${message}, Location: ${locations
+          ?.map((loc) => `${loc.column},${loc.line}`)
+          .join(" ")}, Path: ${path?.join("|")}`
+      )
+    );
   }
   if (networkError) {
     // eslint-disable-next-line no-console
-    console.error(`[Network error]: ${networkError.name}, ${networkError.message}`);
+    console.error(
+      `[Network error]: ${networkError.name}, ${networkError.message}`
+    );
   }
 });
 
@@ -66,11 +73,13 @@ const link = from([
   split(
     ({ query }) => {
       const definition = getMainDefinition(query);
-      return definition.kind === "OperationDefinition" &&
-        definition.operation === "subscription";
+      return (
+        definition.kind === "OperationDefinition" &&
+        definition.operation === "subscription"
+      );
     },
     wsLink,
-    httpLink,
+    httpLink
   ),
 ]);
 
@@ -118,18 +127,13 @@ export const restartWsConnection = (): void => {
     // @ts-expect-error
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     wsClient.connect();
-  } catch (e) { }
-
+  } catch (e) {}
 
   // Push all current operations to the new connection
   for (const id of Object.keys(operations)) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    wsClient.sendMessage(
-      id,
-      MessageTypes.GQL_START,
-      operations[id].options,
-    );
+    wsClient.sendMessage(id, MessageTypes.GQL_START, operations[id].options);
   }
 };

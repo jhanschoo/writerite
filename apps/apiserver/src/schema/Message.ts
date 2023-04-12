@@ -1,4 +1,4 @@
-import { Message as PMessage, Prisma } from "@prisma/client";
+import { Message as PMessage, Prisma } from "database";
 import { builder } from "../builder";
 import { MESSAGE_UPDATES_BY_ROOMID_TOPIC } from "../service/message";
 import { nanoid } from "nanoid";

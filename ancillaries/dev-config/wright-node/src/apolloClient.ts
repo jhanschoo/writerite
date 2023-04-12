@@ -16,7 +16,9 @@ import { Agent } from "http";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  GRAPHQL_HTTP, GRAPHQL_WS, WRIGHT_SECRET_JWT,
+  GRAPHQL_HTTP,
+  GRAPHQL_WS,
+  WRIGHT_SECRET_JWT,
 } = process.env as Record<string, string>;
 
 const Authorization = `Bearer ${WRIGHT_SECRET_JWT}`;
@@ -31,13 +33,17 @@ const httpLink = new HttpLink({
   },
 });
 
-const wsClient = new SubscriptionClient(GRAPHQL_WS, {
-  reconnect: true,
-  connectionParams: {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    Authorization,
+const wsClient = new SubscriptionClient(
+  GRAPHQL_WS,
+  {
+    reconnect: true,
+    connectionParams: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Authorization,
+    },
   },
-}, AgentWebSocket);
+  AgentWebSocket
+);
 
 export const wsLink = new WebSocketLink(wsClient);
 
@@ -60,11 +66,18 @@ const logLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.map(({ message, locations, path }) =>
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-      console.error(`[GraphQL error]: Message: ${message}, Location: ${locations?.map((loc) => `${loc.column},${loc.line}`).join(" ")}, Path: ${path?.join("|")}`));
+      console.error(
+        `[GraphQL error]: Message: ${message}, Location: ${locations
+          ?.map((loc) => `${loc.column},${loc.line}`)
+          .join(" ")}, Path: ${path?.join("|")}`
+      )
+    );
   }
   if (networkError) {
     // eslint-disable-next-line no-console
-    console.error(`[Network error]: ${networkError.name}, ${networkError.message}`);
+    console.error(
+      `[Network error]: ${networkError.name}, ${networkError.message}`
+    );
   }
 });
 
@@ -75,11 +88,13 @@ const link = from([
   split(
     ({ query }) => {
       const definition = getMainDefinition(query);
-      return definition.kind === "OperationDefinition" &&
-        definition.operation === "subscription";
+      return (
+        definition.kind === "OperationDefinition" &&
+        definition.operation === "subscription"
+      );
     },
     wsLink,
-    httpLink,
+    httpLink
   ),
 ]);
 

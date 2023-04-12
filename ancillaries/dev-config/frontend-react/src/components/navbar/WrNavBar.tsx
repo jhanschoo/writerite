@@ -59,50 +59,53 @@ background: none;
 }
 `;
 
-const renderLoggedOut = () =>
+const renderLoggedOut = () => (
   <NavBarItem>
     <PageLink to="/signin" exact={true}>
-        Sign in
+      Sign in
     </PageLink>
-  </NavBarItem>;
+  </NavBarItem>
+);
 const renderLoggedIn = (dispatchSignout: () => SigninAction) => {
   const signoutAndRestartWs = () => {
     dispatchSignout();
     createSignout();
     restartWsConnection();
   };
-  return <>
-    <NavBarItem>
-      <PageLink to="/deck">
-        Decks
-      </PageLink>
-    </NavBarItem>
-    <NavBarItem>
-      <SignoutButton onClick={signoutAndRestartWs}>
-        Sign out
-      </SignoutButton>
-    </NavBarItem>
-  </>;
+  return (
+    <>
+      <NavBarItem>
+        <PageLink to="/deck">Decks</PageLink>
+      </NavBarItem>
+      <NavBarItem>
+        <SignoutButton onClick={signoutAndRestartWs}>Sign out</SignoutButton>
+      </NavBarItem>
+    </>
+  );
 };
 
 const WrNavBar = (): JSX.Element => {
-  const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);
+  const user = useSelector<WrState, CurrentUser | null>(
+    (state) => state.signin?.session?.user ?? null
+  );
   const dispatch = useDispatch<Dispatch<SigninAction>>();
   const dispatchSignout = () => dispatch(createSignout());
-  return <StyledNavBar>
-    <NavBarList>
-      <BrandNavBarItem>
-        <BrandLink to="/" activeClassName="">
-          <BrandHeading>
-            <WrBrandText short={true} />
-          </BrandHeading>
-        </BrandLink>
-      </BrandNavBarItem>
-    </NavBarList>
-    <NavBarListRight>
-      {user ? renderLoggedIn(dispatchSignout) : renderLoggedOut()}
-    </NavBarListRight>
-  </StyledNavBar>;
+  return (
+    <StyledNavBar>
+      <NavBarList>
+        <BrandNavBarItem>
+          <BrandLink to="/" activeClassName="">
+            <BrandHeading>
+              <WrBrandText short={true} />
+            </BrandHeading>
+          </BrandLink>
+        </BrandNavBarItem>
+      </NavBarList>
+      <NavBarListRight>
+        {user ? renderLoggedIn(dispatchSignout) : renderLoggedOut()}
+      </NavBarListRight>
+    </StyledNavBar>
+  );
 };
 
 export default WrNavBar;

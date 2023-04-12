@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "database";
 import { run } from "promise-dag";
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types

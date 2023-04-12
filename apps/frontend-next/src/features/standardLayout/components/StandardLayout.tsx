@@ -45,10 +45,10 @@ const useShellStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'
 });
 
 const useDrawerButtonStyles = createStyles(() => ({
-    inner: {
-      justifyContent: 'flex-start',
-    },
-  }));
+  inner: {
+    justifyContent: 'flex-start',
+  },
+}));
 
 export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>) => {
   const logout = useLogout();

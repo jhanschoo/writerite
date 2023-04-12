@@ -3,7 +3,12 @@ import React, { ReactNode } from "react";
 import type { ThemedStyledFunction } from "styled-components";
 import { WrTheme, wrStyled } from "src/theme";
 
-const styledSpacerDiv: ThemedStyledFunction<"div", WrTheme, { spacerColor?: string }, never> = wrStyled.div;
+const styledSpacerDiv: ThemedStyledFunction<
+  "div",
+  WrTheme,
+  { spacerColor?: string },
+  never
+> = wrStyled.div;
 
 const OuterBox = wrStyled.div`
 display: flex;
@@ -26,14 +31,16 @@ interface Props {
 }
 
 export const VDivider = ({ children, spacerColor }: Props): JSX.Element => {
-  const labelAndHalf = <>
-    <TextBox>
-      {children}
-    </TextBox>
-    <Spacer spacerColor={spacerColor} />
-  </>;
-  return <OuterBox>
-    <Spacer spacerColor={spacerColor} />
-    {children && labelAndHalf}
-  </OuterBox>;
+  const labelAndHalf = (
+    <>
+      <TextBox>{children}</TextBox>
+      <Spacer spacerColor={spacerColor} />
+    </>
+  );
+  return (
+    <OuterBox>
+      <Spacer spacerColor={spacerColor} />
+      {children && labelAndHalf}
+    </OuterBox>
+  );
 };

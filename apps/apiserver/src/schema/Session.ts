@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "database";
 import { builder } from "../builder";
 import {
   CurrentUser,

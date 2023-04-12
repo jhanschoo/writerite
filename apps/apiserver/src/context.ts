@@ -2,7 +2,7 @@ import env from "./safeEnv";
 import Redis from "ioredis";
 import { PubSub, YogaInitialContext, createPubSub } from "graphql-yoga";
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "database";
 
 import { Roles } from "./service/userJWT/Roles";
 import { CurrentUser } from "./service/userJWT/CurrentUser";

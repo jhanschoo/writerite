@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "database";
 import {
   ExternalProfileInformationProvider,
   getDevelopmentProfile,

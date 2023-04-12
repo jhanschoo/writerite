@@ -33,7 +33,7 @@ export interface RoomUpdatesSubscription_roomUpdates_data {
   readonly internalConfig: GraphQLJSONObject;
   readonly state: RoomState;
   readonly owner: RoomUpdatesSubscription_roomUpdates_data_owner | null;
-  readonly occupants: ReadonlyArray<(RoomUpdatesSubscription_roomUpdates_data_occupants | null)> | null;
+  readonly occupants: ReadonlyArray<RoomUpdatesSubscription_roomUpdates_data_occupants | null> | null;
 }
 
 export interface RoomUpdatesSubscription_roomUpdates {

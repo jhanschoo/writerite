@@ -1,12 +1,26 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { CompositeDecorator, ContentBlock, ContentState, DraftDecorator, Editor, EditorChangeType, EditorState, Modifier, RawDraftContentState, SelectionState } from "draft-js";
+import {
+  CompositeDecorator,
+  ContentBlock,
+  ContentState,
+  DraftDecorator,
+  Editor,
+  EditorChangeType,
+  EditorState,
+  Modifier,
+  RawDraftContentState,
+  SelectionState,
+} from "draft-js";
 // eslint-disable-next-line no-shadow
 import { Map } from "immutable";
 
 import { wrStyled } from "src/theme";
 
-const entityStrategy: DraftDecorator["strategy"] = (block, callback, _content) =>
-  block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
+const entityStrategy: DraftDecorator["strategy"] = (
+  block,
+  callback,
+  _content
+) => block.findEntityRanges((cm) => Boolean(cm.getEntity()), callback);
 
 // Following CSS should mirror ui/List and ui/Item, with modifications
 const Wrapper = wrStyled.div`
@@ -50,22 +64,32 @@ export const convertToStringArray = (content: ContentState): string[] => {
   return answers;
 };
 
-export const answersEditorStateFromStringArray = (ss: readonly string[]): EditorState =>
+export const answersEditorStateFromStringArray = (
+  ss: readonly string[]
+): EditorState =>
   EditorState.createWithContent(convertFromStringArray(ss), answersDecorator);
 
-export const answersEditorStateToStringArray = (state: EditorState): string[] => convertToStringArray(state.getCurrentContent());
+export const answersEditorStateToStringArray = (state: EditorState): string[] =>
+  convertToStringArray(state.getCurrentContent());
 
-export const pushStringArray = (state: EditorState, ss: readonly string[], changeType: EditorChangeType): EditorState =>
+export const pushStringArray = (
+  state: EditorState,
+  ss: readonly string[],
+  changeType: EditorChangeType
+): EditorState =>
   EditorState.push(state, convertFromStringArray(ss), changeType);
 
 export const rawToAnswer = (raw: Record<string, unknown>): string =>
-  (raw as unknown as RawDraftContentState)
-    .blocks.map((block) => block.text)
+  (raw as unknown as RawDraftContentState).blocks
+    .map((block) => block.text)
     .join(" ")
-    .replace(/\n/ug, "")
-    .replace(/ +/ug, " ");
+    .replace(/\n/gu, "")
+    .replace(/ +/gu, " ");
 
-export const prependAnswer = (state: EditorState, answer: string): EditorState => {
+export const prependAnswer = (
+  state: EditorState,
+  answer: string
+): EditorState => {
   let content = state.getCurrentContent();
   let key = content.getFirstBlock().getKey();
   content = Modifier.splitBlock(
@@ -75,7 +99,7 @@ export const prependAnswer = (state: EditorState, answer: string): EditorState =
       anchorOffset: 0,
       focusKey: key,
       focusOffset: 0,
-    }),
+    })
   );
   content = content.createEntity("ANSWER", "IMMUTABLE");
   const entityKey = content.getLastCreatedEntityKey();
@@ -90,31 +114,41 @@ export const prependAnswer = (state: EditorState, answer: string): EditorState =
     }),
     answer,
     undefined,
-    entityKey,
+    entityKey
   );
   return EditorState.push(state, content, "insert-fragment");
 };
 
-const blockSelection = (block: ContentBlock): SelectionState => new SelectionState({
-  anchorKey: block.getKey(),
-  anchorOffset: 0,
-  focusKey: block.getKey(),
-  focusOffset: block.getLength(),
-});
+const blockSelection = (block: ContentBlock): SelectionState =>
+  new SelectionState({
+    anchorKey: block.getKey(),
+    anchorOffset: 0,
+    focusKey: block.getKey(),
+    focusOffset: block.getLength(),
+  });
 
 // undo editorState if a block is found that contains an entity that does not span the entire block
 const hasInconsistentBlocks = (state: EditorState): boolean =>
-  state.getCurrentContent().getBlockMap().some((block) => {
-    let someBlockWideEntities = false;
-    block?.findEntityRanges((cm) => Boolean(cm.getEntity()), (start, end) => {
-      if (start !== 0 || end !== block.getLength()) {
-        someBlockWideEntities = true;
-      }
+  state
+    .getCurrentContent()
+    .getBlockMap()
+    .some((block) => {
+      let someBlockWideEntities = false;
+      block?.findEntityRanges(
+        (cm) => Boolean(cm.getEntity()),
+        (start, end) => {
+          if (start !== 0 || end !== block.getLength()) {
+            someBlockWideEntities = true;
+          }
+        }
+      );
+      return someBlockWideEntities;
     });
-    return someBlockWideEntities;
-  });
 
-const trimBlock = (block: ContentBlock, content: ContentState): ContentState => {
+const trimBlock = (
+  block: ContentBlock,
+  content: ContentState
+): ContentState => {
   const res = /\S(?:.*\S)?/u.exec(block.getText());
   if (!res) {
     return Modifier.removeRange(content, blockSelection(block), "forward");
@@ -129,7 +163,7 @@ const trimBlock = (block: ContentBlock, content: ContentState): ContentState => 
         focusKey: block.getKey(),
         focusOffset: block.getLength(),
       }),
-      "forward",
+      "forward"
     );
   }
   if (res.index !== 0) {
@@ -141,7 +175,7 @@ const trimBlock = (block: ContentBlock, content: ContentState): ContentState => 
         focusKey: block.getKey(),
         focusOffset: res.index,
       }),
-      "forward",
+      "forward"
     );
   }
   return nextContent;
@@ -153,14 +187,20 @@ const trimBlocks = (state: EditorState): EditorState => {
   }
   const selectionKey = state.getSelection().getFocusKey();
   let nextContent = state.getCurrentContent();
-  state.getCurrentContent().getBlockMap().forEach((block) => {
-    if (!block) {
-      return;
-    }
-    if (block.getText().trim() !== block.getText() && block.getKey() !== selectionKey) {
-      nextContent = trimBlock(block, nextContent);
-    }
-  });
+  state
+    .getCurrentContent()
+    .getBlockMap()
+    .forEach((block) => {
+      if (!block) {
+        return;
+      }
+      if (
+        block.getText().trim() !== block.getText() &&
+        block.getKey() !== selectionKey
+      ) {
+        nextContent = trimBlock(block, nextContent);
+      }
+    });
   return EditorState.set(state, { currentContent: nextContent });
 };
 
@@ -179,7 +219,11 @@ const trimBlocksContent = (content: ContentState): ContentState => {
 };
 
 // note an invariant: all blocks before the current block are preserved in the returned ContentState
-const removeBlock = (block: ContentBlock, content: ContentState, selection: SelectionState): [ContentState, SelectionState] => {
+const removeBlock = (
+  block: ContentBlock,
+  content: ContentState,
+  selection: SelectionState
+): [ContentState, SelectionState] => {
   if (!selection.isCollapsed()) {
     return [content, selection];
   }
@@ -198,11 +242,11 @@ const removeBlock = (block: ContentBlock, content: ContentState, selection: Sele
           focusKey: key,
           focusOffset: block.getLength(),
         }),
-        "forward",
+        "forward"
       ),
       selection,
     ];
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   } else if (nextBlock) {
     /*
      * deleting from start of current block to start of next: next block
@@ -217,7 +261,7 @@ const removeBlock = (block: ContentBlock, content: ContentState, selection: Sele
           focusKey: nextBlock.getKey(),
           focusOffset: 0,
         }),
-        "forward",
+        "forward"
       ),
       /*
        * therefore we have to move the cursor up to the current block
@@ -225,11 +269,11 @@ const removeBlock = (block: ContentBlock, content: ContentState, selection: Sele
        */
       selection.getAnchorKey() === nextBlock.getKey()
         ? new SelectionState({
-          anchorKey: key,
-          anchorOffset: selection.getAnchorOffset(),
-          focusKey: key,
-          focusOffset: selection.getFocusOffset(),
-        })
+            anchorKey: key,
+            anchorOffset: selection.getAnchorOffset(),
+            focusKey: key,
+            focusOffset: selection.getFocusOffset(),
+          })
         : selection,
     ];
   }
@@ -253,9 +297,9 @@ const removeBlockContent = (block: ContentBlock, content: ContentState) => {
         focusKey: key,
         focusOffset: block.getLength(),
       }),
-      "forward",
+      "forward"
     );
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   } else if (nextBlock) {
     /*
      * deleting from start of current block to start of next: next block
@@ -269,7 +313,7 @@ const removeBlockContent = (block: ContentBlock, content: ContentState) => {
         focusKey: nextBlock.getKey(),
         focusOffset: 0,
       }),
-      "forward",
+      "forward"
     );
   }
   // current block is only block, no-op
@@ -287,15 +331,26 @@ const removeEmptyBlocks = (state: EditorState): EditorState => {
    * considered block of the input ContentState are preserved in the returned ContentState,
    * we are justified in iterating from the last block to the first.
    */
-  state.getCurrentContent().getBlockMap().reverse().forEach((block) => {
-    if (!block) {
-      return;
-    }
-    if (!block.getText() && block.getKey() !== nextSelection.getFocusKey()) {
-      [nextContent, nextSelection] = removeBlock(block, nextContent, nextSelection);
-    }
+  state
+    .getCurrentContent()
+    .getBlockMap()
+    .reverse()
+    .forEach((block) => {
+      if (!block) {
+        return;
+      }
+      if (!block.getText() && block.getKey() !== nextSelection.getFocusKey()) {
+        [nextContent, nextSelection] = removeBlock(
+          block,
+          nextContent,
+          nextSelection
+        );
+      }
+    });
+  return EditorState.set(state, {
+    currentContent: nextContent,
+    selection: nextSelection,
   });
-  return EditorState.set(state, { currentContent: nextContent, selection: nextSelection });
 };
 
 // version where selection is irrelevant
@@ -306,14 +361,17 @@ const removeEmptyBlocksContent = (content: ContentState): ContentState => {
    * considered block of the input ContentState are preserved in the returned ContentState,
    * we are justified in iterating from the last block to the first.
    */
-  content.getBlockMap().reverse().forEach((block) => {
-    if (!block) {
-      return;
-    }
-    if (!block.getText()) {
-      nextContent = removeBlockContent(block, nextContent);
-    }
-  });
+  content
+    .getBlockMap()
+    .reverse()
+    .forEach((block) => {
+      if (!block) {
+        return;
+      }
+      if (!block.getText()) {
+        nextContent = removeBlockContent(block, nextContent);
+      }
+    });
   return nextContent;
 };
 
@@ -321,30 +379,37 @@ const removeEmptyBlocksContent = (content: ContentState): ContentState => {
  * Converts the current block containing no entities into a block
  * containing an ANSWER entity spanning the entire block
  */
-const createAnswerEntity = (block: ContentBlock, state: EditorState): EditorState => {
-  const intermediateContent = state.getCurrentContent().createEntity("ANSWER", "IMMUTABLE");
+const createAnswerEntity = (
+  block: ContentBlock,
+  state: EditorState
+): EditorState => {
+  const intermediateContent = state
+    .getCurrentContent()
+    .createEntity("ANSWER", "IMMUTABLE");
   const intermediateState = EditorState.push(
     state,
     Modifier.applyEntity(
       intermediateContent,
       blockSelection(block),
-      intermediateContent.getLastCreatedEntityKey(),
+      intermediateContent.getLastCreatedEntityKey()
     ),
-    "apply-entity",
+    "apply-entity"
   );
-  return EditorState.set(
-    intermediateState,
-    { selection: state.getSelection() },
-  );
+  return EditorState.set(intermediateState, {
+    selection: state.getSelection(),
+  });
 };
 
 // version where selection is irrelevant
-const createAnswerEntityContent = (block: ContentBlock, content: ContentState): ContentState => {
+const createAnswerEntityContent = (
+  block: ContentBlock,
+  content: ContentState
+): ContentState => {
   const intermediateContent = content.createEntity("ANSWER", "IMMUTABLE");
   return Modifier.applyEntity(
     intermediateContent,
     blockSelection(block),
-    intermediateContent.getLastCreatedEntityKey(),
+    intermediateContent.getLastCreatedEntityKey()
   );
 };
 
@@ -353,14 +418,20 @@ const createAnswerEntities = (state: EditorState): EditorState => {
     return state;
   }
   let nextState = state;
-  state.getCurrentContent().getBlockMap().forEach((block) => {
-    if (!block) {
-      return;
-    }
-    if (!block.getEntityAt(0) && block.getKey() !== state.getSelection().getFocusKey()) {
-      nextState = createAnswerEntity(block, nextState);
-    }
-  });
+  state
+    .getCurrentContent()
+    .getBlockMap()
+    .forEach((block) => {
+      if (!block) {
+        return;
+      }
+      if (
+        !block.getEntityAt(0) &&
+        block.getKey() !== state.getSelection().getFocusKey()
+      ) {
+        nextState = createAnswerEntity(block, nextState);
+      }
+    });
   return nextState;
 };
 
@@ -377,7 +448,9 @@ const createAnswerEntitiesContent = (content: ContentState): ContentState => {
 };
 
 const processContentState = (content: ContentState): ContentState =>
-  createAnswerEntitiesContent(removeEmptyBlocksContent(trimBlocksContent(content)));
+  createAnswerEntitiesContent(
+    removeEmptyBlocksContent(trimBlocksContent(content))
+  );
 
 const processEditorState = (state: EditorState): EditorState =>
   createAnswerEntities(removeEmptyBlocks(trimBlocks(state)));
@@ -397,33 +470,34 @@ interface Props {
 }
 
 const AnswersEditor = (props: Props): JSX.Element => {
-  const {
-    editorState,
-    setEditorState,
-    handleChange,
-    placeholder,
-    readOnly,
-  } = props;
+  const { editorState, setEditorState, handleChange, placeholder, readOnly } =
+    props;
   // eslint-disable-next-line new-cap
-  const blockRenderMap = Map({ unstyled: { element: "li", wrapper: <ul/> } });
+  const blockRenderMap = Map({ unstyled: { element: "li", wrapper: <ul /> } });
   const handleEditorChange = (nextEditorState: EditorState): void => {
     if (hasInconsistentBlocks(nextEditorState)) {
       setEditorState(EditorState.undo(nextEditorState));
     } else {
       const processedState = processEditorState(nextEditorState);
-      setEditorState(handleChange ? handleChange(processedState) ?? EditorState.undo(nextEditorState) : processedState);
+      setEditorState(
+        handleChange
+          ? handleChange(processedState) ?? EditorState.undo(nextEditorState)
+          : processedState
+      );
     }
   };
 
-  return <Wrapper>
-    <Editor
-      blockRenderMap={blockRenderMap}
-      editorState={editorState}
-      onChange={handleEditorChange}
-      placeholder={placeholder}
-      readOnly={readOnly}
-    />
-  </Wrapper>;
+  return (
+    <Wrapper>
+      <Editor
+        blockRenderMap={blockRenderMap}
+        editorState={editorState}
+        onChange={handleEditorChange}
+        placeholder={placeholder}
+        readOnly={readOnly}
+      />
+    </Wrapper>
+  );
 };
 
 export default AnswersEditor;

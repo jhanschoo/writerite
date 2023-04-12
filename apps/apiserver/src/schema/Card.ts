@@ -1,4 +1,4 @@
-import { Prisma, Unit } from "@prisma/client";
+import { Prisma, Unit } from "database";
 import { builder } from "../builder";
 import { CardInput } from "./inputs/CardInput";
 import { decodeGlobalID } from "@pothos/plugin-relay";

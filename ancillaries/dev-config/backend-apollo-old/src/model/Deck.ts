@@ -34,7 +34,11 @@ export function ownDecksTopic(userId: string): string {
   return `deck<owner#${userId}>`;
 }
 
-export async function userOwnsDeck({ prisma, userId, deckId }: {
+export async function userOwnsDeck({
+  prisma,
+  userId,
+  deckId,
+}: {
   prisma: PrismaClient;
   userId?: string | null;
   deckId?: string | null;
@@ -42,10 +46,12 @@ export async function userOwnsDeck({ prisma, userId, deckId }: {
   if (!userId || !deckId) {
     return false;
   }
-  return await prisma.deck.count({
-    where: {
-      id: deckId,
-      ownerId: userId,
-    },
-  }) === 1;
+  return (
+    (await prisma.deck.count({
+      where: {
+        id: deckId,
+        ownerId: userId,
+      },
+    })) === 1
+  );
 }

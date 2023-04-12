@@ -1,5 +1,5 @@
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "database";
 import { ExecutionResult } from "graphql";
 import Redis from "ioredis";
 import { JWTPayload } from "jose";

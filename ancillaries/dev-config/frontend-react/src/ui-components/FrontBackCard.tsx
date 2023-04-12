@@ -82,7 +82,7 @@ export const FrontBackCard = ({
   beforeAnswersContent,
   answersContent,
   footer,
-}: Props): JSX.Element =>
+}: Props): JSX.Element => (
   <CardBox>
     {status && <CardStatus>{status}</CardStatus>}
     {header}
@@ -90,24 +90,21 @@ export const FrontBackCard = ({
       <StyledHeader>
         <h5>front</h5>
       </StyledHeader>
-      <StyledContent>
-        {promptContent}
-      </StyledContent>
+      <StyledContent>{promptContent}</StyledContent>
     </FrontBox>
     <BackBox>
       <StyledHeader>
         <h5>back</h5>
       </StyledHeader>
-      <StyledContent>
-        {fullAnswerContent}
-      </StyledContent>
-      {beforeAnswersContent && <StyledContent>{beforeAnswersContent}</StyledContent>}
+      <StyledContent>{fullAnswerContent}</StyledContent>
+      {beforeAnswersContent && (
+        <StyledContent>{beforeAnswersContent}</StyledContent>
+      )}
       <StyledHeader>
         <h6>accepted answers</h6>
       </StyledHeader>
-      <StyledContent>
-        {answersContent}
-      </StyledContent>
+      <StyledContent>{answersContent}</StyledContent>
     </BackBox>
     {footer}
-  </CardBox>;
+  </CardBox>
+);

@@ -1,4 +1,4 @@
-import { Deck as PDeck, Prisma } from "@prisma/client";
+import { Deck as PDeck, Prisma } from "database";
 import { getDescendantsOfDeck } from "../service/deck";
 import { builder, gao, ungao } from "../builder";
 import { CardInput } from "./inputs/CardInput";

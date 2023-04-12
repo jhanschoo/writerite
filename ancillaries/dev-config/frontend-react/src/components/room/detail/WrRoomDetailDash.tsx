@@ -25,16 +25,30 @@ interface Props {
 }
 
 const WrRoomDetailDash = ({ room, deckId }: Props): JSX.Element => {
-  const user = useSelector<WrState, CurrentUser | null>((state) => state.signin?.session?.user ?? null);
+  const user = useSelector<WrState, CurrentUser | null>(
+    (state) => state.signin?.session?.user ?? null
+  );
   const isOwner = user?.id === room.ownerId;
   const { id, occupants, ownerId } = room;
-  const filteredOccupants = occupants?.filter((occupant): occupant is UserScalars => Boolean(occupant));
-  return <DashBox>
-    <WrRoomDetailDeckInfo deckId={deckId} />
-    {filteredOccupants && <WrRoomDetailOccupantsInfo id={id} occupants={filteredOccupants} ownerId={ownerId} isOwner={isOwner} />}
-    {isOwner && room.state === RoomState.WAITING && <WrRoomDetailWaitingOwnerConfig room={room}/>}
-  </DashBox>;
+  const filteredOccupants = occupants?.filter(
+    (occupant): occupant is UserScalars => Boolean(occupant)
+  );
+  return (
+    <DashBox>
+      <WrRoomDetailDeckInfo deckId={deckId} />
+      {filteredOccupants && (
+        <WrRoomDetailOccupantsInfo
+          id={id}
+          occupants={filteredOccupants}
+          ownerId={ownerId}
+          isOwner={isOwner}
+        />
+      )}
+      {isOwner && room.state === RoomState.WAITING && (
+        <WrRoomDetailWaitingOwnerConfig room={room} />
+      )}
+    </DashBox>
+  );
 };
 
 export default WrRoomDetailDash;
-

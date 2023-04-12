@@ -3,10 +3,24 @@ import { useDebounce } from "use-debounce";
 
 import { useQuery } from "@apollo/client";
 import { DECKS_QUERY } from "src/gql";
-import { DeckScalars, DecksQuery, DecksQueryScope, DecksQueryVariables } from "src/gqlTypes";
+import {
+  DeckScalars,
+  DecksQuery,
+  DecksQueryScope,
+  DecksQueryVariables,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
-import { BorderlessButton, Item, List, Main, ModalBackground, ModalCloseButton, ModalContainer, TextInput } from "src/ui";
+import {
+  BorderlessButton,
+  Item,
+  List,
+  Main,
+  ModalBackground,
+  ModalCloseButton,
+  ModalContainer,
+  TextInput,
+} from "src/ui";
 
 import { DEBOUNCE_DELAY, SERVER_FETCH_LIMIT } from "src/util";
 import WrUploadDeck from "../WrUploadDeck";
@@ -36,7 +50,8 @@ margin: ${({ theme: { space } }) => space[1]};
 `;
 
 const VisibilityButton = wrStyled(BorderlessButton)`
-padding: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) => space[2]};
+padding: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) =>
+  space[2]};
 `;
 
 const TitleFilterBox = wrStyled.div`
@@ -46,15 +61,19 @@ justify-content: center;
 flex-grow: 1;
 ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 margin: 0 ${({ theme: { space } }) => space[1]};
-padding: ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[2]};
+padding: ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) =>
+  space[2]};
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-  margin: 0 ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) => space[3]} ${({ theme: { space } }) => space[1]};
+  margin: 0 ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) =>
+  space[3]} ${({ theme: { space } }) => space[1]};
   width: 100%;
 }
 `;
 
 const TitleFilterLabel = wrStyled.label`
-padding: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) => space[1]};
+padding: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) =>
+  space[2]} ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) =>
+  space[1]};
 `;
 
 const TitleFilterInput = wrStyled(TextInput)`
@@ -66,12 +85,14 @@ const NewDeckButton = wrStyled(BorderlessButton)`
 display: flex;
 justify-content: flex-start;
 align-items: center;
-margin: 0 ${({ theme: { space } }) => space[1]} 0 ${({ theme: { space } }) => space[2]};
+margin: 0 ${({ theme: { space } }) => space[1]} 0 ${({ theme: { space } }) =>
+  space[2]};
 padding: ${({ theme: { space } }) => space[2]};
 ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 
 @media (max-width: ${({ theme: { breakpoints } }) => breakpoints[1]}) {
-  margin: 0 ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[3]} ${({ theme: { space } }) => space[2]};
+  margin: 0 ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) =>
+  space[3]} ${({ theme: { space } }) => space[2]};
   width: 100%;
 }
 `;
@@ -94,7 +115,8 @@ align-items: flex-start;
 const MoreBox = wrStyled(BorderlessButton)`
 display: flex;
 justify-content: flex-start;
-margin: 0 ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) => space[3]} ${({ theme: { space } }) => space[2]};
+margin: 0 ${({ theme: { space } }) => space[2]} ${({ theme: { space } }) =>
+  space[3]} ${({ theme: { space } }) => space[2]};
 padding: ${({ theme: { space } }) => space[3]};
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 `;
@@ -105,13 +127,17 @@ interface Props {
 }
 
 const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
-  const [ownershipFilter, setOwnershipFilter] = useState(DecksQueryScope.UNARCHIVED);
+  const [ownershipFilter, setOwnershipFilter] = useState(
+    DecksQueryScope.UNARCHIVED
+  );
   const [localTitleFilter, setLocalTitleFilter] = useState("");
   const [titleFilter] = useDebounce(localTitleFilter, DEBOUNCE_DELAY);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [cursor, setCursor] = useState<string | null>(null);
   const updateCursor = (data: DecksQuery | undefined) => {
-    const decks = data?.decks?.filter((deck): deck is DeckScalars => deck !== null);
+    const decks = data?.decks?.filter(
+      (deck): deck is DeckScalars => deck !== null
+    );
     if (decks?.length === SERVER_FETCH_LIMIT) {
       setCursor(decks[decks.length - 1]?.id);
       return;
@@ -122,53 +148,67 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
    * Do not indicate if loading since there are no mutations and
    * stale data does not cause harm.
    */
-  const { error, data, fetchMore } = useQuery<DecksQuery, DecksQueryVariables>(DECKS_QUERY, {
-    variables: {
-      titleFilter,
-      scope: ownershipFilter,
-    },
-    onCompleted: updateCursor,
-  });
-  const handleMore = () => fetchMore({
-    variables: {
-      cursor,
-      titleFilter,
-      scope: ownershipFilter,
-    },
-    updateQuery(prev, { fetchMoreResult }) {
-      if (!fetchMoreResult) {
-        return prev;
-      }
-      if (!prev.decks && !fetchMoreResult.decks) {
-        return { decks: null };
-      }
-      const decks = ([] as (DeckScalars | null)[]).concat(prev.decks ?? [], fetchMoreResult.decks ?? []);
-      return { decks };
-    },
-  });
-  const handleSetUnarchived = () => setOwnershipFilter(DecksQueryScope.UNARCHIVED);
+  const { error, data, fetchMore } = useQuery<DecksQuery, DecksQueryVariables>(
+    DECKS_QUERY,
+    {
+      variables: {
+        titleFilter,
+        scope: ownershipFilter,
+      },
+      onCompleted: updateCursor,
+    }
+  );
+  const handleMore = () =>
+    fetchMore({
+      variables: {
+        cursor,
+        titleFilter,
+        scope: ownershipFilter,
+      },
+      updateQuery(prev, { fetchMoreResult }) {
+        if (!fetchMoreResult) {
+          return prev;
+        }
+        if (!prev.decks && !fetchMoreResult.decks) {
+          return { decks: null };
+        }
+        const decks = ([] as (DeckScalars | null)[]).concat(
+          prev.decks ?? [],
+          fetchMoreResult.decks ?? []
+        );
+        return { decks };
+      },
+    });
+  const handleSetUnarchived = () =>
+    setOwnershipFilter(DecksQueryScope.UNARCHIVED);
   const handleSetOwned = () => setOwnershipFilter(DecksQueryScope.OWNED);
-  const handleSetParticipated = () => setOwnershipFilter(DecksQueryScope.PARTICIPATED);
+  const handleSetParticipated = () =>
+    setOwnershipFilter(DecksQueryScope.PARTICIPATED);
   const handleSetVisible = () => setOwnershipFilter(DecksQueryScope.VISIBLE);
-  const handleTitleFilterChange = (e: ChangeEvent<HTMLInputElement>) => setLocalTitleFilter(e.target.value);
+  const handleTitleFilterChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setLocalTitleFilter(e.target.value);
   const handleShowUploadModal = () => setShowUploadModal(true);
   const handleHideUploadModal = () => setShowUploadModal(false);
-  const renderWithList = (list: ReactNode) =>
+  const renderWithList = (list: ReactNode) => (
     <Main>
-      {showUploadModal &&
+      {showUploadModal && (
         <ModalBackground onClick={handleHideUploadModal}>
           <ModalContainer onClick={(e) => e.stopPropagation()}>
-            <ModalCloseButton onClick={handleHideUploadModal}>cancel</ModalCloseButton>
+            <ModalCloseButton onClick={handleHideUploadModal}>
+              cancel
+            </ModalCloseButton>
             <WrUploadDeck />
           </ModalContainer>
         </ModalBackground>
-      }
+      )}
       <Ribbon>
         <VisibilityList>
           <VisibilityItem>
             <VisibilityButton
               onClick={handleSetUnarchived}
-              className={ownershipFilter === DecksQueryScope.UNARCHIVED ? "active" : ""}
+              className={
+                ownershipFilter === DecksQueryScope.UNARCHIVED ? "active" : ""
+              }
             >
               unarchived
             </VisibilityButton>
@@ -176,7 +216,9 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
           <VisibilityItem>
             <VisibilityButton
               onClick={handleSetOwned}
-              className={ownershipFilter === DecksQueryScope.OWNED ? "active" : ""}
+              className={
+                ownershipFilter === DecksQueryScope.OWNED ? "active" : ""
+              }
             >
               owned
             </VisibilityButton>
@@ -184,7 +226,9 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
           <VisibilityItem>
             <VisibilityButton
               onClick={handleSetParticipated}
-              className={ownershipFilter === DecksQueryScope.PARTICIPATED ? "active" : ""}
+              className={
+                ownershipFilter === DecksQueryScope.PARTICIPATED ? "active" : ""
+              }
             >
               participed
             </VisibilityButton>
@@ -192,14 +236,18 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
           <VisibilityItem>
             <VisibilityButton
               onClick={handleSetVisible}
-              className={ownershipFilter === DecksQueryScope.VISIBLE ? "active" : ""}
+              className={
+                ownershipFilter === DecksQueryScope.VISIBLE ? "active" : ""
+              }
             >
               visible
             </VisibilityButton>
           </VisibilityItem>
         </VisibilityList>
         <TitleFilterBox>
-          <TitleFilterLabel htmlFor="wr-deck-title-filter">Find</TitleFilterLabel>{" "}
+          <TitleFilterLabel htmlFor="wr-deck-title-filter">
+            Find
+          </TitleFilterLabel>{" "}
           <TitleFilterInput
             id="wr-deck-title-filter"
             value={localTitleFilter}
@@ -211,7 +259,8 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
         </NewDeckButton>
       </Ribbon>
       {list}
-    </Main>;
+    </Main>
+  );
   if (error) {
     return renderWithList(null);
   }
@@ -220,19 +269,31 @@ const WrDecksList = ({ deckFilter, onItemClick }: Props): JSX.Element => {
   }
   const decks = data.decks
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    .filter((deck): deck is DeckScalars => (deck?.name.includes(localTitleFilter) ?? false) && (deckFilter ? deckFilter(deck as DeckScalars) : true))
-    .map((deck) => <WrDeckItem deck={deck} key={deck.id} onClick={onItemClick ? () => onItemClick(deck) : undefined} />);
+    .filter(
+      (deck): deck is DeckScalars =>
+        (deck?.name.includes(localTitleFilter) ?? false) &&
+        (deckFilter ? deckFilter(deck as DeckScalars) : true)
+    )
+    .map((deck) => (
+      <WrDeckItem
+        deck={deck}
+        key={deck.id}
+        onClick={onItemClick ? () => onItemClick(deck) : undefined}
+      />
+    ));
   if (decks.length === 0) {
     return renderWithList(<p>There are no decks to show.</p>);
   }
-  return renderWithList(<StyledList>
-    {decks}
-    <MoreItem key="more">
-      <MoreBox disabled={!cursor} onClick={handleMore}>
-        {cursor ? "more..." : "end."}
-      </MoreBox>
-    </MoreItem>
-  </StyledList>);
+  return renderWithList(
+    <StyledList>
+      {decks}
+      <MoreItem key="more">
+        <MoreBox disabled={!cursor} onClick={handleMore}>
+          {cursor ? "more..." : "end."}
+        </MoreBox>
+      </MoreItem>
+    </StyledList>
+  );
 };
 
 export default WrDecksList;

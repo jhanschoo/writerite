@@ -1,11 +1,26 @@
 import React, { useState } from "react";
 
 import { useMutation } from "@apollo/client";
-import { DECK_ADD_SUBDECK_MUTATION, DECK_REMOVE_SUBDECK_MUTATION } from "src/gql";
-import type { DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables, DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables, DeckScalars } from "src/gqlTypes";
+import {
+  DECK_ADD_SUBDECK_MUTATION,
+  DECK_REMOVE_SUBDECK_MUTATION,
+} from "src/gql";
+import type {
+  DeckAddSubdeckMutation,
+  DeckAddSubdeckMutationVariables,
+  DeckRemoveSubdeckMutation,
+  DeckRemoveSubdeckMutationVariables,
+  DeckScalars,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
-import { BorderlessButton, List, ModalBackground, ModalCloseButton, ModalContainer } from "src/ui";
+import {
+  BorderlessButton,
+  List,
+  ModalBackground,
+  ModalCloseButton,
+  ModalContainer,
+} from "src/ui";
 import { Loading } from "src/ui-components";
 
 import WrDecksList from "../list/WrDecksList";
@@ -29,11 +44,13 @@ ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 const StyledHeader = wrStyled.header`
 display: flex;
 align-items: baseline;
-padding: ${({ theme: { space } }) => `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
 
 h4 {
   flex-grow: 1;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+  padding: ${({ theme: { space } }) =>
+    `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
   margin: 0;
 }
 `;
@@ -48,7 +65,8 @@ const SubdeckModalContent = wrStyled.div`
 
 const SubdeckModalTitle = wrStyled.h3`
 margin: 0;
-padding: ${({ theme: { space } }) => `${space[4]} ${space[4]} ${space[3]} ${space[4]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[4]} ${space[4]} ${space[3]} ${space[4]}`};
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 `;
 
@@ -84,49 +102,68 @@ const WrDeckDetailSubdecks = ({
   readOnly,
 }: Props): JSX.Element => {
   const [showNewModal, setShowNewModal] = useState(false);
-  const [addMutate, { loading: addLoading }] = useMutation<DeckAddSubdeckMutation, DeckAddSubdeckMutationVariables>(DECK_ADD_SUBDECK_MUTATION);
-  const [removeMutate, { loading: removeLoading }] = useMutation<DeckRemoveSubdeckMutation, DeckRemoveSubdeckMutationVariables>(DECK_REMOVE_SUBDECK_MUTATION);
+  const [addMutate, { loading: addLoading }] = useMutation<
+    DeckAddSubdeckMutation,
+    DeckAddSubdeckMutationVariables
+  >(DECK_ADD_SUBDECK_MUTATION);
+  const [removeMutate, { loading: removeLoading }] = useMutation<
+    DeckRemoveSubdeckMutation,
+    DeckRemoveSubdeckMutationVariables
+  >(DECK_REMOVE_SUBDECK_MUTATION);
   const loading = addLoading || removeLoading;
   const handleShowNewModal = () => setShowNewModal(true);
   const handleHideNewModal = () => setShowNewModal(false);
-  const handleAddSubdeck = (deck: DeckScalars) => addMutate({ variables: { id: deckId, subdeckId: deck.id } });
-  const subdeckItems = subdecks.map((subdeck) =>
+  const handleAddSubdeck = (deck: DeckScalars) =>
+    addMutate({ variables: { id: deckId, subdeckId: deck.id } });
+  const subdeckItems = subdecks.map((subdeck) => (
     <WrDeckDetailSubdeckItem
       deck={subdeck}
-      onClick={() => removeMutate({ variables: { id: deckId, subdeckId: subdeck.id } })}
-      key={subdeck.id}
-    />);
-  return <StyledOuterBox>
-    <StyledInnerBox>
-      {loading && <Loading />}
-      <StyledHeader>
-        <h4>Subdecks</h4>
-        {!readOnly && <AddSubdeckButton onClick={handleShowNewModal}>Add Subdeck...</AddSubdeckButton>}
-      </StyledHeader>
-      {showNewModal &&
-        <ModalBackground onClick={handleHideNewModal}>
-          <ModalContainer onClick={(e) => e.stopPropagation()}>
-            <ModalCloseButton onClick={handleHideNewModal}>cancel</ModalCloseButton>
-            <SubdeckModalContent>
-              {loading && <Loading fontSize={"2.25rem"} />}
-              <SubdeckModalTitle>Choose a Subdeck to Add</SubdeckModalTitle>
-              <SubdeckListBox>
-                <WrDecksList
-                  deckFilter={({ id }) => id !== deckId && subdecks.every((subdeck) => subdeck.id !== id)}
-                  onItemClick={handleAddSubdeck}
-                />
-              </SubdeckListBox>
-            </SubdeckModalContent>
-          </ModalContainer>
-        </ModalBackground>
+      onClick={() =>
+        removeMutate({ variables: { id: deckId, subdeckId: subdeck.id } })
       }
-      <StyledContent>
-        <StyledList>
-          {subdeckItems}
-        </StyledList>
-      </StyledContent>
-    </StyledInnerBox>
-  </StyledOuterBox>;
+      key={subdeck.id}
+    />
+  ));
+  return (
+    <StyledOuterBox>
+      <StyledInnerBox>
+        {loading && <Loading />}
+        <StyledHeader>
+          <h4>Subdecks</h4>
+          {!readOnly && (
+            <AddSubdeckButton onClick={handleShowNewModal}>
+              Add Subdeck...
+            </AddSubdeckButton>
+          )}
+        </StyledHeader>
+        {showNewModal && (
+          <ModalBackground onClick={handleHideNewModal}>
+            <ModalContainer onClick={(e) => e.stopPropagation()}>
+              <ModalCloseButton onClick={handleHideNewModal}>
+                cancel
+              </ModalCloseButton>
+              <SubdeckModalContent>
+                {loading && <Loading fontSize={"2.25rem"} />}
+                <SubdeckModalTitle>Choose a Subdeck to Add</SubdeckModalTitle>
+                <SubdeckListBox>
+                  <WrDecksList
+                    deckFilter={({ id }) =>
+                      id !== deckId &&
+                      subdecks.every((subdeck) => subdeck.id !== id)
+                    }
+                    onItemClick={handleAddSubdeck}
+                  />
+                </SubdeckListBox>
+              </SubdeckModalContent>
+            </ModalContainer>
+          </ModalBackground>
+        )}
+        <StyledContent>
+          <StyledList>{subdeckItems}</StyledList>
+        </StyledContent>
+      </StyledInnerBox>
+    </StyledOuterBox>
+  );
 };
 
 export default WrDeckDetailSubdecks;

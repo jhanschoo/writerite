@@ -1,4 +1,10 @@
-import type { Card, JsonObject, JsonValue, PrismaClient, Unit } from "@prisma/client";
+import type {
+  Card,
+  JsonObject,
+  JsonValue,
+  PrismaClient,
+  Unit,
+} from "@prisma/client";
 import type { DeckSS } from "./Deck";
 import type { UserCardRecordSS } from "./UserCardRecord";
 
@@ -39,7 +45,11 @@ export function cardsOfDeckTopic(deckId: string): string {
   return `card<deck#${deckId}>`;
 }
 
-export async function userOwnsCard({ prisma, userId, cardId }: {
+export async function userOwnsCard({
+  prisma,
+  userId,
+  cardId,
+}: {
   prisma: PrismaClient;
   userId?: string | null;
   cardId?: string | null;
@@ -47,10 +57,12 @@ export async function userOwnsCard({ prisma, userId, cardId }: {
   if (!userId || !cardId) {
     return false;
   }
-  return await prisma.card.count({
-    where: {
-      id: cardId,
-      deck: { ownerId: userId },
-    },
-  }) === 1;
+  return (
+    (await prisma.card.count({
+      where: {
+        id: cardId,
+        deck: { ownerId: userId },
+      },
+    })) === 1
+  );
 }

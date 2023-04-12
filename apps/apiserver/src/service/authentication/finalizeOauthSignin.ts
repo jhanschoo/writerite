@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "database";
 import { ProviderKey, providerStrategies } from "./providerStrategies";
 import { PrismaCurrentUserSourceType } from "./types";
 import { findOrCreateCurrentUserSourceWithProfile } from "./util";

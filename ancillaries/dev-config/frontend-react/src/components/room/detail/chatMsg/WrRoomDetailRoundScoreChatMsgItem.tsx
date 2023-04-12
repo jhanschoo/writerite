@@ -34,8 +34,12 @@ interface Props {
 
 const WrRoomDetailRoundScoreChatMsgItem = ({ chatMsg }: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow
-  const { content: { userIds, prompt, fullAnswer, answers } } = chatMsg;
-  const userIdsFiltered = userIds.filter((userId): userId is string => userId !== null);
+  const {
+    content: { userIds, prompt, fullAnswer, answers },
+  } = chatMsg;
+  const userIdsFiltered = userIds.filter(
+    (userId): userId is string => userId !== null
+  );
   let userNames: JSX.Element;
   const len = userIdsFiltered.length;
   switch (len) {
@@ -43,37 +47,78 @@ const WrRoomDetailRoundScoreChatMsgItem = ({ chatMsg }: Props): JSX.Element => {
       userNames = <>Nobody answered correctly!</>;
       break;
     case 1:
-      userNames = <>Only <strong><UserIdToName id={userIdsFiltered[0]} /></strong> got it right!</>;
+      userNames = (
+        <>
+          Only{" "}
+          <strong>
+            <UserIdToName id={userIdsFiltered[0]} />
+          </strong>{" "}
+          got it right!
+        </>
+      );
       break;
     case 2:
-      userNames = <><strong><UserIdToName id={userIdsFiltered[0]} /></strong> and <strong><UserIdToName id={userIdsFiltered[1]} /></strong> got it right!</>;
+      userNames = (
+        <>
+          <strong>
+            <UserIdToName id={userIdsFiltered[0]} />
+          </strong>{" "}
+          and{" "}
+          <strong>
+            <UserIdToName id={userIdsFiltered[1]} />
+          </strong>{" "}
+          got it right!
+        </>
+      );
       break;
     default:
-      const mostNames = userIdsFiltered.slice(0, len - 1).map((userId) => <><strong><UserIdToName id={userId} /></strong>, </>);
-      userNames = <>{mostNames} and <strong><UserIdToName id={userIdsFiltered[len - 1]} /></strong> got it right!</>;
+      const mostNames = userIdsFiltered.slice(0, len - 1).map((userId) => (
+        <>
+          <strong>
+            <UserIdToName id={userId} />
+          </strong>
+          ,{" "}
+        </>
+      ));
+      userNames = (
+        <>
+          {mostNames} and{" "}
+          <strong>
+            <UserIdToName id={userIdsFiltered[len - 1]} />
+          </strong>{" "}
+          got it right!
+        </>
+      );
   }
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-  return <MsgItem>
-    <FrontBackCard
-      header={<IntroBox>
-        <p>Answers are closed. {userNames}</p>
-      </IntroBox>}
-      promptContent={<SelfManagedNotesEditor
-        initialContent={prompt}
-        placeholder="Empty prompt"
-        readOnly={true}
-      />}
-      fullAnswerContent={<SelfManagedNotesEditor
-        initialContent={fullAnswer}
-        placeholder="Empty answer"
-        readOnly={true}
-      />}
-      answersContent={<SelfManagedAnswersEditor
-        initialContent={answers}
-        readOnly={true}
-      />}
-    />
-  </MsgItem>;
+  return (
+    <MsgItem>
+      <FrontBackCard
+        header={
+          <IntroBox>
+            <p>Answers are closed. {userNames}</p>
+          </IntroBox>
+        }
+        promptContent={
+          <SelfManagedNotesEditor
+            initialContent={prompt}
+            placeholder="Empty prompt"
+            readOnly={true}
+          />
+        }
+        fullAnswerContent={
+          <SelfManagedNotesEditor
+            initialContent={fullAnswer}
+            placeholder="Empty answer"
+            readOnly={true}
+          />
+        }
+        answersContent={
+          <SelfManagedAnswersEditor initialContent={answers} readOnly={true} />
+        }
+      />
+    </MsgItem>
+  );
 };
 
 export default WrRoomDetailRoundScoreChatMsgItem;

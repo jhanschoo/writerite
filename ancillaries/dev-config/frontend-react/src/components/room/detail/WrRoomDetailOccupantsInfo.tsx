@@ -26,7 +26,7 @@ const OccupantsList = wrStyled(List)`
 flex-direction: column;
 flex-grow: 1;
 overflow-y: hidden;
-padding: ${({theme: { space } }) => space[2]};
+padding: ${({ theme: { space } }) => space[2]};
 ${({ theme: { fgbg, bg } }) => fgbg(bg[3])}
 
 &.active, :hover, :focus, :active {
@@ -38,7 +38,8 @@ const DistinguishedOccupantItem = wrStyled(Item)`
 flex-direction: column;
 align-items: flex-start;
 margin: ${({ theme: { space } }) => space[1]};
-padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
 ${({ theme: { fgbg, bg } }) => fgbg(bg[1])}
 
 p {
@@ -57,7 +58,8 @@ const OccupantsItem = wrStyled(Item)`
 flex-direction: column;
 align-items: flex-start;
 margin: ${({ theme: { space } }) => space[1]};
-padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
 
 p {
@@ -72,7 +74,12 @@ interface Props {
   isOwner: boolean;
 }
 
-const WrRoomDetailOccupantsInfo = ({ id, occupants, ownerId, isOwner }: Props): JSX.Element => {
+const WrRoomDetailOccupantsInfo = ({
+  id,
+  occupants,
+  ownerId,
+  isOwner,
+}: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow, @typescript-eslint/prefer-nullish-coalescing
   let owner: UserScalars | null = null;
   const occupantsMinusOwner: UserScalars[] = [];
@@ -83,24 +90,33 @@ const WrRoomDetailOccupantsInfo = ({ id, occupants, ownerId, isOwner }: Props): 
       occupantsMinusOwner.push(occupant);
     }
   }
-  const ownerItem = owner && <DistinguishedOccupantItem key={owner.id}>
-    <SmallP>owner</SmallP>
-    <p>{
-      /* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */
-      owner.name || owner.email
-    }</p>
-  </DistinguishedOccupantItem>;
+  const ownerItem = owner && (
+    <DistinguishedOccupantItem key={owner.id}>
+      <SmallP>owner</SmallP>
+      <p>
+        {
+          /* eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing */
+          owner.name || owner.email
+        }
+      </p>
+    </DistinguishedOccupantItem>
+  );
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-  const occupantItems = occupantsMinusOwner.map(({ id, name, email }) => <OccupantsItem key={id}><p>{name || email}</p></OccupantsItem>);
-  return <OccupantsBox>
-    <h3>Participants</h3>
-    {isOwner && <WrRoomDetailAddOccupant id={id} />}
-    <OccupantsList>
-      {ownerItem}
-      {occupantItems}
-    </OccupantsList>
-  </OccupantsBox>;
+  const occupantItems = occupantsMinusOwner.map(({ id, name, email }) => (
+    <OccupantsItem key={id}>
+      <p>{name || email}</p>
+    </OccupantsItem>
+  ));
+  return (
+    <OccupantsBox>
+      <h3>Participants</h3>
+      {isOwner && <WrRoomDetailAddOccupant id={id} />}
+      <OccupantsList>
+        {ownerItem}
+        {occupantItems}
+      </OccupantsList>
+    </OccupantsBox>
+  );
 };
 
 export default WrRoomDetailOccupantsInfo;
-

@@ -2,7 +2,10 @@ import React, { ChangeEvent, MouseEvent, useState, FormEvent } from "react";
 
 import { useMutation } from "@apollo/client";
 import { ROOM_ADD_OCCUPANT_BY_EMAIL_MUTATION } from "src/gql";
-import { RoomAddOccupantByEmailMutation, RoomAddOccupantByEmailMutationVariables } from "src/gqlTypes";
+import {
+  RoomAddOccupantByEmailMutation,
+  RoomAddOccupantByEmailMutationVariables,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { AnchorButton, BorderlessButton, Button, TextInput } from "src/ui";
@@ -56,49 +59,60 @@ padding: ${({ theme: { space } }) => `${space[1]} ${space[2]}`};
 `;
 
 interface Props {
-  id: string
+  id: string;
 }
 
 const WrRoomDetailAddOccupant = ({ id }: Props): JSX.Element => {
   const [showForm, setShowForm] = useState(false);
   const [emailInput, setEmailInput] = useState("");
-  const [mutate, { loading }] = useMutation<RoomAddOccupantByEmailMutation, RoomAddOccupantByEmailMutationVariables>(ROOM_ADD_OCCUPANT_BY_EMAIL_MUTATION, {
+  const [mutate, { loading }] = useMutation<
+    RoomAddOccupantByEmailMutation,
+    RoomAddOccupantByEmailMutationVariables
+  >(ROOM_ADD_OCCUPANT_BY_EMAIL_MUTATION, {
     onCompleted: (_data) => {
       setEmailInput("");
       setShowForm(false);
     },
   });
   const handleToggleForm = () => setShowForm(!showForm);
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => setEmailInput(e.target.value);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setEmailInput(e.target.value);
   const handleCancel = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setShowForm(false);
   };
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    void mutate({ variables: {
-      id,
-      email: emailInput,
-    } });
+    void mutate({
+      variables: {
+        id,
+        email: emailInput,
+      },
+    });
   };
-  return <AddOccupantWrapper>
-    <AddOccupantButton onClick={handleToggleForm}>
-      Add Occupant...
-    </AddOccupantButton>
-    {showForm && <AddOccupantForm onSubmit={handleSubmit}>
-      <EmailTextInput
-        value={emailInput}
-        placeholder="type an email..."
-        onChange={handleChange}
-        disabled={loading}
-      />
-      <ButtonsBox>
-        <CancelButton onClick={handleCancel}>cancel</CancelButton>
-        <SubmitButton type="submit" disabled={loading}>Add</SubmitButton>
-      </ButtonsBox>
-    </AddOccupantForm>}
-  </AddOccupantWrapper>;
+  return (
+    <AddOccupantWrapper>
+      <AddOccupantButton onClick={handleToggleForm}>
+        Add Occupant...
+      </AddOccupantButton>
+      {showForm && (
+        <AddOccupantForm onSubmit={handleSubmit}>
+          <EmailTextInput
+            value={emailInput}
+            placeholder="type an email..."
+            onChange={handleChange}
+            disabled={loading}
+          />
+          <ButtonsBox>
+            <CancelButton onClick={handleCancel}>cancel</CancelButton>
+            <SubmitButton type="submit" disabled={loading}>
+              Add
+            </SubmitButton>
+          </ButtonsBox>
+        </AddOccupantForm>
+      )}
+    </AddOccupantWrapper>
+  );
 };
 
 export default WrRoomDetailAddOccupant;
-

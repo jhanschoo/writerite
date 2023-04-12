@@ -7,11 +7,13 @@ interface Props {
 }
 
 export const Modal = ({
-  children, handleClose,
-}: PropsWithChildren<Props>): JSX.Element =>
+  children,
+  handleClose,
+}: PropsWithChildren<Props>): JSX.Element => (
   <ModalBackground onClick={handleClose}>
     <ModalContainer onClick={(e: SyntheticEvent) => e.stopPropagation()}>
       <ModalCloseButton onClick={handleClose}>cancel</ModalCloseButton>
       {children}
     </ModalContainer>
-  </ModalBackground>;
+  </ModalBackground>
+);

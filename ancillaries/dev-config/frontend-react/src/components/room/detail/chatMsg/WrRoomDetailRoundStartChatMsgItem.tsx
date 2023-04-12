@@ -47,25 +47,30 @@ interface Props {
 
 const WrRoomDetailRoundStartChatMsgItem = ({ chatMsg }: Props): JSX.Element => {
   // eslint-disable-next-line no-shadow
-  const { id, content: { prompt } } = chatMsg;
+  const {
+    id,
+    content: { prompt },
+  } = chatMsg;
   // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-  return <>
-    <MsgItem key={`${id}-message`}>
-      <IntroBox>
-        <p>next prompt</p>
-      </IntroBox>
-      <StyledHeader>
-        <h5>front</h5>
-      </StyledHeader>
-      <StyledContent>
-        <SelfManagedNotesEditor
-          initialContent={prompt}
-          placeholder="Empty prompt"
-          readOnly={true}
-        />
-      </StyledContent>
-    </MsgItem>
-  </>;
+  return (
+    <>
+      <MsgItem key={`${id}-message`}>
+        <IntroBox>
+          <p>next prompt</p>
+        </IntroBox>
+        <StyledHeader>
+          <h5>front</h5>
+        </StyledHeader>
+        <StyledContent>
+          <SelfManagedNotesEditor
+            initialContent={prompt}
+            placeholder="Empty prompt"
+            readOnly={true}
+          />
+        </StyledContent>
+      </MsgItem>
+    </>
+  );
 };
 
 export default WrRoomDetailRoundStartChatMsgItem;

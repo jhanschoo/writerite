@@ -1,17 +1,17 @@
-import gql from 'graphql-tag';
+import gql from "graphql-tag";
 
 // tslint:disable-next-line: variable-name
 export const WrRoomMessageStub = gql`
-fragment WrRoomMessageStub on RwRoomMessage {
-  id
-  content
-  contentType
-}
+  fragment WrRoomMessageStub on RwRoomMessage {
+    id
+    content
+    contentType
+  }
 `;
 
 export enum WrRoomMessageContentType {
-  TEXT = 'TEXT',
-  CONFIG = 'CONFIG',
+  TEXT = "TEXT",
+  CONFIG = "CONFIG",
 }
 
 export interface IWrRoomMessageStub {

@@ -25,7 +25,7 @@ export interface DeckDetail_cards_ownRecord {
   readonly __typename: "UserCardRecord";
   readonly cardId: string;
   readonly userId: string;
-  readonly correctRecord: ReadonlyArray<(GraphQLDateTime | null)>;
+  readonly correctRecord: ReadonlyArray<GraphQLDateTime | null>;
 }
 
 export interface DeckDetail_cards {
@@ -61,7 +61,7 @@ export interface DeckDetail {
   readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
-  readonly subdecks: ReadonlyArray<(DeckDetail_subdecks | null)> | null;
-  readonly cards: ReadonlyArray<(DeckDetail_cards | null)> | null;
+  readonly subdecks: ReadonlyArray<DeckDetail_subdecks | null> | null;
+  readonly cards: ReadonlyArray<DeckDetail_cards | null> | null;
   readonly ownRecord: DeckDetail_ownRecord | null;
 }

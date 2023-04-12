@@ -14,8 +14,11 @@ interface Props {
   suffix?: string;
 }
 
-const WrBrandText = ({ prefix, short, suffix }: Props): JSX.Element =>
+const WrBrandText = ({ prefix, short, suffix }: Props): JSX.Element => (
   <BrandText>
-    {prefix}{short ? "Wr" : "WriteRite"}{suffix}
-  </BrandText>;
+    {prefix}
+    {short ? "Wr" : "WriteRite"}
+    {suffix}
+  </BrandText>
+);
 export default WrBrandText;

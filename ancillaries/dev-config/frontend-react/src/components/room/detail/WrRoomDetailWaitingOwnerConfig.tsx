@@ -2,7 +2,11 @@ import React from "react";
 
 import { useMutation } from "@apollo/client";
 import { ROOM_EDIT_OWNER_CONFIG_MUTATION } from "src/gql";
-import { RoomDetail, RoomEditOwnerConfigMutation, RoomEditOwnerConfigMutationVariables } from "src/gqlTypes";
+import {
+  RoomDetail,
+  RoomEditOwnerConfigMutation,
+  RoomEditOwnerConfigMutationVariables,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton } from "src/ui";
@@ -33,22 +37,28 @@ interface Props {
 }
 
 const WrRoomDetailWaitingOwnerConfig = ({ room }: Props): JSX.Element => {
-  const [mutate] = useMutation<RoomEditOwnerConfigMutation, RoomEditOwnerConfigMutationVariables>(ROOM_EDIT_OWNER_CONFIG_MUTATION);
-  const handleClick = () => mutate({ variables: {
-    id: room.id,
-    ownerConfig: {
-      ...room.ownerConfig,
-      requestServing: true,
-    },
-  } });
-  return <>
-    <ConfigBox>
-      <h3>Room Settings</h3>
-    </ConfigBox>
-    <StartButton onClick={handleClick}>
-      begin
-    </StartButton>
-  </>;
+  const [mutate] = useMutation<
+    RoomEditOwnerConfigMutation,
+    RoomEditOwnerConfigMutationVariables
+  >(ROOM_EDIT_OWNER_CONFIG_MUTATION);
+  const handleClick = () =>
+    mutate({
+      variables: {
+        id: room.id,
+        ownerConfig: {
+          ...room.ownerConfig,
+          requestServing: true,
+        },
+      },
+    });
+  return (
+    <>
+      <ConfigBox>
+        <h3>Room Settings</h3>
+      </ConfigBox>
+      <StartButton onClick={handleClick}>begin</StartButton>
+    </>
+  );
 };
 
 export default WrRoomDetailWaitingOwnerConfig;

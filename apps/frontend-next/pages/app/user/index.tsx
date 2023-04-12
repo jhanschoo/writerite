@@ -18,9 +18,7 @@ const User: NextPage = () => {
   }
   return (
     <StandardLayout>
-      <motion.div {...motionProps}>
-        {data && <PersonalDashboard user={data.user} />}
-      </motion.div>
+      <motion.div {...motionProps}>{data && <PersonalDashboard user={data.user} />}</motion.div>
     </StandardLayout>
   );
 };

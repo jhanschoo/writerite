@@ -17,7 +17,11 @@ import { createApollo } from "./apollo";
 
 const {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  NODE_ENV, REDIS_HOST, REDIS_PORT, CERT_FILE, KEY_FILE,
+  NODE_ENV,
+  REDIS_HOST,
+  REDIS_PORT,
+  CERT_FILE,
+  KEY_FILE,
 } = process.env;
 
 const prisma = new PrismaClient();
@@ -55,29 +59,38 @@ const apollo = createApollo((ctx) => ({
 apollo.applyMiddleware({
   app,
   cors: {
-    origin: NODE_ENV === "production"
-      ? "https://www.writerite.site"
-      : "https://localhost:3000",
+    origin:
+      NODE_ENV === "production"
+        ? "https://www.writerite.site"
+        : "https://localhost:3000",
     credentials: true,
   },
 });
 
-export const server = CERT_FILE && KEY_FILE
-  ? https.createServer({
-    cert: fs.readFileSync(CERT_FILE),
-    key: fs.readFileSync(KEY_FILE),
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  }, app.callback())
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  : http.createServer(app.callback());
+export const server =
+  CERT_FILE && KEY_FILE
+    ? https.createServer(
+        {
+          cert: fs.readFileSync(CERT_FILE),
+          key: fs.readFileSync(KEY_FILE),
+          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        },
+        app.callback()
+      )
+    : // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      http.createServer(app.callback());
 
 apollo.installSubscriptionHandlers(server);
 
 server.listen({ port: 4000 }, () => {
   // eslint-disable-next-line no-console
-  console.log(`🚀 Server ready at http${
-    CERT_FILE && KEY_FILE ? "s" : ""
-  }://localhost:${4000}${apollo.graphqlPath} in environment ${NODE_ENV as string}`);
+  console.log(
+    `🚀 Server ready at http${
+      CERT_FILE && KEY_FILE ? "s" : ""
+    }://localhost:${4000}${apollo.graphqlPath} in environment ${
+      NODE_ENV as string
+    }`
+  );
 });
 
 export function stop(): void {

@@ -14,12 +14,8 @@ const Home: NextPage = () => {
   const slug = router.query.slug as string | undefined;
 
   return (
-    <StandardLayout
-      vhHeight
-    >
-      <motion.div {...motionProps}>
-        {slug && <ManageRoom slug={slug} />}
-      </motion.div>
+    <StandardLayout vhHeight>
+      <motion.div {...motionProps}>{slug && <ManageRoom slug={slug} />}</motion.div>
     </StandardLayout>
   );
 };

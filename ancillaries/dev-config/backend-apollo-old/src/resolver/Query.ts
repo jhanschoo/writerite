@@ -25,13 +25,18 @@ enum DecksQueryScope {
   VISIBLE = "VISIBLE",
 }
 
-function cursorParams(cursor?: string | null, take?: number | null): {
-  cursor: { id: string },
-  skip: number,
-  take: number,
-} | {
-  take: number
-} {
+function cursorParams(
+  cursor?: string | null,
+  take?: number | null
+):
+  | {
+      cursor: { id: string };
+      skip: number;
+      take: number;
+    }
+  | {
+      take: number;
+    } {
   const actualTake = Math.min(take ?? DEFAULT_TAKE, DEFAULT_TAKE);
   if (cursor) {
     return {
@@ -45,25 +50,86 @@ function cursorParams(cursor?: string | null, take?: number | null): {
   };
 }
 
-interface QueryResolver extends IResolverObject<Record<string, unknown>, WrContext> {
-  user: FieldResolver<Record<string, unknown>, WrContext, { id: string }, UserSS | null>;
-  deck: FieldResolver<Record<string, unknown>, WrContext, { id: string }, DeckSS | null>;
-  decks: FieldResolver<Record<string, unknown>, WrContext, {
-    cursor?: string | null,
-    take?: number | null,
-    titleFilter?: string | null,
-    scope?: DecksQueryScope | null,
-  }, (DeckSS | null)[] | null>;
-  ownDeckRecord: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, UserDeckRecordSS | null>;
-  card: FieldResolver<Record<string, unknown>, WrContext, { id: string }, CardSS | null>;
-  cardsOfDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
-  cardsUnderDeck: FieldResolver<Record<string, unknown>, WrContext, { deckId: string }, (CardSS | null)[] | null>;
-  ownCardRecord: FieldResolver<Record<string, unknown>, WrContext, { cardId: string }, UserCardRecordSS | null>;
-  room: FieldResolver<Record<string, unknown>, WrContext, { id: string }, RoomSS | null>;
+interface QueryResolver
+  extends IResolverObject<Record<string, unknown>, WrContext> {
+  user: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { id: string },
+    UserSS | null
+  >;
+  deck: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { id: string },
+    DeckSS | null
+  >;
+  decks: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    {
+      cursor?: string | null;
+      take?: number | null;
+      titleFilter?: string | null;
+      scope?: DecksQueryScope | null;
+    },
+    (DeckSS | null)[] | null
+  >;
+  ownDeckRecord: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { deckId: string },
+    UserDeckRecordSS | null
+  >;
+  card: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { id: string },
+    CardSS | null
+  >;
+  cardsOfDeck: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { deckId: string },
+    (CardSS | null)[] | null
+  >;
+  cardsUnderDeck: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { deckId: string },
+    (CardSS | null)[] | null
+  >;
+  ownCardRecord: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { cardId: string },
+    UserCardRecordSS | null
+  >;
+  room: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { id: string },
+    RoomSS | null
+  >;
   // eslint-disable-next-line @typescript-eslint/ban-types
-  occupyingRooms: FieldResolver<Record<string, unknown>, WrContext, {}, (RoomSS | null)[] | null>;
-  chatMsg: FieldResolver<Record<string, unknown>, WrContext, { id: string }, ChatMsgSS | null>;
-  chatMsgsOfRoom: FieldResolver<Record<string, unknown>, WrContext, { roomId: string }, (ChatMsgSS | null)[] | null>;
+  occupyingRooms: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    {},
+    (RoomSS | null)[] | null
+  >;
+  chatMsg: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { id: string },
+    ChatMsgSS | null
+  >;
+  chatMsgsOfRoom: FieldResolver<
+    Record<string, unknown>,
+    WrContext,
+    { roomId: string },
+    (ChatMsgSS | null)[] | null
+  >;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -85,10 +151,13 @@ export const Query: QueryResolver = {
         { cards: { some: { records: { some: { userId: sub.id } } } } },
         { published: true },
       ];
-      const decks = await prisma.deck.findMany({ where: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        OR, id,
-      } });
+      const decks = await prisma.deck.findMany({
+        where: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          OR,
+          id,
+        },
+      });
       if (decks.length !== 1) {
         return null;
       }
@@ -97,13 +166,21 @@ export const Query: QueryResolver = {
       return handleError(e);
     }
   },
-  async decks(_parent, { cursor, take, titleFilter, scope }, { sub, prisma }, _info) {
+  async decks(
+    _parent,
+    { cursor, take, titleFilter, scope },
+    { sub, prisma },
+    _info
+  ) {
     if (!sub) {
       return null;
     }
     try {
       const OR = [
-        { ownerId: sub.id, archived: scope === DecksQueryScope.UNARCHIVED ? false : undefined },
+        {
+          ownerId: sub.id,
+          archived: scope === DecksQueryScope.UNARCHIVED ? false : undefined,
+        },
         { cards: { some: { records: { some: { userId: sub.id } } } } },
         { published: true },
       ];
@@ -115,9 +192,9 @@ export const Query: QueryResolver = {
           OR.length = 2;
           break;
         case DecksQueryScope.OWNED:
-          // falls through
+        // falls through
         case DecksQueryScope.UNARCHIVED:
-          // falls through
+        // falls through
         default:
           OR.length = 1;
       }
@@ -126,9 +203,11 @@ export const Query: QueryResolver = {
         where: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
           OR,
-          name: titleFilter ? {
-            contains: titleFilter,
-          } : undefined,
+          name: titleFilter
+            ? {
+                contains: titleFilter,
+              }
+            : undefined,
         },
         include: {
           owner: true,
@@ -149,7 +228,9 @@ export const Query: QueryResolver = {
     }
     try {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      return await prisma.userDeckRecord.findOne({ where: { userId_deckId: { userId: sub.id, deckId } } });
+      return await prisma.userDeckRecord.findOne({
+        where: { userId_deckId: { userId: sub.id, deckId } },
+      });
     } catch (e) {
       return handleError(e);
     }
@@ -181,7 +262,9 @@ export const Query: QueryResolver = {
     }
     try {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      return await prisma.userCardRecord.findOne({ where: { userId_cardId: { userId: sub.id, cardId } } });
+      return await prisma.userCardRecord.findOne({
+        where: { userId_cardId: { userId: sub.id, cardId } },
+      });
     } catch (e) {
       return handleError(e);
     }
@@ -198,14 +281,21 @@ export const Query: QueryResolver = {
       return null;
     }
     try {
-      return (await prisma.room.findMany({ where: { occupants: { some: { occupantId: sub.id } } } })).map(roomToSS);
+      return (
+        await prisma.room.findMany({
+          where: { occupants: { some: { occupantId: sub.id } } },
+        })
+      ).map(roomToSS);
     } catch (e) {
       return handleError(e);
     }
   },
   async chatMsg(_parent, { id }, { sub, prisma }, _info) {
     try {
-      if (!sub || !await userSeesChatMsg({ prisma, userId: sub.id, chatMsgId: id })) {
+      if (
+        !sub ||
+        !(await userSeesChatMsg({ prisma, userId: sub.id, chatMsgId: id }))
+      ) {
         return null;
       }
       return chatMsgToSS(await prisma.chatMsg.findOne({ where: { id } }));
@@ -215,10 +305,19 @@ export const Query: QueryResolver = {
   },
   async chatMsgsOfRoom(_parent, { roomId }, { sub, prisma }, _info) {
     try {
-      if (!sub || !await userOccupiesRoom({ prisma, occupantId: sub.id, where: { id: roomId } })) {
+      if (
+        !sub ||
+        !(await userOccupiesRoom({
+          prisma,
+          occupantId: sub.id,
+          where: { id: roomId },
+        }))
+      ) {
         return null;
       }
-      return (await prisma.chatMsg.findMany({ where: { roomId } })).map(chatMsgToSS);
+      return (await prisma.chatMsg.findMany({ where: { roomId } })).map(
+        chatMsgToSS
+      );
     } catch (e) {
       return handleError(e);
     }

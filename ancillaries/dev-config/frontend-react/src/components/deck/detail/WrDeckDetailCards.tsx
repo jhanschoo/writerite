@@ -8,7 +8,9 @@ import { Item, List } from "src/ui";
 import WrDeckDetailCardItem from "./WrDeckDetailCardItem";
 import WrDeckDetailMainTemplateItem from "./WrDeckDetailMainTemplateItem";
 
-const groupCards = (unsortedCards: readonly (CardDetail | null)[]): [CardDetail[], CardDetail[], CardDetail | null] => {
+const groupCards = (
+  unsortedCards: readonly (CardDetail | null)[]
+): [CardDetail[], CardDetail[], CardDetail | null] => {
   const templates: CardDetail[] = [];
   const cards: CardDetail[] = [];
   let mainTemplateCard = null;
@@ -48,11 +50,13 @@ ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 const StyledHeader = wrStyled.header`
 display: flex;
 align-items: baseline;
-padding: ${({ theme: { space } }) => `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
 
 h4 {
   flex-grow: 1;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+  padding: ${({ theme: { space } }) =>
+    `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
   margin: 0;
 }
 `;
@@ -87,28 +91,43 @@ const WrDeckDetailCards = ({
   readOnly,
 }: Props): JSX.Element => {
   const [cards, templates, mainTemplate] = groupCards(unsortedCards);
-  const cardItems = cards.map((card) => <WrDeckDetailCardItem deckId={deckId} card={card} key={card.id} readOnly={readOnly} />);
-  return <StyledOuterBox>
-    <StyledInnerBox>
-      <StyledHeader>
-        <h4>Cards</h4>
-      </StyledHeader>
-      <StyledContent>
-        <StyledList>
-          {!readOnly && <WrDeckDetailMainTemplateItem
-            deckId={deckId}
-            card={mainTemplate}
-            key={mainTemplate?.id ?? "empty-main-template"}
-            templates={templates}
-          />}
-          {!cardItems.length && <StyledItem key="empty-message">
-            <StyledEmptyMessage>There are no cards to show.</StyledEmptyMessage>
-          </StyledItem>}
-          {cardItems}
-        </StyledList>
-      </StyledContent>
-    </StyledInnerBox>
-  </StyledOuterBox>;
+  const cardItems = cards.map((card) => (
+    <WrDeckDetailCardItem
+      deckId={deckId}
+      card={card}
+      key={card.id}
+      readOnly={readOnly}
+    />
+  ));
+  return (
+    <StyledOuterBox>
+      <StyledInnerBox>
+        <StyledHeader>
+          <h4>Cards</h4>
+        </StyledHeader>
+        <StyledContent>
+          <StyledList>
+            {!readOnly && (
+              <WrDeckDetailMainTemplateItem
+                deckId={deckId}
+                card={mainTemplate}
+                key={mainTemplate?.id ?? "empty-main-template"}
+                templates={templates}
+              />
+            )}
+            {!cardItems.length && (
+              <StyledItem key="empty-message">
+                <StyledEmptyMessage>
+                  There are no cards to show.
+                </StyledEmptyMessage>
+              </StyledItem>
+            )}
+            {cardItems}
+          </StyledList>
+        </StyledContent>
+      </StyledInnerBox>
+    </StyledOuterBox>
+  );
 };
 
 export default WrDeckDetailCards;

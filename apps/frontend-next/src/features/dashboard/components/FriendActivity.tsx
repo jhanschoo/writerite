@@ -22,12 +22,10 @@ export const FriendActivity = () => {
   return (
     <Paper radius="lg" p="md">
       <Box className={classes.header}>
-        <Title order={2} size="h3">Currently Active</Title>
-        <Button
-          variant="outline"
-          radius="xl"
-          leftIcon={<IconFriends size={21} />}
-        >
+        <Title order={2} size="h3">
+          Currently Active
+        </Title>
+        <Button variant="outline" radius="xl" leftIcon={<IconFriends size={21} />}>
           View All Friends
         </Button>
       </Box>

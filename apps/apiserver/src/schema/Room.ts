@@ -1,4 +1,4 @@
-import { Room as PRoom, RoomType, RoundState, Unit } from "@prisma/client";
+import { Room as PRoom, RoomType, RoundState, Unit } from "database";
 import { builder, gao, ungao } from "../builder";
 import { User } from "./User";
 import { Round } from "./Round";

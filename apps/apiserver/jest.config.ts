@@ -4,8 +4,9 @@ const config: Config = {
   collectCoverage: true,
   coverageProvider: "v8",
   coverageDirectory: "coverage",
-  // required only for integration tests
-  maxConcurrency: 1,
+  // required only for integration tests, but unfortunately needs to be specified as global.
+  // consider moving the graphql app to a separate package and only run unit tests internally for it.
+  maxWorkers: 1,
   projects: [
     {
       displayName: "unit",

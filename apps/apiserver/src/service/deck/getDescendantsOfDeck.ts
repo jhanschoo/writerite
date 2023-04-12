@@ -1,4 +1,4 @@
-import { Deck, PrismaClient } from "@prisma/client";
+import { Deck, PrismaClient } from "database";
 
 // Returns a list of decks that are descendants (reflexive) of the deck with the provided deck id.
 

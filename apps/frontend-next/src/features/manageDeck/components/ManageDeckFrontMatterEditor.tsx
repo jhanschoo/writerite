@@ -19,9 +19,7 @@ export const ManageDeckFrontMatterEditor = ({
         value={name}
         onChange={(event) => setName(event.currentTarget.value)}
       />
-      <Input.Wrapper label="Description">
-        {descriptionEditorElement}
-      </Input.Wrapper>
+      <Input.Wrapper label="Description">{descriptionEditorElement}</Input.Wrapper>
     </Stack>
   );
 };

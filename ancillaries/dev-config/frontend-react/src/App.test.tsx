@@ -9,6 +9,11 @@ global.grecaptchaDeferred = null;
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
-  ReactDOM.render(<Providers><App /></Providers>, div);
+  ReactDOM.render(
+    <Providers>
+      <App />
+    </Providers>,
+    div
+  );
   ReactDOM.unmountComponentAtNode(div);
 });

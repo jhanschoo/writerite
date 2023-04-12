@@ -25,12 +25,21 @@ interface Props {
 }
 
 const WrDeckDetailArchive = ({ id, archived }: Props): JSX.Element => {
-  const [mutate, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, { variables: {
-    id,
-    archived: !archived,
-  } });
+  const [mutate, { loading }] = useMutation<
+    DeckEditMutation,
+    DeckEditMutationVariables
+  >(DECK_EDIT_MUTATION, {
+    variables: {
+      id,
+      archived: !archived,
+    },
+  });
   const handleClick = () => mutate();
-  return <PrimaryButton onClick={handleClick} disabled={loading}>{archived ? "Unarchive" : "Archive"}</PrimaryButton>;
+  return (
+    <PrimaryButton onClick={handleClick} disabled={loading}>
+      {archived ? "Unarchive" : "Archive"}
+    </PrimaryButton>
+  );
 };
 
 export default WrDeckDetailArchive;

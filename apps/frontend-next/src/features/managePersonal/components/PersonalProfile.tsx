@@ -25,20 +25,30 @@ export const PersonalProfile = ({ user }: ManagePersonalProps) => {
       setBio(bio ?? null);
       setEditing(false);
     }
-  }
+  };
   return (
     <>
       <UserProfile user={{ ...user, bio }} />
-      {!editing && <Button variant="outline" onClick={() => { setEditing(true); resetBioEditorContent(user.bio ?? null); } }>Edit Profile</Button>}
+      {!editing && (
+        <Button
+          variant="outline"
+          onClick={() => {
+            setEditing(true);
+            resetBioEditorContent(user.bio ?? null);
+          }}
+        >
+          Edit Profile
+        </Button>
+      )}
       {editing && (
-        <Stack sx={{
-          // for 'LoadingOverlay' to work
-          position: "relative"
-        }}>
+        <Stack
+          sx={{
+            // for 'LoadingOverlay' to work
+            position: 'relative',
+          }}
+        >
           <LoadingOverlay visible={fetching} />
-          <Input.Wrapper label="About Myself">
-            {bioEditor}
-          </Input.Wrapper>
+          <Input.Wrapper label="About Myself">{bioEditor}</Input.Wrapper>
           <Flex justify="flex-end" pt="xs" gap="xs">
             <Button
               variant="outline"

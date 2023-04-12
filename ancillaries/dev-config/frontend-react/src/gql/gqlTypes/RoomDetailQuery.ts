@@ -33,7 +33,7 @@ export interface RoomDetailQuery_room {
   readonly internalConfig: GraphQLJSONObject;
   readonly state: RoomState;
   readonly owner: RoomDetailQuery_room_owner | null;
-  readonly occupants: ReadonlyArray<(RoomDetailQuery_room_occupants | null)> | null;
+  readonly occupants: ReadonlyArray<RoomDetailQuery_room_occupants | null> | null;
 }
 
 export interface RoomDetailQuery {

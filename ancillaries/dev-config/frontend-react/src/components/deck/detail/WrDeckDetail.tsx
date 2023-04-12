@@ -9,7 +9,12 @@ import { useParams } from "react-router";
 
 import { useQuery } from "@apollo/client";
 import { DECK_DETAIL_QUERY } from "src/gql";
-import type { CardDetail, DeckDetailQuery, DeckDetailQueryVariables, DeckScalars } from "src/gqlTypes";
+import type {
+  CardDetail,
+  DeckDetailQuery,
+  DeckDetailQueryVariables,
+  DeckScalars,
+} from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { Main, MinimalLink } from "src/ui";
@@ -48,57 +53,70 @@ flex-direction: column;
 
 const WrDeckDetail = (): JSX.Element => {
   const { deckId } = useParams<{ deckId: string }>();
-  const id = useSelector<WrState, string | undefined>((state) => state.signin?.session?.user.id);
+  const id = useSelector<WrState, string | undefined>(
+    (state) => state.signin?.session?.user.id
+  );
   const dispatch = useDispatch<Dispatch<SetAllAction>>();
-  const { error, data } = useQuery<DeckDetailQuery, DeckDetailQueryVariables>(DECK_DETAIL_QUERY, {
-    variables: { id: deckId },
-    onCompleted(newData) {
-      const cards = newData.deck?.cards?.filter((card): card is CardDetail => card?.template === false);
-      if (cards) {
-        dispatch(createSetAll(cards));
-      }
-    },
-  });
+  const { error, data } = useQuery<DeckDetailQuery, DeckDetailQueryVariables>(
+    DECK_DETAIL_QUERY,
+    {
+      variables: { id: deckId },
+      onCompleted(newData) {
+        const cards = newData.deck?.cards?.filter(
+          (card): card is CardDetail => card?.template === false
+        );
+        if (cards) {
+          dispatch(createSetAll(cards));
+        }
+      },
+    }
+  );
   if (error) {
-    return <StyledMain/>;
+    return <StyledMain />;
   }
   if (!data?.deck) {
-    return <StyledMain><p>Retrieving deck...</p></StyledMain>;
+    return (
+      <StyledMain>
+        <p>Retrieving deck...</p>
+      </StyledMain>
+    );
   }
   const { deck } = data;
   const readOnly = deck.ownerId !== id;
-  const subdecks = deck.subdecks?.filter((subdeck): subdeck is DeckScalars => subdeck !== null) ?? [];
-  const cards = deck.cards?.filter((card): card is CardDetail => card !== null) ?? [];
+  const subdecks =
+    deck.subdecks?.filter(
+      (subdeck): subdeck is DeckScalars => subdeck !== null
+    ) ?? [];
+  const cards =
+    deck.cards?.filter((card): card is CardDetail => card !== null) ?? [];
   // Note: component is keyed to force refresh on route change.
-  return <StyledMain key={`${deck.id}-WrDeckDetail`}>
-    <BackLink to="/deck/list">←back to Decks</BackLink>
-    <DeckDataBox>
-      <WrDeckDetailData
-        deck={deck}
+  return (
+    <StyledMain key={`${deck.id}-WrDeckDetail`}>
+      <BackLink to="/deck/list">←back to Decks</BackLink>
+      <DeckDataBox>
+        <WrDeckDetailData deck={deck} readOnly={readOnly} />
+        <NotesBox>
+          <WrDeckDetailDescription
+            deckId={deck.id}
+            description={deck.description as Record<string, unknown>}
+            readOnly={readOnly}
+          />
+          <WrDeckDetailPersonalNotes
+            deckId={deck.id}
+            notes={
+              (deck.ownRecord?.notes as Record<string, unknown> | null) ?? {}
+            }
+          />
+        </NotesBox>
+      </DeckDataBox>
+      <WrDeckDetailSubdecks
+        deckId={deckId}
+        subdecks={subdecks}
         readOnly={readOnly}
       />
-      <NotesBox>
-        <WrDeckDetailDescription
-          deckId={deck.id}
-          description={deck.description as Record<string, unknown>}
-          readOnly={readOnly}
-        />
-        <WrDeckDetailPersonalNotes
-          deckId={deck.id}
-          notes={(deck.ownRecord?.notes as Record<string, unknown> | null) ?? {}}
-        />
-      </NotesBox>
-    </DeckDataBox>
-    <WrDeckDetailSubdecks
-      deckId={deckId}
-      subdecks={subdecks}
-      readOnly={readOnly}
-    />
-    <WrDeckDetailCards
-      deckId={deckId}
-      cards={cards}
-    />
-  </StyledMain>;
+      <WrDeckDetailCards deckId={deckId} cards={cards} />
+    </StyledMain>
+  );
 };
 
 export default WrDeckDetail;

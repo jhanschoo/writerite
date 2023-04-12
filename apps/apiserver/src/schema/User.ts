@@ -1,6 +1,6 @@
 import { invalidateByUserId } from "../service/session";
 import { builder, gao, ungao } from "../builder";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "database";
 import { invalidArgumentsErrorFactory } from "../error";
 import { decodeGlobalID } from "@pothos/plugin-relay";
 

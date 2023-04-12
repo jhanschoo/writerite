@@ -1,6 +1,12 @@
 import type { Context } from "koa";
 import type { CurrentUser, IntegrationContext } from "../src/types";
-import { comparePassword, generateB64UUID, generateJWT, getClaims, hashPassword } from "../src/util";
+import {
+  comparePassword,
+  generateB64UUID,
+  generateJWT,
+  getClaims,
+  hashPassword,
+} from "../src/util";
 
 describe("getClaims", () => {
   test("getClaims returns undefined on bad context", () => {
@@ -33,11 +39,14 @@ describe("JWTs", () => {
     expect.assertions(1);
     const sub = { hello: "world" } as unknown as CurrentUser;
     const jwt = `Bearer ${generateJWT(sub)}`;
-    expect(getClaims({
-      ctx: {
-        get: (headerKey: string) => headerKey === "Authorization" ? jwt : undefined,
-      } as unknown as Context,
-    })).toEqual(sub);
+    expect(
+      getClaims({
+        ctx: {
+          get: (headerKey: string) =>
+            headerKey === "Authorization" ? jwt : undefined,
+        } as unknown as Context,
+      })
+    ).toEqual(sub);
   });
 });
 
@@ -58,7 +67,7 @@ describe("passwords", () => {
 
 describe("generateB64UUID", () => {
   test("generateB64UUID generates distinct strings", () => {
-    expect.assertions(31 * 32 / 2);
+    expect.assertions((31 * 32) / 2);
     const a: string[] = [];
     for (let i = 0; i < 32; ++i) {
       a[i] = generateB64UUID();

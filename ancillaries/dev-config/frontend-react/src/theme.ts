@@ -77,7 +77,7 @@ export const fgbg = (bgi: (typeof bg)[number]): string => {
   let color: (typeof fg)[number] = fg[2];
   switch (bgi) {
     case bg[3]:
-      // fallthrough
+    // fallthrough
     case bg[4]:
       // eslint-disable-next-line prefer-destructuring
       color = fg[1];
@@ -92,7 +92,7 @@ export const bgfg = (fgi: (typeof fg)[number]): string => {
   let color: (typeof bg)[number] = bg[2];
   switch (fgi) {
     case fg[3]:
-      // fallthrough
+    // fallthrough
     case fg[4]:
       // eslint-disable-next-line prefer-destructuring
       color = bg[1];
@@ -111,8 +111,27 @@ export const edge = [transparent, darkGray, lightGray];
  */
 const theme = {
   breakpoints,
-  space: ["0", "0.25rem", "0.5rem", "1rem", "2rem", "4rem", "8rem", "16rem", "32rem"],
-  scale: ["0.875rem", "1rem", "1.25rem", "1.5rem", "2.25rem", "3rem", "5rem", "6rem"],
+  space: [
+    "0",
+    "0.25rem",
+    "0.5rem",
+    "1rem",
+    "2rem",
+    "4rem",
+    "8rem",
+    "16rem",
+    "32rem",
+  ],
+  scale: [
+    "0.875rem",
+    "1rem",
+    "1.25rem",
+    "1.5rem",
+    "2.25rem",
+    "3rem",
+    "5rem",
+    "6rem",
+  ],
   fg,
   bg,
   fgbg,

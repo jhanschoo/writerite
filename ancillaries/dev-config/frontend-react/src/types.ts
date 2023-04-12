@@ -33,28 +33,28 @@ export interface TextChatMsgDetail extends ChatMsgDetail {
 export interface RoundStartChatMsgDetail extends ChatMsgDetail {
   type: ChatMsgContentType.ROUND_START;
   content: {
-    cardId: string,
-    prompt: Record<string, unknown>,
+    cardId: string;
+    prompt: Record<string, unknown>;
   };
 }
 
 export interface RoundWinChatMsgDetail extends ChatMsgDetail {
   type: ChatMsgContentType.ROUND_WIN;
   content: {
-    userId: string | null,
-    cardId: string,
+    userId: string | null;
+    cardId: string;
   };
 }
 
 export interface RoundScoreChatMsgDetail extends ChatMsgDetail {
   type: ChatMsgContentType.ROUND_SCORE;
   content: {
-    userIds: (string | null)[],
-    cardId: string,
-    prompt: Record<string, unknown>
-    fullAnswer: Record<string, unknown>
-    answers: readonly string[],
-    deckId: string,
+    userIds: (string | null)[];
+    cardId: string;
+    prompt: Record<string, unknown>;
+    fullAnswer: Record<string, unknown>;
+    answers: readonly string[];
+    deckId: string;
   };
 }
 
@@ -65,4 +65,6 @@ export type DiscriminatedChatMsgDetail =
   | RoundScoreChatMsgDetail;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type FixRef<T extends { ref?: any }> = Omit<T, "ref"> & { ref?: Exclude<T["ref"], string> };
+export type FixRef<T extends { ref?: any }> = Omit<T, "ref"> & {
+  ref?: Exclude<T["ref"], string>;
+};

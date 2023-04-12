@@ -11,10 +11,10 @@ interface Props {
 }
 
 const useStyles = createStyles((theme) => ({
-    input: {
-      overflow: 'hidden',
-    },
-  }));
+  input: {
+    overflow: 'hidden',
+  },
+}));
 
 export const ManageRoomPrimaryInput = ({ room }: Props) => {
   const { classes } = useStyles();

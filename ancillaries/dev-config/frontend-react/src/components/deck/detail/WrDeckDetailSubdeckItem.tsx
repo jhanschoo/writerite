@@ -47,14 +47,16 @@ ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 
 const DeckTitleBox = wrStyled.div`
 display: flex;
-padding: ${({ theme: { space } }) => `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
 justify-content: space-between;
 align-items: baseline;
 
 h4 {
   margin: 0;
   overflow: hidden;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+  padding: ${({ theme: { space } }) =>
+    `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
 }
 `;
 
@@ -76,21 +78,29 @@ const WrDeckDetailSubdeckItem = ({ deck, onClick }: Props): JSX.Element => {
     e.preventDefault();
     onClick?.();
   };
-  return <StyledItem key={deck.id}>
-    <DeckSummaryLink to={`/deck/${deck.id}`}>
-      <DeckSummaryBox>
-        <DeckTitleBox>
-          <h4>{deck.name}</h4>
-          <RemoveSubdeckButton onClick={handleClick}>remove</RemoveSubdeckButton>
-        </DeckTitleBox>
-        <DeckStatistics>
-          {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
-          <br />
-          {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
-        </DeckStatistics>
-      </DeckSummaryBox>
-    </DeckSummaryLink>
-  </StyledItem>;
+  return (
+    <StyledItem key={deck.id}>
+      <DeckSummaryLink to={`/deck/${deck.id}`}>
+        <DeckSummaryBox>
+          <DeckTitleBox>
+            <h4>{deck.name}</h4>
+            <RemoveSubdeckButton onClick={handleClick}>
+              remove
+            </RemoveSubdeckButton>
+          </DeckTitleBox>
+          <DeckStatistics>
+            {`used ${moment
+              .duration(moment.utc(deck.usedAt).diff(now))
+              .humanize()} ago`}
+            <br />
+            {`edited ${moment
+              .duration(moment.utc(deck.editedAt).diff(now))
+              .humanize()} ago`}
+          </DeckStatistics>
+        </DeckSummaryBox>
+      </DeckSummaryLink>
+    </StyledItem>
+  );
 };
 
 export default WrDeckDetailSubdeckItem;

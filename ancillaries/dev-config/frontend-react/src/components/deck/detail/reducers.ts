@@ -12,7 +12,13 @@ export const initialState: DeckDetailCardsState = {
 };
 
 // eslint-disable-next-line @typescript-eslint/default-param-last
-export const deckDetailCards: Reducer<DeckDetailCardsState, DeckDetailCardsAction> = (state = initialState, action: DeckDetailCardsAction): DeckDetailCardsState => {
+export const deckDetailCards: Reducer<
+  DeckDetailCardsState,
+  DeckDetailCardsAction
+> = (
+  state = initialState,
+  action: DeckDetailCardsAction
+): DeckDetailCardsState => {
   switch (action.type) {
     case ActionTypes.SET_ALL:
       return { cards: action.cards };

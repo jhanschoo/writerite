@@ -7,7 +7,8 @@ import type { DeckSS } from "../model/Deck";
 import type { CardSS } from "../model/Card";
 import type { UserDeckRecordSS } from "../model/UserDeckRecord";
 
-interface DeckResolver extends IResolverObject<DeckSS, WrContext, Record<string, unknown>> {
+interface DeckResolver
+  extends IResolverObject<DeckSS, WrContext, Record<string, unknown>> {
   // id uses default resolver
 
   // ownerId uses default resolver
@@ -28,10 +29,30 @@ interface DeckResolver extends IResolverObject<DeckSS, WrContext, Record<string,
 
   // usedAt uses plugin resolver
 
-  owner: FieldResolver<DeckSS, WrContext, Record<string, unknown>, UserSS | null>;
-  subdecks: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (DeckSS | null)[] | null>;
-  cards: FieldResolver<DeckSS, WrContext, Record<string, unknown>, (CardSS | null)[] | null>;
-  ownRecord: FieldResolver<DeckSS, WrContext, Record<string, unknown>, UserDeckRecordSS | null>;
+  owner: FieldResolver<
+    DeckSS,
+    WrContext,
+    Record<string, unknown>,
+    UserSS | null
+  >;
+  subdecks: FieldResolver<
+    DeckSS,
+    WrContext,
+    Record<string, unknown>,
+    (DeckSS | null)[] | null
+  >;
+  cards: FieldResolver<
+    DeckSS,
+    WrContext,
+    Record<string, unknown>,
+    (CardSS | null)[] | null
+  >;
+  ownRecord: FieldResolver<
+    DeckSS,
+    WrContext,
+    Record<string, unknown>,
+    UserDeckRecordSS | null
+  >;
 }
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -46,7 +67,9 @@ export const Deck: DeckResolver = {
     if (subdecks !== undefined) {
       return subdecks;
     }
-    return prisma.deck.findMany({ where: { parentDecks: { some: { parentDeckId: id } } } });
+    return prisma.deck.findMany({
+      where: { parentDecks: { some: { parentDeckId: id } } },
+    });
   },
   cards({ id, cards }, _args, { prisma }, _info) {
     if (cards !== undefined) {
@@ -63,6 +86,8 @@ export const Deck: DeckResolver = {
       return null;
     }
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    return prisma.userDeckRecord.findOne({ where: { userId_deckId: { userId, deckId: id } } });
+    return prisma.userDeckRecord.findOne({
+      where: { userId_deckId: { userId, deckId: id } },
+    });
   },
 };

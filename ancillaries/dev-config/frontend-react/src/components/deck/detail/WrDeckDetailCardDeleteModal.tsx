@@ -4,7 +4,11 @@ import type { CardDetail } from "src/gqlTypes";
 
 import { wrStyled } from "src/theme";
 import { BorderlessButton } from "src/ui";
-import { FrontBackCard, FrontBackCardButtonsBox, Modal } from "src/ui-components";
+import {
+  FrontBackCard,
+  FrontBackCardButtonsBox,
+  Modal,
+} from "src/ui-components";
 
 import { emptyRawContent } from "src/util";
 import SelfManagedAnswersEditor from "src/components/editor/SelfManagedAnswersEditor";
@@ -47,41 +51,55 @@ interface Props {
 }
 
 const WrDeckDetailCardDeleteModal = ({
-  handleClose, handleDelete, template, card,
+  handleClose,
+  handleDelete,
+  template,
+  card,
 }: Props): JSX.Element => {
   const {
     // eslint-disable-next-line no-shadow
-    prompt, fullAnswer, answers,
+    prompt,
+    fullAnswer,
+    answers,
   } = card ?? {
     prompt: emptyRawContent,
     fullAnswer: emptyRawContent,
     answers: [],
   };
-  return <Modal handleClose={handleClose}>
-    <FrontBackCard
-      header={<StyledDeletePrompt>
-        <p>Delete this{template ? " template" : " card"}?</p>
-      </StyledDeletePrompt>}
-      promptContent={<SelfManagedNotesEditor
-        initialContent={prompt as Record<string, unknown>}
-        placeholder="Empty prompt"
-        readOnly={true}
-      />}
-      fullAnswerContent={<SelfManagedNotesEditor
-        initialContent={fullAnswer as Record<string, unknown>}
-        placeholder="Empty answer"
-        readOnly={true}
-      />}
-      answersContent={<SelfManagedAnswersEditor
-        initialContent={answers}
-        readOnly={true}
-      />}
-      footer={<FrontBackCardButtonsBox>
-        <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>
-        <DeleteCardButton onClick={handleDelete}>Delete</DeleteCardButton>
-      </FrontBackCardButtonsBox>}
-    />
-  </Modal>;
+  return (
+    <Modal handleClose={handleClose}>
+      <FrontBackCard
+        header={
+          <StyledDeletePrompt>
+            <p>Delete this{template ? " template" : " card"}?</p>
+          </StyledDeletePrompt>
+        }
+        promptContent={
+          <SelfManagedNotesEditor
+            initialContent={prompt as Record<string, unknown>}
+            placeholder="Empty prompt"
+            readOnly={true}
+          />
+        }
+        fullAnswerContent={
+          <SelfManagedNotesEditor
+            initialContent={fullAnswer as Record<string, unknown>}
+            placeholder="Empty answer"
+            readOnly={true}
+          />
+        }
+        answersContent={
+          <SelfManagedAnswersEditor initialContent={answers} readOnly={true} />
+        }
+        footer={
+          <FrontBackCardButtonsBox>
+            <SecondaryButton onClick={handleClose}>cancel</SecondaryButton>
+            <DeleteCardButton onClick={handleDelete}>Delete</DeleteCardButton>
+          </FrontBackCardButtonsBox>
+        }
+      />
+    </Modal>
+  );
 };
 
 export default WrDeckDetailCardDeleteModal;

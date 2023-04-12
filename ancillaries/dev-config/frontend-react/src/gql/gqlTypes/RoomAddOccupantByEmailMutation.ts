@@ -33,7 +33,7 @@ export interface RoomAddOccupantByEmailMutation_roomAddOccupantByEmail {
   readonly internalConfig: GraphQLJSONObject;
   readonly state: RoomState;
   readonly owner: RoomAddOccupantByEmailMutation_roomAddOccupantByEmail_owner | null;
-  readonly occupants: ReadonlyArray<(RoomAddOccupantByEmailMutation_roomAddOccupantByEmail_occupants | null)> | null;
+  readonly occupants: ReadonlyArray<RoomAddOccupantByEmailMutation_roomAddOccupantByEmail_occupants | null> | null;
 }
 
 export interface RoomAddOccupantByEmailMutation {

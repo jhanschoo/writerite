@@ -20,10 +20,11 @@ padding: ${({ theme: { space } }) => space[1]};
 }
 `;
 
-const WrSigninContent = (): JSX.Element =>
+const WrSigninContent = (): JSX.Element => (
   <StyledLandingContent as="article">
     <SigninBox>
       <WrSignin />
     </SigninBox>
-  </StyledLandingContent>;
+  </StyledLandingContent>
+);
 export default WrSigninContent;

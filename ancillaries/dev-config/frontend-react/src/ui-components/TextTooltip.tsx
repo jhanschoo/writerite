@@ -17,7 +17,12 @@ interface Props {
   placement?: "up" | "down" | "left" | "right";
 }
 
-export const TextTooltip = ({ children, text, placement }: PropsWithChildren<Props>): JSX.Element =>
+export const TextTooltip = ({
+  children,
+  text,
+  placement,
+}: PropsWithChildren<Props>): JSX.Element => (
   <Tooltip content={<TooltipText>{text}</TooltipText>} placement={placement}>
     {children}
-  </Tooltip>;
+  </Tooltip>
+);

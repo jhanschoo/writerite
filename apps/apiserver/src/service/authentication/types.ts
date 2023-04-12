@@ -1,4 +1,4 @@
-import { Occupant, Round, User } from "@prisma/client";
+import { Occupant, Round, User } from "database";
 
 // following are not meant for service-external use
 export type PrismaCurrentUserSourceType = User & {

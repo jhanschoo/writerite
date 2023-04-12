@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "database";
 
 import { cascadingDelete } from "../_helpers/truncate";
 import {

@@ -12,7 +12,20 @@ export function cascadingDelete(prisma: PrismaClient) {
     chatMsg: [() => prisma.chatMsg.deleteMany({})],
     room: ["chatMsg", "occupant", () => prisma.room.deleteMany({})],
     card: ["userCardRecord", () => prisma.card.deleteMany({})],
-    deck: ["card", "userDeckRecord", "subdeck", () => prisma.deck.deleteMany({})],
-    user: ["deck", "room", "chatMsg", "occupant", "userDeckRecord", "userCardRecord", () => prisma.user.deleteMany({})],
+    deck: [
+      "card",
+      "userDeckRecord",
+      "subdeck",
+      () => prisma.deck.deleteMany({}),
+    ],
+    user: [
+      "deck",
+      "room",
+      "chatMsg",
+      "occupant",
+      "userDeckRecord",
+      "userCardRecord",
+      () => prisma.user.deleteMany({}),
+    ],
   });
 }

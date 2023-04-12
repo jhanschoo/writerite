@@ -130,7 +130,9 @@ export class RoundsService<T> {
       const nextRound = round + 1;
       const queueNextRound = () => this.#queue(this.#roundThunker(nextRound));
       const updateState = ({
-        roundHandlers: newRounds, delay, messageHandler,
+        roundHandlers: newRounds,
+        delay,
+        messageHandler,
       }: RoundDefinition<T>) => {
         if (newRounds) {
           this.#roundHandlers = newRounds;
@@ -213,5 +215,4 @@ export class RoundsService<T> {
     const messageThunk = () => currentMessageThunker(message);
     this.#queue(messageThunk);
   }
-
 }

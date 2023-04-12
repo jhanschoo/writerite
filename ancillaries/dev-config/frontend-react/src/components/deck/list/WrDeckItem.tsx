@@ -47,14 +47,16 @@ ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 
 const DeckTitleBox = wrStyled.div`
 display: flex;
-padding: ${({ theme: { space } }) => `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
 justify-content: space-between;
 align-items: baseline;
 
 h4 {
   margin: 0;
   overflow: hidden;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+  padding: ${({ theme: { space } }) =>
+    `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
 }
 `;
 
@@ -72,27 +74,31 @@ interface Props {
 
 const WrDeckItem = ({ deck, onClick }: Props): JSX.Element => {
   const now = moment.utc();
-  const box =
+  const box = (
     <DeckSummaryBox>
       <DeckTitleBox>
         <h4>{deck.name}</h4>
       </DeckTitleBox>
       <DeckStatistics>
-        {`used ${moment.duration(moment.utc(deck.usedAt).diff(now)).humanize()} ago`}
+        {`used ${moment
+          .duration(moment.utc(deck.usedAt).diff(now))
+          .humanize()} ago`}
         <br />
-        {`edited ${moment.duration(moment.utc(deck.editedAt).diff(now)).humanize()} ago`}
+        {`edited ${moment
+          .duration(moment.utc(deck.editedAt).diff(now))
+          .humanize()} ago`}
       </DeckStatistics>
-    </DeckSummaryBox>;
-  return <StyledItem key={deck.id}>
-    {onClick
-      ? <DeckSummaryButton onClick={() => onClick()}>
-        {box}
-      </DeckSummaryButton>
-      : <DeckSummaryLink to={`/deck/${deck.id}`}>
-        {box}
-      </DeckSummaryLink>
-    }
-  </StyledItem>;
+    </DeckSummaryBox>
+  );
+  return (
+    <StyledItem key={deck.id}>
+      {onClick ? (
+        <DeckSummaryButton onClick={() => onClick()}>{box}</DeckSummaryButton>
+      ) : (
+        <DeckSummaryLink to={`/deck/${deck.id}`}>{box}</DeckSummaryLink>
+      )}
+    </StyledItem>
+  );
 };
 
 export default WrDeckItem;

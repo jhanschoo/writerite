@@ -26,7 +26,11 @@ export interface ChatMsgSS extends Partial<ChatMsg> {
   room?: RoomSS | null;
 }
 
-export async function userSeesChatMsg({ prisma, userId, chatMsgId }: {
+export async function userSeesChatMsg({
+  prisma,
+  userId,
+  chatMsgId,
+}: {
   prisma: PrismaClient;
   userId?: string | null;
   chatMsgId?: string | null;
@@ -34,13 +38,15 @@ export async function userSeesChatMsg({ prisma, userId, chatMsgId }: {
   if (!userId || !chatMsgId) {
     return false;
   }
-  return await prisma.room.count({
-    where: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      occupants: { some: { occupantId: userId } },
-      chatMsgs: { some: { id: chatMsgId } },
-    },
-  }) === 1;
+  return (
+    (await prisma.room.count({
+      where: {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        occupants: { some: { occupantId: userId } },
+        chatMsgs: { some: { id: chatMsgId } },
+      },
+    })) === 1
+  );
 }
 
 export function chatMsgToSS(chatMsg: ChatMsg): ChatMsgSS;

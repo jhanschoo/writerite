@@ -13,7 +13,9 @@ export const ManageCardAltAnswer = ({ answer, editable, onRemove, onStartEditing
   if (editable) {
     return (
       <Button.Group>
-        <Button variant="default" compact onClick={onStartEditing}>{answer}</Button>
+        <Button variant="default" compact onClick={onStartEditing}>
+          {answer}
+        </Button>
         <Button variant="default" compact onClick={onRemove}>
           <IconX size={18} />
         </Button>
@@ -21,6 +23,8 @@ export const ManageCardAltAnswer = ({ answer, editable, onRemove, onStartEditing
     );
   }
   return (
-    <Button variant="default" compact>{answer}</Button>
+    <Button variant="default" compact>
+      {answer}
+    </Button>
   );
 };

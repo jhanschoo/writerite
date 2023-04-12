@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { YogaInitialContext } from "graphql-yoga";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "database";
 import { Context } from "../../src/context";
 import { createGraphQLApp } from "../../src/server";
 import {

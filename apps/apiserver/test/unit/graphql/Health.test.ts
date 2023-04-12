@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "database";
 import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
 import Redis from "ioredis";
 

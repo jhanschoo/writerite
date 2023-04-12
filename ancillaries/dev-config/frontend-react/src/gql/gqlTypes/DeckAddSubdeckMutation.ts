@@ -33,7 +33,7 @@ export interface DeckAddSubdeckMutation_deckAddSubdeck {
   readonly archived: boolean;
   readonly usedAt: GraphQLDateTime;
   readonly editedAt: GraphQLDateTime;
-  readonly subdecks: ReadonlyArray<(DeckAddSubdeckMutation_deckAddSubdeck_subdecks | null)> | null;
+  readonly subdecks: ReadonlyArray<DeckAddSubdeckMutation_deckAddSubdeck_subdecks | null> | null;
 }
 
 export interface DeckAddSubdeckMutation {

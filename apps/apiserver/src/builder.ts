@@ -1,5 +1,5 @@
 import SchemaBuilder from "@pothos/core";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "database";
 import PrismaPlugin from "@pothos/plugin-prisma";
 import DirectivePlugin from "@pothos/plugin-directives";
 import RelayPlugin from "@pothos/plugin-relay";

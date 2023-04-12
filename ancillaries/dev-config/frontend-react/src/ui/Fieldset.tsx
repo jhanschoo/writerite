@@ -9,5 +9,5 @@ padding: 0;
 
 Fieldset.defaultProps = {
   // as: 'fieldset',
-  role: 'group',
+  role: "group",
 };

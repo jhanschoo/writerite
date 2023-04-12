@@ -1,7 +1,16 @@
 import { MouseEvent, MouseEventHandler } from 'react';
 import { DeckCreateDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
-import { Button, Center, createStyles, Divider, getStylesRef, Group, Stack, Title } from '@mantine/core';
+import {
+  Button,
+  Center,
+  createStyles,
+  Divider,
+  getStylesRef,
+  Group,
+  Stack,
+  Title,
+} from '@mantine/core';
 import { motionThemes } from '@/lib/framer-motion/motionThemes';
 import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';

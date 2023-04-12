@@ -1,4 +1,4 @@
-import { RoundState } from "@prisma/client";
+import { RoundState } from "database";
 import { builder } from "../builder";
 
 builder.enumType(RoundState, {

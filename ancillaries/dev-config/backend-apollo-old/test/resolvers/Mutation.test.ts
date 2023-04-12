@@ -13,7 +13,11 @@ import { UserSS, userToSS } from "../../src/model/User";
 import type { DeckSS } from "../../src/model/Deck";
 import type { CardSS } from "../../src/model/Card";
 import { RoomSS, roomToSS } from "../../src/model/Room";
-import { ChatMsgContentType, ChatMsgSS, chatMsgToSS } from "../../src/model/ChatMsg";
+import {
+  ChatMsgContentType,
+  ChatMsgSS,
+  chatMsgToSS,
+} from "../../src/model/ChatMsg";
 import { cascadingDelete } from "../testUtil";
 
 let prisma: PrismaClient;
@@ -23,7 +27,9 @@ let baseCtx: WrContext;
 let baseInfo: GraphQLResolveInfo & { mergeInfo: MergeInfo };
 
 function rawFromText(text: string) {
-  return convertToRaw(ContentState.createFromText(text)) as unknown as JsonObject;
+  return convertToRaw(
+    ContentState.createFromText(text)
+  ) as unknown as JsonObject;
 }
 
 beforeAll(() => {
@@ -35,16 +41,12 @@ beforeAll(() => {
 
 afterAll(async () => {
   await cascadingDelete(prisma).user;
-  await Promise.all([
-    pubsub.close(),
-    prisma.$disconnect(),
-  ]);
+  await Promise.all([pubsub.close(), prisma.$disconnect()]);
 });
 
 beforeEach(() => cascadingDelete(prisma).user);
 
 describe("Mutation resolvers", () => {
-
   const NIL_ID = "00000000-0000-0000-0000-000000000000";
 
   describe("User fields", () => {
@@ -57,27 +59,47 @@ describe("Mutation resolvers", () => {
 
     beforeEach(async () => {
       USER = userToSS(await prisma.user.create({ data: { email: EMAIL } }));
-      OTHER_USER = userToSS(await prisma.user.create({ data: { email: OTHER_EMAIL } }));
+      OTHER_USER = userToSS(
+        await prisma.user.create({ data: { email: OTHER_EMAIL } })
+      );
     });
 
     describe("Mutation.userEdit", () => {
       test("It should replace the name of current user and return it", async () => {
         expect.assertions(3);
-        expect(await prisma.user.findOne({ where: { id: USER.id } })).toHaveProperty("name", null);
-        const user = await Mutation.userEdit({}, { name: OTHER_NAME }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+        expect(
+          await prisma.user.findOne({ where: { id: USER.id } })
+        ).toHaveProperty("name", null);
+        const user = await Mutation.userEdit(
+          {},
+          { name: OTHER_NAME },
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(user).toHaveProperty("name", OTHER_NAME);
-        expect(await prisma.user.findOne({ where: { id: USER.id } })).toHaveProperty("name", OTHER_NAME);
+        expect(
+          await prisma.user.findOne({ where: { id: USER.id } })
+        ).toHaveProperty("name", OTHER_NAME);
       });
 
       test("It should do nothing and return null if user is not logged in", async () => {
         expect.assertions(3);
-        expect(await prisma.user.findOne({ where: { id: USER.id } })).toHaveProperty("name", null);
-        const user = await Mutation.userEdit({}, { name: OTHER_NAME }, baseCtx, baseInfo);
+        expect(
+          await prisma.user.findOne({ where: { id: USER.id } })
+        ).toHaveProperty("name", null);
+        const user = await Mutation.userEdit(
+          {},
+          { name: OTHER_NAME },
+          baseCtx,
+          baseInfo
+        );
         expect(user).toBeNull();
-        expect(await prisma.user.findOne({ where: { id: USER.id } })).toHaveProperty("name", null);
+        expect(
+          await prisma.user.findOne({ where: { id: USER.id } })
+        ).toHaveProperty("name", null);
       });
     });
   });
@@ -112,31 +134,48 @@ describe("Mutation resolvers", () => {
     let OTHER_DECK: DeckSS;
 
     beforeEach(async () => {
-      USER = userToSS(await prisma.user.create({ data: {
-        email: EMAIL,
-      } }));
-      OTHER_USER = userToSS(await prisma.user.create({ data: {
-        email: OTHER_EMAIL,
-      } }));
-      DECK = await prisma.deck.create({ data: {
-        name: NAME,
-        owner: { connect: { id: USER.id } },
-      } });
-      OTHER_DECK = await prisma.deck.create({ data: {
-        name: OTHER_NAME,
-        owner: { connect: { id: OTHER_USER.id } },
-      } });
+      USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: EMAIL,
+          },
+        })
+      );
+      OTHER_USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: OTHER_EMAIL,
+          },
+        })
+      );
+      DECK = await prisma.deck.create({
+        data: {
+          name: NAME,
+          owner: { connect: { id: USER.id } },
+        },
+      });
+      OTHER_DECK = await prisma.deck.create({
+        data: {
+          name: OTHER_NAME,
+          owner: { connect: { id: OTHER_USER.id } },
+        },
+      });
     });
 
     describe("Mutation.deckCreate", () => {
       test("It should create a new deck owned by current user and return it", async () => {
         expect.assertions(4);
-        const deck = await Mutation.deckCreate({}, {
-          name: NEW_NAME,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+        const deck = await Mutation.deckCreate(
+          {},
+          {
+            name: NEW_NAME,
+          },
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(deck).toHaveProperty("name", NEW_NAME);
         expect(deck).toHaveProperty("ownerId", USER.id);
         if (!deck) {
@@ -150,9 +189,14 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(2);
         const deckCount = await prisma.deck.count({});
-        const deck = await Mutation.deckCreate({}, {
-          name: NEW_NAME,
-        }, baseCtx, baseInfo);
+        const deck = await Mutation.deckCreate(
+          {},
+          {
+            name: NEW_NAME,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(deck).toBeNull();
         expect(await prisma.deck.count({})).toBe(deckCount);
       });
@@ -162,10 +206,15 @@ describe("Mutation resolvers", () => {
       test("It should create a new deck owned by user and return it if logged in, with the appropriate cards", async () => {
         expect.assertions(8);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckCreate({}, {
-          name: NEW_NAME,
-          cards: NEW_CARDS,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckCreate(
+          {},
+          {
+            name: NEW_NAME,
+            cards: NEW_CARDS,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toHaveProperty("name", NEW_NAME);
         expect(deck).toHaveProperty("ownerId", USER.id);
         if (!deck) {
@@ -173,42 +222,53 @@ describe("Mutation resolvers", () => {
         }
         const cards = await Deck.cards(deck, {}, ctx, baseInfo);
         expect(cards).toHaveLength(2);
-        expect(cards).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            prompt: NEW_CARD_PROMPT_1,
-            fullAnswer: NEW_CARD_FULL_ANSWER_1,
-            answers: [NEW_CARD_OTHER_ANSWER_1],
-          }),
-          expect.objectContaining({
-            prompt: NEW_CARD_PROMPT_2,
-            fullAnswer: NEW_CARD_FULL_ANSWER_2,
-          }),
-        ]));
+        expect(cards).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              prompt: NEW_CARD_PROMPT_1,
+              fullAnswer: NEW_CARD_FULL_ANSWER_1,
+              answers: [NEW_CARD_OTHER_ANSWER_1],
+            }),
+            expect.objectContaining({
+              prompt: NEW_CARD_PROMPT_2,
+              fullAnswer: NEW_CARD_FULL_ANSWER_2,
+            }),
+          ])
+        );
         const pDeck = await prisma.deck.findOne({ where: { id: deck.id } });
         expect(pDeck).toHaveProperty("name", NEW_NAME);
         expect(pDeck).toHaveProperty("ownerId", USER.id);
-        const pCards = await prisma.card.findMany({ where: { deckId: deck.id } });
+        const pCards = await prisma.card.findMany({
+          where: { deckId: deck.id },
+        });
         expect(pCards).toHaveLength(2);
-        expect(pCards).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            prompt: NEW_CARD_PROMPT_1,
-            fullAnswer: NEW_CARD_FULL_ANSWER_1,
-            answers: [NEW_CARD_OTHER_ANSWER_1],
-          }),
-          expect.objectContaining({
-            prompt: NEW_CARD_PROMPT_2,
-            fullAnswer: NEW_CARD_FULL_ANSWER_2,
-          }),
-        ]));
+        expect(pCards).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              prompt: NEW_CARD_PROMPT_1,
+              fullAnswer: NEW_CARD_FULL_ANSWER_1,
+              answers: [NEW_CARD_OTHER_ANSWER_1],
+            }),
+            expect.objectContaining({
+              prompt: NEW_CARD_PROMPT_2,
+              fullAnswer: NEW_CARD_FULL_ANSWER_2,
+            }),
+          ])
+        );
       });
 
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(2);
         const deckCount = await prisma.deck.count({});
-        const deck = await Mutation.deckCreate({}, {
-          name: NEW_NAME,
-          cards: NEW_CARDS,
-        }, baseCtx, baseInfo);
+        const deck = await Mutation.deckCreate(
+          {},
+          {
+            name: NEW_NAME,
+            cards: NEW_CARDS,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(deck).toBeNull();
         expect(await prisma.deck.count({})).toBe(deckCount);
       });
@@ -218,70 +278,114 @@ describe("Mutation resolvers", () => {
       test("It should return null if deck does not exist", async () => {
         expect.assertions(3);
         expect(await prisma.deck.findOne({ where: { id: NIL_ID } })).toBeNull();
-        const deck = await Mutation.deckEdit({}, {
-          id: NIL_ID,
-          name: OTHER_NAME,
-        }, { ...baseCtx, sub: USER }, baseInfo);
+        const deck = await Mutation.deckEdit(
+          {},
+          {
+            id: NIL_ID,
+            name: OTHER_NAME,
+          },
+          { ...baseCtx, sub: USER },
+          baseInfo
+        );
         expect(deck).toBeNull();
         expect(await prisma.deck.findOne({ where: { id: NIL_ID } })).toBeNull();
       });
 
       test("It should edit a deck's scalars and return it if owned by current user", async () => {
         expect.assertions(3);
-        expect(await prisma.deck.findOne({ where: { id: DECK.id } })).toHaveProperty("name", NAME);
-        const deck = await Mutation.deckEdit({}, {
-          id: DECK.id,
-          name: OTHER_NAME,
-        }, { ...baseCtx, sub: USER }, baseInfo);
+        expect(
+          await prisma.deck.findOne({ where: { id: DECK.id } })
+        ).toHaveProperty("name", NAME);
+        const deck = await Mutation.deckEdit(
+          {},
+          {
+            id: DECK.id,
+            name: OTHER_NAME,
+          },
+          { ...baseCtx, sub: USER },
+          baseInfo
+        );
         expect(deck).toHaveProperty("name", OTHER_NAME);
-        expect(await prisma.deck.findOne({ where: { id: DECK.id } })).toHaveProperty("name", OTHER_NAME);
+        expect(
+          await prisma.deck.findOne({ where: { id: DECK.id } })
+        ).toHaveProperty("name", OTHER_NAME);
       });
 
       test("It should do nothing and return null if not owned by current user", async () => {
         expect.assertions(3);
-        expect(await prisma.deck.findOne({ where: { id: DECK.id } })).toHaveProperty("name", NAME);
-        const deck = await Mutation.deckEdit({}, {
-          id: DECK.id,
-          name: OTHER_NAME,
-        }, { ...baseCtx, sub: OTHER_USER }, baseInfo);
+        expect(
+          await prisma.deck.findOne({ where: { id: DECK.id } })
+        ).toHaveProperty("name", NAME);
+        const deck = await Mutation.deckEdit(
+          {},
+          {
+            id: DECK.id,
+            name: OTHER_NAME,
+          },
+          { ...baseCtx, sub: OTHER_USER },
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.deck.findOne({ where: { id: DECK.id } })).toHaveProperty("name", NAME);
+        expect(
+          await prisma.deck.findOne({ where: { id: DECK.id } })
+        ).toHaveProperty("name", NAME);
       });
 
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(3);
-        expect(await prisma.deck.findOne({ where: { id: DECK.id } })).toHaveProperty("name", NAME);
-        const deck = await Mutation.deckEdit({}, {
-          id: DECK.id,
-          name: OTHER_NAME,
-        }, baseCtx, baseInfo);
+        expect(
+          await prisma.deck.findOne({ where: { id: DECK.id } })
+        ).toHaveProperty("name", NAME);
+        const deck = await Mutation.deckEdit(
+          {},
+          {
+            id: DECK.id,
+            name: OTHER_NAME,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.deck.findOne({ where: { id: DECK.id } })).toHaveProperty("name", NAME);
+        expect(
+          await prisma.deck.findOne({ where: { id: DECK.id } })
+        ).toHaveProperty("name", NAME);
       });
     });
 
     describe("Mutation.deckAddSubdeck", () => {
       test("It should add the subdeck if current user owns parent deck, returning the parent deck", async () => {
         expect.assertions(5);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeckId: DECK.id,
-          subdeckId: OTHER_DECK.id,
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeckId: DECK.id,
+              subdeckId: OTHER_DECK.id,
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toHaveProperty("id", DECK.id);
         if (!deck) {
           return;
         }
         const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(1);
-        expect(subdecks).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: OTHER_DECK.id,
-          }),
-        ]));
+        expect(subdecks).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: OTHER_DECK.id,
+            }),
+          ])
+        );
         if (!subdecks) {
           return;
         }
@@ -289,36 +393,58 @@ describe("Mutation resolvers", () => {
         if (!subdeck) {
           return;
         }
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should do nothing if user owns parent deck, parent-subdeck relation already exists, returning the parent deck", async () => {
         expect.assertions(5);
         const ctx = { ...baseCtx, sub: USER };
-        await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toHaveProperty("id", DECK.id);
         if (!deck) {
           return;
         }
         const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(1);
-        expect(subdecks).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: OTHER_DECK.id,
-          }),
-        ]));
+        expect(subdecks).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: OTHER_DECK.id,
+            }),
+          ])
+        );
         if (!subdecks) {
           return;
         }
@@ -326,81 +452,147 @@ describe("Mutation resolvers", () => {
         if (!subdeck) {
           return;
         }
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should do nothing and return null if user doesn't own parent deck", async () => {
         expect.assertions(3);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: OTHER_USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
 
       test("It should do nothing and return null if parent-subdeck relation already exists but user doesn't own parent deck", async () => {
         expect.assertions(3);
-        await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, { ...baseCtx, sub: USER }, baseInfo);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          { ...baseCtx, sub: USER },
+          baseInfo
+        );
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
         const ctx = { ...baseCtx, sub: OTHER_USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should do nothing and return null if subdeck doesn't exist", async () => {
         expect.assertions(3);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: NIL_ID,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: NIL_ID,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
 
       test("It should do nothing and return null if parent deck doesn't exist", async () => {
         expect.assertions(3);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: NIL_ID, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: NIL_ID,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
     });
 
@@ -408,131 +600,221 @@ describe("Mutation resolvers", () => {
       // TODO: whole describe under development
       test("It should remove the subdeck if current user owns parent deck, returning the parent deck", async () => {
         expect.assertions(4);
-        await prisma.subdeck.create({ data: {
-          parentDeck: { connect: { id: DECK.id } },
-          subdeck: { connect: { id: OTHER_DECK.id } },
-        } });
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        await prisma.subdeck.create({
+          data: {
+            parentDeck: { connect: { id: DECK.id } },
+            subdeck: { connect: { id: OTHER_DECK.id } },
+          },
+        });
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckRemoveSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckRemoveSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toHaveProperty("id", DECK.id);
         if (!deck) {
           return;
         }
         const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(0);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
 
       test("It should do nothing if user owns parent deck, parent-subdeck relation already does not exist, returning the parent deck", async () => {
         expect.assertions(4);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckRemoveSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckRemoveSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toHaveProperty("id", DECK.id);
         if (!deck) {
           return;
         }
         const subdecks = await Deck.subdecks(deck, {}, ctx, baseInfo);
         expect(subdecks).toHaveLength(0);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
 
       test("It should do nothing and return null if user doesn't own parent deck", async () => {
         expect.assertions(3);
-        await prisma.subdeck.create({ data: {
-          parentDeck: { connect: { id: DECK.id } },
-          subdeck: { connect: { id: OTHER_DECK.id } },
-        } });
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        await prisma.subdeck.create({
+          data: {
+            parentDeck: { connect: { id: DECK.id } },
+            subdeck: { connect: { id: OTHER_DECK.id } },
+          },
+        });
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
         const ctx = { ...baseCtx, sub: OTHER_USER };
-        const deck = await Mutation.deckRemoveSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckRemoveSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(1);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should do nothing and return null if parent-subdeck relation already doesn't exist but user doesn't own parent deck", async () => {
         expect.assertions(3);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: OTHER_USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
 
       test("It should do nothing and return null if subdeck doesn't exist", async () => {
         expect.assertions(3);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: DECK.id, subdeckId: NIL_ID,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: DECK.id,
+            subdeckId: NIL_ID,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
 
       test("It should do nothing and return null if parent deck doesn't exist", async () => {
         expect.assertions(3);
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckAddSubdeck({}, {
-          id: NIL_ID, subdeckId: OTHER_DECK.id,
-        }, ctx, baseInfo);
+        const deck = await Mutation.deckAddSubdeck(
+          {},
+          {
+            id: NIL_ID,
+            subdeckId: OTHER_DECK.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
-        expect(await prisma.subdeck.count({ where: {
-          parentDeck: { id: DECK.id },
-          subdeck: { id: OTHER_DECK.id },
-        } })).toBe(0);
+        expect(
+          await prisma.subdeck.count({
+            where: {
+              parentDeck: { id: DECK.id },
+              subdeck: { id: OTHER_DECK.id },
+            },
+          })
+        ).toBe(0);
       });
     });
 
     describe("Mutation.deckDelete", () => {
       beforeEach(async () => {
-        await prisma.subdeck.create({ data: {
-          parentDeck: { connect: { id: DECK.id } },
-          subdeck: { connect: { id: OTHER_DECK.id } },
-        } });
+        await prisma.subdeck.create({
+          data: {
+            parentDeck: { connect: { id: DECK.id } },
+            subdeck: { connect: { id: OTHER_DECK.id } },
+          },
+        });
       });
 
       test("It should delete a deck that current user owns, and return its scalars", async () => {
@@ -540,7 +822,12 @@ describe("Mutation resolvers", () => {
         expect(await prisma.deck.count({ where: { id: DECK.id } })).toBe(1);
         expect(await prisma.subdeck.count({})).toBe(1);
         const ctx = { ...baseCtx, sub: USER };
-        const deck = await Mutation.deckDelete({}, { id: DECK.id }, ctx, baseInfo);
+        const deck = await Mutation.deckDelete(
+          {},
+          { id: DECK.id },
+          ctx,
+          baseInfo
+        );
         expect(deck).toHaveProperty("id", DECK.id);
         expect(deck).toHaveProperty("name", DECK.name);
         expect(await prisma.deck.count({ where: { id: DECK.id } })).toBe(0);
@@ -554,7 +841,12 @@ describe("Mutation resolvers", () => {
         expect(deckCount).toBeGreaterThan(0);
         expect(subdeckCount).toBeGreaterThan(0);
         const ctx = { ...baseCtx, sub: OTHER_USER };
-        const deck = await Mutation.deckDelete({}, { id: DECK.id }, ctx, baseInfo);
+        const deck = await Mutation.deckDelete(
+          {},
+          { id: DECK.id },
+          ctx,
+          baseInfo
+        );
         expect(deck).toBeNull();
         expect(await prisma.deck.count({})).toBe(deckCount);
         expect(await prisma.subdeck.count({})).toBe(subdeckCount);
@@ -566,7 +858,12 @@ describe("Mutation resolvers", () => {
         const subdeckCount = await prisma.subdeck.count({});
         expect(deckCount).toBeGreaterThan(0);
         expect(subdeckCount).toBeGreaterThan(0);
-        const deck = await Mutation.deckDelete({}, { id: DECK.id }, baseCtx, baseInfo);
+        const deck = await Mutation.deckDelete(
+          {},
+          { id: DECK.id },
+          baseCtx,
+          baseInfo
+        );
         expect(deck).toBeNull();
         expect(await prisma.deck.count({})).toBe(deckCount);
         expect(await prisma.subdeck.count({})).toBe(subdeckCount);
@@ -578,7 +875,12 @@ describe("Mutation resolvers", () => {
         const subdeckCount = await prisma.subdeck.count({});
         expect(deckCount).toBeGreaterThan(0);
         expect(subdeckCount).toBeGreaterThan(0);
-        const deck = await Mutation.deckDelete({}, { id: NIL_ID }, baseCtx, baseInfo);
+        const deck = await Mutation.deckDelete(
+          {},
+          { id: NIL_ID },
+          baseCtx,
+          baseInfo
+        );
         expect(deck).toBeNull();
         expect(await prisma.deck.count({})).toBe(deckCount);
         expect(await prisma.subdeck.count({})).toBe(subdeckCount);
@@ -612,56 +914,81 @@ describe("Mutation resolvers", () => {
     let OTHER_CARD: CardSS;
 
     beforeEach(async () => {
-      USER = userToSS(await prisma.user.create({ data: {
-        email: EMAIL,
-      } }));
-      OTHER_USER = userToSS(await prisma.user.create({ data: {
-        email: OTHER_EMAIL,
-      } }));
-      DECK = await prisma.deck.create({ data: {
-        name: NAME,
-        owner: { connect: { id: USER.id } },
-      } });
-      NEXT_DECK = await prisma.deck.create({ data: {
-        name: NEXT_NAME,
-        owner: { connect: { id: USER.id } },
-      } });
-      OTHER_DECK = await prisma.deck.create({ data: {
-        name: OTHER_NAME,
-        owner: { connect: { id: OTHER_USER.id } },
-      } });
-      CARD = await prisma.card.create({ data: {
-        prompt: PROMPT,
-        fullAnswer: FULL_ANSWER,
-        deck: { connect: { id: DECK.id } },
-      } });
-      NEXT_CARD = await prisma.card.create({ data: {
-        prompt: NEXT_PROMPT,
-        fullAnswer: NEXT_FULL_ANSWER,
-        deck: { connect: { id: NEXT_DECK.id } },
-      } });
-      OTHER_CARD = await prisma.card.create({ data: {
-        prompt: OTHER_PROMPT,
-        fullAnswer: OTHER_FULL_ANSWER,
-        deck: { connect: { id: OTHER_DECK.id } },
-      } });
+      USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: EMAIL,
+          },
+        })
+      );
+      OTHER_USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: OTHER_EMAIL,
+          },
+        })
+      );
+      DECK = await prisma.deck.create({
+        data: {
+          name: NAME,
+          owner: { connect: { id: USER.id } },
+        },
+      });
+      NEXT_DECK = await prisma.deck.create({
+        data: {
+          name: NEXT_NAME,
+          owner: { connect: { id: USER.id } },
+        },
+      });
+      OTHER_DECK = await prisma.deck.create({
+        data: {
+          name: OTHER_NAME,
+          owner: { connect: { id: OTHER_USER.id } },
+        },
+      });
+      CARD = await prisma.card.create({
+        data: {
+          prompt: PROMPT,
+          fullAnswer: FULL_ANSWER,
+          deck: { connect: { id: DECK.id } },
+        },
+      });
+      NEXT_CARD = await prisma.card.create({
+        data: {
+          prompt: NEXT_PROMPT,
+          fullAnswer: NEXT_FULL_ANSWER,
+          deck: { connect: { id: NEXT_DECK.id } },
+        },
+      });
+      OTHER_CARD = await prisma.card.create({
+        data: {
+          prompt: OTHER_PROMPT,
+          fullAnswer: OTHER_FULL_ANSWER,
+          deck: { connect: { id: OTHER_DECK.id } },
+        },
+      });
     });
 
     describe("Mutation.cardCreate", () => {
       test("It should create a card in specified current user-owned deck and return it", async () => {
         expect.assertions(6);
-        const card = await Mutation.cardCreate({}, {
-          deckId: DECK.id,
-          card: {
-            prompt: NEW_PROMPT,
-            fullAnswer: NEW_FULL_ANSWER,
-            answers: [],
+        const card = await Mutation.cardCreate(
+          {},
+          {
+            deckId: DECK.id,
+            card: {
+              prompt: NEW_PROMPT,
+              fullAnswer: NEW_FULL_ANSWER,
+              answers: [],
+            },
+            mainTemplate: false,
           },
-          mainTemplate: false,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(card).toHaveProperty("deckId", DECK.id);
         expect(card).toHaveProperty("prompt", NEW_PROMPT);
         expect(card).toHaveProperty("fullAnswer", NEW_FULL_ANSWER);
@@ -677,18 +1004,23 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if user does not own specified deck", async () => {
         expect.assertions(2);
         const cardCount = await prisma.card.count({});
-        const card = await Mutation.cardCreate({}, {
-          deckId: DECK.id,
-          card: {
-            prompt: NEW_PROMPT,
-            fullAnswer: NEW_FULL_ANSWER,
-            answers: [],
+        const card = await Mutation.cardCreate(
+          {},
+          {
+            deckId: DECK.id,
+            card: {
+              prompt: NEW_PROMPT,
+              fullAnswer: NEW_FULL_ANSWER,
+              answers: [],
+            },
+            mainTemplate: false,
           },
-          mainTemplate: false,
-        }, {
-          ...baseCtx,
-          sub: OTHER_USER,
-        }, baseInfo);
+          {
+            ...baseCtx,
+            sub: OTHER_USER,
+          },
+          baseInfo
+        );
         expect(card).toBeNull();
         expect(await prisma.card.count({})).toBe(cardCount);
       });
@@ -696,18 +1028,23 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if deck does not exist", async () => {
         expect.assertions(2);
         const cardCount = await prisma.card.count({});
-        const card = await Mutation.cardCreate({}, {
-          deckId: NIL_ID,
-          card: {
-            prompt: NEW_PROMPT,
-            fullAnswer: NEW_FULL_ANSWER,
-            answers: [],
+        const card = await Mutation.cardCreate(
+          {},
+          {
+            deckId: NIL_ID,
+            card: {
+              prompt: NEW_PROMPT,
+              fullAnswer: NEW_FULL_ANSWER,
+              answers: [],
+            },
+            mainTemplate: false,
           },
-          mainTemplate: false,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(card).toBeNull();
         expect(await prisma.card.count({})).toBe(cardCount);
       });
@@ -715,15 +1052,20 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(2);
         const cardCount = await prisma.card.count({});
-        const card = await Mutation.cardCreate({}, {
-          deckId: NIL_ID,
-          card: {
-            prompt: NEW_PROMPT,
-            fullAnswer: NEW_FULL_ANSWER,
-            answers: [],
+        const card = await Mutation.cardCreate(
+          {},
+          {
+            deckId: NIL_ID,
+            card: {
+              prompt: NEW_PROMPT,
+              fullAnswer: NEW_FULL_ANSWER,
+              answers: [],
+            },
+            mainTemplate: false,
           },
-          mainTemplate: false,
-        }, baseCtx, baseInfo);
+          baseCtx,
+          baseInfo
+        );
         expect(card).toBeNull();
         expect(await prisma.card.count({})).toBe(cardCount);
       });
@@ -737,7 +1079,6 @@ describe("Mutation resolvers", () => {
       // TODO
     });
   });
-
 
   describe("Room fields", () => {
     const EMAIL = "abc@xyz";
@@ -755,48 +1096,77 @@ describe("Mutation resolvers", () => {
     let OTHER_ROOM: RoomSS;
 
     beforeEach(async () => {
-      USER = userToSS(await prisma.user.create({ data: {
-        email: EMAIL,
-      } }));
-      OTHER_USER = userToSS(await prisma.user.create({ data: {
-        email: OTHER_EMAIL,
-      } }));
-      THIRD_USER = userToSS(await prisma.user.create({ data: {
-        email: THIRD_EMAIL,
-      } }));
-      DECK = await prisma.deck.create({ data: {
-        name: DECK_NAME,
-        owner: { connect: { id: USER.id } },
-      } });
-      OTHER_DECK = await prisma.deck.create({ data: {
-        name: DECK_NAME,
-        owner: { connect: { id: USER.id } },
-      } });
-      ROOM = roomToSS(await prisma.room.create({ data: {
-        owner: { connect: { id: USER.id } },
-        occupants: {
-          create: [
-            { occupant: { connect: { id: USER.id } } },
-            { occupant: { connect: { id: OTHER_USER.id } } },
-          ],
+      USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: EMAIL,
+          },
+        })
+      );
+      OTHER_USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: OTHER_EMAIL,
+          },
+        })
+      );
+      THIRD_USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: THIRD_EMAIL,
+          },
+        })
+      );
+      DECK = await prisma.deck.create({
+        data: {
+          name: DECK_NAME,
+          owner: { connect: { id: USER.id } },
         },
-      } }));
-      OTHER_ROOM = roomToSS(await prisma.room.create({ data: {
-        owner: { connect: { id: OTHER_USER.id } },
-        occupants: {
-          create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
+      });
+      OTHER_DECK = await prisma.deck.create({
+        data: {
+          name: DECK_NAME,
+          owner: { connect: { id: USER.id } },
         },
-      } }));
+      });
+      ROOM = roomToSS(
+        await prisma.room.create({
+          data: {
+            owner: { connect: { id: USER.id } },
+            occupants: {
+              create: [
+                { occupant: { connect: { id: USER.id } } },
+                { occupant: { connect: { id: OTHER_USER.id } } },
+              ],
+            },
+          },
+        })
+      );
+      OTHER_ROOM = roomToSS(
+        await prisma.room.create({
+          data: {
+            owner: { connect: { id: OTHER_USER.id } },
+            occupants: {
+              create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
+            },
+          },
+        })
+      );
     });
 
     describe("Mutation.roomCreate", () => {
       test("It should create a new room owned by current user and return it", async () => {
         expect.assertions(3);
         const roomCount = await prisma.room.count({});
-        const room = await Mutation.roomCreate({}, {}, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+        const room = await Mutation.roomCreate(
+          {},
+          {},
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(room).toHaveProperty("ownerConfig", {});
         if (!room) {
           return;
@@ -825,13 +1195,18 @@ describe("Mutation resolvers", () => {
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
-        const room = await Mutation.roomEditOwnerConfig({}, {
-          id: ROOM.id,
-          ownerConfig,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+        const room = await Mutation.roomEditOwnerConfig(
+          {},
+          {
+            id: ROOM.id,
+            ownerConfig,
+          },
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(room).toHaveProperty("ownerConfig", ownerConfig);
         if (!room) {
           return;
@@ -850,13 +1225,18 @@ describe("Mutation resolvers", () => {
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
-        const room = await Mutation.roomEditOwnerConfig({}, {
-          id: ROOM.id,
-          ownerConfig,
-        }, {
-          ...baseCtx,
-          sub: OTHER_USER,
-        }, baseInfo);
+        const room = await Mutation.roomEditOwnerConfig(
+          {},
+          {
+            id: ROOM.id,
+            ownerConfig,
+          },
+          {
+            ...baseCtx,
+            sub: OTHER_USER,
+          },
+          baseInfo
+        );
         expect(room).toBeNull();
         const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom2).not.toHaveProperty("ownerConfig", ownerConfig);
@@ -872,10 +1252,15 @@ describe("Mutation resolvers", () => {
         };
         const pRoom1 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom1).not.toHaveProperty("ownerConfig", ownerConfig);
-        const room = await Mutation.roomEditOwnerConfig({}, {
-          id: ROOM.id,
-          ownerConfig,
-        }, baseCtx, baseInfo);
+        const room = await Mutation.roomEditOwnerConfig(
+          {},
+          {
+            id: ROOM.id,
+            ownerConfig,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(room).toBeNull();
         const pRoom2 = await prisma.room.findOne({ where: { id: ROOM.id } });
         expect(pRoom2).not.toHaveProperty("ownerConfig", ownerConfig);
@@ -886,25 +1271,37 @@ describe("Mutation resolvers", () => {
     describe("Mutation.roomAddOccupant", () => {
       test("It should add the user to the room if current user occupies room, returning the room", async () => {
         expect.assertions(7);
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: THIRD_USER.id },
-        } })).toBe(0);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: THIRD_USER.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: ROOM.id, occupantId: THIRD_USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: ROOM.id,
+            occupantId: THIRD_USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toHaveProperty("id", ROOM.id);
         if (!room) {
           return;
         }
         const occupants = await Room.occupants(room, {}, ctx, baseInfo);
         expect(occupants).toHaveLength(3);
-        expect(occupants).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: THIRD_USER.id,
-          }),
-        ]));
+        expect(occupants).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: THIRD_USER.id,
+            }),
+          ])
+        );
         if (!occupants) {
           return;
         }
@@ -912,40 +1309,63 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: THIRD_USER }, baseInfo);
+        const occupyingRooms = await User.occupyingRooms(
+          occupant,
+          {},
+          { ...baseCtx, sub: THIRD_USER },
+          baseInfo
+        );
         expect(occupyingRooms).toHaveLength(1);
-        expect(occupyingRooms).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: ROOM.id,
-          }),
-        ]));
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: THIRD_USER.id },
-        } })).toBe(1);
+        expect(occupyingRooms).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: ROOM.id,
+            }),
+          ])
+        );
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: THIRD_USER.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should add the user to the room if user is current user, returning the room", async () => {
         expect.assertions(7);
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: THIRD_USER.id },
-        } })).toBe(0);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: THIRD_USER.id },
+            },
+          })
+        ).toBe(0);
         const ctx = { ...baseCtx, sub: THIRD_USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: ROOM.id, occupantId: THIRD_USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: ROOM.id,
+            occupantId: THIRD_USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toHaveProperty("id", ROOM.id);
         if (!room) {
           return;
         }
         const occupants = await Room.occupants(room, {}, ctx, baseInfo);
         expect(occupants).toHaveLength(3);
-        expect(occupants).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: THIRD_USER.id,
-          }),
-        ]));
+        expect(occupants).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: THIRD_USER.id,
+            }),
+          ])
+        );
         if (!occupants) {
           return;
         }
@@ -953,40 +1373,63 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: THIRD_USER }, baseInfo);
+        const occupyingRooms = await User.occupyingRooms(
+          occupant,
+          {},
+          { ...baseCtx, sub: THIRD_USER },
+          baseInfo
+        );
         expect(occupyingRooms).toHaveLength(1);
-        expect(occupyingRooms).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: ROOM.id,
-          }),
-        ]));
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: THIRD_USER.id },
-        } })).toBe(1);
+        expect(occupyingRooms).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: ROOM.id,
+            }),
+          ])
+        );
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: THIRD_USER.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should do nothing if user already occupies room, current user occupies the room, returning the room", async () => {
         expect.assertions(7);
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: USER.id },
-        } })).toBe(1);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: USER.id },
+            },
+          })
+        ).toBe(1);
         const ctx = { ...baseCtx, sub: OTHER_USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: ROOM.id, occupantId: USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: ROOM.id,
+            occupantId: USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toHaveProperty("id", ROOM.id);
         if (!room) {
           return;
         }
         const occupants = await Room.occupants(room, {}, ctx, baseInfo);
         expect(occupants).toHaveLength(2);
-        expect(occupants).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: USER.id,
-          }),
-        ]));
+        expect(occupants).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: USER.id,
+            }),
+          ])
+        );
         if (!occupants) {
           return;
         }
@@ -994,40 +1437,63 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: USER }, baseInfo);
+        const occupyingRooms = await User.occupyingRooms(
+          occupant,
+          {},
+          { ...baseCtx, sub: USER },
+          baseInfo
+        );
         expect(occupyingRooms).toHaveLength(1);
-        expect(occupyingRooms).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: ROOM.id,
-          }),
-        ]));
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: USER.id },
-        } })).toBe(1);
+        expect(occupyingRooms).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: ROOM.id,
+            }),
+          ])
+        );
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: USER.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should add the user to the room if user is current user occupying the room, returning the room", async () => {
         expect.assertions(7);
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: USER.id },
-        } })).toBe(1);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: USER.id },
+            },
+          })
+        ).toBe(1);
         const ctx = { ...baseCtx, sub: USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: ROOM.id, occupantId: USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: ROOM.id,
+            occupantId: USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toHaveProperty("id", ROOM.id);
         if (!room) {
           return;
         }
         const occupants = await Room.occupants(room, {}, ctx, baseInfo);
         expect(occupants).toHaveLength(2);
-        expect(occupants).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: USER.id,
-          }),
-        ]));
+        expect(occupants).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: USER.id,
+            }),
+          ])
+        );
         if (!occupants) {
           return;
         }
@@ -1035,107 +1501,189 @@ describe("Mutation resolvers", () => {
         if (!occupant) {
           return;
         }
-        const occupyingRooms = await User.occupyingRooms(occupant, {}, { ...baseCtx, sub: USER }, baseInfo);
+        const occupyingRooms = await User.occupyingRooms(
+          occupant,
+          {},
+          { ...baseCtx, sub: USER },
+          baseInfo
+        );
         expect(occupyingRooms).toHaveLength(1);
-        expect(occupyingRooms).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            id: ROOM.id,
-          }),
-        ]));
-        expect(await prisma.occupant.count({ where: {
-          room: { id: ROOM.id },
-          occupant: { id: USER.id },
-        } })).toBe(1);
+        expect(occupyingRooms).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: ROOM.id,
+            }),
+          ])
+        );
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: ROOM.id },
+              occupant: { id: USER.id },
+            },
+          })
+        ).toBe(1);
       });
 
       test("It should do nothing if user is neither occupant nor current user, returning null", async () => {
         expect.assertions(2);
-        const occupantCount = await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } });
+        const occupantCount = await prisma.occupant.count({
+          where: {
+            room: { id: OTHER_ROOM.id },
+          },
+        });
         const ctx = { ...baseCtx, sub: USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: OTHER_ROOM.id, occupantId: THIRD_USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: OTHER_ROOM.id,
+            occupantId: THIRD_USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toBeNull();
-        expect(await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } })).toBe(occupantCount);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: OTHER_ROOM.id },
+            },
+          })
+        ).toBe(occupantCount);
       });
 
       test("It should do nothing if user is neither occupant nor current user, returning null, even if person to add is already occupant", async () => {
         expect.assertions(2);
-        const occupantCount = await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } });
+        const occupantCount = await prisma.occupant.count({
+          where: {
+            room: { id: OTHER_ROOM.id },
+          },
+        });
         const ctx = { ...baseCtx, sub: USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: OTHER_ROOM.id, occupantId: THIRD_USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: OTHER_ROOM.id,
+            occupantId: THIRD_USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toBeNull();
-        expect(await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } })).toBe(occupantCount);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: OTHER_ROOM.id },
+            },
+          })
+        ).toBe(occupantCount);
       });
 
       test("It should do nothing if user does not exist, returning null", async () => {
         expect.assertions(2);
-        const occupantCount = await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } });
+        const occupantCount = await prisma.occupant.count({
+          where: {
+            room: { id: OTHER_ROOM.id },
+          },
+        });
         const ctx = { ...baseCtx, sub: USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: OTHER_ROOM.id, occupantId: NIL_ID,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: OTHER_ROOM.id,
+            occupantId: NIL_ID,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toBeNull();
-        expect(await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } })).toBe(occupantCount);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: OTHER_ROOM.id },
+            },
+          })
+        ).toBe(occupantCount);
       });
 
       test("It should do nothing if room does not exist, returning null", async () => {
         expect.assertions(2);
-        const occupantCount = await prisma.occupant.count({ where: {
-          occupant: { id: USER.id },
-        } });
+        const occupantCount = await prisma.occupant.count({
+          where: {
+            occupant: { id: USER.id },
+          },
+        });
         const ctx = { ...baseCtx, sub: USER };
-        const room = await Mutation.roomAddOccupant({}, {
-          id: NIL_ID, occupantId: USER.id,
-        }, ctx, baseInfo);
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: NIL_ID,
+            occupantId: USER.id,
+          },
+          ctx,
+          baseInfo
+        );
         expect(room).toBeNull();
-        expect(await prisma.occupant.count({ where: {
-          occupant: { id: USER.id },
-        } })).toBe(occupantCount);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              occupant: { id: USER.id },
+            },
+          })
+        ).toBe(occupantCount);
       });
 
       test("It should do nothing if not logged in, returning null", async () => {
         expect.assertions(2);
-        const occupantCount = await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } });
-        const room = await Mutation.roomAddOccupant({}, {
-          id: OTHER_ROOM.id, occupantId: THIRD_USER.id,
-        }, baseCtx, baseInfo);
+        const occupantCount = await prisma.occupant.count({
+          where: {
+            room: { id: OTHER_ROOM.id },
+          },
+        });
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: OTHER_ROOM.id,
+            occupantId: THIRD_USER.id,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(room).toBeNull();
-        expect(await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } })).toBe(occupantCount);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: OTHER_ROOM.id },
+            },
+          })
+        ).toBe(occupantCount);
       });
 
       test("It should do nothing if not logged in, returning null, even if user to add is already occupant", async () => {
         expect.assertions(2);
-        const occupantCount = await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } });
-        const room = await Mutation.roomAddOccupant({}, {
-          id: OTHER_ROOM.id, occupantId: USER.id,
-        }, baseCtx, baseInfo);
+        const occupantCount = await prisma.occupant.count({
+          where: {
+            room: { id: OTHER_ROOM.id },
+          },
+        });
+        const room = await Mutation.roomAddOccupant(
+          {},
+          {
+            id: OTHER_ROOM.id,
+            occupantId: USER.id,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(room).toBeNull();
-        expect(await prisma.occupant.count({ where: {
-          room: { id: OTHER_ROOM.id },
-        } })).toBe(occupantCount);
+        expect(
+          await prisma.occupant.count({
+            where: {
+              room: { id: OTHER_ROOM.id },
+            },
+          })
+        ).toBe(occupantCount);
       });
-
     });
   });
 
@@ -1160,88 +1708,135 @@ describe("Mutation resolvers", () => {
     let OTHER_CHAT_MSG: ChatMsgSS;
 
     beforeEach(async () => {
-      USER = userToSS(await prisma.user.create({ data: {
-        email: EMAIL,
-      } }));
-      OTHER_USER = userToSS(await prisma.user.create({ data: {
-        email: OTHER_EMAIL,
-      } }));
-      ROOM = roomToSS(await prisma.room.create({ data: {
-        owner: { connect: { id: USER.id } },
-        occupants: {
-          create: [{ occupant: { connect: { id: USER.id } } }],
-        },
-      } }));
-      NEXT_ROOM = roomToSS(await prisma.room.create({ data: {
-        owner: { connect: { id: USER.id } },
-        occupants: {
-          create: [
-            {
-              occupant: { connect: { id: USER.id } },
-            }, {
-              occupant: { connect: { id: OTHER_USER.id } },
+      USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: EMAIL,
+          },
+        })
+      );
+      OTHER_USER = userToSS(
+        await prisma.user.create({
+          data: {
+            email: OTHER_EMAIL,
+          },
+        })
+      );
+      ROOM = roomToSS(
+        await prisma.room.create({
+          data: {
+            owner: { connect: { id: USER.id } },
+            occupants: {
+              create: [{ occupant: { connect: { id: USER.id } } }],
             },
-          ],
-        },
-      } }));
-      OTHER_ROOM = roomToSS(await prisma.room.create({ data: {
-        owner: { connect: { id: OTHER_USER.id } },
-        occupants: {
-          create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
-        },
-      } }));
-      CHAT_MSG = chatMsgToSS(await prisma.chatMsg.create({ data: {
-        type: CONTENT_TYPE,
-        content: CONTENT,
-        room: { connect: { id: ROOM.id } },
-      } }));
-      NEXT_CHAT_MSG = chatMsgToSS(await prisma.chatMsg.create({ data: {
-        type: NEXT_CONTENT_TYPE,
-        content: NEXT_CONTENT,
-        room: { connect: { id: NEXT_ROOM.id } },
-      } }));
-      OTHER_CHAT_MSG = chatMsgToSS(await prisma.chatMsg.create({ data: {
-        type: OTHER_CONTENT_TYPE,
-        content: OTHER_CONTENT,
-        room: { connect: { id: OTHER_ROOM.id } },
-      } }));
+          },
+        })
+      );
+      NEXT_ROOM = roomToSS(
+        await prisma.room.create({
+          data: {
+            owner: { connect: { id: USER.id } },
+            occupants: {
+              create: [
+                {
+                  occupant: { connect: { id: USER.id } },
+                },
+                {
+                  occupant: { connect: { id: OTHER_USER.id } },
+                },
+              ],
+            },
+          },
+        })
+      );
+      OTHER_ROOM = roomToSS(
+        await prisma.room.create({
+          data: {
+            owner: { connect: { id: OTHER_USER.id } },
+            occupants: {
+              create: [{ occupant: { connect: { id: OTHER_USER.id } } }],
+            },
+          },
+        })
+      );
+      CHAT_MSG = chatMsgToSS(
+        await prisma.chatMsg.create({
+          data: {
+            type: CONTENT_TYPE,
+            content: CONTENT,
+            room: { connect: { id: ROOM.id } },
+          },
+        })
+      );
+      NEXT_CHAT_MSG = chatMsgToSS(
+        await prisma.chatMsg.create({
+          data: {
+            type: NEXT_CONTENT_TYPE,
+            content: NEXT_CONTENT,
+            room: { connect: { id: NEXT_ROOM.id } },
+          },
+        })
+      );
+      OTHER_CHAT_MSG = chatMsgToSS(
+        await prisma.chatMsg.create({
+          data: {
+            type: OTHER_CONTENT_TYPE,
+            content: OTHER_CONTENT,
+            room: { connect: { id: OTHER_ROOM.id } },
+          },
+        })
+      );
     });
 
     describe("Mutation.chatMsgCreate", () => {
       test("It should create a chat message with current user as sender when current user is occupant in room.", async () => {
         expect.assertions(4);
-        const chatMsg = await Mutation.chatMsgCreate({}, {
-          roomId: ROOM.id,
-          type: ChatMsgContentType.TEXT,
-          content: NEW_CONTENT,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+        const chatMsg = await Mutation.chatMsgCreate(
+          {},
+          {
+            roomId: ROOM.id,
+            type: ChatMsgContentType.TEXT,
+            content: NEW_CONTENT,
+          },
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         if (!chatMsg) {
           return;
         }
         expect(chatMsg).toHaveProperty("roomId", ROOM.id);
         expect(chatMsg).toHaveProperty("senderId", USER.id);
         expect(chatMsg).toHaveProperty("content", NEW_CONTENT);
-        expect(await prisma.chatMsg.findOne({ where: { id: chatMsg.id } })).toEqual(expect.objectContaining({
-          roomId: ROOM.id,
-          senderId: USER.id,
-          content: NEW_CONTENT,
-        }));
+        expect(
+          await prisma.chatMsg.findOne({ where: { id: chatMsg.id } })
+        ).toEqual(
+          expect.objectContaining({
+            roomId: ROOM.id,
+            senderId: USER.id,
+            content: NEW_CONTENT,
+          })
+        );
       });
 
       test("It should do nothing and return null if user does not occupy room", async () => {
         expect.assertions(2);
         const chatMsgCount = await prisma.chatMsg.count({});
-        const chatMsg = await Mutation.chatMsgCreate({}, {
-          roomId: ROOM.id,
-          type: ChatMsgContentType.TEXT,
-          content: NEW_CONTENT,
-        }, {
-          ...baseCtx,
-          sub: OTHER_USER,
-        }, baseInfo);
+        const chatMsg = await Mutation.chatMsgCreate(
+          {},
+          {
+            roomId: ROOM.id,
+            type: ChatMsgContentType.TEXT,
+            content: NEW_CONTENT,
+          },
+          {
+            ...baseCtx,
+            sub: OTHER_USER,
+          },
+          baseInfo
+        );
         expect(chatMsg).toBeNull();
         expect(await prisma.chatMsg.count({})).toBe(chatMsgCount);
       });
@@ -1249,14 +1844,19 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if room does not exist", async () => {
         expect.assertions(2);
         const chatMsgCount = await prisma.chatMsg.count({});
-        const chatMsg = await Mutation.chatMsgCreate({}, {
-          roomId: NIL_ID,
-          type: ChatMsgContentType.TEXT,
-          content: NEW_CONTENT,
-        }, {
-          ...baseCtx,
-          sub: USER,
-        }, baseInfo);
+        const chatMsg = await Mutation.chatMsgCreate(
+          {},
+          {
+            roomId: NIL_ID,
+            type: ChatMsgContentType.TEXT,
+            content: NEW_CONTENT,
+          },
+          {
+            ...baseCtx,
+            sub: USER,
+          },
+          baseInfo
+        );
         expect(chatMsg).toBeNull();
         expect(await prisma.chatMsg.count({})).toBe(chatMsgCount);
       });
@@ -1264,11 +1864,16 @@ describe("Mutation resolvers", () => {
       test("It should do nothing and return null if not logged in", async () => {
         expect.assertions(2);
         const chatMsgCount = await prisma.chatMsg.count({});
-        const chatMsg = await Mutation.chatMsgCreate({}, {
-          roomId: ROOM.id,
-          type: ChatMsgContentType.TEXT,
-          content: NEW_CONTENT,
-        }, baseCtx, baseInfo);
+        const chatMsg = await Mutation.chatMsgCreate(
+          {},
+          {
+            roomId: ROOM.id,
+            type: ChatMsgContentType.TEXT,
+            content: NEW_CONTENT,
+          },
+          baseCtx,
+          baseInfo
+        );
         expect(chatMsg).toBeNull();
         expect(await prisma.chatMsg.count({})).toBe(chatMsgCount);
       });

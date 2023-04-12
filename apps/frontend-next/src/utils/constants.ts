@@ -8,5 +8,6 @@ export const NEXT_PUBLIC_GRAPHQL_WS = process.env.NEXT_PUBLIC_GRAPHQL_WS as stri
 
 // Note (2022-08-14): this limit is not enforced by the server.
 export const NEXT_PUBLIC_MAX_CARDS_PER_DECK = parseInt(
-  process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string, 10
+  process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string,
+  10
 );

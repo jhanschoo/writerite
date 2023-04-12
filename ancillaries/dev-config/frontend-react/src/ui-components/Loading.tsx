@@ -27,14 +27,17 @@ interface Props {
   fontSize?: WrTheme["scale"][number];
 }
 
-export const Loading = ({ fontSize }: Props): JSX.Element =>
+export const Loading = ({ fontSize }: Props): JSX.Element => (
   <LoadingBackground>
     <LoadingContent>
       <p style={{ fontSize, marginTop: 0 }}>Loading...</p>
-      <Spinner style={{
-        width: 40,
-        height: 40,
-        marginRight: 10, // compensation for ellipses
-      }} />
+      <Spinner
+        style={{
+          width: 40,
+          height: 40,
+          marginRight: 10, // compensation for ellipses
+        }}
+      />
     </LoadingContent>
-  </LoadingBackground>;
+  </LoadingBackground>
+);

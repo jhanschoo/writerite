@@ -11,7 +11,8 @@ import type { CardScalars } from "src/gqlTypes";
 import { wrStyled } from "src/theme";
 import { BorderlessButton } from "src/ui";
 
-const textFromRaw = (raw: GraphQLJSON): string => convertFromRaw(raw as unknown as RawDraftContentState).getPlainText(" ");
+const textFromRaw = (raw: GraphQLJSON): string =>
+  convertFromRaw(raw as unknown as RawDraftContentState).getPlainText(" ");
 
 const PrimaryButton = wrStyled(BorderlessButton)`
 ${({ theme: { bgfg, fg } }) => bgfg(fg[2])}
@@ -30,7 +31,9 @@ interface Props {
 }
 
 const WrDeckDetailDownloadCsv = ({ name }: Props): JSX.Element => {
-  const cards = useSelector<WrState, Map<string, CardScalars> | null>((state) => state.deckDetailCards?.cards ?? null);
+  const cards = useSelector<WrState, Map<string, CardScalars> | null>(
+    (state) => state.deckDetailCards?.cards ?? null
+  );
   const handleDownloadCsv = () => {
     if (!cards) {
       return;
@@ -44,7 +47,11 @@ const WrDeckDetailDownloadCsv = ({ name }: Props): JSX.Element => {
     const blob = new Blob([csvString], { type: "text/csv" });
     saveAs(blob, `${name}.csv`);
   };
-  return <PrimaryButton onClick={handleDownloadCsv} disabled={!cards}>Download CSV</PrimaryButton>;
+  return (
+    <PrimaryButton onClick={handleDownloadCsv} disabled={!cards}>
+      Download CSV
+    </PrimaryButton>
+  );
 };
 
 export default WrDeckDetailDownloadCsv;

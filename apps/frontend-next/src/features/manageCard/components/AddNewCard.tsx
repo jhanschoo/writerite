@@ -12,10 +12,7 @@ import {
 } from '@mantine/core';
 
 import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
-import {
-  BareRichTextEditor,
-  DEFAULT_EDITOR_PROPS,
-} from '@/components/editor';
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
 import { useMutation } from 'urql';
 import { CardCreateDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';

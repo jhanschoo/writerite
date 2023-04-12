@@ -3,7 +3,6 @@ import { InMemoryCache } from "@apollo/client";
 import { persistCache } from "apollo-cache-persist";
 import possibleTypes from "./possibleTypes.json";
 
-
 export const cache = new InMemoryCache({
   possibleTypes,
   typePolicies: {
@@ -48,4 +47,3 @@ export const persistedCacheStatus = persistCache({
   // @ts-expect-error
   storage: window.localStorage,
 });
-

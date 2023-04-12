@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/unbound-method */
 // eslint-disable-next-line no-shadow
 import React, { MouseEvent, useEffect, useState } from "react";
-import {
-  Formik, FormikErrors, FormikProps, FormikTouched,
-} from "formik";
+import { Formik, FormikErrors, FormikProps, FormikTouched } from "formik";
 import { KEYUTIL, KJUR } from "jsrsasign";
 import * as yup from "yup";
 
@@ -29,7 +27,9 @@ declare let gapiDeferred: Promise<any> | undefined;
 declare let grecaptchaDeferred: Promise<any> | undefined;
 declare let FBDeferred: Promise<any> | undefined;
 
-const PUBLIC_KEY = KEYUTIL.getKey(JSON.parse(process.env.REACT_APP_JWT_PUBLIC_KEY ?? "fail"));
+const PUBLIC_KEY = KEYUTIL.getKey(
+  JSON.parse(process.env.REACT_APP_JWT_PUBLIC_KEY ?? "fail")
+);
 const RECAPTCHA_CLIENT_KEY = process.env.REACT_APP_RECAPTCHA_CLIENT_KEY;
 
 interface FormValues {
@@ -105,7 +105,8 @@ font-size: 87.5%;
 
 const FlowTextInput = wrStyled(TextInput)`
 width: 100%;
-margin: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) => space[0]};
+margin: ${({ theme: { space } }) => space[1]} ${({ theme: { space } }) =>
+  space[0]};
 `;
 
 const ErrorMessage = wrStyled.p`
@@ -125,24 +126,25 @@ align-items: baseline;
 `;
 
 const formSchema = yup.object().shape({
-  email: yup.string()
+  email: yup
+    .string()
     .required("Email is required")
     .email("Please enter a valid email"),
   name: yup.string(),
-  password: yup.string()
+  password: yup
+    .string()
     .required("Password is required")
     .when("isSignup", {
       is: true,
-      then: yup.string()
+      then: yup
+        .string()
         .oneOf([yup.ref("confirmPassword")], "Passwords do not match"),
     }),
   confirmPassword: yup.string(),
-  recaptcha: yup.string()
-    .when("isSignup", {
-      is: true,
-      then: yup.string()
-        .required("Please verify that you are human"),
-    }),
+  recaptcha: yup.string().when("isSignup", {
+    is: true,
+    then: yup.string().required("Please verify that you are human"),
+  }),
   isSignin: yup.boolean(),
 });
 
@@ -189,53 +191,67 @@ const WrSignin = (): JSX.Element => {
       setSigninUnderway(false);
     }
   };
-  const [mutateSignin] = useMutation<SigninMutation, SigninMutationVariables>(SIGNIN_MUTATION, {
-    onCompleted: handleSigninSuccess,
-    onError: (_e) => {
-      setSigninUnderway(false);
-    },
-  });
+  const [mutateSignin] = useMutation<SigninMutation, SigninMutationVariables>(
+    SIGNIN_MUTATION,
+    {
+      onCompleted: handleSigninSuccess,
+      onError: (_e) => {
+        setSigninUnderway(false);
+      },
+    }
+  );
 
   const handleGoogleSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     setSigninUnderway(true);
     const googleAuth = (await gapiDeferred).auth2.getAuthInstance();
-    return googleAuth.signIn().then((googleUser: any) => mutateSignin({
-      variables: {
-        email: googleUser.getBasicProfile().getEmail(),
-        token: googleUser.getAuthResponse().id_token,
-        authorizer: "GOOGLE",
-        identifier: googleUser.getId(),
-      },
-    }).catch(() => setSigninUnderway(false)), () => setSigninUnderway(false));
+    return googleAuth.signIn().then(
+      (googleUser: any) =>
+        mutateSignin({
+          variables: {
+            email: googleUser.getBasicProfile().getEmail(),
+            token: googleUser.getAuthResponse().id_token,
+            authorizer: "GOOGLE",
+            identifier: googleUser.getId(),
+          },
+        }).catch(() => setSigninUnderway(false)),
+      () => setSigninUnderway(false)
+    );
   };
   const handleFacebookSignin = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setSigninUnderway(true);
-    return (await FBDeferred).login((loginResponse: any) => {
-      const { authResponse } = loginResponse;
-      if (authResponse) {
-        void (async () => {
-          (await FBDeferred).api("/me", {
-            fields: "name,email",
-          }, (apiResponse: any) => {
-            mutateSignin({
-              variables: {
-                email: apiResponse.email,
-                token: authResponse.accessToken,
-                authorizer: "FACEBOOK",
-                identifier: authResponse.userID,
+    return (await FBDeferred).login(
+      (loginResponse: any) => {
+        const { authResponse } = loginResponse;
+        if (authResponse) {
+          void (async () => {
+            (await FBDeferred).api(
+              "/me",
+              {
+                fields: "name,email",
               },
-            }).catch(() => setSigninUnderway(false));
-          });
-        })();
-      } else {
-        setSigninUnderway(false);
+              (apiResponse: any) => {
+                mutateSignin({
+                  variables: {
+                    email: apiResponse.email,
+                    token: authResponse.accessToken,
+                    authorizer: "FACEBOOK",
+                    identifier: authResponse.userID,
+                  },
+                }).catch(() => setSigninUnderway(false));
+              }
+            );
+          })();
+        } else {
+          setSigninUnderway(false);
+        }
+      },
+      {
+        scope: "public_profile,email",
       }
-    }, {
-      scope: "public_profile,email",
-    });
+    );
   };
 
   const handleLocalSignin = (values: FormValues) => {
@@ -287,127 +303,143 @@ const WrSignin = (): JSX.Element => {
       setFieldValue("recaptcha", gRecaptchaResponse || "");
       return null;
     };
-    const showValid = (key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>) => touched[key] && !errors[key];
-    const showError = (key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>) => touched[key] && errors[key];
+    const showValid = (
+      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>
+    ) => touched[key] && !errors[key];
+    const showError = (
+      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>
+    ) => touched[key] && errors[key];
     const passwordShowValid =
-      touched.password && touched.confirmPassword && !(
-        errors.password ?? errors.confirmPassword
-      );
+      touched.password &&
+      touched.confirmPassword &&
+      !(errors.password ?? errors.confirmPassword);
     const passwordShowError =
-      touched.password && touched.confirmPassword && (
-        errors.password ?? errors.confirmPassword
+      touched.password &&
+      touched.confirmPassword &&
+      (errors.password ?? errors.confirmPassword);
+    const maybeError = (
+      key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>
+    ) => showError(key) && <ErrorMessage>{errors[key]}</ErrorMessage>;
+    const formattedPasswordError = passwordShowError && (
+      <ErrorMessage>{errors.password ?? errors.confirmPassword}</ErrorMessage>
+    );
+    const developmentSignin =
+      process.env.NODE_ENV !== "development" ? (
+        ""
+      ) : (
+        <AnchorButton onClick={handleDevelopmentSignin}>
+          Development Login
+        </AnchorButton>
       );
-    const maybeError = (key: keyof FormikErrors<FormValues> & keyof FormikTouched<FormValues>) => showError(key) &&
-      <ErrorMessage>
-        {errors[key]}
-      </ErrorMessage>;
-    const formattedPasswordError = passwordShowError &&
-      <ErrorMessage>
-        {errors.password ?? errors.confirmPassword}
-      </ErrorMessage>;
-    const developmentSignin = process.env.NODE_ENV !== "development"
-      ? ""
-      : <AnchorButton onClick={handleDevelopmentSignin}>Development Login</AnchorButton>;
-    return <form onSubmit={handleSubmit}>
-      <FieldsetWithMargin>
-        <StyledLabel htmlFor="email-input">Email</StyledLabel>
-        <FlowTextInput
-          onChange={handleChange}
-          onBlur={handleBlur}
-          type="email"
-          name="email"
-          id="email-input"
-          // autocomplete={isSignup ? 'new-username' : 'current-username'}
-          disabled={disabled}
-          className={showError("email") ? "error" : showValid("email") ? "valid" : ""}
-        />
-        {maybeError("email")}
-      </FieldsetWithMargin>
-      <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
-        <StyledLabel htmlFor="name-input">Display Name (can be changed)</StyledLabel>
-        <FlowTextInput
-          onChange={handleChange}
-          onBlur={handleBlur}
-          type="text"
-          name="name"
-          id="name-input"
-          // autocomplete={isSignup ? 'new-username' : 'current-username'}
-          disabled={disabled}
-          className={showError("name") ? "error" : showValid("name") ? "valid" : ""}
-        />
-        {maybeError("name")}
-      </FieldsetWithMargin>
-      <FieldsetWithMargin>
-        <StyledLabel htmlFor="password-input">Password</StyledLabel>
-        <FlowTextInput
-          onChange={handleChange}
-          onBlur={handleBlur}
-          type="password"
-          name="password"
-          id="password-input"
-          // autocomplete={isSignup ? 'new-password' : 'current-password'}
-          disabled={disabled}
-          className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
-        />
-        {formattedPasswordError}
-      </FieldsetWithMargin>
-      <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
-        <StyledLabel htmlFor="confirm-password-input">Confirm Password</StyledLabel>
-        <FlowTextInput
-          onChange={handleChange}
-          onBlur={handleBlur}
-          type="password"
-          name="confirmPassword"
-          id="confirm-password-input"
-          aria-label="Confirm Password"
-          // autocomplete={isSignup ? 'new-password' : 'current-password'}
-          disabled={disabled}
-          className={passwordShowError ? "error" : passwordShowValid ? "valid" : ""}
-        />
-      </FieldsetWithMargin>
-      <Fieldset>
-        <TextCenteredDiv>
-          <InlineBlockDiv id="g-recaptcha" />
-          {maybeError("recaptcha")}
-        </TextCenteredDiv>
-      </Fieldset>
-      <LocalSigninButton
-        type="submit"
-      >
-        {isSignup ? "Sign up with Email and Password" : "Login with Email and Password"}
-      </LocalSigninButton>
-      <SmallMessage>
-        {isSignup ? "Existing user?\u00A0" : "New user?\u00A0"}
-        <AnchorButton onClick={handleToggleSignin}>
-          {isSignup ? "Login" : "Sign up"}
-        </AnchorButton> {developmentSignin}
-      </SmallMessage>
-    </form>;
+    return (
+      <form onSubmit={handleSubmit}>
+        <FieldsetWithMargin>
+          <StyledLabel htmlFor="email-input">Email</StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="email"
+            name="email"
+            id="email-input"
+            // autocomplete={isSignup ? 'new-username' : 'current-username'}
+            disabled={disabled}
+            className={
+              showError("email") ? "error" : showValid("email") ? "valid" : ""
+            }
+          />
+          {maybeError("email")}
+        </FieldsetWithMargin>
+        <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
+          <StyledLabel htmlFor="name-input">
+            Display Name (can be changed)
+          </StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="text"
+            name="name"
+            id="name-input"
+            // autocomplete={isSignup ? 'new-username' : 'current-username'}
+            disabled={disabled}
+            className={
+              showError("name") ? "error" : showValid("name") ? "valid" : ""
+            }
+          />
+          {maybeError("name")}
+        </FieldsetWithMargin>
+        <FieldsetWithMargin>
+          <StyledLabel htmlFor="password-input">Password</StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="password"
+            name="password"
+            id="password-input"
+            // autocomplete={isSignup ? 'new-password' : 'current-password'}
+            disabled={disabled}
+            className={
+              passwordShowError ? "error" : passwordShowValid ? "valid" : ""
+            }
+          />
+          {formattedPasswordError}
+        </FieldsetWithMargin>
+        <FieldsetWithMargin className={isSignup ? undefined : "hidden"}>
+          <StyledLabel htmlFor="confirm-password-input">
+            Confirm Password
+          </StyledLabel>
+          <FlowTextInput
+            onChange={handleChange}
+            onBlur={handleBlur}
+            type="password"
+            name="confirmPassword"
+            id="confirm-password-input"
+            aria-label="Confirm Password"
+            // autocomplete={isSignup ? 'new-password' : 'current-password'}
+            disabled={disabled}
+            className={
+              passwordShowError ? "error" : passwordShowValid ? "valid" : ""
+            }
+          />
+        </FieldsetWithMargin>
+        <Fieldset>
+          <TextCenteredDiv>
+            <InlineBlockDiv id="g-recaptcha" />
+            {maybeError("recaptcha")}
+          </TextCenteredDiv>
+        </Fieldset>
+        <LocalSigninButton type="submit">
+          {isSignup
+            ? "Sign up with Email and Password"
+            : "Login with Email and Password"}
+        </LocalSigninButton>
+        <SmallMessage>
+          {isSignup ? "Existing user?\u00A0" : "New user?\u00A0"}
+          <AnchorButton onClick={handleToggleSignin}>
+            {isSignup ? "Login" : "Sign up"}
+          </AnchorButton>{" "}
+          {developmentSignin}
+        </SmallMessage>
+      </form>
+    );
   };
-  return <SigninBox>
-    <GoogleButton
-      disabled={disabled}
-      onClick={handleGoogleSignin}
-    >
-      Sign in with Google
-    </GoogleButton>
-    <FacebookButton
-      disabled={disabled}
-      onClick={handleFacebookSignin}
-    >
-      Sign in with Facebook
-    </FacebookButton>
-    <HDivider>
-      OR
-    </HDivider>
-    <Formik
-      initialValues={formInitialValues}
-      onSubmit={handleLocalSignin}
-      validationSchema={formSchema}
-    >
-      {renderFields}
-    </Formik>
-  </SigninBox>;
+  return (
+    <SigninBox>
+      <GoogleButton disabled={disabled} onClick={handleGoogleSignin}>
+        Sign in with Google
+      </GoogleButton>
+      <FacebookButton disabled={disabled} onClick={handleFacebookSignin}>
+        Sign in with Facebook
+      </FacebookButton>
+      <HDivider>OR</HDivider>
+      <Formik
+        initialValues={formInitialValues}
+        onSubmit={handleLocalSignin}
+        validationSchema={formSchema}
+      >
+        {renderFields}
+      </Formik>
+    </SigninBox>
+  );
 };
 
 export default WrSignin;

@@ -10,7 +10,9 @@ import { DeckEditMutation, DeckEditMutationVariables } from "src/gqlTypes";
 import { wrStyled } from "src/theme";
 
 import { DEBOUNCE_DELAY } from "src/util";
-import NotesEditor, { notesEditorStateFromRaw } from "src/components/editor/NotesEditor";
+import NotesEditor, {
+  notesEditorStateFromRaw,
+} from "src/components/editor/NotesEditor";
 
 const StyledOuterBox = wrStyled.div`
 flex-direction: column;
@@ -29,11 +31,13 @@ ${({ theme: { fgbg, bg } }) => fgbg(bg[2])}
 const StyledHeader = wrStyled.header`
 display: flex;
 align-items: baseline;
-padding: ${({ theme: { space } }) => `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
+padding: ${({ theme: { space } }) =>
+  `${space[3]} ${space[3]} ${space[1]} ${space[3]}`};
 
 h4 {
   flex-grow: 1;
-  padding: ${({ theme: { space } }) => `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
+  padding: ${({ theme: { space } }) =>
+    `${space[1]} ${space[4]} ${space[1]} ${space[2]}`};
   margin: 0;
 }
 `;
@@ -59,26 +63,36 @@ const WrDeckDetailDescription = ({
   description,
   readOnly,
 }: Props): JSX.Element => {
-  const [editorState, setEditorState] = useState(notesEditorStateFromRaw(description));
+  const [editorState, setEditorState] = useState(
+    notesEditorStateFromRaw(description)
+  );
   const [currentDescription, setCurrentDescription] = useState(description);
   const [debouncing, setDebouncing] = useState(false);
-  const mutateOpts = { variables: {
-    id: deckId,
-    description: currentDescription,
-  } };
-  const [mutate, { loading }] = useMutation<DeckEditMutation, DeckEditMutationVariables>(DECK_EDIT_MUTATION, {
+  const mutateOpts = {
+    variables: {
+      id: deckId,
+      description: currentDescription,
+    },
+  };
+  const [mutate, { loading }] = useMutation<
+    DeckEditMutation,
+    DeckEditMutationVariables
+  >(DECK_EDIT_MUTATION, {
     onCompleted(data) {
       // no-op if debounce will trigger
       if (debouncing) {
         return;
       }
       // debounce has fired a no-op before flight returned; we now fire a new mutation
-      if (data.deckEdit && !equal(currentDescription, data.deckEdit.description)) {
+      if (
+        data.deckEdit &&
+        !equal(currentDescription, data.deckEdit.description)
+      ) {
         void mutate(mutateOpts);
       }
     },
   });
-  const [debounce,, call] = useDebouncedCallback(() => {
+  const [debounce, , call] = useDebouncedCallback(() => {
     setDebouncing(false);
     // no-op if a mutation is already in-flight
     if (loading || equal(currentDescription, description)) {
@@ -88,30 +102,36 @@ const WrDeckDetailDescription = ({
   }, DEBOUNCE_DELAY);
   useEffect(() => call, [call]);
   const handleChange = (nextEditorState: EditorState) => {
-    setCurrentDescription(convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<string, unknown>);
+    setCurrentDescription(
+      convertToRaw(nextEditorState.getCurrentContent()) as unknown as Record<
+        string,
+        unknown
+      >
+    );
     setDebouncing(true);
     debounce();
     return nextEditorState;
   };
-  const descriptionStatus = loading || !equal(currentDescription, description)
-    ? "saving"
-    : undefined;
-  return <StyledOuterBox>
-    <StyledInnerBox>
-      <StyledHeader>
-        <h4>About this deck</h4>
-        <DescriptionStatus>{descriptionStatus}</DescriptionStatus>
-      </StyledHeader>
-      <StyledContent>
-        <NotesEditor
-          editorState={editorState}
-          setEditorState={setEditorState}
-          handleChange={handleChange}
-          placeholder={readOnly ? "No description" : "Enter a description..."}
-          readOnly={readOnly}
-        />
-      </StyledContent>
-    </StyledInnerBox>
-  </StyledOuterBox>;
+  const descriptionStatus =
+    loading || !equal(currentDescription, description) ? "saving" : undefined;
+  return (
+    <StyledOuterBox>
+      <StyledInnerBox>
+        <StyledHeader>
+          <h4>About this deck</h4>
+          <DescriptionStatus>{descriptionStatus}</DescriptionStatus>
+        </StyledHeader>
+        <StyledContent>
+          <NotesEditor
+            editorState={editorState}
+            setEditorState={setEditorState}
+            handleChange={handleChange}
+            placeholder={readOnly ? "No description" : "Enter a description..."}
+            readOnly={readOnly}
+          />
+        </StyledContent>
+      </StyledInnerBox>
+    </StyledOuterBox>
+  );
 };
 export default WrDeckDetailDescription;
