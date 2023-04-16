@@ -10,10 +10,13 @@
     },
     "test": {
       "outputs": ["coverage/**"],
-      "dependsOn": []
+      "dependsOn": ["codegen", "db:push"]
     },
     "lint": {
       "dependsOn": ["^build"]
+    },
+    "codegen": {
+      "dependsOn": ["^codegen", "^test", "db:generate"]
     },
     "dev": {
       "cache": false,

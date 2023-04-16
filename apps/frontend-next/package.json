@@ -2,7 +2,7 @@
   "name": "frontend-next",
   "private": true,
   "scripts": {
-    "generate": "graphql-codegen",
+    "codegen": "graphql-codegen",
     "dev": "next dev",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
