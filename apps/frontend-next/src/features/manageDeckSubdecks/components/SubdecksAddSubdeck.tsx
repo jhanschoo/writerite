@@ -1,77 +1,123 @@
-import {
-  DeckAddSubdeckDocument,
-  DeckCreateDocument,
-  DecksQueryOrder,
-  DeckSummaryFragment,
-} from '@generated/graphql';
 import { useState, ChangeEvent, useEffect } from 'react';
-import { useMutation } from 'urql';
-import type { ManageDeckProps } from '@/features/manageDeck';
+import { useMutation, useQuery } from 'urql';
 import { Button, Divider, Flex, Stack, TextInput, Title } from '@mantine/core';
 import { IconArrowLeft, IconCheck, IconLink, IconPlus, IconUpload } from '@tabler/icons-react';
-import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { BasicList } from '@/components/BasicList';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
 import { useRouter } from 'next/router';
 import { DECK_DETAIL_PATH } from '@/paths';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ManageDeckSubdecksLinkSubdeckQueryQuery } from '@generated/gql/graphql';
+import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
 
 export const INITIAL_RECENT_DECKS = 5;
 
-interface Props extends ManageDeckProps {
+const ManageDeckSubdecksLinkSubdeckQuery = graphql(/* GraphQL */ `
+  query ManageDeckSubdecksLinkSubdeckQuery(
+    $after: ID
+    $before: ID
+    $first: Int
+    $last: Int
+    $input: DecksQueryInput!
+  ) {
+    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+      edges {
+        cursor
+        node {
+          ...SubdeckListItemContent
+          id
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+    }
+  }
+`);
+
+const ManageDeckSubdecksLinkSubdeckAddSubdeckMutation = graphql(/* GraphQL */ `
+  mutation ManageDeckSubdecksLinkSubdeckAddSubdeck($deckId: ID!, $subdeckId: ID!) {
+    deckAddSubdeck(deckId: $deckId, subdeckId: $subdeckId) {
+      id
+    }
+  }
+`);
+
+const ManageDeckSubdecksLinkSubdeckCreateSubdeckMutation = graphql(/* GraphQL */ `
+  mutation ManageDeckSubdecksLinkSubdeckCreateSubdeck($input: DeckCreateMutationInput!) {
+    deckCreate(input: $input) {
+      id
+    }
+  }
+`);
+
+interface Props {
+  deck: FragmentType<typeof ManageDeckSubdecksFragment>;
   onFinishedLinkingSubdecks(): void;
 }
 
-export const ManageDeckSubdecksLinkSubdeck = ({
-  deck: { id: deckId, subdecks },
-  onFinishedLinkingSubdecks,
-}: Props) => {
+export const ManageDeckSubdecksLinkSubdeck = ({ deck, onFinishedLinkingSubdecks }: Props) => {
+  const deckFragment = useFragment(ManageDeckSubdecksFragment, deck);
+  const { id: deckId, subdecks } = deckFragment;
   const stoplist = subdecks.map(({ id }) => id);
   stoplist.push(deckId);
   const router = useRouter();
   const [titleFilter, setTitleFilter] = useState('');
   const [recentShowMore, setRecentShowMore] = useState(false);
   const [added, setAdded] = useState<string[]>([]);
-  const [persistedRecentDecks, setPersistedDecks] = useState<DeckSummaryFragment[]>([]);
-  const [{ data, fetching, error }] = useQueryRecentDecks({
-    stoplist,
-    order: DecksQueryOrder.EditedRecency,
+  const [persistedRecentDecks, setPersistedDecks] = useState<
+    ManageDeckSubdecksLinkSubdeckQueryQuery['decks']['edges']
+  >([]);
+  const [{ data, fetching, error }] = useQuery({
+    query: ManageDeckSubdecksLinkSubdeckQuery,
+    variables: {
+      input: {
+        stoplist,
+      }
+    },
   });
   useEffect(() => {
     if (data && persistedRecentDecks.length === 0) {
-      setPersistedDecks(data.decks);
+      setPersistedDecks(data.decks.edges);
     }
   }, [data]);
-  const [, addSubdeck] = useMutation(DeckAddSubdeckDocument);
-  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+  const [, addSubdeck] = useMutation(ManageDeckSubdecksLinkSubdeckAddSubdeckMutation);
+  const [, deckCreateMutation] = useMutation(ManageDeckSubdecksLinkSubdeckCreateSubdeckMutation);
   const handleCreateSubdeck = async () => {
     const createdDeck = await deckCreateMutation({
-      answerLang: 'en',
-      cards: [],
-      description: null,
-      name: '',
-      promptLang: 'en',
-      published: false,
-      parentDeckId: deckId,
+      input: {
+        answerLang: 'en',
+        cards: [],
+        description: null,
+        name: '',
+        promptLang: 'en',
+        published: false,
+        parentDeckId: deckId,
+      },
     });
     if (createdDeck.data?.deckCreate.id) {
       router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
     }
   };
   const handleAddSubdeck = async (subdeckId: string) => {
-    await addSubdeck({ id: deckId, subdeckId });
+    await addSubdeck({ deckId, subdeckId });
     setAdded(added.concat([subdeckId]));
   };
-  const recentDeckItems = (persistedRecentDecks ?? []).map((deck, index) => (
+  const recentDeckItems = (persistedRecentDecks ?? []).flatMap((edge, index) => (
+    edge ? [
     <SubdeckListItemContent
       key={index}
-      deck={deck}
-      onAction={() => handleAddSubdeck(deck.id)}
-      actioned={added.includes(deck.id)}
+      deck={edge.node}
+      onAction={() => handleAddSubdeck(edge.node.id)}
+      actioned={added.includes(edge.node.id)}
       actionText="Link"
       actionedText="Linked"
       actionIcon={<IconLink />}
       actionedIcon={<IconCheck />}
-    />
+    />] : []
   ));
   const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS;
   if (canShowMoreRecentDecks && !recentShowMore) {

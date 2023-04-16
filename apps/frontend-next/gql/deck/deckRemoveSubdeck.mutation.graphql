@@ -1,5 +1,0 @@
-mutation DeckRemoveSubdeck($id: ID!, $subdeckId: ID!) {
-  deckRemoveSubdeck(id: $id, subdeckId: $subdeckId) {
-    ...deckSubdecks
-  }
-}

@@ -1,21 +1,18 @@
-import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 
-import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';
 import { usePeriodicallyRefreshToken } from '@/features/signin';
 import { ManageRoom } from '@/features/manageRoom/components/ManageRoom';
 
 const Home: NextPage = () => {
-  const { motionProps } = useMotionContext();
   const router = useRouter();
   usePeriodicallyRefreshToken();
-  const slug = router.query.slug as string | undefined;
+  const id = router.query.id as string;
 
   return (
     <StandardLayout vhHeight>
-      <motion.div {...motionProps}>{slug && <ManageRoom slug={slug} />}</motion.div>
+      <ManageRoom id={id} />
     </StandardLayout>
   );
 };

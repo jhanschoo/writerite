@@ -1,18 +1,42 @@
 import { ToolbaredRichTextEditor, useContentViewer } from '@/components/editor';
 import { useContentEditor } from '@/components/editor/useContentEditor';
-import { DeckEditDocument } from '@generated/graphql';
 import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import { ManageDeckProps } from '../types/ManageDeckProps';
 import { ManageDeckFrontMatterContent } from './ManageDeckFrontMatterContent';
 import { ManageDeckFrontMatterEditor } from './ManageDeckFrontMatterEditor';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 
-export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
-  const [{ fetching }, mutateDeckInfo] = useMutation(DeckEditDocument);
+const ManageDeckFrontMatterEditMutation = graphql(/* GraphQL */ `
+  mutation ManageDeckFrontMatterEdit($input: DeckEditMutationInput!) {
+    deckEdit(input: $input) {
+      answerLang
+      description
+      id
+      name
+      promptLang
+    }
+  }
+`);
+
+const ManageDeckFrontMatterFragment = graphql(/* GraphQL */ `
+  fragment ManageDeckFrontMatter on Deck {
+    id
+    name
+    description
+  }
+`);
+
+interface Props {
+  deck: FragmentType<typeof ManageDeckFrontMatterFragment>;
+}
+
+export const ManageDeckFrontMatter = ({ deck }: Props) => {
+  const deckFragment = useFragment(ManageDeckFrontMatterFragment, deck);
+  const [{ fetching }, mutateDeckInfo] = useMutation(ManageDeckFrontMatterEditMutation);
   const [editing, setEditing] = useState(false);
-  const [name, setName] = useState(deck.name);
-  const [description, setDescription] = useState(deck.description ?? null);
+  const [name, setName] = useState(deckFragment.name);
+  const [description, setDescription] = useState(deckFragment.description ?? null);
   const [descriptionEditor, resetEditorContent] = useContentEditor({
     editorComponent: ToolbaredRichTextEditor,
     content: description,
@@ -38,7 +62,7 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
     return content;
   }
   const handleSave = async () => {
-    const { data } = await mutateDeckInfo({ id: deck.id, name, description });
+    const { data } = await mutateDeckInfo({ input: { id: deckFragment.id, name, description } });
     if (data) {
       const {
         deckEdit: { name, description },
@@ -71,8 +95,8 @@ export const ManageDeckFrontMatter = ({ deck }: ManageDeckProps) => {
           <Button
             variant="outline"
             onClick={() => {
-              setName(deck.name);
-              setDescription(deck.description ?? null);
+              setName(deckFragment.name);
+              setDescription(deckFragment.description ?? null);
               setEditing(false);
             }}
           >

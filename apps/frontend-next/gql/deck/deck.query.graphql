@@ -1,5 +1,0 @@
-query Deck($id: ID!) {
-  deck(id: $id) {
-    ...deckDetail
-  }
-}

@@ -1,35 +1,30 @@
 import { useState, ChangeEvent, MouseEventHandler, Dispatch, SetStateAction } from 'react';
-import { DecksDocument, DecksQueryScope } from '@generated/graphql';
 import { useQuery } from 'urql';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { useDebounce } from 'use-debounce';
 import { Card, SegmentedControl, Text, TextInput, UnstyledButton } from '@mantine/core';
-import { DeckItemComponentProps, DecksList, DeckSummaryContent } from '@/components/deck';
-import { useMotionContext } from '@/hooks';
+import {
+  DecksList,
+  DeckSummaryContent,
+  DeckSummaryContentFragment,
+} from '@/components/deck';
 import { useRouter } from 'next/router';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { DecksQueryScope } from '@generated/gql/graphql';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
 type OnClickFactoryType = (
-  deck: DeckItemComponentProps['deck']
+  deckId: string
 ) => MouseEventHandler<HTMLDivElement>;
-
-const emptyNewDeckInput = {
-  answerLang: 'en',
-  cards: [],
-  description: {},
-  name: '',
-  promptLang: 'en',
-  published: false,
-};
 
 const DeckItemFactory =
   (onClickFactory: OnClickFactoryType) =>
-  ({ deck }: DeckItemComponentProps) => {
+  ({ deck }: { deck: FragmentType<typeof DeckSummaryContentFragment> & { id: string } }) => {
     return (
       <UnstyledButton
         sx={{ height: 'unset', flexGrow: 1, maxWidth: '100%' }}
-        onClick={onClickFactory(deck)}
+        onClick={onClickFactory(deck.id)}
         component="div"
       >
         <Card
@@ -55,36 +50,67 @@ const DeckItemFactory =
     );
   };
 
+const SearchDecksQuery = graphql(/* GraphQL */ `
+  query SearchDecks(
+    $after: ID
+    $before: ID
+    $first: Int
+    $last: Int
+    $input: DecksQueryInput!
+  ) {
+    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+      edges {
+        cursor
+        node {
+          id
+          name
+          ...DeckSummaryContent
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+    }
+  }
+`);
+
 interface Props {
   onClickFactory: OnClickFactoryType;
 }
 
 // TODO: pagination
 export const SearchDecks = ({ onClickFactory }: Props) => {
-  const router = useRouter();
-  const { setMotionProps } = useMotionContext();
-  const [titleFilter, setTitleFilter] = useState('');
-  const [debouncedTitleFilter] = useDebounce(titleFilter, STANDARD_DEBOUNCE_MS);
-  const [scopeFilter, setScopeFilter] = useState<DecksQueryScope>(DecksQueryScope.Owned);
+  const [titleContainsInput, setTitleContainsInput] = useState('');
+  const [titleContains] = useDebounce(titleContainsInput, STANDARD_DEBOUNCE_MS);
+  const [scope, setScope] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [cursor, setCursor] = useState<string | undefined>();
   const [{ data }, refetchDecks] = useQuery({
-    query: DecksDocument,
+    query: SearchDecksQuery,
     variables: {
-      scope: scopeFilter,
-      take: MANAGE_DECKS_DECKS_NUM,
-      titleFilter: debouncedTitleFilter,
-      cursor,
+      first: MANAGE_DECKS_DECKS_NUM,
+      after: cursor,
+      input: {
+        scope: scope,
+        titleContains,
+      }
     },
   });
-  const decks = data?.decks.filter((deck) => deck.name.includes(titleFilter));
+  const decks = data?.decks.edges.flatMap((edge) => {
+    if (edge?.node?.name.includes(titleContainsInput)) {
+      return [edge.node];
+    }
+    return [];
+  });
   return (
     <>
       <SegmentedControl
-        value={scopeFilter}
-        onChange={setScopeFilter as Dispatch<SetStateAction<string>>}
+        value={scope}
+        onChange={setScope as Dispatch<SetStateAction<string>>}
         data={[
           { label: 'Owned', value: DecksQueryScope.Owned },
-          { label: 'Relevant', value: DecksQueryScope.Participated },
           { label: 'Public', value: DecksQueryScope.Visible },
         ]}
       />
@@ -94,8 +120,8 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
         placeholder="e.g. ocabular"
         size="md"
         mb="md"
-        value={titleFilter}
-        onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleFilter(e.target.value)}
+        value={titleContainsInput}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setTitleContainsInput(e.target.value)}
       />
       <DecksList decks={decks} component={DeckItemFactory(onClickFactory)} justifyLeading />
     </>

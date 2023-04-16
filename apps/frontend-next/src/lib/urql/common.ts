@@ -1,5 +1,4 @@
-import { SSRExchange } from 'next-urql';
-import { dedupExchange, fetchExchange, subscriptionExchange } from 'urql/core';
+import { Exchange, fetchExchange, subscriptionExchange } from 'urql/core';
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { cacheExchange, Data, NullArray } from '@urql/exchange-graphcache';
@@ -12,9 +11,10 @@ import {
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import schema from '@root/graphql.schema.json';
-import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
+// import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
 import { IntrospectionQuery } from 'graphql';
 import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
+import { graphql } from '@generated/gql';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
@@ -27,6 +27,15 @@ const wsClient = createClient({
   url: NEXT_PUBLIC_GRAPHQL_WS,
   webSocketImpl: WebSocket,
 });
+
+export const AuthRefreshMutation = graphql(/* GraphQL */ `
+  mutation AuthRefreshMutation($token: JWT!) {
+    refresh(token: $token) {
+      currentUser
+      token
+    }
+  }
+`);
 
 const auth = authExchange(async ({ appendHeaders, mutate }) => {
   let token = getAccessToken();
@@ -49,7 +58,7 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
         unsetSessionInfo();
         return;
       }
-      const result = await mutate(RefreshDocument, { token });
+      const result = await mutate(AuthRefreshMutation, { token });
       const sessionInfo = result.data?.refresh;
       if (!sessionInfo) {
         unsetSessionInfo();
@@ -65,64 +74,67 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
 });
 
 const subscription = subscriptionExchange({
-  forwardSubscription: (operation) => ({
-    subscribe: (sink) => ({
-      unsubscribe: wsClient.subscribe(operation, sink),
-    }),
-  }),
+  forwardSubscription: (request) => {
+    const input = { ...request, query: request.query || '' };
+    return {
+      subscribe: (sink) => ({
+        unsubscribe: wsClient.subscribe(input, sink),
+      }),
+    };
+  },
 });
 
-export const getExchanges = (ssr: SSRExchange) => [
+export const getExchanges = (ssr: Exchange) => [
   devtoolsExchange,
-  dedupExchange,
   cacheExchange({
     schema: schema as unknown as IntrospectionQuery, // type mismatch when using graphql.schema.json
-    updates: {
-      Mutation: {
-        cardCreate(result, _args, cache) {
-          const { cardCreate: card } = result as Mutation;
-          const { id, deckId } = card;
-          const cardsDirect = cache.resolve(
-            { __typename: 'Deck', id: deckId as string },
-            'cardsDirect'
-          );
-          if (Array.isArray(cardsDirect)) {
-            cardsDirect.unshift({ __typename: 'Card', id });
-            cache.link(
-              { __typename: 'Deck', id: deckId as string },
-              'cardsDirect',
-              cardsDirect as NullArray<Data>
-            );
-            cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
-              __typename: 'Deck',
-              id: deckId as string,
-              cardsDirectCount: cardsDirect.length,
-            });
-          }
-        },
-        cardDelete(result, _args, cache) {
-          const {
-            cardDelete: { id, deckId },
-          } = result as Mutation;
-          const cardsDirect = cache.resolve(
-            { __typename: 'Deck', id: deckId as string },
-            'cardsDirect'
-          );
-          const deletedCardKey = cache.keyOfEntity({ __typename: 'Card', id });
-          if (Array.isArray(cardsDirect)) {
-            const updatedCards = cardsDirect.filter((cardKey) => cardKey !== deletedCardKey);
-            cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
-            cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
-              __typename: 'Deck',
-              id: deckId as string,
-              cardsDirectCount: updatedCards.length,
-            });
-          }
-        },
-        // deckAddSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
-        // deckRemoveSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
-      },
-    },
+    // TODO: review
+    // updates: {
+    //   Mutation: {
+    //     cardCreate(result, _args, cache) {
+    //       const { cardCreate: card } = result as Mutation;
+    //       const { id, deckId } = card;
+    //       const cardsDirect = cache.resolve(
+    //         { __typename: 'Deck', id: deckId as string },
+    //         'cardsDirect'
+    //       );
+    //       if (Array.isArray(cardsDirect)) {
+    //         cardsDirect.unshift({ __typename: 'Card', id });
+    //         cache.link(
+    //           { __typename: 'Deck', id: deckId as string },
+    //           'cardsDirect',
+    //           cardsDirect as NullArray<Data>
+    //         );
+    //         cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
+    //           __typename: 'Deck',
+    //           id: deckId as string,
+    //           cardsDirectCount: cardsDirect.length,
+    //         });
+    //       }
+    //     },
+    //     cardDelete(result, _args, cache) {
+    //       const {
+    //         cardDelete: { id, deckId },
+    //       } = result as Mutation;
+    //       const cardsDirect = cache.resolve(
+    //         { __typename: 'Deck', id: deckId as string },
+    //         'cardsDirect'
+    //       );
+    //       const deletedCardKey = cache.keyOfEntity({ __typename: 'Card', id });
+    //       if (Array.isArray(cardsDirect)) {
+    //         const updatedCards = cardsDirect.filter((cardKey) => cardKey !== deletedCardKey);
+    //         cache.link({ __typename: 'Deck', id: deckId as string }, 'cardsDirect', updatedCards);
+    //         cache.writeFragment(DeckCardsDirectCountFragmentDoc, {
+    //           __typename: 'Deck',
+    //           id: deckId as string,
+    //           cardsDirectCount: updatedCards.length,
+    //         });
+    //       }
+    //     },
+    //     // deckAddSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
+    //     // deckRemoveSubdeck requires no cache updates since ...deckSubdecks is returned which automatically updates the cache
+    //   },
+    // },
   }),
   ssr,
   auth,

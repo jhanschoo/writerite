@@ -1,8 +1,0 @@
-subscription MessageUpdatesByRoomSlug($slug: String!) {
-  messageUpdatesByRoomSlug(slug: $slug) {
-    operation
-    value {
-      ...basicMessage
-    }
-  }
-}

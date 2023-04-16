@@ -1,7 +1,7 @@
 import Papa from 'papaparse';
 import { nextTick, NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
-import type { NewCardData } from '../types';
 import { JSONContent } from '@tiptap/react';
+import { CardCreateMutationInput } from '@generated/gql/graphql';
 
 const textToJsonContent = (textContent: string): JSONContent => {
   const lines = textContent
@@ -22,8 +22,8 @@ const textToJsonContent = (textContent: string): JSONContent => {
 export const useParseCsv = () => async (file: File) =>
   nextTick(
     async () =>
-      new Promise<NewCardData[]>((resolve, reject) => {
-        let newCards: NewCardData[] = [];
+      new Promise<CardCreateMutationInput[]>((resolve, reject) => {
+        let newCards: CardCreateMutationInput[] = [];
         Papa.parse<string[], File>(file, {
           skipEmptyLines: 'greedy',
           chunk: (results, parser) => {
@@ -36,6 +36,7 @@ export const useParseCsv = () => async (file: File) =>
                 prompt: textToJsonContent(prompt),
                 fullAnswer: textToJsonContent(fullAnswer),
                 answers: answers.filter((answer) => answer.trim()),
+                isTemplate: false,
               }))
             );
             if (newCards.length > NEXT_PUBLIC_MAX_CARDS_PER_DECK) {

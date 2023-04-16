@@ -1,26 +1,48 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/core';
 
-import { ManageDeckProps } from '@/features/manageDeck';
 import { AddNewCard, ManageCard } from '@/features/manageCard';
 import { accumulateContentText } from '@/components/editor';
 import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/react';
-
-type Card = ManageDeckProps['deck']['cardsDirect'][number];
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 
 const WHITESPACE_REGEX = /\s+/;
 
-const sortCards = (cards: Card[]) =>
-  cards.sort((a, b) =>
-    a.editedAt > b.editedAt ? -1 : a.editedAt < b.editedAt ? 1 : a.id > b.id ? 1 : -1
-  );
+// const sortCards = (cards: Card[]) =>
+//   cards.sort((a, b) =>
+//     a.editedAt > b.editedAt ? -1 : a.editedAt < b.editedAt ? 1 : a.id > b.id ? 1 : -1
+//   );
 
-interface Props extends ManageDeckProps {
+const ManageDeckCardsFragment = graphql(/* GraphQL */ `
+  fragment ManageDeckCards on Deck {
+    id
+    cardsDirect(after: $after, before: $before, first: $first, last: $last) {
+      edges {
+        cursor
+        node {
+          id
+          ...ManageCard
+        }
+      }
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+    }
+    cardsDirectCount
+  }
+`);
+
+interface Props {
+  deck: FragmentType<typeof ManageDeckCardsFragment>;
   startUpload(): void;
 }
 
 export const ManageDeckCards = ({ deck, startUpload }: Props) => {
+  const deckFragment = useFragment(ManageDeckCardsFragment, deck);
   const [filter, setFilter] = useState('');
   const [activePage, setActivePage] = useState<number>(1);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
@@ -33,25 +55,29 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
     .split(WHITESPACE_REGEX)
     .filter((word) => Boolean(word));
   // .filter(...) is necessary since "".split(/\s+/) === ['']
-  const currentCards = useMemo(() => {
-    const filteredCards = deck.cardsDirect.filter(({ prompt, fullAnswer, answers }) => {
-      const promptString = (prompt && accumulateContentText(prompt as JSONContent)) ?? '';
-      const fullAnswerString =
-        (fullAnswer && accumulateContentText(fullAnswer as JSONContent)) ?? '';
-      return filterWords.every(
-        (word) =>
-          promptString.includes(word) ||
-          fullAnswerString.includes(word) ||
-          answers.some((answer) => answer.includes(word))
-      );
-    });
-    sortCards(filteredCards);
-    return filteredCards.slice((activePage - 1) * 10, activePage * 10);
-  }, [deck.cardsDirect, activePage, filter]);
-  const total = Math.ceil(deck.cardsDirect.length / 10);
+  // const currentCards = useMemo(() => {
+  //   const filteredCards = deck.cardsDirect.filter(({ prompt, fullAnswer, answers }) => {
+  //     const promptString = (prompt && accumulateContentText(prompt as JSONContent)) ?? '';
+  //     const fullAnswerString =
+  //       (fullAnswer && accumulateContentText(fullAnswer as JSONContent)) ?? '';
+  //     return filterWords.every(
+  //       (word) =>
+  //         promptString.includes(word) ||
+  //         fullAnswerString.includes(word) ||
+  //         answers.some((answer) => answer.includes(word))
+  //     );
+  //   });
+  //   sortCards(filteredCards);
+  //   return filteredCards.slice((activePage - 1) * 10, activePage * 10);
+  // }, [deck.cardsDirect, activePage, filter]);
+  // TODO: fix
+  const currentCards = deckFragment.cardsDirect.edges.flatMap((edge) =>
+    edge?.node ? [edge.node] : []
+  );
+  const total = Math.ceil(deckFragment.cardsDirectCount / 10);
   const canAddANewCard =
-    deck.cardsDirect.length < parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) &&
-    activePage === 1;
+    deckFragment.cardsDirectCount <
+      parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) && activePage === 1;
   return (
     <Stack spacing="xs" align="stretch">
       <Flex gap="md" wrap="wrap" justify="stretch">
@@ -72,7 +98,7 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
           Import from file
         </Button>
       </Flex>
-      {showAddCard && <AddNewCard deck={deck} onDone={() => setShowAddCard(false)} />}
+      {showAddCard && <AddNewCard deckId={deckFragment.id} onDone={() => setShowAddCard(false)} />}
       <Divider />
       <TextInput
         value={filter}

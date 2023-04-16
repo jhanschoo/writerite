@@ -1,5 +1,6 @@
 import '@styles/globals.css';
 
+// TODO: remove framer-motion
 import { AnimatePresence } from 'framer-motion';
 import React from 'react';
 import type { AppProps } from 'next/app';

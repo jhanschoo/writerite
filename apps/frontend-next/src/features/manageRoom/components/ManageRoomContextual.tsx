@@ -1,20 +1,30 @@
-import { RoomDetailFragment } from '@generated/graphql';
-import { FineRoomState, getFineRoomState } from '../util';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import { ManageRoomAddOccupants } from './ManageRoomAddOccupants';
 import { ManageRoomSetDeck } from './ManageRoomSetDeck';
 
+const ManageRoomContextualFragment = graphql(/* GraphQL */ `
+  fragment ManageRoomContextual on Room {
+    id
+    activeRound {
+      deck {
+        id
+        name
+      }
+      id
+      slug
+      state
+    }
+  }
+`);
+
 interface Props {
-  room?: RoomDetailFragment;
+  room: FragmentType<typeof ManageRoomContextualFragment>;
 }
 
 export const ManageRoomContextual = ({ room }: Props) => {
-  if (!room) {
-    return null;
+  const roomFragment = useFragment(ManageRoomContextualFragment, room);
+  if (!roomFragment.activeRound) {
+    return <ManageRoomSetDeck roomId={roomFragment.id} />
   }
-  switch (getFineRoomState({ room })) {
-    case FineRoomState.SetDeck:
-      return <ManageRoomSetDeck room={room} />;
-    case FineRoomState.AddOccupants:
-      return <ManageRoomAddOccupants room={room} />;
-  }
+  return null;
 };

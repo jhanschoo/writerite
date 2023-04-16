@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import { InitializeOauthSigninDocument } from '../../../../generated/graphql';
+import { InitializeOauthSigninMutation } from '../fragments/InitializeOauthSigninMutation';
 
 // https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
 const client_id = process.env.NEXT_PUBLIC_FACEBOOK_APP_ID as string;
 
 export default function useFacebookSignin() {
-  const [, executeInitializeOauth] = useMutation(InitializeOauthSigninDocument);
+  const [, executeInitializeOauth] = useMutation(InitializeOauthSigninMutation);
   const [signinUnderway, setSigninUnderway] = useState(false);
   return [
     signinUnderway,

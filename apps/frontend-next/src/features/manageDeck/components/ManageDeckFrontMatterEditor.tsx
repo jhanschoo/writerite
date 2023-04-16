@@ -1,8 +1,7 @@
 import { Input, Stack, TextInput } from '@mantine/core';
-import { ManageDeckProps } from '../types/ManageDeckProps';
 
-export interface ManageDeckFrontMatterEditorProps
-  extends Pick<ManageDeckProps['deck'], 'name' | 'description'> {
+export interface Props {
+  name: string;
   setName: (name: string) => void;
   descriptionEditorElement: JSX.Element;
 }
@@ -11,7 +10,7 @@ export const ManageDeckFrontMatterEditor = ({
   name,
   setName,
   descriptionEditorElement,
-}: ManageDeckFrontMatterEditorProps) => {
+}: Props) => {
   return (
     <Stack>
       <TextInput

@@ -1,8 +1,0 @@
-mutation UserEdit($isPublic: Boolean, $name: String, $bio: JSONObject) {
-  userEdit(isPublic: $isPublic, name: $name, bio: $bio) {
-    bio
-    id
-    isPublic
-    name
-  }
-}

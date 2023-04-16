@@ -1,7 +1,6 @@
-import { RoomDetailFragment } from '@generated/graphql';
 
 interface Props {
-  room: RoomDetailFragment;
+  room: object;
 }
 
 export const ManageRoomAddOccupants = ({ room }: Props) => {

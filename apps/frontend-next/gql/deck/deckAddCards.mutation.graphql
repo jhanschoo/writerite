@@ -1,5 +1,0 @@
-mutation DeckAddCards($deckId: ID!, $cards: [CardCreateInput!]!) {
-  deckAddCards(deckId: $deckId, cards: $cards) {
-    ...deckDetail
-  }
-}

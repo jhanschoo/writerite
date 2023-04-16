@@ -1,31 +1,50 @@
-import {
-  BasicMessageFragment,
-  MessageContentType,
-  MessageUpdatesByRoomSlugDocument,
-  MessageUpdatesByRoomSlugSubscription,
-  MessageUpdatesByRoomSlugSubscriptionVariables,
-  MessageUpdateOperation,
-  RoomDetailFragment,
-} from '@generated/graphql';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ManageRoomMessagesSubscriptionSubscription, MessageContentType, ManageRoomMessagesFragment as ManageRoomMessagesFragmentType, MessageUpdateOperations } from '@generated/gql/graphql';
 import { Divider, Space, Stack, Text, Title } from '@mantine/core';
 import { useSubscription } from 'urql';
 
 interface Props {
-  room?: RoomDetailFragment;
+  roomId: string;
 }
 
+const ManageRoomMessagesFragment = graphql(/* GraphQL */ `
+  fragment ManageRoomMessages on Message {
+    content
+    createdAt
+    id
+    sender {
+      id
+      name
+    }
+    type
+  }
+`);
+
+const ManageRoomMessagesSubscription = graphql(/* GraphQL */ `
+  subscription ManageRoomMessagesSubscription($id: ID!) {
+    messageUpdatesByRoomId(id: $id) {
+      operation
+      value {
+        ...ManageRoomMessages
+      }
+    }
+  }
+`);
+
 function handleMessageUpdates(
-  messages: BasicMessageFragment[] = [],
-  response: MessageUpdatesByRoomSlugSubscription
-) {
-  const { messageUpdatesByRoomSlug } = response;
-  switch (messageUpdatesByRoomSlug.operation) {
-    case MessageUpdateOperation.MessageCreate:
-      return [...messages, messageUpdatesByRoomSlug.value];
+  messages: ManageRoomMessagesFragmentType[] = [],
+  response: ManageRoomMessagesSubscriptionSubscription
+): ManageRoomMessagesFragmentType[] {
+  const { messageUpdatesByRoomId: { operation, value } } = response;
+  switch (operation) {
+    case MessageUpdateOperations.MessageCreate: {
+      const valueFragment = useFragment(ManageRoomMessagesFragment, value);
+      return [...messages, valueFragment];
+    }
   }
 }
 
-export const ManageRoomMessages = ({ room }: Props) => {
+export const ManageRoomMessages = ({ roomId }: Props) => {
   const stackElements: JSX.Element[] = [
     <Space sx={{ height: 0, flexGrow: 100 }} key="spacer" />,
     <Divider
@@ -37,14 +56,10 @@ export const ManageRoomMessages = ({ room }: Props) => {
       key="start-of-chat"
     />,
   ];
-  const [{ data }] = useSubscription<
-    MessageUpdatesByRoomSlugSubscription,
-    BasicMessageFragment[],
-    MessageUpdatesByRoomSlugSubscriptionVariables
-  >(
+  const [{ data }] = useSubscription(
     {
-      query: MessageUpdatesByRoomSlugDocument,
-      variables: { slug: room?.slug as string },
+      query: ManageRoomMessagesSubscription,
+      variables: { id: roomId },
     },
     handleMessageUpdates
   );

@@ -1,8 +1,14 @@
 import { Deck as PDeck, Prisma } from "database";
 import { getDescendantsOfDeck } from "../service/deck";
 import { builder, gao, ungao } from "../builder";
-import { CardInput } from "./inputs/CardInput";
+import {
+  CardCreateMutationInput,
+  DeckCreateMutationInput,
+  DeckEditMutationInput,
+} from "./inputs";
 import { decodeGlobalID } from "@pothos/plugin-relay";
+import { DecksQueryScope } from "./enums";
+import { DecksQueryInput } from "./inputs/DecksQueryInput";
 
 export const PPUBLIC = gao("getPublicInfo");
 export const PPRIVATABLE = gao("getPrivatableInfo");
@@ -83,20 +89,10 @@ export enum DecksQueryOrder {
   USED_RECENCY = "USED_RECENCY",
 }
 
-export enum DecksQueryScope {
-  OWNED = "OWNED",
-  VISIBLE = "VISIBLE",
-}
-
 // builder.enumType(DecksQueryOrder, {
 //   name: "DecksQueryOrder",
 //   description: "order in which decks are returned",
 // });
-
-builder.enumType(DecksQueryScope, {
-  name: "DecksQueryScope",
-  description: "ownership type of of decks returned",
-});
 
 builder.queryFields((t) => ({
   deck: t.prismaField({
@@ -124,10 +120,14 @@ builder.queryFields((t) => ({
     type: Deck,
     cursor: "id",
     args: {
-      scope: t.arg({ type: DecksQueryScope }),
-      stoplist: t.arg.idList(),
+      input: t.arg({ type: DecksQueryInput, required: true }),
     },
-    resolve: async (query, _root, { scope, stoplist }, { prisma, sub }) => {
+    resolve: async (
+      query,
+      _root,
+      { input: { scope, stoplist, titleContains } },
+      { prisma, sub }
+    ) => {
       const { id: userId } = sub;
       const res = await prisma.deck.findMany({
         ...query,
@@ -138,6 +138,7 @@ builder.queryFields((t) => ({
           id: stoplist
             ? { notIn: stoplist.map((id) => decodeGlobalID(id as string).id) }
             : undefined,
+          name: titleContains ? { contains: titleContains } : undefined,
         },
         orderBy: { editedAt: "desc" },
       });
@@ -151,19 +152,14 @@ builder.mutationFields((t) => ({
     type: Deck,
     description: "create a new deck",
     args: {
-      name: t.arg.string({ required: true }),
-      description: t.arg({ type: "JSONObject" }),
-      promptLang: t.arg.string({ required: true, validate: { minLength: 2 } }),
-      answerLang: t.arg.string({ required: true, validate: { minLength: 2 } }),
-      published: t.arg.boolean(),
-      cards: t.arg({ type: [CardInput], required: true }),
-      parentDeckId: t.arg.id(),
-      notes: t.arg({ type: "JSONObject" }),
+      input: t.arg({ type: DeckCreateMutationInput, required: true }),
     },
     resolve: async (
       query,
       _root,
-      { cards, description, parentDeckId, published, notes, ...rest },
+      {
+        input: { cards, description, parentDeckId, published, notes, ...rest },
+      },
       { prisma, sub }
     ) => {
       const res = await prisma.deck.create({
@@ -200,23 +196,12 @@ builder.mutationFields((t) => ({
     type: Deck,
     description: "edit a new deck",
     args: {
-      id: t.arg.id({ required: true }),
-      name: t.arg.string({ directives: { undefinedOnly: true } }),
-      description: t.arg({ type: "JSONObject" }),
-      promptLang: t.arg.string({
-        directives: { undefinedOnly: true },
-        validate: { minLength: 2 },
-      }),
-      answerLang: t.arg.string({
-        directives: { undefinedOnly: true },
-        validate: { minLength: 2 },
-      }),
-      notes: t.arg({ type: "JSONObject" }),
+      input: t.arg({ type: DeckEditMutationInput, required: true }),
     },
     resolve: async (
       query,
       _root,
-      { id, description, name, promptLang, answerLang, notes },
+      { input: { id, description, name, promptLang, answerLang, notes } },
       { prisma, sub }
     ) => {
       id = decodeGlobalID(id as string).id;
@@ -250,7 +235,7 @@ builder.mutationFields((t) => ({
     description: "add cards to a deck",
     args: {
       deckId: t.arg.id({ required: true }),
-      cards: t.arg({ type: [CardInput], required: true }),
+      cards: t.arg({ type: [CardCreateMutationInput], required: true }),
     },
     resolve: async (query, _root, { deckId, cards }, { prisma, sub }) => {
       const { id } = decodeGlobalID(deckId as string);

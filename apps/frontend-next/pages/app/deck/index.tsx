@@ -8,12 +8,7 @@ import { StandardLayout } from '@/features/standardLayout';
 const Home: NextPage = () => {
   const { motionProps } = useMotionContext();
   return (
-    <StandardLayout
-      breadcrumbs={[
-        ['/app', 'Home'],
-        ['/app/deck', 'Decks'],
-      ]}
-    >
+    <StandardLayout>
       <motion.div {...motionProps}>
         <ManageDecks />
       </motion.div>

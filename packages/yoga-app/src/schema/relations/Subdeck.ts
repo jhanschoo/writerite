@@ -1,5 +1,4 @@
 import { builder } from "../../builder";
-import { prismaConnectionHelpers } from "@pothos/plugin-prisma";
 import { Deck, PPRIVATABLE } from "../Deck";
 
 export const Subdeck = builder.prismaNode("Subdeck", {
@@ -13,29 +12,18 @@ export const Subdeck = builder.prismaNode("Subdeck", {
   }),
 });
 
-const subdeckConnectionHelpers = prismaConnectionHelpers(builder, Subdeck, {
-  cursor: "id",
-  select: (nodeSelection) => ({
-    subdeck: nodeSelection(true),
-  }),
-  resolveNode: ({ subdeck }) => subdeck,
-});
-
 builder.prismaObjectFields("Deck", (t) => ({
-  subdecks: t.withAuth(PPRIVATABLE).connection({
-    type: Deck,
+  subdecks: t.withAuth(PPRIVATABLE).field({
+    type: [Deck],
     description: "all subdecks directly belonging to this deck",
-    select: (args, ctx, nestedSelection) => ({
-      parentDeckIn: subdeckConnectionHelpers.getQuery(
-        args,
-        ctx,
-        nestedSelection
-      ) as ReturnType<typeof subdeckConnectionHelpers.getQuery> & {
-        cursor?: { id: string };
+    select: (_args, _ctx, nestedSelection) => ({
+      parentDeckIn: {
+        select: {
+          subdeck: nestedSelection(true),
+        }
       },
     }),
-    resolve: (deck, args, ctx) =>
-      subdeckConnectionHelpers.resolve(deck.parentDeckIn, args, ctx),
+    resolve: (deck) => deck.parentDeckIn.map((s) => s.subdeck),
   }),
   subdecksCount: t.withAuth(PPRIVATABLE).relationCount("parentDeckIn"),
 }));

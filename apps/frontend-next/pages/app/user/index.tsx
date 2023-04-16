@@ -5,12 +5,20 @@ import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 import { PersonalDashboard } from '@/features/managePersonal';
 import { useQuery } from 'urql';
-import { UserPersonalDocument } from '@generated/graphql';
+import { graphql, useFragment } from '@generated/gql';
+
+const UserQuery = graphql(/* GraphQL */ `
+  query UserQuery {
+    me {
+      id
+      ...PersonalProfile
+    }
+  }
+`);
 
 const User: NextPage = () => {
-  const { motionProps } = useMotionContext();
   const [{ fetching, data }] = useQuery({
-    query: UserPersonalDocument,
+    query: UserQuery,
     variables: {},
   });
   if (!data) {
@@ -18,7 +26,7 @@ const User: NextPage = () => {
   }
   return (
     <StandardLayout>
-      <motion.div {...motionProps}>{data && <PersonalDashboard user={data.user} />}</motion.div>
+      {data?.me && <PersonalDashboard user={data.me} />}
     </StandardLayout>
   );
 };

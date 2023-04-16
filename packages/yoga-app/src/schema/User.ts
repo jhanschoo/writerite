@@ -3,6 +3,7 @@ import { builder, gao, ungao } from "../builder";
 import { Prisma } from "database";
 import { invalidArgumentsErrorFactory } from "../error";
 import { decodeGlobalID } from "@pothos/plugin-relay";
+import { OwnProfileEditMutationInput } from "./inputs";
 
 export const PPUBLIC = gao("getPublicInfo");
 export const PPRIVATABLE = gao("getPrivatableInfo");
@@ -74,9 +75,10 @@ builder.mutationFields((t) => ({
     type: User,
     description: "Edit the user's own profile.",
     args: {
-      name: t.arg.string({ directives: { undefinedOnly: true } }),
-      bio: t.arg({ type: "JSONObject", directives: { undefinedOnly: true } }),
-      isPublic: t.arg.boolean({ directives: { undefinedOnly: true } }),
+      input: t.arg({
+        type: OwnProfileEditMutationInput,
+        required: true,
+      }),
     },
     directives: {
       invalidatesTokens: true,
@@ -84,7 +86,7 @@ builder.mutationFields((t) => ({
     resolve: async (
       query,
       _parent,
-      { name, bio, isPublic },
+      { input: { name, bio, isPublic } },
       { prisma, redis, sub }
     ) => {
       const { id } = sub;

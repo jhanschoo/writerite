@@ -19,24 +19,10 @@ export function mutationDeckCreateEmpty(
     executor,
     document: graphql(/* GraphQL */ `
       mutation DeckCreateEmpty(
-        $answerLang: String!
-        $cards: [CardCreateInput!]!
-        $description: JSONObject
-        $name: String!
-        $notes: JSONObject
-        $parentDeckId: ID
-        $promptLang: String!
-        $published: Boolean
+        $input: DeckCreateMutationInput!
       ) {
         deckCreate(
-          answerLang: $answerLang
-          cards: $cards
-          description: $description
-          name: $name
-          notes: $notes
-          parentDeckId: $parentDeckId
-          promptLang: $promptLang
-          published: $published
+          input: $input
         ) {
           id
           answerLang
@@ -101,20 +87,10 @@ export function mutationDeckEditName(
     executor,
     document: graphql(/* GraphQL */ `
       mutation DeckEdit(
-        $id: ID!
-        $name: String
-        $answerLang: String
-        $description: JSONObject
-        $notes: JSONObject
-        $promptLang: String
+        $input: DeckEditMutationInput!
       ) {
         deckEdit(
-          id: $id
-          name: $name
-          answerLang: $answerLang
-          description: $description
-          notes: $notes
-          promptLang: $promptLang
+          input: $input
         ) {
           id
           name
@@ -165,16 +141,14 @@ export function queryDecks(
         $before: ID
         $first: Int
         $last: Int
-        $scope: DecksQueryScope
-        $stoplist: [ID!]
+        $input: DecksQueryInput!
       ) {
         decks(
           after: $after
           before: $before
           first: $first
           last: $last
-          scope: $scope
-          stoplist: $stoplist
+          input: $input
         ) {
           edges {
             cursor

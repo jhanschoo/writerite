@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Stack, Stepper } from '@mantine/core';
 
-import { ManageDeckProps } from '@/features/manageDeck';
 import { Import } from './Import';
 import { Instructions } from './Instructions';
-import type { ImportCardsData } from '../types';
-import { Review } from './Review';
+import { ManageDeckCardsUploadReviewFragment, Review } from './Review';
+import { FragmentType } from '@generated/gql';
+import { ImportCardsData } from '../types';
 
-interface Props extends ManageDeckProps {
+interface Props {
+  deck: FragmentType<typeof ManageDeckCardsUploadReviewFragment>;
   onUploadEnded(): unknown;
 }
 

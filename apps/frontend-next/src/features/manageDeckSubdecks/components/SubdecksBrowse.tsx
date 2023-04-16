@@ -1,22 +1,37 @@
-import { DeckRemoveSubdeckDocument, DeckSummaryFragment } from '@generated/graphql';
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import type { ManageDeckProps } from '@/features/manageDeck';
 import { Button, Stack, Text } from '@mantine/core';
 import { IconCheck, IconLinkOff, IconPlus } from '@tabler/icons-react';
 import { BasicList } from '@/components/BasicList';
-import { SubdeckListItemContent } from './SubdeckListItemContent';
+import { SubdeckListItemContent, SubdeckListItemContentFragment } from './SubdeckListItemContent';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
 
-interface Props extends ManageDeckProps {
+const ManageDeckSubdecksBrowseRemoveSubdeckMutation = graphql(/* GraphQL */ `
+  mutation ManageDeckSubdecksBrowseRemoveSubdeck($deckId: ID!, $subdeckId: ID!) {
+    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {
+      id
+    }
+  }
+`);
+
+interface Props {
+  deck: FragmentType<typeof ManageDeckSubdecksFragment>;
   onAddSubdeck(): void;
 }
 
-export const ManageDeckSubdecksBrowse = ({ deck: { id, subdecks }, onAddSubdeck }: Props) => {
+// TODO: revisit pagination
+export const ManageDeckSubdecksBrowse = ({ deck, onAddSubdeck }: Props) => {
+  const deckFragment = useFragment(ManageDeckSubdecksFragment, deck);
+  const {
+    id: deckId,
+    subdecks,
+  } = deckFragment;
   const [removed, setRemoved] = useState<string[]>([]);
-  const [, removeSubdeck] = useMutation(DeckRemoveSubdeckDocument);
-  const [persistedSubdecks] = useState<DeckSummaryFragment[]>(subdecks);
+  const [, removeSubdeck] = useMutation(ManageDeckSubdecksBrowseRemoveSubdeckMutation);
+  const [persistedSubdecks] = useState(subdecks);
   const handleRemove = async (subdeckId: string) => {
-    await removeSubdeck({ id, subdeckId });
+    await removeSubdeck({ deckId, subdeckId });
     setRemoved(removed.concat([subdeckId]));
   };
   const decks = persistedSubdecks.map((deck, index) => (

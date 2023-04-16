@@ -1,14 +1,8 @@
 {
   "__schema": {
-    "queryType": {
-      "name": "Query"
-    },
-    "mutationType": {
-      "name": "Mutation"
-    },
-    "subscriptionType": {
-      "name": "Subscription"
-    },
+    "queryType": { "name": "Query" },
+    "mutationType": { "name": "Mutation" },
+    "subscriptionType": { "name": "Subscription" },
     "types": [
       {
         "kind": "SCALAR",
@@ -38,28 +32,8 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
                 }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deckId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -72,11 +46,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -85,11 +55,7 @@
             "name": "fullAnswer",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "JSONObject",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -100,39 +66,47 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "mainTemplate",
+            "name": "isPrimaryTemplate",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "ownRecord",
+            "name": "isTemplate",
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "UserCardRecord",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ownRecordCorrectHistory",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -141,39 +115,19 @@
             "name": "prompt",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "JSONObject",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "template",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
-            },
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
         ],
         "inputFields": null,
-        "interfaces": [],
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
         "enumValues": null,
         "possibleTypes": null
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "CardCreateInput",
+        "name": "CardCreateMutationInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -189,11 +143,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
                 }
               }
             },
@@ -204,10 +154,26 @@
           {
             "name": "fullAnswer",
             "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isPrimaryTemplate",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isTemplate",
+            "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "JSONObject",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -216,23 +182,86 @@
           {
             "name": "prompt",
             "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "CardEditMutationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "answers",
+            "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "JSONObject",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+                }
+              }
             },
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "template",
+            "name": "fullAnswer",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isPrimaryTemplate",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isTemplate",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "prompt",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -264,11 +293,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -276,23 +301,44 @@
           {
             "name": "cardsAllUnder",
             "description": "all cards directly belonging to some descendant (reflexive, transitive closure of subdeck) deck of this deck",
-            "args": [],
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Card",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "DeckCardsAllUnderConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -300,23 +346,44 @@
           {
             "name": "cardsDirect",
             "description": "all cards directly belonging to this deck",
-            "args": [],
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Card",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "DeckCardsDirectConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -328,11 +395,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Int", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -344,18 +407,14 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "descendantDecks",
-            "description": "all descendant (reflexive, transitive closure of subdeck) decks of this deck",
+            "description": "all descendant decks (reflexive, transitive closure of subdeck) of this deck",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -366,11 +425,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Deck",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
                 }
               }
             },
@@ -381,11 +436,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "JSONObject",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -396,11 +447,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -412,11 +459,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -428,24 +471,16 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "ownRecord",
+            "name": "ownRecordNotes",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "UserDeckRecord",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -456,27 +491,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ownerId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -488,11 +503,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -504,11 +515,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -526,11 +533,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
                 }
               }
             },
@@ -539,7 +542,7 @@
           },
           {
             "name": "subdecks",
-            "description": "all direct subdecks of this deck",
+            "description": "all subdecks directly belonging to this deck",
             "args": [],
             "type": {
               "kind": "NON_NULL",
@@ -550,11 +553,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Deck",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
                 }
               }
             },
@@ -563,16 +562,55 @@
           },
           {
             "name": "subdecksCount",
-            "description": "count of all direct subdecks of this deck",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "Int", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DeckCardsAllUnderConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "DeckCardsAllUnderConnectionEdge",
+                  "ofType": null
+                }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -584,44 +622,337 @@
         "possibleTypes": null
       },
       {
-        "kind": "ENUM",
-        "name": "DecksQueryOrder",
+        "kind": "OBJECT",
+        "name": "DeckCardsAllUnderConnectionEdge",
         "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
+        "fields": [
           {
-            "name": "EDITED_RECENCY",
+            "name": "cursor",
             "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "USED_RECENCY",
+            "name": "node",
             "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Card", "ofType": null }
+            },
             "isDeprecated": false,
             "deprecationReason": null
           }
         ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DeckCardsDirectConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "DeckCardsDirectConnectionEdge",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DeckCardsDirectConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Card", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "DeckCreateMutationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "answerLang",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "cards",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "CardCreateMutationInput",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "notes",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "parentDeckId",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "promptLang",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "published",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "DeckEditMutationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "answerLang",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "notes",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "promptLang",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "DecksQueryInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "scope",
+            "description": null,
+            "type": { "kind": "ENUM", "name": "DecksQueryScope", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "stoplist",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "titleContains",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
         "possibleTypes": null
       },
       {
         "kind": "ENUM",
         "name": "DecksQueryScope",
-        "description": null,
+        "description": "ownership type of of decks returned",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
             "name": "OWNED",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PARTICIPATED",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -638,10 +969,140 @@
       {
         "kind": "SCALAR",
         "name": "EmailAddress",
-        "description": "A field whose value conforms to the standard internet email address format as specified in RFC822: https://www.w3.org/Protocols/rfc822/.",
+        "description": "A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "FinalizeOauthSigninMutationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "code",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "nonce",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "provider",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "redirect_uri",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Friendship",
+        "description": null,
+        "fields": [
+          {
+            "name": "befriended",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "befriender",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "createdAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatedAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -704,15 +1165,7 @@
             "name": "content",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "JSON",
-                "ofType": null
-              }
-            },
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -723,11 +1176,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -739,43 +1188,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "room",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -785,21 +1198,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "User",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "senderId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -811,18 +1212,14 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "MessageContentType",
-                "ofType": null
-              }
+              "ofType": { "kind": "ENUM", "name": "MessageContentType", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           }
         ],
         "inputFields": null,
-        "interfaces": [],
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -864,19 +1261,14 @@
             "isDeprecated": false,
             "deprecationReason": null
           },
-          {
-            "name": "TEXT",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
+          { "name": "TEXT", "description": null, "isDeprecated": false, "deprecationReason": null }
         ],
         "possibleTypes": null
       },
       {
         "kind": "OBJECT",
         "name": "MessageUpdate",
-        "description": null,
+        "description": "A message indicating an operation performed on a message.",
         "fields": [
           {
             "name": "operation",
@@ -885,11 +1277,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "MessageUpdateOperation",
-                "ofType": null
-              }
+              "ofType": { "kind": "ENUM", "name": "MessageUpdateOperations", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -901,11 +1289,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Message",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Message", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -918,14 +1302,14 @@
       },
       {
         "kind": "ENUM",
-        "name": "MessageUpdateOperation",
-        "description": null,
+        "name": "MessageUpdateOperations",
+        "description": "Names identifying operations that trigger message updates.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
-            "name": "messageCreate",
+            "name": "MESSAGE_CREATE",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -939,6 +1323,31 @@
         "description": null,
         "fields": [
           {
+            "name": "befriend",
+            "description": "Befriend the `befriendedId` user, then resolves to the user's own profile",
+            "args": [
+              {
+                "name": "befriendedId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "cardCreate",
             "description": null,
             "args": [
@@ -950,7 +1359,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "CardCreateInput",
+                    "name": "CardCreateMutationInput",
                     "ofType": null
                   }
                 },
@@ -964,23 +1373,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "mainTemplate",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -990,11 +1383,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Card",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Card", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1009,11 +1398,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1023,11 +1408,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Card",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Card", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1037,84 +1418,16 @@
             "description": null,
             "args": [
               {
-                "name": "answers",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
-                  "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "String",
-                      "ofType": null
-                    }
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "fullAnswer",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "JSONObject",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "id",
+                "name": "input",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "CardEditMutationInput",
                     "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "mainTemplate",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "prompt",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "JSONObject",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "template",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1124,47 +1437,14 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Card",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "cardUnsetMainTemplate",
-            "description": null,
-            "args": [
-              {
-                "name": "deckId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Card",
-              "ofType": null
+              "ofType": { "kind": "OBJECT", "name": "Card", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deckAddCards",
-            "description": null,
+            "description": "add cards to a deck",
             "args": [
               {
                 "name": "cards",
@@ -1180,7 +1460,7 @@
                       "name": null,
                       "ofType": {
                         "kind": "INPUT_OBJECT",
-                        "name": "CardCreateInput",
+                        "name": "CardCreateMutationInput",
                         "ofType": null
                       }
                     }
@@ -1196,11 +1476,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1210,30 +1486,22 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deckAddSubdeck",
-            "description": null,
+            "description": "add a subdeck to a deck and resolve to the parent deck",
             "args": [
               {
-                "name": "id",
+                "name": "deckId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1245,11 +1513,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1259,106 +1523,26 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deckCreate",
-            "description": null,
+            "description": "create a new deck",
             "args": [
               {
-                "name": "answerLang",
+                "name": "input",
                 "description": null,
                 "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "cards",
-                "description": null,
-                "type": {
-                  "kind": "LIST",
+                  "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "INPUT_OBJECT",
-                      "name": "CardCreateInput",
-                      "ofType": null
-                    }
+                    "kind": "INPUT_OBJECT",
+                    "name": "DeckCreateMutationInput",
+                    "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "description",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "JSONObject",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "name",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "parentDeckId",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "promptLang",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "published",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1368,30 +1552,22 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deckDelete",
-            "description": null,
+            "description": "delete the specified deck, only if its dependents are deleted",
             "args": [
               {
-                "name": "id",
+                "name": "deckId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1401,90 +1577,26 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deckEdit",
-            "description": null,
+            "description": "edit a new deck",
             "args": [
               {
-                "name": "answerLang",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "description",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "JSONObject",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "id",
+                "name": "input",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
+                    "kind": "INPUT_OBJECT",
+                    "name": "DeckEditMutationInput",
                     "ofType": null
                   }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "name",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "promptLang",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "published",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1494,30 +1606,22 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "deckRemoveSubdeck",
-            "description": null,
+            "description": "add a subdeck to a deck and resolve to the parent deck",
             "args": [
               {
-                "name": "id",
+                "name": "deckId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1529,11 +1633,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1543,11 +1643,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1557,62 +1653,14 @@
             "description": null,
             "args": [
               {
-                "name": "code",
+                "name": "input",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "nonce",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "provider",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "redirect_uri",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
+                    "kind": "INPUT_OBJECT",
+                    "name": "FinalizeOauthSigninMutationInput",
                     "ofType": null
                   }
                 },
@@ -1621,11 +1669,7 @@
                 "deprecationReason": null
               }
             ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "SessionInfo",
-              "ofType": null
-            },
+            "type": { "kind": "OBJECT", "name": "SessionInfo", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -1636,56 +1680,24 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "messageCreate",
-            "description": "@triggersSubscriptions(\n    signatures: [\"messagesOfRoomUpdates\"]\n  )",
+            "name": "ownProfileEdit",
+            "description": "Edit the user's own profile.",
             "args": [
               {
-                "name": "content",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "JSON",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "slug",
+                "name": "input",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "type",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "MessageContentType",
+                    "kind": "INPUT_OBJECT",
+                    "name": "OwnProfileEditMutationInput",
                     "ofType": null
                   }
                 },
@@ -1697,54 +1709,22 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Message",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "ownCardRecordSet",
+            "name": "recordCorrectAnswer",
             "description": null,
             "args": [
               {
-                "name": "cardId",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "correctRecordAppend",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "LIST",
-                    "name": null,
-                    "ofType": {
-                      "kind": "NON_NULL",
-                      "name": null,
-                      "ofType": {
-                        "kind": "SCALAR",
-                        "name": "DateTime",
-                        "ofType": null
-                      }
-                    }
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1752,15 +1732,123 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "UserCardRecord",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Card", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "ownDeckRecordSet",
+            "name": "refresh",
+            "description": null,
+            "args": [
+              {
+                "name": "token",
+                "description": "A JWT token",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "JWT", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": { "kind": "OBJECT", "name": "SessionInfo", "ofType": null },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roomArchive",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roomCreate",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roomEndRound",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roomJoin",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roomSetDeck",
             "description": null,
             "args": [
               {
@@ -1769,11 +1857,106 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roomStartRound",
+            "description": null,
+            "args": [
+              {
+                "name": "id",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sendTextMessage",
+            "description": null,
+            "args": [
+              {
+                "name": "roomId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "textContent",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+                },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Message", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "setOwnNotes",
+            "description": "set personal notes for a deck",
+            "args": [
+              {
+                "name": "deckId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1785,11 +1968,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "JSONObject",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "JSONObject", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -1799,347 +1978,126 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "UserDeckRecord",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
-          },
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INTERFACE",
+        "name": "Node",
+        "description": null,
+        "fields": [
           {
-            "name": "refresh",
-            "description": null,
-            "args": [
-              {
-                "name": "token",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "JWT",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "SessionInfo",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomCleanUpDead",
+            "name": "id",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": [
+          { "kind": "OBJECT", "name": "Card", "ofType": null },
+          { "kind": "OBJECT", "name": "Deck", "ofType": null },
+          { "kind": "OBJECT", "name": "Friendship", "ofType": null },
+          { "kind": "OBJECT", "name": "Message", "ofType": null },
+          { "kind": "OBJECT", "name": "Room", "ofType": null },
+          { "kind": "OBJECT", "name": "Round", "ofType": null },
+          { "kind": "OBJECT", "name": "Subdeck", "ofType": null },
+          { "kind": "OBJECT", "name": "User", "ofType": null }
+        ]
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "OwnProfileEditMutationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "bio",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
+            "defaultValue": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "roomCreate",
-            "description": "@invalidatesTokens(\n    reason: \"occupying newly created room\"\n  )\n  @triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
+            "name": "isPublic",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "name",
+            "description": null,
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "PageInfo",
+        "description": null,
+        "fields": [
+          {
+            "name": "endCursor",
+            "description": null,
+            "args": [],
+            "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "hasNextPage",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "roomInvitationSend",
+            "name": "hasPreviousPage",
             "description": null,
-            "args": [
-              {
-                "name": "receiverId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "roomId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "RoomInvitation",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomJoin",
-            "description": "@invalidatesTokens(\n    reason: \"occupying existing room\"\n  )\n  @triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
-            "args": [
-              {
-                "name": "id",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "roomSetDeck",
-            "description": "@triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
-            "args": [
-              {
-                "name": "deckId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomSetState",
-            "description": "@invalidatesTokens(\n    reason: \"room may no longer be active\"\n  )\n  @triggersSubscriptions(\n    signatures: [\"activeRoomUpdates\"]\n  )",
-            "args": [
-              {
-                "name": "id",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "state",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "RoomState",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userBefriendUser",
+            "name": "startCursor",
             "description": null,
-            "args": [
-              {
-                "name": "befriendedId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userEdit",
-            "description": "@invalidatesTokens(\n    reason: \"name may be changed\"\n  )",
-            "args": [
-              {
-                "name": "bio",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "JSONObject",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "id",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "isPublic",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "name",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
-            },
+            "args": [],
+            "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -2164,11 +2122,7 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -2178,95 +2132,55 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Deck",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "decks",
-            "description": "implicit limit of 60",
+            "description": null,
             "args": [
               {
-                "name": "cursor",
+                "name": "after",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               },
               {
-                "name": "order",
-                "description": "how results are ordered; if undefined, defaults to USED_RECENCY",
-                "type": {
-                  "kind": "ENUM",
-                  "name": "DecksQueryOrder",
-                  "ofType": null
-                },
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               },
               {
-                "name": "scope",
+                "name": "first",
                 "description": null,
-                "type": {
-                  "kind": "ENUM",
-                  "name": "DecksQueryScope",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               },
               {
-                "name": "stoplist",
+                "name": "input",
                 "description": null,
                 "type": {
-                  "kind": "LIST",
+                  "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "NON_NULL",
-                    "name": null,
-                    "ofType": {
-                      "kind": "SCALAR",
-                      "name": "ID",
-                      "ofType": null
-                    }
-                  }
+                  "ofType": { "kind": "INPUT_OBJECT", "name": "DecksQueryInput", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               },
               {
-                "name": "take",
+                "name": "last",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Int",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
-                "name": "titleFilter",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
@@ -2275,19 +2189,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Deck",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "QueryDecksConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2299,17 +2201,21 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "message",
+            "name": "me",
+            "description": null,
+            "args": [],
+            "type": { "kind": "OBJECT", "name": "User", "ofType": null },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
             "description": null,
             "args": [
               {
@@ -2318,43 +2224,35 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               }
             ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Message",
-                "ofType": null
-              }
-            },
+            "type": { "kind": "INTERFACE", "name": "Node", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "messagesOfRoom",
+            "name": "nodes",
             "description": null,
             "args": [
               {
-                "name": "id",
+                "name": "ids",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
                   "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
+                    "kind": "LIST",
+                    "name": null,
+                    "ofType": {
+                      "kind": "NON_NULL",
+                      "name": null,
+                      "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+                    }
                   }
                 },
                 "defaultValue": null,
@@ -2368,69 +2266,24 @@
               "ofType": {
                 "kind": "LIST",
                 "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Message",
-                    "ofType": null
-                  }
-                }
+                "ofType": { "kind": "INTERFACE", "name": "Node", "ofType": null }
               }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "occupyingActiveRooms",
+            "name": "occupyingUnarchivedRooms",
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Room",
-                    "ofType": null
-                  }
-                }
+                "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ownDeckRecord",
-            "description": null,
-            "args": [
-              {
-                "name": "deckId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "UserDeckRecord",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2445,26 +2298,14 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "ID",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               }
             ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
-            },
+            "type": { "kind": "OBJECT", "name": "Room", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -2478,54 +2319,87 @@
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
                 "deprecationReason": null
               }
             ],
+            "type": { "kind": "OBJECT", "name": "Room", "ofType": null },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "QueryDecksConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
+            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": { "kind": "OBJECT", "name": "QueryDecksConnectionEdge", "ofType": null }
               }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "user",
+            "name": "pageInfo",
             "description": null,
-            "args": [
-              {
-                "name": "id",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "ID",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
+            "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "QueryDecksConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2542,42 +2416,10 @@
         "description": null,
         "fields": [
           {
-            "name": "createdAt",
+            "name": "activeRound",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "DateTime",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deck",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Deck",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "deckId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
-            },
+            "type": { "kind": "OBJECT", "name": "Round", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -2588,11 +2430,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2604,11 +2442,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Int", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2616,23 +2450,44 @@
           {
             "name": "messages",
             "description": null,
-            "args": [],
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Message",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "RoomMessagesConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2650,11 +2505,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "User",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
                 }
               }
             },
@@ -2668,95 +2519,58 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Int", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "owner",
+            "name": "type",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "ENUM", "name": "RoomType", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "RoomMessagesConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": { "kind": "OBJECT", "name": "RoomMessagesConnectionEdge", "ofType": null }
               }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "ownerId",
+            "name": "pageInfo",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "slug",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "state",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "RoomState",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userIdOfLastAddedOccupantForSubscription",
-            "description": "guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomJoin",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "userOfLastAddedOccupantForSubscription",
-            "description": "guaranteed to be set only as part of the top-level RoomUpdate payload yielded by a subscription to roomUpdatesBySlug triggered by a successful roomJoin",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "User",
-              "ofType": null
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2769,69 +2583,29 @@
       },
       {
         "kind": "OBJECT",
-        "name": "RoomInvitation",
+        "name": "RoomMessagesConnectionEdge",
         "description": null,
         "fields": [
           {
-            "name": "id",
+            "name": "cursor",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "receiverId",
+            "name": "node",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "senderId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "Message", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2844,20 +2618,184 @@
       },
       {
         "kind": "ENUM",
-        "name": "RoomState",
+        "name": "RoomType",
         "description": null,
         "fields": null,
         "inputFields": null,
         "interfaces": null,
         "enumValues": [
           {
-            "name": "SERVED",
+            "name": "EPHEMERAL",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "SERVING",
+            "name": "PERSISTENT",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "RoomUpdate",
+        "description": "A message indicating an operation performed on a room.",
+        "fields": [
+          {
+            "name": "operation",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "ENUM", "name": "RoomUpdateOperations", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "value",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Room", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "RoomUpdateOperations",
+        "description": "Keys identifying operations that trigger room updates.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "ROOM_ARCHIVE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ROOM_END_ROUND",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ROOM_JOIN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ROOM_SET_DECK",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ROOM_START_ROUND",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Round",
+        "description": null,
+        "fields": [
+          {
+            "name": "deck",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "isActive",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "slug",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "state",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "ENUM", "name": "RoundState", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "RoundState",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "PLAYING",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -2873,80 +2811,8 @@
       },
       {
         "kind": "OBJECT",
-        "name": "RoomUpdate",
-        "description": null,
-        "fields": [
-          {
-            "name": "operation",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "RoomUpdateOperation",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "value",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Room",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "RoomUpdateOperation",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "roomJoin",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomSetDeck",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "roomSetState",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
         "name": "SessionInfo",
-        "description": null,
+        "description": "A token and its contained information",
         "fields": [
           {
             "name": "currentUser",
@@ -2955,11 +2821,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "JSONObject",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "JSONObject", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2971,11 +2833,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "JWT",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "JWT", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2998,24 +2856,91 @@
       },
       {
         "kind": "OBJECT",
+        "name": "Subdeck",
+        "description": null,
+        "fields": [
+          {
+            "name": "createdAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "parentDeck",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "subdeck",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "updatedAt",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "DateTime", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
         "name": "Subscription",
         "description": null,
         "fields": [
           {
-            "name": "messageUpdatesByRoomSlug",
+            "name": "messageUpdatesByRoomId",
             "description": null,
             "args": [
               {
-                "name": "slug",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -3025,11 +2950,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "MessageUpdate",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "MessageUpdate", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3041,30 +2962,22 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "roomUpdatesByRoomSlug",
+            "name": "roomUpdatesByRoomId",
             "description": null,
             "args": [
               {
-                "name": "slug",
+                "name": "id",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
                 },
                 "defaultValue": null,
                 "isDeprecated": false,
@@ -3074,11 +2987,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "RoomUpdate",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "RoomUpdate", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3106,80 +3015,114 @@
         "fields": [
           {
             "name": "befriendeds",
-            "description": "users who this user have unilaterally befriended without reciprocation",
-            "args": [],
+            "description": "users this user has befriended",
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "User",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "UserBefriendedsConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "befriendedsCount",
-            "description": "count of users unilaterally befriended by this user without reciprocation",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Int", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "befrienders",
-            "description": "users who have unilaterally befriended this user without reciprocation",
-            "args": [],
+            "description": "users that have befriended this user and you",
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "User",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "UserBefriendersConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "befriendersCount",
-            "description": "count of users who have unilaterally befriended this user without reciprocation",
+            "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Int", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3188,34 +3131,51 @@
             "name": "bio",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "JSONObject",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "JSONObject", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "decks",
             "description": null,
-            "args": [],
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Deck",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "OBJECT", "name": "UserDecksConnection", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3224,51 +3184,7 @@
             "name": "facebookId",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "friends",
-            "description": "users who are mutual friends of this user",
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "User",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "friendsCount",
-            "description": "count of users who are mutual friends of this user",
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3276,11 +3192,7 @@
             "name": "googleId",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3291,25 +3203,66 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
             "name": "isPublic",
-            "description": null,
+            "description": "whether the user's profile information is accessible by non-friends and searchable",
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "mutualBefriendeds",
+            "description": "users befriending you that this user has befriended; upon own user gives your mutual friends",
+            "args": [
+              {
+                "name": "after",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "ID", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": { "kind": "SCALAR", "name": "Int", "ofType": null },
+                "defaultValue": null,
+                "isDeprecated": false,
+                "deprecationReason": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
+                "kind": "OBJECT",
+                "name": "UserMutualBefriendedsConnection",
                 "ofType": null
               }
             },
@@ -3321,57 +3274,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "occupyingActiveRooms",
-            "description": null,
-            "args": [],
-            "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Room",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ownedRooms",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Room",
-                    "ofType": null
-                  }
-                }
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3389,11 +3294,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
                 }
               }
             },
@@ -3402,17 +3303,17 @@
           }
         ],
         "inputFields": null,
-        "interfaces": [],
+        "interfaces": [{ "kind": "INTERFACE", "name": "Node", "ofType": null }],
         "enumValues": null,
         "possibleTypes": null
       },
       {
         "kind": "OBJECT",
-        "name": "UserCardRecord",
+        "name": "UserBefriendedsConnection",
         "description": null,
         "fields": [
           {
-            "name": "correctRecord",
+            "name": "edges",
             "description": null,
             "args": [],
             "type": {
@@ -3422,15 +3323,23 @@
                 "kind": "LIST",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "DateTime",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "UserBefriendedsConnectionEdge",
+                  "ofType": null
                 }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3443,21 +3352,259 @@
       },
       {
         "kind": "OBJECT",
-        "name": "UserDeckRecord",
+        "name": "UserBefriendedsConnectionEdge",
         "description": null,
         "fields": [
           {
-            "name": "notes",
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserBefriendersConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "JSONObject",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UserBefriendersConnectionEdge",
+                  "ofType": null
+                }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserBefriendersConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserDecksConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": { "kind": "OBJECT", "name": "UserDecksConnectionEdge", "ofType": null }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserDecksConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "Deck", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserMutualBefriendedsConnection",
+        "description": null,
+        "fields": [
+          {
+            "name": "edges",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UserMutualBefriendedsConnectionEdge",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "pageInfo",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "PageInfo", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UserMutualBefriendedsConnectionEdge",
+        "description": null,
+        "fields": [
+          {
+            "name": "cursor",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "SCALAR", "name": "ID", "ofType": null }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "node",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": { "kind": "OBJECT", "name": "User", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3480,11 +3627,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3493,11 +3636,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3508,11 +3647,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3530,11 +3665,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "__DirectiveLocation",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "ENUM", "name": "__DirectiveLocation", "ofType": null }
                 }
               }
             },
@@ -3548,11 +3679,7 @@
               {
                 "name": "includeDeprecated",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
                 "defaultValue": "false",
                 "isDeprecated": false,
                 "deprecationReason": null
@@ -3567,11 +3694,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "__InputValue",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "__InputValue", "ofType": null }
                 }
               }
             },
@@ -3721,11 +3844,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3734,11 +3853,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3749,11 +3864,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3762,11 +3873,7 @@
             "name": "deprecationReason",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -3788,11 +3895,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3801,11 +3904,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3816,11 +3915,7 @@
               {
                 "name": "includeDeprecated",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
                 "defaultValue": "false",
                 "isDeprecated": false,
                 "deprecationReason": null
@@ -3835,11 +3930,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "__InputValue",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "__InputValue", "ofType": null }
                 }
               }
             },
@@ -3853,11 +3944,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "__Type",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "__Type", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3869,11 +3956,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3882,11 +3965,7 @@
             "name": "deprecationReason",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -3908,11 +3987,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3921,11 +3996,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3936,11 +4007,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "__Type",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "__Type", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3949,11 +4016,7 @@
             "name": "defaultValue",
             "description": "A GraphQL-formatted string representing the default value for this input value.",
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -3964,11 +4027,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3977,11 +4036,7 @@
             "name": "deprecationReason",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -4000,11 +4055,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4021,11 +4072,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "__Type",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "__Type", "ofType": null }
                 }
               }
             },
@@ -4039,11 +4086,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "__Type",
-                "ofType": null
-              }
+              "ofType": { "kind": "OBJECT", "name": "__Type", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4052,11 +4095,7 @@
             "name": "mutationType",
             "description": "If this server supports mutation, the type that mutation operations will be rooted at.",
             "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "__Type",
-              "ofType": null
-            },
+            "type": { "kind": "OBJECT", "name": "__Type", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4064,11 +4103,7 @@
             "name": "subscriptionType",
             "description": "If this server support subscription, the type that subscription operations will be rooted at.",
             "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "__Type",
-              "ofType": null
-            },
+            "type": { "kind": "OBJECT", "name": "__Type", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4085,11 +4120,7 @@
                 "ofType": {
                   "kind": "NON_NULL",
                   "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "__Directive",
-                    "ofType": null
-                  }
+                  "ofType": { "kind": "OBJECT", "name": "__Directive", "ofType": null }
                 }
               }
             },
@@ -4114,11 +4145,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "__TypeKind",
-                "ofType": null
-              }
+              "ofType": { "kind": "ENUM", "name": "__TypeKind", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -4127,11 +4154,7 @@
             "name": "name",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4139,11 +4162,7 @@
             "name": "description",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4151,11 +4170,7 @@
             "name": "specifiedByURL",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4166,11 +4181,7 @@
               {
                 "name": "includeDeprecated",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
                 "defaultValue": "false",
                 "isDeprecated": false,
                 "deprecationReason": null
@@ -4182,11 +4193,7 @@
               "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "__Field",
-                  "ofType": null
-                }
+                "ofType": { "kind": "OBJECT", "name": "__Field", "ofType": null }
               }
             },
             "isDeprecated": false,
@@ -4202,11 +4209,7 @@
               "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "__Type",
-                  "ofType": null
-                }
+                "ofType": { "kind": "OBJECT", "name": "__Type", "ofType": null }
               }
             },
             "isDeprecated": false,
@@ -4222,11 +4225,7 @@
               "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "__Type",
-                  "ofType": null
-                }
+                "ofType": { "kind": "OBJECT", "name": "__Type", "ofType": null }
               }
             },
             "isDeprecated": false,
@@ -4239,11 +4238,7 @@
               {
                 "name": "includeDeprecated",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
                 "defaultValue": "false",
                 "isDeprecated": false,
                 "deprecationReason": null
@@ -4255,11 +4250,7 @@
               "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "__EnumValue",
-                  "ofType": null
-                }
+                "ofType": { "kind": "OBJECT", "name": "__EnumValue", "ofType": null }
               }
             },
             "isDeprecated": false,
@@ -4272,11 +4263,7 @@
               {
                 "name": "includeDeprecated",
                 "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Boolean",
-                  "ofType": null
-                },
+                "type": { "kind": "SCALAR", "name": "Boolean", "ofType": null },
                 "defaultValue": "false",
                 "isDeprecated": false,
                 "deprecationReason": null
@@ -4288,11 +4275,7 @@
               "ofType": {
                 "kind": "NON_NULL",
                 "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "__InputValue",
-                  "ofType": null
-                }
+                "ofType": { "kind": "OBJECT", "name": "__InputValue", "ofType": null }
               }
             },
             "isDeprecated": false,
@@ -4302,11 +4285,7 @@
             "name": "ofType",
             "description": null,
             "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "__Type",
-              "ofType": null
-            },
+            "type": { "kind": "OBJECT", "name": "__Type", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -4391,11 +4370,7 @@
           {
             "name": "reason",
             "description": "Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax, as specified by [CommonMark](https://commonmark.org/).",
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
+            "type": { "kind": "SCALAR", "name": "String", "ofType": null },
             "defaultValue": "\"No longer supported\"",
             "isDeprecated": false,
             "deprecationReason": null
@@ -4406,11 +4381,7 @@
         "name": "include",
         "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD",
-          "FRAGMENT_SPREAD",
-          "INLINE_FRAGMENT"
-        ],
+        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
         "args": [
           {
             "name": "if",
@@ -4418,11 +4389,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4434,11 +4401,7 @@
         "name": "skip",
         "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD",
-          "FRAGMENT_SPREAD",
-          "INLINE_FRAGMENT"
-        ],
+        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
         "args": [
           {
             "name": "if",
@@ -4446,11 +4409,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "Boolean", "ofType": null }
             },
             "defaultValue": null,
             "isDeprecated": false,
@@ -4462,9 +4421,7 @@
         "name": "specifiedBy",
         "description": "Exposes a URL that specifies the behavior of this scalar.",
         "isRepeatable": false,
-        "locations": [
-          "SCALAR"
-        ],
+        "locations": ["SCALAR"],
         "args": [
           {
             "name": "url",
@@ -4472,11 +4429,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
             },
             "defaultValue": null,
             "isDeprecated": false,

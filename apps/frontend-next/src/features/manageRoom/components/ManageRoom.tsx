@@ -1,4 +1,3 @@
-import { RoomBySlugDocument } from '@generated/graphql';
 import { useQuery } from 'urql';
 import {
   ActionIcon,
@@ -13,6 +12,7 @@ import {
 import { ManageRoomMessages } from './ManageRoomMessages';
 import { ManageRoomPrimaryInput } from './ManageRoomPrimaryInput';
 import { ManageRoomContextual } from './ManageRoomContextual';
+import { graphql } from '@generated/gql';
 
 const useStyles = createStyles((theme) => {
   // https://github.com/mantinedev/mantine/blob/c7d080c2133b0196e3a8382ec6134838632c8f9a/src/mantine-core/src/Tabs/Tab/Tab.styles.ts#L49
@@ -45,32 +45,39 @@ const useStyles = createStyles((theme) => {
   };
 });
 
+const ManageRoomQuery = graphql(/* GraphQL */ `
+  query ManageRoomQuery($id: ID!) {
+    room(id: $id) {
+      id
+      ...ManageRoomContextual
+    }
+  }
+`);
+
 interface Props {
-  slug: string;
+  id: string;
 }
 
-export const ManageRoom = ({ slug }: Props) => {
+export const ManageRoom = ({ id }: Props) => {
   const { classes } = useStyles();
   const [{ data }, refetchRoom] = useQuery({
-    query: RoomBySlugDocument,
-    variables: {
-      slug,
-    },
+    query: ManageRoomQuery,
+    variables: { id },
   });
-  const room = data?.roomBySlug;
+  const room = data?.room;
   return (
     <Box className={classes.gridTemplate}>
-      <Box className={classes.headerPanel}>
-        {room && <Title>Room {room.slug || room.id}</Title>}
-      </Box>
+      <Box className={classes.headerPanel}>{room && <Title>Room {id}</Title>}</Box>
       <Box className={classes.chatPanel}>
-        <ManageRoomMessages room={room} />
+        <ManageRoomMessages roomId={id} />
       </Box>
-      <Box className={classes.contextualPanel}>
-        <ManageRoomContextual room={room} />
-      </Box>
+      {room && (
+        <Box className={classes.contextualPanel}>
+          <ManageRoomContextual room={room} />
+        </Box>
+      )}
       <Box className={classes.inputPanel}>
-        <ManageRoomPrimaryInput room={room} />
+        <ManageRoomPrimaryInput roomId={id} />
       </Box>
     </Box>
   );

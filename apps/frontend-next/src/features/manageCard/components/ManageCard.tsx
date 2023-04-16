@@ -12,15 +12,14 @@ import {
 } from '@mantine/core';
 import stringify from 'fast-json-stable-stringify';
 
-import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
 import { IconTrash } from '@tabler/icons-react';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { useMutation } from 'urql';
-import { CardDeleteDocument, CardEditDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 import { JSONContent, useEditor } from '@tiptap/react';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -59,12 +58,6 @@ const useStyles = createStyles(({ fn }) => {
   };
 });
 
-interface Props {
-  card: ManageDeckProps['deck']['cardsDirect'][number];
-  onDelete: () => void;
-  forceLoading: boolean;
-}
-
 interface State {
   prompt: JSONContent | null;
   fullAnswer: JSONContent | null;
@@ -81,6 +74,39 @@ function debounceIfStateDeltaExists(
   } else {
     debounced.cancel();
   }
+}
+
+const ManageCardFragment = graphql(/* GraphQL */ `
+  fragment ManageCard on Card {
+    answers
+    fullAnswer
+    id
+    isPrimaryTemplate
+    isTemplate
+    prompt
+  }
+`);
+
+const ManageCardEditCardMutation = graphql(/* GraphQL */ `
+  mutation ManageCardEditCardMutation($input: CardEditMutationInput!) {
+    cardEdit(input: $input) {
+      ...ManageCard
+    }
+  }
+`);
+
+const ManageCardDeleteCardMutation = graphql(/* GraphQL */ `
+  mutation ManageCardDeleteCardMutation($id: ID!) {
+    cardDelete(id: $id) {
+      id
+    }
+  }
+`);
+
+interface Props {
+  card: FragmentType<typeof ManageCardFragment>;
+  onDelete: () => void;
+  forceLoading: boolean;
 }
 
 /**
@@ -109,7 +135,7 @@ function debounceIfStateDeltaExists(
  *   answers if we have not tried any such thing).
  */
 export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
-  const { id, prompt, fullAnswer, answers } = card;
+  const { id, prompt, fullAnswer, answers, isTemplate } = useFragment(ManageCardFragment, card);
   const { classes } = useStyles();
   const initialState = {
     prompt,
@@ -121,8 +147,8 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
     fullAnswer ?? null
   );
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
-  const [{ fetching }, cardEdit] = useMutation(CardEditDocument);
-  const [{ fetching: fetchingDelete }, cardDelete] = useMutation(CardDeleteDocument);
+  const [{ fetching }, cardEdit] = useMutation(ManageCardEditCardMutation);
+  const [{ fetching: fetchingDelete }, cardDelete] = useMutation(ManageCardDeleteCardMutation);
   const promptEditor = useEditor({
     ...DEFAULT_EDITOR_PROPS,
     content: promptContent,
@@ -153,10 +179,11 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
   });
   const updateStateToServer = (newState: State) => {
     return cardEdit({
-      id,
-      ...newState,
-      fullAnswer: newState.fullAnswer ? { ...newState.fullAnswer } : undefined,
-      prompt: newState.prompt ? { ...newState.prompt } : undefined,
+      input: {
+        id,
+        ...newState,
+        isTemplate,
+      },
     });
   };
   const handleCardDelete = () => {

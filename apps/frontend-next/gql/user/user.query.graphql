@@ -1,9 +1,0 @@
-query User($id: ID) {
-  user(id: $id) {
-    id
-    facebookId
-    googleId
-    isPublic
-    name
-  }
-}

@@ -55,10 +55,12 @@ describe("graphql/Deck.ts", () => {
 
         // create deck
         const response = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         expect(response).toHaveProperty(
           "data.deckCreate",
@@ -95,10 +97,12 @@ describe("graphql/Deck.ts", () => {
 
         // create deck
         const createDeckResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         expect(createDeckResponse).toHaveProperty("data.deckCreate", {
           id: expect.any(String),
@@ -146,10 +150,12 @@ describe("graphql/Deck.ts", () => {
 
         // create deck 1
         const createDeckResponse1 = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         expect(createDeckResponse1).toHaveProperty(
           "data.deckCreate",
@@ -164,10 +170,12 @@ describe("graphql/Deck.ts", () => {
 
         // create deck 2
         const createDeckResponse2 = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         expect(createDeckResponse2).toHaveProperty(
           "data.deckCreate",
@@ -181,7 +189,7 @@ describe("graphql/Deck.ts", () => {
         const deckBefore2 = createDeckResponse2.data.deckCreate;
 
         // query decks
-        const queryDeckResponse = await queryDecks(executor, {});
+        const queryDeckResponse = await queryDecks(executor, { input: {} });
         expect(queryDeckResponse).toHaveProperty(
           "data.decks.edges",
           expect.arrayContaining([

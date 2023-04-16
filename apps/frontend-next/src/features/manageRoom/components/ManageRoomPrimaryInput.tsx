@@ -1,14 +1,10 @@
 import { KeyboardEvent } from 'react';
-import { MessageContentType, MessageCreateDocument, RoomDetailFragment } from '@generated/graphql';
 import { createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
 import { IconSend } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { useMutation } from 'urql';
 import { ActionIcon } from '@/components/ActionIcon';
-
-interface Props {
-  room?: RoomDetailFragment;
-}
+import { graphql } from '@generated/gql';
 
 const useStyles = createStyles((theme) => ({
   input: {
@@ -16,20 +12,31 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const ManageRoomPrimaryInput = ({ room }: Props) => {
+interface Props {
+  roomId: string;
+}
+
+const ManageRoomPrimaryInputMutation = graphql(/* GraphQL */ `
+  mutation ManageRoomPrimaryInputMutation($roomId: ID!, $textContent: String!) {
+    sendTextMessage(roomId: $roomId, textContent: $textContent) {
+      id
+    }
+  }
+`);
+
+export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
   const { classes } = useStyles();
   const form = useForm({
     initialValues: {
       chatInput: '',
     },
   });
-  const [{ fetching }, messageCreateMutation] = useMutation(MessageCreateDocument);
+  const [{ fetching }, messageCreateMutation] = useMutation(ManageRoomPrimaryInputMutation);
   const submitForm = form.onSubmit((values) => {
     form.reset();
     messageCreateMutation({
-      content: { text: values.chatInput },
-      slug: room?.slug as string,
-      type: MessageContentType.Text,
+      roomId,
+      textContent: values.chatInput,
     });
   });
   const handleSubmitAccelerator = (e: KeyboardEvent<HTMLTextAreaElement>) => {

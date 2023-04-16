@@ -1,5 +1,0 @@
-query UserPersonal {
-  user {
-    ...userDetail
-  }
-}

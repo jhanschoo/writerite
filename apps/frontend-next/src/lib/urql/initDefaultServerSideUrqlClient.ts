@@ -1,8 +1,8 @@
 import { ssrExchange, Client } from 'urql';
-import { initUrqlClient, SSRData } from 'next-urql';
+import { initUrqlClient } from 'next-urql';
 import { commonUrqlOptions, getExchanges } from './common';
 
-export const initDefaultServerSideUrqlClient = (): [Client, () => SSRData] => {
+export const initDefaultServerSideUrqlClient = () => {
   const ssr = ssrExchange({ isClient: false });
   const client = initUrqlClient(
     {
@@ -15,5 +15,5 @@ export const initDefaultServerSideUrqlClient = (): [Client, () => SSRData] => {
     throw new Error('unable to initialize urql client in initDefaultUrqlClient');
   }
   const getUrqlState = () => ssr.extractData();
-  return [client, getUrqlState];
+  return [client, getUrqlState] as const;
 };

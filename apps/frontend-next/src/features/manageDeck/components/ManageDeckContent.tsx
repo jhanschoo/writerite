@@ -1,10 +1,22 @@
 import { createStyles, Group, Stack, Tabs } from '@mantine/core';
-import { ManageDeckProps } from '../types/ManageDeckProps';
 import { ManageDeckCards } from '../../manageDeckCards/components/ManageDeckCards';
 import { ManageDeckSubdecks } from '../../manageDeckSubdecks/components/ManageDeckSubdecks';
 import { ManageDeckCardsUpload } from '@/features/manageDeckCardsUpload';
 import { useRouter } from 'next/router';
 import { DECK_DETAIL_PATH, DECK_DETAIL_IMPORT_PATH, DECK_DETAIL_SUBDECK_PATH } from '@/paths';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+
+const ManageDeckContentFragment = graphql(/* GraphQL */ `
+  fragment ManageDeckContent on Deck {
+    id
+    editedAt
+    cardsDirectCount
+    subdecksCount
+    ...ManageDeckCardsUploadReview
+    ...ManageDeckSubdecks
+    ...ManageDeckCards
+  }
+`);
 
 const useStyles = createStyles((theme) => {
   const { background: backgroundColor } = theme.fn.variant({ variant: 'default', color: 'gray' });
@@ -56,7 +68,14 @@ enum Subpage {
   Import = 'import',
 }
 
-export const ManageDeckContent = ({ deck, path }: ManageDeckProps) => {
+interface Props {
+  deck: FragmentType<typeof ManageDeckContentFragment>;
+  path?: string[];
+}
+
+export const ManageDeckContent = ({ deck, path }: Props) => {
+  const deckFragment = useFragment(ManageDeckContentFragment, deck);
+  const { id, cardsDirectCount, subdecksCount } = deckFragment;
   const { classes } = useStyles();
   const router = useRouter();
   const [subpath, ...rest] = path ?? [];
@@ -64,13 +83,13 @@ export const ManageDeckContent = ({ deck, path }: ManageDeckProps) => {
   const handleTabChange = (tabValue: Subpage | null) => {
     switch (tabValue) {
       case Subpage.Card:
-        router.replace(DECK_DETAIL_PATH(deck.id));
+        router.replace(DECK_DETAIL_PATH(id));
         break;
       case Subpage.Subdeck:
-        router.replace(DECK_DETAIL_SUBDECK_PATH(deck.id));
+        router.replace(DECK_DETAIL_SUBDECK_PATH(id));
         break;
       case Subpage.Import:
-        router.replace(DECK_DETAIL_IMPORT_PATH(deck.id));
+        router.replace(DECK_DETAIL_IMPORT_PATH(id));
         break;
     }
   };
@@ -78,27 +97,27 @@ export const ManageDeckContent = ({ deck, path }: ManageDeckProps) => {
     <Tabs variant="outline" value={subpage} onTabChange={handleTabChange} classNames={classes}>
       <Group className={classes.tabsListWrapper}>
         <Tabs.List>
-          <Tabs.Tab value={Subpage.Card}>{deck.cardsDirect.length} Cards</Tabs.Tab>
-          <Tabs.Tab value={Subpage.Subdeck}>{deck.subdecks.length} Subdecks</Tabs.Tab>
+          <Tabs.Tab value={Subpage.Card}>{cardsDirectCount} Cards</Tabs.Tab>
+          <Tabs.Tab value={Subpage.Subdeck}>{subdecksCount} Subdecks</Tabs.Tab>
           <Tabs.Tab value={Subpage.Import}>Import</Tabs.Tab>
         </Tabs.List>
       </Group>
       <Stack className={classes.panelWrapper}>
         <Tabs.Panel value={Subpage.Card}>
           <ManageDeckCards
-            deck={deck}
-            startUpload={() => router.replace(DECK_DETAIL_IMPORT_PATH(deck.id))}
+            deck={deckFragment}
+            startUpload={() => router.replace(DECK_DETAIL_IMPORT_PATH(id))}
           />
         </Tabs.Panel>
 
         <Tabs.Panel value={Subpage.Subdeck}>
-          <ManageDeckSubdecks deck={deck} path={rest} />
+          <ManageDeckSubdecks deck={deckFragment} path={rest} />
         </Tabs.Panel>
 
         <Tabs.Panel value={Subpage.Import}>
           <ManageDeckCardsUpload
-            deck={deck}
-            onUploadEnded={() => router.replace(DECK_DETAIL_PATH(deck.id))}
+            deck={deckFragment}
+            onUploadEnded={() => router.replace(DECK_DETAIL_PATH(id))}
           />
         </Tabs.Panel>
       </Stack>

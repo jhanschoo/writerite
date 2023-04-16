@@ -1,0 +1,28 @@
+schema: node_modules/yoga-app/generated/schema.graphql
+documents:
+  - pages/**/*.ts
+  - src/**/*.ts
+  - pages/**/*.tsx
+  - src/**/*.tsx
+extensions:
+  codegen:
+    generates:
+      ./generated/gql/:
+        preset: client-preset
+        plugins:
+          - add:
+              content: import { JSONValue, JSONObject } from '../../src/utils/jsonTypes'
+      ./graphql.schema.json:
+        plugins:
+          - 'introspection'
+        config:
+          minify: true
+    config:
+      scalars:
+        DateTime: string
+        EmailAddress: string
+        JSON: JSONValue
+        JSONObject: JSONObject
+        JWT: string
+        UUID: string
+    hooks: { afterAllFileWrite: ['prettier --write'] }

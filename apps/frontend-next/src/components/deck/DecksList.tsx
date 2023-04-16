@@ -1,17 +1,16 @@
-import { DeckSummaryFragment } from '@generated/graphql';
 import { Flex } from '@mantine/core';
 
-export interface DeckItemComponentProps {
-  deck: DeckSummaryFragment;
+export interface DeckItemComponentProps<T> {
+  deck: T;
 }
 
-interface Props {
-  decks?: DeckSummaryFragment[];
-  component: (props: DeckItemComponentProps) => JSX.Element;
+interface Props<T> {
+  decks?: T[];
+  component: (props: { deck: T }) => JSX.Element;
   justifyLeading?: boolean;
 }
 
-export const DecksList = ({ decks, component: DeckItemComponent, justifyLeading }: Props) => {
+export const DecksList = <T,>({ decks, component: DeckItemComponent, justifyLeading }: Props<T>) => {
   const decksList =
     decks?.map((deck, index) => <DeckItemComponent key={index} deck={deck} />) || [];
   if (!justifyLeading) {

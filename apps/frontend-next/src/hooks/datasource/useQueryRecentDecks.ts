@@ -1,26 +1,40 @@
-import { DecksDocument, DecksQueryOrder, DecksQueryScope } from '@generated/graphql';
+import { graphql } from '@generated/gql';
 import { useQuery } from 'urql';
 
 export const RECENT_DECKS_TAKE = 20;
 
 interface Props {
-  order: DecksQueryOrder;
   stoplist?: string[];
   take?: number;
 }
 
-export function useQueryRecentDecks({
-  order = DecksQueryOrder.UsedRecency,
-  stoplist,
-  take,
-}: Props) {
+const UseQueryDecksQuery = graphql(/* GraphQL */ `
+  query UseQueryDecks($after: ID, $before: ID, $first: Int, $last: Int, $input: DecksQueryInput!) {
+    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+      edges {
+        cursor
+        node {
+          id
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+    }
+  }
+`);
+
+export function useQueryDecks({ stoplist, take }: Props) {
   return useQuery({
-    query: DecksDocument,
+    query: UseQueryDecksQuery,
     variables: {
-      scope: DecksQueryScope.Owned,
-      take: take ?? RECENT_DECKS_TAKE,
-      stoplist,
-      order,
+      first: take,
+      input: {
+        stoplist,
+      },
     },
   });
 }

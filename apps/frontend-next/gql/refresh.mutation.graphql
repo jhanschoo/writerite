@@ -1,6 +1,0 @@
-mutation Refresh($token: JWT!) {
-  refresh(token: $token) {
-    currentUser
-    token
-  }
-}

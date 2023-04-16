@@ -1,8 +1,19 @@
 import { Text } from '@mantine/core';
 import { formatISO, parseISO } from 'date-fns';
-import { ManageDeckProps } from '../types/ManageDeckProps';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 
-export const ManageDeckAdditionalInfo = ({ deck: { editedAt } }: ManageDeckProps) => {
+const ManageDeckAdditionalInfoFragment = graphql(/* GraphQL */ `
+  fragment ManageDeckAdditionalInfo on Deck {
+    editedAt
+  }
+`);
+
+export const ManageDeckAdditionalInfo = ({
+  deck,
+}: {
+  deck: FragmentType<typeof ManageDeckAdditionalInfoFragment>;
+}) => {
+  const { editedAt } = useFragment(ManageDeckAdditionalInfoFragment, deck);
   const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   return (
     <Text color="dimmed" size="xs">

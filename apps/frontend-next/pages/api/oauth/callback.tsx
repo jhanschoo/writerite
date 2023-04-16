@@ -1,7 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { FinalizeOauthSigninDocument } from '@generated/graphql';
 import { initDefaultServerSideUrqlClient } from '@lib/urql/initDefaultServerSideUrqlClient';
+import { graphql } from '@generated/gql';
+
+export const FinalizeOauthSigninMutation = graphql(/* GraphQL */ `
+  mutation FinalizeOauthSignin($input: FinalizeOauthSigninMutationInput!) {
+    finalizeOauthSignin(input: $input) {
+      currentUser
+      token
+    }
+  }
+`);
 
 type Data = {
   name: string;
@@ -24,11 +33,13 @@ export default async function handler(
     }
     const [client] = initDefaultServerSideUrqlClient();
     const mutationRes = await client
-      .mutation(FinalizeOauthSigninDocument, {
-        code,
-        provider,
-        nonce,
-        redirect_uri,
+      .mutation(FinalizeOauthSigninMutation, {
+        input: {
+          code,
+          provider,
+          nonce,
+          redirect_uri,
+        }
       })
       .toPromise();
     const sessionInfo = mutationRes?.data?.finalizeOauthSignin;

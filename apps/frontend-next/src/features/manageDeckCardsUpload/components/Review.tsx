@@ -1,21 +1,38 @@
 import { Box, Button, Stack, Table, Text } from '@mantine/core';
 import { IconArrowLeft, IconUpload } from '@tabler/icons-react';
-import type { ImportCardsData } from '../types';
-import type { ManageDeckProps } from '@/features/manageDeck';
 import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
-import { DeckAddCardsDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
 import { accumulateContentText } from '@/components/editor';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ImportCardsData } from '../types';
 
-interface Props extends ImportCardsData, ManageDeckProps {
+export const ManageDeckCardsUploadReviewFragment = graphql(/* GraphQL */ `
+  fragment ManageDeckCardsUploadReview on Deck {
+    id
+    cardsDirectCount
+    name
+  }
+`);
+
+export const ManageDeckCardsAddCardsMutation = graphql(/* GraphQL */ `
+  mutation ManageDeckCardsAddCards($deckId: ID!, $cards: [CardCreateMutationInput!]!) {
+    deckAddCards(deckId: $deckId, cards: $cards) {
+      id
+    }
+  }
+`);
+
+interface Props extends ImportCardsData {
+  deck: FragmentType<typeof ManageDeckCardsUploadReviewFragment>;
   onCancel(): unknown;
   onPreviousStep(): unknown;
   onUploadCompleted(): unknown;
 }
 
 export const Review = ({ onCancel, onPreviousStep, cards, deck, onUploadCompleted }: Props) => {
-  const [, deckAddCardsMutation] = useMutation(DeckAddCardsDocument);
-  const numDeckCards = deck.cardsDirect.length;
+  const { id, cardsDirectCount, name } = useFragment(ManageDeckCardsUploadReviewFragment, deck);
+  const [, deckAddCardsMutation] = useMutation(ManageDeckCardsAddCardsMutation);
+  const numDeckCards = cardsDirectCount;
   const numCards = cards.length;
   const postImportNumCards = Math.min(numDeckCards + numCards, NEXT_PUBLIC_MAX_CARDS_PER_DECK);
   const cardsToImport = cards.slice(0, postImportNumCards - numDeckCards);
@@ -23,7 +40,7 @@ export const Review = ({ onCancel, onPreviousStep, cards, deck, onUploadComplete
   return (
     <Stack>
       <Text>
-        Your deck <strong>{deck.name}</strong> currently has <strong>{numDeckCards}</strong> cards.
+        Your deck <strong>{name}</strong> currently has <strong>{numDeckCards}</strong> cards.
         After importing, your deck will have <strong>{postImportNumCards}</strong> cards.
       </Text>
       {exceeded && (
@@ -63,7 +80,7 @@ export const Review = ({ onCancel, onPreviousStep, cards, deck, onUploadComplete
           leftIcon={<IconUpload />}
           sx={{ flexGrow: 1 }}
           onClick={async () => {
-            await deckAddCardsMutation({ deckId: deck.id, cards: cardsToImport });
+            await deckAddCardsMutation({ deckId: id, cards: cardsToImport });
             onUploadCompleted();
           }}
         >

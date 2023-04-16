@@ -1,8 +1,8 @@
 import { Box, Button, createStyles, Stack, Title } from '@mantine/core';
 import { IconPencil } from '@tabler/icons-react';
-import { ManagePersonalProps } from '../types/ManagePersonalProps';
 import { PersonalFriends } from './PersonalFriends';
-import { PersonalProfile } from './PersonalProfile';
+import { PersonalProfile, PersonalProfileFragment } from './PersonalProfile';
+import { FragmentType } from '@generated/gql';
 
 const useStyles = createStyles((theme) => ({
   gridBox: {
@@ -29,7 +29,10 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export const PersonalDashboard = ({ user }: ManagePersonalProps) => {
+export const PersonalDashboard = ({ user }: {
+  // TODO: change once PersonalFriends is implemented
+  user: FragmentType<typeof PersonalProfileFragment>;
+}) => {
   const { classes } = useStyles();
   return (
     <Box className={classes.gridBox} p="md">

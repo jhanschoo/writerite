@@ -1,5 +1,4 @@
 import { MouseEvent, MouseEventHandler } from 'react';
-import { DeckCreateDocument } from '@generated/graphql';
 import { useMutation } from 'urql';
 import {
   Button,
@@ -17,15 +16,26 @@ import { useRouter } from 'next/router';
 import { SearchDecks } from './SearchDecks';
 import { DECK_DETAIL_PATH } from '@/paths';
 import { RecentDecks } from './RecentDecks';
+import { graphql } from '@generated/gql';
 
 const emptyNewDeckInput = {
-  answerLang: 'en',
-  cards: [],
-  description: {},
-  name: '',
-  promptLang: 'en',
-  published: false,
+  input: {
+    answerLang: 'en',
+    cards: [],
+    description: {},
+    name: '',
+    promptLang: 'en',
+    published: false,
+  }
 };
+
+const NewDeckItemMutation = graphql(/* GraphQL */ `
+  mutation ManageDecksNewDeckItemMutation($input: DeckCreateMutationInput!) {
+    deckCreate(input: $input) {
+      id
+    }
+  }
+`);
 
 const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
   <Button onClick={onClick} size="lg">
@@ -51,7 +61,7 @@ export const ManageDecks = () => {
   const router = useRouter();
   const { setMotionProps } = useMotionContext();
   const { classes } = useStyles();
-  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+  const [, deckCreateMutation] = useMutation(NewDeckItemMutation);
   const handleCreateDeck: MouseEventHandler = async (e) => {
     setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation(emptyNewDeckInput);
@@ -78,8 +88,8 @@ export const ManageDecks = () => {
           Search
         </Title>
         <SearchDecks
-          onClickFactory={(deck) => (e: MouseEvent<HTMLDivElement>) => {
-            router.push(DECK_DETAIL_PATH(deck.id));
+          onClickFactory={(deckId) => (e: MouseEvent<HTMLDivElement>) => {
+            router.push(DECK_DETAIL_PATH(deckId));
           }}
         />
       </Stack>

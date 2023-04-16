@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import { InitializeOauthSigninDocument } from '../../../../generated/graphql';
+import { InitializeOauthSigninMutation } from '../fragments/InitializeOauthSigninMutation';
 
 const DEFAULT_DEVELOPER_NAME = 'developer';
 
 export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
-  const [, executeInitializeOauth] = useMutation(InitializeOauthSigninDocument);
+  const [, executeInitializeOauth] = useMutation(InitializeOauthSigninMutation);
   const [signinUnderway, setSigninUnderway] = useState(false);
   return [
     signinUnderway,

@@ -20,16 +20,10 @@ export function mutationCreateUser(
     executor,
     document: graphql(/* GraphQL */ `
       mutation CreateUser(
-        $code: String!
-        $nonce: String!
-        $provider: String!
-        $redirect_uri: String!
+        $input: FinalizeOauthSigninMutationInput!
       ) {
         finalizeOauthSignin(
-          code: $code
-          nonce: $nonce
-          provider: $provider
-          redirect_uri: $redirect_uri
+          input: $input
         ) {
           currentUser
           token
@@ -38,10 +32,12 @@ export function mutationCreateUser(
     `),
     // eslint-disable-next-line @typescript-eslint/naming-convention
     variables: {
-      code: name,
-      nonce: "",
-      provider: "development",
-      redirect_uri: "",
+      input: {
+        code: name,
+        nonce: "",
+        provider: "development",
+        redirect_uri: "",
+      }
     },
   });
 }
@@ -54,14 +50,14 @@ export function mutationNameUser(
   return testQuery({
     executor,
     document: graphql(/* GraphQL */ `
-      mutation NameUser($name: String!) {
-        ownProfileEdit(name: $name) {
+      mutation NameUser($input: OwnProfileEditMutationInput!) {
+        ownProfileEdit(input: $input) {
           id
           name
         }
       }
     `),
-    variables: { name },
+    variables: { input: { name } },
   });
 }
 
@@ -146,8 +142,8 @@ export function mutationUserEdit(
   return testQuery({
     executor,
     document: graphql(/* GraphQL */ `
-      mutation UserEdit($name: String, $isPublic: Boolean) {
-        ownProfileEdit(name: $name, isPublic: $isPublic) {
+      mutation UserEdit($input: OwnProfileEditMutationInput!) {
+        ownProfileEdit(input: $input) {
           id
           name
         }

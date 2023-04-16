@@ -1,12 +1,19 @@
-import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
+import { DeckCompactSummaryContent, DeckCompactSummaryContentFragment, DeckName } from '@/components/deck';
 import { DECK_DETAIL_PATH } from '@/paths';
-import { DeckSummaryFragment } from '@generated/graphql';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import { Button, Flex } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 
+export const SubdeckListItemContentFragment = graphql(/* GraphQL */ `
+  fragment SubdeckListItemContent on Deck {
+    ...DeckCompactSummaryContent
+    id
+  }
+`);
+
 interface SubdeckListItemContentProps {
-  deck: DeckSummaryFragment;
+  deck: FragmentType<typeof SubdeckListItemContentFragment>;
   onAction(): Promise<unknown>;
   actionIcon: ReactNode;
   actionedIcon: ReactNode;
@@ -24,7 +31,8 @@ export const SubdeckListItemContent = ({
   deck,
   onAction,
 }: SubdeckListItemContentProps) => {
-  const { id, name, cardsDirectCount, subdecksCount } = deck;
+  const deckFragment = useFragment(SubdeckListItemContentFragment, deck);
+  const { id } = deckFragment;
   const [isAdding, setIsAdding] = useState(false);
   const router = useRouter();
   const handleClick = async () => {
@@ -37,7 +45,7 @@ export const SubdeckListItemContent = ({
   };
   return (
     <>
-      <DeckCompactSummaryContent deck={deck} rootProps={{ sx: { flexGrow: 1 } }} />
+      <DeckCompactSummaryContent deck={deckFragment} rootProps={{ sx: { flexGrow: 1 } }} />
       <Flex wrap="wrap" justify="flex-end">
         <Button variant="subtle" onClick={() => router.push(DECK_DETAIL_PATH(id))}>
           Visit

@@ -1,6 +1,9 @@
 import { JSONContent } from '@tiptap/react';
 
-export function accumulateContentText(item: JSONContent): string {
+export function accumulateContentText(item?: JSONContent | null): string {
+  if (!item) {
+    return '';
+  }
   const strs: string[] = [];
   const queue = [item];
   while (queue.length) {

@@ -1,4 +1,0 @@
-fragment deckCardsDirectCount on Deck {
-  cardsDirectCount
-  id
-}

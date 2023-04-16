@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { Button, Flex, Stack, Text } from '@mantine/core';
 
-import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
 import { ManageCardAltAnswer } from './ManageCardAltAnswer';
 import { IconPlus } from '@tabler/icons-react';
 
 interface Props {
-  answers: ManageDeckProps['deck']['cardsDirect'][number]['answers'];
+  answers: string[];
   onAnswersSave: (answers: string[]) => void;
 }
 

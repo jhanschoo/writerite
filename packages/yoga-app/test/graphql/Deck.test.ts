@@ -104,10 +104,12 @@ describe("graphql/Deck.ts", () => {
           id,
         } as Deck);
         const response = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          }
         });
         expect(response).toHaveProperty("data.deckCreate.id", gid);
       });
@@ -137,8 +139,10 @@ describe("graphql/Deck.ts", () => {
           name: nextName,
         } as Deck);
         const response = await mutationDeckEditName(executor, {
-          id: gid,
-          name: nextName,
+          input: {
+            id: gid,
+            name: nextName,
+          }
         });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.updateMany).toHaveBeenCalledWith({
@@ -237,7 +241,7 @@ describe("graphql/Deck.ts", () => {
           { id: id1 } as Deck,
           { id: id2 } as Deck,
         ]);
-        const queryDecksResponse = await queryDecks(executor, {});
+        const queryDecksResponse = await queryDecks(executor, { input: {} });
         expect(queryDecksResponse.data?.decks.edges).toHaveLength(2);
       });
     });

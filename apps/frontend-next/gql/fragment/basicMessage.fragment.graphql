@@ -1,8 +1,0 @@
-fragment basicMessage on Message {
-  content
-  createdAt
-  id
-  roomId
-  senderId
-  type
-}

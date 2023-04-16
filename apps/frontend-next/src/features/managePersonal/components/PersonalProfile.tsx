@@ -1,14 +1,34 @@
 import { ToolbaredRichTextEditor, useContentEditor } from '@/components/editor';
 import { UserProfile } from '@/components/user';
-import { UserEditDocument } from '@generated/graphql';
 import { Button, Flex, Input, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import { ManagePersonalProps } from '../types';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 
-export const PersonalProfile = ({ user }: ManagePersonalProps) => {
-  const [{ fetching }, updateProfile] = useMutation(UserEditDocument);
-  const [bio, setBio] = useState(user.bio ?? null);
+export const PersonalProfileFragment = graphql(/* GraphQL */ `
+  fragment PersonalProfile on User {
+    id
+    bio
+    name
+  }
+`);
+
+const PersonalProfileEditMutation = graphql(/* GraphQL */ `
+  mutation PersonalProfileEdit($input: OwnProfileEditMutationInput!) {
+    ownProfileEdit(input: $input) {
+      ...PersonalProfile
+    }
+  }
+`);
+
+interface Props {
+  user: FragmentType<typeof PersonalProfileFragment>;
+}
+
+export const PersonalProfile = ({ user }: Props) => {
+  const userFragment = useFragment(PersonalProfileFragment, user);
+  const [{ fetching }, updateProfile] = useMutation(PersonalProfileEditMutation);
+  const [bio, setBio] = useState(userFragment.bio ?? null);
   const [editing, setEditing] = useState(false);
   const [bioEditor, resetBioEditorContent] = useContentEditor({
     editorComponent: ToolbaredRichTextEditor,
@@ -17,24 +37,23 @@ export const PersonalProfile = ({ user }: ManagePersonalProps) => {
     placeholder: 'Tell us about yourself!',
   });
   const handleUpdateProfile = async () => {
-    const { data } = await updateProfile({ bio });
+    const { data } = await updateProfile({ input: { bio } });
     if (data) {
-      const {
-        userEdit: { bio },
-      } = data;
+      const { ownProfileEdit } = data;
+      const { bio } = useFragment(PersonalProfileFragment, ownProfileEdit);
       setBio(bio ?? null);
       setEditing(false);
     }
   };
   return (
     <>
-      <UserProfile user={{ ...user, bio }} />
+      <UserProfile user={{ ...userFragment, bio }} />
       {!editing && (
         <Button
           variant="outline"
           onClick={() => {
             setEditing(true);
-            resetBioEditorContent(user.bio ?? null);
+            resetBioEditorContent(userFragment.bio ?? null);
           }}
         >
           Edit Profile
@@ -53,7 +72,7 @@ export const PersonalProfile = ({ user }: ManagePersonalProps) => {
             <Button
               variant="outline"
               onClick={() => {
-                setBio(user.bio ?? null);
+                setBio(userFragment.bio ?? null);
                 setEditing(false);
               }}
             >

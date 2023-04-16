@@ -1,5 +1,0 @@
-mutation CardDelete($id: ID!) {
-  cardDelete(id: $id) {
-    ...cardDetail
-  }
-}

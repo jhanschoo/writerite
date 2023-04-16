@@ -1,5 +1,0 @@
-fragment userProfile on User {
-  bio
-  id
-  name
-}

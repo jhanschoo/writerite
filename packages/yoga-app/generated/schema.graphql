@@ -9,11 +9,21 @@ type Card implements Node {
   prompt: JSONObject
 }
 
-input CardCreateInput {
+input CardCreateMutationInput {
   answers: [String!]!
-  fullAnswer: JSONObject!
+  fullAnswer: JSONObject
+  isPrimaryTemplate: Boolean
   isTemplate: Boolean!
-  prompt: JSONObject!
+  prompt: JSONObject
+}
+
+input CardEditMutationInput {
+  answers: [String!]!
+  fullAnswer: JSONObject
+  id: ID!
+  isPrimaryTemplate: Boolean
+  isTemplate: Boolean!
+  prompt: JSONObject
 }
 
 """
@@ -51,7 +61,7 @@ type Deck implements Node {
   sortData: [String!]!
 
   """all subdecks directly belonging to this deck"""
-  subdecks(after: ID, before: ID, first: Int, last: Int): DeckSubdecksConnection!
+  subdecks: [Deck!]!
   subdecksCount: Int!
 }
 
@@ -75,14 +85,30 @@ type DeckCardsDirectConnectionEdge {
   node: Card!
 }
 
-type DeckSubdecksConnection {
-  edges: [DeckSubdecksConnectionEdge]!
-  pageInfo: PageInfo!
+input DeckCreateMutationInput {
+  answerLang: String!
+  cards: [CardCreateMutationInput!]!
+  description: JSONObject
+  name: String!
+  notes: JSONObject
+  parentDeckId: ID
+  promptLang: String!
+  published: Boolean
 }
 
-type DeckSubdecksConnectionEdge {
-  cursor: ID!
-  node: Deck!
+input DeckEditMutationInput {
+  answerLang: String
+  description: JSONObject
+  id: ID!
+  name: String
+  notes: JSONObject
+  promptLang: String
+}
+
+input DecksQueryInput {
+  scope: DecksQueryScope
+  stoplist: [ID!]
+  titleContains: String
 }
 
 """ownership type of of decks returned"""
@@ -95,6 +121,13 @@ enum DecksQueryScope {
 A field whose value conforms to the standard internet email address format as specified in HTML Spec: https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address.
 """
 scalar EmailAddress
+
+input FinalizeOauthSigninMutationInput {
+  code: String!
+  nonce: String!
+  provider: String!
+  redirect_uri: String!
+}
 
 type Friendship implements Node {
   befriended: User!
@@ -152,32 +185,32 @@ type Mutation {
   Befriend the `befriendedId` user, then resolves to the user's own profile
   """
   befriend(befriendedId: ID!): User!
-  cardCreate(card: CardCreateInput!, deckId: ID!, isPrimaryTemplate: Boolean): Card!
+  cardCreate(card: CardCreateMutationInput!, deckId: ID!): Card!
   cardDelete(id: ID!): Card!
-  cardEdit(cardInput: CardCreateInput, id: ID!, isPrimaryTemplate: Boolean): Card!
+  cardEdit(input: CardEditMutationInput!): Card!
 
   """add cards to a deck"""
-  deckAddCards(cards: [CardCreateInput!]!, deckId: ID!): Deck!
+  deckAddCards(cards: [CardCreateMutationInput!]!, deckId: ID!): Deck!
 
   """add a subdeck to a deck and resolve to the parent deck"""
   deckAddSubdeck(deckId: ID!, subdeckId: ID!): Deck!
 
   """create a new deck"""
-  deckCreate(answerLang: String!, cards: [CardCreateInput!]!, description: JSONObject, name: String!, notes: JSONObject, parentDeckId: ID, promptLang: String!, published: Boolean): Deck!
+  deckCreate(input: DeckCreateMutationInput!): Deck!
 
   """delete the specified deck, only if its dependents are deleted"""
   deckDelete(deckId: ID!): Deck!
 
   """edit a new deck"""
-  deckEdit(answerLang: String, description: JSONObject, id: ID!, name: String, notes: JSONObject, promptLang: String): Deck!
+  deckEdit(input: DeckEditMutationInput!): Deck!
 
   """add a subdeck to a deck and resolve to the parent deck"""
   deckRemoveSubdeck(deckId: ID!, subdeckId: ID!): Deck!
-  finalizeOauthSignin(code: String!, nonce: String!, provider: String!, redirect_uri: String!): SessionInfo
+  finalizeOauthSignin(input: FinalizeOauthSigninMutationInput!): SessionInfo
   initializeOauthSignin: String!
 
   """Edit the user's own profile."""
-  ownProfileEdit(bio: JSONObject, isPublic: Boolean, name: String): User!
+  ownProfileEdit(input: OwnProfileEditMutationInput!): User!
   recordCorrectAnswer(id: ID!): Card!
   refresh(
     """A JWT token"""
@@ -199,6 +232,12 @@ interface Node {
   id: ID!
 }
 
+input OwnProfileEditMutationInput {
+  bio: JSONObject
+  isPublic: Boolean
+  name: String
+}
+
 type PageInfo {
   endCursor: ID
   hasNextPage: Boolean!
@@ -208,7 +247,7 @@ type PageInfo {
 
 type Query {
   deck(id: ID!): Deck!
-  decks(after: ID, before: ID, first: Int, last: Int, scope: DecksQueryScope, stoplist: [ID!]): QueryDecksConnection!
+  decks(after: ID, before: ID, first: Int, input: DecksQueryInput!, last: Int): QueryDecksConnection!
   health: String!
   me: User
   node(id: ID!): Node

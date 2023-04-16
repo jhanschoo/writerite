@@ -1,8 +1,7 @@
 import { useRouter } from 'next/router';
-import { useMutation } from 'urql';
+import { useMutation, useQuery } from 'urql';
 import { useMotionContext } from '@hooks/useMotionContext';
 import { motionThemes } from '@lib/framer-motion/motionThemes';
-import { DeckCreateDocument, DecksQueryOrder, DeckSummaryFragment } from '@generated/graphql';
 import {
   Button,
   Card,
@@ -15,9 +14,9 @@ import {
 } from '@mantine/core';
 import { IconSearch, IconPlus } from '@tabler/icons-react';
 import { formatISO, parseISO } from 'date-fns';
-import { useQueryRecentDecks } from '@/hooks/datasource/useQueryRecentDecks';
 import { DECK_DETAIL_PATH, DECK_PATH } from '@/paths';
 import { DeckCompactSummaryContent } from '@/components/deck';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 5;
 
@@ -46,20 +45,30 @@ const useStyles = createStyles((theme) => {
   };
 });
 
+const NewDeckItemMutation = graphql(/* GraphQL */ `
+  mutation UserDecksSummaryNewDeckItemMutation($input: DeckCreateMutationInput!) {
+    deckCreate(input: $input) {
+      id
+    }
+  }
+`);
+
 const NewDeckItem = () => {
   const router = useRouter();
   const { classes } = useStyles();
   const { setMotionProps } = useMotionContext();
-  const [, deckCreateMutation] = useMutation(DeckCreateDocument);
+  const [, newDeckItemMutation] = useMutation(NewDeckItemMutation);
   const handleCreateDeck = async () => {
     setMotionProps(motionThemes.forward);
-    const createdDeck = await deckCreateMutation({
-      answerLang: 'en',
-      cards: [],
-      description: null,
-      name: '',
-      promptLang: 'en',
-      published: false,
+    const createdDeck = await newDeckItemMutation({
+      input: {
+        answerLang: 'en',
+        cards: [],
+        description: null,
+        name: '',
+        promptLang: 'en',
+        published: false,
+      },
     });
     if (createdDeck.data?.deckCreate.id) {
       router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
@@ -79,35 +88,77 @@ const NewDeckItem = () => {
   );
 };
 
-const DeckItem = ({ deck }: { deck: DeckSummaryFragment }) => {
-  const editedAtDisplay = formatISO(parseISO(deck.editedAt), { representation: 'date' });
+export const UserDecksSummaryDeckItemFragment = graphql(/* GraphQL */ `
+  fragment UserDecksSummaryDeckItem on Deck {
+    id
+    editedAt
+    ...DeckCompactSummaryContent
+  }
+`);
+
+const DeckItem = ({ deck }: { deck: FragmentType<typeof UserDecksSummaryDeckItemFragment> }) => {
+  const deckFragment = useFragment(UserDecksSummaryDeckItemFragment, deck);
+  const { id, editedAt } = deckFragment;
+  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
   const { classes } = useStyles();
   const router = useRouter();
   return (
     <UnstyledButton
-      onClick={(e) => router.push(DECK_DETAIL_PATH(deck.id))}
+      onClick={(e) => router.push(DECK_DETAIL_PATH(id))}
       component="div"
       p="md"
       className={classes.deckItem}
     >
-      <DeckCompactSummaryContent deck={deck} />
+      <DeckCompactSummaryContent deck={deckFragment} />
     </UnstyledButton>
   );
 };
 
+const UserDecksSummaryQuery = graphql(/* GraphQL */ `
+  query UserDecksSummaryQuery(
+    $after: ID
+    $before: ID
+    $first: Int
+    $last: Int
+    $input: DecksQueryInput!
+  ) {
+    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+      edges {
+        cursor
+        node {
+          ...UserDecksSummaryDeckItem
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+    }
+  }
+`);
+
 export const UserDecksSummary = () => {
   const { classes } = useStyles();
   const router = useRouter();
-  const [{ data, fetching, error }, refetchDecks] = useQueryRecentDecks({
-    order: DecksQueryOrder.EditedRecency,
-    take: USER_DECK_SUMMARY_DECKS_NUM,
+  const [{ data, fetching, error }, refetchDecks] = useQuery({
+    query: UserDecksSummaryQuery,
+    variables: {
+      first: USER_DECK_SUMMARY_DECKS_NUM,
+      input: {},
+    },
   });
-  const decks = (data?.decks || []).flatMap((deck, index) => [
-    <Divider key={`${index}-divider`} />,
-    <Card.Section key={index}>
-      <DeckItem deck={deck} />
-    </Card.Section>,
-  ]);
+  const decks = (data?.decks.edges || []).flatMap((deck, index) =>
+    deck
+      ? [
+          <Divider key={`${index}-divider`} />,
+          <Card.Section key={index}>
+            <DeckItem deck={deck.node} />
+          </Card.Section>,
+        ]
+      : []
+  );
   return (
     <Card shadow="xl" radius="lg" px="md" pt="md" className={classes.card}>
       <Flex justify="space-between">

@@ -1,6 +1,6 @@
 import { Prisma, Unit } from "database";
 import { builder } from "../builder";
-import { CardInput } from "./inputs/CardInput";
+import { CardCreateMutationInput, CardEditMutationInput } from "./inputs";
 import { decodeGlobalID } from "@pothos/plugin-relay";
 
 /**
@@ -58,13 +58,12 @@ builder.mutationFields((t) => ({
     type: Card,
     args: {
       deckId: t.arg.id({ required: true }),
-      card: t.arg({ type: CardInput, required: true }),
-      isPrimaryTemplate: t.arg.boolean(),
+      card: t.arg({ type: CardCreateMutationInput, required: true }),
     },
     resolve: async (
       query,
       _root,
-      { deckId, card, isPrimaryTemplate },
+      { deckId, card },
       { prisma, sub }
     ) => {
       deckId = decodeGlobalID(deckId as string).id;
@@ -78,8 +77,8 @@ builder.mutationFields((t) => ({
         prisma.card.create({
           ...query,
           data: {
-            prompt: card.prompt,
-            fullAnswer: card.fullAnswer,
+            prompt: card.prompt || Prisma.DbNull,
+            fullAnswer: card.fullAnswer || Prisma.DbNull,
             answers: card.answers,
             isTemplate: card.isTemplate,
             isPrimaryTemplate,
@@ -88,7 +87,7 @@ builder.mutationFields((t) => ({
             },
           },
         });
-      if (isPrimaryTemplate) {
+      if (card.isPrimaryTemplate) {
         const res = await prisma.$transaction([
           updateDeckOperation(),
           prisma.card.updateMany({
@@ -110,14 +109,12 @@ builder.mutationFields((t) => ({
   cardEdit: t.withAuth({ authenticated: true }).prismaField({
     type: Card,
     args: {
-      id: t.arg.id({ required: true }),
-      cardInput: t.arg({ type: CardInput }),
-      isPrimaryTemplate: t.arg.boolean(),
+      input: t.arg({ type: CardEditMutationInput, required: true }),
     },
     resolve: async (
       query,
       _root,
-      { id, cardInput, isPrimaryTemplate },
+      { input: { id, ...card } },
       { prisma, sub }
     ) => {
       id = decodeGlobalID(id as string).id;
@@ -127,14 +124,16 @@ builder.mutationFields((t) => ({
           ...query,
           where: cardConditions,
           data: {
-            ...cardInput,
+            prompt: card.prompt === null ? Prisma.DbNull : card.prompt,
+            fullAnswer: card.fullAnswer === null ? Prisma.DbNull : card.fullAnswer,
+            answers: card.answers,
             isPrimaryTemplate,
             deck: {
               update: { editedAt: new Date() },
             },
           },
         });
-      if (isPrimaryTemplate) {
+      if (card.isPrimaryTemplate) {
         const res = await prisma.$transaction([
           prisma.card.updateMany({
             where: { deck: { ownerId: sub.id }, isPrimaryTemplate: Unit.UNIT },

@@ -152,10 +152,12 @@ describe("graphql/Room.ts", () => {
         // create deck
         setSub(ownerUser);
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deck = deckCreateResponse.data?.deckCreate;
 
@@ -240,10 +242,12 @@ describe("graphql/Room.ts", () => {
         // create deck
         setSub(ownerUser);
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deck = deckCreateResponse.data?.deckCreate;
 
@@ -351,10 +355,12 @@ describe("graphql/Room.ts", () => {
 
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
 
@@ -394,10 +400,12 @@ describe("graphql/Room.ts", () => {
 
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
 
@@ -460,19 +468,23 @@ describe("graphql/Room.ts", () => {
 
         // create first deck
         const deckCreateResponse1 = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deck1 = deckCreateResponse1.data?.deckCreate;
 
         // create second deck
         const deckCreateResponse2 = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse2.data?.deckCreate;
 
@@ -562,19 +574,23 @@ describe("graphql/Room.ts", () => {
 
         // create first deck
         const deckCreateResponse1 = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deck1 = deckCreateResponse1.data?.deckCreate;
 
         // create second deck
         const deckCreateResponse2 = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse2.data?.deckCreate;
 
@@ -641,10 +657,12 @@ describe("graphql/Room.ts", () => {
 
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
 
@@ -679,10 +697,12 @@ describe("graphql/Room.ts", () => {
           const roomBefore = roomCreateResponse.data?.roomCreate;
           // create deck
           const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-            answerLang: "en",
-            cards: [],
-            name: "name",
-            promptLang: "en",
+            input: {
+              answerLang: "en",
+              cards: [],
+              name: "name",
+              promptLang: "en",
+            },
           });
           const deckBefore = deckCreateResponse.data?.deckCreate;
           // set deck
@@ -755,10 +775,12 @@ describe("graphql/Room.ts", () => {
           const roomBefore = roomCreateResponse.data?.roomCreate;
           // create deck
           const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-            answerLang: "en",
-            cards: [],
-            name: "name",
-            promptLang: "en",
+            input: {
+              answerLang: "en",
+              cards: [],
+              name: "name",
+              promptLang: "en",
+            },
           });
           const deckBefore = deckCreateResponse.data?.deckCreate;
           // set deck
@@ -939,10 +961,12 @@ describe("graphql/Room.ts", () => {
         const roomBefore = roomCreateResponse.data?.roomCreate;
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
         // we have to update our claims before we can establish a subscription
@@ -1107,10 +1131,12 @@ describe("graphql/Room.ts", () => {
         const roomBefore = roomCreateResponse.data?.roomCreate;
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
-          answerLang: "en",
-          cards: [],
-          name: "name",
-          promptLang: "en",
+          input: {
+            answerLang: "en",
+            cards: [],
+            name: "name",
+            promptLang: "en",
+          },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
         // we have to update our claims before we can establish a subscription

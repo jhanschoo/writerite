@@ -11,12 +11,11 @@ import {
   getStylesRef,
 } from '@mantine/core';
 
-import { ManageDeckProps } from '../../manageDeck/types/ManageDeckProps';
 import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
 import { useMutation } from 'urql';
-import { CardCreateDocument } from '@generated/graphql';
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 import { JSONContent, useEditor } from '@tiptap/react';
+import { graphql } from '@generated/gql';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({ variant: 'default' });
@@ -57,24 +56,36 @@ const useStyles = createStyles(({ fn }) => {
   };
 });
 
-interface Props extends ManageDeckProps {
+interface Props {
+  deckId: string;
   onDone(): void;
 }
 
-export const AddNewCard = ({ deck: { id: deckId }, onDone }: Props) => {
+const AddNewCardMutation = graphql(/* GraphQL */ `
+  mutation ManageCardAddNewCardMutation($deckId: ID!, $cards: [CardCreateMutationInput!]!) {
+    deckAddCards(deckId: $deckId, cards: $cards) {
+      id
+    }
+  }
+`);
+
+
+export const AddNewCard = ({ deckId, onDone }: Props) => {
   const { classes } = useStyles();
   const [promptContent, setPromptContent] = useState<JSONContent | null>(null);
   const [fullAnswerContent, setFullAnswerContent] = useState<JSONContent | null>(null);
   const [answerValues, setAnswerValues] = useState<string[]>([]);
-  const [{ fetching }, deckAddCard] = useMutation(CardCreateDocument);
+  const [{ fetching }, deckAddCard] = useMutation(AddNewCardMutation);
+  // TODO: handle updating local state
   const updateStateToServer = () => {
     return deckAddCard({
       deckId,
-      card: {
+      cards: [{
         prompt: promptContent,
         fullAnswer: fullAnswerContent,
         answers: answerValues,
-      },
+        isTemplate: false,
+      }],
     });
   };
   const handleSave = async () => {

@@ -1,9 +1,8 @@
 import { Button, Flex, Stack, Title } from '@mantine/core';
 import { DeckName } from '@/components/deck';
-import { ManageDeckProps } from '../types/ManageDeckProps';
 
-export interface ManageDeckFrontMatterContentProps {
-  name: ManageDeckProps['deck']['name'];
+export interface Props {
+  name?: string;
   handleEdit?: () => void;
   descriptionElement: JSX.Element;
 }
@@ -12,7 +11,7 @@ export const ManageDeckFrontMatterContent = ({
   name,
   descriptionElement,
   handleEdit,
-}: ManageDeckFrontMatterContentProps) => {
+}: Props) => {
   return (
     <Stack>
       <Flex justify="space-between">

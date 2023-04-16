@@ -1,12 +1,6 @@
-import { ToolbaredRichTextEditor, useContentEditor } from '@/components/editor';
-import { UserProfile } from '@/components/user';
-import { UserEditDocument } from '@generated/graphql';
-import { Box, Button, Card, Flex, Input, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
-import { useState } from 'react';
-import { useMutation } from 'urql';
-import { ManagePersonalProps } from '../types';
+import { Box, Card, Title } from '@mantine/core';
 
-export const PersonalFriends = ({ user }: ManagePersonalProps) => {
+export const PersonalFriends = ({ user }: { user: object }) => {
   return (
     <Card shadow="xl" radius="lg" p="md">
       <Box>

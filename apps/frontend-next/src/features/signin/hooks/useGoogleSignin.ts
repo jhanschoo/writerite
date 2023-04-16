@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useMutation } from 'urql';
-import { InitializeOauthSigninDocument } from '../../../../generated/graphql';
+import { InitializeOauthSigninMutation } from '../fragments/InitializeOauthSigninMutation';
 
 // https://developers.google.com/identity/protocols/oauth2/web-server#httprest
 const client_id = process.env.NEXT_PUBLIC_GAPI_CLIENT_ID as string;
 
 export default function useGoogleSignin() {
-  const [, executeInitializeOauth] = useMutation(InitializeOauthSigninDocument);
+  const [, executeInitializeOauth] = useMutation(InitializeOauthSigninMutation);
   const [signinUnderway, setSigninUnderway] = useState(false);
   return [
     signinUnderway,

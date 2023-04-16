@@ -1,5 +1,5 @@
-import { NewCardData } from './NewCardData';
+import { CardCreateMutationInput } from '@generated/gql/graphql';
 
 export interface ImportCardsData {
-  cards: NewCardData[];
+  cards: CardCreateMutationInput[];
 }

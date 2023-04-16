@@ -7,6 +7,7 @@ import { currentUserToUserJWT } from "../service/userJWT";
 
 import env from "../safeEnv";
 import { SessionInfo } from "./Session";
+import { FinalizeOauthSigninMutationInput } from "./inputs";
 
 const { NODE_ENV } = env;
 
@@ -24,14 +25,11 @@ builder.mutationField("finalizeOauthSignin", (t) =>
     type: SessionInfo,
     nullable: true,
     args: {
-      code: t.arg.string({ required: true }),
-      provider: t.arg.string({ required: true }),
-      nonce: t.arg.string({ required: true }),
-      redirect_uri: t.arg.string({ required: true }),
+      input: t.arg({ type: FinalizeOauthSigninMutationInput, required: true }),
     },
     async resolve(
       _parent,
-      { code, provider, nonce, redirect_uri },
+      { input: { code, provider, nonce, redirect_uri } },
       { prisma, redis }
     ) {
       if (NODE_ENV === "production" && !(await validateNonce(redis, nonce))) {

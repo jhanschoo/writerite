@@ -1,19 +1,18 @@
 import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
-import { UserProfileFragment } from '@generated/graphql';
 import { Avatar, AvatarProps, Tooltip } from '@mantine/core';
 
 interface Props {
-  user: UserProfileFragment;
+  user: { id: string; name: string };
   avatarProps?: AvatarProps;
   showTooltip?: boolean;
 }
 
-export const ProfilePicture = ({ avatarProps, user, showTooltip }: Props) => {
+export const ProfilePicture = ({ avatarProps, user: { id, name }, showTooltip }: Props) => {
   const avatarComponent = (
-    <Avatar radius="xl" src={generatedAvatarUrl(user.id)} variant="light" {...avatarProps} />
+    <Avatar radius="xl" src={generatedAvatarUrl(id)} variant="light" {...avatarProps} />
   );
-  if (showTooltip && user.name) {
-    return <Tooltip label={user.name}>{avatarComponent}</Tooltip>;
+  if (showTooltip && name) {
+    return <Tooltip label={name}>{avatarComponent}</Tooltip>;
   }
   return avatarComponent;
 };
