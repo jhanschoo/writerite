@@ -60,12 +60,7 @@ builder.mutationFields((t) => ({
       deckId: t.arg.id({ required: true }),
       card: t.arg({ type: CardCreateMutationInput, required: true }),
     },
-    resolve: async (
-      query,
-      _root,
-      { deckId, card },
-      { prisma, sub }
-    ) => {
+    resolve: async (query, _root, { deckId, card }, { prisma, sub }) => {
       deckId = decodeGlobalID(deckId as string).id;
       const deckConditions = { id: deckId, ownerId: sub.id };
       const updateDeckOperation = () =>
@@ -125,7 +120,8 @@ builder.mutationFields((t) => ({
           where: cardConditions,
           data: {
             prompt: card.prompt === null ? Prisma.DbNull : card.prompt,
-            fullAnswer: card.fullAnswer === null ? Prisma.DbNull : card.fullAnswer,
+            fullAnswer:
+              card.fullAnswer === null ? Prisma.DbNull : card.fullAnswer,
             answers: card.answers,
             isPrimaryTemplate,
             deck: {

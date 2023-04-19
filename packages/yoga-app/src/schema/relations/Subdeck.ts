@@ -20,7 +20,7 @@ builder.prismaObjectFields("Deck", (t) => ({
       parentDeckIn: {
         select: {
           subdeck: nestedSelection(true),
-        }
+        },
       },
     }),
     resolve: (deck) => deck.parentDeckIn.map((s) => s.subdeck),

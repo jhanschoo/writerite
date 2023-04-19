@@ -37,9 +37,14 @@ export function testContextFactory<
   P extends PrismaClient,
   Q extends PubSubPublishArgs,
   R extends Redis
->(
-  { prisma, pubsub, redis }: Pick<Context<P, Q, R>, "prisma" | "pubsub" | "redis">,
-): [(sub?: CurrentUser) => void, (initialContext: YogaInitialContext) => Promise<Context>] {
+>({
+  prisma,
+  pubsub,
+  redis,
+}: Pick<Context<P, Q, R>, "prisma" | "pubsub" | "redis">): [
+  (sub?: CurrentUser) => void,
+  (initialContext: YogaInitialContext) => Promise<Context>
+] {
   let sub: CurrentUser | undefined;
   return [
     (newSub) => {
@@ -53,7 +58,7 @@ export function testContextFactory<
         pubsub,
         redis,
       };
-    }
+    },
   ];
 }
 

@@ -58,6 +58,7 @@
   "scripts": {
     "codegen": "export $(xargs -a .env -d '\\n') NODE_ENV=development && ts-node scripts/printSchema.ts && graphql-codegen",
     "echo-for-dep-graph": "echo",
+    "lint": "eslint && prettier -w .",
     "test": "export $(xargs -a .env -d '\\n') && jest"
   }
 }

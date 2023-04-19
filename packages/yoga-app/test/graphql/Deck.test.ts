@@ -109,7 +109,7 @@ describe("graphql/Deck.ts", () => {
             cards: [],
             name: "name",
             promptLang: "en",
-          }
+          },
         });
         expect(response).toHaveProperty("data.deckCreate.id", gid);
       });
@@ -142,7 +142,7 @@ describe("graphql/Deck.ts", () => {
           input: {
             id: gid,
             name: nextName,
-          }
+          },
         });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.updateMany).toHaveBeenCalledWith({
