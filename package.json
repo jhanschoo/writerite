@@ -14,11 +14,10 @@
     "lint": "turbo run lint",
     "test": "turbo run test"
   },
-  "dependencies": {},
   "devDependencies": {
     "eslint-config-custom": "workspace:*",
     "prettier": "latest",
-    "turbo": "latest"
+    "turbo": "^1.9.3"
   },
   "packageManager": "pnpm@8.1.1",
   "engines": {

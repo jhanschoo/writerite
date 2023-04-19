@@ -16,5 +16,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "echo-for-dep-graph": "echo"
   }
 }

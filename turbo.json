@@ -18,6 +18,9 @@
     "codegen": {
       "dependsOn": ["^codegen", "^test", "db:generate"]
     },
+    "echo-for-dep-graph": {
+      "dependsOn": ["^echo-for-dep-graph"]
+    },
     "dev": {
       "cache": false,
       "persistent": true

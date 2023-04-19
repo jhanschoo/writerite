@@ -63,6 +63,7 @@
     "build": "tsc",
     "app:start": "node dist/src/index.js",
     "dev": "export $(xargs -a .env -d '\\n') NODE_ENV=development && ts-node-dev --exit-child --respawn src/index.ts",
+    "echo-for-dep-graph": "echo",
     "codegen": "graphql-codegen",
     "test": "export $(xargs -a .env -d '\\n') && jest --runInBand"
   }

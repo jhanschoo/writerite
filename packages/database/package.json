@@ -10,7 +10,8 @@
   "main": "./index.ts",
   "scripts": {
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate"
+    "db:push": "prisma db push --skip-generate",
+    "echo-for-dep-graph": "echo"
   },
   "types": "./index.ts"
 }

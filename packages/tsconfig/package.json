@@ -8,5 +8,8 @@
   },
   "devDependencies": {
     "@tsconfig/node18": "^1.0.1"
+  },
+  "scripts": {
+    "echo-for-dep-graph": "echo"
   }
 }

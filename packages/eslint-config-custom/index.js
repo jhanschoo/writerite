@@ -5,7 +5,7 @@ module.exports = {
     "turbo",
     "prettier",
     "plugin:jest/recommended",
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
   ],
   plugins: ["testing-library", "jest"],
   settings: {
@@ -15,9 +15,9 @@ module.exports = {
   },
   overrides: [
     {
-      "files": ["**/?(*.)+(spec|test).[jt]s?(x)"],
-      "extends": ["plugin:testing-library/react"]
-    }
+      files: ["**/?(*.)+(spec|test).[jt]s?(x)"],
+      extends: ["plugin:testing-library/react"],
+    },
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
