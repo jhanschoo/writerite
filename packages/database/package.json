@@ -5,13 +5,14 @@
     "@prisma/client": "latest"
   },
   "devDependencies": {
-    "prisma": "^4.12.0"
+    "prisma": "^4.13.0"
   },
   "main": "./index.ts",
   "scripts": {
     "db:generate": "prisma generate",
     "db:push": "prisma db push --skip-generate",
-    "echo-for-dep-graph": "echo"
+    "echo-for-dep-graph": "echo",
+    "lint": "prisma format"
   },
   "types": "./index.ts"
 }
