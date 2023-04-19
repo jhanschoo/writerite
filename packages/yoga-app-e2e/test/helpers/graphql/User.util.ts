@@ -19,12 +19,8 @@ export function mutationCreateUser(
   return testQuery({
     executor,
     document: graphql(/* GraphQL */ `
-      mutation CreateUser(
-        $input: FinalizeOauthSigninMutationInput!
-      ) {
-        finalizeOauthSignin(
-          input: $input
-        ) {
+      mutation CreateUser($input: FinalizeOauthSigninMutationInput!) {
+        finalizeOauthSignin(input: $input) {
           currentUser
           token
         }
@@ -37,7 +33,7 @@ export function mutationCreateUser(
         nonce: "",
         provider: "development",
         redirect_uri: "",
-      }
+      },
     },
   });
 }

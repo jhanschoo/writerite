@@ -13,17 +13,19 @@
       "dependsOn": ["codegen", "db:push"]
     },
     "lint": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["codegen"]
     },
     "codegen": {
-      "dependsOn": ["^codegen", "^test", "db:generate"]
+      "dependsOn": ["^codegen", "^test", "db:generate"],
+      "outputs": ["generated/schema.graphql*", "test/generated/gql/**", "generated/gql/**"]
     },
     "echo-for-dep-graph": {
       "dependsOn": ["^echo-for-dep-graph"]
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["codegen", "lint"]
     },
     "clean": {
       "cache": false

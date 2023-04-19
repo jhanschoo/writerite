@@ -1,0 +1,9 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "codegen": {
+      "inputs": ["test/**/*.ts", "src/**", "scripts/**"],
+      "outputs": ["test/generated/gql/**", "generated/schema.graphql"]
+    }
+  }
+}

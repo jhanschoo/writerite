@@ -18,12 +18,8 @@ export function mutationDeckCreateEmpty(
   return testQuery({
     executor,
     document: graphql(/* GraphQL */ `
-      mutation DeckCreateEmpty(
-        $input: DeckCreateMutationInput!
-      ) {
-        deckCreate(
-          input: $input
-        ) {
+      mutation DeckCreateEmpty($input: DeckCreateMutationInput!) {
+        deckCreate(input: $input) {
           id
           answerLang
           description
@@ -86,12 +82,8 @@ export function mutationDeckEditName(
   return testQuery({
     executor,
     document: graphql(/* GraphQL */ `
-      mutation DeckEdit(
-        $input: DeckEditMutationInput!
-      ) {
-        deckEdit(
-          input: $input
-        ) {
+      mutation DeckEdit($input: DeckEditMutationInput!) {
+        deckEdit(input: $input) {
           id
           name
         }

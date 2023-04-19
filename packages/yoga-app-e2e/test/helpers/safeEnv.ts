@@ -18,11 +18,15 @@ const keyTransform =
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return parsed as z.SafeParseSuccess<{ kty: string }>["data"];
     } else {
-      for (const { path: pathSuffix, ...rest } of (validationResult as z.SafeParseError<{ kty: string }>).error.issues) {
+      for (const { path: pathSuffix, ...rest } of (
+        validationResult as z.SafeParseError<{ kty: string }>
+      ).error.issues) {
         ctx.addIssue({ path: [...path, ...pathSuffix], ...rest });
       }
       // we improperly coerce the type here, but it's safe because we've already added issues
-      return undefined as unknown as z.SafeParseSuccess<{ kty: string }>["data"];
+      return undefined as unknown as z.SafeParseSuccess<{
+        kty: string;
+      }>["data"];
     }
   };
 

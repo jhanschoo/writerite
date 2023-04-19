@@ -1,3 +1,4 @@
+# CAUTION: update `turbo.json`'s codegen task after editing this file
 schema: ./generated/schema.graphql
 documents:
   - test/**/*.ts
@@ -12,6 +13,9 @@ extensions:
       ./generated/schema.graphql:
         plugins:
           - schema-ast
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
     config:
       scalars:
         DateTime: string

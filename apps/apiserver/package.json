@@ -1,5 +1,5 @@
 {
-  "name": "@writerite/apiserver",
+  "name": "apiserver",
   "version": "0.1.0",
   "description": "GraphQL Yoga implementation of WriteRite backend",
   "main": "dist/index.js",
@@ -34,8 +34,6 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.0",
-    "@types/supertest": "^2.0.12",
     "eslint": "^8.38.0",
     "eslint-config-custom-server": "workspace:*",
     "prettier": "^2.8.7",
@@ -47,6 +45,7 @@
     "build": "tsc",
     "app:start": "node dist/src/index.js",
     "dev": "export $(xargs -a .env -d '\\n') NODE_ENV=development && ts-node-dev --exit-child --respawn src/index.ts",
-    "echo-for-dep-graph": "echo"
+    "echo-for-dep-graph": "echo",
+    "lint": "eslint && prettier --write ."
   }
 }

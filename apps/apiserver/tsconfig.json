@@ -8,5 +8,5 @@
     "noErrorTruncation": true
   },
   "exclude": ["node_modules", "dist", "coverage"],
-  "include": ["src", "test"]
+  "include": ["src"]
 }

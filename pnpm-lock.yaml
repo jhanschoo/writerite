@@ -89,12 +89,6 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@types/jest':
-        specifier: ^29.5.0
-        version: 29.5.0
-      '@types/supertest':
-        specifier: ^2.0.12
-        version: 2.0.12
       eslint:
         specifier: ^8.38.0
         version: 8.38.0
@@ -442,9 +436,6 @@ importers:
       '@types/express':
         specifier: ^4.17.17
         version: 4.17.17
-      '@types/node':
-        specifier: ^18.15.11
-        version: 18.15.11
       bcrypt:
         specifier: ^5.1.0
         version: 5.1.0
@@ -461,8 +452,8 @@ importers:
         specifier: ^3.9.0
         version: 3.9.0(graphql@16.6.0)
       ioredis:
-        specifier: ^5.3.1
-        version: 5.3.1
+        specifier: ^5.3.2
+        version: 5.3.2
       jose:
         specifier: ^4.14.0
         version: 4.14.0
@@ -494,6 +485,9 @@ importers:
       '@types/jest':
         specifier: ^29.5.0
         version: 29.5.0
+      '@types/node':
+        specifier: ^18.15.11
+        version: 18.15.11
       dotenv:
         specifier: ^16.0.3
         version: 16.0.3
@@ -524,9 +518,6 @@ importers:
       ts-node:
         specifier: ^10.9.1
         version: 10.9.1(@types/node@18.15.11)(typescript@5.0.4)
-      ts-node-dev:
-        specifier: ^2.0.0
-        version: 2.0.0(@types/node@18.15.11)(typescript@5.0.4)
       tsconfig:
         specifier: workspace:*
         version: link:../tsconfig
@@ -550,7 +541,7 @@ importers:
         version: 3.2.0(graphql@16.6.0)
       '@graphql-yoga/redis-event-target':
         specifier: ^1.0.0
-        version: 1.0.0(ioredis@5.3.1)
+        version: 1.0.0(ioredis@5.3.2)
       '@pothos/plugin-relay':
         specifier: ^3.39.0
         version: 3.39.0(@pothos/core@3.29.0)(graphql@16.6.0)
@@ -588,8 +579,8 @@ importers:
         specifier: ^3.9.0
         version: 3.9.0(graphql@16.6.0)
       ioredis:
-        specifier: ^5.3.1
-        version: 5.3.1
+        specifier: ^5.3.2
+        version: 5.3.2
       jest:
         specifier: ^29.5.0
         version: 29.5.0(@types/node@18.15.11)(ts-node@10.9.1)
@@ -2326,16 +2317,6 @@ packages:
     dependencies:
       tslib: 2.5.0
 
-  /@graphql-yoga/redis-event-target@1.0.0(ioredis@5.3.1):
-    resolution: {integrity: sha512-axkYZUEN+NKJ814yjMOUA76ABT/53vg5SAHnqr1CKq1AQ+kNsuPGNtNmJuA5056SQPc2WCO/PvRutwyvoItiqw==}
-    peerDependencies:
-      ioredis: ^5.0.6
-    dependencies:
-      '@graphql-yoga/typed-event-target': 1.0.0
-      '@whatwg-node/events': 0.0.2
-      ioredis: 5.3.1
-    dev: true
-
   /@graphql-yoga/redis-event-target@1.0.0(ioredis@5.3.2):
     resolution: {integrity: sha512-axkYZUEN+NKJ814yjMOUA76ABT/53vg5SAHnqr1CKq1AQ+kNsuPGNtNmJuA5056SQPc2WCO/PvRutwyvoItiqw==}
     peerDependencies:
@@ -2344,7 +2325,6 @@ packages:
       '@graphql-yoga/typed-event-target': 1.0.0
       '@whatwg-node/events': 0.0.2
       ioredis: 5.3.2
-    dev: false
 
   /@graphql-yoga/subscription@3.1.0:
     resolution: {integrity: sha512-Vc9lh8KzIHyS3n4jBlCbz7zCjcbtQnOBpsymcRvHhFr2cuH+knmRn0EmzimMQ58jQ8kxoRXXC3KJS3RIxSdPIg==}
@@ -3065,7 +3045,7 @@ packages:
       typescript: '>=4.7.2'
     dependencies:
       '@pothos/core': 3.29.0(graphql@16.6.0)
-      '@prisma/client': 4.13.0(prisma@4.13.0)
+      '@prisma/client': 4.13.0(prisma@4.12.0)
       '@prisma/generator-helper': 4.12.0
       graphql: 16.6.0
       typescript: 5.0.4
@@ -3104,6 +3084,20 @@ packages:
       zod: 3.21.4
     dev: false
 
+  /@prisma/client@4.13.0(prisma@4.12.0):
+    resolution: {integrity: sha512-YaiiICcRB2hatxsbnfB66uWXjcRw3jsZdlAVxmx0cFcTc/Ad/sKdHCcWSnqyDX47vAewkjRFwiLwrOUjswVvmA==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.13.0-50.1e7af066ee9cb95cf3a403c78d9aab3e6b04f37a
+      prisma: 4.12.0
+    dev: false
+
   /@prisma/client@4.13.0(prisma@4.13.0):
     resolution: {integrity: sha512-YaiiICcRB2hatxsbnfB66uWXjcRw3jsZdlAVxmx0cFcTc/Ad/sKdHCcWSnqyDX47vAewkjRFwiLwrOUjswVvmA==}
     engines: {node: '>=14.17'}
@@ -3135,7 +3129,6 @@ packages:
   /@prisma/engines@4.12.0:
     resolution: {integrity: sha512-0alKtnxhNB5hYU+ymESBlGI4b9XrGGSdv7Ud+8TE/fBNOEhIud0XQsAR+TrvUZgS4na5czubiMsODw0TUrgkIA==}
     requiresBuild: true
-    dev: true
 
   /@prisma/engines@4.13.0:
     resolution: {integrity: sha512-HrniowHRZXHuGT9XRgoXEaP2gJLXM5RMoItaY2PkjvuZ+iHc0Zjbm/302MB8YsPdWozAPHHn+jpFEcEn71OgPw==}
@@ -3903,10 +3896,6 @@ packages:
     dependencies:
       '@types/node': 18.15.11
 
-  /@types/cookiejar@2.1.2:
-    resolution: {integrity: sha512-t73xJJrvdTjXrn4jLS9VSGRbz0nUY3cl2DMGDU48lKl+HR9dbbjW2A9r3g40VA++mQpy6uuHg33gy7du2BKpog==}
-    dev: true
-
   /@types/cors@2.8.13:
     resolution: {integrity: sha512-RG8AStHlUiV5ysZQKq97copd2UmVYw3/pRMLefISZ3S1hK104Cwm7iLQ3fTKx+lsUH2CE8FlLaYeEA2LSeqYUA==}
     dependencies:
@@ -4085,19 +4074,6 @@ packages:
 
   /@types/strip-json-comments@0.0.30:
     resolution: {integrity: sha512-7NQmHra/JILCd1QqpSzl8+mJRc8ZHz3uDm8YV1Ks9IhK0epEiTw8aIErbvH9PI+6XbqhyIQy3462nEsn7UVzjQ==}
-    dev: true
-
-  /@types/superagent@4.1.16:
-    resolution: {integrity: sha512-tLfnlJf6A5mB6ddqF159GqcDizfzbMUB1/DeT59/wBNqzRTNNKsaw79A/1TZ84X+f/EwWH8FeuSkjlCLyqS/zQ==}
-    dependencies:
-      '@types/cookiejar': 2.1.2
-      '@types/node': 18.15.11
-    dev: true
-
-  /@types/supertest@2.0.12:
-    resolution: {integrity: sha512-X3HPWTwXRerBZS7Mo1k6vMVR1Z6zmJcDVn5O/31whe0tnjE4te6ZJSJGq1RiqHPjzPdMTfjCFogDJmwng9xHaQ==}
-    dependencies:
-      '@types/superagent': 4.1.16
     dev: true
 
   /@types/testing-library__jest-dom@5.14.5:
@@ -6825,22 +6801,6 @@ packages:
     dependencies:
       loose-envify: 1.4.0
 
-  /ioredis@5.3.1:
-    resolution: {integrity: sha512-C+IBcMysM6v52pTLItYMeV4Hz7uriGtoJdz7SSBDX6u+zwSYGirLdQh3L7t/OItWITcw3gTFMjJReYUwS4zihg==}
-    engines: {node: '>=12.22.0'}
-    dependencies:
-      '@ioredis/commands': 1.2.0
-      cluster-key-slot: 1.1.2
-      debug: 4.3.4
-      denque: 2.1.0
-      lodash.defaults: 4.2.0
-      lodash.isarguments: 3.1.0
-      redis-errors: 1.2.0
-      redis-parser: 3.0.0
-      standard-as-callback: 2.1.0
-    transitivePeerDependencies:
-      - supports-color
-
   /ioredis@5.3.2:
     resolution: {integrity: sha512-1DKMMzlIHM02eBBVOFQ1+AolGjs6+xEcM4PDL7NqOS6szq7H9jSaEkIUH6/a5Hl241LzW6JLSiAbNvTQjUupUA==}
     engines: {node: '>=12.22.0'}
@@ -6856,7 +6816,6 @@ packages:
       standard-as-callback: 2.1.0
     transitivePeerDependencies:
       - supports-color
-    dev: false
 
   /is-absolute@1.0.0:
     resolution: {integrity: sha512-dOWoqflvcydARa360Gvv18DZ/gRuHKi2NU/wU5X1ZFzdYfH29nkiNZsF3mp4OJ3H4yo9Mx8A/uAGNzpzPN3yBA==}
@@ -8527,7 +8486,6 @@ packages:
     requiresBuild: true
     dependencies:
       '@prisma/engines': 4.12.0
-    dev: true
 
   /prisma@4.13.0:
     resolution: {integrity: sha512-L9mqjnSmvWIRCYJ9mQkwCtj4+JDYYTdhoyo8hlsHNDXaZLh/b4hR0IoKIBbTKxZuyHQzLopb/+0Rvb69uGV7uA==}

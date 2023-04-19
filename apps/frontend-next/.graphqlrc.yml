@@ -1,3 +1,4 @@
+# CAUTION: update `turbo.json`'s codegen task after editing this file
 schema: node_modules/yoga-app/generated/schema.graphql
 documents:
   - pages/**/*.ts
@@ -12,11 +13,14 @@ extensions:
         plugins:
           - add:
               content: import { JSONValue, JSONObject } from '../../src/utils/jsonTypes'
-      ./graphql.schema.json:
+      ./generated/schema.graphql.json:
         plugins:
           - 'introspection'
         config:
           minify: true
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
     config:
       scalars:
         DateTime: string
@@ -25,4 +29,3 @@ extensions:
         JSONObject: JSONObject
         JWT: string
         UUID: string
-    hooks: { afterAllFileWrite: ['prettier --write'] }

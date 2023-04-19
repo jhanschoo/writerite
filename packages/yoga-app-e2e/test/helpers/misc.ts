@@ -3,10 +3,7 @@ import { PrismaClient } from "database";
 import { ExecutionResult } from "graphql";
 import Redis from "ioredis";
 import { JWTPayload } from "jose";
-import {
-  ContextFactoryReturnType,
-  contextFactory,
-} from "./context";
+import { ContextFactoryReturnType, contextFactory } from "./context";
 import { parseArbitraryJWT } from "yoga-app/src/service/crypto";
 import { Context, CurrentUser, PubSubPublishArgs } from "yoga-app";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";

@@ -2,11 +2,7 @@
 import { YogaInitialContext } from "graphql-yoga";
 import { PrismaClient } from "database";
 import { Context, createYogaServerApp } from "yoga-app";
-import {
-  mutationCreateUser,
-  queryHealth,
-  testContextFactory,
-} from "./helpers";
+import { mutationCreateUser, queryHealth, testContextFactory } from "./helpers";
 import { cascadingDelete } from "./helpers/truncate";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 

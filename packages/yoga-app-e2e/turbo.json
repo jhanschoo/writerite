@@ -1,0 +1,9 @@
+{
+  "extends": ["//"],
+  "pipeline": {
+    "codegen": {
+      "inputs": ["test/**/*.ts", "node_modules/yoga-app/generated/schema.graphql"],
+      "outputs": ["test/generated/gql/**"]
+    }
+  }
+}
