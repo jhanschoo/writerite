@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
-import { contextFactory } from "../src/context";
+import { contextFactory } from "./helpers/context";
 import { createYogaServerApp } from "yoga-app";
 import { queryHealth } from "./helpers/graphql/Health.util";
 

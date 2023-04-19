@@ -13,10 +13,10 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n      mutation DeckCreateEmpty(\n        $input: DeckCreateMutationInput!\n      ) {\n        deckCreate(\n          input: $input\n        ) {\n          id\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    ": types.DeckCreateEmptyDocument,
+    "\n      mutation DeckCreateEmpty($input: DeckCreateMutationInput!) {\n        deckCreate(input: $input) {\n          id\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    ": types.DeckCreateEmptyDocument,
     "\n      mutation DeckAddSubdeck($deckId: ID!, $subdeckId: ID!) {\n        deckAddSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n          id\n        }\n      }\n    ": types.DeckAddSubdeckDocument,
     "\n      mutation DeckRemoveSubdeck($deckId: ID!, $subdeckId: ID!) {\n        deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n          id\n        }\n      }\n    ": types.DeckRemoveSubdeckDocument,
-    "\n      mutation DeckEdit(\n        $input: DeckEditMutationInput!\n      ) {\n        deckEdit(\n          input: $input\n        ) {\n          id\n          name\n        }\n      }\n    ": types.DeckEditDocument,
+    "\n      mutation DeckEdit($input: DeckEditMutationInput!) {\n        deckEdit(input: $input) {\n          id\n          name\n        }\n      }\n    ": types.DeckEditDocument,
     "\n      query Deck($id: ID!) {\n        deck(id: $id) {\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    ": types.DeckDocument,
     "\n      query Decks(\n        $after: ID\n        $before: ID\n        $first: Int\n        $last: Int\n        $input: DecksQueryInput!\n      ) {\n        decks(\n          after: $after\n          before: $before\n          first: $first\n          last: $last\n          input: $input\n        ) {\n          edges {\n            cursor\n            node {\n              id\n            }\n          }\n          pageInfo {\n            endCursor\n            hasNextPage\n            hasPreviousPage\n            startCursor\n          }\n        }\n      }\n    ": types.DecksDocument,
     "\n      mutation Befriend($befriendedId: ID!) {\n        befriend(befriendedId: $befriendedId) {\n          id\n        }\n      }\n    ": types.BefriendDocument,
@@ -57,7 +57,7 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n      mutation DeckCreateEmpty(\n        $input: DeckCreateMutationInput!\n      ) {\n        deckCreate(\n          input: $input\n        ) {\n          id\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    "): (typeof documents)["\n      mutation DeckCreateEmpty(\n        $input: DeckCreateMutationInput!\n      ) {\n        deckCreate(\n          input: $input\n        ) {\n          id\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    "];
+export function graphql(source: "\n      mutation DeckCreateEmpty($input: DeckCreateMutationInput!) {\n        deckCreate(input: $input) {\n          id\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    "): (typeof documents)["\n      mutation DeckCreateEmpty($input: DeckCreateMutationInput!) {\n        deckCreate(input: $input) {\n          id\n          answerLang\n          description\n          editedAt\n          name\n          owner {\n            id\n          }\n          promptLang\n          published\n          sortData\n        }\n      }\n    "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -69,7 +69,7 @@ export function graphql(source: "\n      mutation DeckRemoveSubdeck($deckId: ID!
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n      mutation DeckEdit(\n        $input: DeckEditMutationInput!\n      ) {\n        deckEdit(\n          input: $input\n        ) {\n          id\n          name\n        }\n      }\n    "): (typeof documents)["\n      mutation DeckEdit(\n        $input: DeckEditMutationInput!\n      ) {\n        deckEdit(\n          input: $input\n        ) {\n          id\n          name\n        }\n      }\n    "];
+export function graphql(source: "\n      mutation DeckEdit($input: DeckEditMutationInput!) {\n        deckEdit(input: $input) {\n          id\n          name\n        }\n      }\n    "): (typeof documents)["\n      mutation DeckEdit($input: DeckEditMutationInput!) {\n        deckEdit(input: $input) {\n          id\n          name\n        }\n      }\n    "];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

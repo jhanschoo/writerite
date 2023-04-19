@@ -4,7 +4,7 @@ import type { PrismaClient } from "database";
 import { YogaInitialContext } from "graphql-yoga";
 import { decodeGlobalID, encodeGlobalID } from "@pothos/plugin-relay";
 
-import { cascadingDelete } from "../../_helpers/truncate";
+import { cascadingDelete } from "../../helpers/truncate";
 import { loginAsNewlyCreatedUser, testContextFactory } from "../../helpers";
 import { Context, CurrentUser, Roles, createYogaServerApp } from "yoga-app";
 import { currentUserToUserJWT } from "yoga-app/src/service/userJWT";

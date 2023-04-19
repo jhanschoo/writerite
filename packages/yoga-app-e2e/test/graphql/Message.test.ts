@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { PrismaClient } from "database";
 
-import { cascadingDelete } from "../_helpers/truncate";
+import { cascadingDelete } from "../helpers/truncate";
 import {
   loginAsNewlyCreatedUser,
   refreshLogin,

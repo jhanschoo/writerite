@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { JSONValue, JSONObject } from '../../../src/types/jsonTypes'
+import { JSONValue, JSONObject } from '../../helpers/types/jsonTypes'
 import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;

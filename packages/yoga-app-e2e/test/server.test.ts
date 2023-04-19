@@ -7,7 +7,7 @@ import {
   queryHealth,
   testContextFactory,
 } from "./helpers";
-import { cascadingDelete } from "./_helpers/truncate";
+import { cascadingDelete } from "./helpers/truncate";
 import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 
 describe("server", () => {

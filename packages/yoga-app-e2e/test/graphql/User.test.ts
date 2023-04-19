@@ -3,7 +3,7 @@
 import type { PrismaClient } from "database";
 import { YogaInitialContext } from "graphql-yoga";
 
-import { cascadingDelete } from "../_helpers/truncate";
+import { cascadingDelete } from "../helpers/truncate";
 import {
   DEFAULT_CREATE_USER_VALUES,
   mutationCreateUser,

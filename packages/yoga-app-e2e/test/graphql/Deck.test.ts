@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import type { PrismaClient } from "database";
 
-import { cascadingDelete } from "../_helpers/truncate";
+import { cascadingDelete } from "../helpers/truncate";
 import { loginAsNewlyCreatedUser } from "../helpers/graphql/User.util";
 import {
   isoTimestampMatcher,
