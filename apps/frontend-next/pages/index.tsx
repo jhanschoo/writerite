@@ -1,18 +1,22 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Signin, useLogin } from '@features/signin';
 import HeroHeading from '@components/HeroHeading';
 import BrandText from '@components/typography/BrandText';
-import { Center, Stack } from '@mantine/core';
+import { Center, LoadingOverlay, Stack } from '@mantine/core';
 
 const Home: NextPage = () => {
   const router = useRouter();
   const login = useLogin();
+  const [inspectingToken, setInspectingToken] = useState(true);
   useEffect(() => {
     const { token, currentUser } = router.query;
     if (window?.localStorage && typeof token === 'string' && typeof currentUser === 'string') {
-      login({ token, currentUser });
+      setInspectingToken(true);
+      login({ token, currentUser }).catch(() => setInspectingToken(false));
+    } else {
+      setInspectingToken(false);
     }
   }, [router, login]);
   return (
@@ -22,6 +26,7 @@ const Home: NextPage = () => {
         height: '100vh',
       }}
     >
+      <LoadingOverlay visible={inspectingToken} />
       <Center sx={(theme) => ({ minHeight: '25vw', maxWidth: '50vw', margin: theme.spacing.lg })}>
         <HeroHeading>
           <em>Study with supercharged flashcards on </em>

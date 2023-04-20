@@ -9,10 +9,10 @@ import {
 // TODO: useLocalStorage
 export function useLogin() {
   const router = useRouter();
-  return (serializedSessionInfo: SerializedSessionInfo) => {
+  return async (serializedSessionInfo: SerializedSessionInfo) => {
     setSessionInfo(serializedSessionInfo);
     if (getAccessToken()) {
-      void router.push('/app');
+      await router.push('/app');
     }
   };
 }
