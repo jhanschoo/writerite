@@ -1,4 +1,4 @@
-import { ssrExchange, Client } from 'urql';
+import { ssrExchange } from 'urql';
 import { initUrqlClient } from 'next-urql';
 import { commonUrqlOptions, getExchanges } from './common';
 

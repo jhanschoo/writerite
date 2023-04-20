@@ -10,7 +10,7 @@ import {
 } from '@lib/tokenManagement';
 import { createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
-import schema from '@root/graphql.schema.json';
+import schema from '@generated/schema.graphql.json';
 // import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
 import { IntrospectionQuery } from 'graphql';
 import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';

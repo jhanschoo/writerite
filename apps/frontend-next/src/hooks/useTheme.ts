@@ -6,10 +6,10 @@ export function useTheme(colorScheme: ColorScheme, langTag?: string): MantineThe
   const textFont = useFont({ type: 'text', tag: langTag });
   return {
     colorScheme,
-    fontFamily: `${textFont}, sans-serif`,
+    fontFamily: `${textFont.style.fontFamily}, sans-serif`,
     primaryColor: colorScheme === 'light' ? 'dark' : 'gray',
     headings: {
-      fontFamily: `${displayFont}, sans-serif`,
+      fontFamily: `${displayFont.style.fontFamily}, sans-serif`,
     },
   };
 }

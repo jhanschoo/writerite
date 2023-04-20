@@ -1,12 +1,12 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
+  "globalDependencies": ["**/.env*"],
   "globalEnv": ["PORT"],
   "pipeline": {
     "build": {
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "public/dist/**"],
       "dependsOn": ["^build"],
-      "env": ["NEXT_PUBLIC_API_HOST"]
+      "env": ["NEXT_PUBLIC_GRAPHQL_HTTP", "NEXT_PUBLIC_GRAPHQL_WS", "NEXT_PUBLIC_MAX_CARDS_PER_DECK"]
     },
     "test": {
       "outputs": ["coverage/**"],
@@ -25,7 +25,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["codegen", "lint"]
+      "dependsOn": ["codegen"]
     },
     "clean": {
       "cache": false

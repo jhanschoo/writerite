@@ -9,29 +9,21 @@ interface Props {
 }
 
 // TODO: test this, inspect set styles
-const _Lang = forwardRef<HTMLDivElement, PropsWithChildren<Props>>(
-  ({ tag, children, ...others }, ref) => {
-    const displayFont = useFont({ type: 'display', tag });
-    const theme = useMantineTheme();
-    const textFont = useFont({ type: 'text', tag });
-    return (
-      <Box
-        component="div"
-        ref={ref}
-        className={`${displayFont.variable} ${textFont.variable}`}
-        {...others}
-      >
-        <MantineProvider theme={{
-          fontFamily: `var(${textFont.variable}), ${theme.fontFamily}}`,
-          headings: {
-            fontFamily: `var(${displayFont.variable}), ${theme.headings.fontFamily}}`,
-          },
-        }} inherit>
-          {children}
-        </MantineProvider>
-      </Box>
-    );
-  }
-);
-
-export const Lang = createPolymorphicComponent<"div", Props>(_Lang);
+export const Lang = ({ tag, children }: PropsWithChildren<Props>) => {
+  const displayFont = useFont({ type: 'display', tag });
+  const theme = useMantineTheme();
+  const textFont = useFont({ type: 'text', tag });
+  return (
+    <MantineProvider
+      theme={{
+        fontFamily: `${textFont.style.fontFamily}, ${theme.fontFamily}}`,
+        headings: {
+          fontFamily: `${displayFont.style.fontFamily}, ${theme.headings.fontFamily}}`,
+        },
+      }}
+      inherit
+    >
+      {children}
+    </MantineProvider>
+  );
+};

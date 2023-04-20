@@ -38,9 +38,10 @@
     "zod": "^3.21.4"
   },
   "scripts": {
+    "dev": "graphql-codegen --watch",
     "echo-for-dep-graph": "echo",
     "codegen": "graphql-codegen",
     "lint": "eslint && prettier --write .",
-    "test": "export $(xargs -a .env -d '\\n') && jest --runInBand"
+    "test": "export $(xargs -a .env -d '\\n') && jest"
   }
 }

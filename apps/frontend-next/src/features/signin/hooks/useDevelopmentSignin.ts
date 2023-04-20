@@ -4,12 +4,12 @@ import { InitializeOauthSigninMutation } from '../fragments/InitializeOauthSigni
 
 const DEFAULT_DEVELOPER_NAME = 'developer';
 
-export default function useDevelopmentSignin(name = DEFAULT_DEVELOPER_NAME) {
+export default function useDevelopmentSignin(defaultName = DEFAULT_DEVELOPER_NAME) {
   const [, executeInitializeOauth] = useMutation(InitializeOauthSigninMutation);
   const [signinUnderway, setSigninUnderway] = useState(false);
   return [
     signinUnderway,
-    async () => {
+    async (name = defaultName) => {
       setSigninUnderway(true);
       const initializeOauth = await executeInitializeOauth({});
       const redirect_uri = `${window.location.origin}/api/oauth/callback`;

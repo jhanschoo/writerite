@@ -41,9 +41,11 @@
     "prisma": "^4.12.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "tsconfig": "workspace:*"
+    "tsconfig": "workspace:*",
+    "watch": "^1.0.2"
   },
   "scripts": {
+    "dev": "export $(xargs -a .env -d '\\n') NODE_ENV=development && watch 'graphql-codegen' src test",
     "codegen": "export $(xargs -a .env -d '\\n') NODE_ENV=development && ts-node scripts/printSchema.ts && graphql-codegen",
     "echo-for-dep-graph": "echo",
     "lint": "eslint && prettier -w .",
