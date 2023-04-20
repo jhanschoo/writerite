@@ -167,6 +167,9 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^2.0.3
         version: 2.0.3(@tiptap/pm@2.0.3)
+      '@urql/core':
+        specifier: ^4.0.5
+        version: 4.0.5(graphql@16.6.0)
       '@urql/exchange-auth':
         specifier: ^2.1.0
         version: 2.1.0(graphql@16.6.0)
@@ -179,9 +182,6 @@ importers:
       fast-json-stable-stringify:
         specifier: ^2.1.0
         version: 2.1.0
-      framer-motion:
-        specifier: ^10.12.2
-        version: 10.12.2(react-dom@18.2.0)(react@18.2.0)
       graphql:
         specifier: ^16.6.0
         version: 16.6.0
@@ -278,7 +278,7 @@ importers:
         version: 5.58.0(eslint@8.38.0)(typescript@5.0.4)
       '@urql/devtools':
         specifier: ^2.0.3
-        version: 2.0.3(@urql/core@4.0.4)(graphql@16.6.0)
+        version: 2.0.3(@urql/core@4.0.5)(graphql@16.6.0)
       eslint:
         specifier: ^8.38.0
         version: 8.38.0
@@ -1323,19 +1323,6 @@ packages:
   /@emotion/hash@0.9.0:
     resolution: {integrity: sha512-14FtKiHhy2QoPIzdTcvh//8OyBlknNs2nXRwIhG904opCby3l+9Xaf/wuPvICBF0rc1ZCNBd3nKe9cd2mecVkQ==}
     dev: false
-
-  /@emotion/is-prop-valid@0.8.8:
-    resolution: {integrity: sha512-u5WtneEAr5IDG2Wv65yhunPSMLIpuKsbuOktRojfrEiEvRyC85LgPMZI63cr7NUqT8ZIGdSVg8ZKGxIug4lXcA==}
-    requiresBuild: true
-    dependencies:
-      '@emotion/memoize': 0.7.4
-    dev: false
-    optional: true
-
-  /@emotion/memoize@0.7.4:
-    resolution: {integrity: sha512-Ja/Vfqe3HpuzRsG1oBtWTHk2PGZ7GR+2Vz5iYGelAw8dx32K0y7PjVuxK6z1nMpZOqAFsRUPCkK1YjJ56qJlgw==}
-    dev: false
-    optional: true
 
   /@emotion/memoize@0.8.0:
     resolution: {integrity: sha512-G/YwXTkv7Den9mXDO7AhLWkE3q+I92B+VqAE+dYG4NGPaHZGvt3G8Q0p9vmE+sq7rTGphUbAvmQ9YpbfMQGGlA==}
@@ -4228,21 +4215,21 @@ packages:
       '@typescript-eslint/types': 5.58.0
       eslint-visitor-keys: 3.4.0
 
-  /@urql/core@4.0.4(graphql@16.6.0):
-    resolution: {integrity: sha512-r1rB/VMVpCnfnMTTzCAs+HY+UqOHUgpZ+GimLtU4DCTP3C78DK+m4qr36M7KKleggrKgcpcC1TE8eFEVcKzfSQ==}
+  /@urql/core@4.0.5(graphql@16.6.0):
+    resolution: {integrity: sha512-RNhUTNPV/ThI0/QCg4cJeA2RUUzkMMDhf64spHhAJ+Li7L1Qic+oUA36AJZ2Ff4sErzTra1CLbgTcL8dNcYWhw==}
     dependencies:
       '@0no-co/graphql.web': 1.0.0(graphql@16.6.0)
       wonka: 6.3.1
     transitivePeerDependencies:
       - graphql
 
-  /@urql/devtools@2.0.3(@urql/core@4.0.4)(graphql@16.6.0):
+  /@urql/devtools@2.0.3(@urql/core@4.0.5)(graphql@16.6.0):
     resolution: {integrity: sha512-TktPLiBS9LcBPHD6qcnb8wqOVcg3Bx0iCtvQ80uPpfofwwBGJmqnQTjUdEFU6kwaLOFZULQ9+Uo4831G823mQw==}
     peerDependencies:
       '@urql/core': '>= 1.14.0'
       graphql: '>= 0.11.0'
     dependencies:
-      '@urql/core': 4.0.4(graphql@16.6.0)
+      '@urql/core': 4.0.5(graphql@16.6.0)
       graphql: 16.6.0
       wonka: 6.3.1
     dev: true
@@ -4250,7 +4237,7 @@ packages:
   /@urql/exchange-auth@2.1.0(graphql@16.6.0):
     resolution: {integrity: sha512-jWnH68RLoIHMN058u5VNC028vj04CRIv972dfnouTsK4iUtmBAKqEbo1GrpGzv+5QimZnyBCBwvwjfiBEtj/vg==}
     dependencies:
-      '@urql/core': 4.0.4(graphql@16.6.0)
+      '@urql/core': 4.0.5(graphql@16.6.0)
       wonka: 6.3.1
     transitivePeerDependencies:
       - graphql
@@ -4260,7 +4247,7 @@ packages:
     resolution: {integrity: sha512-nJCQwem45p1nspbRrZz2oFjyHW6tufT6LQ1SvqE3CN1pLq3v72leZ6nfRMv4RCoh9IxFnv9hr0fn8DQSmQaB4w==}
     dependencies:
       '@0no-co/graphql.web': 1.0.0(graphql@16.6.0)
-      '@urql/core': 4.0.4(graphql@16.6.0)
+      '@urql/core': 4.0.5(graphql@16.6.0)
       wonka: 6.3.1
     transitivePeerDependencies:
       - graphql
@@ -6264,24 +6251,6 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
     dev: true
-
-  /framer-motion@10.12.2(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-DD3Ieqy4pjmL0qBtfNMqnU/IONchUqnhHtgFtu0Nq5jw7bhkksD/Cs4cNhLYd1vs7iB8Q+WInxuBeMmzIoA5Xg==}
-    peerDependencies:
-      react: ^18.0.0
-      react-dom: ^18.0.0
-    peerDependenciesMeta:
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      tslib: 2.5.0
-    optionalDependencies:
-      '@emotion/is-prop-valid': 0.8.8
-    dev: false
 
   /fs-extra@11.1.1:
     resolution: {integrity: sha512-MGIE4HOvQCeUCzmlHs0vXpih4ysz4wg9qiSAu6cd42lVwPbTM1TjV7RusoyQqMmk/95gdQZX72u+YW+c3eEpFQ==}
@@ -9944,7 +9913,7 @@ packages:
     peerDependencies:
       react: '>= 16.8.0'
     dependencies:
-      '@urql/core': 4.0.4(graphql@16.6.0)
+      '@urql/core': 4.0.5(graphql@16.6.0)
       react: 18.2.0
       wonka: 6.3.1
     transitivePeerDependencies:

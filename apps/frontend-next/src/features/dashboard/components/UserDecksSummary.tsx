@@ -1,7 +1,5 @@
 import { useRouter } from 'next/router';
 import { useMutation, useQuery } from 'urql';
-import { useMotionContext } from '@hooks/useMotionContext';
-import { motionThemes } from '@lib/framer-motion/motionThemes';
 import {
   Button,
   Card,
@@ -56,10 +54,8 @@ const NewDeckItemMutation = graphql(/* GraphQL */ `
 const NewDeckItem = () => {
   const router = useRouter();
   const { classes } = useStyles();
-  const { setMotionProps } = useMotionContext();
   const [, newDeckItemMutation] = useMutation(NewDeckItemMutation);
   const handleCreateDeck = async () => {
-    setMotionProps(motionThemes.forward);
     const createdDeck = await newDeckItemMutation({
       input: {
         answerLang: 'en',

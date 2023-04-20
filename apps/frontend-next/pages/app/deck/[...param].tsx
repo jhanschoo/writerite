@@ -1,9 +1,7 @@
-import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useQuery } from 'urql';
 
-import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout';
 import { ManageDeck } from '@/features/manageDeck';
 import { graphql } from '@generated/gql';
@@ -18,7 +16,6 @@ const DeckQuery = graphql(/* GraphQL */ `
 `);
 
 const HomeComponent = ({ id, path }: { id: string; path: string[] }) => {
-  const { motionProps } = useMotionContext();
   const [{ data, fetching, error }] = useQuery({
     query: DeckQuery,
     variables: { id },
@@ -30,9 +27,7 @@ const HomeComponent = ({ id, path }: { id: string; path: string[] }) => {
 
   return (
     <StandardLayout>
-      <motion.div {...motionProps}>
-        <ManageDeck deck={deck} path={path} />
-      </motion.div>
+      <ManageDeck deck={deck} path={path} />
     </StandardLayout>
   );
 };

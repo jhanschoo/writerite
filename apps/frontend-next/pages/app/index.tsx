@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 import { Dashboard } from '@/features/dashboard';
 import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';

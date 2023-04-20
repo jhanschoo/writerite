@@ -1,7 +1,5 @@
-import { motion } from 'framer-motion';
 import type { NextPage } from 'next';
 
-import { useMotionContext } from '@hooks/useMotionContext';
 import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 import { PersonalDashboard } from '@/features/managePersonal';
 import { useQuery } from 'urql';

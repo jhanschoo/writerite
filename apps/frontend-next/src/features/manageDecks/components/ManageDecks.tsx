@@ -10,8 +10,6 @@ import {
   Stack,
   Title,
 } from '@mantine/core';
-import { motionThemes } from '@/lib/framer-motion/motionThemes';
-import { useMotionContext } from '@/hooks';
 import { useRouter } from 'next/router';
 import { SearchDecks } from './SearchDecks';
 import { DECK_DETAIL_PATH } from '@/paths';
@@ -59,11 +57,9 @@ const useStyles = createStyles(({ breakpoints }) => ({
 // TODO: pagination
 export const ManageDecks = () => {
   const router = useRouter();
-  const { setMotionProps } = useMotionContext();
   const { classes } = useStyles();
   const [, deckCreateMutation] = useMutation(NewDeckItemMutation);
   const handleCreateDeck: MouseEventHandler = async (e) => {
-    setMotionProps(motionThemes.forward);
     const createdDeck = await deckCreateMutation(emptyNewDeckInput);
     if (createdDeck.data?.deckCreate.id) {
       router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));

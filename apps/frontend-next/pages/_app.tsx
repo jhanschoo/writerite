@@ -1,7 +1,5 @@
 import '@styles/globals.css';
 
-// TODO: remove framer-motion
-import { AnimatePresence } from 'framer-motion';
 import React from 'react';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
@@ -22,9 +20,7 @@ const WrApp = ({ Component, pageProps }: AppProps) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Providers>
-        <AnimatePresence>
-          <Component {...pageProps} key={router.route} />
-        </AnimatePresence>
+        <Component {...pageProps} key={router.route} />
       </Providers>
     </>
   );

@@ -25,7 +25,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "dependsOn": ["codegen"]
+      "dependsOn": ["codegen", "db:generate"]
     },
     "clean": {
       "cache": false
@@ -34,7 +34,8 @@
       "cache": false
     },
     "db:push": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["db:generate"]
     }
   }
 }

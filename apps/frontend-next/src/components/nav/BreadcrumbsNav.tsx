@@ -1,6 +1,4 @@
 import router from 'next/router';
-import { motionThemes } from '@lib/framer-motion/motionThemes';
-import { useMotionContext } from '@hooks/useMotionContext';
 import { Breadcrumbs, Button, Divider, Group, GroupProps, Text } from '@mantine/core';
 import Link from 'next/link';
 
@@ -11,9 +9,7 @@ export interface BreadcrumbsNavProps {
 }
 
 const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavProps) => {
-  const { setMotionProps } = useMotionContext();
   const handleBack = async () => {
-    setMotionProps(motionThemes.back);
     router.back();
   };
   const breadcrumbLinks =

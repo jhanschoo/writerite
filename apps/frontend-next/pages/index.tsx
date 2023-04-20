@@ -9,9 +9,9 @@ import { Center, LoadingOverlay, Stack } from '@mantine/core';
 const Home: NextPage = () => {
   const router = useRouter();
   const login = useLogin();
-  const [inspectingToken, setInspectingToken] = useState(true);
+  const { token, currentUser } = router.query;
+  const [inspectingToken, setInspectingToken] = useState(typeof token === 'string' && typeof currentUser === 'string');
   useEffect(() => {
-    const { token, currentUser } = router.query;
     if (window?.localStorage && typeof token === 'string' && typeof currentUser === 'string') {
       setInspectingToken(true);
       login({ token, currentUser }).catch(() => setInspectingToken(false));
