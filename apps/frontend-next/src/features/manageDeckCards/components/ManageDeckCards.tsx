@@ -1,11 +1,18 @@
-import { ChangeEvent, useMemo, useState } from 'react';
-import { Button, Divider, Flex, Pagination, Stack, TextInput } from '@mantine/core';
+import { ChangeEvent, useMemo, useState } from "react";
+import {
+  Button,
+  Divider,
+  Flex,
+  Pagination,
+  Stack,
+  TextInput,
+} from "@mantine/core";
 
-import { AddNewCard, ManageCard } from '@/features/manageCard';
-import { accumulateContentText } from '@/components/editor';
-import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
-import { JSONContent } from '@tiptap/react';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { AddNewCard, ManageCard } from "@/features/manageCard";
+import { accumulateContentText } from "@/components/editor";
+import { IconPlus, IconSearch, IconUpload } from "@tabler/icons-react";
+import { JSONContent } from "@tiptap/react";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 const WHITESPACE_REGEX = /\s+/;
 
@@ -43,7 +50,7 @@ interface Props {
 
 export const ManageDeckCards = ({ deck, startUpload }: Props) => {
   const deckFragment = useFragment(ManageDeckCardsFragment, deck);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState("");
   const [activePage, setActivePage] = useState<number>(1);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +84,8 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
   const total = Math.ceil(deckFragment.cardsDirectCount / 10);
   const canAddANewCard =
     deckFragment.cardsDirectCount <
-      parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) && activePage === 1;
+      parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) &&
+    activePage === 1;
   return (
     <Stack spacing="xs" align="stretch">
       <Flex gap="md" wrap="wrap" justify="stretch">
@@ -98,7 +106,12 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
           Import from file
         </Button>
       </Flex>
-      {showAddCard && <AddNewCard deckId={deckFragment.id} onDone={() => setShowAddCard(false)} />}
+      {showAddCard && (
+        <AddNewCard
+          deckId={deckFragment.id}
+          onDone={() => setShowAddCard(false)}
+        />
+      )}
       <Divider />
       <TextInput
         value={filter}
@@ -108,7 +121,12 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
         sx={{ flexGrow: 1 }}
       />
       {currentCards.map((card) => (
-        <ManageCard card={card} key={card.id} onDelete={() => undefined} forceLoading={false} />
+        <ManageCard
+          card={card}
+          key={card.id}
+          onDelete={() => undefined}
+          forceLoading={false}
+        />
       ))}
       {total ? (
         <Pagination
@@ -116,7 +134,7 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
           onChange={setActivePage}
           total={total}
           radius="lg"
-          sx={{ alignSelf: 'center' }}
+          sx={{ alignSelf: "center" }}
         />
       ) : undefined}
     </Stack>

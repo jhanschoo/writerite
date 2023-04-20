@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Stack, Table, Text } from '@mantine/core';
-import { IconArrowRight } from '@tabler/icons-react';
+import { Box, Button, Flex, Stack, Table, Text } from "@mantine/core";
+import { IconArrowRight } from "@tabler/icons-react";
 
 export const Instructions = ({
   onCancel,
@@ -11,13 +11,13 @@ export const Instructions = ({
   return (
     <Stack>
       <Text>
-        You can import <strong>text cards</strong> from a <strong>.csv</strong> file to your deck.
-        The contents of the .csv file will be used to create new cards that will be added to your
-        deck.
+        You can import <strong>text cards</strong> from a <strong>.csv</strong>{" "}
+        file to your deck. The contents of the .csv file will be used to create
+        new cards that will be added to your deck.
       </Text>
       <Text>
-        For example, consider a .csv representing the following table, where each row has up to 5
-        non-empty columns:
+        For example, consider a .csv representing the following table, where
+        each row has up to 5 non-empty columns:
       </Text>
       <Table>
         <caption>Sample .csv contents</caption>
@@ -46,8 +46,8 @@ export const Instructions = ({
         </tbody>
       </Table>
       <Text>
-        With such a .csv file, importing will create a deck named <strong>demo</strong>, with the
-        following 3 cards:
+        With such a .csv file, importing will create a deck named{" "}
+        <strong>demo</strong>, with the following 3 cards:
       </Text>
       <ul>
         <li>Card 1</li>
@@ -59,7 +59,8 @@ export const Instructions = ({
             Back: <em>Back 1</em>
           </li>
           <li>
-            Alternative answers: <em>Card 1 Alt. Ans. 1</em>, <em>Card 1 Alt. Ans. 2</em>
+            Alternative answers: <em>Card 1 Alt. Ans. 1</em>,{" "}
+            <em>Card 1 Alt. Ans. 2</em>
           </li>
         </ul>
         <li>Card 2</li>
@@ -80,8 +81,8 @@ export const Instructions = ({
             Back: <em>Back 3</em>
           </li>
           <li>
-            Alternative answers: <em>Card 3 Alt. Ans. 1</em>, <em>Card 3 Alt. Ans. 2</em>,{' '}
-            <em>Card 3 Alt. Ans. 3</em>
+            Alternative answers: <em>Card 3 Alt. Ans. 1</em>,{" "}
+            <em>Card 3 Alt. Ans. 2</em>, <em>Card 3 Alt. Ans. 3</em>
           </li>
         </ul>
       </ul>
@@ -89,7 +90,11 @@ export const Instructions = ({
         <Button onClick={onCancel} variant="subtle">
           Cancel
         </Button>
-        <Button onClick={onNextStep} rightIcon={<IconArrowRight />} sx={{ flexGrow: 1 }}>
+        <Button
+          onClick={onNextStep}
+          rightIcon={<IconArrowRight />}
+          sx={{ flexGrow: 1 }}
+        >
           Proceed
         </Button>
       </Flex>

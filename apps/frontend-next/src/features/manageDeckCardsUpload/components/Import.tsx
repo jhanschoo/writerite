@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { Box, Button, Divider, Stack, Text } from '@mantine/core';
-import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
+import { useState } from "react";
+import { Box, Button, Divider, Stack, Text } from "@mantine/core";
+import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 
-import { IconArrowLeft } from '@tabler/icons-react';
-import { useParseCsv } from '../hooks/useParseCsv';
-import { CardCreateMutationInput } from '@generated/gql/graphql';
+import { IconArrowLeft } from "@tabler/icons-react";
+import { useParseCsv } from "../hooks/useParseCsv";
+import { CardCreateMutationInput } from "@generated/gql/graphql";
 
 const MAX_SIZE_MIB = 3;
 
@@ -14,7 +14,11 @@ interface Props {
   onSuccessfulImport(cards: CardCreateMutationInput[]): unknown;
 }
 
-export const Import = ({ onCancel, onPreviousStep, onSuccessfulImport }: Props) => {
+export const Import = ({
+  onCancel,
+  onPreviousStep,
+  onSuccessfulImport,
+}: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean>(false);
   const parseCsv = useParseCsv();
@@ -25,7 +29,7 @@ export const Import = ({ onCancel, onPreviousStep, onSuccessfulImport }: Props) 
     const [csvFile] = files;
     setLoading(true);
     try {
-      console.log('trying to parse');
+      console.log("trying to parse");
       const newCards = await parseCsv(csvFile);
       onSuccessfulImport(newCards);
       setHasErrors(false);
@@ -39,7 +43,7 @@ export const Import = ({ onCancel, onPreviousStep, onSuccessfulImport }: Props) 
     <Stack>
       <Dropzone
         onDrop={handleDrop}
-        onReject={(files) => console.log('rejected files', files)}
+        onReject={(files) => console.log("rejected files", files)}
         maxSize={MAX_SIZE_MIB * 1024 ** 2}
         multiple={false}
         loading={loading}
@@ -60,19 +64,23 @@ export const Import = ({ onCancel, onPreviousStep, onSuccessfulImport }: Props) 
          */
         // A bug report has been submitted to the Chromium project:
         // https://bugs.chromium.org/p/chromium/issues/detail?id=1350487
-        accept={{ [MIME_TYPES.csv]: ['.csv'] }}
+        accept={{ [MIME_TYPES.csv]: [".csv"] }}
         sx={{
-          minHeight: '50vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
+          minHeight: "50vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
         }}
         useFsAccessApi={false}
       >
         <Stack spacing="md" align="center">
           <Text size="lg">Drag a .csv file here</Text>
-          <Divider label="or" sx={{ alignSelf: 'stretch' }} labelPosition="center" />
+          <Divider
+            label="or"
+            sx={{ alignSelf: "stretch" }}
+            labelPosition="center"
+          />
           <Button>Select file</Button>
           <Text color="dimmed" size="xs">
             Maximum file size limit: {MAX_SIZE_MIB}MB
@@ -84,11 +92,21 @@ export const Import = ({ onCancel, onPreviousStep, onSuccessfulImport }: Props) 
           )}
         </Stack>
       </Dropzone>
-      <Box sx={({ spacing }) => ({ display: 'flex', gap: spacing.xs, flexWrap: 'wrap-reverse' })}>
+      <Box
+        sx={({ spacing }) => ({
+          display: "flex",
+          gap: spacing.xs,
+          flexWrap: "wrap-reverse",
+        })}
+      >
         <Button onClick={onCancel} variant="subtle">
           Cancel
         </Button>
-        <Button variant="outline" onClick={onPreviousStep} leftIcon={<IconArrowLeft />}>
+        <Button
+          variant="outline"
+          onClick={onPreviousStep}
+          leftIcon={<IconArrowLeft />}
+        >
           Review instructions
         </Button>
       </Box>

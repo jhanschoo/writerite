@@ -1,9 +1,8 @@
-import { Text } from '@mantine/core';
+import { Text } from "@mantine/core";
 
 interface Props {
   name?: string;
 }
-
 
 /**
  * DeckName helps to properly format a deck name for display, even when the name is the empty string.

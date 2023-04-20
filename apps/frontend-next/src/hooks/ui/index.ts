@@ -1,1 +1,1 @@
-export * from './useLabelInsideInput';
+export * from "./useLabelInsideInput";

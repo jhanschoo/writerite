@@ -12,45 +12,58 @@ import {
   UnstyledButton,
   useMantineColorScheme,
   useMantineTheme,
-} from '@mantine/core';
-import { useLogout } from '@features/signin/hooks/useLogout';
-import { PropsWithChildren, useState } from 'react';
-import Link from 'next/link';
-import { IconBell, IconLogout, IconMoonStars, IconSun } from '@tabler/icons-react';
-import { useMediaQuery } from '@mantine/hooks';
-import { useRouter } from 'next/router';
-import BrandText from '@/components/typography/BrandText';
-import { useCurrentUser } from '@/hooks';
-import { ProfilePicture } from '@/features/profilePicture/components';
-import { ActionIcon } from '@/components/ActionIcon';
-import { PROFILE_PATH } from '@/paths';
+} from "@mantine/core";
+import { useLogout } from "@features/signin/hooks/useLogout";
+import { PropsWithChildren, useState } from "react";
+import Link from "next/link";
+import {
+  IconBell,
+  IconLogout,
+  IconMoonStars,
+  IconSun,
+} from "@tabler/icons-react";
+import { useMediaQuery } from "@mantine/hooks";
+import { useRouter } from "next/router";
+import BrandText from "@/components/typography/BrandText";
+import { useCurrentUser } from "@/hooks";
+import { ProfilePicture } from "@/features/profilePicture/components";
+import { ActionIcon } from "@/components/ActionIcon";
+import { PROFILE_PATH } from "@/paths";
 
 interface Props {
   vhHeight?: boolean;
 }
 
-const useShellStyles = createStyles((theme, { vhHeight }: Pick<Props, 'vhHeight'>) => {
-  const { background } = theme.fn.variant({ variant: 'light', color: 'gray' });
-  return {
-    main: {
-      backgroundColor: background,
-      display: 'flex',
-      flexDirection: 'column',
-      height: vhHeight ? '100vh' : undefined,
-    },
-    root: {
-      flexGrow: 1,
-    },
-  };
-});
+const useShellStyles = createStyles(
+  (theme, { vhHeight }: Pick<Props, "vhHeight">) => {
+    const { background } = theme.fn.variant({
+      variant: "light",
+      color: "gray",
+    });
+    return {
+      main: {
+        backgroundColor: background,
+        display: "flex",
+        flexDirection: "column",
+        height: vhHeight ? "100vh" : undefined,
+      },
+      root: {
+        flexGrow: 1,
+      },
+    };
+  }
+);
 
 const useDrawerButtonStyles = createStyles(() => ({
   inner: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
 }));
 
-export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>) => {
+export const StandardLayout = ({
+  children,
+  vhHeight,
+}: PropsWithChildren<Props>) => {
   const logout = useLogout();
   const currentUser = useCurrentUser();
   const router = useRouter();
@@ -69,10 +82,10 @@ export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>)
           height={50}
           px="md"
           sx={({ spacing }) => ({
-            display: 'flex',
-            flexDirection: 'row',
-            height: '100%',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "row",
+            height: "100%",
+            alignItems: "center",
             columnGap: spacing.sm,
           })}
         >
@@ -85,9 +98,14 @@ export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>)
           </ActionIcon>
           {currentUser && (
             <>
-              <Menu opened={useMenu && showProfileOptions} onChange={setShowProfileOptions}>
+              <Menu
+                opened={useMenu && showProfileOptions}
+                onChange={setShowProfileOptions}
+              >
                 <Menu.Target>
-                  <UnstyledButton onClick={() => setShowProfileOptions(!showProfileOptions)}>
+                  <UnstyledButton
+                    onClick={() => setShowProfileOptions(!showProfileOptions)}
+                  >
                     <ProfilePicture user={currentUser} />
                   </UnstyledButton>
                 </Menu.Target>
@@ -100,10 +118,14 @@ export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>)
                     <Text>View profile & friends</Text>
                   </Menu.Item>
                   <Menu.Item
-                    icon={colorScheme === 'light' ? <IconMoonStars /> : <IconSun />}
+                    icon={
+                      colorScheme === "light" ? <IconMoonStars /> : <IconSun />
+                    }
                     onClick={() => toggleColorScheme()}
                   >
-                    <Text>Use{colorScheme === 'light' ? ' dark ' : ' light '}theme</Text>
+                    <Text>
+                      Use{colorScheme === "light" ? " dark " : " light "}theme
+                    </Text>
                   </Menu.Item>
                   <Menu.Item icon={<IconLogout />} onClick={logout}>
                     Logout
@@ -132,11 +154,15 @@ export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>)
                     variant="subtle"
                     onClick={() => toggleColorScheme()}
                     leftIcon={
-                      colorScheme === 'light' ? <IconMoonStars size={20} /> : <IconSun size={20} />
+                      colorScheme === "light" ? (
+                        <IconMoonStars size={20} />
+                      ) : (
+                        <IconSun size={20} />
+                      )
                     }
                     classNames={drawerButtonClasses}
                   >
-                    Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
+                    Use{colorScheme === "light" ? " dark " : " light "}theme
                   </Button>
                   <Button
                     size="xl"
@@ -156,7 +182,10 @@ export const StandardLayout = ({ children, vhHeight }: PropsWithChildren<Props>)
       // footer={<Footer height={40}><Center><Text>Hello, World!</Text></Center></Footer>}
       classNames={shellClasses}
     >
-      <Stack spacing={2} sx={{ flexGrow: 1, height: vhHeight ? '100%' : undefined }}>
+      <Stack
+        spacing={2}
+        sx={{ flexGrow: 1, height: vhHeight ? "100%" : undefined }}
+      >
         {children}
       </Stack>
     </AppShell>

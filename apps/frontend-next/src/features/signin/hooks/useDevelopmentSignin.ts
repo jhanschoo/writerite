@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { useMutation } from 'urql';
-import { InitializeOauthSigninMutation } from '../fragments/InitializeOauthSigninMutation';
+import { useState } from "react";
+import { useMutation } from "urql";
+import { InitializeOauthSigninMutation } from "../fragments/InitializeOauthSigninMutation";
 
-const DEFAULT_DEVELOPER_NAME = 'developer';
+const DEFAULT_DEVELOPER_NAME = "developer";
 
-export default function useDevelopmentSignin(defaultName = DEFAULT_DEVELOPER_NAME) {
+export default function useDevelopmentSignin(
+  defaultName = DEFAULT_DEVELOPER_NAME
+) {
   const [, executeInitializeOauth] = useMutation(InitializeOauthSigninMutation);
   const [signinUnderway, setSigninUnderway] = useState(false);
   return [
@@ -16,7 +18,7 @@ export default function useDevelopmentSignin(defaultName = DEFAULT_DEVELOPER_NAM
       const { data } = initializeOauth;
       if (!data) {
         setSigninUnderway(false);
-        throw new Error('Unable to initializeOauthSignin');
+        throw new Error("Unable to initializeOauthSignin");
       }
       const nonce = data.initializeOauthSignin;
       const url = new URL(
@@ -24,7 +26,7 @@ export default function useDevelopmentSignin(defaultName = DEFAULT_DEVELOPER_NAM
           name
         )}&state=${encodeURIComponent(
           JSON.stringify({
-            provider: 'development',
+            provider: "development",
             nonce,
             redirect_uri,
           })

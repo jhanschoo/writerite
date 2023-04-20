@@ -13,7 +13,7 @@
       "dependsOn": ["codegen", "db:push"]
     },
     "lint": {
-      "dependsOn": ["codegen"]
+      "dependsOn": ["codegen", "format"]
     },
     "codegen": {
       "dependsOn": ["^codegen", "^test", "db:generate"],
@@ -26,6 +26,9 @@
       "cache": false,
       "persistent": true,
       "dependsOn": ["codegen", "db:generate"]
+    },
+    "format": {
+      "cache": false
     },
     "clean": {
       "cache": false

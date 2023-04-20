@@ -1,1 +1,1 @@
-export * from './ManageDeckCardsUpload';
+export * from "./ManageDeckCardsUpload";

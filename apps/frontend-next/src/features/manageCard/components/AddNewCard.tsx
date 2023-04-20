@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   Button,
   Box,
@@ -9,49 +9,51 @@ import {
   Text,
   Flex,
   getStylesRef,
-} from '@mantine/core';
+} from "@mantine/core";
 
-import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
-import { useMutation } from 'urql';
-import { ManageCardAltAnswers } from './ManageCardAltAnswers';
-import { JSONContent, useEditor } from '@tiptap/react';
-import { graphql } from '@generated/gql';
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from "@/components/editor";
+import { useMutation } from "urql";
+import { ManageCardAltAnswers } from "./ManageCardAltAnswers";
+import { JSONContent, useEditor } from "@tiptap/react";
+import { graphql } from "@generated/gql";
 
 const useStyles = createStyles(({ fn }) => {
-  const { background, hover, border, color } = fn.variant({ variant: 'default' });
+  const { background, hover, border, color } = fn.variant({
+    variant: "default",
+  });
   return {
     cardRoot: {
-      [`&:hover .${getStylesRef('cardCloseButton')}`]: {
-        visibility: 'visible',
+      [`&:hover .${getStylesRef("cardCloseButton")}`]: {
+        visibility: "visible",
       },
       // workaround for non-static Styles API for @mantine/tiptap@5.9.0 not being supported
-      '& .mantine-RichTextEditor-root': {
-        border: 'none',
+      "& .mantine-RichTextEditor-root": {
+        border: "none",
         color,
         ...fn.hover({
           backgroundColor: hover,
         }),
       },
-      '& .mantine-RichTextEditor-toolbar': {
-        border: 'none',
-        background: 'transparent',
+      "& .mantine-RichTextEditor-toolbar": {
+        border: "none",
+        background: "transparent",
       },
-      '& .mantine-RichTextEditor-content': {
-        background: 'transparent',
+      "& .mantine-RichTextEditor-content": {
+        background: "transparent",
       },
     },
     cardCloseButton: {
-      ref: getStylesRef('cardCloseButton'),
-      position: 'absolute',
+      ref: getStylesRef("cardCloseButton"),
+      position: "absolute",
       top: 0,
       right: 0,
-      visibility: 'hidden',
+      visibility: "hidden",
       borderTopLeftRadius: 0,
       borderBottomRightRadius: 0,
     },
     boxRoot: {
       // for 'LoadingOverlay' to work
-      position: 'relative',
+      position: "relative",
     },
   };
 });
@@ -62,30 +64,35 @@ interface Props {
 }
 
 const AddNewCardMutation = graphql(/* GraphQL */ `
-  mutation ManageCardAddNewCardMutation($deckId: ID!, $cards: [CardCreateMutationInput!]!) {
+  mutation ManageCardAddNewCardMutation(
+    $deckId: ID!
+    $cards: [CardCreateMutationInput!]!
+  ) {
     deckAddCards(deckId: $deckId, cards: $cards) {
       id
     }
   }
 `);
 
-
 export const AddNewCard = ({ deckId, onDone }: Props) => {
   const { classes } = useStyles();
   const [promptContent, setPromptContent] = useState<JSONContent | null>(null);
-  const [fullAnswerContent, setFullAnswerContent] = useState<JSONContent | null>(null);
+  const [fullAnswerContent, setFullAnswerContent] =
+    useState<JSONContent | null>(null);
   const [answerValues, setAnswerValues] = useState<string[]>([]);
   const [{ fetching }, deckAddCard] = useMutation(AddNewCardMutation);
   // TODO: handle updating local state
   const updateStateToServer = () => {
     return deckAddCard({
       deckId,
-      cards: [{
-        prompt: promptContent,
-        fullAnswer: fullAnswerContent,
-        answers: answerValues,
-        isTemplate: false,
-      }],
+      cards: [
+        {
+          prompt: promptContent,
+          fullAnswer: fullAnswerContent,
+          answers: answerValues,
+          isTemplate: false,
+        },
+      ],
     });
   };
   const handleSave = async () => {
@@ -142,9 +149,20 @@ export const AddNewCard = ({ deckId, onDone }: Props) => {
         </Card.Section>
         <Divider />
         <Card.Section inheritPadding py="sm">
-          <Flex gap="xs" direction={{ base: 'column', md: 'row' }} align={{ md: 'flex-end' }}>
-            <ManageCardAltAnswers answers={answerValues} onAnswersSave={setAnswerValues} />
-            <Flex gap="xs" wrap={{ base: 'wrap', sm: 'nowrap' }} justify="flex-end">
+          <Flex
+            gap="xs"
+            direction={{ base: "column", md: "row" }}
+            align={{ md: "flex-end" }}
+          >
+            <ManageCardAltAnswers
+              answers={answerValues}
+              onAnswersSave={setAnswerValues}
+            />
+            <Flex
+              gap="xs"
+              wrap={{ base: "wrap", sm: "nowrap" }}
+              justify="flex-end"
+            >
               <Button variant="subtle" onClick={onDone}>
                 Cancel
               </Button>

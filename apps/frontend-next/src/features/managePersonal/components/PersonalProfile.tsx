@@ -1,9 +1,16 @@
-import { ToolbaredRichTextEditor, useContentEditor } from '@/components/editor';
-import { UserProfile } from '@/components/user';
-import { Button, Flex, Input, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { useState } from 'react';
-import { useMutation } from 'urql';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ToolbaredRichTextEditor, useContentEditor } from "@/components/editor";
+import { UserProfile } from "@/components/user";
+import {
+  Button,
+  Flex,
+  Input,
+  LoadingOverlay,
+  Stack,
+  Text,
+} from "@mantine/core";
+import { useState } from "react";
+import { useMutation } from "urql";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 export const PersonalProfileFragment = graphql(/* GraphQL */ `
   fragment PersonalProfile on User {
@@ -27,14 +34,16 @@ interface Props {
 
 export const PersonalProfile = ({ user }: Props) => {
   const userFragment = useFragment(PersonalProfileFragment, user);
-  const [{ fetching }, updateProfile] = useMutation(PersonalProfileEditMutation);
+  const [{ fetching }, updateProfile] = useMutation(
+    PersonalProfileEditMutation
+  );
   const [bio, setBio] = useState(userFragment.bio ?? null);
   const [editing, setEditing] = useState(false);
   const [bioEditor, resetBioEditorContent] = useContentEditor({
     editorComponent: ToolbaredRichTextEditor,
     content: bio,
     setContent: setBio,
-    placeholder: 'Tell us about yourself!',
+    placeholder: "Tell us about yourself!",
   });
   const handleUpdateProfile = async () => {
     const { data } = await updateProfile({ input: { bio } });
@@ -63,7 +72,7 @@ export const PersonalProfile = ({ user }: Props) => {
         <Stack
           sx={{
             // for 'LoadingOverlay' to work
-            position: 'relative',
+            position: "relative",
           }}
         >
           <LoadingOverlay visible={fetching} />

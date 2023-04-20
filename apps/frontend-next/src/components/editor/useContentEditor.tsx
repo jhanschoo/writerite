@@ -1,11 +1,11 @@
-import { JSONObject } from '@/utils';
-import { RichTextEditorProps } from '@mantine/tiptap';
-import Placeholder from '@tiptap/extension-placeholder';
-import { useEditor } from '@tiptap/react';
-import { DEFAULT_EDITOR_PROPS } from './common';
+import { JSONObject } from "@/utils";
+import { RichTextEditorProps } from "@mantine/tiptap";
+import Placeholder from "@tiptap/extension-placeholder";
+import { useEditor } from "@tiptap/react";
+import { DEFAULT_EDITOR_PROPS } from "./common";
 
 export interface UseEditorProps {
-  editorComponent: (props: Pick<RichTextEditorProps, 'editor'>) => JSX.Element;
+  editorComponent: (props: Pick<RichTextEditorProps, "editor">) => JSX.Element;
   content: JSONObject | null;
   setContent: (content: JSONObject) => void;
   placeholder?: string;

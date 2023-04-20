@@ -1,4 +1,4 @@
-import { NextPage } from 'next';
+import { NextPage } from "next";
 
 const SsgBare: NextPage = () => <p>Hello World!</p>;
 

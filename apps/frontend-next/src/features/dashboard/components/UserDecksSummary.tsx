@@ -1,5 +1,5 @@
-import { useRouter } from 'next/router';
-import { useMutation, useQuery } from 'urql';
+import { useRouter } from "next/router";
+import { useMutation, useQuery } from "urql";
 import {
   Button,
   Card,
@@ -9,26 +9,28 @@ import {
   Text,
   Title,
   UnstyledButton,
-} from '@mantine/core';
-import { IconSearch, IconPlus } from '@tabler/icons-react';
-import { formatISO, parseISO } from 'date-fns';
-import { DECK_DETAIL_PATH, DECK_PATH } from '@/paths';
-import { DeckCompactSummaryContent } from '@/components/deck';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+} from "@mantine/core";
+import { IconSearch, IconPlus } from "@tabler/icons-react";
+import { formatISO, parseISO } from "date-fns";
+import { DECK_DETAIL_PATH, DECK_PATH } from "@/paths";
+import { DeckCompactSummaryContent } from "@/components/deck";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 5;
 
 const useStyles = createStyles((theme) => {
-  const { background: backgroundColor, hover } = theme.fn.variant({ variant: 'default' });
+  const { background: backgroundColor, hover } = theme.fn.variant({
+    variant: "default",
+  });
   return {
     card: {
-      overflow: 'visible',
+      overflow: "visible",
     },
     buttonSection: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      overflow: 'visible',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      overflow: "visible",
     },
     deckItem: {
       backgroundColor,
@@ -37,14 +39,16 @@ const useStyles = createStyles((theme) => {
       }),
     },
     createDeckButton: {
-      position: 'relative',
-      bottom: '-1rem',
+      position: "relative",
+      bottom: "-1rem",
     },
   };
 });
 
 const NewDeckItemMutation = graphql(/* GraphQL */ `
-  mutation UserDecksSummaryNewDeckItemMutation($input: DeckCreateMutationInput!) {
+  mutation UserDecksSummaryNewDeckItemMutation(
+    $input: DeckCreateMutationInput!
+  ) {
     deckCreate(input: $input) {
       id
     }
@@ -58,11 +62,11 @@ const NewDeckItem = () => {
   const handleCreateDeck = async () => {
     const createdDeck = await newDeckItemMutation({
       input: {
-        answerLang: 'en',
+        answerLang: "en",
         cards: [],
         description: null,
-        name: '',
-        promptLang: 'en',
+        name: "",
+        promptLang: "en",
         published: false,
       },
     });
@@ -92,10 +96,16 @@ export const UserDecksSummaryDeckItemFragment = graphql(/* GraphQL */ `
   }
 `);
 
-const DeckItem = ({ deck }: { deck: FragmentType<typeof UserDecksSummaryDeckItemFragment> }) => {
+const DeckItem = ({
+  deck,
+}: {
+  deck: FragmentType<typeof UserDecksSummaryDeckItemFragment>;
+}) => {
   const deckFragment = useFragment(UserDecksSummaryDeckItemFragment, deck);
   const { id, editedAt } = deckFragment;
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
+  const editedAtDisplay = formatISO(parseISO(editedAt), {
+    representation: "date",
+  });
   const { classes } = useStyles();
   const router = useRouter();
   return (
@@ -118,7 +128,13 @@ const UserDecksSummaryQuery = graphql(/* GraphQL */ `
     $last: Int
     $input: DecksQueryInput!
   ) {
-    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+    decks(
+      after: $after
+      before: $before
+      first: $first
+      last: $last
+      input: $input
+    ) {
       edges {
         cursor
         node {

@@ -36,7 +36,7 @@
   "devDependencies": {
     "eslint": "^8.38.0",
     "eslint-config-custom-server": "workspace:*",
-    "prettier": "^2.8.7",
+    "prettier-config-custom": "workspace:*",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "tsconfig": "workspace:*"
@@ -46,6 +46,7 @@
     "app:start": "node dist/src/index.js",
     "dev": "export $(xargs -a .env -d '\\n') NODE_ENV=development && ts-node-dev --exit-child --respawn src/index.ts",
     "echo-for-dep-graph": "echo",
-    "lint": "eslint && prettier --write ."
+    "lint": "eslint",
+    "format": "prettier -w ."
   }
 }

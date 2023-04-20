@@ -1,12 +1,20 @@
-import { PropsWithChildren } from 'react';
-import { useQuery } from 'urql';
-import { Avatar, Button, Card, createStyles, Text, Tooltip, UnstyledButton } from '@mantine/core';
-import { alertGradient, alertGradientHover } from '@/lib/mantine/fns';
-import { ProfilePicture } from '@/features/profilePicture/components';
-import { FriendActivity } from './FriendActivity';
-import { ROOM_DETAIL_PATH } from '@/paths';
-import { useRouter } from 'next/router';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { PropsWithChildren } from "react";
+import { useQuery } from "urql";
+import {
+  Avatar,
+  Button,
+  Card,
+  createStyles,
+  Text,
+  Tooltip,
+  UnstyledButton,
+} from "@mantine/core";
+import { alertGradient, alertGradientHover } from "@/lib/mantine/fns";
+import { ProfilePicture } from "@/features/profilePicture/components";
+import { FriendActivity } from "./FriendActivity";
+import { ROOM_DETAIL_PATH } from "@/paths";
+import { useRouter } from "next/router";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -36,19 +44,19 @@ const useStyles = createStyles((theme) => {
       ...theme.fn.hover({
         backgroundImage: alertGradientHover(theme),
       }),
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
     },
     avatarGroup: {
-      display: 'inline-flex',
+      display: "inline-flex",
     },
     roomItemButton: {
       borderColor: theme.white,
       color: theme.white,
-      minWidth: '25%',
+      minWidth: "25%",
       ...theme.fn.hover({
-        background: 'none',
+        background: "none",
       }),
     },
     roomItemText: {
@@ -63,17 +71,24 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-const RoomItem = ({ room }: { room: FragmentType<typeof RoomNotificationsRoomItemFragment> }) => {
+const RoomItem = ({
+  room,
+}: {
+  room: FragmentType<typeof RoomNotificationsRoomItemFragment>;
+}) => {
   const roomFragment = useFragment(RoomNotificationsRoomItemFragment, room);
   const { id, activeRound, occupants } = roomFragment;
   const roomName = activeRound?.slug || id;
   const { classes } = useStyles();
   const router = useRouter();
   return (
-    <UnstyledButton onClick={() => router.push(ROOM_DETAIL_PATH(id))} component="div">
+    <UnstyledButton
+      onClick={() => router.push(ROOM_DETAIL_PATH(id))}
+      component="div"
+    >
       <Card shadow="xl" radius="lg" mx="lg" className={classes.roomItem}>
         <Text fw="bolder" ta="center" m="md" className={classes.roomItemText}>
-          You are currently in a room with{' '}
+          You are currently in a room with{" "}
           <Avatar.Group spacing="xl" className={classes.avatarGroup}>
             {occupants.map((occupant, index) => (
               <ProfilePicture user={occupant} key={index} showTooltip />
@@ -81,7 +96,11 @@ const RoomItem = ({ room }: { room: FragmentType<typeof RoomNotificationsRoomIte
           </Avatar.Group>
           .
         </Text>
-        <Button variant="outline" className={classes.roomItemButton} radius="xl">
+        <Button
+          variant="outline"
+          className={classes.roomItemButton}
+          radius="xl"
+        >
           Rejoin
         </Button>
       </Card>

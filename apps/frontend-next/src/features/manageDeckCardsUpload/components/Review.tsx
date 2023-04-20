@@ -1,10 +1,10 @@
-import { Box, Button, Stack, Table, Text } from '@mantine/core';
-import { IconArrowLeft, IconUpload } from '@tabler/icons-react';
-import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
-import { useMutation } from 'urql';
-import { accumulateContentText } from '@/components/editor';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { ImportCardsData } from '../types';
+import { Box, Button, Stack, Table, Text } from "@mantine/core";
+import { IconArrowLeft, IconUpload } from "@tabler/icons-react";
+import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from "@/utils";
+import { useMutation } from "urql";
+import { accumulateContentText } from "@/components/editor";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { ImportCardsData } from "../types";
 
 export const ManageDeckCardsUploadReviewFragment = graphql(/* GraphQL */ `
   fragment ManageDeckCardsUploadReview on Deck {
@@ -15,7 +15,10 @@ export const ManageDeckCardsUploadReviewFragment = graphql(/* GraphQL */ `
 `);
 
 export const ManageDeckCardsAddCardsMutation = graphql(/* GraphQL */ `
-  mutation ManageDeckCardsAddCards($deckId: ID!, $cards: [CardCreateMutationInput!]!) {
+  mutation ManageDeckCardsAddCards(
+    $deckId: ID!
+    $cards: [CardCreateMutationInput!]!
+  ) {
     deckAddCards(deckId: $deckId, cards: $cards) {
       id
     }
@@ -29,25 +32,38 @@ interface Props extends ImportCardsData {
   onUploadCompleted(): unknown;
 }
 
-export const Review = ({ onCancel, onPreviousStep, cards, deck, onUploadCompleted }: Props) => {
-  const { id, cardsDirectCount, name } = useFragment(ManageDeckCardsUploadReviewFragment, deck);
+export const Review = ({
+  onCancel,
+  onPreviousStep,
+  cards,
+  deck,
+  onUploadCompleted,
+}: Props) => {
+  const { id, cardsDirectCount, name } = useFragment(
+    ManageDeckCardsUploadReviewFragment,
+    deck
+  );
   const [, deckAddCardsMutation] = useMutation(ManageDeckCardsAddCardsMutation);
   const numDeckCards = cardsDirectCount;
   const numCards = cards.length;
-  const postImportNumCards = Math.min(numDeckCards + numCards, NEXT_PUBLIC_MAX_CARDS_PER_DECK);
+  const postImportNumCards = Math.min(
+    numDeckCards + numCards,
+    NEXT_PUBLIC_MAX_CARDS_PER_DECK
+  );
   const cardsToImport = cards.slice(0, postImportNumCards - numDeckCards);
   const exceeded = numDeckCards + numCards > postImportNumCards;
   return (
     <Stack>
       <Text>
-        Your deck <strong>{name}</strong> currently has <strong>{numDeckCards}</strong> cards.
-        After importing, your deck will have <strong>{postImportNumCards}</strong> cards.
+        Your deck <strong>{name}</strong> currently has{" "}
+        <strong>{numDeckCards}</strong> cards. After importing, your deck will
+        have <strong>{postImportNumCards}</strong> cards.
       </Text>
       {exceeded && (
         <Text>
-          <strong>Not all the cards will be imported!</strong> Only the first{' '}
-          <strong>{cardsToImport.length}</strong> cards will be imported, since any more will put
-          the deck over the maximum number of cards.
+          <strong>Not all the cards will be imported!</strong> Only the first{" "}
+          <strong>{cardsToImport.length}</strong> cards will be imported, since
+          any more will put the deck over the maximum number of cards.
         </Text>
       )}
       <Table>
@@ -64,16 +80,28 @@ export const Review = ({ onCancel, onPreviousStep, cards, deck, onUploadComplete
             <tr key={index}>
               <td>{accumulateContentText(prompt)}</td>
               <td>{accumulateContentText(fullAnswer)}</td>
-              <td>{answers.length ? `+${answers.length} answers` : undefined}</td>
+              <td>
+                {answers.length ? `+${answers.length} answers` : undefined}
+              </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <Box sx={({ spacing }) => ({ display: 'flex', gap: spacing.xs, flexWrap: 'wrap-reverse' })}>
+      <Box
+        sx={({ spacing }) => ({
+          display: "flex",
+          gap: spacing.xs,
+          flexWrap: "wrap-reverse",
+        })}
+      >
         <Button onClick={onCancel} variant="subtle">
           Cancel
         </Button>
-        <Button variant="subtle" onClick={onPreviousStep} leftIcon={<IconArrowLeft />}>
+        <Button
+          variant="subtle"
+          onClick={onPreviousStep}
+          leftIcon={<IconArrowLeft />}
+        >
           Choose another file for import
         </Button>
         <Button

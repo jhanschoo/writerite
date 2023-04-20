@@ -1,4 +1,4 @@
-import { Flex } from '@mantine/core';
+import { Flex } from "@mantine/core";
 
 export interface DeckItemComponentProps<T> {
   deck: T;
@@ -10,9 +10,15 @@ interface Props<T> {
   justifyLeading?: boolean;
 }
 
-export const DecksList = <T,>({ decks, component: DeckItemComponent, justifyLeading }: Props<T>) => {
+export const DecksList = <T,>({
+  decks,
+  component: DeckItemComponent,
+  justifyLeading,
+}: Props<T>) => {
   const decksList =
-    decks?.map((deck, index) => <DeckItemComponent key={index} deck={deck} />) || [];
+    decks?.map((deck, index) => (
+      <DeckItemComponent key={index} deck={deck} />
+    )) || [];
   if (!justifyLeading) {
     return <Flex gap="sm">{decksList}</Flex>;
   }

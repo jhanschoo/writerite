@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { initDefaultServerSideUrqlClient } from '@lib/urql/initDefaultServerSideUrqlClient';
-import { graphql } from '@generated/gql';
+import type { NextApiRequest, NextApiResponse } from "next";
+import { initDefaultServerSideUrqlClient } from "@lib/urql/initDefaultServerSideUrqlClient";
+import { graphql } from "@generated/gql";
 
 export const FinalizeOauthSigninMutation = graphql(/* GraphQL */ `
   mutation FinalizeOauthSignin($input: FinalizeOauthSigninMutationInput!) {
@@ -22,13 +22,13 @@ export default async function handler(
 ): Promise<void> {
   const { error, code, state } = req.query;
   if (!error) {
-    if (typeof code !== 'string' || typeof state !== 'string') {
-      res.status(400).end('Invalid callback parameters');
+    if (typeof code !== "string" || typeof state !== "string") {
+      res.status(400).end("Invalid callback parameters");
       return;
     }
     const { provider, nonce, redirect_uri } = JSON.parse(state as string);
-    if (typeof provider !== 'string' || typeof nonce !== 'string') {
-      res.status(400).end('Invalid state');
+    if (typeof provider !== "string" || typeof nonce !== "string") {
+      res.status(400).end("Invalid state");
       return;
     }
     const [client] = initDefaultServerSideUrqlClient();
@@ -39,7 +39,7 @@ export default async function handler(
           provider,
           nonce,
           redirect_uri,
-        }
+        },
       })
       .toPromise();
     const sessionInfo = mutationRes?.data?.finalizeOauthSignin;
@@ -52,5 +52,5 @@ export default async function handler(
       return res.redirect(303, `/?${queryParams}`), undefined;
     }
   }
-  return res.redirect(303, '/'), undefined;
+  return res.redirect(303, "/"), undefined;
 }

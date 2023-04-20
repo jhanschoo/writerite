@@ -1,6 +1,6 @@
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { ManageRoomAddOccupants } from './ManageRoomAddOccupants';
-import { ManageRoomSetDeck } from './ManageRoomSetDeck';
+import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { ManageRoomAddOccupants } from "./ManageRoomAddOccupants";
+import { ManageRoomSetDeck } from "./ManageRoomSetDeck";
 
 const ManageRoomContextualFragment = graphql(/* GraphQL */ `
   fragment ManageRoomContextual on Room {
@@ -24,7 +24,7 @@ interface Props {
 export const ManageRoomContextual = ({ room }: Props) => {
   const roomFragment = useFragment(ManageRoomContextualFragment, room);
   if (!roomFragment.activeRound) {
-    return <ManageRoomSetDeck roomId={roomFragment.id} />
+    return <ManageRoomSetDeck roomId={roomFragment.id} />;
   }
   return null;
 };

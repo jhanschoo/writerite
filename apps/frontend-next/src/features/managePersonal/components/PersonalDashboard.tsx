@@ -1,35 +1,37 @@
-import { Box, Button, createStyles, Stack, Title } from '@mantine/core';
-import { IconPencil } from '@tabler/icons-react';
-import { PersonalFriends } from './PersonalFriends';
-import { PersonalProfile, PersonalProfileFragment } from './PersonalProfile';
-import { FragmentType } from '@generated/gql';
+import { Box, Button, createStyles, Stack, Title } from "@mantine/core";
+import { IconPencil } from "@tabler/icons-react";
+import { PersonalFriends } from "./PersonalFriends";
+import { PersonalProfile, PersonalProfileFragment } from "./PersonalProfile";
+import { FragmentType } from "@generated/gql";
 
 const useStyles = createStyles((theme) => ({
   gridBox: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(12, 1fr)',
+    display: "grid",
+    gridTemplateColumns: "repeat(12, 1fr)",
     maxWidth: theme.breakpoints.lg,
-    margin: 'auto',
+    margin: "auto",
     gap: theme.spacing.md,
   },
   headerPanel: {
-    gridColumn: 'span 12',
+    gridColumn: "span 12",
   },
   profilePanel: {
-    gridColumn: 'span 12',
+    gridColumn: "span 12",
     [`@media (min-width: ${theme.breakpoints.lg})`]: {
-      gridColumn: 'span 6',
+      gridColumn: "span 6",
     },
   },
   friendsPanel: {
-    gridColumn: 'span 12',
+    gridColumn: "span 12",
     [`@media (min-width: ${theme.breakpoints.lg})`]: {
-      gridColumn: 'span 6',
+      gridColumn: "span 6",
     },
   },
 }));
 
-export const PersonalDashboard = ({ user }: {
+export const PersonalDashboard = ({
+  user,
+}: {
   // TODO: change once PersonalFriends is implemented
   user: FragmentType<typeof PersonalProfileFragment>;
 }) => {

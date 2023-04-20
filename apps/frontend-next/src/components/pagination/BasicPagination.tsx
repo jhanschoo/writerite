@@ -1,5 +1,5 @@
-import { Pagination } from '@mantine/core';
-import { ElementType, ReactNode, useState } from 'react';
+import { Pagination } from "@mantine/core";
+import { ElementType, ReactNode, useState } from "react";
 
 export interface BasicPaginationProps {
   wrapper: ElementType;
@@ -10,7 +10,12 @@ export interface BasicPaginationProps {
 
 // BasicPagination takes in an array of keyed components and paginates them according to pageSize.
 // This is as opposed to receiving an array of data elements and calling a callback on only the data elements on the page. TODO: determine location of state management
-const BasicPagination = ({ wrapper: Wrapper, children, pageSize, top }: BasicPaginationProps) => {
+const BasicPagination = ({
+  wrapper: Wrapper,
+  children,
+  pageSize,
+  top,
+}: BasicPaginationProps) => {
   const [page, setPage] = useState(1);
   const paginationComponent = (
     <Pagination
@@ -22,7 +27,9 @@ const BasicPagination = ({ wrapper: Wrapper, children, pageSize, top }: BasicPag
   return (
     <>
       {top && paginationComponent}
-      <Wrapper>{children.slice(pageSize * (page - 1), pageSize * page)}</Wrapper>
+      <Wrapper>
+        {children.slice(pageSize * (page - 1), pageSize * page)}
+      </Wrapper>
       {paginationComponent}
     </>
   );

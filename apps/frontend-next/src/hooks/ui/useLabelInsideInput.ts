@@ -1,18 +1,18 @@
-import { createStyles } from '@mantine/core';
+import { createStyles } from "@mantine/core";
 
 export const useLabelInsideInput = createStyles((theme) => ({
   root: {
-    position: 'relative',
+    position: "relative",
   },
 
   input: {
-    height: 'auto',
+    height: "auto",
     paddingTop: 18,
   },
 
   label: {
-    position: 'absolute',
-    pointerEvents: 'none',
+    position: "absolute",
+    pointerEvents: "none",
     fontSize: theme.fontSizes.xs,
     paddingLeft: theme.spacing.sm,
     paddingTop: `calc(${theme.spacing.sm} / 2)`,

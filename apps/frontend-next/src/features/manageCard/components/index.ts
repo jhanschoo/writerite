@@ -1,2 +1,2 @@
-export * from './AddNewCard';
-export * from './ManageCard';
+export * from "./AddNewCard";
+export * from "./ManageCard";

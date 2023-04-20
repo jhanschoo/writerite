@@ -1,6 +1,6 @@
-import { Text } from '@mantine/core';
-import { formatISO, parseISO } from 'date-fns';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Text } from "@mantine/core";
+import { formatISO, parseISO } from "date-fns";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 const ManageDeckAdditionalInfoFragment = graphql(/* GraphQL */ `
   fragment ManageDeckAdditionalInfo on Deck {
@@ -14,7 +14,9 @@ export const ManageDeckAdditionalInfo = ({
   deck: FragmentType<typeof ManageDeckAdditionalInfoFragment>;
 }) => {
   const { editedAt } = useFragment(ManageDeckAdditionalInfoFragment, deck);
-  const editedAtDisplay = formatISO(parseISO(editedAt), { representation: 'date' });
+  const editedAtDisplay = formatISO(parseISO(editedAt), {
+    representation: "date",
+  });
   return (
     <Text color="dimmed" size="xs">
       Last edited on {editedAtDisplay}

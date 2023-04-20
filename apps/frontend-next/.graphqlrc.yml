@@ -15,7 +15,7 @@ extensions:
               content: import { JSONValue, JSONObject } from '../../src/utils/jsonTypes'
       ./generated/schema.graphql.json:
         plugins:
-          - 'introspection'
+          - "introspection"
         config:
           minify: true
     hooks:

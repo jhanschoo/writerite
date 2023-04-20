@@ -1,14 +1,20 @@
-import { useState } from 'react';
-import { useMutation } from 'urql';
-import { Button, Stack, Text } from '@mantine/core';
-import { IconCheck, IconLinkOff, IconPlus } from '@tabler/icons-react';
-import { BasicList } from '@/components/BasicList';
-import { SubdeckListItemContent, SubdeckListItemContentFragment } from './SubdeckListItemContent';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
+import { useState } from "react";
+import { useMutation } from "urql";
+import { Button, Stack, Text } from "@mantine/core";
+import { IconCheck, IconLinkOff, IconPlus } from "@tabler/icons-react";
+import { BasicList } from "@/components/BasicList";
+import {
+  SubdeckListItemContent,
+  SubdeckListItemContentFragment,
+} from "./SubdeckListItemContent";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { ManageDeckSubdecksFragment } from "../fragments/ManageDeckSubdecksFragment";
 
 const ManageDeckSubdecksBrowseRemoveSubdeckMutation = graphql(/* GraphQL */ `
-  mutation ManageDeckSubdecksBrowseRemoveSubdeck($deckId: ID!, $subdeckId: ID!) {
+  mutation ManageDeckSubdecksBrowseRemoveSubdeck(
+    $deckId: ID!
+    $subdeckId: ID!
+  ) {
     deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {
       id
     }
@@ -23,12 +29,11 @@ interface Props {
 // TODO: revisit pagination
 export const ManageDeckSubdecksBrowse = ({ deck, onAddSubdeck }: Props) => {
   const deckFragment = useFragment(ManageDeckSubdecksFragment, deck);
-  const {
-    id: deckId,
-    subdecks,
-  } = deckFragment;
+  const { id: deckId, subdecks } = deckFragment;
   const [removed, setRemoved] = useState<string[]>([]);
-  const [, removeSubdeck] = useMutation(ManageDeckSubdecksBrowseRemoveSubdeckMutation);
+  const [, removeSubdeck] = useMutation(
+    ManageDeckSubdecksBrowseRemoveSubdeckMutation
+  );
   const [persistedSubdecks] = useState(subdecks);
   const handleRemove = async (subdeckId: string) => {
     await removeSubdeck({ deckId, subdeckId });
@@ -54,7 +59,7 @@ export const ManageDeckSubdecksBrowse = ({ deck, onAddSubdeck }: Props) => {
         radius="xl"
         leftIcon={<IconPlus />}
         onClick={onAddSubdeck}
-        sx={{ alignSelf: 'center' }}
+        sx={{ alignSelf: "center" }}
       >
         Link / add subdecks
       </Button>

@@ -1,14 +1,14 @@
-import { KeyboardEvent } from 'react';
-import { createStyles, Group, Kbd, Stack, Text, Textarea } from '@mantine/core';
-import { IconSend } from '@tabler/icons-react';
-import { useForm } from '@mantine/form';
-import { useMutation } from 'urql';
-import { ActionIcon } from '@/components/ActionIcon';
-import { graphql } from '@generated/gql';
+import { KeyboardEvent } from "react";
+import { createStyles, Group, Kbd, Stack, Text, Textarea } from "@mantine/core";
+import { IconSend } from "@tabler/icons-react";
+import { useForm } from "@mantine/form";
+import { useMutation } from "urql";
+import { ActionIcon } from "@/components/ActionIcon";
+import { graphql } from "@generated/gql";
 
 const useStyles = createStyles((theme) => ({
   input: {
-    overflow: 'hidden',
+    overflow: "hidden",
   },
 }));
 
@@ -28,10 +28,12 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
   const { classes } = useStyles();
   const form = useForm({
     initialValues: {
-      chatInput: '',
+      chatInput: "",
     },
   });
-  const [{ fetching }, messageCreateMutation] = useMutation(ManageRoomPrimaryInputMutation);
+  const [{ fetching }, messageCreateMutation] = useMutation(
+    ManageRoomPrimaryInputMutation
+  );
   const submitForm = form.onSubmit((values) => {
     form.reset();
     messageCreateMutation({
@@ -40,7 +42,10 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
     });
   });
   const handleSubmitAccelerator = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)) {
+    if (
+      e.key === "Enter" &&
+      !(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)
+    ) {
       e.preventDefault();
       submitForm();
     }
@@ -52,11 +57,11 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
           <Text
             fz="xs"
             sx={{
-              visibility: form.values.chatInput ? 'visible' : 'hidden',
+              visibility: form.values.chatInput ? "visible" : "hidden",
             }}
           >
-            (<Kbd>Alt</Kbd>/<Kbd>Shift</Kbd>/<Kbd>Ctrl</Kbd>/<Kbd>Option</Kbd>)+<Kbd>Enter</Kbd> to
-            insert a line
+            (<Kbd>Alt</Kbd>/<Kbd>Shift</Kbd>/<Kbd>Ctrl</Kbd>/<Kbd>Option</Kbd>)+
+            <Kbd>Enter</Kbd> to insert a line
           </Text>
           <Textarea
             autosize
@@ -72,7 +77,7 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
               </Group>
             }
             onKeyDown={handleSubmitAccelerator}
-            {...form.getInputProps('chatInput')}
+            {...form.getInputProps("chatInput")}
           />
         </Stack>
       </Group>

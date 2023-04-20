@@ -1,6 +1,2 @@
-coverage/
 dist/
-generated/
-migrations/
 
-patch_node_modules/

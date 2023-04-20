@@ -1,11 +1,11 @@
-import { ToolbaredRichTextEditor, useContentViewer } from '@/components/editor';
-import { useContentEditor } from '@/components/editor/useContentEditor';
-import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
-import { useState } from 'react';
-import { useMutation } from 'urql';
-import { ManageDeckFrontMatterContent } from './ManageDeckFrontMatterContent';
-import { ManageDeckFrontMatterEditor } from './ManageDeckFrontMatterEditor';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ToolbaredRichTextEditor, useContentViewer } from "@/components/editor";
+import { useContentEditor } from "@/components/editor/useContentEditor";
+import { Box, Button, Flex, LoadingOverlay } from "@mantine/core";
+import { useState } from "react";
+import { useMutation } from "urql";
+import { ManageDeckFrontMatterContent } from "./ManageDeckFrontMatterContent";
+import { ManageDeckFrontMatterEditor } from "./ManageDeckFrontMatterEditor";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 const ManageDeckFrontMatterEditMutation = graphql(/* GraphQL */ `
   mutation ManageDeckFrontMatterEdit($input: DeckEditMutationInput!) {
@@ -33,15 +33,19 @@ interface Props {
 
 export const ManageDeckFrontMatter = ({ deck }: Props) => {
   const deckFragment = useFragment(ManageDeckFrontMatterFragment, deck);
-  const [{ fetching }, mutateDeckInfo] = useMutation(ManageDeckFrontMatterEditMutation);
+  const [{ fetching }, mutateDeckInfo] = useMutation(
+    ManageDeckFrontMatterEditMutation
+  );
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(deckFragment.name);
-  const [description, setDescription] = useState(deckFragment.description ?? null);
+  const [description, setDescription] = useState(
+    deckFragment.description ?? null
+  );
   const [descriptionEditor, resetEditorContent] = useContentEditor({
     editorComponent: ToolbaredRichTextEditor,
     content: description,
     setContent: setDescription,
-    placeholder: 'Write a description...',
+    placeholder: "Write a description...",
   });
   const [descriptionViewer, viewer] = useContentViewer(description);
   const content = (
@@ -62,7 +66,9 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
     return content;
   }
   const handleSave = async () => {
-    const { data } = await mutateDeckInfo({ input: { id: deckFragment.id, name, description } });
+    const { data } = await mutateDeckInfo({
+      input: { id: deckFragment.id, name, description },
+    });
     if (data) {
       const {
         deckEdit: { name, description },
@@ -76,12 +82,12 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
     <Flex wrap="wrap">
       <Box
         sx={(theme) => ({
-          width: '100%',
+          width: "100%",
           [`@media (min-width: ${theme.breakpoints.md})`]: {
-            width: '50%',
+            width: "50%",
           },
           // for 'LoadingOverlay' to work
-          position: 'relative',
+          position: "relative",
         })}
         p="xs"
       >
@@ -107,9 +113,9 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
       </Box>
       <Box
         sx={(theme) => ({
-          width: '100%',
+          width: "100%",
           [`@media (min-width: ${theme.breakpoints.md})`]: {
-            width: '50%',
+            width: "50%",
           },
         })}
         p="xs"

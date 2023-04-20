@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { Button, Flex, Stack, Text } from '@mantine/core';
+import { useState } from "react";
+import { Button, Flex, Stack, Text } from "@mantine/core";
 
-import { ManageCardAltAnswerInput } from './ManageCardAltAnswerInput';
-import { ManageCardAltAnswer } from './ManageCardAltAnswer';
-import { IconPlus } from '@tabler/icons-react';
+import { ManageCardAltAnswerInput } from "./ManageCardAltAnswerInput";
+import { ManageCardAltAnswer } from "./ManageCardAltAnswer";
+import { IconPlus } from "@tabler/icons-react";
 
 interface Props {
   answers: string[];
@@ -54,7 +54,11 @@ export const ManageCardAltAnswers = ({ answers, onAnswersSave }: Props) => {
         {
           // Button to add a new answer
           currentlyEditing === null && (
-            <Button compact onClick={() => setCurrentlyEditing(answers.length)} variant="default">
+            <Button
+              compact
+              onClick={() => setCurrentlyEditing(answers.length)}
+              variant="default"
+            >
               <IconPlus size={18} />
             </Button>
           )
@@ -63,7 +67,7 @@ export const ManageCardAltAnswers = ({ answers, onAnswersSave }: Props) => {
           // Component if editing a new answer
           currentlyEditing === answers.length ? (
             <ManageCardAltAnswerInput
-              initialAnswer={''}
+              initialAnswer={""}
               onCancel={handleCancel}
               onSave={handleSave(answers.length)}
             />

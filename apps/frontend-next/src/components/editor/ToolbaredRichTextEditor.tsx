@@ -1,6 +1,8 @@
-import { RichTextEditorProps, RichTextEditor } from '@mantine/tiptap';
+import { RichTextEditorProps, RichTextEditor } from "@mantine/tiptap";
 
-export const ToolbaredRichTextEditor = ({ editor }: Pick<RichTextEditorProps, 'editor'>) => {
+export const ToolbaredRichTextEditor = ({
+  editor,
+}: Pick<RichTextEditorProps, "editor">) => {
   return (
     <RichTextEditor editor={editor}>
       <RichTextEditor.Toolbar>

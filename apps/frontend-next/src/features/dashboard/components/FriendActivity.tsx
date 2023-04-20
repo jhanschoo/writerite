@@ -1,10 +1,10 @@
-import { Box, Button, createStyles, Paper, Text, Title } from '@mantine/core';
-import { IconFriends } from '@tabler/icons-react';
+import { Box, Button, createStyles, Paper, Text, Title } from "@mantine/core";
+import { IconFriends } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   header: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
   },
   emptyStatsText: {
     fontSize: theme.fontSizes.xl,
@@ -25,7 +25,11 @@ export const FriendActivity = () => {
         <Title order={2} size="h3">
           Currently Active
         </Title>
-        <Button variant="outline" radius="xl" leftIcon={<IconFriends size={21} />}>
+        <Button
+          variant="outline"
+          radius="xl"
+          leftIcon={<IconFriends size={21} />}
+        >
           View All Friends
         </Button>
       </Box>

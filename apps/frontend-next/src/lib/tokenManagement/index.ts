@@ -1,11 +1,11 @@
-import { decodeJwt } from 'jose';
-import { isSSRContext } from '@/utils';
+import { decodeJwt } from "jose";
+import { isSSRContext } from "@/utils";
 
-const ACCESS_TOKEN_KEY = 'auth_token';
+const ACCESS_TOKEN_KEY = "auth_token";
 
-const CURRENT_USER_KEY = 'auth_current_user';
+const CURRENT_USER_KEY = "auth_current_user";
 
-const EXPIRY_KEY = 'auth_expiry';
+const EXPIRY_KEY = "auth_expiry";
 
 const EXPIRY_TOLERANCE_IN_SECONDS = 15;
 
@@ -33,12 +33,12 @@ export function setSessionInfo({ token, currentUser }: SerializedSessionInfo) {
  */
 export function expireCurrentSession() {
   if (window?.localStorage?.getItem(EXPIRY_KEY)) {
-    window.localStorage.setItem(EXPIRY_KEY, '0');
+    window.localStorage.setItem(EXPIRY_KEY, "0");
   }
 }
 
 export function sessionNeedsRefreshing() {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return false;
   }
   const feExp = window?.localStorage?.getItem(EXPIRY_KEY);
@@ -62,7 +62,11 @@ export function getCurrentUser() {
     return null;
   }
   const serializedCurrentUser = window?.localStorage?.getItem(CURRENT_USER_KEY);
-  return (serializedCurrentUser && (JSON.parse(serializedCurrentUser) as CurrentUser)) || null;
+  return (
+    (serializedCurrentUser &&
+      (JSON.parse(serializedCurrentUser) as CurrentUser)) ||
+    null
+  );
 }
 
 export function unsetSessionInfo() {
@@ -84,8 +88,8 @@ export interface SessionInfo {
 }
 
 export enum Roles {
-  User = 'User',
-  Admin = 'Admin',
+  User = "User",
+  Admin = "Admin",
 }
 
 export interface CurrentUser {

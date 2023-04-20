@@ -1,17 +1,24 @@
-import { ColorScheme, ColorSchemeProvider, MantineProvider } from '@mantine/core';
-import { PropsWithChildren, useMemo, useState } from 'react';
-import { useTheme } from '@/hooks/useTheme';
-import { useRouter } from 'next/router';
+import {
+  ColorScheme,
+  ColorSchemeProvider,
+  MantineProvider,
+} from "@mantine/core";
+import { PropsWithChildren, useMemo, useState } from "react";
+import { useTheme } from "@/hooks/useTheme";
+import { useRouter } from "next/router";
 
 export const Providers = ({ children }: PropsWithChildren) => {
   const router = useRouter();
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const [colorScheme, setColorScheme] = useState<ColorScheme>("light");
   const toggleColorScheme = (value?: ColorScheme) => {
-    setColorScheme(value || (colorScheme === 'light' ? 'dark' : 'light'));
+    setColorScheme(value || (colorScheme === "light" ? "dark" : "light"));
   };
   const theme = useTheme(colorScheme, router.locale);
   return (
-    <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
       <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
         {children}
       </MantineProvider>

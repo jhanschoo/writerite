@@ -4,28 +4,28 @@ in the same way as the return values of functions provided by
 
 ```javascript
 export default function MyApp({ Component, pageProps }) {
-  const myFont = useTextFont({ lang: 'en' });
+  const myFont = useTextFont({ lang: "en" });
   return (
     <main className={myFont.className}>
       <Component {...pageProps} />
     </main>
-  )
+  );
 }
 ```
 
 gives the same result as
 
 ```javascript
-import { Inter } from 'next/font/google'
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function MyApp({ Component, pageProps }) {
   return (
     <main className={inter.className}>
       <Component {...pageProps} />
     </main>
-  )
+  );
 }
 ```
 

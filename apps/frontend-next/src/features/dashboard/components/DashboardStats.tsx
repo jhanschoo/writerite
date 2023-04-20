@@ -1,4 +1,4 @@
-import { createStyles, Paper, Text } from '@mantine/core';
+import { createStyles, Paper, Text } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   emptyStatsText: {

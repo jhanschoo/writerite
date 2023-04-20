@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useQuery } from 'urql';
-import { Button, Card, Flex, Stack, Text, UnstyledButton } from '@mantine/core';
-import { useRouter } from 'next/router';
-import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
-import { DECK_DETAIL_PATH } from '@/paths';
-import { graphql } from '@generated/gql';
+import { useState } from "react";
+import { useQuery } from "urql";
+import { Button, Card, Flex, Stack, Text, UnstyledButton } from "@mantine/core";
+import { useRouter } from "next/router";
+import { DeckCompactSummaryContent, DeckName } from "@/components/deck";
+import { DECK_DETAIL_PATH } from "@/paths";
+import { graphql } from "@generated/gql";
 
 export const INITIAL_RECENT_DECKS = 6;
 
@@ -16,7 +16,13 @@ const RecentDecksQuery = graphql(/* GraphQL */ `
     $last: Int
     $input: DecksQueryInput!
   ) {
-    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+    decks(
+      after: $after
+      before: $before
+      first: $first
+      last: $last
+      input: $input
+    ) {
       edges {
         cursor
         node {
@@ -45,13 +51,13 @@ export const RecentDecks = () => {
       ? [
           <UnstyledButton
             component="div"
-            sx={{ flexGrow: 1, maxWidth: '100%' }}
+            sx={{ flexGrow: 1, maxWidth: "100%" }}
             onClick={() => router.push(DECK_DETAIL_PATH(edge.node.id))}
           >
             <Card
               sx={(theme) => {
                 const { border, background, color, hover } = theme.fn.variant({
-                  variant: 'default',
+                  variant: "default",
                 });
                 return {
                   backgroundColor: background,
@@ -77,13 +83,22 @@ export const RecentDecks = () => {
   recentDeckItems.reverse();
   return (
     <Stack>
-      <Flex direction="row-reverse" wrap="wrap-reverse" gap="xs" justify="stretch">
+      <Flex
+        direction="row-reverse"
+        wrap="wrap-reverse"
+        gap="xs"
+        justify="stretch"
+      >
         {recentDeckItems}
       </Flex>
       {canShowMoreRecentDecks && (
-        <Button fullWidth variant="subtle" onClick={() => setRecentShowMore(!recentShowMore)}>
-          {!recentShowMore && 'Show more'}
-          {recentShowMore && 'Show less'}
+        <Button
+          fullWidth
+          variant="subtle"
+          onClick={() => setRecentShowMore(!recentShowMore)}
+        >
+          {!recentShowMore && "Show more"}
+          {recentShowMore && "Show less"}
         </Button>
       )}
     </Stack>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -9,49 +9,51 @@ import {
   Text,
   Flex,
   getStylesRef,
-} from '@mantine/core';
-import stringify from 'fast-json-stable-stringify';
+} from "@mantine/core";
+import stringify from "fast-json-stable-stringify";
 
-import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
-import { IconTrash } from '@tabler/icons-react';
-import { DebouncedState, useDebouncedCallback } from 'use-debounce';
-import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
-import { useMutation } from 'urql';
-import { ManageCardAltAnswers } from './ManageCardAltAnswers';
-import { JSONContent, useEditor } from '@tiptap/react';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from "@/components/editor";
+import { IconTrash } from "@tabler/icons-react";
+import { DebouncedState, useDebouncedCallback } from "use-debounce";
+import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from "@/utils";
+import { useMutation } from "urql";
+import { ManageCardAltAnswers } from "./ManageCardAltAnswers";
+import { JSONContent, useEditor } from "@tiptap/react";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
 
 const useStyles = createStyles(({ fn }) => {
-  const { background, hover, border, color } = fn.variant({ variant: 'default' });
+  const { background, hover, border, color } = fn.variant({
+    variant: "default",
+  });
   return {
     cardRoot: {
       // for 'LoadingOverlay' to work
-      position: 'relative',
-      [`&:hover .${getStylesRef('cardCloseButton')}`]: {
-        visibility: 'visible',
+      position: "relative",
+      [`&:hover .${getStylesRef("cardCloseButton")}`]: {
+        visibility: "visible",
       },
       // workaround for non-static Styles API for @mantine/tiptap@5.9.0 not being supported
-      '& .mantine-RichTextEditor-root': {
-        border: 'none',
+      "& .mantine-RichTextEditor-root": {
+        border: "none",
         color,
         ...fn.hover({
           backgroundColor: hover,
         }),
       },
-      '& .mantine-RichTextEditor-toolbar': {
-        border: 'none',
-        background: 'transparent',
+      "& .mantine-RichTextEditor-toolbar": {
+        border: "none",
+        background: "transparent",
       },
-      '& .mantine-RichTextEditor-content': {
-        background: 'transparent',
+      "& .mantine-RichTextEditor-content": {
+        background: "transparent",
       },
     },
     cardCloseButton: {
-      ref: getStylesRef('cardCloseButton'),
-      position: 'absolute',
+      ref: getStylesRef("cardCloseButton"),
+      position: "absolute",
       top: 0,
       right: 0,
-      visibility: 'hidden',
+      visibility: "hidden",
       borderTopLeftRadius: 0,
       borderBottomRightRadius: 0,
     },
@@ -135,20 +137,26 @@ interface Props {
  *   answers if we have not tried any such thing).
  */
 export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
-  const { id, prompt, fullAnswer, answers, isTemplate } = useFragment(ManageCardFragment, card);
+  const { id, prompt, fullAnswer, answers, isTemplate } = useFragment(
+    ManageCardFragment,
+    card
+  );
   const { classes } = useStyles();
   const initialState = {
     prompt,
     fullAnswer,
     answers,
   } as State;
-  const [promptContent, setPromptContent] = useState<JSONContent | null>(prompt ?? null);
-  const [fullAnswerContent, setFullAnswerContent] = useState<JSONContent | null>(
-    fullAnswer ?? null
+  const [promptContent, setPromptContent] = useState<JSONContent | null>(
+    prompt ?? null
   );
+  const [fullAnswerContent, setFullAnswerContent] =
+    useState<JSONContent | null>(fullAnswer ?? null);
   const [answerValues, setAnswerValues] = useState<string[]>(answers);
   const [{ fetching }, cardEdit] = useMutation(ManageCardEditCardMutation);
-  const [{ fetching: fetchingDelete }, cardDelete] = useMutation(ManageCardDeleteCardMutation);
+  const [{ fetching: fetchingDelete }, cardDelete] = useMutation(
+    ManageCardDeleteCardMutation
+  );
   const promptEditor = useEditor({
     ...DEFAULT_EDITOR_PROPS,
     content: promptContent,
@@ -190,9 +198,13 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
     debounced.cancel();
     cardDelete({ id });
   };
-  const debounced = useDebouncedCallback(updateStateToServer, STANDARD_DEBOUNCE_MS, {
-    maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS,
-  });
+  const debounced = useDebouncedCallback(
+    updateStateToServer,
+    STANDARD_DEBOUNCE_MS,
+    {
+      maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS,
+    }
+  );
   useEffect(
     () => () => {
       debounced.flush();
@@ -247,8 +259,11 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
       <Divider />
       <Card.Section inheritPadding py="sm">
         <Flex>
-          <ManageCardAltAnswers answers={answerValues} onAnswersSave={handleAnswersSave} />
-          <Loader visibility={hasUnsavedChanges ? 'visible' : 'hidden'} />
+          <ManageCardAltAnswers
+            answers={answerValues}
+            onAnswersSave={handleAnswersSave}
+          />
+          <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
         </Flex>
       </Card.Section>
     </Card>

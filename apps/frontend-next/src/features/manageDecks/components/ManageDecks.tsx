@@ -1,5 +1,5 @@
-import { MouseEvent, MouseEventHandler } from 'react';
-import { useMutation } from 'urql';
+import { MouseEvent, MouseEventHandler } from "react";
+import { useMutation } from "urql";
 import {
   Button,
   Center,
@@ -9,22 +9,22 @@ import {
   Group,
   Stack,
   Title,
-} from '@mantine/core';
-import { useRouter } from 'next/router';
-import { SearchDecks } from './SearchDecks';
-import { DECK_DETAIL_PATH } from '@/paths';
-import { RecentDecks } from './RecentDecks';
-import { graphql } from '@generated/gql';
+} from "@mantine/core";
+import { useRouter } from "next/router";
+import { SearchDecks } from "./SearchDecks";
+import { DECK_DETAIL_PATH } from "@/paths";
+import { RecentDecks } from "./RecentDecks";
+import { graphql } from "@generated/gql";
 
 const emptyNewDeckInput = {
   input: {
-    answerLang: 'en',
+    answerLang: "en",
     cards: [],
     description: {},
-    name: '',
-    promptLang: 'en',
+    name: "",
+    promptLang: "en",
     published: false,
-  }
+  },
 };
 
 const NewDeckItemMutation = graphql(/* GraphQL */ `
@@ -35,7 +35,11 @@ const NewDeckItemMutation = graphql(/* GraphQL */ `
   }
 `);
 
-const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElement> }) => (
+const NewDeckItem = ({
+  onClick,
+}: {
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+}) => (
   <Button onClick={onClick} size="lg">
     Create a new Deck
   </Button>
@@ -43,14 +47,14 @@ const NewDeckItem = ({ onClick }: { onClick?: MouseEventHandler<HTMLButtonElemen
 
 const useStyles = createStyles(({ breakpoints }) => ({
   root: {
-    width: '100%',
+    width: "100%",
     maxWidth: breakpoints.lg,
   },
   group: {
-    [`& > .${getStylesRef('growable')}`]: { flexGrow: 1 },
+    [`& > .${getStylesRef("growable")}`]: { flexGrow: 1 },
   },
   growable: {
-    ref: getStylesRef('growable'),
+    ref: getStylesRef("growable"),
   },
 }));
 

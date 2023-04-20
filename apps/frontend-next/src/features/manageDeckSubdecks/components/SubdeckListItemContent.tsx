@@ -1,9 +1,13 @@
-import { DeckCompactSummaryContent, DeckCompactSummaryContentFragment, DeckName } from '@/components/deck';
-import { DECK_DETAIL_PATH } from '@/paths';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { Button, Flex } from '@mantine/core';
-import { useRouter } from 'next/router';
-import { ReactNode, useState } from 'react';
+import {
+  DeckCompactSummaryContent,
+  DeckCompactSummaryContentFragment,
+  DeckName,
+} from "@/components/deck";
+import { DECK_DETAIL_PATH } from "@/paths";
+import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { Button, Flex } from "@mantine/core";
+import { useRouter } from "next/router";
+import { ReactNode, useState } from "react";
 
 export const SubdeckListItemContentFragment = graphql(/* GraphQL */ `
   fragment SubdeckListItemContent on Deck {
@@ -45,9 +49,15 @@ export const SubdeckListItemContent = ({
   };
   return (
     <>
-      <DeckCompactSummaryContent deck={deckFragment} rootProps={{ sx: { flexGrow: 1 } }} />
+      <DeckCompactSummaryContent
+        deck={deckFragment}
+        rootProps={{ sx: { flexGrow: 1 } }}
+      />
       <Flex wrap="wrap" justify="flex-end">
-        <Button variant="subtle" onClick={() => router.push(DECK_DETAIL_PATH(id))}>
+        <Button
+          variant="subtle"
+          onClick={() => router.push(DECK_DETAIL_PATH(id))}
+        >
           Visit
         </Button>
         <Button

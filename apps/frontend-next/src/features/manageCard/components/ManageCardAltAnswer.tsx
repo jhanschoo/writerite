@@ -1,6 +1,6 @@
-import { Button } from '@mantine/core';
+import { Button } from "@mantine/core";
 
-import { IconX } from '@tabler/icons-react';
+import { IconX } from "@tabler/icons-react";
 
 interface Props {
   answer: string;
@@ -9,7 +9,12 @@ interface Props {
   onStartEditing: () => void;
 }
 
-export const ManageCardAltAnswer = ({ answer, editable, onRemove, onStartEditing }: Props) => {
+export const ManageCardAltAnswer = ({
+  answer,
+  editable,
+  onRemove,
+  onStartEditing,
+}: Props) => {
   if (editable) {
     return (
       <Button.Group>

@@ -1,24 +1,28 @@
-import { Exchange, fetchExchange, subscriptionExchange } from 'urql/core';
-import { devtoolsExchange } from '@urql/devtools';
-import { authExchange } from '@urql/exchange-auth';
-import { cacheExchange, Data, NullArray } from '@urql/exchange-graphcache';
+import { Exchange, fetchExchange, subscriptionExchange } from "urql/core";
+import { devtoolsExchange } from "@urql/devtools";
+import { authExchange } from "@urql/exchange-auth";
+import { cacheExchange, Data, NullArray } from "@urql/exchange-graphcache";
 import {
   getAccessToken,
   unsetSessionInfo,
   setSessionInfo,
   sessionNeedsRefreshing,
-} from '@lib/tokenManagement';
-import { createClient } from 'graphql-ws';
-import WebSocket from 'isomorphic-ws';
-import schema from '@generated/schema.graphql.json';
+} from "@lib/tokenManagement";
+import { createClient } from "graphql-ws";
+import WebSocket from "isomorphic-ws";
+import schema from "@generated/schema.graphql.json";
 // import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
-import { IntrospectionQuery } from 'graphql';
-import { isSSRContext, NEXT_PUBLIC_GRAPHQL_HTTP, NEXT_PUBLIC_GRAPHQL_WS } from '@/utils';
-import { graphql } from '@generated/gql';
+import { IntrospectionQuery } from "graphql";
+import {
+  isSSRContext,
+  NEXT_PUBLIC_GRAPHQL_HTTP,
+  NEXT_PUBLIC_GRAPHQL_WS,
+} from "@/utils";
+import { graphql } from "@generated/gql";
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
-  requestPolicy: 'cache-and-network',
+  requestPolicy: "cache-and-network",
   // preferGetMethod: true seems to be necessary for my implementation of subscriptions to work
   // preferGetMethod: true,
 } as const;
@@ -51,7 +55,9 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
     },
     willAuthError: sessionNeedsRefreshing,
     didAuthError(error) {
-      return error.graphQLErrors.some((e) => e.extensions.wrCode === 'USER_NOT_LOGGED_IN');
+      return error.graphQLErrors.some(
+        (e) => e.extensions.wrCode === "USER_NOT_LOGGED_IN"
+      );
     },
     async refreshAuth() {
       if (!token) {
@@ -75,7 +81,7 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
 
 const subscription = subscriptionExchange({
   forwardSubscription: (request) => {
-    const input = { ...request, query: request.query || '' };
+    const input = { ...request, query: request.query || "" };
     return {
       subscribe: (sink) => ({
         unsubscribe: wsClient.subscribe(input, sink),

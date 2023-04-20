@@ -1,6 +1,6 @@
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { createStyles, Text, TextProps } from '@mantine/core';
-import { DeckName } from './DeckName';
+import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { createStyles, Text, TextProps } from "@mantine/core";
+import { DeckName } from "./DeckName";
 
 export const DeckCompactSummaryContentFragment = graphql(/* GraphQL */ `
   fragment DeckCompactSummaryContent on Deck {
@@ -17,8 +17,8 @@ interface Props {
 
 const useStyles = createStyles({
   name: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
 });
 
@@ -31,10 +31,10 @@ export const DeckCompactSummaryContent = ({ deck, rootProps }: Props) => {
       <Text className={classes.name} fw="bold">
         <DeckName name={deckFragment.name} />
       </Text>
-      {cardsDirectCount ? `${cardsDirectCount} cards` : ''}
-      {cardsDirectCount && subdecksCount ? ' / ' : ''}
-      {subdecksCount ? `${subdecksCount} subdecks` : ''}
-      {!(cardsDirectCount || subdecksCount) ? 'Empty deck' : ''}
+      {cardsDirectCount ? `${cardsDirectCount} cards` : ""}
+      {cardsDirectCount && subdecksCount ? " / " : ""}
+      {subdecksCount ? `${subdecksCount} subdecks` : ""}
+      {!(cardsDirectCount || subdecksCount) ? "Empty deck" : ""}
     </Text>
   );
 };

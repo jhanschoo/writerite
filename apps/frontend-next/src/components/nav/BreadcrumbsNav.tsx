@@ -1,6 +1,13 @@
-import router from 'next/router';
-import { Breadcrumbs, Button, Divider, Group, GroupProps, Text } from '@mantine/core';
-import Link from 'next/link';
+import router from "next/router";
+import {
+  Breadcrumbs,
+  Button,
+  Divider,
+  Group,
+  GroupProps,
+  Text,
+} from "@mantine/core";
+import Link from "next/link";
 
 export interface BreadcrumbsNavProps {
   showBack?: boolean;
@@ -8,7 +15,11 @@ export interface BreadcrumbsNavProps {
   groupProps?: GroupProps;
 }
 
-const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavProps) => {
+const BreadcrumbsNav = ({
+  showBack,
+  breadcrumbs,
+  groupProps,
+}: BreadcrumbsNavProps) => {
   const handleBack = async () => {
     router.back();
   };
@@ -17,7 +28,7 @@ const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavPro
     breadcrumbs.length &&
     breadcrumbs.map(([href, name], index) => (
       <Link key={index} href={href}>
-        {typeof name === 'string' ? <Text>{name}</Text> : name}
+        {typeof name === "string" ? <Text>{name}</Text> : name}
       </Link>
     ));
   return (
@@ -28,7 +39,9 @@ const BreadcrumbsNav = ({ showBack, breadcrumbs, groupProps }: BreadcrumbsNavPro
         </Button>
       )}
       {showBack && breadcrumbLinks && <Divider orientation="vertical" />}
-      {breadcrumbLinks && <Breadcrumbs separator="»">{breadcrumbLinks}</Breadcrumbs>}
+      {breadcrumbLinks && (
+        <Breadcrumbs separator="»">{breadcrumbLinks}</Breadcrumbs>
+      )}
     </Group>
   );
 };

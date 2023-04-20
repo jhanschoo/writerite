@@ -1,7 +1,7 @@
-import { useState, KeyboardEvent } from 'react';
-import { TextInput } from '@mantine/core';
-import { IconCheck } from '@tabler/icons-react';
-import { ActionIcon } from '@/components/ActionIcon';
+import { useState, KeyboardEvent } from "react";
+import { TextInput } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
+import { ActionIcon } from "@/components/ActionIcon";
 
 interface Props {
   initialAnswer: string;
@@ -9,7 +9,11 @@ interface Props {
   onSave: (answer: string) => void; // answer.trim() will be nonzero
 }
 
-export const ManageCardAltAnswerInput = ({ initialAnswer, onCancel, onSave }: Props) => {
+export const ManageCardAltAnswerInput = ({
+  initialAnswer,
+  onCancel,
+  onSave,
+}: Props) => {
   const [answerInput, setAnswerInput] = useState(initialAnswer);
   return (
     <TextInput
@@ -17,10 +21,10 @@ export const ManageCardAltAnswerInput = ({ initialAnswer, onCancel, onSave }: Pr
       onChange={(e) => setAnswerInput(e.currentTarget.value)}
       onKeyDown={(e: KeyboardEvent<unknown>) => {
         switch (e.key) {
-          case 'Escape':
+          case "Escape":
             onCancel();
             break;
-          case 'Enter': {
+          case "Enter": {
             const answerToSave = answerInput.trim();
             if (answerToSave) {
               onSave(answerToSave);

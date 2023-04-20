@@ -1,4 +1,4 @@
-import { Box, Card, Title } from '@mantine/core';
+import { Box, Card, Title } from "@mantine/core";
 
 export const PersonalFriends = ({ user }: { user: object }) => {
   return (

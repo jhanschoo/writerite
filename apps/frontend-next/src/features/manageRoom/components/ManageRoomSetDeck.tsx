@@ -1,13 +1,10 @@
-import { useMutation } from 'urql';
-import { Divider, Text, Title } from '@mantine/core';
-import { SearchDecks } from '@/features/manageDecks';
-import { graphql } from '@generated/gql';
+import { useMutation } from "urql";
+import { Divider, Text, Title } from "@mantine/core";
+import { SearchDecks } from "@/features/manageDecks";
+import { graphql } from "@generated/gql";
 
 const RoomSetDeckMutation = graphql(/* GraphQL */ `
-  mutation ManageRoomRoomSetDeck(
-    $deckId: ID!
-    $id: ID!
-  ) {
+  mutation ManageRoomRoomSetDeck($deckId: ID!, $id: ID!) {
     roomSetDeck(deckId: $deckId, id: $id) {
       id
       activeRound {
@@ -34,11 +31,10 @@ export const ManageRoomSetDeck = ({ roomId }: Props) => {
         Please choose a deck to serve in this room
       </Title>
       <SearchDecks
-        onClickFactory={(deckId) =>
-          (e) => {
-            e.stopPropagation();
-            roomSetDeckMutation({ deckId, id: roomId });
-          }}
+        onClickFactory={(deckId) => (e) => {
+          e.stopPropagation();
+          roomSetDeckMutation({ deckId, id: roomId });
+        }}
       />
       <Divider />
     </>

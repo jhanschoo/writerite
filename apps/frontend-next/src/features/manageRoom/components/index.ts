@@ -1,1 +1,1 @@
-export * from './ManageRoom';
+export * from "./ManageRoom";

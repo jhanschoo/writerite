@@ -11,13 +11,12 @@
     "clean": "turbo run clean",
     "dev": "turbo run dev",
     "dev:apps": "turbo run dev --filter='./apps/*' --parallel",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "lint": "turbo run lint",
+    "format": "turbo run format --parallel",
+    "lint": "turbo run lint --parallel",
     "test": "turbo run test"
   },
   "devDependencies": {
     "eslint-config-custom": "workspace:*",
-    "prettier": "latest",
     "turbo": "^1.9.3"
   },
   "packageManager": "pnpm@8.1.1",

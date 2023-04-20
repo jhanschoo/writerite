@@ -1,5 +1,5 @@
-import { graphql } from '@generated/gql';
-import { useQuery } from 'urql';
+import { graphql } from "@generated/gql";
+import { useQuery } from "urql";
 
 export const RECENT_DECKS_TAKE = 20;
 
@@ -9,8 +9,20 @@ interface Props {
 }
 
 const UseQueryDecksQuery = graphql(/* GraphQL */ `
-  query UseQueryDecks($after: ID, $before: ID, $first: Int, $last: Int, $input: DecksQueryInput!) {
-    decks(after: $after, before: $before, first: $first, last: $last, input: $input) {
+  query UseQueryDecks(
+    $after: ID
+    $before: ID
+    $first: Int
+    $last: Int
+    $input: DecksQueryInput!
+  ) {
+    decks(
+      after: $after
+      before: $before
+      first: $first
+      last: $last
+      input: $input
+    ) {
       edges {
         cursor
         node {
