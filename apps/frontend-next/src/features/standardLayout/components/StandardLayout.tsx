@@ -18,6 +18,7 @@ import { PropsWithChildren, useState } from "react";
 import Link from "next/link";
 import {
   IconBell,
+  IconHeartHandshake,
   IconLogout,
   IconMoonStars,
   IconSun,
@@ -28,7 +29,7 @@ import BrandText from "@/components/typography/BrandText";
 import { useCurrentUser } from "@/hooks";
 import { ProfilePicture } from "@/features/profilePicture/components";
 import { ActionIcon } from "@/components/ActionIcon";
-import { PROFILE_PATH } from "@/paths";
+import { FRIENDS_PATH, PROFILE_PATH } from "@/paths";
 
 interface Props {
   vhHeight?: boolean;
@@ -74,6 +75,7 @@ export const StandardLayout = ({
   const { classes: drawerButtonClasses } = useDrawerButtonStyles();
   const [showProfileOptions, setShowProfileOptions] = useState(false);
   const handleGoToProfile = () => router.push(PROFILE_PATH);
+  const handleGoToFriends = () => router.push(FRIENDS_PATH);
   return (
     <AppShell
       padding={0}
@@ -115,7 +117,13 @@ export const StandardLayout = ({
                     onClick={handleGoToProfile}
                   >
                     <Text fw="bolder">{currentUser.name}</Text>
-                    <Text>View profile & friends</Text>
+                    <Text>View profile</Text>
+                  </Menu.Item>
+                  <Menu.Item
+                    icon={<IconHeartHandshake />}
+                    onClick={handleGoToFriends}
+                  >
+                    <Text>Friends</Text>
                   </Menu.Item>
                   <Menu.Item
                     icon={
@@ -141,7 +149,7 @@ export const StandardLayout = ({
                     <ProfilePicture user={currentUser} />
                     <Text fw="normal">
                       <Text fw="bolder">{currentUser.name}</Text>
-                      <Text fz="sm">View profile & friends</Text>
+                      <Text fz="sm">View profile</Text>
                     </Text>
                   </Flex>
                 }
@@ -149,6 +157,15 @@ export const StandardLayout = ({
                 size="100%"
               >
                 <Stack spacing={0}>
+                  <Button
+                    size="xl"
+                    variant="subtle"
+                    onClick={handleGoToFriends}
+                    leftIcon={<IconHeartHandshake size={20} />}
+                    classNames={drawerButtonClasses}
+                  >
+                    Friends
+                  </Button>
                   <Button
                     size="xl"
                     variant="subtle"

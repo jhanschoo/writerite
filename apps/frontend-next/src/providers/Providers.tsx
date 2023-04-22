@@ -3,6 +3,7 @@ import {
   ColorSchemeProvider,
   MantineProvider,
 } from "@mantine/core";
+import { Notifications } from '@mantine/notifications';
 import { PropsWithChildren, useMemo, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { useRouter } from "next/router";
@@ -28,9 +29,10 @@ export const Providers = ({
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
-        <ResetUrqlContext.Provider value={resetUrqlClient}>
-          {children}
-        </ResetUrqlContext.Provider>
+          <ResetUrqlContext.Provider value={resetUrqlClient}>
+            <Notifications position="bottom-center" />
+            {children}
+          </ResetUrqlContext.Provider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

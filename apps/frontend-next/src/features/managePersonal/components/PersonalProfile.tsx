@@ -2,11 +2,16 @@ import { ToolbaredRichTextEditor, useContentEditor } from "@/components/editor";
 import { UserProfile } from "@/components/user";
 import {
   Button,
+  Card,
   Flex,
+  Grid,
+  Group,
   Input,
   LoadingOverlay,
+  SimpleGrid,
   Stack,
   Text,
+  Title,
 } from "@mantine/core";
 import { useState } from "react";
 import { useMutation } from "urql";
@@ -39,7 +44,6 @@ export const PersonalProfile = ({ user }: Props) => {
     PersonalProfileEditMutation
   );
   const [bio, setBio] = useState(userFragment.bio ?? null);
-  const [editing, setEditing] = useState(false);
   const [bioEditor, resetBioEditorContent] = useContentEditor({
     editorComponent: ToolbaredRichTextEditor,
     content: bio,
@@ -52,30 +56,23 @@ export const PersonalProfile = ({ user }: Props) => {
       const { ownProfileEdit } = data;
       const { bio } = useFragment(PersonalProfileFragment, ownProfileEdit);
       setBio(bio ?? null);
-      setEditing(false);
     }
   };
   return (
-    <>
-      <UserProfile user={{ ...userFragment, bio }} />
-      {!editing && (
-        <Button
-          variant="outline"
-          onClick={() => {
-            setEditing(true);
-            resetBioEditorContent(userFragment.bio ?? null);
-          }}
-        >
-          Edit Profile
-        </Button>
-      )}
-      {editing && (
-        <Stack
+    <Grid>
+      <Grid.Col md={6} span={12}>
+        <UserProfile user={{ ...userFragment, bio }} />
+      </Grid.Col>
+      <Grid.Col md={6} span={12}>
+        <Card
           sx={{
             // for 'LoadingOverlay' to work
-            position: "relative",
+            position: "relative"
           }}
+          withBorder
+          radius="lg"
         >
+          <Title order={2}>Edit Profile</Title>
           <LoadingOverlay visible={fetching} />
           <Input.Wrapper label="About Myself">{bioEditor}</Input.Wrapper>
           <Flex justify="flex-end" pt="xs" gap="xs">
@@ -83,15 +80,14 @@ export const PersonalProfile = ({ user }: Props) => {
               variant="outline"
               onClick={() => {
                 setBio(userFragment.bio ?? null);
-                setEditing(false);
               }}
             >
               Cancel
             </Button>
             <Button onClick={handleUpdateProfile}>Save changes</Button>
           </Flex>
-        </Stack>
-      )}
-    </>
+        </Card>
+      </Grid.Col>
+    </Grid>
   );
 };

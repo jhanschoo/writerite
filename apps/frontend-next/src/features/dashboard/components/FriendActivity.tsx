@@ -1,5 +1,5 @@
 import { Box, Button, createStyles, Paper, Text, Title } from "@mantine/core";
-import { IconFriends } from "@tabler/icons-react";
+import { IconHeartHandshake } from "@tabler/icons-react";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -28,9 +28,9 @@ export const FriendActivity = () => {
         <Button
           variant="outline"
           radius="xl"
-          leftIcon={<IconFriends size={21} />}
+          leftIcon={<IconHeartHandshake size={21} />}
         >
-          View All Friends
+          Friends
         </Button>
       </Box>
       <Text ta="center" className={classes.emptyStatsText} color="dimmed">

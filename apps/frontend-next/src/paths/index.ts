@@ -13,3 +13,4 @@ export const ROOM_PATH = `${APP_PATH}/room`;
 export const ROOM_DETAIL_PATH = (idOrSlug: string) =>
   `${ROOM_PATH}/${idOrSlug}`;
 export const PROFILE_PATH = `${APP_PATH}/user`;
+export const FRIENDS_PATH = `${APP_PATH}/friends`;

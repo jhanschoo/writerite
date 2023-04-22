@@ -2,7 +2,17 @@ import { useContentViewer } from "@/components/editor";
 import { ProfilePicture } from "@/features/profilePicture";
 import { JSONObject } from "@/utils";
 import { graphql } from "@generated/gql";
-import { Flex, Paper, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Card,
+  Flex,
+  Stack,
+  Text,
+  Tooltip,
+} from "@mantine/core";
+import { notifications } from "@mantine/notifications";
+import { IconCopy } from "@tabler/icons-react";
 
 export const UserProfileFragment = graphql(/* GraphQL */ `
   fragment UserProfile on User {
@@ -15,6 +25,7 @@ export const UserProfileFragment = graphql(/* GraphQL */ `
 
 interface Props {
   user: {
+    id: string;
     bareId: string;
     bio: JSONObject | null;
     name: string;
@@ -22,17 +33,32 @@ interface Props {
 }
 
 export const UserProfile = ({ user }: Props) => {
-  const { bio, name } = user;
+  const { id, bio, name } = user;
   const [viewerComponent] = useContentViewer(bio ?? null);
   return (
-    <Paper shadow="xl" radius="lg" p="md">
+    <Card shadow="xl" radius="lg" p="md">
       <Flex gap="xs">
         <ProfilePicture user={user} avatarProps={{ size: 84 }} />
         <Stack>
-          <Text weight="bolder">{name}</Text>
+          <Flex>
+            <Text>
+              <Text weight="bolder" span>
+                {name}
+              </Text>
+              #{id}
+            </Text>
+            <ActionIcon size="xs">
+              <IconCopy onClick={() => {
+                navigator.clipboard.writeText(id);
+                notifications.show({
+                  message: `id ${id} copied to clipboard`
+                })
+              }} />
+            </ActionIcon>
+          </Flex>
           {viewerComponent}
         </Stack>
       </Flex>
-    </Paper>
+    </Card>
   );
 };
