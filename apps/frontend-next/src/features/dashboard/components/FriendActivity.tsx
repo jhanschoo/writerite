@@ -1,5 +1,7 @@
+import { FRIENDS_PATH } from "@/paths";
 import { Box, Button, createStyles, Paper, Text, Title } from "@mantine/core";
 import { IconHeartHandshake } from "@tabler/icons-react";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -18,6 +20,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export const FriendActivity = () => {
+  const router = useRouter();
   const { classes } = useStyles();
   return (
     <Paper radius="lg" p="md">
@@ -29,6 +32,7 @@ export const FriendActivity = () => {
           variant="outline"
           radius="xl"
           leftIcon={<IconHeartHandshake size={21} />}
+          onClick={() => router.push(FRIENDS_PATH)}
         >
           Friends
         </Button>

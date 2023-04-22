@@ -1,4 +1,6 @@
 import { Card, Center, createStyles, Stack, Title } from "@mantine/core";
+import { Befriend } from "./Befriend";
+import { FriendsList } from "./FriendsList";
 
 const useStyles = createStyles(({ breakpoints }) => ({
   root: {
@@ -12,12 +14,13 @@ export const FriendsDashboard = () => {
   return (
     <Center>
       <Stack p="md" className={classes.root}>
-        <Card shadow="xl" radius="lg" p="md">
-          <Title order={2} mb="md">
-            Friends
-          </Title>
-          <Card.Section inheritPadding>Hello</Card.Section>
+        <Title order={2}>
+          Friends
+        </Title>
+        <Card shadow="md" radius="lg" p="md">
+          <Befriend />
         </Card>
+        <FriendsList />
       </Stack>
     </Center>
   );
