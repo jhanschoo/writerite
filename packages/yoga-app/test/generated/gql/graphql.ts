@@ -377,6 +377,7 @@ export type Query = {
   occupyingUnarchivedRooms?: Maybe<Array<Room>>;
   room?: Maybe<Room>;
   roomBySlug?: Maybe<Room>;
+  usersByName: Array<User>;
 };
 
 
@@ -411,6 +412,11 @@ export type QueryRoomArgs = {
 
 export type QueryRoomBySlugArgs = {
   slug: Scalars['String'];
+};
+
+
+export type QueryUsersByNameArgs = {
+  name: Scalars['String'];
 };
 
 export type QueryDecksConnection = {

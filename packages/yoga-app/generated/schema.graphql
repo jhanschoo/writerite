@@ -255,6 +255,7 @@ type Query {
   occupyingUnarchivedRooms: [Room!]
   room(id: ID!): Room
   roomBySlug(slug: String!): Room
+  usersByName(name: String!): [User!]!
 }
 
 type QueryDecksConnection {

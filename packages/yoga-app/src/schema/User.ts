@@ -69,6 +69,17 @@ builder.queryFields((t) => ({
         where: { id: sub.bareId },
       }),
   }),
+  usersByName: t.withAuth({ authenticated: true }).prismaField({
+    type: [User],
+    args: {
+      name: t.arg.string({ required: true }),
+    },
+    resolve: (query, _root, { name }, { prisma }) =>
+      prisma.user.findMany({
+        ...query,
+        where: { name },
+      }),
+  }),
 }));
 
 builder.mutationFields((t) => ({
