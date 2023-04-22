@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "codegen": "graphql-codegen",
-    "dev": "next dev",
+    "dev": "concurrently 'next dev' 'watch \"graphql-codegen --watch\" node_modules/yoga-app/generated'",
     "build": "next build",
     "analyze": "ANALYZE=true next build",
     "start": "next start",
@@ -75,6 +75,7 @@
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "@urql/devtools": "^2.0.3",
+    "concurrently": "^8.0.1",
     "eslint": "^8.38.0",
     "eslint-config-custom": "workspace:*",
     "eslint-config-mantine": "^2.0.0",
@@ -92,6 +93,7 @@
     "storybook-dark-mode": "^3.0.0",
     "ts-jest": "^29.1.0",
     "tsconfig": "workspace:*",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "watch": "^1.0.2"
   }
 }

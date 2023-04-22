@@ -17,10 +17,10 @@ export async function isInvalidated(params: InvalidatedGuardParams) {
   const {
     redis,
     payload: { iat },
-    sub: { id, occupyingRoomSlugs },
+    sub: { bareId, occupyingRoomSlugs },
   } = params;
   const timestamps = await redis.mget(
-    getInvalidationByUserIdTopic(id),
+    getInvalidationByUserIdTopic(bareId),
     ...Object.keys(occupyingRoomSlugs).map(getInvalidationByRoomIdTopic)
   );
   if (!iat) {

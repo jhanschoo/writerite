@@ -92,7 +92,7 @@ builder.mutationFields((t) => ({
       const message: PMessage & { content: { text: string } } = {
         id: nanoid(),
         roomId,
-        senderId: sub.id,
+        senderId: sub.bareId,
         type: MessageContentType.TEXT,
         content: { text: textContent },
         createdAt: now,

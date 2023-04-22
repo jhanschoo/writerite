@@ -346,6 +346,8 @@ A field whose value is a generic Universally Unique Identifier: https://en.wikip
 scalar UUID
 
 type User implements Node {
+  bareId: ID!
+
   """users this user has befriended"""
   befriendeds(after: ID, before: ID, first: Int, last: Int): UserBefriendedsConnection!
   befriendedsCount: Int!

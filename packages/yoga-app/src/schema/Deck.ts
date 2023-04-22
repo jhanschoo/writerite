@@ -23,7 +23,7 @@ export const Deck = builder.prismaNode("Deck", {
     authenticated: true,
   },
   grantScopes: ({ ownerId, published }, { sub }) => {
-    if (sub?.id === ownerId) {
+    if (sub?.bareId === ownerId) {
       return OWNER_PERMS;
     }
     if (published) {
@@ -63,7 +63,7 @@ export const Deck = builder.prismaNode("Deck", {
       nullable: true,
       select: (_args, { sub }) => ({
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        records: { where: { userId: sub!.id }, select: { notes: true } },
+        records: { where: { userId: sub!.bareId }, select: { notes: true } },
       }),
       resolve: ({ records }) => {
         const notes = records[0]?.notes ?? null;
@@ -105,7 +105,7 @@ builder.queryFields((t) => ({
     },
     resolve: async (query, _root, { id }, { prisma, sub }) => {
       id = decodeGlobalID(id as string).id;
-      const { id: userId } = sub!;
+      const { bareId: userId } = sub!;
       const res = await prisma.deck.findUnique({
         ...query,
         where: {
@@ -128,7 +128,7 @@ builder.queryFields((t) => ({
       { input: { scope, stoplist, titleContains } },
       { prisma, sub }
     ) => {
-      const { id: userId } = sub;
+      const { bareId: userId } = sub;
       const res = await prisma.deck.findMany({
         ...query,
         where: {
@@ -165,7 +165,7 @@ builder.mutationFields((t) => ({
       const res = await prisma.deck.create({
         ...query,
         data: {
-          ownerId: sub.id,
+          ownerId: sub.bareId,
           description: description === null ? Prisma.DbNull : description,
           ...rest,
           published: published ?? false,
@@ -174,7 +174,10 @@ builder.mutationFields((t) => ({
             ? {
                 create: {
                   parentDeck: {
-                    connect: { id: parentDeckId as string, ownerId: sub.id },
+                    connect: {
+                      id: parentDeckId as string,
+                      ownerId: sub.bareId,
+                    },
                   },
                 },
               }
@@ -182,7 +185,7 @@ builder.mutationFields((t) => ({
           records: notes
             ? {
                 create: {
-                  userId: sub.id,
+                  userId: sub.bareId,
                   notes,
                 },
               }
@@ -207,7 +210,7 @@ builder.mutationFields((t) => ({
       id = decodeGlobalID(id as string).id;
       const res = await prisma.deck.update({
         ...query,
-        where: { id, ownerId: sub.id },
+        where: { id, ownerId: sub.bareId },
         data: {
           description: description === null ? Prisma.DbNull : description,
           name: name ?? undefined,
@@ -218,10 +221,10 @@ builder.mutationFields((t) => ({
             ? {
                 upsert: {
                   where: {
-                    userId_deckId: { userId: sub.id, deckId: id },
+                    userId_deckId: { userId: sub.bareId, deckId: id },
                   },
                   update: { notes },
-                  create: { userId: sub.id, notes },
+                  create: { userId: sub.bareId, notes },
                 },
               }
             : undefined,
@@ -241,7 +244,7 @@ builder.mutationFields((t) => ({
       const { id } = decodeGlobalID(deckId as string);
       const res = await prisma.deck.update({
         ...query,
-        where: { id, ownerId: sub.id },
+        where: { id, ownerId: sub.bareId },
         data: {
           cards: { create: cards },
           editedAt: new Date(),
@@ -262,7 +265,7 @@ builder.mutationFields((t) => ({
       subdeckId = decodeGlobalID(subdeckId as string).id;
       const res = await prisma.deck.update({
         ...query,
-        where: { id, ownerId: sub.id },
+        where: { id, ownerId: sub.bareId },
         data: {
           parentDeckIn: {
             create: {
@@ -287,7 +290,7 @@ builder.mutationFields((t) => ({
       subdeckId = decodeGlobalID(subdeckId as string).id;
       const res = await prisma.deck.update({
         ...query,
-        where: { id, ownerId: sub.id },
+        where: { id, ownerId: sub.bareId },
         data: {
           parentDeckIn: {
             delete: {
@@ -335,10 +338,10 @@ builder.mutationFields((t) => ({
           records: {
             upsert: {
               where: {
-                userId_deckId: { userId: sub.id, deckId },
+                userId_deckId: { userId: sub.bareId, deckId },
               },
               update: { notes },
-              create: { userId: sub.id, notes },
+              create: { userId: sub.bareId, notes },
             },
           },
         },

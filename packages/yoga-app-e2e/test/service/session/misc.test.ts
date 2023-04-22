@@ -72,7 +72,7 @@ describe("service/session", () => {
       roomCreateResponse.data?.roomCreate.id as string
     );
     expect(currentUser).toEqual({
-      id: user.id,
+      bareId: user.bareId,
       name: user.name,
       roles: [Roles.User],
       occupyingRoomSlugs: { [rid.id]: null },
@@ -115,7 +115,7 @@ describe("service/session", () => {
 
     // invalidate JWT
     await sleep(1010);
-    await invalidateByUserId(redis, currentUser.id);
+    await invalidateByUserId(redis, currentUser.bareId);
 
     // check JWT validity
     const authorization = `Bearer ${userJWT}`;

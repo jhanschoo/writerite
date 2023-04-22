@@ -21,14 +21,14 @@ import { buildHTTPExecutor } from "@graphql-tools/executor-http";
 import { encodeGlobalID } from "@pothos/plugin-relay";
 
 export const DEFAULT_CURRENT_USER = {
-  id: "fake-id",
+  bareId: "fake-id",
   name: "fake-name",
   roles: [Roles.User],
   occupyingRoomSlugs: {},
 };
 export const DEFAULT_CURRENT_USER_GID = encodeGlobalID(
   "User",
-  DEFAULT_CURRENT_USER.id
+  DEFAULT_CURRENT_USER.bareId
 );
 
 describe("graphql/Deck.ts", () => {
@@ -146,7 +146,7 @@ describe("graphql/Deck.ts", () => {
         });
         // eslint-disable-next-line @typescript-eslint/unbound-method
         expect(prisma.deck.updateMany).toHaveBeenCalledWith({
-          where: { id, ownerId: DEFAULT_CURRENT_USER.id },
+          where: { id, ownerId: DEFAULT_CURRENT_USER.bareId },
           data: {
             name: nextName,
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -197,9 +197,9 @@ describe("graphql/Deck.ts", () => {
         prisma.user.findUnique.mockResolvedValue({ name: "abc" } as User);
         prisma.deck.findUnique.mockResolvedValue({
           id,
-          ownerId: DEFAULT_CURRENT_USER.id,
+          ownerId: DEFAULT_CURRENT_USER.bareId,
           owner: {
-            id: DEFAULT_CURRENT_USER.id as unknown,
+            id: DEFAULT_CURRENT_USER.bareId as unknown,
           },
           name: "",
           description: {},

@@ -53,7 +53,7 @@ describe("graphql/User.ts", () => {
         const currentUser = response.data?.finalizeOauthSignin
           ?.currentUser as unknown as CurrentUser;
         expect(currentUser).toEqual({
-          id: expect.any(String),
+          bareId: expect.any(String),
           name: expect.any(String),
           occupyingRoomSlugs: {},
           roles: [Roles.User],

@@ -45,7 +45,7 @@
     "watch": "^1.0.2"
   },
   "scripts": {
-    "dev": "export $(xargs -a .env -d '\\n') NODE_ENV=development && watch 'graphql-codegen' src test",
+    "dev": "export $(xargs -a .env -d '\\n') NODE_ENV=development && watch 'ts-node scripts/printSchema.ts && graphql-codegen' src test --ignoreDirectoryPattern=/test\\/generated/",
     "codegen": "export $(xargs -a .env -d '\\n') NODE_ENV=development && ts-node scripts/printSchema.ts && graphql-codegen",
     "echo-for-dep-graph": "echo",
     "lint": "eslint",

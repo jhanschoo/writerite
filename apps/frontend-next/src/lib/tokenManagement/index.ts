@@ -93,7 +93,7 @@ export enum Roles {
 }
 
 export interface CurrentUser {
-  id: string;
+  bareId: string;
   name: string;
   roles: Roles[];
   occupyingActiveRoomSlugs: Record<string, string>;

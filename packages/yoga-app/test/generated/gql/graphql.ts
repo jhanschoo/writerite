@@ -526,6 +526,7 @@ export type SubscriptionRoomUpdatesByRoomIdArgs = {
 
 export type User = Node & {
   __typename?: 'User';
+  bareId: Scalars['ID'];
   /** users this user has befriended */
   befriendeds: UserBefriendedsConnection;
   befriendedsCount: Scalars['Int'];

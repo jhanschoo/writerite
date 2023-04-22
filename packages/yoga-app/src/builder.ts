@@ -72,7 +72,7 @@ export const builder = new SchemaBuilder<{
     always: true,
     authenticated: Boolean(sub),
     admin: (sub && sub.roles.includes(Roles.Admin)) ?? false,
-    subIdIs: (id: unknown) => Boolean(sub?.id === id),
+    subIdIs: (id: unknown) => Boolean(sub?.bareId === id),
     inRoomId: (roomId: unknown) =>
       typeof roomId === "string" &&
       Object.keys(sub?.occupyingRoomSlugs || {}).includes(roomId),

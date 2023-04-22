@@ -127,7 +127,7 @@ builder.queryFields((t) => ({
         where: {
           occupants: {
             some: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
           archived: false,
@@ -144,13 +144,13 @@ builder.mutationFields((t) => ({
       invalidatesTokens: true,
     },
     resolve: async (query, _root, _args, { prisma, redis, sub }) => {
-      await invalidateByUserId(redis, sub.id);
+      await invalidateByUserId(redis, sub.bareId);
       const res = await prisma.room.create({
         ...query,
         data: {
           occupants: {
             create: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
         },
@@ -178,10 +178,10 @@ builder.mutationFields((t) => ({
             some: {
               occupant: {
                 befrienderIn: {
-                  some: { befriendedId: sub.id },
+                  some: { befriendedId: sub.bareId },
                 },
                 befriendedIn: {
-                  some: { befrienderId: sub.id },
+                  some: { befrienderId: sub.bareId },
                 },
               },
             },
@@ -190,12 +190,12 @@ builder.mutationFields((t) => ({
         data: {
           occupants: {
             create: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
         },
       });
-      await invalidateByUserId(redis, sub.id);
+      await invalidateByUserId(redis, sub.bareId);
       sub.occupyingRoomSlugs[res.id] = null;
       pubsub.publish(ROOM_UPDATES_BY_ROOMID_TOPIC, res.id, {
         operation: RoomUpdateOperations.ROOM_JOIN,
@@ -225,7 +225,7 @@ builder.mutationFields((t) => ({
           id,
           occupants: {
             some: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
           OR: [
@@ -273,7 +273,7 @@ builder.mutationFields((t) => ({
           id,
           occupants: {
             some: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
           rounds: {
@@ -316,7 +316,7 @@ builder.mutationFields((t) => ({
           id,
           occupants: {
             some: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
           rounds: {
@@ -362,7 +362,7 @@ builder.mutationFields((t) => ({
           id,
           occupants: {
             some: {
-              occupantId: sub.id,
+              occupantId: sub.bareId,
             },
           },
           archived: false,

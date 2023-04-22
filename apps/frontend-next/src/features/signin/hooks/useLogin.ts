@@ -12,6 +12,7 @@ export function useLogin() {
   return async (serializedSessionInfo: SerializedSessionInfo) => {
     setSessionInfo(serializedSessionInfo);
     if (getAccessToken()) {
+      console.log(getAccessToken());
       await router.push("/app");
     }
   };

@@ -5,7 +5,7 @@ import { guardLoggedIn } from "./guardLoggedIn";
 export async function notValidUser({ prisma, sub }: LoggedInContext) {
   const user = await prisma.user.findUnique({
     where: {
-      id: sub.id,
+      id: sub.bareId,
     },
   });
   return Boolean(!user?.name);

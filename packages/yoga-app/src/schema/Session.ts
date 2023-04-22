@@ -37,7 +37,11 @@ builder.mutationField("refresh", (t) =>
       try {
         const { sub } = await verifyStaleUserJWT(token);
         const currentUserSource =
-          await findOrCreateCurrentUserSourceWithProfile(prisma, sub.id, "id");
+          await findOrCreateCurrentUserSourceWithProfile(
+            prisma,
+            sub.bareId,
+            "id"
+          );
         const currentUser = currentUserSourceToCurrentUser(currentUserSource);
         return new SessionInfo(
           await currentUserToUserJWT(currentUser),

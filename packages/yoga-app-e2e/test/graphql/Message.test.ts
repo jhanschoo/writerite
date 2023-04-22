@@ -54,7 +54,7 @@ describe("graphql/Message.ts", () => {
         // create user
         const { currentUser: currentUser1, token } =
           await loginAsNewlyCreatedUser(executor, setSub, "user1");
-        const currentUsergid = encodeGlobalID("User", currentUser1.id);
+        const currentUsergid = encodeGlobalID("User", currentUser1.bareId);
         setSub(currentUser1);
 
         // create room
@@ -113,7 +113,7 @@ describe("graphql/Message.ts", () => {
           executor,
           setSub
         );
-        const currentUsergid = encodeGlobalID("User", user.id);
+        const currentUsergid = encodeGlobalID("User", user.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);

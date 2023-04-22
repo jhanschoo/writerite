@@ -15,6 +15,7 @@ import { FragmentType, graphql, useFragment } from "@generated/gql";
 export const PersonalProfileFragment = graphql(/* GraphQL */ `
   fragment PersonalProfile on User {
     id
+    bareId
     bio
     name
   }

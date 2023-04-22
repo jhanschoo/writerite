@@ -6,8 +6,16 @@ import {
 import { PropsWithChildren, useMemo, useState } from "react";
 import { useTheme } from "@/hooks/useTheme";
 import { useRouter } from "next/router";
+import { ResetUrqlContext } from "./ResetUrqlContext";
 
-export const Providers = ({ children }: PropsWithChildren) => {
+interface Props {
+  resetUrqlClient?(): void;
+}
+
+export const Providers = ({
+  children,
+  resetUrqlClient,
+}: PropsWithChildren<Props>) => {
   const router = useRouter();
   const [colorScheme, setColorScheme] = useState<ColorScheme>("light");
   const toggleColorScheme = (value?: ColorScheme) => {
@@ -20,7 +28,9 @@ export const Providers = ({ children }: PropsWithChildren) => {
       toggleColorScheme={toggleColorScheme}
     >
       <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
-        {children}
+        <ResetUrqlContext.Provider value={resetUrqlClient}>
+          {children}
+        </ResetUrqlContext.Provider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

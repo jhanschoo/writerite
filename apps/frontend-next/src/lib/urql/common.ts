@@ -53,7 +53,12 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
         Authorization: `Bearer ${token}`,
       });
     },
-    willAuthError: sessionNeedsRefreshing,
+    willAuthError() {
+      if (!token) {
+        token = getAccessToken();
+      }
+      return sessionNeedsRefreshing();
+    },
     didAuthError(error) {
       return error.graphQLErrors.some(
         (e) => e.extensions.wrCode === "USER_NOT_LOGGED_IN"
@@ -92,6 +97,7 @@ const subscription = subscriptionExchange({
 
 export const getExchanges = (ssr: Exchange) => [
   devtoolsExchange,
+  auth,
   cacheExchange({
     schema: schema as unknown as IntrospectionQuery, // type mismatch when using graphql.schema.json
     // TODO: review
@@ -143,7 +149,6 @@ export const getExchanges = (ssr: Exchange) => [
     // },
   }),
   ssr,
-  auth,
   fetchExchange,
   subscription,
 ];

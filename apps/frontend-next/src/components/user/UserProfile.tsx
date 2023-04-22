@@ -7,6 +7,7 @@ import { Flex, Paper, Stack, Text } from "@mantine/core";
 export const UserProfileFragment = graphql(/* GraphQL */ `
   fragment UserProfile on User {
     id
+    bareId
     bio
     name
   }
@@ -14,7 +15,7 @@ export const UserProfileFragment = graphql(/* GraphQL */ `
 
 interface Props {
   user: {
-    id: string;
+    bareId: string;
     bio: JSONObject | null;
     name: string;
   };

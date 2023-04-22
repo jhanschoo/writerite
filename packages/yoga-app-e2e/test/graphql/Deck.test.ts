@@ -111,7 +111,7 @@ describe("graphql/Deck.ts", () => {
           editedAt: expect.stringMatching(isoTimestampMatcher),
           name: "name",
           owner: {
-            id: encodeGlobalID("User", user.id),
+            id: encodeGlobalID("User", user.bareId),
           },
           promptLang: "en",
           published: false,
@@ -132,7 +132,7 @@ describe("graphql/Deck.ts", () => {
           editedAt: deckBefore.editedAt,
           name: "name",
           owner: {
-            id: encodeGlobalID("User", user.id),
+            id: encodeGlobalID("User", user.bareId),
           },
           promptLang: "en",
           published: false,

@@ -64,7 +64,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user2"
         );
-        const occupantGid = encodeGlobalID("User", occupantBefore.id);
+        const occupantGid = encodeGlobalID("User", occupantBefore.bareId);
 
         // create owner user
         const { currentUser: ownerUser } = await loginAsNewlyCreatedUser(
@@ -72,7 +72,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user1"
         );
-        const ownerGid = encodeGlobalID("User", ownerUser.id);
+        const ownerGid = encodeGlobalID("User", ownerUser.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
@@ -125,7 +125,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user2"
         );
-        const occupantGid = encodeGlobalID("User", occupantBefore.id);
+        const occupantGid = encodeGlobalID("User", occupantBefore.bareId);
 
         // create owner user
         const { currentUser: ownerUser } = await loginAsNewlyCreatedUser(
@@ -133,7 +133,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user1"
         );
-        const ownerGid = encodeGlobalID("User", ownerUser.id);
+        const ownerGid = encodeGlobalID("User", ownerUser.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
@@ -215,7 +215,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user2"
         );
-        const occupantGid = encodeGlobalID("User", occupantBefore.id);
+        const occupantGid = encodeGlobalID("User", occupantBefore.bareId);
 
         // create owner user
         const { currentUser: ownerUser } = await loginAsNewlyCreatedUser(
@@ -223,7 +223,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user1"
         );
-        const ownerGid = encodeGlobalID("User", ownerUser.id);
+        const ownerGid = encodeGlobalID("User", ownerUser.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
@@ -319,7 +319,7 @@ describe("graphql/Room.ts", () => {
           executor,
           setSub
         );
-        const ownerGid = encodeGlobalID("User", user.id);
+        const ownerGid = encodeGlobalID("User", user.bareId);
         const response = await mutationRoomCreate(executor);
         expect(response).toHaveProperty(
           "data.roomCreate",
@@ -865,7 +865,7 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user1"
         );
-        const user1gid = encodeGlobalID("User", user1.id);
+        const user1gid = encodeGlobalID("User", user1.bareId);
         // create room
         const roomCreateResponse1 = await mutationRoomCreate(executor);
         const room1 = roomCreateResponse1.data?.roomCreate;
@@ -878,8 +878,8 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user2"
         );
-        const user2gid = encodeGlobalID("User", user2.id);
-        expect(user2.id).not.toEqual(user1.id);
+        const user2gid = encodeGlobalID("User", user2.bareId);
+        expect(user2.bareId).not.toEqual(user1.bareId);
         // user2 befriends user1
         await mutationUserBefriendUser(executor, { befriendedId: user1gid });
         // user1 befriends user2
@@ -1040,14 +1040,14 @@ describe("graphql/Room.ts", () => {
           setSub,
           "user2"
         );
-        const occupantBeforegid = encodeGlobalID("User", occupantBefore.id);
+        const occupantBeforegid = encodeGlobalID("User", occupantBefore.bareId);
         // create owner user
         const { token, currentUser: ownerUser } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
           "user1"
         );
-        const ownerUsergid = encodeGlobalID("User", ownerUser.id);
+        const ownerUsergid = encodeGlobalID("User", ownerUser.bareId);
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
@@ -1116,7 +1116,7 @@ describe("graphql/Room.ts", () => {
           executor,
           setSub
         );
-        const usergid = encodeGlobalID("User", user.id);
+        const usergid = encodeGlobalID("User", user.bareId);
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(

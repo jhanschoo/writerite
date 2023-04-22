@@ -1,7 +1,7 @@
 import { Roles } from "./Roles";
 
 export interface CurrentUser {
-  id: string;
+  bareId: string;
   name: string;
   roles: Roles[];
   occupyingRoomSlugs: Record<string, string | null>;

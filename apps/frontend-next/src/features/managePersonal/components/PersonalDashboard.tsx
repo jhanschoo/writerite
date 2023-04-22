@@ -1,5 +1,4 @@
 import { Box, Button, createStyles, Stack, Title } from "@mantine/core";
-import { IconPencil } from "@tabler/icons-react";
 import { PersonalFriends } from "./PersonalFriends";
 import { PersonalProfile, PersonalProfileFragment } from "./PersonalProfile";
 import { FragmentType } from "@generated/gql";
@@ -40,7 +39,7 @@ export const PersonalDashboard = ({
     <Box className={classes.gridBox} p="md">
       <Box className={classes.headerPanel}>
         <Title order={1} mx="md">
-          Home
+          Profile
         </Title>
       </Box>
       <Stack className={classes.profilePanel}>

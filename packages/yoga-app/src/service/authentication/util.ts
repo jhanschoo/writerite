@@ -17,7 +17,7 @@ export function currentUserSourceToCurrentUser({
     occupyingRoomSlugs[roomId] = rounds[0]?.slug ?? null;
   }
   return {
-    id,
+    bareId: id,
     name,
     roles: roles as Roles[],
     occupyingRoomSlugs,

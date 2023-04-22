@@ -25,7 +25,7 @@ export const User = builder.prismaNode("User", {
     authenticated: true,
   },
   grantScopes: ({ id, isPublic }, { sub }) => {
-    if (sub?.id === id) {
+    if (sub?.bareId === id) {
       return SELF_PERMS;
     }
     if (isPublic) {
@@ -35,6 +35,7 @@ export const User = builder.prismaNode("User", {
   },
   id: { field: "id" },
   fields: (t) => ({
+    bareId: t.withAuth(PPUBLIC).exposeID("id"),
     name: t.withAuth(PPUBLIC).exposeString("name"),
     googleId: t
       .withAuth(PPERSONAL)
@@ -65,7 +66,7 @@ builder.queryFields((t) => ({
     resolve: (query, _root, _args, { prisma, sub }) =>
       prisma.user.findUnique({
         ...query,
-        where: { id: sub.id },
+        where: { id: sub.bareId },
       }),
   }),
 }));
@@ -89,7 +90,7 @@ builder.mutationFields((t) => ({
       { input: { name, bio, isPublic } },
       { prisma, redis, sub }
     ) => {
-      const { id } = sub;
+      const { bareId: id } = sub;
       const userRes = await prisma.user.update({
         ...query,
         where: { id },
@@ -112,18 +113,18 @@ builder.mutationFields((t) => ({
     },
     resolve: async (query, _parent, { befriendedId }, { prisma, sub }) => {
       befriendedId = decodeGlobalID(befriendedId as string).id;
-      if (befriendedId === sub.id) {
+      if (befriendedId === sub.bareId) {
         throw invalidArgumentsErrorFactory("You cannot befriend yourself.");
       }
       const userRes = await prisma.user.update({
         ...query,
-        where: { id: sub.id },
+        where: { id: sub.bareId },
         data: {
           befrienderIn: {
             connectOrCreate: {
               where: {
                 befrienderId_befriendedId: {
-                  befrienderId: sub.id,
+                  befrienderId: sub.bareId,
                   befriendedId,
                 },
               },

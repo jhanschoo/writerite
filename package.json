@@ -10,7 +10,7 @@
     "build": "turbo run build",
     "clean": "turbo run clean",
     "dev": "turbo run dev",
-    "dev:apps": "turbo run dev --filter='./apps/*' --parallel",
+    "dev:apps": "turbo run dev --filter='./apps/*' --filter=yoga-app --parallel",
     "format": "turbo run format --parallel",
     "lint": "turbo run lint --parallel",
     "test": "turbo run test"

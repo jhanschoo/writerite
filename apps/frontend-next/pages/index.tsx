@@ -10,19 +10,17 @@ const Home: NextPage = () => {
   const router = useRouter();
   const login = useLogin();
   const { token, currentUser } = router.query;
-  const [inspectingToken, setInspectingToken] = useState(
-    typeof token === "string" && typeof currentUser === "string"
-  );
+  // on the server side this is false
+  const [inspectingToken, setInspectingToken] = useState(false);
   useEffect(() => {
     if (
       window?.localStorage &&
       typeof token === "string" &&
-      typeof currentUser === "string"
+      typeof currentUser === "string" &&
+      !inspectingToken
     ) {
       setInspectingToken(true);
       login({ token, currentUser }).catch(() => setInspectingToken(false));
-    } else {
-      setInspectingToken(false);
     }
   }, [router, login]);
   return (

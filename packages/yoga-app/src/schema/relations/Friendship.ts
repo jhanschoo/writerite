@@ -73,7 +73,7 @@ builder.prismaObjectFields("User", (t) => ({
           }),
           where: {
             befriended: {
-              befrienderIn: { some: { befriendedId: ctx.sub!.id } },
+              befrienderIn: { some: { befriendedId: ctx.sub!.bareId } },
             },
           },
         },
@@ -98,7 +98,7 @@ builder.prismaObjectFields("User", (t) => ({
           }),
           where: {
             befriender: {
-              befrienderIn: { some: { befriendedId: ctx.sub!.id } },
+              befrienderIn: { some: { befriendedId: ctx.sub!.bareId } },
             },
           },
         },

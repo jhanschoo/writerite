@@ -23,6 +23,7 @@ const RoomNotificationsRoomItemFragment = graphql(/* GraphQL */ `
     id
     occupants {
       id
+      bareId
       name
     }
     activeRound {

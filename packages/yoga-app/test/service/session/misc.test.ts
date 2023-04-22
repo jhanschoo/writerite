@@ -24,7 +24,7 @@ describe("currentUserToUserJWT and getClaims", () => {
   test("currentUserToUserJWT generates a JWT compatible with getClaims", async () => {
     expect.assertions(1);
     const sub: CurrentUser = {
-      id: "foo",
+      bareId: "foo",
       name: "bar",
       roles: [],
       occupyingRoomSlugs: {},

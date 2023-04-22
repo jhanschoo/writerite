@@ -39,7 +39,7 @@ export const Card = builder.prismaNode("Card", {
       select: (_args, { sub }) => ({
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         records: {
-          where: { userId: sub!.id },
+          where: { userId: sub!.bareId },
           select: { correctRecord: true },
         },
       }),
@@ -62,7 +62,7 @@ builder.mutationFields((t) => ({
     },
     resolve: async (query, _root, { deckId, card }, { prisma, sub }) => {
       deckId = decodeGlobalID(deckId as string).id;
-      const deckConditions = { id: deckId, ownerId: sub.id };
+      const deckConditions = { id: deckId, ownerId: sub.bareId };
       const updateDeckOperation = () =>
         prisma.deck.update({
           where: deckConditions,
@@ -113,7 +113,7 @@ builder.mutationFields((t) => ({
       { prisma, sub }
     ) => {
       id = decodeGlobalID(id as string).id;
-      const cardConditions = { id, deck: { ownerId: sub.id } };
+      const cardConditions = { id, deck: { ownerId: sub.bareId } };
       const cardSetOperation = (isPrimaryTemplate: Unit | null) =>
         prisma.card.update({
           ...query,
@@ -132,7 +132,10 @@ builder.mutationFields((t) => ({
       if (card.isPrimaryTemplate) {
         const res = await prisma.$transaction([
           prisma.card.updateMany({
-            where: { deck: { ownerId: sub.id }, isPrimaryTemplate: Unit.UNIT },
+            where: {
+              deck: { ownerId: sub.bareId },
+              isPrimaryTemplate: Unit.UNIT,
+            },
             data: { isPrimaryTemplate: null },
           }),
           cardSetOperation(Unit.UNIT),
@@ -150,7 +153,7 @@ builder.mutationFields((t) => ({
     },
     resolve: async (query, _root, { id }, { prisma, sub }) => {
       id = decodeGlobalID(id as string).id;
-      const cardConditions = { id, deck: { ownerId: sub.id } };
+      const cardConditions = { id, deck: { ownerId: sub.bareId } };
       const res = await prisma.$transaction([
         prisma.card.update({
           where: cardConditions,
@@ -178,10 +181,13 @@ builder.mutationFields((t) => ({
           records: {
             upsert: {
               where: {
-                userId_cardId: { userId: sub.id, cardId: id },
+                userId_cardId: { userId: sub.bareId, cardId: id },
               },
               update: { correctHistory: { push: new Date() } },
-              create: { userId: sub.id, correctHistory: { set: [new Date()] } },
+              create: {
+                userId: sub.bareId,
+                correctHistory: { set: [new Date()] },
+              },
             },
           },
         },

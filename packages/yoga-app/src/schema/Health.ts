@@ -16,7 +16,7 @@ builder.subscriptionField("repeatHealth", (t) =>
       return (async function* repeatHealth() {
         let times = 5;
         while (times--) {
-          yield String(times) + (sub?.id ?? "");
+          yield String(times) + (sub?.bareId ?? "");
           await new Promise((resolve) => {
             setTimeout(resolve, 1000);
           });
