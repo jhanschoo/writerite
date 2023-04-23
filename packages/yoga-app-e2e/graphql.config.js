@@ -15,9 +15,6 @@ module.exports = {
             },
           ],
         },
-        './generated/schema.graphql': {
-          plugins: ['schema-ast'],
-        },
       },
       hooks: {
         afterOneFileWrite: ['prettier --write'],

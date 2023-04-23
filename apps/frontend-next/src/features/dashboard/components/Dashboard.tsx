@@ -1,11 +1,10 @@
 import { Box, Stack, Title, createStyles } from '@mantine/core';
 
 import { DashboardStats } from './DashboardStats';
-import { FriendActivity } from './FriendActivity';
 import { RoomNotifications } from './RoomNotifications';
 import { UserDecksSummary } from './UserDecksSummary';
 
-const useStyles = createStyles((theme, _params) => ({
+const useStyles = createStyles((theme) => ({
   gridBox: {
     display: 'grid',
     gridTemplateColumns: 'repeat(12, 1fr)',

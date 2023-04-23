@@ -6,7 +6,7 @@ module.exports = {
   extensions: {
     codegen: {
       generates: {
-        './test/generated/gql/': {
+        './generated/gql/': {
           preset: 'client-preset',
           plugins: [
             {
