@@ -1,10 +1,9 @@
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { useQuery } from "urql";
-
-import { StandardLayout } from "@/features/standardLayout";
-import { ManageDeck } from "@/features/manageDeck";
-import { graphql } from "@generated/gql";
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { ManageDeck } from '@/features/manageDeck';
+import { StandardLayout } from '@/features/standardLayout';
+import { graphql } from '@generated/gql';
+import { useQuery } from 'urql';
 
 const DeckQuery = graphql(/* GraphQL */ `
   query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int) {

@@ -1,14 +1,15 @@
-import { graphql } from "../../generated/gql";
-import { DeckQueryVariables } from "../../generated/gql/graphql";
-import { DecksQueryVariables } from "../../generated/gql/graphql";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+
+import { graphql } from '../../generated/gql';
 import {
   DeckAddSubdeckMutationVariables,
   DeckCreateEmptyMutationVariables,
   DeckEditMutationVariables,
+  DeckQueryVariables,
   DeckRemoveSubdeckMutationVariables,
-} from "../../generated/gql/graphql";
-import { testQuery } from "../misc";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+  DecksQueryVariables,
+} from '../../generated/gql/graphql';
+import { testQuery } from '../misc';
 
 export function mutationDeckCreateEmpty(
   executor: ReturnType<typeof buildHTTPExecutor>,

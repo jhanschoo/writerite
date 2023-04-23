@@ -1,28 +1,29 @@
 import {
-  useState,
   ChangeEvent,
-  MouseEventHandler,
   Dispatch,
+  MouseEventHandler,
   SetStateAction,
-} from "react";
-import { useQuery } from "urql";
-import { STANDARD_DEBOUNCE_MS } from "@/utils";
-import { useDebounce } from "use-debounce";
+  useState,
+} from 'react';
+import { useRouter } from 'next/router';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { DecksQueryScope } from '@generated/gql/graphql';
 import {
   Card,
   SegmentedControl,
   Text,
   TextInput,
   UnstyledButton,
-} from "@mantine/core";
+} from '@mantine/core';
+import { useQuery } from 'urql';
+import { useDebounce } from 'use-debounce';
+
 import {
-  DecksList,
   DeckSummaryContent,
   DeckSummaryContentFragment,
-} from "@/components/deck";
-import { useRouter } from "next/router";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
-import { DecksQueryScope } from "@generated/gql/graphql";
+  DecksList,
+} from '@/components/deck';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
@@ -37,7 +38,7 @@ const DeckItemFactory =
   }) => {
     return (
       <UnstyledButton
-        sx={{ height: "unset", flexGrow: 1, maxWidth: "100%" }}
+        sx={{ height: 'unset', flexGrow: 1, maxWidth: '100%' }}
         onClick={onClickFactory(deck.id)}
         component="div"
       >
@@ -47,14 +48,14 @@ const DeckItemFactory =
           withBorder
           sx={(theme) => {
             const { border, background, color, hover } = theme.fn.variant({
-              variant: "default",
+              variant: 'default',
             });
             return {
               backgroundColor: background,
               color,
-              height: "100%",
-              display: "flex",
-              flexDirection: "column",
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
               borderColor: border,
               ...theme.fn.hover({ backgroundColor: hover }),
             };
@@ -105,7 +106,7 @@ interface Props {
 
 // TODO: pagination
 export const SearchDecks = ({ onClickFactory }: Props) => {
-  const [titleContainsInput, setTitleContainsInput] = useState("");
+  const [titleContainsInput, setTitleContainsInput] = useState('');
   const [titleContains] = useDebounce(titleContainsInput, STANDARD_DEBOUNCE_MS);
   const [scope, setScope] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [cursor, setCursor] = useState<string | undefined>();
@@ -132,8 +133,8 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
         value={scope}
         onChange={setScope as Dispatch<SetStateAction<string>>}
         data={[
-          { label: "Owned", value: DecksQueryScope.Owned },
-          { label: "Public", value: DecksQueryScope.Visible },
+          { label: 'Owned', value: DecksQueryScope.Owned },
+          { label: 'Public', value: DecksQueryScope.Visible },
         ]}
       />
       <TextInput

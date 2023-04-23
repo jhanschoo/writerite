@@ -1,8 +1,9 @@
-import { Roles } from "../userJWT/Roles";
-import { PrismaCurrentUserSourceType } from "./types";
-import { PrismaClient, Unit } from "database";
-import { ProviderPrismaFieldKeys } from "./providerStrategies";
-import type { CurrentUser } from "../userJWT/CurrentUser";
+import { PrismaClient, Unit } from 'database';
+
+import type { CurrentUser } from '../userJWT/CurrentUser';
+import { Roles } from '../userJWT/Roles';
+import { ProviderPrismaFieldKeys } from './providerStrategies';
+import { PrismaCurrentUserSourceType } from './types';
 
 export function currentUserSourceToCurrentUser({
   id,
@@ -38,7 +39,7 @@ export const findOrCreateCurrentUserSourceWithProfile = async (
     update: {},
     create: {
       [idField]: profileId,
-      name: name ?? "New User",
+      name: name ?? 'New User',
       roles: [Roles.User],
     },
     include: {

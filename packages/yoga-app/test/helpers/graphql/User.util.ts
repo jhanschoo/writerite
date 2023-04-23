@@ -1,14 +1,15 @@
-import { graphql } from "../../generated/gql";
-import { testQuery } from "../misc";
-import { CurrentUser } from "../../../src/service/userJWT";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+
+import { CurrentUser } from '../../../src/service/userJWT';
+import { graphql } from '../../generated/gql';
 import {
   MeQueryVariables,
   UserEditMutationVariables,
-} from "../../generated/gql/graphql";
+} from '../../generated/gql/graphql';
+import { testQuery } from '../misc';
 
 export const DEFAULT_CREATE_USER_VALUES = {
-  name: "abcxyz",
+  name: 'abcxyz',
 };
 
 export function mutationCreateUser(
@@ -30,9 +31,9 @@ export function mutationCreateUser(
     variables: {
       input: {
         code: name,
-        nonce: "",
-        provider: "development",
-        redirect_uri: "",
+        nonce: '',
+        provider: 'development',
+        redirect_uri: '',
       },
     },
   });

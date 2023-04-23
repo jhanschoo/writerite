@@ -1,12 +1,13 @@
-import { Message as PMessage, Prisma } from "database";
-import { builder } from "../builder";
-import { MESSAGE_UPDATES_BY_ROOMID_TOPIC } from "../service/message";
-import { nanoid } from "nanoid";
-import { User } from "./User";
-import { decodeGlobalID } from "@pothos/plugin-relay";
+import { decodeGlobalID } from '@pothos/plugin-relay';
+import { Message as PMessage, Prisma } from 'database';
+import { nanoid } from 'nanoid';
+
+import { builder } from '../builder';
+import { MESSAGE_UPDATES_BY_ROOMID_TOPIC } from '../service/message';
+import { User } from './User';
 
 export enum MessageUpdateOperations {
-  MESSAGE_CREATE = "messageCreate",
+  MESSAGE_CREATE = 'messageCreate',
 }
 
 export interface MessageUpdateShape {
@@ -22,31 +23,31 @@ export interface MessageUpdatePublishArgs {
 }
 
 builder.enumType(MessageUpdateOperations, {
-  name: "MessageUpdateOperations",
-  description: "Names identifying operations that trigger message updates.",
+  name: 'MessageUpdateOperations',
+  description: 'Names identifying operations that trigger message updates.',
 });
 
 export enum MessageContentType {
-  TEXT = "TEXT",
-  CONFIG = "CONFIG",
-  ROUND_START = "ROUND_START",
-  ROUND_WIN = "ROUND_WIN",
-  ROUND_SCORE = "ROUND_SCORE",
-  CONTEST_SCORE = "CONTEST_SCORE",
+  TEXT = 'TEXT',
+  CONFIG = 'CONFIG',
+  ROUND_START = 'ROUND_START',
+  ROUND_WIN = 'ROUND_WIN',
+  ROUND_SCORE = 'ROUND_SCORE',
+  CONTEST_SCORE = 'CONTEST_SCORE',
 }
 
 builder.enumType(MessageContentType, {
-  name: "MessageContentType",
+  name: 'MessageContentType',
 });
 
 /**
  * A message sent by a user in a room. We do not support querying for relations on messages.
  */
-export const Message = builder.prismaNode("Message", {
+export const Message = builder.prismaNode('Message', {
   authScopes: {
     authenticated: true,
   },
-  id: { field: "id" },
+  id: { field: 'id' },
   fields: (t) => ({
     // ID's if revealed, need to be converted to global IDs
     // roomId: t.exposeID("roomId"),
@@ -60,13 +61,13 @@ export const Message = builder.prismaNode("Message", {
       resolve: ({ type }) => type as MessageContentType,
     }),
     content: t.field({
-      type: "JSONObject",
+      type: 'JSONObject',
       nullable: true,
       resolve: ({ content }) => content as Prisma.JsonObject | null,
     }),
-    createdAt: t.expose("createdAt", { type: "DateTime" }),
+    createdAt: t.expose('createdAt', { type: 'DateTime' }),
 
-    sender: t.relation("sender"),
+    sender: t.relation('sender'),
   }),
 });
 
@@ -114,9 +115,9 @@ builder.mutationFields((t) => ({
 }));
 
 export const MessageUpdate = builder
-  .objectRef<MessageUpdateShape>("MessageUpdate")
+  .objectRef<MessageUpdateShape>('MessageUpdate')
   .implement({
-    description: "A message indicating an operation performed on a message.",
+    description: 'A message indicating an operation performed on a message.',
     fields: (t) => ({
       operation: t.field({
         type: MessageUpdateOperations,

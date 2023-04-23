@@ -1,7 +1,6 @@
-import { useContentViewer } from "@/components/editor";
-import { ProfilePicture } from "@/features/profilePicture";
-import { JSONObject } from "@/utils";
-import { graphql } from "@generated/gql";
+import { ProfilePicture } from '@/features/profilePicture';
+import { JSONObject } from '@/utils';
+import { graphql } from '@generated/gql';
 import {
   ActionIcon,
   Button,
@@ -10,9 +9,11 @@ import {
   Stack,
   Text,
   Tooltip,
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconCopy } from "@tabler/icons-react";
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconCopy } from '@tabler/icons-react';
+
+import { useContentViewer } from '@/components/editor';
 
 export const UserProfileFragment = graphql(/* GraphQL */ `
   fragment UserProfile on User {
@@ -48,12 +49,14 @@ export const UserProfile = ({ user }: Props) => {
               #{id}
             </Text>
             <ActionIcon size="xs">
-              <IconCopy onClick={() => {
-                navigator.clipboard.writeText(id);
-                notifications.show({
-                  message: `id ${id} copied to clipboard`
-                })
-              }} />
+              <IconCopy
+                onClick={() => {
+                  navigator.clipboard.writeText(id);
+                  notifications.show({
+                    message: `id ${id} copied to clipboard`,
+                  });
+                }}
+              />
             </ActionIcon>
           </Flex>
           {viewerComponent}

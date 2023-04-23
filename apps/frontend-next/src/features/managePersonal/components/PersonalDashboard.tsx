@@ -1,7 +1,8 @@
-import { Box, Button, Center, createStyles, Stack, Title } from "@mantine/core";
-import { PersonalFriends } from "./PersonalFriends";
-import { PersonalProfile, PersonalProfileFragment } from "./PersonalProfile";
-import { FragmentType } from "@generated/gql";
+import { FragmentType } from '@generated/gql';
+import { Box, Button, Center, Stack, Title, createStyles } from '@mantine/core';
+
+import { PersonalFriends } from './PersonalFriends';
+import { PersonalProfile, PersonalProfileFragment } from './PersonalProfile';
 
 const useStyles = createStyles(({ breakpoints }) => ({
   root: {

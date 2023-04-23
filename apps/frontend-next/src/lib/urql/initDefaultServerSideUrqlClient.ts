@@ -1,6 +1,7 @@
-import { ssrExchange } from "urql";
-import { initUrqlClient } from "next-urql";
-import { commonUrqlOptions, getExchanges } from "./common";
+import { initUrqlClient } from 'next-urql';
+import { ssrExchange } from 'urql';
+
+import { commonUrqlOptions, getExchanges } from './common';
 
 export const initDefaultServerSideUrqlClient = () => {
   const ssr = ssrExchange({ isClient: false });
@@ -13,7 +14,7 @@ export const initDefaultServerSideUrqlClient = () => {
   );
   if (!client) {
     throw new Error(
-      "unable to initialize urql client in initDefaultUrqlClient"
+      'unable to initialize urql client in initDefaultUrqlClient'
     );
   }
   const getUrqlState = () => ssr.extractData();

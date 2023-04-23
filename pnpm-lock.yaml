@@ -4,9 +4,9 @@ importers:
 
   .:
     devDependencies:
-      eslint-config-custom:
+      eslint-config-custom-server:
         specifier: workspace:*
-        version: link:packages/eslint-config-custom
+        version: link:packages/eslint-config-custom-server
       turbo:
         specifier: ^1.9.3
         version: 1.9.3

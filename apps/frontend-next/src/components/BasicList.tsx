@@ -1,9 +1,9 @@
-import { createStyles, Flex, Stack } from "@mantine/core";
-import { ComponentPropsWithoutRef, ReactNode } from "react";
+import { ComponentPropsWithoutRef, ReactNode } from 'react';
+import { Flex, Stack, createStyles } from '@mantine/core';
 
 const useStyles = createStyles(({ fn, spacing }) => {
   const { background, hover, border, color } = fn.variant({
-    variant: "default",
+    variant: 'default',
   });
   return {
     item: {
@@ -11,14 +11,14 @@ const useStyles = createStyles(({ fn, spacing }) => {
       padding: spacing.xs,
       backgroundColor: background,
       gap: spacing.md,
-      alignItems: "center",
-      "&:hover": {
+      alignItems: 'center',
+      '&:hover': {
         backgroundColor: hover,
       },
-      "&:first-of-type.no-border-top": {
-        borderTop: "none",
+      '&:first-of-type.no-border-top': {
+        borderTop: 'none',
       },
-      "&:last-of-type.border-bottom": {
+      '&:last-of-type.border-bottom': {
         borderBottom: `1px solid ${border}`,
       },
     },
@@ -44,8 +44,8 @@ export const BasicList = ({
   const items = data.map((item, index) => (
     <Flex
       key={index}
-      className={`${classes.item} ${borderTop ? "" : "no-border-top"} ${
-        borderBottom ? "border-bottom" : ""
+      className={`${classes.item} ${borderTop ? '' : 'no-border-top'} ${
+        borderBottom ? 'border-bottom' : ''
       }`}
       {...rootProps?.[index]}
     >

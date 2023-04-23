@@ -1,6 +1,6 @@
-import { PropsWithChildren } from "react";
-import { Text } from "@mantine/core";
-import { useFont } from "@/hooks";
+import { PropsWithChildren } from 'react';
+import { useFont } from '@/hooks';
+import { Text } from '@mantine/core';
 
 interface Props {
   full?: boolean;
@@ -9,17 +9,17 @@ interface Props {
 }
 
 const BrandText = ({ prefix, full, suffix }: PropsWithChildren<Props>) => {
-  const brandFont = useFont({ type: "brand" });
+  const brandFont = useFont({ type: 'brand' });
   return (
     <Text
       component="span"
       sx={{
         ...brandFont.style,
-        fontSize: "125%",
+        fontSize: '125%',
       }}
     >
       {prefix}
-      {full ? "WriteRite" : "Wr"}
+      {full ? 'WriteRite' : 'Wr'}
       {suffix}
     </Text>
   );

@@ -1,20 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "database";
-import { YogaInitialContext } from "graphql-yoga";
 
-import { cascadingDelete } from "../helpers/truncate";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import type { PrismaClient } from 'database';
+import { YogaInitialContext } from 'graphql-yoga';
+import { Context, CurrentUser, Roles, createYogaServerApp } from 'yoga-app';
+
 import {
   DEFAULT_CREATE_USER_VALUES,
   mutationCreateUser,
   mutationUserEdit,
   queryMe,
   testContextFactory,
-} from "../helpers";
-import { Context, CurrentUser, createYogaServerApp, Roles } from "yoga-app";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+} from '../helpers';
+import { cascadingDelete } from '../helpers/truncate';
 
-describe("graphql/User.ts", () => {
+describe('graphql/User.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
@@ -38,16 +39,16 @@ describe("graphql/User.ts", () => {
     await cascadingDelete(prisma).user;
   });
 
-  describe("Mutation", () => {
-    describe("finalizeOauthSignin", () => {
-      it("should be able to create a user with development authentication in test environment", async () => {
+  describe('Mutation', () => {
+    describe('finalizeOauthSignin', () => {
+      it('should be able to create a user with development authentication in test environment', async () => {
         expect.assertions(2);
 
-        const name = "user1";
+        const name = 'user1';
         // create user
         const response = await mutationCreateUser(executor, { name });
         expect(response).toHaveProperty(
-          "data.finalizeOauthSignin.token",
+          'data.finalizeOauthSignin.token',
           expect.any(String)
         );
         const currentUser = response.data?.finalizeOauthSignin
@@ -60,14 +61,14 @@ describe("graphql/User.ts", () => {
         });
       });
     });
-    describe("userEdit", () => {
+    describe('userEdit', () => {
       // TODO: implement
     });
   });
 
-  describe("Query", () => {
-    describe("user", () => {
-      it("should be able to fetch all user-accessible fields of current user", async () => {
+  describe('Query', () => {
+    describe('user', () => {
+      it('should be able to fetch all user-accessible fields of current user', async () => {
         expect.assertions(1);
 
         // create user
@@ -80,7 +81,7 @@ describe("graphql/User.ts", () => {
 
         // query own user
         const queryUserRequest = await queryMe(executor, {});
-        expect(queryUserRequest).toHaveProperty("data.me", {
+        expect(queryUserRequest).toHaveProperty('data.me', {
           name: DEFAULT_CREATE_USER_VALUES.name,
           isPublic: false,
           roles: [Roles.User],

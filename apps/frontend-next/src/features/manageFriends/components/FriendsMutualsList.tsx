@@ -1,7 +1,19 @@
-import { Tabs, Title } from "@mantine/core";
+import { graphql } from '@generated/gql';
+import { Tabs, Title } from '@mantine/core';
 
-export const FriendsMutualsList= () => {
-  return (
-    <p>FriendsMutualsList</p>
-  );
+const FriendsMutualsListQuery = graphql(/* GraphQL */ `
+  query FriendsMutualsListQuery {
+    friends {
+      edges {
+        cursor
+        node {
+          ...UserProfile
+        }
+      }
+    }
+  }
+`);
+
+export const FriendsMutualsList = () => {
+  return <p>FriendsMutualsList</p>;
 };

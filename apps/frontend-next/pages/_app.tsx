@@ -1,13 +1,11 @@
-import "@styles/globals.css";
-
-import React, { useEffect } from "react";
-import type { AppProps } from "next/app";
-import Head from "next/head";
-import { useRouter } from "next/router";
-
-import { Providers } from "@providers/Providers";
-import { withDefaultUrqlClient } from "@lib/urql/withDefaultUrqlClient";
-import { WithUrqlProps } from "next-urql";
+import '@styles/globals.css';
+import React, { useEffect } from 'react';
+import type { AppProps } from 'next/app';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import { withDefaultUrqlClient } from '@lib/urql/withDefaultUrqlClient';
+import { Providers } from '@providers/Providers';
+import { WithUrqlProps } from 'next-urql';
 
 const WrApp = ({ Component, ...rest }: AppProps & WithUrqlProps) => {
   const router = useRouter();

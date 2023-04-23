@@ -1,12 +1,12 @@
-import { FRIENDS_PATH } from "@/paths";
-import { Box, Button, createStyles, Paper, Text, Title } from "@mantine/core";
-import { IconHeartHandshake } from "@tabler/icons-react";
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
+import { FRIENDS_PATH } from '@/paths';
+import { Box, Button, Paper, Text, Title, createStyles } from '@mantine/core';
+import { IconHeartHandshake } from '@tabler/icons-react';
 
 const useStyles = createStyles((theme) => ({
   header: {
-    display: "flex",
-    justifyContent: "space-between",
+    display: 'flex',
+    justifyContent: 'space-between',
   },
   emptyStatsText: {
     fontSize: theme.fontSizes.xl,

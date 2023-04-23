@@ -1,4 +1,4 @@
-import { Box, Card, Title } from "@mantine/core";
+import { Box, Card, Title } from '@mantine/core';
 
 export const PersonalFriends = ({ user }: { user: object }) => {
   return (
@@ -6,9 +6,7 @@ export const PersonalFriends = ({ user }: { user: object }) => {
       <Title order={2} mb="md">
         Friends
       </Title>
-      <Card.Section inheritPadding>
-        Hello
-      </Card.Section>
+      <Card.Section inheritPadding>Hello</Card.Section>
     </Card>
   );
 };

@@ -1,20 +1,22 @@
-import { PropsWithChildren } from "react";
-import { useQuery } from "urql";
+import { PropsWithChildren } from 'react';
+import { useRouter } from 'next/router';
+import { ProfilePicture } from '@/features/profilePicture/components';
+import { ROOM_DETAIL_PATH } from '@/paths';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Avatar,
   Button,
   Card,
-  createStyles,
   Text,
   Tooltip,
   UnstyledButton,
-} from "@mantine/core";
-import { alertGradient, alertGradientHover } from "@/lib/mantine/fns";
-import { ProfilePicture } from "@/features/profilePicture/components";
-import { FriendActivity } from "./FriendActivity";
-import { ROOM_DETAIL_PATH } from "@/paths";
-import { useRouter } from "next/router";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+  createStyles,
+} from '@mantine/core';
+import { useQuery } from 'urql';
+
+import { alertGradient, alertGradientHover } from '@/lib/mantine/fns';
+
+import { FriendActivity } from './FriendActivity';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 20;
 
@@ -45,19 +47,19 @@ const useStyles = createStyles((theme) => {
       ...theme.fn.hover({
         backgroundImage: alertGradientHover(theme),
       }),
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
     },
     avatarGroup: {
-      display: "inline-flex",
+      display: 'inline-flex',
     },
     roomItemButton: {
       borderColor: theme.white,
       color: theme.white,
-      minWidth: "25%",
+      minWidth: '25%',
       ...theme.fn.hover({
-        background: "none",
+        background: 'none',
       }),
     },
     roomItemText: {
@@ -89,7 +91,7 @@ const RoomItem = ({
     >
       <Card shadow="xl" radius="lg" mx="lg" className={classes.roomItem}>
         <Text fw="bolder" ta="center" m="md" className={classes.roomItemText}>
-          You are currently in a room with{" "}
+          You are currently in a room with{' '}
           <Avatar.Group spacing="xl" className={classes.avatarGroup}>
             {occupants.map((occupant, index) => (
               <ProfilePicture user={occupant} key={index} showTooltip />

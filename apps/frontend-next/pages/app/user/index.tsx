@@ -1,9 +1,8 @@
-import type { NextPage } from "next";
-
-import { StandardLayout } from "@/features/standardLayout/components/StandardLayout";
-import { PersonalDashboard } from "@/features/managePersonal";
-import { useQuery } from "urql";
-import { graphql, useFragment } from "@generated/gql";
+import type { NextPage } from 'next';
+import { PersonalDashboard } from '@/features/managePersonal';
+import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
+import { graphql, useFragment } from '@generated/gql';
+import { useQuery } from 'urql';
 
 const UserQuery = graphql(/* GraphQL */ `
   query UserQuery {

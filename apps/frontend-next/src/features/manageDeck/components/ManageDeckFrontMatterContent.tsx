@@ -1,5 +1,6 @@
-import { Button, Flex, Stack, Title } from "@mantine/core";
-import { DeckName } from "@/components/deck";
+import { Button, Flex, Stack, Title } from '@mantine/core';
+
+import { DeckName } from '@/components/deck';
 
 export interface Props {
   name?: string;

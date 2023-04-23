@@ -1,8 +1,8 @@
-import { JSONContent } from "@tiptap/react";
+import { JSONContent } from '@tiptap/react';
 
 export function accumulateContentText(item?: JSONContent | null): string {
   if (!item) {
-    return "";
+    return '';
   }
   const strs: string[] = [];
   const queue = [item];
@@ -15,5 +15,5 @@ export function accumulateContentText(item?: JSONContent | null): string {
       queue.push(item);
     }
   }
-  return strs.join("");
+  return strs.join('');
 }

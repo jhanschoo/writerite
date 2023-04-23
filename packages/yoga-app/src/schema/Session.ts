@@ -1,14 +1,15 @@
-import { Prisma } from "database";
-import { builder } from "../builder";
+import { Prisma } from 'database';
+
+import { builder } from '../builder';
+import {
+  currentUserSourceToCurrentUser,
+  findOrCreateCurrentUserSourceWithProfile,
+} from '../service/authentication';
 import {
   CurrentUser,
   currentUserToUserJWT,
   verifyStaleUserJWT,
-} from "../service/userJWT";
-import {
-  findOrCreateCurrentUserSourceWithProfile,
-  currentUserSourceToCurrentUser,
-} from "../service/authentication";
+} from '../service/userJWT';
 
 export class SessionInfo {
   public readonly currentUser: Prisma.JsonObject;
@@ -18,20 +19,20 @@ export class SessionInfo {
 }
 
 builder.objectType(SessionInfo, {
-  name: "SessionInfo",
-  description: "A token and its contained information",
+  name: 'SessionInfo',
+  description: 'A token and its contained information',
   fields: (t) => ({
-    token: t.expose("token", { type: "JWT" }),
-    currentUser: t.expose("currentUser", { type: "JSONObject" }),
+    token: t.expose('token', { type: 'JWT' }),
+    currentUser: t.expose('currentUser', { type: 'JSONObject' }),
   }),
 });
 
-builder.mutationField("refresh", (t) =>
+builder.mutationField('refresh', (t) =>
   t.field({
     type: SessionInfo,
     nullable: true,
     args: {
-      token: t.arg({ type: "JWT", description: "A JWT token", required: true }),
+      token: t.arg({ type: 'JWT', description: 'A JWT token', required: true }),
     },
     resolve: async (_parent, { token }, { prisma }) => {
       try {
@@ -40,7 +41,7 @@ builder.mutationField("refresh", (t) =>
           await findOrCreateCurrentUserSourceWithProfile(
             prisma,
             sub.bareId,
-            "id"
+            'id'
           );
         const currentUser = currentUserSourceToCurrentUser(currentUserSource);
         return new SessionInfo(

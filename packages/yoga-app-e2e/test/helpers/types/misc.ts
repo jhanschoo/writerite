@@ -1,10 +1,10 @@
-import { Readable } from "stream";
+import { Readable } from 'stream';
 
 export enum AuthorizerType {
-  GOOGLE = "GOOGLE",
-  FACEBOOK = "FACEBOOK",
-  LOCAL = "LOCAL",
-  DEVELOPMENT = "DEVELOPMENT",
+  GOOGLE = 'GOOGLE',
+  FACEBOOK = 'FACEBOOK',
+  LOCAL = 'LOCAL',
+  DEVELOPMENT = 'DEVELOPMENT',
 }
 
 export interface FileUpload {
@@ -17,9 +17,9 @@ export interface FileUpload {
 export type Upload = Promise<FileUpload>;
 
 export enum UpdateType {
-  CREATED = "CREATED",
-  EDITED = "EDITED",
-  DELETED = "DELETED",
+  CREATED = 'CREATED',
+  EDITED = 'EDITED',
+  DELETED = 'DELETED',
 }
 
 export interface Update<T> {

@@ -1,7 +1,7 @@
-import { GetStaticProps, NextPage } from "next";
-import { useQuery } from "urql";
-import { initDefaultServerSideUrqlClient } from "@lib/urql/initDefaultServerSideUrqlClient";
-import { graphql } from "@generated/gql";
+import { GetStaticProps, NextPage } from 'next';
+import { graphql } from '@generated/gql';
+import { initDefaultServerSideUrqlClient } from '@lib/urql/initDefaultServerSideUrqlClient';
+import { useQuery } from 'urql';
 
 export const healthQueryDocument = graphql(/* GraphQL */ `
   query HealthSSG {

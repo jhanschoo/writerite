@@ -1,5 +1,5 @@
-import { generatedAvatarUrl } from "@/utils/generatedAvatarUrl";
-import { Avatar, AvatarProps, Tooltip } from "@mantine/core";
+import { generatedAvatarUrl } from '@/utils/generatedAvatarUrl';
+import { Avatar, AvatarProps, Tooltip } from '@mantine/core';
 
 interface Props {
   user: { bareId: string; name: string };

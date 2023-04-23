@@ -1,5 +1,5 @@
-import { graphql } from "@generated/gql";
-import { useQuery } from "urql";
+import { graphql } from '@generated/gql';
+import { useQuery } from 'urql';
 
 export const RECENT_DECKS_TAKE = 20;
 

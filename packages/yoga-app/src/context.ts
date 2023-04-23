@@ -1,10 +1,9 @@
-import type Redis from "ioredis";
-import type { PubSub, YogaInitialContext } from "graphql-yoga";
+import type { PrismaClient } from 'database';
+import type { PubSub, YogaInitialContext } from 'graphql-yoga';
+import type Redis from 'ioredis';
 
-import type { PrismaClient } from "database";
-
-import type { CurrentUser } from "./service/userJWT/CurrentUser";
-import type { PubSubPublishArgs } from "./types/PubSubPublishArgs";
+import type { CurrentUser } from './service/userJWT/CurrentUser';
+import type { PubSubPublishArgs } from './types/PubSubPublishArgs';
 
 export interface Context<
   P extends PrismaClient = PrismaClient,

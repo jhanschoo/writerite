@@ -1,1 +1,1 @@
-export * from "./DecksQueryScope";
+export * from './DecksQueryScope';

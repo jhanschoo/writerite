@@ -1,23 +1,23 @@
-import { WebSocketServer } from "ws";
-import { useServer } from "graphql-ws/lib/use/ws";
+import { RequestListener, Server, createServer } from 'http';
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { WebSocketServer } from 'ws';
+import { WrServer, createYogaServerApp } from 'yoga-app';
 
-import { contextFactory } from "./context";
-import { WrServer, createYogaServerApp } from "yoga-app";
-import { RequestListener, Server, createServer } from "http";
+import { contextFactory } from './context';
 
 const { NODE_ENV } = process.env;
 
 export const [contextFn, stopContextServices] = contextFactory();
 
-const graphqlEndpoint = "/graphql";
+const graphqlEndpoint = '/graphql';
 
 export const yoga: WrServer = createYogaServerApp({
   context: contextFn,
   cors: {
     origin:
-      NODE_ENV === "production"
-        ? "https://www.writerite.site"
-        : "http://localhost:3000",
+      NODE_ENV === 'production'
+        ? 'https://www.writerite.site'
+        : 'http://localhost:3000',
   },
   graphqlEndpoint,
 });
@@ -73,7 +73,7 @@ async function main(): Promise<[Server, WebSocketServer]> {
   return new Promise((res, rej) => {
     let rejected = false;
     let resolved = false;
-    httpServer.on("error", (err) => {
+    httpServer.on('error', (err) => {
       // eslint-disable-next-line no-console
       console.error(err);
       if (rejected || resolved) {

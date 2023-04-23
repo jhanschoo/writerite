@@ -1,5 +1,5 @@
-import { MessageUpdatePublishArgs } from "../schema/Message";
-import type { RoomUpdatePublishArgs } from "../schema/Room";
+import { MessageUpdatePublishArgs } from '../schema/Message';
+import type { RoomUpdatePublishArgs } from '../schema/Room';
 
 // PubSubPublishArgsByKey is declared here since GraphQL Yoga doesn't export it
 export interface PubSubPublishArgsByKey {

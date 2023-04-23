@@ -1,4 +1,4 @@
-import { Roles } from "./Roles";
+import { Roles } from './Roles';
 
 export interface CurrentUser {
   bareId: string;

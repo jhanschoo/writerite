@@ -1,12 +1,11 @@
-import SchemaBuilder from "@pothos/core";
-import { Prisma } from "database";
-import PrismaPlugin from "@pothos/plugin-prisma";
-import DirectivePlugin from "@pothos/plugin-directives";
-import RelayPlugin from "@pothos/plugin-relay";
-import ScopeAuthPlugin from "@pothos/plugin-scope-auth";
-import ValidationPlugin from "@pothos/plugin-validation";
-import type PrismaTypes from "@pothos/plugin-prisma/generated";
-import { Context } from "./context";
+import SchemaBuilder from '@pothos/core';
+import DirectivePlugin from '@pothos/plugin-directives';
+import PrismaPlugin from '@pothos/plugin-prisma';
+import type PrismaTypes from '@pothos/plugin-prisma/generated';
+import RelayPlugin from '@pothos/plugin-relay';
+import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
+import ValidationPlugin from '@pothos/plugin-validation';
+import { Prisma } from 'database';
 import {
   DateTimeResolver,
   EmailAddressResolver,
@@ -14,8 +13,10 @@ import {
   JSONResolver,
   JWTResolver,
   UUIDResolver,
-} from "graphql-scalars";
-import { Roles } from "./service/userJWT";
+} from 'graphql-scalars';
+
+import { Context } from './context';
+import { Roles } from './service/userJWT';
 
 export const builder = new SchemaBuilder<{
   AuthScopes: {
@@ -26,18 +27,18 @@ export const builder = new SchemaBuilder<{
     inRoomId: unknown;
   };
   AuthContexts: {
-    authenticated: Context & { sub: NonNullable<Context["sub"]> };
-    admin: Context & { sub: NonNullable<Context["sub"]> };
-    subIdIs: Context & { sub: NonNullable<Context["sub"]> };
-    inRoomId: Context & { sub: NonNullable<Context["sub"]> };
+    authenticated: Context & { sub: NonNullable<Context['sub']> };
+    admin: Context & { sub: NonNullable<Context['sub']> };
+    subIdIs: Context & { sub: NonNullable<Context['sub']> };
+    inRoomId: Context & { sub: NonNullable<Context['sub']> };
   };
   Context: Context;
   Directives: {
     undefinedOnly: {
-      locations: "ARGUMENT_DEFINITION" | "INPUT_FIELD_DEFINITION";
+      locations: 'ARGUMENT_DEFINITION' | 'INPUT_FIELD_DEFINITION';
     };
     invalidatesTokens: {
-      locations: "FIELD_DEFINITION";
+      locations: 'FIELD_DEFINITION';
     };
   };
   PrismaTypes: PrismaTypes;
@@ -74,7 +75,7 @@ export const builder = new SchemaBuilder<{
     admin: (sub && sub.roles.includes(Roles.Admin)) ?? false,
     subIdIs: (id: unknown) => Boolean(sub?.bareId === id),
     inRoomId: (roomId: unknown) =>
-      typeof roomId === "string" &&
+      typeof roomId === 'string' &&
       Object.keys(sub?.occupyingRoomSlugs || {}).includes(roomId),
   }),
   plugins: [
@@ -93,8 +94,8 @@ export const builder = new SchemaBuilder<{
   },
   relayOptions: {
     // These will become the defaults in the next major version
-    clientMutationId: "omit",
-    cursorType: "ID",
+    clientMutationId: 'omit',
+    cursorType: 'ID',
   },
 });
 
@@ -102,12 +103,12 @@ builder.queryType({});
 builder.mutationType({});
 builder.subscriptionType({});
 
-builder.addScalarType("DateTime", DateTimeResolver, {});
-builder.addScalarType("EmailAddress", EmailAddressResolver, {});
-builder.addScalarType("JSON", JSONResolver, {});
-builder.addScalarType("JSONObject", JSONObjectResolver, {});
-builder.addScalarType("JWT", JWTResolver, {});
-builder.addScalarType("UUID", UUIDResolver, {});
+builder.addScalarType('DateTime', DateTimeResolver, {});
+builder.addScalarType('EmailAddress', EmailAddressResolver, {});
+builder.addScalarType('JSON', JSONResolver, {});
+builder.addScalarType('JSONObject', JSONObjectResolver, {});
+builder.addScalarType('JWT', JWTResolver, {});
+builder.addScalarType('UUID', UUIDResolver, {});
 
 // gao: grant authorization object
 export const gao = <T extends string>(s: T) => ({ $granted: s });

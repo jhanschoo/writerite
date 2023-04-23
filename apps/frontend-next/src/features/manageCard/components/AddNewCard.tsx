@@ -1,59 +1,60 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { graphql } from '@generated/gql';
 import {
-  Button,
   Box,
+  Button,
   Card,
-  createStyles,
   Divider,
+  Flex,
   LoadingOverlay,
   Text,
-  Flex,
+  createStyles,
   getStylesRef,
-} from "@mantine/core";
+} from '@mantine/core';
+import { JSONContent, useEditor } from '@tiptap/react';
+import { useMutation } from 'urql';
 
-import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from "@/components/editor";
-import { useMutation } from "urql";
-import { ManageCardAltAnswers } from "./ManageCardAltAnswers";
-import { JSONContent, useEditor } from "@tiptap/react";
-import { graphql } from "@generated/gql";
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
+
+import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({
-    variant: "default",
+    variant: 'default',
   });
   return {
     cardRoot: {
-      [`&:hover .${getStylesRef("cardCloseButton")}`]: {
-        visibility: "visible",
+      [`&:hover .${getStylesRef('cardCloseButton')}`]: {
+        visibility: 'visible',
       },
       // workaround for non-static Styles API for @mantine/tiptap@5.9.0 not being supported
-      "& .mantine-RichTextEditor-root": {
-        border: "none",
+      '& .mantine-RichTextEditor-root': {
+        border: 'none',
         color,
         ...fn.hover({
           backgroundColor: hover,
         }),
       },
-      "& .mantine-RichTextEditor-toolbar": {
-        border: "none",
-        background: "transparent",
+      '& .mantine-RichTextEditor-toolbar': {
+        border: 'none',
+        background: 'transparent',
       },
-      "& .mantine-RichTextEditor-content": {
-        background: "transparent",
+      '& .mantine-RichTextEditor-content': {
+        background: 'transparent',
       },
     },
     cardCloseButton: {
-      ref: getStylesRef("cardCloseButton"),
-      position: "absolute",
+      ref: getStylesRef('cardCloseButton'),
+      position: 'absolute',
       top: 0,
       right: 0,
-      visibility: "hidden",
+      visibility: 'hidden',
       borderTopLeftRadius: 0,
       borderBottomRightRadius: 0,
     },
     boxRoot: {
       // for 'LoadingOverlay' to work
-      position: "relative",
+      position: 'relative',
     },
   };
 });
@@ -151,8 +152,8 @@ export const AddNewCard = ({ deckId, onDone }: Props) => {
         <Card.Section inheritPadding py="sm">
           <Flex
             gap="xs"
-            direction={{ base: "column", md: "row" }}
-            align={{ md: "flex-end" }}
+            direction={{ base: 'column', md: 'row' }}
+            align={{ md: 'flex-end' }}
           >
             <ManageCardAltAnswers
               answers={answerValues}
@@ -160,7 +161,7 @@ export const AddNewCard = ({ deckId, onDone }: Props) => {
             />
             <Flex
               gap="xs"
-              wrap={{ base: "wrap", sm: "nowrap" }}
+              wrap={{ base: 'wrap', sm: 'nowrap' }}
               justify="flex-end"
             >
               <Button variant="subtle" onClick={onDone}>

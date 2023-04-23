@@ -4,8 +4,8 @@
  * login and signup of users, up to the point of identifying
  * or creating a particular user on the platform.
  */
-export * from "./profileProviders";
-export * from "./finalizeOauthSignin";
-export * from "./providerStrategies";
-export * from "./types";
-export * from "./util";
+export * from './profileProviders';
+export * from './finalizeOauthSignin';
+export * from './providerStrategies';
+export * from './types';
+export * from './util';

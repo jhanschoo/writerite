@@ -1,10 +1,10 @@
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Signin, useLogin } from "@features/signin";
-import HeroHeading from "@components/HeroHeading";
-import BrandText from "@components/typography/BrandText";
-import { Center, LoadingOverlay, Stack } from "@mantine/core";
+import { useEffect, useState } from 'react';
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import HeroHeading from '@components/HeroHeading';
+import BrandText from '@components/typography/BrandText';
+import { Signin, useLogin } from '@features/signin';
+import { Center, LoadingOverlay, Stack } from '@mantine/core';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -15,8 +15,8 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (
       window?.localStorage &&
-      typeof token === "string" &&
-      typeof currentUser === "string" &&
+      typeof token === 'string' &&
+      typeof currentUser === 'string' &&
       !inspectingToken
     ) {
       setInspectingToken(true);
@@ -27,14 +27,14 @@ const Home: NextPage = () => {
     <Stack
       align="center"
       sx={{
-        height: "100vh",
+        height: '100vh',
       }}
     >
       <LoadingOverlay visible={inspectingToken} />
       <Center
         sx={(theme) => ({
-          minHeight: "25vw",
-          maxWidth: "50vw",
+          minHeight: '25vw',
+          maxWidth: '50vw',
           margin: theme.spacing.lg,
         })}
       >
@@ -45,8 +45,8 @@ const Home: NextPage = () => {
           </BrandText>
         </HeroHeading>
       </Center>
-      <Center sx={(theme) => ({ maxWidth: "50vw" })}>
-        <Signin sx={{ width: "100%" }} />
+      <Center sx={(theme) => ({ maxWidth: '50vw' })}>
+        <Signin sx={{ width: '100%' }} />
       </Center>
     </Stack>
   );

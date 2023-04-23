@@ -1,7 +1,7 @@
-import { useMutation } from "urql";
-import { Divider, Text, Title } from "@mantine/core";
-import { SearchDecks } from "@/features/manageDecks";
-import { graphql } from "@generated/gql";
+import { SearchDecks } from '@/features/manageDecks';
+import { graphql } from '@generated/gql';
+import { Divider, Text, Title } from '@mantine/core';
+import { useMutation } from 'urql';
 
 const RoomSetDeckMutation = graphql(/* GraphQL */ `
   mutation ManageRoomRoomSetDeck($deckId: ID!, $id: ID!) {

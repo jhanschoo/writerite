@@ -1,7 +1,8 @@
-import { createStyles, Text, TextProps } from "@mantine/core";
-import { formatISO, parseISO } from "date-fns";
-import { DeckName } from "./DeckName";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Text, TextProps, createStyles } from '@mantine/core';
+import { formatISO, parseISO } from 'date-fns';
+
+import { DeckName } from './DeckName';
 
 export const DeckSummaryContentFragment = graphql(/* GraphQL */ `
   fragment DeckSummaryContent on Deck {
@@ -15,8 +16,8 @@ export const DeckSummaryContentFragment = graphql(/* GraphQL */ `
 
 const useStyles = createStyles({
   name: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
 });
 
@@ -30,7 +31,7 @@ export const DeckSummaryContent = ({ deck, rootProps }: Props) => {
   const { name, subdecksCount, cardsDirectCount, editedAt } = deckFragment;
   const { classes } = useStyles();
   const editedAtDisplay = formatISO(parseISO(editedAt), {
-    representation: "date",
+    representation: 'date',
   });
   return (
     <Text {...rootProps}>

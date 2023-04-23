@@ -1,10 +1,12 @@
-import { Box, Button, Stack, Table, Text } from "@mantine/core";
-import { IconArrowLeft, IconUpload } from "@tabler/icons-react";
-import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from "@/utils";
-import { useMutation } from "urql";
-import { accumulateContentText } from "@/components/editor";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
-import { ImportCardsData } from "../types";
+import { NEXT_PUBLIC_MAX_CARDS_PER_DECK } from '@/utils';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Box, Button, Stack, Table, Text } from '@mantine/core';
+import { IconArrowLeft, IconUpload } from '@tabler/icons-react';
+import { useMutation } from 'urql';
+
+import { accumulateContentText } from '@/components/editor';
+
+import { ImportCardsData } from '../types';
 
 export const ManageDeckCardsUploadReviewFragment = graphql(/* GraphQL */ `
   fragment ManageDeckCardsUploadReview on Deck {
@@ -55,13 +57,13 @@ export const Review = ({
   return (
     <Stack>
       <Text>
-        Your deck <strong>{name}</strong> currently has{" "}
+        Your deck <strong>{name}</strong> currently has{' '}
         <strong>{numDeckCards}</strong> cards. After importing, your deck will
         have <strong>{postImportNumCards}</strong> cards.
       </Text>
       {exceeded && (
         <Text>
-          <strong>Not all the cards will be imported!</strong> Only the first{" "}
+          <strong>Not all the cards will be imported!</strong> Only the first{' '}
           <strong>{cardsToImport.length}</strong> cards will be imported, since
           any more will put the deck over the maximum number of cards.
         </Text>
@@ -89,9 +91,9 @@ export const Review = ({
       </Table>
       <Box
         sx={({ spacing }) => ({
-          display: "flex",
+          display: 'flex',
           gap: spacing.xs,
-          flexWrap: "wrap-reverse",
+          flexWrap: 'wrap-reverse',
         })}
       >
         <Button onClick={onCancel} variant="subtle">

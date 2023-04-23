@@ -1,9 +1,10 @@
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
+
 import {
-  getAccessToken,
   SerializedSessionInfo,
+  getAccessToken,
   setSessionInfo,
-} from "../../../lib/tokenManagement";
+} from '../../../lib/tokenManagement';
 
 // Performs a login of the user if an access token is provided (albeit persisting the token) or there already exists a persisted access token.
 // TODO: useLocalStorage
@@ -12,7 +13,7 @@ export function useLogin() {
   return async (serializedSessionInfo: SerializedSessionInfo) => {
     setSessionInfo(serializedSessionInfo);
     if (getAccessToken()) {
-      await router.push("/app");
+      await router.push('/app');
     }
   };
 }

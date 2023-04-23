@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { z } from "zod";
+import { z } from 'zod';
 
 const keySchema = z.object({
   kty: z.string(),
@@ -16,13 +16,13 @@ const keyTransform =
        *   the `kty`, etc. in this data.
        */
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return parsed as z.SafeParseSuccess<{ kty: string }>["data"];
+      return parsed as z.SafeParseSuccess<{ kty: string }>['data'];
     }
     for (const { path: pathSuffix, ...rest } of validationResult.error.issues) {
       ctx.addIssue({ path: [...path, ...pathSuffix], ...rest });
     }
     // we improperly coerce the type here, but it's safe because we've already added issues
-    return undefined as unknown as z.SafeParseSuccess<{ kty: string }>["data"];
+    return undefined as unknown as z.SafeParseSuccess<{ kty: string }>['data'];
   };
 
 const envSchema = z.object({
@@ -31,9 +31,9 @@ const envSchema = z.object({
   FACEBOOK_APP_SECRET: z.string(),
   GAPI_CLIENT_ID: z.string(),
   GAPI_CLIENT_SECRET: z.string(),
-  JWT_PRIVATE_KEY: z.string().transform(keyTransform(["JWT_PRIVATE_KEY"])),
-  JWT_PUBLIC_KEY: z.string().transform(keyTransform(["JWT_PUBLIC_KEY"])),
-  NODE_ENV: z.enum(["development", "production", "test"]),
+  JWT_PRIVATE_KEY: z.string().transform(keyTransform(['JWT_PRIVATE_KEY'])),
+  JWT_PUBLIC_KEY: z.string().transform(keyTransform(['JWT_PUBLIC_KEY'])),
+  NODE_ENV: z.enum(['development', 'production', 'test']),
   REDIS_HOST: z.string(),
   REDIS_PORT: z.string(),
   REDIS_PASSWORD: z.string(),

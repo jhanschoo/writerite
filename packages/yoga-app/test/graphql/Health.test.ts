@@ -1,28 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "database";
-import { DeepMockProxy, mockDeep, mockReset } from "jest-mock-extended";
-import Redis from "ioredis";
 
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import type { PrismaClient } from 'database';
+import { GraphQLResolveInfo } from 'graphql';
+import { YogaInitialContext, createPubSub, createYoga } from 'graphql-yoga';
+import Redis from 'ioredis';
+import { DeepMockProxy, mockDeep, mockReset } from 'jest-mock-extended';
+
+import { Context } from '../../src/context';
+import { schema } from '../../src/schema';
+import { CurrentUser, Roles } from '../../src/service/userJWT';
 import {
   jestForAwaitOf,
   queryHealth,
   subscriptionRepeatHealth,
   testContextFactory,
-} from "../helpers";
-import { Context } from "../../src/context";
-import { YogaInitialContext, createPubSub, createYoga } from "graphql-yoga";
-import { schema } from "../../src/schema";
-import { CurrentUser, Roles } from "../../src/service/userJWT";
-import { GraphQLResolveInfo } from "graphql";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+} from '../helpers';
 
 export const DEFAULT_CURRENT_USER = {
-  id: "fake-id",
-  name: "fake-name",
+  id: 'fake-id',
+  name: 'fake-name',
   roles: [Roles.User],
 };
 
-describe("graphql/Health.ts", () => {
+describe('graphql/Health.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let prisma: DeepMockProxy<PrismaClient>;
@@ -51,19 +52,19 @@ describe("graphql/Health.ts", () => {
     jest.useRealTimers();
   });
 
-  describe("Query", () => {
-    describe("health", () => {
+  describe('Query', () => {
+    describe('health', () => {
       it('should return a string "OK"', async () => {
         expect.assertions(1);
         const response = await queryHealth(executor);
-        expect(response).toHaveProperty("data.health", "OK");
+        expect(response).toHaveProperty('data.health', 'OK');
       });
     });
   });
 
-  describe("Subscription", () => {
-    describe("repeatHealth", () => {
-      it("the iterator itself should do stuff", async () => {
+  describe('Subscription', () => {
+    describe('repeatHealth', () => {
+      it('the iterator itself should do stuff', async () => {
         jest.useFakeTimers();
         const subscribe = schema.getSubscriptionType()?.getFields()
           .repeatHealth.subscribe;
@@ -89,7 +90,7 @@ describe("graphql/Health.ts", () => {
           }
         );
       });
-      it("should do stuff", async () => {
+      it('should do stuff', async () => {
         jest.useFakeTimers();
         expect.assertions(5);
         const response = await subscriptionRepeatHealth(executor);
@@ -100,18 +101,18 @@ describe("graphql/Health.ts", () => {
           () => jest.advanceTimersByTime(2000),
           // eslint-disable-next-line @typescript-eslint/require-await
           async (result) => {
-            expect(result).toHaveProperty("data.repeatHealth", String(counter));
+            expect(result).toHaveProperty('data.repeatHealth', String(counter));
             --counter;
           }
         );
       });
-      it.skip("should do stuff if we advance the timers", async () => {
+      it.skip('should do stuff if we advance the timers', async () => {
         jest.useFakeTimers({ advanceTimers: true });
         expect.assertions(5);
         const response = await subscriptionRepeatHealth(executor);
         let counter = 4;
         for await (const result of response) {
-          expect(result).toHaveProperty("data.repeatHealth", String(counter));
+          expect(result).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         }
       }, 10000);

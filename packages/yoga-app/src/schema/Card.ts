@@ -1,40 +1,41 @@
-import { Prisma, Unit } from "database";
-import { builder } from "../builder";
-import { CardCreateMutationInput, CardEditMutationInput } from "./inputs";
-import { decodeGlobalID } from "@pothos/plugin-relay";
+import { decodeGlobalID } from '@pothos/plugin-relay';
+import { Prisma, Unit } from 'database';
+
+import { builder } from '../builder';
+import { CardCreateMutationInput, CardEditMutationInput } from './inputs';
 
 /**
  * Cards have no access control, and they must not naively appear top-level.
  */
-export const Card = builder.prismaNode("Card", {
+export const Card = builder.prismaNode('Card', {
   authScopes: {
     authenticated: true,
   },
-  id: { field: "id" },
+  id: { field: 'id' },
   fields: (t) => ({
     prompt: t.field({
-      type: "JSONObject",
+      type: 'JSONObject',
       nullable: true,
       resolve: ({ prompt }) => prompt as Prisma.JsonObject | null,
     }),
     fullAnswer: t.field({
-      type: "JSONObject",
+      type: 'JSONObject',
       nullable: true,
       resolve: ({ fullAnswer }) => fullAnswer as Prisma.JsonObject | null,
     }),
-    answers: t.exposeStringList("answers"),
-    isTemplate: t.exposeBoolean("isTemplate"),
+    answers: t.exposeStringList('answers'),
+    isTemplate: t.exposeBoolean('isTemplate'),
     isPrimaryTemplate: t.field({
-      type: "Boolean",
+      type: 'Boolean',
       resolve: ({ isPrimaryTemplate }) => {
         return Boolean(isPrimaryTemplate);
       },
     }),
-    editedAt: t.expose("editedAt", { type: "DateTime" }),
+    editedAt: t.expose('editedAt', { type: 'DateTime' }),
     // ID's if revealed, need to be converted to global IDs
     // deckId: t.exposeID("deckId"),
     ownRecordCorrectHistory: t.field({
-      type: ["DateTime"],
+      type: ['DateTime'],
       nullable: true,
       select: (_args, { sub }) => ({
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

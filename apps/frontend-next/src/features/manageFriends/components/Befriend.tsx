@@ -1,22 +1,22 @@
-import { graphql } from "@generated/gql";
+import { useState } from 'react';
+import { graphql } from '@generated/gql';
 import {
   Button,
   Card,
   Center,
-  createStyles,
   Flex,
   Stack,
   TextInput,
   Title,
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { IconHash, IconPlus } from "@tabler/icons-react";
-import { useState } from "react";
-import { useMutation } from "urql";
+  createStyles,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconHash, IconPlus } from '@tabler/icons-react';
+import { useMutation } from 'urql';
 
 const useStyles = createStyles(({ breakpoints }) => ({
   root: {
-    width: "100%",
+    width: '100%',
     maxWidth: breakpoints.lg,
   },
 }));
@@ -31,7 +31,7 @@ const ManageFriendsBefriendMutation = graphql(/* GraphQL */ `
 
 export const Befriend = () => {
   const { classes } = useStyles();
-  const [befriendedId, setBefriendedId] = useState("");
+  const [befriendedId, setBefriendedId] = useState('');
   const [{ fetching }, befriendMutation] = useMutation(
     ManageFriendsBefriendMutation
   );
@@ -39,10 +39,10 @@ export const Befriend = () => {
     const { data, error } = await befriendMutation({ befriendedId });
     if (data) {
       notifications.show({
-        message: `Sent a friend request to user with Friend ID ${befriendedId}`
+        message: `Sent a friend request to user with Friend ID ${befriendedId}`,
       });
     }
-  }
+  };
   return (
     <Flex align="flex-end" gap="sm">
       <TextInput
@@ -55,7 +55,9 @@ export const Befriend = () => {
           flexGrow: 1,
         }}
       />
-      <Button leftIcon={<IconPlus />} onClick={handleBefriend}>Add</Button>
+      <Button leftIcon={<IconPlus />} onClick={handleBefriend}>
+        Add
+      </Button>
     </Flex>
   );
 };

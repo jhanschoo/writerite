@@ -1,1 +1,1 @@
-export * from "./ManageDeckSubdecks";
+export * from './ManageDeckSubdecks';

@@ -1,26 +1,24 @@
-import { builder } from "../builder";
-
-import { getNonce, validateNonce } from "../service/crypto/nonce";
-import { finalizeOauthSignin } from "../service/authentication/finalizeOauthSignin";
-import { currentUserSourceToCurrentUser } from "../service/authentication/util";
-import { currentUserToUserJWT } from "../service/userJWT";
-
-import env from "../safeEnv";
-import { SessionInfo } from "./Session";
-import { FinalizeOauthSigninMutationInput } from "./inputs";
+import { builder } from '../builder';
+import env from '../safeEnv';
+import { finalizeOauthSignin } from '../service/authentication/finalizeOauthSignin';
+import { currentUserSourceToCurrentUser } from '../service/authentication/util';
+import { getNonce, validateNonce } from '../service/crypto/nonce';
+import { currentUserToUserJWT } from '../service/userJWT';
+import { SessionInfo } from './Session';
+import { FinalizeOauthSigninMutationInput } from './inputs';
 
 const { NODE_ENV } = env;
 
-builder.mutationField("initializeOauthSignin", (t) =>
+builder.mutationField('initializeOauthSignin', (t) =>
   t.field({
-    type: "String",
+    type: 'String',
     resolve(_parent, _args, { redis }) {
       return getNonce(redis);
     },
   })
 );
 
-builder.mutationField("finalizeOauthSignin", (t) =>
+builder.mutationField('finalizeOauthSignin', (t) =>
   t.field({
     type: SessionInfo,
     nullable: true,
@@ -32,7 +30,7 @@ builder.mutationField("finalizeOauthSignin", (t) =>
       { input: { code, provider, nonce, redirect_uri } },
       { prisma, redis }
     ) {
-      if (NODE_ENV === "production" && !(await validateNonce(redis, nonce))) {
+      if (NODE_ENV === 'production' && !(await validateNonce(redis, nonce))) {
         return null;
       }
       const user = await finalizeOauthSignin({

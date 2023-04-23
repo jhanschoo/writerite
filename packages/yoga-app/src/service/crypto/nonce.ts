@@ -1,9 +1,9 @@
-import { nanoid } from "nanoid";
-import type Redis from "ioredis";
+import type Redis from 'ioredis';
+import { nanoid } from 'nanoid';
 
 const oneMinute = 60;
-const namespace = "nonce";
-const OK = "OK";
+const namespace = 'nonce';
+const OK = 'OK';
 
 export async function getNonce(redis: Redis): Promise<string> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call

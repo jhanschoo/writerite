@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import env from "../../../safeEnv";
+
 // eslint-disable-next-line @typescript-eslint/no-shadow
-import { URL } from "url";
-import { setSearchParams } from "../../../util";
-import { ExternalProfileInformationProvider } from "./types";
+import { URL } from 'url';
+
+import env from '../../../safeEnv';
+import { setSearchParams } from '../../../util';
+import { ExternalProfileInformationProvider } from './types';
 
 // https://developers.facebook.com/docs/graph-api/overview
 const FACEBOOK_OAUTH_TOKEN_BASE_URL = new URL(
-  "https://graph.facebook.com/oauth/access_token"
+  'https://graph.facebook.com/oauth/access_token'
 );
 const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = env;
 
 interface FacebookTokenResponse {
   access_token: string;
   expires_in: number; // seconds integer
-  token_type: "bearer";
+  token_type: 'bearer';
 }
 
 interface FacebookPublicProfile {
@@ -41,9 +43,9 @@ export const getFacebookProfile: ExternalProfileInformationProvider = async ({
     return null;
   }
   const { access_token } = (await tokenRes.json()) as FacebookTokenResponse;
-  const profileUrl = setSearchParams(new URL("https://graph.facebook.com/me"), {
+  const profileUrl = setSearchParams(new URL('https://graph.facebook.com/me'), {
     access_token,
-    fields: "id,email",
+    fields: 'id,email',
   });
   const profileRes = await fetch(profileUrl.toString());
   const { email, id, name } =

@@ -1,5 +1,5 @@
-import { ToolbaredRichTextEditor, useContentEditor } from "@/components/editor";
-import { UserProfile } from "@/components/user";
+import { useState } from 'react';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
   Card,
@@ -12,10 +12,11 @@ import {
   Stack,
   Text,
   Title,
-} from "@mantine/core";
-import { useState } from "react";
-import { useMutation } from "urql";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+} from '@mantine/core';
+import { useMutation } from 'urql';
+
+import { ToolbaredRichTextEditor, useContentEditor } from '@/components/editor';
+import { UserProfile } from '@/components/user';
 
 export const PersonalProfileFragment = graphql(/* GraphQL */ `
   fragment PersonalProfile on User {
@@ -48,7 +49,7 @@ export const PersonalProfile = ({ user }: Props) => {
     editorComponent: ToolbaredRichTextEditor,
     content: bio,
     setContent: setBio,
-    placeholder: "Tell us about yourself!",
+    placeholder: 'Tell us about yourself!',
   });
   const handleUpdateProfile = async () => {
     const { data } = await updateProfile({ input: { bio } });
@@ -67,7 +68,7 @@ export const PersonalProfile = ({ user }: Props) => {
         <Card
           sx={{
             // for 'LoadingOverlay' to work
-            position: "relative"
+            position: 'relative',
           }}
           withBorder
           radius="lg"

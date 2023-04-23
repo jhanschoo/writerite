@@ -1,14 +1,15 @@
-import { KeyboardEvent } from "react";
-import { createStyles, Group, Kbd, Stack, Text, Textarea } from "@mantine/core";
-import { IconSend } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
-import { useMutation } from "urql";
-import { ActionIcon } from "@/components/ActionIcon";
-import { graphql } from "@generated/gql";
+import { KeyboardEvent } from 'react';
+import { graphql } from '@generated/gql';
+import { Group, Kbd, Stack, Text, Textarea, createStyles } from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { IconSend } from '@tabler/icons-react';
+import { useMutation } from 'urql';
+
+import { ActionIcon } from '@/components/ActionIcon';
 
 const useStyles = createStyles((theme) => ({
   input: {
-    overflow: "hidden",
+    overflow: 'hidden',
   },
 }));
 
@@ -28,7 +29,7 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
   const { classes } = useStyles();
   const form = useForm({
     initialValues: {
-      chatInput: "",
+      chatInput: '',
     },
   });
   const [{ fetching }, messageCreateMutation] = useMutation(
@@ -43,7 +44,7 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
   });
   const handleSubmitAccelerator = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (
-      e.key === "Enter" &&
+      e.key === 'Enter' &&
       !(e.altKey || e.shiftKey || e.ctrlKey || e.metaKey)
     ) {
       e.preventDefault();
@@ -57,7 +58,7 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
           <Text
             fz="xs"
             sx={{
-              visibility: form.values.chatInput ? "visible" : "hidden",
+              visibility: form.values.chatInput ? 'visible' : 'hidden',
             }}
           >
             (<Kbd>Alt</Kbd>/<Kbd>Shift</Kbd>/<Kbd>Ctrl</Kbd>/<Kbd>Option</Kbd>)+
@@ -77,7 +78,7 @@ export const ManageRoomPrimaryInput = ({ roomId }: Props) => {
               </Group>
             }
             onKeyDown={handleSubmitAccelerator}
-            {...form.getInputProps("chatInput")}
+            {...form.getInputProps('chatInput')}
           />
         </Stack>
       </Group>

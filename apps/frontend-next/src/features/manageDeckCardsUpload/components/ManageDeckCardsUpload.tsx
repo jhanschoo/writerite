@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Stack, Stepper } from "@mantine/core";
+import { useState } from 'react';
+import { FragmentType } from '@generated/gql';
+import { Stack, Stepper } from '@mantine/core';
 
-import { Import } from "./Import";
-import { Instructions } from "./Instructions";
-import { ManageDeckCardsUploadReviewFragment, Review } from "./Review";
-import { FragmentType } from "@generated/gql";
-import { ImportCardsData } from "../types";
+import { ImportCardsData } from '../types';
+import { Import } from './Import';
+import { Instructions } from './Instructions';
+import { ManageDeckCardsUploadReviewFragment, Review } from './Review';
 
 interface Props {
   deck: FragmentType<typeof ManageDeckCardsUploadReviewFragment>;

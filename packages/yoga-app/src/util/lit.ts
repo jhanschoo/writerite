@@ -1,5 +1,5 @@
 export const lit = (literals: string[], ...substitutions: unknown[]) => {
-  let result = "";
+  let result = '';
 
   for (let i = 0; i < substitutions.length; i++) {
     result += literals[i];

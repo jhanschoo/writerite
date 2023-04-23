@@ -1,11 +1,14 @@
-import { YogaInitialContext, createYoga } from "graphql-yoga";
-import type { Context } from "./context";
-export type { Context } from "./context";
-import { schema } from "./schema";
-export type { CurrentUser } from "./service/userJWT/CurrentUser";
-export { Roles } from "./service/userJWT/Roles";
-export { getClaims } from "./service/session";
-export type { PubSubPublishArgs } from "./types/PubSubPublishArgs";
+import { YogaInitialContext, createYoga } from 'graphql-yoga';
+
+import type { Context } from './context';
+import { schema } from './schema';
+
+export type { Context } from './context';
+
+export type { CurrentUser } from './service/userJWT/CurrentUser';
+export { Roles } from './service/userJWT/Roles';
+export { getClaims } from './service/session';
+export type { PubSubPublishArgs } from './types/PubSubPublishArgs';
 
 const { NODE_ENV } = process.env;
 
@@ -32,9 +35,9 @@ export function createYogaServerApp(opts: GraphQLServerFactoryOpts) {
   return createYoga<Record<string, unknown>, Context>({
     schema,
     graphiql: {
-      subscriptionsProtocol: "WS",
+      subscriptionsProtocol: 'WS',
     },
-    maskedErrors: NODE_ENV === "production",
+    maskedErrors: NODE_ENV === 'production',
     ...opts,
   });
 }

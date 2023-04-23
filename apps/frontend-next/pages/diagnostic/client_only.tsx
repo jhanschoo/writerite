@@ -1,7 +1,7 @@
-import { NextPage } from "next";
-import { SubscriptionHandler, useQuery, useSubscription } from "urql";
-import { graphql } from "@generated/gql";
-import { RepeatHealthClientOnlySubscription } from "@generated/gql/graphql";
+import { NextPage } from 'next';
+import { graphql } from '@generated/gql';
+import { RepeatHealthClientOnlySubscription } from '@generated/gql/graphql';
+import { SubscriptionHandler, useQuery, useSubscription } from 'urql';
 
 export const healthQueryDocument = graphql(/* GraphQL */ `
   query HealthClientOnly {

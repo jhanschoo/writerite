@@ -1,19 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "database";
+
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import type { PrismaClient } from 'database';
+import { YogaInitialContext } from 'graphql-yoga';
+import Redis from 'ioredis';
+import { Context, createYogaServerApp } from 'yoga-app';
 
 import {
   jestForAwaitOf,
   queryHealth,
   subscriptionRepeatHealth,
   testContextFactory,
-} from "../helpers";
-import { Context, createYogaServerApp } from "yoga-app";
-import { YogaInitialContext } from "graphql-yoga";
-import { cascadingDelete } from "../helpers/truncate";
-import Redis from "ioredis";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+} from '../helpers';
+import { cascadingDelete } from '../helpers/truncate';
 
-describe("graphql/Health.ts", () => {
+describe('graphql/Health.ts', () => {
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
   let prisma: PrismaClient;
@@ -39,19 +40,19 @@ describe("graphql/Health.ts", () => {
     await redis.flushdb();
   });
 
-  describe("Query", () => {
-    describe("health", () => {
+  describe('Query', () => {
+    describe('health', () => {
       it('should return a string "OK"', async () => {
         expect.assertions(1);
         const response = await queryHealth(executor);
-        expect(response).toHaveProperty("data.health", "OK");
+        expect(response).toHaveProperty('data.health', 'OK');
       });
     });
   });
 
-  describe("Subscription", () => {
-    describe("repeatHealth", () => {
-      it("should do stuff", async () => {
+  describe('Subscription', () => {
+    describe('repeatHealth', () => {
+      it('should do stuff', async () => {
         jest.useFakeTimers();
         expect.assertions(5);
         const response = await subscriptionRepeatHealth(executor);
@@ -61,18 +62,18 @@ describe("graphql/Health.ts", () => {
           response,
           () => jest.advanceTimersByTime(2000),
           (result) => {
-            expect(result).toHaveProperty("data.repeatHealth", String(counter));
+            expect(result).toHaveProperty('data.repeatHealth', String(counter));
             --counter;
             return Promise.resolve();
           }
         );
       });
-      it.skip("should do stuff with real timers", async () => {
+      it.skip('should do stuff with real timers', async () => {
         expect.assertions(5);
         const response = await subscriptionRepeatHealth(executor);
         let counter = 4;
         for await (const result of response) {
-          expect(result).toHaveProperty("data.repeatHealth", String(counter));
+          expect(result).toHaveProperty('data.repeatHealth', String(counter));
           --counter;
         }
       }, 10000);

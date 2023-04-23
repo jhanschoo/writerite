@@ -1,4 +1,4 @@
-import { Input, Stack, TextInput } from "@mantine/core";
+import { Input, Stack, TextInput } from '@mantine/core';
 
 export interface Props {
   name: string;

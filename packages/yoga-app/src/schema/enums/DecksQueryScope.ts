@@ -1,11 +1,11 @@
-import { builder } from "../../builder";
+import { builder } from '../../builder';
 
 export enum DecksQueryScope {
-  OWNED = "OWNED",
-  VISIBLE = "VISIBLE",
+  OWNED = 'OWNED',
+  VISIBLE = 'VISIBLE',
 }
 
 builder.enumType(DecksQueryScope, {
-  name: "DecksQueryScope",
-  description: "ownership type of of decks returned",
+  name: 'DecksQueryScope',
+  description: 'ownership type of of decks returned',
 });

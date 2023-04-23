@@ -1,5 +1,6 @@
-import { withUrqlClient } from "next-urql";
-import { commonUrqlOptions, getExchanges } from "./common";
+import { withUrqlClient } from 'next-urql';
+
+import { commonUrqlOptions, getExchanges } from './common';
 
 export const withDefaultUrqlClient = withUrqlClient(
   (ssrExchange) => ({

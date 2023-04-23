@@ -50,6 +50,7 @@ const documents = {
     "\n  query RecentDecksQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          ...DeckCompactSummaryContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n": types.RecentDecksQueryDocument,
     "\n  query SearchDecks(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...DeckSummaryContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n": types.SearchDecksDocument,
     "\n  mutation ManageFriendsBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n": types.ManageFriendsBefriendMutationDocument,
+    "\nquery FriendsMutualsListQuery {\n  friends {\n    edges {\n      cursor\n      node {\n        ...UserProfile\n      }\n    }\n  }\n}\n": types.FriendsMutualsListQueryDocument,
     "\n  fragment PersonalProfile on User {\n    id\n    bareId\n    bio\n    name\n  }\n": types.PersonalProfileFragmentDoc,
     "\n  mutation PersonalProfileEdit($input: OwnProfileEditMutationInput!) {\n    ownProfileEdit(input: $input) {\n      ...PersonalProfile\n    }\n  }\n": types.PersonalProfileEditDocument,
     "\n  query ManageRoomQuery($id: ID!) {\n    room(id: $id) {\n      id\n      ...ManageRoomContextual\n    }\n  }\n": types.ManageRoomQueryDocument,
@@ -226,6 +227,10 @@ export function graphql(source: "\n  query SearchDecks(\n    $after: ID\n    $be
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  mutation ManageFriendsBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation ManageFriendsBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nquery FriendsMutualsListQuery {\n  friends {\n    edges {\n      cursor\n      node {\n        ...UserProfile\n      }\n    }\n  }\n}\n"): (typeof documents)["\nquery FriendsMutualsListQuery {\n  friends {\n    edges {\n      cursor\n      node {\n        ...UserProfile\n      }\n    }\n  }\n}\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

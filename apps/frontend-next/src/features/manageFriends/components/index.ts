@@ -1,1 +1,1 @@
-export * from "./FriendsDashboard";
+export * from './FriendsDashboard';

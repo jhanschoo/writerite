@@ -1,11 +1,11 @@
-import { useFont } from "@/hooks";
+import { PropsWithChildren, forwardRef } from 'react';
+import { useFont } from '@/hooks';
 import {
   Box,
   MantineProvider,
   createPolymorphicComponent,
   useMantineTheme,
-} from "@mantine/core";
-import { PropsWithChildren, forwardRef } from "react";
+} from '@mantine/core';
 
 // https://mantine.dev/guides/polymorphic/
 
@@ -15,9 +15,9 @@ interface Props {
 
 // TODO: test this, inspect set styles
 export const Lang = ({ tag, children }: PropsWithChildren<Props>) => {
-  const displayFont = useFont({ type: "display", tag });
+  const displayFont = useFont({ type: 'display', tag });
   const theme = useMantineTheme();
-  const textFont = useFont({ type: "text", tag });
+  const textFont = useFont({ type: 'text', tag });
   return (
     <MantineProvider
       theme={{

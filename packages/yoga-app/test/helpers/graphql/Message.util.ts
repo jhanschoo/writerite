@@ -1,10 +1,11 @@
-import { graphql } from "../../generated/gql";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+
+import { graphql } from '../../generated/gql';
 import {
   MessageUpdatesByRoomIdSubscriptionVariables,
   SendTextMessageMutationVariables,
-} from "../../generated/gql/graphql";
-import { testQuery, testSubscription } from "../misc";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+} from '../../generated/gql/graphql';
+import { testQuery, testSubscription } from '../misc';
 
 export function mutationSendTextMessage(
   executor: ReturnType<typeof buildHTTPExecutor>,

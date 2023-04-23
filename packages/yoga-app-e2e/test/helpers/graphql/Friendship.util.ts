@@ -1,7 +1,8 @@
-import { graphql } from "../../generated/gql";
-import { BefriendMutationVariables } from "../../generated/gql/graphql";
-import { testQuery } from "../misc";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+
+import { graphql } from '../../generated/gql';
+import { BefriendMutationVariables } from '../../generated/gql/graphql';
+import { testQuery } from '../misc';
 
 export function mutationUserBefriendUser(
   executor: ReturnType<typeof buildHTTPExecutor>,

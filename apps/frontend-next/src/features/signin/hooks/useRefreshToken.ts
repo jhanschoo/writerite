@@ -1,6 +1,7 @@
-import { Client } from "urql";
-import { getAccessToken, setSessionInfo } from "../../../lib/tokenManagement";
-import { graphql } from "@generated/gql";
+import { graphql } from '@generated/gql';
+import { Client } from 'urql';
+
+import { getAccessToken, setSessionInfo } from '../../../lib/tokenManagement';
 
 export const RefreshMutation = graphql(/* GraphQL */ `
   mutation RefreshMutation($token: JWT!) {
@@ -17,7 +18,7 @@ export function useRefreshToken(client: Client) {
   return async () => {
     const token = getAccessToken();
     if (!token) {
-      console.error("token refresh failed: no token");
+      console.error('token refresh failed: no token');
       return;
     }
     const result = await client
@@ -25,7 +26,7 @@ export function useRefreshToken(client: Client) {
       .toPromise();
     const newSessionInfo = result.data?.refresh;
     if (!newSessionInfo) {
-      console.error("token refresh failed: no token response");
+      console.error('token refresh failed: no token response');
       return;
     }
     setSessionInfo({

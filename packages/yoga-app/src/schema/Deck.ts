@@ -1,24 +1,25 @@
-import { Deck as PDeck, Prisma } from "database";
-import { getDescendantsOfDeck } from "../service/deck";
-import { builder, gao, ungao } from "../builder";
+import { decodeGlobalID } from '@pothos/plugin-relay';
+import { Deck as PDeck, Prisma } from 'database';
+
+import { builder, gao, ungao } from '../builder';
+import { getDescendantsOfDeck } from '../service/deck';
+import { DecksQueryScope } from './enums';
 import {
   CardCreateMutationInput,
   DeckCreateMutationInput,
   DeckEditMutationInput,
-} from "./inputs";
-import { decodeGlobalID } from "@pothos/plugin-relay";
-import { DecksQueryScope } from "./enums";
-import { DecksQueryInput } from "./inputs/DecksQueryInput";
+} from './inputs';
+import { DecksQueryInput } from './inputs/DecksQueryInput';
 
-export const PPUBLIC = gao("getPublicInfo");
-export const PPRIVATABLE = gao("getPrivatableInfo");
-export const PPERSONAL = gao("getPersonalInfo");
-export const PEDIT = gao("editInfo");
+export const PPUBLIC = gao('getPublicInfo');
+export const PPRIVATABLE = gao('getPrivatableInfo');
+export const PPERSONAL = gao('getPersonalInfo');
+export const PEDIT = gao('editInfo');
 const OWNER_PERMS = ungao([PPUBLIC, PPRIVATABLE, PPERSONAL, PEDIT]);
 const PUBLIC_DECK_PERMS = ungao([PPUBLIC, PPRIVATABLE]);
 const PUBLIC_PERMS = ungao([PPUBLIC]);
 
-export const Deck = builder.prismaNode("Deck", {
+export const Deck = builder.prismaNode('Deck', {
   authScopes: {
     authenticated: true,
   },
@@ -31,35 +32,35 @@ export const Deck = builder.prismaNode("Deck", {
     }
     return PUBLIC_PERMS;
   },
-  id: { field: "id" },
+  id: { field: 'id' },
   fields: (t) => ({
     // ID's if revealed, need to be converted to global IDs
     // ownerId: t.withAuth(PPRIVATABLE).exposeID("ownerId"),
-    name: t.withAuth(PPRIVATABLE).exposeString("name"),
+    name: t.withAuth(PPRIVATABLE).exposeString('name'),
     description: t.withAuth(PPRIVATABLE).field({
-      type: "JSONObject",
+      type: 'JSONObject',
       nullable: true,
       resolve: ({ description }) => description as Prisma.JsonObject | null,
     }),
-    promptLang: t.withAuth(PPRIVATABLE).exposeString("promptLang"),
-    answerLang: t.withAuth(PPRIVATABLE).exposeString("answerLang"),
-    published: t.withAuth(PPRIVATABLE).exposeBoolean("published"),
-    sortData: t.withAuth(PPRIVATABLE).exposeStringList("sortData"),
+    promptLang: t.withAuth(PPRIVATABLE).exposeString('promptLang'),
+    answerLang: t.withAuth(PPRIVATABLE).exposeString('answerLang'),
+    published: t.withAuth(PPRIVATABLE).exposeBoolean('published'),
+    sortData: t.withAuth(PPRIVATABLE).exposeStringList('sortData'),
     createdAt: t
       .withAuth(PPRIVATABLE)
-      .expose("createdAt", { type: "DateTime" }),
-    editedAt: t.withAuth(PPRIVATABLE).expose("editedAt", { type: "DateTime" }),
+      .expose('createdAt', { type: 'DateTime' }),
+    editedAt: t.withAuth(PPRIVATABLE).expose('editedAt', { type: 'DateTime' }),
 
-    owner: t.withAuth(PPRIVATABLE).relation("owner"),
-    cardsDirect: t.withAuth(PPRIVATABLE).relatedConnection("cards", {
-      description: "all cards directly belonging to this deck",
-      cursor: "id",
+    owner: t.withAuth(PPRIVATABLE).relation('owner'),
+    cardsDirect: t.withAuth(PPRIVATABLE).relatedConnection('cards', {
+      description: 'all cards directly belonging to this deck',
+      cursor: 'id',
     }),
-    cardsDirectCount: t.withAuth(PPRIVATABLE).relationCount("cards", {
-      description: "number of all cards directly belonging to this deck",
+    cardsDirectCount: t.withAuth(PPRIVATABLE).relationCount('cards', {
+      description: 'number of all cards directly belonging to this deck',
     }),
     ownRecordNotes: t.withAuth(PPUBLIC).field({
-      type: "JSONObject",
+      type: 'JSONObject',
       nullable: true,
       select: (_args, { sub }) => ({
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -73,11 +74,11 @@ export const Deck = builder.prismaNode("Deck", {
   }),
 });
 
-builder.prismaObjectFields("Deck", (t) => ({
+builder.prismaObjectFields('Deck', (t) => ({
   descendantDecks: t.withAuth(PPRIVATABLE).field({
     type: [Deck],
     description:
-      "all descendant decks (reflexive, transitive closure of subdeck) of this deck",
+      'all descendant decks (reflexive, transitive closure of subdeck) of this deck',
     async resolve({ id }, _args, { prisma }) {
       return getDescendantsOfDeck(prisma, id);
     },
@@ -85,8 +86,8 @@ builder.prismaObjectFields("Deck", (t) => ({
 }));
 
 export enum DecksQueryOrder {
-  EDITED_RECENCY = "EDITED_RECENCY",
-  USED_RECENCY = "USED_RECENCY",
+  EDITED_RECENCY = 'EDITED_RECENCY',
+  USED_RECENCY = 'USED_RECENCY',
 }
 
 // builder.enumType(DecksQueryOrder, {
@@ -118,7 +119,7 @@ builder.queryFields((t) => ({
   }),
   decks: t.withAuth({ authenticated: true }).prismaConnection({
     type: Deck,
-    cursor: "id",
+    cursor: 'id',
     args: {
       input: t.arg({ type: DecksQueryInput, required: true }),
     },
@@ -140,7 +141,7 @@ builder.queryFields((t) => ({
             : undefined,
           name: titleContains ? { contains: titleContains } : undefined,
         },
-        orderBy: { editedAt: "desc" },
+        orderBy: { editedAt: 'desc' },
       });
       return res;
     },
@@ -150,7 +151,7 @@ builder.queryFields((t) => ({
 builder.mutationFields((t) => ({
   deckCreate: t.withAuth({ authenticated: true }).prismaField({
     type: Deck,
-    description: "create a new deck",
+    description: 'create a new deck',
     args: {
       input: t.arg({ type: DeckCreateMutationInput, required: true }),
     },
@@ -197,7 +198,7 @@ builder.mutationFields((t) => ({
   }),
   deckEdit: t.withAuth({ authenticated: true }).prismaField({
     type: Deck,
-    description: "edit a new deck",
+    description: 'edit a new deck',
     args: {
       input: t.arg({ type: DeckEditMutationInput, required: true }),
     },
@@ -235,7 +236,7 @@ builder.mutationFields((t) => ({
   }),
   deckAddCards: t.withAuth({ authenticated: true }).prismaField({
     type: Deck,
-    description: "add cards to a deck",
+    description: 'add cards to a deck',
     args: {
       deckId: t.arg.id({ required: true }),
       cards: t.arg({ type: [CardCreateMutationInput], required: true }),
@@ -255,7 +256,7 @@ builder.mutationFields((t) => ({
   }),
   deckAddSubdeck: t.withAuth({ authenticated: true }).prismaField({
     type: Deck,
-    description: "add a subdeck to a deck and resolve to the parent deck",
+    description: 'add a subdeck to a deck and resolve to the parent deck',
     args: {
       deckId: t.arg.id({ required: true }),
       subdeckId: t.arg.id({ required: true }),
@@ -280,7 +281,7 @@ builder.mutationFields((t) => ({
   }),
   deckRemoveSubdeck: t.withAuth({ authenticated: true }).prismaField({
     type: Deck,
-    description: "add a subdeck to a deck and resolve to the parent deck",
+    description: 'add a subdeck to a deck and resolve to the parent deck',
     args: {
       deckId: t.arg.id({ required: true }),
       subdeckId: t.arg.id({ required: true }),
@@ -309,7 +310,7 @@ builder.mutationFields((t) => ({
   deckDelete: t.withAuth({ admin: true }).prismaField({
     type: Deck,
     description:
-      "delete the specified deck, only if its dependents are deleted",
+      'delete the specified deck, only if its dependents are deleted',
     args: {
       deckId: t.arg.id({ required: true }),
     },
@@ -324,10 +325,10 @@ builder.mutationFields((t) => ({
   }),
   setOwnNotes: t.withAuth({ authenticated: true }).prismaField({
     type: Deck,
-    description: "set personal notes for a deck",
+    description: 'set personal notes for a deck',
     args: {
       deckId: t.arg.id({ required: true }),
-      notes: t.arg({ type: "JSONObject", required: true }),
+      notes: t.arg({ type: 'JSONObject', required: true }),
     },
     resolve: async (query, _root, { deckId, notes }, { prisma, sub }) => {
       deckId = decodeGlobalID(deckId as string).id;

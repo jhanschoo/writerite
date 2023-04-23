@@ -1,4 +1,4 @@
-export const APP_PATH = "/app";
+export const APP_PATH = '/app';
 export const DECK_PATH = `${APP_PATH}/deck`;
 export const DECK_DETAIL_PATH = (id: string) => `${DECK_PATH}/${id}`;
 export const DECK_DETAIL_SUBDECK_PATH = (id: string) =>

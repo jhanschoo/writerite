@@ -1,5 +1,6 @@
 /** @type {import('prettier').Config} */
 module.exports = {
+  singleQuote: true,
   importOrder: [
     "^(react/(.*)$)|^(react$)",
     "^(next/(.*)$)|^(next$)",

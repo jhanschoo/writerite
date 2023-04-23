@@ -1,6 +1,7 @@
-import { JWTPayload } from "jose";
-import { CurrentUser } from "./CurrentUser";
-import { verifyUserJWT } from "./verifyUserJWT";
+import { JWTPayload } from 'jose';
+
+import { CurrentUser } from './CurrentUser';
+import { verifyUserJWT } from './verifyUserJWT';
 
 const ONE_WEEK_IN_SECONDS = 60 * 60 * 24 * 7;
 

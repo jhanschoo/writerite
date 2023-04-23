@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { useQuery } from "urql";
-import { Button, Card, Flex, Stack, Text, UnstyledButton } from "@mantine/core";
-import { useRouter } from "next/router";
-import { DeckCompactSummaryContent, DeckName } from "@/components/deck";
-import { DECK_DETAIL_PATH } from "@/paths";
-import { graphql } from "@generated/gql";
+import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
+import { graphql } from '@generated/gql';
+import { Button, Card, Flex, Stack, Text, UnstyledButton } from '@mantine/core';
+import { useQuery } from 'urql';
+
+import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
 
 export const INITIAL_RECENT_DECKS = 6;
 
@@ -51,13 +52,13 @@ export const RecentDecks = () => {
       ? [
           <UnstyledButton
             component="div"
-            sx={{ flexGrow: 1, maxWidth: "100%" }}
+            sx={{ flexGrow: 1, maxWidth: '100%' }}
             onClick={() => router.push(DECK_DETAIL_PATH(edge.node.id))}
           >
             <Card
               sx={(theme) => {
                 const { border, background, color, hover } = theme.fn.variant({
-                  variant: "default",
+                  variant: 'default',
                 });
                 return {
                   backgroundColor: background,
@@ -97,8 +98,8 @@ export const RecentDecks = () => {
           variant="subtle"
           onClick={() => setRecentShowMore(!recentShowMore)}
         >
-          {!recentShowMore && "Show more"}
-          {recentShowMore && "Show less"}
+          {!recentShowMore && 'Show more'}
+          {recentShowMore && 'Show less'}
         </Button>
       )}
     </Stack>

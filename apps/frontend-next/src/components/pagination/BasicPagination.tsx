@@ -1,5 +1,5 @@
-import { Pagination } from "@mantine/core";
-import { ElementType, ReactNode, useState } from "react";
+import { ElementType, ReactNode, useState } from 'react';
+import { Pagination } from '@mantine/core';
 
 export interface BasicPaginationProps {
   wrapper: ElementType;

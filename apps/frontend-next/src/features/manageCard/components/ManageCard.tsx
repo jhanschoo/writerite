@@ -1,59 +1,60 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
+import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
   Card,
-  createStyles,
   Divider,
+  Flex,
   Loader,
   LoadingOverlay,
   Text,
-  Flex,
+  createStyles,
   getStylesRef,
-} from "@mantine/core";
-import stringify from "fast-json-stable-stringify";
+} from '@mantine/core';
+import { IconTrash } from '@tabler/icons-react';
+import { JSONContent, useEditor } from '@tiptap/react';
+import stringify from 'fast-json-stable-stringify';
+import { useMutation } from 'urql';
+import { DebouncedState, useDebouncedCallback } from 'use-debounce';
 
-import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from "@/components/editor";
-import { IconTrash } from "@tabler/icons-react";
-import { DebouncedState, useDebouncedCallback } from "use-debounce";
-import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from "@/utils";
-import { useMutation } from "urql";
-import { ManageCardAltAnswers } from "./ManageCardAltAnswers";
-import { JSONContent, useEditor } from "@tiptap/react";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
+
+import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 
 const useStyles = createStyles(({ fn }) => {
   const { background, hover, border, color } = fn.variant({
-    variant: "default",
+    variant: 'default',
   });
   return {
     cardRoot: {
       // for 'LoadingOverlay' to work
-      position: "relative",
-      [`&:hover .${getStylesRef("cardCloseButton")}`]: {
-        visibility: "visible",
+      position: 'relative',
+      [`&:hover .${getStylesRef('cardCloseButton')}`]: {
+        visibility: 'visible',
       },
       // workaround for non-static Styles API for @mantine/tiptap@5.9.0 not being supported
-      "& .mantine-RichTextEditor-root": {
-        border: "none",
+      '& .mantine-RichTextEditor-root': {
+        border: 'none',
         color,
         ...fn.hover({
           backgroundColor: hover,
         }),
       },
-      "& .mantine-RichTextEditor-toolbar": {
-        border: "none",
-        background: "transparent",
+      '& .mantine-RichTextEditor-toolbar': {
+        border: 'none',
+        background: 'transparent',
       },
-      "& .mantine-RichTextEditor-content": {
-        background: "transparent",
+      '& .mantine-RichTextEditor-content': {
+        background: 'transparent',
       },
     },
     cardCloseButton: {
-      ref: getStylesRef("cardCloseButton"),
-      position: "absolute",
+      ref: getStylesRef('cardCloseButton'),
+      position: 'absolute',
       top: 0,
       right: 0,
-      visibility: "hidden",
+      visibility: 'hidden',
       borderTopLeftRadius: 0,
       borderBottomRightRadius: 0,
     },
@@ -263,7 +264,7 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
             answers={answerValues}
             onAnswersSave={handleAnswersSave}
           />
-          <Loader visibility={hasUnsavedChanges ? "visible" : "hidden"} />
+          <Loader visibility={hasUnsavedChanges ? 'visible' : 'hidden'} />
         </Flex>
       </Card.Section>
     </Card>

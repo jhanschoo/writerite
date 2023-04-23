@@ -1,7 +1,7 @@
-import { builder } from "../../builder";
+import { builder } from '../../builder';
 
 export const FinalizeOauthSigninMutationInput = builder.inputType(
-  "FinalizeOauthSigninMutationInput",
+  'FinalizeOauthSigninMutationInput',
   {
     fields: (t) => ({
       code: t.string({ required: true }),

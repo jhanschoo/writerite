@@ -1,20 +1,22 @@
-import { useState, ChangeEvent, useEffect } from "react";
-import { useMutation, useQuery } from "urql";
-import { Button, Divider, Flex, Stack, TextInput, Title } from "@mantine/core";
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { ManageDeckSubdecksLinkSubdeckQueryQuery } from '@generated/gql/graphql';
+import { Button, Divider, Flex, Stack, TextInput, Title } from '@mantine/core';
 import {
   IconArrowLeft,
   IconCheck,
   IconLink,
   IconPlus,
   IconUpload,
-} from "@tabler/icons-react";
-import { BasicList } from "@/components/BasicList";
-import { SubdeckListItemContent } from "./SubdeckListItemContent";
-import { useRouter } from "next/router";
-import { DECK_DETAIL_PATH } from "@/paths";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
-import { ManageDeckSubdecksLinkSubdeckQueryQuery } from "@generated/gql/graphql";
-import { ManageDeckSubdecksFragment } from "../fragments/ManageDeckSubdecksFragment";
+} from '@tabler/icons-react';
+import { useMutation, useQuery } from 'urql';
+
+import { BasicList } from '@/components/BasicList';
+
+import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
+import { SubdeckListItemContent } from './SubdeckListItemContent';
 
 export const INITIAL_RECENT_DECKS = 5;
 
@@ -86,11 +88,11 @@ export const ManageDeckSubdecksLinkSubdeck = ({
   const stoplist = subdecks.map(({ id }) => id);
   stoplist.push(deckId);
   const router = useRouter();
-  const [titleFilter, setTitleFilter] = useState("");
+  const [titleFilter, setTitleFilter] = useState('');
   const [recentShowMore, setRecentShowMore] = useState(false);
   const [added, setAdded] = useState<string[]>([]);
   const [persistedRecentDecks, setPersistedDecks] = useState<
-    ManageDeckSubdecksLinkSubdeckQueryQuery["decks"]["edges"]
+    ManageDeckSubdecksLinkSubdeckQueryQuery['decks']['edges']
   >([]);
   const [{ data, fetching, error }] = useQuery({
     query: ManageDeckSubdecksLinkSubdeckQuery,
@@ -114,11 +116,11 @@ export const ManageDeckSubdecksLinkSubdeck = ({
   const handleCreateSubdeck = async () => {
     const createdDeck = await deckCreateMutation({
       input: {
-        answerLang: "en",
+        answerLang: 'en',
         cards: [],
         description: null,
-        name: "",
-        promptLang: "en",
+        name: '',
+        promptLang: 'en',
         published: false,
         parentDeckId: deckId,
       },
@@ -163,8 +165,8 @@ export const ManageDeckSubdecksLinkSubdeck = ({
           variant="subtle"
           onClick={() => setRecentShowMore(!recentShowMore)}
         >
-          {recentShowMore && "Show less"}
-          {!recentShowMore && "Show more"}
+          {recentShowMore && 'Show less'}
+          {!recentShowMore && 'Show more'}
         </Button>
       )}
       <Flex justify="space-between" align="center">
@@ -185,7 +187,7 @@ export const ManageDeckSubdecksLinkSubdeck = ({
           </Button>
           <Button
             variant="outline"
-            onClick={() => console.log("new subdeck")}
+            onClick={() => console.log('new subdeck')}
             leftIcon={<IconUpload />}
           >
             Import

@@ -4,7 +4,7 @@ export function generatedAvatarUrl(
 ) {
   const url = new URL(
     `https://avatars.dicebear.com/api/bottts/${unsafeUuid.slice(-8)}.svg${
-      params ? `?${params}` : ""
+      params ? `?${params}` : ''
     }`
   );
   return url.toString();

@@ -1,15 +1,16 @@
-import { User } from "database";
+import { User } from 'database';
+
 import {
   ExternalProfileInformationProvider,
   getDevelopmentProfile,
   getFacebookProfile,
   getGoogleProfile,
-} from "./profileProviders";
+} from './profileProviders';
 
-const FACEBOOK_PROVIDER = "facebook";
-const GOOGLE_PROVIDER = "google";
-const DEVELOPMENT_PROVIDER = "development";
-const DUMMY_ID_PROVIDER = "id";
+const FACEBOOK_PROVIDER = 'facebook';
+const GOOGLE_PROVIDER = 'google';
+const DEVELOPMENT_PROVIDER = 'development';
+const DUMMY_ID_PROVIDER = 'id';
 
 export type ProviderKey =
   | typeof FACEBOOK_PROVIDER
@@ -19,7 +20,7 @@ export type ProviderKey =
 
 export type ProviderPrismaFieldKeys = keyof Pick<
   User,
-  "facebookId" | "googleId" | "id"
+  'facebookId' | 'googleId' | 'id'
 >;
 
 // We generalize the type of `providerStrategies` in this way (losing type information about the particular key to value maps) for ease in inference.
@@ -29,8 +30,8 @@ export const providerStrategies: {
     ProviderPrismaFieldKeys
   ];
 } = {
-  google: [getGoogleProfile, "googleId"],
-  facebook: [getFacebookProfile, "facebookId"],
-  development: [getDevelopmentProfile, "id"],
-  id: [() => Promise.resolve(null), "id"],
+  google: [getGoogleProfile, 'googleId'],
+  facebook: [getFacebookProfile, 'facebookId'],
+  development: [getDevelopmentProfile, 'id'],
+  id: [() => Promise.resolve(null), 'id'],
 };

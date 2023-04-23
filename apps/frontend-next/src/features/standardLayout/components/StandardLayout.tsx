@@ -1,7 +1,13 @@
+import { PropsWithChildren, useState } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { ProfilePicture } from '@/features/profilePicture/components';
+import { useCurrentUser } from '@/hooks';
+import { FRIENDS_PATH, PROFILE_PATH } from '@/paths';
+import { useLogout } from '@features/signin/hooks/useLogout';
 import {
   AppShell,
   Button,
-  createStyles,
   Drawer,
   Flex,
   Header,
@@ -10,43 +16,38 @@ import {
   Stack,
   Text,
   UnstyledButton,
+  createStyles,
   useMantineColorScheme,
   useMantineTheme,
-} from "@mantine/core";
-import { useLogout } from "@features/signin/hooks/useLogout";
-import { PropsWithChildren, useState } from "react";
-import Link from "next/link";
+} from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import {
   IconBell,
   IconHeartHandshake,
   IconLogout,
   IconMoonStars,
   IconSun,
-} from "@tabler/icons-react";
-import { useMediaQuery } from "@mantine/hooks";
-import { useRouter } from "next/router";
-import BrandText from "@/components/typography/BrandText";
-import { useCurrentUser } from "@/hooks";
-import { ProfilePicture } from "@/features/profilePicture/components";
-import { ActionIcon } from "@/components/ActionIcon";
-import { FRIENDS_PATH, PROFILE_PATH } from "@/paths";
+} from '@tabler/icons-react';
+
+import { ActionIcon } from '@/components/ActionIcon';
+import BrandText from '@/components/typography/BrandText';
 
 interface Props {
   vhHeight?: boolean;
 }
 
 const useShellStyles = createStyles(
-  (theme, { vhHeight }: Pick<Props, "vhHeight">) => {
+  (theme, { vhHeight }: Pick<Props, 'vhHeight'>) => {
     const { background } = theme.fn.variant({
-      variant: "light",
-      color: "gray",
+      variant: 'light',
+      color: 'gray',
     });
     return {
       main: {
         backgroundColor: background,
-        display: "flex",
-        flexDirection: "column",
-        height: vhHeight ? "100vh" : undefined,
+        display: 'flex',
+        flexDirection: 'column',
+        height: vhHeight ? '100vh' : undefined,
       },
       root: {
         flexGrow: 1,
@@ -57,7 +58,7 @@ const useShellStyles = createStyles(
 
 const useDrawerButtonStyles = createStyles(() => ({
   inner: {
-    justifyContent: "flex-start",
+    justifyContent: 'flex-start',
   },
 }));
 
@@ -84,10 +85,10 @@ export const StandardLayout = ({
           height={50}
           px="md"
           sx={({ spacing }) => ({
-            display: "flex",
-            flexDirection: "row",
-            height: "100%",
-            alignItems: "center",
+            display: 'flex',
+            flexDirection: 'row',
+            height: '100%',
+            alignItems: 'center',
             columnGap: spacing.sm,
           })}
         >
@@ -127,12 +128,12 @@ export const StandardLayout = ({
                   </Menu.Item>
                   <Menu.Item
                     icon={
-                      colorScheme === "light" ? <IconMoonStars /> : <IconSun />
+                      colorScheme === 'light' ? <IconMoonStars /> : <IconSun />
                     }
                     onClick={() => toggleColorScheme()}
                   >
                     <Text>
-                      Use{colorScheme === "light" ? " dark " : " light "}theme
+                      Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
                     </Text>
                   </Menu.Item>
                   <Menu.Item icon={<IconLogout />} onClick={logout}>
@@ -171,7 +172,7 @@ export const StandardLayout = ({
                     variant="subtle"
                     onClick={() => toggleColorScheme()}
                     leftIcon={
-                      colorScheme === "light" ? (
+                      colorScheme === 'light' ? (
                         <IconMoonStars size={20} />
                       ) : (
                         <IconSun size={20} />
@@ -179,7 +180,7 @@ export const StandardLayout = ({
                     }
                     classNames={drawerButtonClasses}
                   >
-                    Use{colorScheme === "light" ? " dark " : " light "}theme
+                    Use{colorScheme === 'light' ? ' dark ' : ' light '}theme
                   </Button>
                   <Button
                     size="xl"
@@ -201,7 +202,7 @@ export const StandardLayout = ({
     >
       <Stack
         spacing={2}
-        sx={{ flexGrow: 1, height: vhHeight ? "100%" : undefined }}
+        sx={{ flexGrow: 1, height: vhHeight ? '100%' : undefined }}
       >
         {children}
       </Stack>

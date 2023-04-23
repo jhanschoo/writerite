@@ -1,11 +1,10 @@
-import env from "./safeEnv";
-import Redis from "ioredis";
-import { PubSub, YogaInitialContext, createPubSub } from "graphql-yoga";
+import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
+import { PrismaClient } from 'database';
+import { PubSub, YogaInitialContext, createPubSub } from 'graphql-yoga';
+import Redis from 'ioredis';
+import { Context, CurrentUser, PubSubPublishArgs, getClaims } from 'yoga-app';
 
-import { PrismaClient } from "database";
-
-import { Context, CurrentUser, getClaims, PubSubPublishArgs } from "yoga-app";
-import { createRedisEventTarget } from "@graphql-yoga/redis-event-target";
+import env from './safeEnv';
 
 const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
 
@@ -51,7 +50,7 @@ export function contextFactory<
   R extends Redis
 >(
   opts?: Partial<Context> &
-    Pick<Context<P, Q, R>, "prisma" | "pubsub" | "redis">,
+    Pick<Context<P, Q, R>, 'prisma' | 'pubsub' | 'redis'>,
   subFn?: (
     initialContext: YogaInitialContext,
     redis?: Redis
@@ -112,12 +111,12 @@ export function contextFactory<
       Promise.allSettled([
         useDefaultPrisma
           ? prisma.$disconnect()
-          : Promise.resolve("custom prisma used"),
+          : Promise.resolve('custom prisma used'),
         useDefaultRedis
           ? redis.disconnect()
-          : Promise.resolve("custom redis used"),
-        publishClient?.disconnect() ?? Promise.resolve("custom pubsub used"),
-        subscribeClient?.disconnect() ?? Promise.resolve("custom pubsub used"),
+          : Promise.resolve('custom redis used'),
+        publishClient?.disconnect() ?? Promise.resolve('custom pubsub used'),
+        subscribeClient?.disconnect() ?? Promise.resolve('custom pubsub used'),
       ]),
     { prisma: prisma as P, pubsub, redis: redis as R },
   ];

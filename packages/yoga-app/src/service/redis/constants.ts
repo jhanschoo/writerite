@@ -1,1 +1,1 @@
-export const WRITERITE_TOPIC = "wr:";
+export const WRITERITE_TOPIC = 'wr:';

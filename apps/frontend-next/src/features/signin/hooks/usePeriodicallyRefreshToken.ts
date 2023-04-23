@@ -1,7 +1,8 @@
-import { useInterval } from "@mantine/hooks";
-import { useEffect } from "react";
-import { useClient } from "urql";
-import { useRefreshToken } from "./useRefreshToken";
+import { useEffect } from 'react';
+import { useInterval } from '@mantine/hooks';
+import { useClient } from 'urql';
+
+import { useRefreshToken } from './useRefreshToken';
 
 // Performs a login of the user if an access token is provided (albeit persisting the token) or there already exists a persisted access token.
 // TODO: useLocalStorage

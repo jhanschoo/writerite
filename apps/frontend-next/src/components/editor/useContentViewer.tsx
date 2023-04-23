@@ -1,7 +1,8 @@
-import { JSONObject } from "@/utils";
-import { Editor } from "@tiptap/core";
-import { EditorContent, useEditor } from "@tiptap/react";
-import { DEFAULT_EDITOR_PROPS } from "./common";
+import { JSONObject } from '@/utils';
+import { Editor } from '@tiptap/core';
+import { EditorContent, useEditor } from '@tiptap/react';
+
+import { DEFAULT_EDITOR_PROPS } from './common';
 
 export const useContentViewer = (
   content: JSONObject | null

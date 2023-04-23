@@ -246,8 +246,16 @@ type PageInfo {
 }
 
 type Query {
+  """users you have unilaterally befriended"""
+  befriendeds(after: ID, before: ID, first: Int, last: Int): QueryBefriendedsConnection!
+
+  """users that have befriended you"""
+  befrienders(after: ID, before: ID, first: Int, last: Int): QueryBefriendersConnection!
   deck(id: ID!): Deck!
   decks(after: ID, before: ID, first: Int, input: DecksQueryInput!, last: Int): QueryDecksConnection!
+
+  """users who are mutual friends with you"""
+  friends(after: ID, before: ID, first: Int, last: Int): QueryFriendsConnection!
   health: String!
   me: User
   node(id: ID!): Node
@@ -258,6 +266,26 @@ type Query {
   usersByName(name: String!): [User!]!
 }
 
+type QueryBefriendedsConnection {
+  edges: [QueryBefriendedsConnectionEdge]!
+  pageInfo: PageInfo!
+}
+
+type QueryBefriendedsConnectionEdge {
+  cursor: ID!
+  node: User!
+}
+
+type QueryBefriendersConnection {
+  edges: [QueryBefriendersConnectionEdge]!
+  pageInfo: PageInfo!
+}
+
+type QueryBefriendersConnectionEdge {
+  cursor: ID!
+  node: User!
+}
+
 type QueryDecksConnection {
   edges: [QueryDecksConnectionEdge]!
   pageInfo: PageInfo!
@@ -266,6 +294,16 @@ type QueryDecksConnection {
 type QueryDecksConnectionEdge {
   cursor: ID!
   node: Deck!
+}
+
+type QueryFriendsConnection {
+  edges: [QueryFriendsConnectionEdge]!
+  pageInfo: PageInfo!
+}
+
+type QueryFriendsConnectionEdge {
+  cursor: ID!
+  node: User!
 }
 
 type Room implements Node {
@@ -348,13 +386,7 @@ scalar UUID
 
 type User implements Node {
   bareId: ID!
-
-  """users this user has befriended"""
-  befriendeds(after: ID, before: ID, first: Int, last: Int): UserBefriendedsConnection!
   befriendedsCount: Int!
-
-  """users that have befriended this user and you"""
-  befrienders(after: ID, before: ID, first: Int, last: Int): UserBefriendersConnection!
   befriendersCount: Int!
   bio: JSONObject
   decks(after: ID, before: ID, first: Int, last: Int): UserDecksConnection!
@@ -366,33 +398,8 @@ type User implements Node {
   whether the user's profile information is accessible by non-friends and searchable
   """
   isPublic: Boolean!
-
-  """
-  users befriending you that this user has befriended; upon own user gives your mutual friends
-  """
-  mutualBefriendeds(after: ID, before: ID, first: Int, last: Int): UserMutualBefriendedsConnection!
   name: String!
   roles: [String!]!
-}
-
-type UserBefriendedsConnection {
-  edges: [UserBefriendedsConnectionEdge]!
-  pageInfo: PageInfo!
-}
-
-type UserBefriendedsConnectionEdge {
-  cursor: ID!
-  node: User!
-}
-
-type UserBefriendersConnection {
-  edges: [UserBefriendersConnectionEdge]!
-  pageInfo: PageInfo!
-}
-
-type UserBefriendersConnectionEdge {
-  cursor: ID!
-  node: User!
 }
 
 type UserDecksConnection {
@@ -403,14 +410,4 @@ type UserDecksConnection {
 type UserDecksConnectionEdge {
   cursor: ID!
   node: Deck!
-}
-
-type UserMutualBefriendedsConnection {
-  edges: [UserMutualBefriendedsConnectionEdge]!
-  pageInfo: PageInfo!
-}
-
-type UserMutualBefriendedsConnectionEdge {
-  cursor: ID!
-  node: User!
 }

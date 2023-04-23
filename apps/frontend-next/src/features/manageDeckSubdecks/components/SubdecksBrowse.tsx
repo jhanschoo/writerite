@@ -1,14 +1,16 @@
-import { useState } from "react";
-import { useMutation } from "urql";
-import { Button, Stack, Text } from "@mantine/core";
-import { IconCheck, IconLinkOff, IconPlus } from "@tabler/icons-react";
-import { BasicList } from "@/components/BasicList";
+import { useState } from 'react';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Button, Stack, Text } from '@mantine/core';
+import { IconCheck, IconLinkOff, IconPlus } from '@tabler/icons-react';
+import { useMutation } from 'urql';
+
+import { BasicList } from '@/components/BasicList';
+
+import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
 import {
   SubdeckListItemContent,
   SubdeckListItemContentFragment,
-} from "./SubdeckListItemContent";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
-import { ManageDeckSubdecksFragment } from "../fragments/ManageDeckSubdecksFragment";
+} from './SubdeckListItemContent';
 
 const ManageDeckSubdecksBrowseRemoveSubdeckMutation = graphql(/* GraphQL */ `
   mutation ManageDeckSubdecksBrowseRemoveSubdeck(
@@ -59,7 +61,7 @@ export const ManageDeckSubdecksBrowse = ({ deck, onAddSubdeck }: Props) => {
         radius="xl"
         leftIcon={<IconPlus />}
         onClick={onAddSubdeck}
-        sx={{ alignSelf: "center" }}
+        sx={{ alignSelf: 'center' }}
       >
         Link / add subdecks
       </Button>

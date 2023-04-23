@@ -1,4 +1,4 @@
-import { MantineTheme } from "@mantine/core";
+import { MantineTheme } from '@mantine/core';
 
 type Shade = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 
@@ -36,8 +36,8 @@ export function alertGradientHover({
 
 export function grayGradientRight({ fn }: MantineTheme) {
   return fn.gradient({
-    from: "rgba(0,0,0,0)",
-    to: "rgba(127,127,127,0.1)",
+    from: 'rgba(0,0,0,0)',
+    to: 'rgba(127,127,127,0.1)',
     deg: 90,
   });
 }

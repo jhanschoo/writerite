@@ -1,9 +1,8 @@
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-
-import { StandardLayout } from "@/features/standardLayout";
-import { usePeriodicallyRefreshToken } from "@/features/signin";
-import { ManageRoom } from "@/features/manageRoom/components/ManageRoom";
+import type { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { ManageRoom } from '@/features/manageRoom/components/ManageRoom';
+import { usePeriodicallyRefreshToken } from '@/features/signin';
+import { StandardLayout } from '@/features/standardLayout';
 
 const Home: NextPage = () => {
   const router = useRouter();

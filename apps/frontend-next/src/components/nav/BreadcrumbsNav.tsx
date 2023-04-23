@@ -1,4 +1,5 @@
-import router from "next/router";
+import Link from 'next/link';
+import router from 'next/router';
 import {
   Breadcrumbs,
   Button,
@@ -6,8 +7,7 @@ import {
   Group,
   GroupProps,
   Text,
-} from "@mantine/core";
-import Link from "next/link";
+} from '@mantine/core';
 
 export interface BreadcrumbsNavProps {
   showBack?: boolean;
@@ -28,7 +28,7 @@ const BreadcrumbsNav = ({
     breadcrumbs.length &&
     breadcrumbs.map(([href, name], index) => (
       <Link key={index} href={href}>
-        {typeof name === "string" ? <Text>{name}</Text> : name}
+        {typeof name === 'string' ? <Text>{name}</Text> : name}
       </Link>
     ));
   return (

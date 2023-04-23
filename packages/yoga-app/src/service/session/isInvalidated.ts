@@ -1,10 +1,11 @@
-import Redis from "ioredis";
-import { JWTPayload } from "jose";
-import { CurrentUser } from "../userJWT";
+import Redis from 'ioredis';
+import { JWTPayload } from 'jose';
+
+import { CurrentUser } from '../userJWT';
 import {
   getInvalidationByRoomIdTopic,
   getInvalidationByUserIdTopic,
-} from "./util";
+} from './util';
 
 export interface InvalidatedGuardParams {
   redis: Redis;

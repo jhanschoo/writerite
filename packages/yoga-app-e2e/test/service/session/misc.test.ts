@@ -1,28 +1,29 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { PrismaClient } from "database";
-import { YogaInitialContext } from "graphql-yoga";
-import { decodeGlobalID, encodeGlobalID } from "@pothos/plugin-relay";
 
-import { cascadingDelete } from "../../helpers/truncate";
-import { loginAsNewlyCreatedUser, testContextFactory } from "../../helpers";
-import { Context, CurrentUser, Roles, createYogaServerApp } from "yoga-app";
-import { currentUserToUserJWT } from "yoga-app/src/service/userJWT";
-import Redis from "ioredis";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { decodeGlobalID, encodeGlobalID } from '@pothos/plugin-relay';
+import type { PrismaClient } from 'database';
+import { YogaInitialContext } from 'graphql-yoga';
+import Redis from 'ioredis';
+import { Context, CurrentUser, Roles, createYogaServerApp } from 'yoga-app';
 import {
   currentUserSourceToCurrentUser,
   findOrCreateCurrentUserSourceWithProfile,
-} from "yoga-app/src/service/authentication/util";
+} from 'yoga-app/src/service/authentication/util';
 import {
   getClaims,
   invalidateByRoomId,
   invalidateByUserId,
-} from "yoga-app/src/service/session";
-import { mutationRoomCreate } from "../../helpers/graphql/Room.util";
-import { sleep } from "yoga-app/src/util";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+} from 'yoga-app/src/service/session';
+import { currentUserToUserJWT } from 'yoga-app/src/service/userJWT';
+import { sleep } from 'yoga-app/src/util';
 
-describe("service/session", () => {
+import { loginAsNewlyCreatedUser, testContextFactory } from '../../helpers';
+import { mutationRoomCreate } from '../../helpers/graphql/Room.util';
+import { cascadingDelete } from '../../helpers/truncate';
+
+describe('service/session', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
@@ -50,7 +51,7 @@ describe("service/session", () => {
     await redis.flushdb();
   });
 
-  it("should be able to get claims of valid JWTs on the platform", async () => {
+  it('should be able to get claims of valid JWTs on the platform', async () => {
     expect.assertions(2);
 
     // setup currentUser
@@ -62,7 +63,7 @@ describe("service/session", () => {
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
       user.name,
-      "id"
+      'id'
     );
     const currentUser = currentUserSourceToCurrentUser(currentUserSource);
 
@@ -85,7 +86,7 @@ describe("service/session", () => {
         request: {
           headers: {
             get: (headerKey: string) =>
-              headerKey === "Authorization" ? authorization : undefined,
+              headerKey === 'Authorization' ? authorization : undefined,
           },
         },
       } as unknown as YogaInitialContext,
@@ -94,7 +95,7 @@ describe("service/session", () => {
     expect(sub).toEqual(currentUser);
   });
 
-  it("should not be able to get claims after JWTs have been invalidated by userId", async () => {
+  it('should not be able to get claims after JWTs have been invalidated by userId', async () => {
     expect.assertions(1);
 
     // setup currentUser
@@ -106,7 +107,7 @@ describe("service/session", () => {
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
       user.name,
-      "id"
+      'id'
     );
     const currentUser = currentUserSourceToCurrentUser(currentUserSource);
 
@@ -124,7 +125,7 @@ describe("service/session", () => {
         request: {
           headers: {
             get: (headerKey: string) =>
-              headerKey === "Authorization" ? authorization : undefined,
+              headerKey === 'Authorization' ? authorization : undefined,
           },
         },
       } as unknown as YogaInitialContext,
@@ -133,7 +134,7 @@ describe("service/session", () => {
     expect(sub).toBeUndefined();
   });
 
-  it("should not be able to get claims after JWTs have been invalidated by room slug", async () => {
+  it('should not be able to get claims after JWTs have been invalidated by room slug', async () => {
     expect.assertions(1);
 
     // setup currentUser
@@ -145,7 +146,7 @@ describe("service/session", () => {
     const currentUserSource = await findOrCreateCurrentUserSourceWithProfile(
       prisma,
       user.name,
-      "id"
+      'id'
     );
     const currentUser = currentUserSourceToCurrentUser(currentUserSource);
 
@@ -166,7 +167,7 @@ describe("service/session", () => {
         request: {
           headers: {
             get: (headerKey: string) =>
-              headerKey === "Authorization" ? authorization : undefined,
+              headerKey === 'Authorization' ? authorization : undefined,
           },
         },
       } as unknown as YogaInitialContext,

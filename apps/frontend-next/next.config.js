@@ -1,5 +1,5 @@
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
 });
 
 /** @type {import('next').NextConfig} */
@@ -11,13 +11,13 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: "/app/deck/:id",
-        destination: "/app/deck/:id/card",
+        source: '/app/deck/:id',
+        destination: '/app/deck/:id/card',
         permanent: true,
       },
       {
-        source: "/app/deck/:id/subdeck",
-        destination: "/app/deck/:id/subdeck/link",
+        source: '/app/deck/:id/subdeck',
+        destination: '/app/deck/:id/subdeck/link',
         permanent: true,
       },
     ];

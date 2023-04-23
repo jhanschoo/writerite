@@ -1,36 +1,37 @@
-import { useRouter } from "next/router";
-import { useMutation, useQuery } from "urql";
+import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH, DECK_PATH } from '@/paths';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
   Card,
-  createStyles,
   Divider,
   Flex,
   Text,
   Title,
   UnstyledButton,
-} from "@mantine/core";
-import { IconSearch, IconPlus } from "@tabler/icons-react";
-import { formatISO, parseISO } from "date-fns";
-import { DECK_DETAIL_PATH, DECK_PATH } from "@/paths";
-import { DeckCompactSummaryContent } from "@/components/deck";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+  createStyles,
+} from '@mantine/core';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
+import { formatISO, parseISO } from 'date-fns';
+import { useMutation, useQuery } from 'urql';
+
+import { DeckCompactSummaryContent } from '@/components/deck';
 
 export const USER_DECK_SUMMARY_DECKS_NUM = 5;
 
 const useStyles = createStyles((theme) => {
   const { background: backgroundColor, hover } = theme.fn.variant({
-    variant: "default",
+    variant: 'default',
   });
   return {
     card: {
-      overflow: "visible",
+      overflow: 'visible',
     },
     buttonSection: {
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      overflow: "visible",
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      overflow: 'visible',
     },
     deckItem: {
       backgroundColor,
@@ -39,8 +40,8 @@ const useStyles = createStyles((theme) => {
       }),
     },
     createDeckButton: {
-      position: "relative",
-      bottom: "-1rem",
+      position: 'relative',
+      bottom: '-1rem',
     },
   };
 });
@@ -62,11 +63,11 @@ const NewDeckItem = () => {
   const handleCreateDeck = async () => {
     const createdDeck = await newDeckItemMutation({
       input: {
-        answerLang: "en",
+        answerLang: 'en',
         cards: [],
         description: null,
-        name: "",
-        promptLang: "en",
+        name: '',
+        promptLang: 'en',
         published: false,
       },
     });
@@ -104,7 +105,7 @@ const DeckItem = ({
   const deckFragment = useFragment(UserDecksSummaryDeckItemFragment, deck);
   const { id, editedAt } = deckFragment;
   const editedAtDisplay = formatISO(parseISO(editedAt), {
-    representation: "date",
+    representation: 'date',
   });
   const { classes } = useStyles();
   const router = useRouter();

@@ -368,8 +368,14 @@ export type PageInfo = {
 
 export type Query = {
   __typename?: 'Query';
+  /** users you have unilaterally befriended */
+  befriendeds: QueryBefriendedsConnection;
+  /** users that have befriended you */
+  befrienders: QueryBefriendersConnection;
   deck: Deck;
   decks: QueryDecksConnection;
+  /** users who are mutual friends with you */
+  friends: QueryFriendsConnection;
   health: Scalars['String'];
   me?: Maybe<User>;
   node?: Maybe<Node>;
@@ -378,6 +384,22 @@ export type Query = {
   room?: Maybe<Room>;
   roomBySlug?: Maybe<Room>;
   usersByName: Array<User>;
+};
+
+
+export type QueryBefriendedsArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryBefriendersArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -391,6 +413,14 @@ export type QueryDecksArgs = {
   before?: InputMaybe<Scalars['ID']>;
   first?: InputMaybe<Scalars['Int']>;
   input: DecksQueryInput;
+  last?: InputMaybe<Scalars['Int']>;
+};
+
+
+export type QueryFriendsArgs = {
+  after?: InputMaybe<Scalars['ID']>;
+  before?: InputMaybe<Scalars['ID']>;
+  first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
 
@@ -419,6 +449,30 @@ export type QueryUsersByNameArgs = {
   name: Scalars['String'];
 };
 
+export type QueryBefriendedsConnection = {
+  __typename?: 'QueryBefriendedsConnection';
+  edges: Array<Maybe<QueryBefriendedsConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type QueryBefriendedsConnectionEdge = {
+  __typename?: 'QueryBefriendedsConnectionEdge';
+  cursor: Scalars['ID'];
+  node: User;
+};
+
+export type QueryBefriendersConnection = {
+  __typename?: 'QueryBefriendersConnection';
+  edges: Array<Maybe<QueryBefriendersConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type QueryBefriendersConnectionEdge = {
+  __typename?: 'QueryBefriendersConnectionEdge';
+  cursor: Scalars['ID'];
+  node: User;
+};
+
 export type QueryDecksConnection = {
   __typename?: 'QueryDecksConnection';
   edges: Array<Maybe<QueryDecksConnectionEdge>>;
@@ -429,6 +483,18 @@ export type QueryDecksConnectionEdge = {
   __typename?: 'QueryDecksConnectionEdge';
   cursor: Scalars['ID'];
   node: Deck;
+};
+
+export type QueryFriendsConnection = {
+  __typename?: 'QueryFriendsConnection';
+  edges: Array<Maybe<QueryFriendsConnectionEdge>>;
+  pageInfo: PageInfo;
+};
+
+export type QueryFriendsConnectionEdge = {
+  __typename?: 'QueryFriendsConnectionEdge';
+  cursor: Scalars['ID'];
+  node: User;
 };
 
 export type Room = Node & {
@@ -533,11 +599,7 @@ export type SubscriptionRoomUpdatesByRoomIdArgs = {
 export type User = Node & {
   __typename?: 'User';
   bareId: Scalars['ID'];
-  /** users this user has befriended */
-  befriendeds: UserBefriendedsConnection;
   befriendedsCount: Scalars['Int'];
-  /** users that have befriended this user and you */
-  befrienders: UserBefriendersConnection;
   befriendersCount: Scalars['Int'];
   bio?: Maybe<Scalars['JSONObject']>;
   decks: UserDecksConnection;
@@ -546,26 +608,8 @@ export type User = Node & {
   id: Scalars['ID'];
   /** whether the user's profile information is accessible by non-friends and searchable */
   isPublic: Scalars['Boolean'];
-  /** users befriending you that this user has befriended; upon own user gives your mutual friends */
-  mutualBefriendeds: UserMutualBefriendedsConnection;
   name: Scalars['String'];
   roles: Array<Scalars['String']>;
-};
-
-
-export type UserBefriendedsArgs = {
-  after?: InputMaybe<Scalars['ID']>;
-  before?: InputMaybe<Scalars['ID']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type UserBefriendersArgs = {
-  after?: InputMaybe<Scalars['ID']>;
-  before?: InputMaybe<Scalars['ID']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
 };
 
 
@@ -574,38 +618,6 @@ export type UserDecksArgs = {
   before?: InputMaybe<Scalars['ID']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
-};
-
-
-export type UserMutualBefriendedsArgs = {
-  after?: InputMaybe<Scalars['ID']>;
-  before?: InputMaybe<Scalars['ID']>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-};
-
-export type UserBefriendedsConnection = {
-  __typename?: 'UserBefriendedsConnection';
-  edges: Array<Maybe<UserBefriendedsConnectionEdge>>;
-  pageInfo: PageInfo;
-};
-
-export type UserBefriendedsConnectionEdge = {
-  __typename?: 'UserBefriendedsConnectionEdge';
-  cursor: Scalars['ID'];
-  node: User;
-};
-
-export type UserBefriendersConnection = {
-  __typename?: 'UserBefriendersConnection';
-  edges: Array<Maybe<UserBefriendersConnectionEdge>>;
-  pageInfo: PageInfo;
-};
-
-export type UserBefriendersConnectionEdge = {
-  __typename?: 'UserBefriendersConnectionEdge';
-  cursor: Scalars['ID'];
-  node: User;
 };
 
 export type UserDecksConnection = {
@@ -618,18 +630,6 @@ export type UserDecksConnectionEdge = {
   __typename?: 'UserDecksConnectionEdge';
   cursor: Scalars['ID'];
   node: Deck;
-};
-
-export type UserMutualBefriendedsConnection = {
-  __typename?: 'UserMutualBefriendedsConnection';
-  edges: Array<Maybe<UserMutualBefriendedsConnectionEdge>>;
-  pageInfo: PageInfo;
-};
-
-export type UserMutualBefriendedsConnectionEdge = {
-  __typename?: 'UserMutualBefriendedsConnectionEdge';
-  cursor: Scalars['ID'];
-  node: User;
 };
 
 export type DeckCreateEmptyMutationVariables = Exact<{

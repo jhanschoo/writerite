@@ -1,7 +1,8 @@
-import { Tabs, Title } from "@mantine/core";
-import { FriendsMutualsList } from "./FriendsMutualsList";
+import { Tabs, Title } from '@mantine/core';
 
-export const FriendsList= () => {
+import { FriendsMutualsList } from './FriendsMutualsList';
+
+export const FriendsList = () => {
   return (
     <Tabs defaultValue="mutuals">
       <Tabs.List>
@@ -13,12 +14,8 @@ export const FriendsList= () => {
         <FriendsMutualsList />
       </Tabs.Panel>
       <Tabs.Panel value="pending">
-        <Title order={3}>
-          Received
-        </Title>
-        <Title order={3}>
-          Sent
-        </Title>
+        <Title order={3}>Received</Title>
+        <Title order={3}>Sent</Title>
       </Tabs.Panel>
     </Tabs>
   );

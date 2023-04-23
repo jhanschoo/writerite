@@ -1,4 +1,4 @@
-import { graphql } from "@generated/gql";
+import { graphql } from '@generated/gql';
 
 export const ManageDeckSubdecksFragment = graphql(/* GraphQL */ `
   fragment ManageDeckSubdecks on Deck {

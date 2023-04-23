@@ -1,18 +1,19 @@
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
-import { PrismaClient } from "database";
-import { ExecutionResult } from "graphql";
-import Redis from "ioredis";
-import { JWTPayload } from "jose";
-import { ContextFactoryReturnType, contextFactory } from "./context";
-import { parseArbitraryJWT } from "yoga-app/src/service/crypto";
-import { Context, CurrentUser, PubSubPublishArgs } from "yoga-app";
-import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import { PrismaClient } from 'database';
+import { ExecutionResult } from 'graphql';
+import Redis from 'ioredis';
+import { JWTPayload } from 'jose';
+import { Context, CurrentUser, PubSubPublishArgs } from 'yoga-app';
+import { parseArbitraryJWT } from 'yoga-app/src/service/crypto';
+
+import { ContextFactoryReturnType, contextFactory } from './context';
 
 function assertSingleValue<TValue extends ExecutionResult<any, any>>(
   value: TValue | AsyncIterable<TValue>
 ): asserts value is TValue {
   if (Symbol.asyncIterator in value) {
-    throw new Error("Expected single value");
+    throw new Error('Expected single value');
   }
 }
 function assertStreamValue<TValue extends ExecutionResult<any, any>>(
@@ -21,7 +22,7 @@ function assertStreamValue<TValue extends ExecutionResult<any, any>>(
   if (Symbol.asyncIterator in value) {
     return;
   }
-  throw new Error("Expected single value");
+  throw new Error('Expected single value');
 }
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
@@ -37,7 +38,7 @@ export function testContextFactory<
   R extends Redis
 >(
   opts?: Partial<Context<T, U, R>> &
-    Pick<Context<T, U, R>, "prisma" | "pubsub" | "redis">
+    Pick<Context<T, U, R>, 'prisma' | 'pubsub' | 'redis'>
 ): [(sub?: CurrentUser) => void, ...ContextFactoryReturnType<T, U, R>];
 export function testContextFactory(
   opts?: Partial<Context>

@@ -1,18 +1,19 @@
-import { Room as PRoom, RoomType, RoundState, Unit } from "database";
-import { builder, gao, ungao } from "../builder";
-import { User } from "./User";
-import { Round } from "./Round";
-import { invalidateByRoomId, invalidateByUserId } from "../service/session";
-import { ROOM_UPDATES_BY_ROOMID_TOPIC } from "../service/room";
-import { slug as genSlug } from "../util";
-import { decodeGlobalID } from "@pothos/plugin-relay";
+import { decodeGlobalID } from '@pothos/plugin-relay';
+import { Room as PRoom, RoomType, RoundState, Unit } from 'database';
+
+import { builder, gao, ungao } from '../builder';
+import { ROOM_UPDATES_BY_ROOMID_TOPIC } from '../service/room';
+import { invalidateByRoomId, invalidateByUserId } from '../service/session';
+import { slug as genSlug } from '../util';
+import { Round } from './Round';
+import { User } from './User';
 
 export enum RoomUpdateOperations {
-  ROOM_SET_DECK = "roomSetDeck",
-  ROOM_JOIN = "roomJoin",
-  ROOM_START_ROUND = "roomStartRound",
-  ROOM_END_ROUND = "roomEndRound",
-  ROOM_ARCHIVE = "roomArchive",
+  ROOM_SET_DECK = 'roomSetDeck',
+  ROOM_JOIN = 'roomJoin',
+  ROOM_START_ROUND = 'roomStartRound',
+  ROOM_END_ROUND = 'roomEndRound',
+  ROOM_ARCHIVE = 'roomArchive',
 }
 
 export interface RoomUpdateShape {
@@ -25,16 +26,16 @@ export interface RoomUpdatePublishArgs {
 }
 
 builder.enumType(RoomUpdateOperations, {
-  name: "RoomUpdateOperations",
-  description: "Keys identifying operations that trigger room updates.",
+  name: 'RoomUpdateOperations',
+  description: 'Keys identifying operations that trigger room updates.',
 });
 
 builder.enumType(RoomType, {
-  name: "RoomType",
+  name: 'RoomType',
 });
 
-export const PSUMMARY = gao("getPublicInfo");
-export const PDETAIL = gao("getDetailInfo");
+export const PSUMMARY = gao('getPublicInfo');
+export const PDETAIL = gao('getDetailInfo');
 
 // note that persistent rooms rely on the type not being accessible from the graph
 // except by its occupants in the first place for access control.
@@ -45,7 +46,7 @@ const OCCUPANT_PERMS = ungao([PSUMMARY, PDETAIL]);
 // PUBLIC_PERMS is the minimal set of permissions that a user has on a room.
 const PUBLIC_PERMS = ungao([PSUMMARY]);
 
-export const Room = builder.prismaNode("Room", {
+export const Room = builder.prismaNode('Room', {
   authScopes: {
     authenticated: true,
   },
@@ -58,13 +59,13 @@ export const Room = builder.prismaNode("Room", {
     }
     return PUBLIC_PERMS;
   },
-  id: { field: "id" },
+  id: { field: 'id' },
   fields: (t) => ({
     messages: t
       .withAuth(PDETAIL)
-      .relatedConnection("chatMsgs", { cursor: "id" }),
-    messageCount: t.withAuth(PDETAIL).relationCount("chatMsgs"),
-    occupantsCount: t.withAuth(PDETAIL).relationCount("occupants"),
+      .relatedConnection('chatMsgs', { cursor: 'id' }),
+    messageCount: t.withAuth(PDETAIL).relationCount('chatMsgs'),
+    occupantsCount: t.withAuth(PDETAIL).relationCount('occupants'),
     occupants: t.withAuth(PDETAIL).field({
       select: (_args, _ctx, nestedSelection) => ({
         occupants: {
@@ -86,7 +87,7 @@ export const Room = builder.prismaNode("Room", {
       nullable: true,
       resolve: (room) => room.rounds[0] ?? null,
     }),
-    type: t.expose("type", { type: RoomType }),
+    type: t.expose('type', { type: RoomType }),
   }),
 });
 
@@ -381,9 +382,9 @@ builder.mutationFields((t) => ({
 }));
 
 export const RoomUpdate = builder
-  .objectRef<RoomUpdateShape>("RoomUpdate")
+  .objectRef<RoomUpdateShape>('RoomUpdate')
   .implement({
-    description: "A message indicating an operation performed on a room.",
+    description: 'A message indicating an operation performed on a room.',
     fields: (t) => ({
       operation: t.field({
         type: RoomUpdateOperations,

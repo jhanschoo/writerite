@@ -1,16 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { PrismaClient, Unit } from "database";
 
-import { cascadingDelete } from "../helpers/truncate";
+import { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import { encodeGlobalID } from '@pothos/plugin-relay';
+import { PrismaClient, Unit } from 'database';
+import { YogaInitialContext } from 'graphql-yoga';
+import { nanoid } from 'nanoid';
+import { Context, CurrentUser, createYogaServerApp } from 'yoga-app';
+
 import {
-  loginAsNewlyCreatedUser,
-  refreshLogin,
-} from "../helpers/graphql/User.util";
-import { mutationDeckCreateEmpty, testContextFactory } from "../helpers";
-import { YogaInitialContext } from "graphql-yoga";
-import { Context, CurrentUser, createYogaServerApp } from "yoga-app";
+  RoomType,
+  RoomUpdateOperations,
+  RoundState,
+} from '../generated/gql/graphql';
+import { mutationDeckCreateEmpty, testContextFactory } from '../helpers';
+import { mutationUserBefriendUser } from '../helpers/graphql/Friendship.util';
 import {
   mutationRoomCreate,
   mutationRoomJoin,
@@ -19,18 +24,14 @@ import {
   queryOccupyingUnarchivedRooms,
   queryRoom,
   subscriptionRoomUpdatesByRoomId,
-} from "../helpers/graphql/Room.util";
-import { mutationUserBefriendUser } from "../helpers/graphql/Friendship.util";
-import { buildHTTPExecutor } from "@graphql-tools/executor-http";
+} from '../helpers/graphql/Room.util';
 import {
-  RoomType,
-  RoomUpdateOperations,
-  RoundState,
-} from "../generated/gql/graphql";
-import { encodeGlobalID } from "@pothos/plugin-relay";
-import { nanoid } from "nanoid";
+  loginAsNewlyCreatedUser,
+  refreshLogin,
+} from '../helpers/graphql/User.util';
+import { cascadingDelete } from '../helpers/truncate';
 
-describe("graphql/Room.ts", () => {
+describe('graphql/Room.ts', () => {
   let setSub: (sub?: CurrentUser) => void;
   let context: (initialContext: YogaInitialContext) => Promise<Context>;
   let stopContext: () => Promise<unknown>;
@@ -53,31 +54,31 @@ describe("graphql/Room.ts", () => {
     await cascadingDelete(prisma).user;
   });
 
-  describe("Mutation", () => {
-    describe("roomJoin", () => {
-      it("should allow a user to join to an room that a friend is occupying with no active round", async () => {
+  describe('Mutation', () => {
+    describe('roomJoin', () => {
+      it('should allow a user to join to an room that a friend is occupying with no active round', async () => {
         expect.assertions(2);
 
         // create occupant user
         const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user2"
+          'user2'
         );
-        const occupantGid = encodeGlobalID("User", occupantBefore.bareId);
+        const occupantGid = encodeGlobalID('User', occupantBefore.bareId);
 
         // create owner user
         const { currentUser: ownerUser } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user1"
+          'user1'
         );
-        const ownerGid = encodeGlobalID("User", ownerUser.bareId);
+        const ownerGid = encodeGlobalID('User', ownerUser.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             activeRound: null,
@@ -103,7 +104,7 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
         });
         expect(roomJoinResponse).toHaveProperty(
-          "data.roomJoin",
+          'data.roomJoin',
           expect.objectContaining({
             id: roomBefore?.id,
             activeRound: null,
@@ -116,24 +117,24 @@ describe("graphql/Room.ts", () => {
         );
       });
 
-      it("should allow a user to join a room that a friend is occupying with an active round in WAITING state", async () => {
+      it('should allow a user to join a room that a friend is occupying with an active round in WAITING state', async () => {
         expect.assertions(2);
 
         // create occupant user
         const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user2"
+          'user2'
         );
-        const occupantGid = encodeGlobalID("User", occupantBefore.bareId);
+        const occupantGid = encodeGlobalID('User', occupantBefore.bareId);
 
         // create owner user
         const { currentUser: ownerUser } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user1"
+          'user1'
         );
-        const ownerGid = encodeGlobalID("User", ownerUser.bareId);
+        const ownerGid = encodeGlobalID('User', ownerUser.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
@@ -153,10 +154,10 @@ describe("graphql/Room.ts", () => {
         setSub(ownerUser);
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deck = deckCreateResponse.data?.deckCreate;
@@ -168,7 +169,7 @@ describe("graphql/Room.ts", () => {
         });
 
         expect(roomSetDeckResponse).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: room?.id,
             type: RoomType.Ephemeral,
@@ -188,7 +189,7 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
         });
         expect(roomJoinResponse).toHaveProperty(
-          "data.roomJoin",
+          'data.roomJoin',
           expect.objectContaining({
             id: roomBefore?.id,
             activeRound: expect.objectContaining({
@@ -206,24 +207,24 @@ describe("graphql/Room.ts", () => {
         );
       });
 
-      it("should allow a user to join a room that a friend is occupying with an active round in PLAYING state", async () => {
+      it('should allow a user to join a room that a friend is occupying with an active round in PLAYING state', async () => {
         expect.assertions(2);
 
         // create occupant user
         const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user2"
+          'user2'
         );
-        const occupantGid = encodeGlobalID("User", occupantBefore.bareId);
+        const occupantGid = encodeGlobalID('User', occupantBefore.bareId);
 
         // create owner user
         const { currentUser: ownerUser } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user1"
+          'user1'
         );
-        const ownerGid = encodeGlobalID("User", ownerUser.bareId);
+        const ownerGid = encodeGlobalID('User', ownerUser.bareId);
 
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
@@ -243,10 +244,10 @@ describe("graphql/Room.ts", () => {
         setSub(ownerUser);
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deck = deckCreateResponse.data?.deckCreate;
@@ -262,7 +263,7 @@ describe("graphql/Room.ts", () => {
           id: room?.id as string,
         });
         expect(roomStartRoundResponse).toHaveProperty(
-          "data.roomStartRound",
+          'data.roomStartRound',
           expect.objectContaining({
             id: room?.id,
             type: RoomType.Ephemeral,
@@ -282,7 +283,7 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
         });
         expect(roomJoinResponse).toHaveProperty(
-          "data.roomJoin",
+          'data.roomJoin',
           expect.objectContaining({
             id: roomBefore?.id,
             activeRound: expect.objectContaining({
@@ -299,30 +300,30 @@ describe("graphql/Room.ts", () => {
         );
       });
 
-      it("should not allow a user to join a missing room", async () => {
+      it('should not allow a user to join a missing room', async () => {
         expect.assertions(2);
 
         // create occupant user
         await loginAsNewlyCreatedUser(executor, setSub);
         const response = await mutationRoomJoin(executor, {
-          id: encodeGlobalID("Room", nanoid()),
+          id: encodeGlobalID('Room', nanoid()),
         });
-        expect(response).toHaveProperty("data", null);
+        expect(response).toHaveProperty('data', null);
         expect(response.errors).not.toHaveLength(0);
       });
     });
 
-    describe("roomCreate", () => {
-      it("should be able to create a room with no active round", async () => {
+    describe('roomCreate', () => {
+      it('should be able to create a room with no active round', async () => {
         expect.assertions(1);
         const { currentUser: user } = await loginAsNewlyCreatedUser(
           executor,
           setSub
         );
-        const ownerGid = encodeGlobalID("User", user.bareId);
+        const ownerGid = encodeGlobalID('User', user.bareId);
         const response = await mutationRoomCreate(executor);
         expect(response).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -333,8 +334,8 @@ describe("graphql/Room.ts", () => {
       });
     });
 
-    describe("roomSetDeck", () => {
-      it("should be able to set the deck of an owned room in WAITING state", async () => {
+    describe('roomSetDeck', () => {
+      it('should be able to set the deck of an owned room in WAITING state', async () => {
         expect.assertions(2);
 
         // create user
@@ -343,7 +344,7 @@ describe("graphql/Room.ts", () => {
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -356,10 +357,10 @@ describe("graphql/Room.ts", () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -370,7 +371,7 @@ describe("graphql/Room.ts", () => {
           deckId: deckBefore?.id as string,
         });
         expect(roomSetDeckResponse).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: roomBefore?.id as string,
             type: RoomType.Ephemeral,
@@ -388,7 +389,7 @@ describe("graphql/Room.ts", () => {
         );
       });
 
-      it("should be able to re-set the same deck of an owned room in WAITING state with no apparent change in state", async () => {
+      it('should be able to re-set the same deck of an owned room in WAITING state with no apparent change in state', async () => {
         expect.assertions(2);
 
         // create user
@@ -401,10 +402,10 @@ describe("graphql/Room.ts", () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -415,7 +416,7 @@ describe("graphql/Room.ts", () => {
           deckId: deckBefore?.id as string,
         });
         expect(roomSetDeckResponseBefore).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: room?.id as string,
             type: RoomType.Ephemeral,
@@ -438,7 +439,7 @@ describe("graphql/Room.ts", () => {
           deckId: deckBefore?.id as string,
         });
         expect(roomSetDeckResponse).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: room?.id as string,
             type: RoomType.Ephemeral,
@@ -456,7 +457,7 @@ describe("graphql/Room.ts", () => {
         );
       });
 
-      it("should be able to change the deck of a room in WAITING state", async () => {
+      it('should be able to change the deck of a room in WAITING state', async () => {
         expect.assertions(2);
 
         // create user
@@ -469,10 +470,10 @@ describe("graphql/Room.ts", () => {
         // create first deck
         const deckCreateResponse1 = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deck1 = deckCreateResponse1.data?.deckCreate;
@@ -480,10 +481,10 @@ describe("graphql/Room.ts", () => {
         // create second deck
         const deckCreateResponse2 = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse2.data?.deckCreate;
@@ -494,7 +495,7 @@ describe("graphql/Room.ts", () => {
           deckId: deck1?.id as string,
         });
         expect(roomSetDeckResponseBefore).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: room?.id as string,
             type: RoomType.Ephemeral,
@@ -518,7 +519,7 @@ describe("graphql/Room.ts", () => {
           deckId: deckBefore?.id as string,
         });
         expect(roomSetDeckResponse2).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: room?.id as string,
             type: RoomType.Ephemeral,
@@ -536,7 +537,7 @@ describe("graphql/Room.ts", () => {
         );
       });
 
-      it("should fail to add a missing deck to a room in WAITING state", async () => {
+      it('should fail to add a missing deck to a room in WAITING state', async () => {
         expect.assertions(3);
 
         // create user
@@ -545,7 +546,7 @@ describe("graphql/Room.ts", () => {
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -558,11 +559,11 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
           deckId: nanoid(),
         });
-        expect(roomSetDeckResponse).toHaveProperty("data", null);
+        expect(roomSetDeckResponse).toHaveProperty('data', null);
         expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
 
-      it("should fail to add a deck to a room with a PLAYING state round", async () => {
+      it('should fail to add a deck to a room with a PLAYING state round', async () => {
         expect.assertions(4);
 
         // create user
@@ -575,10 +576,10 @@ describe("graphql/Room.ts", () => {
         // create first deck
         const deckCreateResponse1 = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deck1 = deckCreateResponse1.data?.deckCreate;
@@ -586,10 +587,10 @@ describe("graphql/Room.ts", () => {
         // create second deck
         const deckCreateResponse2 = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse2.data?.deckCreate;
@@ -600,7 +601,7 @@ describe("graphql/Room.ts", () => {
           deckId: deck1?.id as string,
         });
         expect(roomSetDeckResponseBefore).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: room?.id as string,
             type: RoomType.Ephemeral,
@@ -623,7 +624,7 @@ describe("graphql/Room.ts", () => {
           id: room?.id as string,
         });
         expect(roomStartRoundResponse).toHaveProperty(
-          "data.roomStartRound",
+          'data.roomStartRound',
           expect.objectContaining({
             id: room?.id,
             type: RoomType.Ephemeral,
@@ -645,11 +646,11 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
           deckId: deckBefore?.id as string,
         });
-        expect(roomSetDeckResponse2).toHaveProperty("data", null);
+        expect(roomSetDeckResponse2).toHaveProperty('data', null);
         expect(roomSetDeckResponse2.errors).not.toHaveLength(0);
       });
 
-      it("should fail to add an deck to a missing room", async () => {
+      it('should fail to add an deck to a missing room', async () => {
         expect.assertions(2);
 
         // create user
@@ -658,10 +659,10 @@ describe("graphql/Room.ts", () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -671,12 +672,12 @@ describe("graphql/Room.ts", () => {
           id: nanoid(),
           deckId: deckBefore?.id as string,
         });
-        expect(roomSetDeckResponse).toHaveProperty("data", null);
+        expect(roomSetDeckResponse).toHaveProperty('data', null);
         expect(roomSetDeckResponse.errors).not.toHaveLength(0);
       });
 
-      describe("roomStartRound", () => {
-        it("should transition the state of the active round from WAITING to PLAYING state", async () => {
+      describe('roomStartRound', () => {
+        it('should transition the state of the active round from WAITING to PLAYING state', async () => {
           expect.assertions(3);
           // create user
           const { currentUser: user } = await loginAsNewlyCreatedUser(
@@ -686,7 +687,7 @@ describe("graphql/Room.ts", () => {
           // create room
           const roomCreateResponse = await mutationRoomCreate(executor);
           expect(roomCreateResponse).toHaveProperty(
-            "data.roomCreate",
+            'data.roomCreate',
             expect.objectContaining({
               id: expect.any(String),
               type: RoomType.Ephemeral,
@@ -698,10 +699,10 @@ describe("graphql/Room.ts", () => {
           // create deck
           const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
             input: {
-              answerLang: "en",
+              answerLang: 'en',
               cards: [],
-              name: "name",
-              promptLang: "en",
+              name: 'name',
+              promptLang: 'en',
             },
           });
           const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -711,7 +712,7 @@ describe("graphql/Room.ts", () => {
             deckId: deckBefore?.id as string,
           });
           expect(roomSetDeckResponse).toHaveProperty(
-            "data.roomSetDeck",
+            'data.roomSetDeck',
             expect.objectContaining({
               id: roomBefore?.id as string,
               type: RoomType.Ephemeral,
@@ -735,7 +736,7 @@ describe("graphql/Room.ts", () => {
             }
           );
           expect(roomStartRoundResponse).toHaveProperty(
-            "data.roomStartRound",
+            'data.roomStartRound',
             expect.objectContaining({
               id: roomBefore?.id as string,
               type: RoomType.Ephemeral,
@@ -759,12 +760,12 @@ describe("graphql/Room.ts", () => {
           const { currentUser: user1 } = await loginAsNewlyCreatedUser(
             executor,
             setSub,
-            "user1"
+            'user1'
           );
           // create room
           const roomCreateResponse = await mutationRoomCreate(executor);
           expect(roomCreateResponse).toHaveProperty(
-            "data.roomCreate",
+            'data.roomCreate',
             expect.objectContaining({
               id: expect.any(String),
               type: RoomType.Ephemeral,
@@ -776,10 +777,10 @@ describe("graphql/Room.ts", () => {
           // create deck
           const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
             input: {
-              answerLang: "en",
+              answerLang: 'en',
               cards: [],
-              name: "name",
-              promptLang: "en",
+              name: 'name',
+              promptLang: 'en',
             },
           });
           const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -789,7 +790,7 @@ describe("graphql/Room.ts", () => {
             deckId: deckBefore?.id as string,
           });
           expect(roomSetDeckResponse).toHaveProperty(
-            "data.roomSetDeck",
+            'data.roomSetDeck',
             expect.objectContaining({
               id: roomBefore?.id as string,
               type: RoomType.Ephemeral,
@@ -807,21 +808,21 @@ describe("graphql/Room.ts", () => {
           );
           // create user
           // the test should fail by commenting out exactly the below line
-          await loginAsNewlyCreatedUser(executor, setSub, "user2");
+          await loginAsNewlyCreatedUser(executor, setSub, 'user2');
           // transition state
           const roomSetStateResponse = await mutationRoomStartRound(executor, {
             id: roomBefore?.id as string,
           });
-          expect(roomSetStateResponse).toHaveProperty("data", null);
+          expect(roomSetStateResponse).toHaveProperty('data', null);
           expect(roomSetStateResponse.errors).not.toHaveLength(0);
         });
       });
     });
   });
 
-  describe("Query", () => {
-    describe("room", () => {
-      it("should be able to return details of a room", async () => {
+  describe('Query', () => {
+    describe('room', () => {
+      it('should be able to return details of a room', async () => {
         expect.assertions(2);
         // create user
         const { currentUser: user } = await loginAsNewlyCreatedUser(
@@ -831,7 +832,7 @@ describe("graphql/Room.ts", () => {
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -845,7 +846,7 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
         });
         expect(roomQueryResponse).toHaveProperty(
-          "data.room",
+          'data.room',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -856,16 +857,16 @@ describe("graphql/Room.ts", () => {
       });
     });
 
-    describe("occupyingUnarchivedRooms", () => {
-      it("should be able to return ids of owned rooms and rooms you are occupying state", async () => {
+    describe('occupyingUnarchivedRooms', () => {
+      it('should be able to return ids of owned rooms and rooms you are occupying state', async () => {
         expect.assertions(5);
         // create owner user
         const { currentUser: user1 } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user1"
+          'user1'
         );
-        const user1gid = encodeGlobalID("User", user1.bareId);
+        const user1gid = encodeGlobalID('User', user1.bareId);
         // create room
         const roomCreateResponse1 = await mutationRoomCreate(executor);
         const room1 = roomCreateResponse1.data?.roomCreate;
@@ -876,9 +877,9 @@ describe("graphql/Room.ts", () => {
         const { currentUser: user2 } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user2"
+          'user2'
         );
-        const user2gid = encodeGlobalID("User", user2.bareId);
+        const user2gid = encodeGlobalID('User', user2.bareId);
         expect(user2.bareId).not.toEqual(user1.bareId);
         // user2 befriends user1
         await mutationUserBefriendUser(executor, { befriendedId: user1gid });
@@ -889,7 +890,7 @@ describe("graphql/Room.ts", () => {
         setSub(user2);
         const roomCreateResponse3 = await mutationRoomCreate(executor);
         expect(roomCreateResponse3).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -903,7 +904,7 @@ describe("graphql/Room.ts", () => {
           id: room1?.id as string,
         });
         expect(roomJoinResponse1).toHaveProperty(
-          "data.roomJoin",
+          'data.roomJoin',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -917,7 +918,7 @@ describe("graphql/Room.ts", () => {
           id: room2?.id as string,
         });
         expect(roomJoinResponse2).toHaveProperty(
-          "data.roomJoin",
+          'data.roomJoin',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -930,7 +931,7 @@ describe("graphql/Room.ts", () => {
         const occupyingUnarchivedRoomsResponse =
           await queryOccupyingUnarchivedRooms(executor);
         expect(occupyingUnarchivedRoomsResponse).toHaveProperty(
-          "data.occupyingUnarchivedRooms",
+          'data.occupyingUnarchivedRooms',
           expect.arrayContaining([
             expect.objectContaining({ id: roomBefore1?.id }),
             expect.objectContaining({ id: roomBefore2?.id }),
@@ -941,16 +942,16 @@ describe("graphql/Room.ts", () => {
     });
   });
 
-  describe("Subscription", () => {
-    describe("roomUpdatesByRoomId", () => {
-      it("should yield an appropriate integration event when the room it is subscribed to has roomSetDeck run on it", async () => {
+  describe('Subscription', () => {
+    describe('roomUpdatesByRoomId', () => {
+      it('should yield an appropriate integration event when the room it is subscribed to has roomSetDeck run on it', async () => {
         expect.assertions(4);
         // create user
         const { token } = await loginAsNewlyCreatedUser(executor, setSub);
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -962,10 +963,10 @@ describe("graphql/Room.ts", () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -989,7 +990,7 @@ describe("graphql/Room.ts", () => {
           deckId: deckBefore?.id as string,
         });
         expect(roomSetDeckResponse).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: roomBefore?.id as string,
             type: RoomType.Ephemeral,
@@ -1008,7 +1009,7 @@ describe("graphql/Room.ts", () => {
         const readResult = await readResultP;
         if (!readResult.done) {
           expect(readResult.value).toHaveProperty(
-            "data.roomUpdatesByRoomId",
+            'data.roomUpdatesByRoomId',
             expect.objectContaining({
               operation: RoomUpdateOperations.RoomSetDeck,
               value: {
@@ -1032,26 +1033,26 @@ describe("graphql/Room.ts", () => {
         }
         await roomUpdatesIterator.return?.();
       });
-      it("should yield an appropriate integration event when the room it is subscribed to has roomJoin run on it", async () => {
+      it('should yield an appropriate integration event when the room it is subscribed to has roomJoin run on it', async () => {
         expect.assertions(4);
         // create occupant user
         const { currentUser: occupantBefore } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user2"
+          'user2'
         );
-        const occupantBeforegid = encodeGlobalID("User", occupantBefore.bareId);
+        const occupantBeforegid = encodeGlobalID('User', occupantBefore.bareId);
         // create owner user
         const { token, currentUser: ownerUser } = await loginAsNewlyCreatedUser(
           executor,
           setSub,
-          "user1"
+          'user1'
         );
-        const ownerUsergid = encodeGlobalID("User", ownerUser.bareId);
+        const ownerUsergid = encodeGlobalID('User', ownerUser.bareId);
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -1083,7 +1084,7 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
         });
         expect(roomJoinResponse).toHaveProperty(
-          "data.roomJoin",
+          'data.roomJoin',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -1095,7 +1096,7 @@ describe("graphql/Room.ts", () => {
         const readResult = await readResultP;
         if (!readResult.done) {
           expect(readResult.value).toHaveProperty(
-            "data.roomUpdatesByRoomId",
+            'data.roomUpdatesByRoomId',
             expect.objectContaining({
               operation: RoomUpdateOperations.RoomJoin,
               value: {
@@ -1109,18 +1110,18 @@ describe("graphql/Room.ts", () => {
         }
         await roomUpdatesIterator.return?.();
       });
-      it("should yield an appropriate integration event when the room it is subscribed to starts a round", async () => {
+      it('should yield an appropriate integration event when the room it is subscribed to starts a round', async () => {
         expect.assertions(6);
         // create user
         const { currentUser: user, token } = await loginAsNewlyCreatedUser(
           executor,
           setSub
         );
-        const usergid = encodeGlobalID("User", user.bareId);
+        const usergid = encodeGlobalID('User', user.bareId);
         // create room
         const roomCreateResponse = await mutationRoomCreate(executor);
         expect(roomCreateResponse).toHaveProperty(
-          "data.roomCreate",
+          'data.roomCreate',
           expect.objectContaining({
             id: expect.any(String),
             type: RoomType.Ephemeral,
@@ -1132,10 +1133,10 @@ describe("graphql/Room.ts", () => {
         // create deck
         const deckCreateResponse = await mutationDeckCreateEmpty(executor, {
           input: {
-            answerLang: "en",
+            answerLang: 'en',
             cards: [],
-            name: "name",
-            promptLang: "en",
+            name: 'name',
+            promptLang: 'en',
           },
         });
         const deckBefore = deckCreateResponse.data?.deckCreate;
@@ -1154,7 +1155,7 @@ describe("graphql/Room.ts", () => {
           deckId: deckBefore?.id as string,
         });
         expect(roomSetDeckResponse).toHaveProperty(
-          "data.roomSetDeck",
+          'data.roomSetDeck',
           expect.objectContaining({
             id: roomBefore?.id,
             type: RoomType.Ephemeral,
@@ -1171,7 +1172,7 @@ describe("graphql/Room.ts", () => {
         const readResultOne = await readResultOneP;
         if (!readResultOne.done) {
           expect(readResultOne.value).toHaveProperty(
-            "data.roomUpdatesByRoomId",
+            'data.roomUpdatesByRoomId',
             expect.objectContaining({
               operation: RoomUpdateOperations.RoomSetDeck,
               value: {
@@ -1194,7 +1195,7 @@ describe("graphql/Room.ts", () => {
           id: roomBefore?.id as string,
         });
         expect(roomStartRoundResponse).toHaveProperty(
-          "data.roomStartRound",
+          'data.roomStartRound',
           expect.objectContaining({
             id: roomBefore?.id,
             type: RoomType.Ephemeral,
@@ -1211,7 +1212,7 @@ describe("graphql/Room.ts", () => {
         const readResultTwo = await readResultTwoP;
         if (!readResultTwo.done) {
           expect(readResultTwo.value).toHaveProperty(
-            "data.roomUpdatesByRoomId",
+            'data.roomUpdatesByRoomId',
             expect.objectContaining({
               operation: RoomUpdateOperations.RoomStartRound,
               value: {

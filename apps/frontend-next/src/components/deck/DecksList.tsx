@@ -1,4 +1,4 @@
-import { Flex } from "@mantine/core";
+import { Flex } from '@mantine/core';
 
 export interface DeckItemComponentProps<T> {
   deck: T;

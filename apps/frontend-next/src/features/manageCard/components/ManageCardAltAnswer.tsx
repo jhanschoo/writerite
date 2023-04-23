@@ -1,6 +1,5 @@
-import { Button } from "@mantine/core";
-
-import { IconX } from "@tabler/icons-react";
+import { Button } from '@mantine/core';
+import { IconX } from '@tabler/icons-react';
 
 interface Props {
   answer: string;

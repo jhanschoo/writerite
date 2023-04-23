@@ -16,7 +16,7 @@
     "test": "turbo run test"
   },
   "devDependencies": {
-    "eslint-config-custom": "workspace:*",
+    "eslint-config-custom-server": "workspace:*",
     "turbo": "^1.9.3"
   },
   "packageManager": "pnpm@8.1.1",

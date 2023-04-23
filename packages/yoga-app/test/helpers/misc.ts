@@ -1,20 +1,21 @@
-import type { buildHTTPExecutor } from "@graphql-tools/executor-http";
-import type { PrismaClient } from "database";
-import type { ExecutionResult } from "graphql";
-import type Redis from "ioredis";
-import type { JWTPayload } from "jose";
-import type { Context } from "../../src/context";
-import { parseArbitraryJWT } from "../../src/service/crypto";
-import type { CurrentUser } from "../../src/service/userJWT";
-import type { PubSubPublishArgs } from "../../src/types/PubSubPublishArgs";
-import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import type { YogaInitialContext } from "graphql-yoga";
+import type { buildHTTPExecutor } from '@graphql-tools/executor-http';
+import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
+import type { PrismaClient } from 'database';
+import type { ExecutionResult } from 'graphql';
+import type { YogaInitialContext } from 'graphql-yoga';
+import type Redis from 'ioredis';
+import type { JWTPayload } from 'jose';
+
+import type { Context } from '../../src/context';
+import { parseArbitraryJWT } from '../../src/service/crypto';
+import type { CurrentUser } from '../../src/service/userJWT';
+import type { PubSubPublishArgs } from '../../src/types/PubSubPublishArgs';
 
 function assertSingleValue<TValue extends ExecutionResult<any, any>>(
   value: TValue | AsyncIterable<TValue>
 ): asserts value is TValue {
   if (Symbol.asyncIterator in value) {
-    throw new Error("Expected single value");
+    throw new Error('Expected single value');
   }
 }
 function assertStreamValue<TValue extends ExecutionResult<any, any>>(
@@ -23,7 +24,7 @@ function assertStreamValue<TValue extends ExecutionResult<any, any>>(
   if (Symbol.asyncIterator in value) {
     return;
   }
-  throw new Error("Expected single value");
+  throw new Error('Expected single value');
 }
 
 export function unsafeJwtToCurrentUser(jwt: string): CurrentUser {
@@ -41,7 +42,7 @@ export function testContextFactory<
   prisma,
   pubsub,
   redis,
-}: Pick<Context<P, Q, R>, "prisma" | "pubsub" | "redis">): [
+}: Pick<Context<P, Q, R>, 'prisma' | 'pubsub' | 'redis'>): [
   (sub?: CurrentUser) => void,
   (initialContext: YogaInitialContext) => Promise<Context>
 ] {

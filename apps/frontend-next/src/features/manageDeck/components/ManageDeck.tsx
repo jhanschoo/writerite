@@ -1,8 +1,9 @@
-import { Stack } from "@mantine/core";
-import { ManageDeckContent } from "./ManageDeckContent";
-import { ManageDeckAdditionalInfo } from "./ManageDeckAdditionalInfo";
-import { ManageDeckFrontMatter } from "./ManageDeckFrontMatter";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Stack } from '@mantine/core';
+
+import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
+import { ManageDeckContent } from './ManageDeckContent';
+import { ManageDeckFrontMatter } from './ManageDeckFrontMatter';
 
 const ManageDeckFragment = graphql(/* GraphQL */ `
   fragment ManageDeck on Deck {
@@ -22,9 +23,9 @@ interface Props {
 export const ManageDeck = ({ deck, path }: Props) => {
   const deckFragment = useFragment(ManageDeckFragment, deck);
   return (
-    <Stack spacing={2} align="center" sx={{ height: "100%" }}>
+    <Stack spacing={2} align="center" sx={{ height: '100%' }}>
       <Stack
-        sx={({ breakpoints }) => ({ maxWidth: breakpoints.lg, width: "100%" })}
+        sx={({ breakpoints }) => ({ maxWidth: breakpoints.lg, width: '100%' })}
         p="md"
         align="stretch"
       >

@@ -1,12 +1,12 @@
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
+  ManageRoomMessagesFragment as ManageRoomMessagesFragmentType,
   ManageRoomMessagesSubscriptionSubscription,
   MessageContentType,
-  ManageRoomMessagesFragment as ManageRoomMessagesFragmentType,
   MessageUpdateOperations,
-} from "@generated/gql/graphql";
-import { Divider, Space, Stack, Text, Title } from "@mantine/core";
-import { useSubscription } from "urql";
+} from '@generated/gql/graphql';
+import { Divider, Space, Stack, Text, Title } from '@mantine/core';
+import { useSubscription } from 'urql';
 
 interface Props {
   roomId: string;
@@ -74,7 +74,7 @@ export const ManageRoomMessages = ({ roomId }: Props) => {
     (data ?? [])
       .filter((basicMessage) => basicMessage.type === MessageContentType.Text)
       .map(({ content, id }) => (
-        <Text key={id}>{(content as any)["text"]}</Text>
+        <Text key={id}>{(content as any)['text']}</Text>
       ))
   );
   return (
@@ -82,8 +82,8 @@ export const ManageRoomMessages = ({ roomId }: Props) => {
       px="md"
       justify="stretch"
       sx={{
-        height: "100%",
-        overflow: "hidden",
+        height: '100%',
+        overflow: 'hidden',
       }}
     >
       <Title order={2}>Chat</Title>
@@ -91,9 +91,9 @@ export const ManageRoomMessages = ({ roomId }: Props) => {
         sx={{
           minHeight: 0,
           flexGrow: 100,
-          overflowWrap: "anywhere",
-          overflowY: "scroll",
-          wordBreak: "break-word",
+          overflowWrap: 'anywhere',
+          overflowY: 'scroll',
+          wordBreak: 'break-word',
         }}
       >
         {displayMessages}

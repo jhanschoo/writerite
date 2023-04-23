@@ -1,11 +1,13 @@
-import { ToolbaredRichTextEditor, useContentViewer } from "@/components/editor";
-import { useContentEditor } from "@/components/editor/useContentEditor";
-import { Box, Button, Flex, LoadingOverlay } from "@mantine/core";
-import { useState } from "react";
-import { useMutation } from "urql";
-import { ManageDeckFrontMatterContent } from "./ManageDeckFrontMatterContent";
-import { ManageDeckFrontMatterEditor } from "./ManageDeckFrontMatterEditor";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { useState } from 'react';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
+import { useMutation } from 'urql';
+
+import { ToolbaredRichTextEditor, useContentViewer } from '@/components/editor';
+import { useContentEditor } from '@/components/editor/useContentEditor';
+
+import { ManageDeckFrontMatterContent } from './ManageDeckFrontMatterContent';
+import { ManageDeckFrontMatterEditor } from './ManageDeckFrontMatterEditor';
 
 const ManageDeckFrontMatterEditMutation = graphql(/* GraphQL */ `
   mutation ManageDeckFrontMatterEdit($input: DeckEditMutationInput!) {
@@ -45,7 +47,7 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
     editorComponent: ToolbaredRichTextEditor,
     content: description,
     setContent: setDescription,
-    placeholder: "Write a description...",
+    placeholder: 'Write a description...',
   });
   const [descriptionViewer, viewer] = useContentViewer(description);
   const content = (
@@ -82,12 +84,12 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
     <Flex wrap="wrap">
       <Box
         sx={(theme) => ({
-          width: "100%",
+          width: '100%',
           [`@media (min-width: ${theme.breakpoints.md})`]: {
-            width: "50%",
+            width: '50%',
           },
           // for 'LoadingOverlay' to work
-          position: "relative",
+          position: 'relative',
         })}
         p="xs"
       >
@@ -113,9 +115,9 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
       </Box>
       <Box
         sx={(theme) => ({
-          width: "100%",
+          width: '100%',
           [`@media (min-width: ${theme.breakpoints.md})`]: {
-            width: "50%",
+            width: '50%',
           },
         })}
         p="xs"

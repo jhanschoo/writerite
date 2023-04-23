@@ -1,4 +1,6 @@
-import { ChangeEvent, useMemo, useState } from "react";
+import { ChangeEvent, useMemo, useState } from 'react';
+import { AddNewCard, ManageCard } from '@/features/manageCard';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
   Divider,
@@ -6,13 +8,11 @@ import {
   Pagination,
   Stack,
   TextInput,
-} from "@mantine/core";
+} from '@mantine/core';
+import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
+import { JSONContent } from '@tiptap/react';
 
-import { AddNewCard, ManageCard } from "@/features/manageCard";
-import { accumulateContentText } from "@/components/editor";
-import { IconPlus, IconSearch, IconUpload } from "@tabler/icons-react";
-import { JSONContent } from "@tiptap/react";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
+import { accumulateContentText } from '@/components/editor';
 
 const WHITESPACE_REGEX = /\s+/;
 
@@ -50,7 +50,7 @@ interface Props {
 
 export const ManageDeckCards = ({ deck, startUpload }: Props) => {
   const deckFragment = useFragment(ManageDeckCardsFragment, deck);
-  const [filter, setFilter] = useState("");
+  const [filter, setFilter] = useState('');
   const [activePage, setActivePage] = useState<number>(1);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -134,7 +134,7 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
           onChange={setActivePage}
           total={total}
           radius="lg"
-          sx={{ alignSelf: "center" }}
+          sx={{ alignSelf: 'center' }}
         />
       ) : undefined}
     </Stack>

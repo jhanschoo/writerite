@@ -1,13 +1,14 @@
+import { ReactNode, useState } from 'react';
+import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Button, Flex } from '@mantine/core';
+
 import {
   DeckCompactSummaryContent,
   DeckCompactSummaryContentFragment,
   DeckName,
-} from "@/components/deck";
-import { DECK_DETAIL_PATH } from "@/paths";
-import { FragmentType, graphql, useFragment } from "@generated/gql";
-import { Button, Flex } from "@mantine/core";
-import { useRouter } from "next/router";
-import { ReactNode, useState } from "react";
+} from '@/components/deck';
 
 export const SubdeckListItemContentFragment = graphql(/* GraphQL */ `
   fragment SubdeckListItemContent on Deck {

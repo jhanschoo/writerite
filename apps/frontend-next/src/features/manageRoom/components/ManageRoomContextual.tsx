@@ -1,6 +1,7 @@
-import { FragmentType, graphql, useFragment } from "@generated/gql";
-import { ManageRoomAddOccupants } from "./ManageRoomAddOccupants";
-import { ManageRoomSetDeck } from "./ManageRoomSetDeck";
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+
+import { ManageRoomAddOccupants } from './ManageRoomAddOccupants';
+import { ManageRoomSetDeck } from './ManageRoomSetDeck';
 
 const ManageRoomContextualFragment = graphql(/* GraphQL */ `
   fragment ManageRoomContextual on Room {
