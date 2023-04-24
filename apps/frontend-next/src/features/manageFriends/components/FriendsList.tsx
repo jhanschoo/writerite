@@ -2,6 +2,7 @@ import { Tabs, Title } from '@mantine/core';
 
 import { FriendsMutualsList } from './FriendsMutualsList';
 import { FriendsListReceived } from './FriendsListReceived';
+import { FriendsListSent } from './FriendsListSent';
 
 export const FriendsList = () => (
   <Tabs defaultValue="mutuals">
@@ -17,6 +18,7 @@ export const FriendsList = () => (
       <Title order={3}>Received</Title>
       <FriendsListReceived />
       <Title order={3}>Sent</Title>
+      <FriendsListSent />
     </Tabs.Panel>
   </Tabs>
 );

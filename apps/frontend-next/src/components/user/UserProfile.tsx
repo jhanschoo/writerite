@@ -3,17 +3,16 @@ import { JSONObject } from '@/utils';
 import { graphql } from '@generated/gql';
 import {
   ActionIcon,
-  Button,
   Card,
   Flex,
   Stack,
   Text,
-  Tooltip,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconCopy } from '@tabler/icons-react';
 
 import { useContentViewer } from '@/components/editor';
+import { PropsWithChildren } from 'react';
 
 export const UserProfileFragment = graphql(/* GraphQL */ `
   fragment UserProfile on User {
@@ -28,19 +27,19 @@ interface Props {
   user: {
     id: string;
     bareId: string;
-    bio: JSONObject | null;
+    bio?: JSONObject | null;
     name: string;
   };
 }
 
-export const UserProfile = ({ user }: Props) => {
+export const UserProfile = ({ user, children }: PropsWithChildren<Props>) => {
   const { id, bio, name } = user;
   const [viewerComponent] = useContentViewer(bio ?? null);
   return (
     <Card shadow="xl" radius="lg" p="md">
-      <Flex gap="xs">
+      <Flex gap="xs" wrap="wrap" justify="flex-end">
         <ProfilePicture user={user} avatarProps={{ size: 84 }} />
-        <Stack>
+        <Stack sx={{ flexGrow: 1 }}>
           <Flex>
             <Text>
               <Text weight="bolder" span>
@@ -61,6 +60,7 @@ export const UserProfile = ({ user }: Props) => {
           </Flex>
           {viewerComponent}
         </Stack>
+        {children}
       </Flex>
     </Card>
   );

@@ -226,6 +226,11 @@ type Mutation {
 
   """set personal notes for a deck"""
   setOwnNotes(deckId: ID!, notes: JSONObject!): Deck!
+
+  """
+  Unbefriend the `befriendedId` user, then resolves to the user's own profile
+  """
+  unbefriend(befriendedId: ID!): User!
 }
 
 interface Node {

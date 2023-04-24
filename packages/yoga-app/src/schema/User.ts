@@ -148,4 +148,33 @@ builder.mutationFields((t) => ({
       return userRes;
     },
   }),
+  unbefriend: t.withAuth({ authenticated: true }).prismaField({
+    type: User,
+    description:
+      "Unbefriend the `befriendedId` user, then resolves to the user's own profile",
+    args: {
+      befriendedId: t.arg.id({ required: true }),
+    },
+    resolve: async (query, _parent, { befriendedId }, { prisma, sub }) => {
+      befriendedId = decodeGlobalID(befriendedId as string).id;
+      if (befriendedId === sub.bareId) {
+        throw invalidArgumentsErrorFactory('You cannot unbefriend yourself.');
+      }
+      const userRes = await prisma.user.update({
+        ...query,
+        where: { id: sub.bareId },
+        data: {
+          befrienderIn: {
+            delete: {
+              befrienderId_befriendedId: {
+                befrienderId: sub.bareId,
+                befriendedId,
+              },
+            },
+          },
+        },
+      });
+      return userRes;
+    },
+  }),
 }));

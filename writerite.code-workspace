@@ -5,6 +5,12 @@
 		}
 	],
 	"settings": {
-		"editor.tabSize": 2
+		"editor.tabSize": 2,
+		"eslint.workingDirectories": [
+			"./apps/apiserver",
+			"./apps/frontend-next",
+			"./packages/yoga-app",
+			"./packages/yoga-app-e2e"
+		]
 	}
 }
