@@ -10,8 +10,7 @@ export const ManageDeckFrontMatterEditor = ({
   name,
   setName,
   descriptionEditorElement,
-}: Props) => {
-  return (
+}: Props) => (
     <Stack>
       <TextInput
         label="Title"
@@ -23,4 +22,3 @@ export const ManageDeckFrontMatterEditor = ({
       </Input.Wrapper>
     </Stack>
   );
-};

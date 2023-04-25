@@ -13,6 +13,7 @@ import { IconCopy } from '@tabler/icons-react';
 
 import { useContentViewer } from '@/components/editor';
 import { PropsWithChildren } from 'react';
+import { EditorContent } from '@tiptap/react';
 
 export const UserProfileFragment = graphql(/* GraphQL */ `
   fragment UserProfile on User {
@@ -34,7 +35,8 @@ interface Props {
 
 export const UserProfile = ({ user, children }: PropsWithChildren<Props>) => {
   const { id, bio, name } = user;
-  const [viewerComponent] = useContentViewer(bio ?? null);
+  const viewer = useContentViewer(bio ?? null);
+  const viewerComponent = <EditorContent editor={viewer} />;
   return (
     <Card shadow="xl" radius="lg" p="md">
       <Flex gap="xs" wrap="wrap" justify="flex-end">

@@ -1,27 +1,37 @@
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { graphql } from '@generated/gql';
 import { Stack } from '@mantine/core';
+import { useQuery } from 'urql';
 
 import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
 import { ManageDeckContent } from './ManageDeckContent';
 import { ManageDeckFrontMatter } from './ManageDeckFrontMatter';
 
-const ManageDeckFragment = graphql(/* GraphQL */ `
-  fragment ManageDeck on Deck {
-    id
+const DeckQuery = graphql(/* GraphQL */ `
+  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int) {
+    deck(id: $id) {
+      id
     ...ManageDeckFrontMatter
     ...ManageDeckAdditionalInfo
     ...ManageDeckContent
+    }
   }
 `);
 
 interface Props {
-  deck: FragmentType<typeof ManageDeckFragment>;
+  deckId: string;
   path: string[];
 }
 
 // TODO: pagination
-export const ManageDeck = ({ deck, path }: Props) => {
-  const deckFragment = useFragment(ManageDeckFragment, deck);
+export const ManageDeck = ({ deckId, path }: Props) => {
+  const [{ data }] = useQuery({
+    query: DeckQuery,
+    variables: { id: deckId },
+  });
+  if (!data) {
+    return null;
+  }
+  const { deck } = data;
   return (
     <Stack spacing={2} align="center" sx={{ height: '100%' }}>
       <Stack
@@ -29,10 +39,10 @@ export const ManageDeck = ({ deck, path }: Props) => {
         p="md"
         align="stretch"
       >
-        <ManageDeckFrontMatter deck={deckFragment} />
-        <ManageDeckAdditionalInfo deck={deckFragment} />
+        <ManageDeckFrontMatter deck={deck} />
+        <ManageDeckAdditionalInfo deck={deck} />
       </Stack>
-      <ManageDeckContent deck={deckFragment} path={path} />
+      <ManageDeckContent deck={deck} path={path} />
     </Stack>
   );
 };

@@ -6,8 +6,6 @@ import { Button, Flex } from '@mantine/core';
 
 import {
   DeckCompactSummaryContent,
-  DeckCompactSummaryContentFragment,
-  DeckName,
 } from '@/components/deck';
 
 export const SubdeckListItemContentFragment = graphql(/* GraphQL */ `

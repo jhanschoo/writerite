@@ -9,7 +9,6 @@ import { BasicList } from '@/components/BasicList';
 import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
 import {
   SubdeckListItemContent,
-  SubdeckListItemContentFragment,
 } from './SubdeckListItemContent';
 
 const ManageDeckSubdecksBrowseRemoveSubdeckMutation = graphql(/* GraphQL */ `
@@ -18,7 +17,7 @@ const ManageDeckSubdecksBrowseRemoveSubdeckMutation = graphql(/* GraphQL */ `
     $subdeckId: ID!
   ) {
     deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {
-      id
+      ...ManageDeckSubdecks
     }
   }
 `);
@@ -41,6 +40,7 @@ export const ManageDeckSubdecksBrowse = ({ deck, onAddSubdeck }: Props) => {
     await removeSubdeck({ deckId, subdeckId });
     setRemoved(removed.concat([subdeckId]));
   };
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   const decks = persistedSubdecks.map((deck, index) => (
     <SubdeckListItemContent
       key={index}

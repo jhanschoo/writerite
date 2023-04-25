@@ -12,6 +12,7 @@ import { ManageDeckSubdecksBrowse } from './SubdecksBrowse';
 
 enum Subpage {
   Browse = 'browse',
+  // eslint-disable-next-line @typescript-eslint/no-shadow
   Link = 'link',
   Import = 'import',
 }
@@ -21,7 +22,6 @@ interface Props {
   path?: string[];
 }
 
-// TODO: WIP
 export const ManageDeckSubdecks = ({ deck, path }: Props) => {
   const { id } = useFragment(ManageDeckSubdecksFragment, deck);
   const router = useRouter();
@@ -47,6 +47,7 @@ export const ManageDeckSubdecks = ({ deck, path }: Props) => {
         </p>
       );
     case Subpage.Browse:
+    default:
       return (
         <ManageDeckSubdecksBrowse
           deck={deck}

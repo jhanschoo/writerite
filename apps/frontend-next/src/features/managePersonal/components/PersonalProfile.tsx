@@ -5,12 +5,8 @@ import {
   Card,
   Flex,
   Grid,
-  Group,
   Input,
   LoadingOverlay,
-  SimpleGrid,
-  Stack,
-  Text,
   Title,
 } from '@mantine/core';
 import { useMutation } from 'urql';
@@ -45,18 +41,22 @@ export const PersonalProfile = ({ user }: Props) => {
     PersonalProfileEditMutation
   );
   const [bio, setBio] = useState(userFragment.bio ?? null);
-  const [bioEditor, resetBioEditorContent] = useContentEditor({
-    editorComponent: ToolbaredRichTextEditor,
+  const [editor] = useContentEditor({
     content: bio,
     setContent: setBio,
     placeholder: 'Tell us about yourself!',
   });
+  const bioEditor = <ToolbaredRichTextEditor editor={editor} />;
   const handleUpdateProfile = async () => {
     const { data } = await updateProfile({ input: { bio } });
     if (data) {
       const { ownProfileEdit } = data;
-      const { bio } = useFragment(PersonalProfileFragment, ownProfileEdit);
-      setBio(bio ?? null);
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const { bio: optimisticBio } = useFragment(
+        PersonalProfileFragment,
+        ownProfileEdit
+      );
+      setBio(optimisticBio ?? null);
     }
   };
   return (

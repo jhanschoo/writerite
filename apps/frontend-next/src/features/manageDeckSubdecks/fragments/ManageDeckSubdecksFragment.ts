@@ -7,5 +7,6 @@ export const ManageDeckSubdecksFragment = graphql(/* GraphQL */ `
       id
       ...SubdeckListItemContent
     }
+    subdecksCount
   }
 `);

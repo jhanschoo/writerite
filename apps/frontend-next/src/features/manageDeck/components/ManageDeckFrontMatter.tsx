@@ -3,8 +3,9 @@ import { FragmentType, graphql, useFragment } from '@generated/gql';
 import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
 import { useMutation } from 'urql';
 
-import { ToolbaredRichTextEditor, useContentViewer } from '@/components/editor';
-import { useContentEditor } from '@/components/editor/useContentEditor';
+import { ToolbaredRichTextEditor, useContentViewer } from '@components/editor';
+import { useContentEditor } from '@components/editor/useContentEditor';
+import { EditorContent } from '@tiptap/react';
 
 import { ManageDeckFrontMatterContent } from './ManageDeckFrontMatterContent';
 import { ManageDeckFrontMatterEditor } from './ManageDeckFrontMatterEditor';
@@ -43,23 +44,28 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
   const [description, setDescription] = useState(
     deckFragment.description ?? null
   );
-  const [descriptionEditor, resetEditorContent] = useContentEditor({
-    editorComponent: ToolbaredRichTextEditor,
+  const [editor, resetEditorContent] = useContentEditor({
     content: description,
     setContent: setDescription,
     placeholder: 'Write a description...',
   });
-  const [descriptionViewer, viewer] = useContentViewer(description);
+  const descriptionEditor = <ToolbaredRichTextEditor editor={editor} />;
+  const viewer = useContentViewer(
+    editing ? description : deckFragment.description ?? null
+  );
+  const descriptionViewer = <EditorContent editor={viewer} />;
   const content = (
     <ManageDeckFrontMatterContent
-      name={name}
+      name={editing ? name : deckFragment.name}
       descriptionElement={descriptionViewer}
       handleEdit={
         editing /* TODO: add check for owner of deck */
           ? undefined
           : () => {
               setEditing(true);
-              resetEditorContent(viewer?.getJSON() ?? null);
+              setName(deckFragment.name);
+              setDescription(deckFragment.description ?? null);
+              resetEditorContent(deckFragment.description ?? null);
             }
       }
     />
@@ -73,11 +79,11 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
     });
     if (data) {
       const {
-        deckEdit: { name, description },
+        deckEdit: { name: optimisticName, description: optimisticDescription },
       } = data;
       setEditing(false);
-      setName(name);
-      setDescription(description ?? null);
+      setName(optimisticName);
+      setDescription(optimisticDescription ?? null);
     }
   };
   return (

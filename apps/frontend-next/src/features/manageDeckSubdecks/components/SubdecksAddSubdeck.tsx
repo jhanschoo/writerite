@@ -58,7 +58,7 @@ const ManageDeckSubdecksLinkSubdeckAddSubdeckMutation = graphql(/* GraphQL */ `
     $subdeckId: ID!
   ) {
     deckAddSubdeck(deckId: $deckId, subdeckId: $subdeckId) {
-      id
+      ...ManageDeckSubdecks
     }
   }
 `);
@@ -94,7 +94,7 @@ export const ManageDeckSubdecksLinkSubdeck = ({
   const [persistedRecentDecks, setPersistedDecks] = useState<
     ManageDeckSubdecksLinkSubdeckQueryQuery['decks']['edges']
   >([]);
-  const [{ data, fetching, error }] = useQuery({
+  const [{ data }] = useQuery({
     query: ManageDeckSubdecksLinkSubdeckQuery,
     variables: {
       input: {
@@ -106,7 +106,7 @@ export const ManageDeckSubdecksLinkSubdeck = ({
     if (data && persistedRecentDecks.length === 0) {
       setPersistedDecks(data.decks.edges);
     }
-  }, [data]);
+  }, [data, persistedRecentDecks.length]);
   const [, addSubdeck] = useMutation(
     ManageDeckSubdecksLinkSubdeckAddSubdeckMutation
   );

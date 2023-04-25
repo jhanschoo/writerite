@@ -1,4 +1,4 @@
-import { Tabs, Title } from '@mantine/core';
+import { Stack, Tabs, Title } from '@mantine/core';
 
 import { FriendsMutualsList } from './FriendsMutualsList';
 import { FriendsListReceived } from './FriendsListReceived';
@@ -11,14 +11,20 @@ export const FriendsList = () => (
       <Tabs.Tab value="pending">Pending</Tabs.Tab>
     </Tabs.List>
 
-    <Tabs.Panel value="mutuals">
-      <FriendsMutualsList />
+    <Tabs.Panel value="mutuals" py="md">
+      <Stack>
+        <FriendsMutualsList />
+      </Stack>
     </Tabs.Panel>
     <Tabs.Panel value="pending">
       <Title order={3}>Received</Title>
-      <FriendsListReceived />
+      <Stack>
+        <FriendsListReceived />
+      </Stack>
       <Title order={3}>Sent</Title>
-      <FriendsListSent />
+      <Stack>
+        <FriendsListSent />
+      </Stack>
     </Tabs.Panel>
   </Tabs>
 );

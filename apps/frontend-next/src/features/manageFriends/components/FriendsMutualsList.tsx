@@ -1,5 +1,7 @@
-import { graphql } from '@generated/gql';
-import { Tabs, Title } from '@mantine/core';
+import { UserProfileFragment, UserProfile } from '@/components/user';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Button, Center } from '@mantine/core';
+import { useQuery } from 'urql';
 
 const FriendsMutualsListQuery = graphql(/* GraphQL */ `
   query FriendsMutualsListQuery {
@@ -7,6 +9,7 @@ const FriendsMutualsListQuery = graphql(/* GraphQL */ `
       edges {
         cursor
         node {
+          id
           ...UserProfile
         }
       }
@@ -14,6 +17,27 @@ const FriendsMutualsListQuery = graphql(/* GraphQL */ `
   }
 `);
 
+interface FriendsMutualsListItemProps {
+  user: FragmentType<typeof UserProfileFragment>;
+}
+
+const FriendsMutualsListItem = ({ user }: FriendsMutualsListItemProps) => {
+  const userFragment = useFragment(UserProfileFragment, user);
+  return (
+    <UserProfile user={userFragment}>
+      <Center>
+          <Button>Message</Button>
+      </Center>
+    </UserProfile>
+  );
+};
+
 export const FriendsMutualsList = () => {
-  return <p>FriendsMutualsList</p>;
+  const [{ data }] = useQuery({ query: FriendsMutualsListQuery });
+  const users =
+    data?.friends?.edges?.flatMap((edge) =>
+      edge?.node ? [edge.node] : []
+    ) ?? [];
+  const userProfiles = users.map((user) => <FriendsMutualsListItem key={user.id} user={user} />);
+  return <>{userProfiles}</>;
 };

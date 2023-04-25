@@ -1,12 +1,10 @@
 import { JSONObject } from '@/utils';
-import { RichTextEditorProps } from '@mantine/tiptap';
 import Placeholder from '@tiptap/extension-placeholder';
-import { useEditor } from '@tiptap/react';
+import { Editor, useEditor } from '@tiptap/react';
 
 import { DEFAULT_EDITOR_PROPS } from './common';
 
 export interface UseEditorProps {
-  editorComponent: (props: Pick<RichTextEditorProps, 'editor'>) => JSX.Element;
   content: JSONObject | null;
   setContent: (content: JSONObject) => void;
   placeholder?: string;
@@ -20,11 +18,10 @@ export interface UseEditorProps {
  * @returns [editor, resetEditorContent] where `editor` is the editor component, and `resetEditorContent` is a function to reset the editor content to the value in the viewer, which should be the value of `content`
  */
 export const useContentEditor = ({
-  editorComponent: EditorComponent,
   content,
   setContent,
   placeholder,
-}: UseEditorProps): [JSX.Element, (content: JSONObject | null) => void] => {
+}: UseEditorProps): [Editor | null, (content: JSONObject | null) => void] => {
   const editor = useEditor({
     ...DEFAULT_EDITOR_PROPS,
     extensions: [
@@ -32,13 +29,13 @@ export const useContentEditor = ({
       Placeholder.configure({ placeholder }),
     ],
     content,
-    onUpdate({ editor }) {
-      const updatedJsonContent = editor.getJSON();
+    onUpdate({ editor: currentEditor }) {
+      const updatedJsonContent = currentEditor.getJSON();
       setContent(updatedJsonContent);
     },
   });
   return [
-    <EditorComponent editor={editor} />,
-    (content: JSONObject | null) => editor?.commands.setContent(content),
+    editor,
+    (newContent: JSONObject | null) => editor?.commands.setContent(newContent),
   ];
 };

@@ -12,8 +12,7 @@ export const ManageDeckFrontMatterContent = ({
   name,
   descriptionElement,
   handleEdit,
-}: Props) => {
-  return (
+}: Props) => (
     <Stack>
       <Flex justify="space-between">
         <Title order={1}>
@@ -28,4 +27,3 @@ export const ManageDeckFrontMatterContent = ({
       {descriptionElement}
     </Stack>
   );
-};

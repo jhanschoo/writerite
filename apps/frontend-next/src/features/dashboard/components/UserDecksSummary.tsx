@@ -123,17 +123,11 @@ const DeckItem = ({
 
 const UserDecksSummaryQuery = graphql(/* GraphQL */ `
   query UserDecksSummaryQuery(
-    $after: ID
-    $before: ID
     $first: Int
-    $last: Int
     $input: DecksQueryInput!
   ) {
     decks(
-      after: $after
-      before: $before
       first: $first
-      last: $last
       input: $input
     ) {
       edges {
@@ -141,12 +135,6 @@ const UserDecksSummaryQuery = graphql(/* GraphQL */ `
         node {
           ...UserDecksSummaryDeckItem
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
       }
     }
   }

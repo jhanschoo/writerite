@@ -163,6 +163,7 @@ builder.mutationFields((t) => ({
       },
       { prisma, sub }
     ) => {
+      parentDeckId = parentDeckId ? decodeGlobalID(parentDeckId as string).id : null;
       const res = await prisma.deck.create({
         ...query,
         data: {
