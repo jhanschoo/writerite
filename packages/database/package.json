@@ -1,11 +1,11 @@
 {
   "name": "database",
   "dependencies": {
-    "@pothos/plugin-prisma": "^3.47.2",
+    "@pothos/plugin-prisma": "^3.51.0",
     "@prisma/client": "latest"
   },
   "devDependencies": {
-    "prisma": "^4.13.0"
+    "prisma": "^4.14.0"
   },
   "main": "./index.ts",
   "scripts": {
