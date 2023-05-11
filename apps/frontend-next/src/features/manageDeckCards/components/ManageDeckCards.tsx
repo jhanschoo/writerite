@@ -84,7 +84,7 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
   const total = Math.ceil(deckFragment.cardsDirectCount / 10);
   const canAddANewCard =
     deckFragment.cardsDirectCount <
-      parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string) &&
+      parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string, 10) &&
     activePage === 1;
   return (
     <Stack spacing="xs" align="stretch">
@@ -128,15 +128,6 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
           forceLoading={false}
         />
       ))}
-      {total ? (
-        <Pagination
-          value={activePage}
-          onChange={setActivePage}
-          total={total}
-          radius="lg"
-          sx={{ alignSelf: 'center' }}
-        />
-      ) : undefined}
     </Stack>
   );
 };

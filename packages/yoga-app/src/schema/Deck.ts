@@ -1,8 +1,9 @@
 import { decodeGlobalID } from '@pothos/plugin-relay';
-import { Deck as PDeck, Prisma } from 'database';
+import { Deck as PDeck, Prisma, Unit } from 'database';
 
 import { builder, gao, ungao } from '../builder';
 import { getDescendantsOfDeck } from '../service/deck';
+import { flattenJSONContent } from '../service/tiptap';
 import { DecksQueryScope } from './enums';
 import {
   CardCreateMutationInput,
@@ -55,6 +56,25 @@ export const Deck = builder.prismaNode('Deck', {
     cardsDirect: t.withAuth(PPRIVATABLE).relatedConnection('cards', {
       description: 'all cards directly belonging to this deck',
       cursor: 'id',
+      args: {
+        contains: t.arg.string(),
+      },
+      query: ({ contains }, context) => ({
+        where: {
+          ...(contains
+            ? {
+                OR: [
+                  { promptString: { contains } },
+                  { answerString: { contains } },
+                  { answers: { has: contains } }, // limitation
+                ],
+              }
+            : {}),
+        },
+        orderBy: {
+          editedAt: 'desc',
+        },
+      }),
     }),
     cardsDirectCount: t.withAuth(PPRIVATABLE).relationCount('cards', {
       description: 'number of all cards directly belonging to this deck',
@@ -163,7 +183,21 @@ builder.mutationFields((t) => ({
       },
       { prisma, sub }
     ) => {
-      parentDeckId = parentDeckId ? decodeGlobalID(parentDeckId as string).id : null;
+      parentDeckId = parentDeckId
+        ? decodeGlobalID(parentDeckId as string).id
+        : null;
+      const cardsInput = cards.map((card) => ({
+        ...card,
+        prompt: card.prompt ?? Prisma.DbNull,
+        promptString: card.prompt
+          ? flattenJSONContent(card.prompt).join('')
+          : '',
+        fullAnswer: card.fullAnswer ?? Prisma.DbNull,
+        fullAnswerString: card.fullAnswer
+          ? flattenJSONContent(card.fullAnswer).join('')
+          : '',
+        isPrimaryTemplate: card.isPrimaryTemplate ? Unit.UNIT : undefined,
+      }));
       const res = await prisma.deck.create({
         ...query,
         data: {
@@ -171,7 +205,7 @@ builder.mutationFields((t) => ({
           description: description === null ? Prisma.DbNull : description,
           ...rest,
           published: published ?? false,
-          cards: { create: cards },
+          cards: { create: cardsInput },
           subdeckIn: parentDeckId
             ? {
                 create: {
@@ -244,11 +278,23 @@ builder.mutationFields((t) => ({
     },
     resolve: async (query, _root, { deckId, cards }, { prisma, sub }) => {
       const { id } = decodeGlobalID(deckId as string);
+      const cardsInput = cards.map((card) => ({
+        ...card,
+        prompt: card.prompt ?? Prisma.DbNull,
+        promptString: card.prompt
+          ? flattenJSONContent(card.prompt).join('')
+          : '',
+        fullAnswer: card.fullAnswer ?? Prisma.DbNull,
+        fullAnswerString: card.fullAnswer
+          ? flattenJSONContent(card.fullAnswer).join('')
+          : '',
+        isPrimaryTemplate: card.isPrimaryTemplate ? Unit.UNIT : undefined,
+      }));
       const res = await prisma.deck.update({
         ...query,
         where: { id, ownerId: sub.bareId },
         data: {
-          cards: { create: cards },
+          cards: { create: cardsInput },
           editedAt: new Date(),
         },
       });

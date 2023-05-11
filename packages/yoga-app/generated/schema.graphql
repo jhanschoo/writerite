@@ -40,7 +40,7 @@ type Deck implements Node {
   cardsAllUnder(after: ID, before: ID, first: Int, last: Int): DeckCardsAllUnderConnection!
 
   """all cards directly belonging to this deck"""
-  cardsDirect(after: ID, before: ID, first: Int, last: Int): DeckCardsDirectConnection!
+  cardsDirect(after: ID, before: ID, contains: String, first: Int, last: Int): DeckCardsDirectConnection!
 
   """number of all cards directly belonging to this deck"""
   cardsDirectCount: Int!

@@ -36,8 +36,11 @@ model Card {
   deckId            String
   // prompt is a JsonObject
   prompt            Json?
+  // workaround for searching for containment (@>) not supported by Prisma
+  promptString      String
   // fullAnswer is a JsonObject
   fullAnswer        Json?
+  fullAnswerString  String
   answers           String[]
   isTemplate        Boolean  @default(false)
   isPrimaryTemplate Unit?

@@ -101,6 +101,7 @@ export type DeckCardsAllUnderArgs = {
 export type DeckCardsDirectArgs = {
   after?: InputMaybe<Scalars['ID']>;
   before?: InputMaybe<Scalars['ID']>;
+  contains?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };
@@ -241,6 +242,8 @@ export type Mutation = {
   sendTextMessage: Message;
   /** set personal notes for a deck */
   setOwnNotes: Deck;
+  /** Unbefriend the `befriendedId` user, then resolves to the user's own profile */
+  unbefriend: User;
 };
 
 export type MutationBefriendArgs = {
@@ -332,6 +335,10 @@ export type MutationSendTextMessageArgs = {
 export type MutationSetOwnNotesArgs = {
   deckId: Scalars['ID'];
   notes: Scalars['JSONObject'];
+};
+
+export type MutationUnbefriendArgs = {
+  befriendedId: Scalars['ID'];
 };
 
 export type Node = {

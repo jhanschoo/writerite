@@ -1,8 +1,8 @@
 module.exports = {
   extends: [
-    "prettier",
     "mantine",
     "next/core-web-vitals",
+    "prettier",
     "turbo",
     "plugin:jest/recommended",
     "plugin:storybook/recommended",

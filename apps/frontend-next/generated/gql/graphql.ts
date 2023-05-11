@@ -94,6 +94,7 @@ export type DeckCardsAllUnderArgs = {
 export type DeckCardsDirectArgs = {
   after?: InputMaybe<Scalars['ID']>;
   before?: InputMaybe<Scalars['ID']>;
+  contains?: InputMaybe<Scalars['String']>;
   first?: InputMaybe<Scalars['Int']>;
   last?: InputMaybe<Scalars['Int']>;
 };

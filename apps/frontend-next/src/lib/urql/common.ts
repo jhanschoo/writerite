@@ -22,7 +22,7 @@ import { Exchange, fetchExchange, subscriptionExchange } from 'urql/core';
 
 export const commonUrqlOptions = {
   url: NEXT_PUBLIC_GRAPHQL_HTTP,
-  requestPolicy: 'cache-and-network',
+  requestPolicy: 'network-only',
   // preferGetMethod: true seems to be necessary for my implementation of subscriptions to work
   // preferGetMethod: true,
 } as const;

@@ -24,7 +24,7 @@ importers:
         version: 3.10.1(graphql@16.6.0)
       '@pothos/plugin-prisma':
         specifier: ^3.47.2
-        version: 3.47.2(@pothos/core@3.29.0)(@prisma/client@4.13.0)(graphql@16.6.0)(typescript@5.0.4)
+        version: 3.47.2(@pothos/core@3.29.0)(@prisma/client@4.14.0)(graphql@16.6.0)(typescript@5.0.4)
       '@pothos/plugin-relay':
         specifier: ^3.39.0
         version: 3.39.0(@pothos/core@3.29.0)(graphql@16.6.0)
@@ -357,7 +357,7 @@ importers:
         version: 2.0.0(@typescript-eslint/eslint-plugin@5.58.0)(@typescript-eslint/parser@5.58.0)(eslint-config-airbnb-typescript@17.0.0)(eslint-config-airbnb@19.0.4)(eslint-plugin-import@2.27.5)(eslint-plugin-jsx-a11y@6.7.1)(eslint-plugin-react-hooks@4.6.0)(eslint-plugin-react@7.32.2)(eslint@8.38.0)
       eslint-config-next:
         specifier: latest
-        version: 13.3.0(eslint@8.38.0)(typescript@5.0.4)
+        version: 13.4.1(eslint@8.38.0)(typescript@5.0.4)
       eslint-config-prettier:
         specifier: ^8.8.0
         version: 8.8.0(eslint@8.38.0)
@@ -379,6 +379,9 @@ importers:
       eslint-plugin-testing-library:
         specifier: ^5.10.3
         version: 5.10.3(eslint@8.38.0)(typescript@5.0.4)
+      next:
+        specifier: ^13.3.0
+        version: 13.3.0(@babel/core@7.21.4)(react-dom@18.2.0)(react@18.2.0)
 
   packages/eslint-config-custom-server:
     dependencies:
@@ -432,7 +435,7 @@ importers:
         version: 3.10.1(graphql@16.6.0)
       '@pothos/plugin-prisma':
         specifier: ^3.47.2
-        version: 3.47.2(@pothos/core@3.29.0)(@prisma/client@4.13.0)(graphql@16.6.0)(typescript@5.0.4)
+        version: 3.47.2(@pothos/core@3.29.0)(@prisma/client@4.14.0)(graphql@16.6.0)(typescript@5.0.4)
       '@pothos/plugin-relay':
         specifier: ^3.39.0
         version: 3.39.0(@pothos/core@3.29.0)(graphql@16.6.0)
@@ -2891,6 +2894,13 @@ packages:
     resolution: {integrity: sha512-wuGN5qSEjSgcq9fVkH0Y/qIPFjnZtW3ZPwfjJOn7l/rrf6y8J24h/lo61kwqunTyzZJm/ETGfGVU9PUs8cnzEA==}
     dependencies:
       glob: 7.1.7
+    dev: true
+
+  /@next/eslint-plugin-next@13.4.1:
+    resolution: {integrity: sha512-tVPS/2FKlA3ANCRCYZVT5jdbUKasBU8LG6bYqcNhyORDFTlDYa4cAWQJjZ7msIgLwMQIbL8CAsxrOL8maa/4Lg==}
+    dependencies:
+      glob: 7.1.7
+    dev: false
 
   /@next/swc-darwin-arm64@13.3.0:
     resolution: {integrity: sha512-DmIQCNq6JtccLPPBzf0dgh2vzMWt5wjxbP71pCi5EWpWYE3MsP6FcRXi4MlAmFNDQOfcFXR2r7kBeG1LpZUh1w==}
@@ -3069,7 +3079,25 @@ packages:
       typescript: '>=4.7.2'
     dependencies:
       '@pothos/core': 3.29.0(graphql@16.6.0)
-      '@prisma/client': 4.13.0(prisma@4.12.0)
+      '@prisma/client': 4.13.0(prisma@4.13.0)
+      '@prisma/generator-helper': 4.12.0
+      graphql: 16.6.0
+      typescript: 5.0.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /@pothos/plugin-prisma@3.47.2(@pothos/core@3.29.0)(@prisma/client@4.14.0)(graphql@16.6.0)(typescript@5.0.4):
+    resolution: {integrity: sha512-S38uYCETz1310HK9iKg8V87qkUqPW8pfDGDqbbhURBt5nqFHu8iCTzjY28DPWa8E68rME3KZEtXBzc1mwZH4eg==}
+    hasBin: true
+    peerDependencies:
+      '@pothos/core': '*'
+      '@prisma/client': '*'
+      graphql: '>=15.1.0'
+      typescript: '>=4.7.2'
+    dependencies:
+      '@pothos/core': 3.29.0(graphql@16.6.0)
+      '@prisma/client': 4.14.0(prisma@4.12.0)
       '@prisma/generator-helper': 4.12.0
       graphql: 16.6.0
       typescript: 5.0.4
@@ -3108,20 +3136,6 @@ packages:
       zod: 3.21.4
     dev: false
 
-  /@prisma/client@4.13.0(prisma@4.12.0):
-    resolution: {integrity: sha512-YaiiICcRB2hatxsbnfB66uWXjcRw3jsZdlAVxmx0cFcTc/Ad/sKdHCcWSnqyDX47vAewkjRFwiLwrOUjswVvmA==}
-    engines: {node: '>=14.17'}
-    requiresBuild: true
-    peerDependencies:
-      prisma: '*'
-    peerDependenciesMeta:
-      prisma:
-        optional: true
-    dependencies:
-      '@prisma/engines-version': 4.13.0-50.1e7af066ee9cb95cf3a403c78d9aab3e6b04f37a
-      prisma: 4.12.0
-    dev: false
-
   /@prisma/client@4.13.0(prisma@4.13.0):
     resolution: {integrity: sha512-YaiiICcRB2hatxsbnfB66uWXjcRw3jsZdlAVxmx0cFcTc/Ad/sKdHCcWSnqyDX47vAewkjRFwiLwrOUjswVvmA==}
     engines: {node: '>=14.17'}
@@ -3136,6 +3150,20 @@ packages:
       prisma: 4.13.0
     dev: false
 
+  /@prisma/client@4.14.0(prisma@4.12.0):
+    resolution: {integrity: sha512-MK/XaA2sFdfaOa7I9MjNKz6dxeIEdeZlnpNRoF2w3JuRLlFJLkpp6cD3yaqw2nUUhbrn3Iqe3ZpVV+VuGGil7Q==}
+    engines: {node: '>=14.17'}
+    requiresBuild: true
+    peerDependencies:
+      prisma: '*'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+    dependencies:
+      '@prisma/engines-version': 4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c
+      prisma: 4.12.0
+    dev: false
+
   /@prisma/debug@4.12.0:
     resolution: {integrity: sha512-mBTAGClWnxJpFSDSLF4+sVfVgS+KIs+y/Ncu3e+JkJ/gfJ1f591nRrclV1EmxnfTcvd8xoomhbiTy5mYDzzPEA==}
     dependencies:
@@ -3148,6 +3176,10 @@ packages:
 
   /@prisma/engines-version@4.13.0-50.1e7af066ee9cb95cf3a403c78d9aab3e6b04f37a:
     resolution: {integrity: sha512-fsQlbkhPJf08JOzKoyoD9atdUijuGBekwoOPZC3YOygXEml1MTtgXVpnUNchQlRSY82OQ6pSGQ9PxUe4arcSLQ==}
+    dev: false
+
+  /@prisma/engines-version@4.14.0-67.d9a4c5988f480fa576d43970d5a23641aa77bc9c:
+    resolution: {integrity: sha512-3jum8/YSudeSN0zGW5qkpz+wAN2V/NYCQ+BPjvHYDfWatLWlQkqy99toX0GysDeaUoBIJg1vaz2yKqiA3CFcQw==}
     dev: false
 
   /@prisma/engines@4.12.0:
@@ -5770,6 +5802,32 @@ packages:
     transitivePeerDependencies:
       - eslint-import-resolver-webpack
       - supports-color
+    dev: true
+
+  /eslint-config-next@13.4.1(eslint@8.38.0)(typescript@5.0.4):
+    resolution: {integrity: sha512-ajuxjCkW1hvirr0EQZb3/B/bFH52Z7CT89uCtTcICFL9l30i5c8hN4p0LXvTjdOXNPV5fEDcxBgGHgXdzTj1/A==}
+    peerDependencies:
+      eslint: ^7.23.0 || ^8.0.0
+      typescript: '>=3.3.1'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@next/eslint-plugin-next': 13.4.1
+      '@rushstack/eslint-patch': 1.2.0
+      '@typescript-eslint/parser': 5.58.0(eslint@8.38.0)(typescript@5.0.4)
+      eslint: 8.38.0
+      eslint-import-resolver-node: 0.3.7
+      eslint-import-resolver-typescript: 3.5.5(@typescript-eslint/parser@5.58.0)(eslint-import-resolver-node@0.3.7)(eslint-plugin-import@2.27.5)(eslint@8.38.0)
+      eslint-plugin-import: 2.27.5(@typescript-eslint/parser@5.58.0)(eslint-import-resolver-typescript@3.5.5)(eslint@8.38.0)
+      eslint-plugin-jsx-a11y: 6.7.1(eslint@8.38.0)
+      eslint-plugin-react: 7.32.2(eslint@8.38.0)
+      eslint-plugin-react-hooks: 4.6.0(eslint@8.38.0)
+      typescript: 5.0.4
+    transitivePeerDependencies:
+      - eslint-import-resolver-webpack
+      - supports-color
+    dev: false
 
   /eslint-config-prettier@8.8.0(eslint@8.38.0):
     resolution: {integrity: sha512-wLbQiFre3tdGgpDv67NQKnJuTlcUVYHas3k+DZCc2U2BadthoEY4B7hLPvAxaqdyOGCzuLfii2fqGph10va7oA==}

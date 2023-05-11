@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
-import { useMutation } from 'urql';
-
 import { ToolbaredRichTextEditor, useContentViewer } from '@components/editor';
 import { useContentEditor } from '@components/editor/useContentEditor';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Box, Button, Flex, LoadingOverlay } from '@mantine/core';
 import { EditorContent } from '@tiptap/react';
+import { useMutation } from 'urql';
 
 import { ManageDeckFrontMatterContent } from './ManageDeckFrontMatterContent';
 import { ManageDeckFrontMatterEditor } from './ManageDeckFrontMatterEditor';
@@ -94,6 +93,17 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
           [`@media (min-width: ${theme.breakpoints.md})`]: {
             width: '50%',
           },
+        })}
+        p="xs"
+      >
+        {content}
+      </Box>
+      <Box
+        sx={(theme) => ({
+          width: '100%',
+          [`@media (min-width: ${theme.breakpoints.md})`]: {
+            width: '50%',
+          },
           // for 'LoadingOverlay' to work
           position: 'relative',
         })}
@@ -118,17 +128,6 @@ export const ManageDeckFrontMatter = ({ deck }: Props) => {
           </Button>
           <Button onClick={handleSave}>Save changes</Button>
         </Flex>
-      </Box>
-      <Box
-        sx={(theme) => ({
-          width: '100%',
-          [`@media (min-width: ${theme.breakpoints.md})`]: {
-            width: '50%',
-          },
-        })}
-        p="xs"
-      >
-        {content}
       </Box>
     </Flex>
   );
