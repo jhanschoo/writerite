@@ -1,6 +1,5 @@
-import { MouseEvent, MouseEventHandler } from 'react';
+import { MouseEventHandler } from 'react';
 import { useRouter } from 'next/router';
-import { DECK_DETAIL_PATH } from '@/paths';
 import { graphql } from '@generated/gql';
 import {
   Button,
@@ -13,6 +12,7 @@ import {
   getStylesRef,
 } from '@mantine/core';
 import { useMutation } from 'urql';
+import { DECK_DETAIL_PATH } from '@/paths';
 
 import { RecentDecks } from './RecentDecks';
 import { SearchDecks } from './SearchDecks';
@@ -64,7 +64,7 @@ export const ManageDecks = () => {
   const router = useRouter();
   const { classes } = useStyles();
   const [, deckCreateMutation] = useMutation(NewDeckItemMutation);
-  const handleCreateDeck: MouseEventHandler = async (e) => {
+  const handleCreateDeck: MouseEventHandler = async () => {
     const createdDeck = await deckCreateMutation(emptyNewDeckInput);
     if (createdDeck.data?.deckCreate.id) {
       router.push(DECK_DETAIL_PATH(createdDeck.data.deckCreate.id));
@@ -89,7 +89,7 @@ export const ManageDecks = () => {
           Search
         </Title>
         <SearchDecks
-          onClickFactory={(deckId) => (e: MouseEvent<HTMLDivElement>) => {
+          onClickFactory={(deckId) => () => {
             router.push(DECK_DETAIL_PATH(deckId));
           }}
         />

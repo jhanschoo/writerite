@@ -4,6 +4,7 @@ import { Prisma, Unit } from 'database';
 import { builder } from '../builder';
 import { CardCreateMutationInput, CardEditMutationInput } from './inputs';
 import { flattenJSONContent } from '../service/tiptap';
+import { CARD_ANSWERS_SEPARATOR } from '../constants';
 
 /**
  * Cards have no access control, and they must not naively appear top-level.
@@ -79,6 +80,7 @@ builder.mutationFields((t) => ({
             fullAnswer: card.fullAnswer || Prisma.DbNull,
             fullAnswerString: flattenJSONContent(card.fullAnswer).join("") || '',
             answers: card.answers,
+            answersString: card.answers.join(CARD_ANSWERS_SEPARATOR) || '',
             isTemplate: card.isTemplate,
             isPrimaryTemplate,
             deck: {
@@ -129,6 +131,7 @@ builder.mutationFields((t) => ({
               card.fullAnswer === null ? Prisma.DbNull : card.fullAnswer,
             fullAnswerString: card.fullAnswer === undefined ? undefined : flattenJSONContent(card.fullAnswer).join(""),
             answers: card.answers,
+            answersString: card.answers === undefined ? undefined : card.answers.join(CARD_ANSWERS_SEPARATOR),
             isPrimaryTemplate,
             deck: {
               update: { editedAt: new Date() },

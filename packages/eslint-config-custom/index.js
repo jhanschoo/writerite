@@ -25,8 +25,8 @@ module.exports = {
   //     presets: [require.resolve("next/babel")],
   //   },
   // },
-  // rules: {
-  //   "react/react-in-jsx-scope": "off",
-  //   "import/extensions": [1, { "pattern": { "@*": "never" } }]
-  // }
+  rules: {
+    // "react/react-in-jsx-scope": "off",
+    "import/extensions": [1, { "pattern": { "@*": "never" } }]
+  }
 };

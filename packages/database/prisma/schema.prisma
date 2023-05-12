@@ -42,6 +42,7 @@ model Card {
   fullAnswer        Json?
   fullAnswerString  String
   answers           String[]
+  answersString     String
   isTemplate        Boolean  @default(false)
   isPrimaryTemplate Unit?
   editedAt          DateTime @default(now())

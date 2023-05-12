@@ -5,37 +5,36 @@ import {
   SetStateAction,
   useState,
 } from 'react';
-import { useRouter } from 'next/router';
-import { STANDARD_DEBOUNCE_MS } from '@/utils';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { FragmentType, graphql } from '@generated/gql';
 import { DecksQueryScope } from '@generated/gql/graphql';
 import {
+  Button,
   Card,
   SegmentedControl,
-  Text,
   TextInput,
   UnstyledButton,
 } from '@mantine/core';
 import { useQuery } from 'urql';
 import { useDebounce } from 'use-debounce';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
 
 import {
   DeckSummaryContent,
   DeckSummaryContentFragment,
   DecksList,
 } from '@/components/deck';
+import { PageParams } from '@/utils/PageParams';
 
 export const MANAGE_DECKS_DECKS_NUM = 20;
 
 type OnClickFactoryType = (deckId: string) => MouseEventHandler<HTMLDivElement>;
 
-const DeckItemFactory =
-  (onClickFactory: OnClickFactoryType) =>
-  ({
+const DeckItemFactory = (onClickFactory: OnClickFactoryType) =>
+  function DeckItem({
     deck,
   }: {
     deck: FragmentType<typeof DeckSummaryContentFragment> & { id: string };
-  }) => {
+  }) {
     return (
       <UnstyledButton
         sx={{ height: 'unset', flexGrow: 1, maxWidth: '100%' }}
@@ -109,20 +108,26 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
   const [titleContainsInput, setTitleContainsInput] = useState('');
   const [titleContains] = useDebounce(titleContainsInput, STANDARD_DEBOUNCE_MS);
   const [scope, setScope] = useState<DecksQueryScope>(DecksQueryScope.Owned);
-  const [cursor, setCursor] = useState<string | undefined>();
-  const [{ data }, refetchDecks] = useQuery({
+  const [pageParams, setPageParams] = useState<PageParams>({
+    first: MANAGE_DECKS_DECKS_NUM,
+  });
+  const [{ data }] = useQuery({
     query: SearchDecksQuery,
     variables: {
-      first: MANAGE_DECKS_DECKS_NUM,
-      after: cursor,
+      ...pageParams,
       input: {
-        scope: scope,
+        scope,
         titleContains,
       },
     },
   });
-  const decks = data?.decks.edges.flatMap((edge) => {
-    if (edge?.node?.name.includes(titleContainsInput)) {
+  if (!data) {
+    return null;
+  }
+  const { hasPreviousPage, hasNextPage, startCursor, endCursor } =
+    data.decks.pageInfo;
+  const decks = data.decks.edges.flatMap((edge) => {
+    if (edge?.node?.name.toLocaleLowerCase().includes(titleContainsInput.toLocaleLowerCase())) {
       return [edge.node];
     }
     return [];
@@ -148,11 +153,36 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
           setTitleContainsInput(e.target.value)
         }
       />
+      {hasPreviousPage && startCursor && (
+        <Button
+          onClick={() => {
+            setPageParams({
+              last: MANAGE_DECKS_DECKS_NUM,
+              before: startCursor,
+            });
+          }}
+          variant="outline"
+        >
+          View previous...
+        </Button>
+      )}
       <DecksList
         decks={decks}
         component={DeckItemFactory(onClickFactory)}
         justifyLeading
       />
+      {hasNextPage && endCursor && (
+        <Button
+          onClick={() => {
+            setPageParams({
+              first: MANAGE_DECKS_DECKS_NUM,
+              after: endCursor,
+            });
+          }}
+        >
+          View more...
+        </Button>
+      )}
     </>
   );
 };

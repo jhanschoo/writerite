@@ -11,6 +11,7 @@ import {
   DeckEditMutationInput,
 } from './inputs';
 import { DecksQueryInput } from './inputs/DecksQueryInput';
+import { CARD_ANSWERS_SEPARATOR } from '../constants';
 
 export const PPUBLIC = gao('getPublicInfo');
 export const PPRIVATABLE = gao('getPrivatableInfo');
@@ -64,8 +65,8 @@ export const Deck = builder.prismaNode('Deck', {
           ...(contains
             ? {
                 OR: [
-                  { promptString: { contains } },
-                  { answerString: { contains } },
+                  { promptString: { contains, mode: 'insensitive' } },
+                  { answerString: { contains, mode: 'insensitive' } },
                   { answers: { has: contains } }, // limitation
                 ],
               }
@@ -159,7 +160,7 @@ builder.queryFields((t) => ({
           id: stoplist
             ? { notIn: stoplist.map((id) => decodeGlobalID(id as string).id) }
             : undefined,
-          name: titleContains ? { contains: titleContains } : undefined,
+          name: titleContains ? { contains: titleContains, mode: 'insensitive' } : undefined,
         },
         orderBy: { editedAt: 'desc' },
       });
@@ -196,6 +197,7 @@ builder.mutationFields((t) => ({
         fullAnswerString: card.fullAnswer
           ? flattenJSONContent(card.fullAnswer).join('')
           : '',
+        answersString: card.answers.join(CARD_ANSWERS_SEPARATOR) || '',
         isPrimaryTemplate: card.isPrimaryTemplate ? Unit.UNIT : undefined,
       }));
       const res = await prisma.deck.create({
@@ -288,6 +290,7 @@ builder.mutationFields((t) => ({
         fullAnswerString: card.fullAnswer
           ? flattenJSONContent(card.fullAnswer).join('')
           : '',
+        answersString: card.answers.join(CARD_ANSWERS_SEPARATOR) || '',
         isPrimaryTemplate: card.isPrimaryTemplate ? Unit.UNIT : undefined,
       }));
       const res = await prisma.deck.update({
