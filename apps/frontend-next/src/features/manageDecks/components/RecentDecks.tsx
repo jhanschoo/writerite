@@ -1,41 +1,70 @@
-import { useState } from 'react';
+import { MouseEventHandler } from 'react';
 import { useRouter } from 'next/router';
-import { DECK_DETAIL_PATH } from '@/paths';
-import { graphql } from '@generated/gql';
-import { Button, Card, Flex, Stack, Text, UnstyledButton } from '@mantine/core';
+import { FragmentType, graphql } from '@generated/gql';
+import { Card, UnstyledButton } from '@mantine/core';
 import { useQuery } from 'urql';
 
-import { DeckCompactSummaryContent, DeckName } from '@/components/deck';
+import { DecksQueryScope } from '@generated/gql/graphql';
+import { DeckSummaryContent, DeckSummaryContentFragment, DecksList } from '@/components/deck';
+import { DECK_DETAIL_PATH } from '@/paths';
 
-export const INITIAL_RECENT_DECKS = 6;
+export const INITIAL_RECENT_DECKS = 5;
+
+type OnClickFactoryType = (deckId: string) => MouseEventHandler<HTMLDivElement>;
+
+const DeckItemFactory = (onClickFactory: OnClickFactoryType) =>
+  function DeckItem({
+    deck,
+  }: {
+    deck: FragmentType<typeof DeckSummaryContentFragment> & { id: string };
+  }) {
+    return (
+      <UnstyledButton
+        sx={{ height: 'unset', flexGrow: 1, maxWidth: '100%' }}
+        onClick={onClickFactory(deck.id)}
+        component="div"
+      >
+        <Card
+          shadow="md"
+          p="md"
+          withBorder
+          sx={(theme) => {
+            const { border, background, color, hover } = theme.fn.variant({
+              variant: 'default',
+            });
+            return {
+              backgroundColor: background,
+              color,
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              borderColor: border,
+              ...theme.fn.hover({ backgroundColor: hover }),
+            };
+          }}
+        >
+          <DeckSummaryContent deck={deck} />
+        </Card>
+      </UnstyledButton>
+    );
+  };
 
 const RecentDecksQuery = graphql(/* GraphQL */ `
   query RecentDecksQuery(
-    $after: ID
-    $before: ID
-    $first: Int
-    $last: Int
+    $first: Int!
     $input: DecksQueryInput!
   ) {
     decks(
-      after: $after
-      before: $before
       first: $first
-      last: $last
       input: $input
     ) {
       edges {
         cursor
         node {
           id
-          ...DeckCompactSummaryContent
+          name
+          ...DeckSummaryContent
         }
-      }
-      pageInfo {
-        endCursor
-        hasNextPage
-        hasPreviousPage
-        startCursor
       }
     }
   }
@@ -43,65 +72,27 @@ const RecentDecksQuery = graphql(/* GraphQL */ `
 
 export const RecentDecks = () => {
   const router = useRouter();
-  const [recentShowMore, setRecentShowMore] = useState(false);
-  const [{ data, fetching, error }] = useQuery({
+  const [{ data }] = useQuery({
     query: RecentDecksQuery,
+    variables: {
+      first: INITIAL_RECENT_DECKS,
+      input: {
+        scope: DecksQueryScope.Owned,
+      }
+    }
   });
-  const recentDeckItems = (data?.decks.edges ?? []).flatMap((edge, index) =>
-    edge?.node
-      ? [
-          <UnstyledButton
-            component="div"
-            sx={{ flexGrow: 1, maxWidth: '100%' }}
-            onClick={() => router.push(DECK_DETAIL_PATH(edge.node.id))}
-          >
-            <Card
-              sx={(theme) => {
-                const { border, background, color, hover } = theme.fn.variant({
-                  variant: 'default',
-                });
-                return {
-                  backgroundColor: background,
-                  color,
-                  borderColor: border,
-                  ...theme.fn.hover({ backgroundColor: hover }),
-                };
-              }}
-              shadow="md"
-              p="sm"
-              withBorder
-            >
-              <DeckCompactSummaryContent deck={edge.node} />
-            </Card>
-          </UnstyledButton>,
-        ]
-      : []
-  );
-  const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS;
-  if (canShowMoreRecentDecks && !recentShowMore) {
-    recentDeckItems.length = INITIAL_RECENT_DECKS;
+  if (!data) {
+    return null;
   }
-  recentDeckItems.reverse();
+  const decks = data.decks.edges.flatMap((edge) => edge?.node ? [edge.node] : []);
   return (
-    <Stack>
-      <Flex
-        direction="row-reverse"
-        wrap="wrap-reverse"
-        gap="xs"
-        justify="stretch"
-      >
-        {recentDeckItems}
-      </Flex>
-      {canShowMoreRecentDecks && (
-        <Button
-          fullWidth
-          variant="subtle"
-          onClick={() => setRecentShowMore(!recentShowMore)}
-        >
-          {!recentShowMore && 'Show more'}
-          {recentShowMore && 'Show less'}
-        </Button>
-      )}
-    </Stack>
+    <DecksList
+      decks={decks}
+      component={DeckItemFactory((deckId) => () => {
+        router.push(DECK_DETAIL_PATH(deckId));
+      })}
+      justifyLeading
+    />
+
   );
 };
