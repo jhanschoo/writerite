@@ -50,8 +50,8 @@ const documents = {
     types.RoomJoinDocument,
   '\n      query Room($id: ID!) {\n        room(id: $id) {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    ':
     types.RoomDocument,
-  '\n      query OccupyingUnarchivedRooms {\n        occupyingUnarchivedRooms {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    ':
-    types.OccupyingUnarchivedRoomsDocument,
+  '\n      query OccupyingUnarchivedEphemeralRooms {\n        occupyingUnarchivedEphemeralRooms {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    ':
+    types.OccupyingUnarchivedEphemeralRoomsDocument,
   '\n      subscription RoomUpdatesByRoomId($id: ID!) {\n        roomUpdatesByRoomId(id: $id) {\n          operation\n          value {\n            id\n            type\n            activeRound {\n              id\n              deck {\n                id\n              }\n              isActive\n              state\n              slug\n            }\n            occupants {\n              id\n            }\n          }\n        }\n      }\n    ':
     types.RoomUpdatesByRoomIdDocument,
   '\n      mutation CreateUser($input: FinalizeOauthSigninMutationInput!) {\n        finalizeOauthSignin(input: $input) {\n          currentUser\n          token\n        }\n      }\n    ':
@@ -192,8 +192,8 @@ export function graphql(
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(
-  source: '\n      query OccupyingUnarchivedRooms {\n        occupyingUnarchivedRooms {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    '
-): (typeof documents)['\n      query OccupyingUnarchivedRooms {\n        occupyingUnarchivedRooms {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    '];
+  source: '\n      query OccupyingUnarchivedEphemeralRooms {\n        occupyingUnarchivedEphemeralRooms {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    '
+): (typeof documents)['\n      query OccupyingUnarchivedEphemeralRooms {\n        occupyingUnarchivedEphemeralRooms {\n          id\n          type\n          activeRound {\n            id\n            deck {\n              id\n            }\n            isActive\n            state\n            slug\n          }\n          occupants {\n            id\n          }\n        }\n      }\n    '];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

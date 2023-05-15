@@ -1,18 +1,21 @@
-import { ChangeEvent, useMemo, useState } from 'react';
-import { AddNewCard, ManageCard } from '@/features/manageCard';
+import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
   Divider,
   Flex,
-  Pagination,
   Stack,
   TextInput,
 } from '@mantine/core';
 import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
-import { JSONContent } from '@tiptap/react';
+import { useDebouncedCallback } from 'use-debounce';
+import { AddNewCard, ManageCard } from '@/features/manageCard';
 
+import { PageParams } from '@/utils/PageParams';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { accumulateContentText } from '@/components/editor';
+import { JSONContent } from '@tiptap/core';
+import { MANAGE_DECK_CARDS_CARDS_NUM } from '../constants';
 
 const WHITESPACE_REGEX = /\s+/;
 
@@ -24,11 +27,14 @@ const WHITESPACE_REGEX = /\s+/;
 const ManageDeckCardsFragment = graphql(/* GraphQL */ `
   fragment ManageDeckCards on Deck {
     id
-    cardsDirect(after: $after, before: $before, first: $first, last: $last) {
+    cardsDirect(after: $after, before: $before, first: $first, last: $last, contains: $contains) {
       edges {
         cursor
         node {
           id
+          prompt
+          fullAnswer
+          answers
           ...ManageCard
         }
       }
@@ -45,53 +51,49 @@ const ManageDeckCardsFragment = graphql(/* GraphQL */ `
 
 interface Props {
   deck: FragmentType<typeof ManageDeckCardsFragment>;
+  onCardDeleted(): void;
+  setCardsPageParams: Dispatch<SetStateAction<PageParams>>;
+  setCardsContain: Dispatch<SetStateAction<string>>;
   startUpload(): void;
 }
 
-export const ManageDeckCards = ({ deck, startUpload }: Props) => {
+export const ManageDeckCards = ({ deck, setCardsPageParams, setCardsContain, startUpload, onCardDeleted }: Props) => {
   const deckFragment = useFragment(ManageDeckCardsFragment, deck);
+  const { hasNextPage, hasPreviousPage, startCursor, endCursor } = deckFragment.cardsDirect.pageInfo;
   const [filter, setFilter] = useState('');
-  const [activePage, setActivePage] = useState<number>(1);
+  const setCardsContainDebounced = useDebouncedCallback((newCardsContain: string) => {
+    setCardsContain(newCardsContain);
+    setCardsPageParams({ first: MANAGE_DECK_CARDS_CARDS_NUM });
+  }, STANDARD_DEBOUNCE_MS);
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
-    setActivePage(1);
+    setCardsContainDebounced(e.target.value);
   };
   const filterWords = filter
     .trim()
+    .toLocaleLowerCase()
     .split(WHITESPACE_REGEX)
     .filter((word) => Boolean(word));
   // .filter(...) is necessary since "".split(/\s+/) === ['']
-  // const currentCards = useMemo(() => {
-  //   const filteredCards = deck.cardsDirect.filter(({ prompt, fullAnswer, answers }) => {
-  //     const promptString = (prompt && accumulateContentText(prompt as JSONContent)) ?? '';
-  //     const fullAnswerString =
-  //       (fullAnswer && accumulateContentText(fullAnswer as JSONContent)) ?? '';
-  //     return filterWords.every(
-  //       (word) =>
-  //         promptString.includes(word) ||
-  //         fullAnswerString.includes(word) ||
-  //         answers.some((answer) => answer.includes(word))
-  //     );
-  //   });
-  //   sortCards(filteredCards);
-  //   return filteredCards.slice((activePage - 1) * 10, activePage * 10);
-  // }, [deck.cardsDirect, activePage, filter]);
-  // TODO: fix
-  const currentCards = deckFragment.cardsDirect.edges.flatMap((edge) =>
-    edge?.node ? [edge.node] : []
-  );
-  const total = Math.ceil(deckFragment.cardsDirectCount / 10);
-  const canAddANewCard =
-    deckFragment.cardsDirectCount <
-      parseInt(process.env.NEXT_PUBLIC_MAX_CARDS_PER_DECK as string, 10) &&
-    activePage === 1;
+  const currentCards = deckFragment.cardsDirect.edges.flatMap((edge) => {
+    if (edge?.node) {
+      const { prompt, fullAnswer, answers } = edge.node;
+      const promptString = (prompt && accumulateContentText(prompt as JSONContent))?.toLocaleLowerCase() ?? '';
+      const fullAnswerString =
+        (fullAnswer && accumulateContentText(fullAnswer as JSONContent))?.toLocaleLowerCase() ?? '';
+      if (filterWords.every((word) => promptString.includes(word) || fullAnswerString.includes(word) || answers.some((answer) => answer.toLocaleLowerCase().includes(word)))) {
+        return [edge.node];
+      }
+    }
+    return [];
+  });
   return (
     <Stack spacing="xs" align="stretch">
       <Flex gap="md" wrap="wrap" justify="stretch">
         <Button
           onClick={() => setShowAddCard(true)}
-          disabled={!canAddANewCard || showAddCard}
+          disabled={showAddCard}
           sx={{ flexGrow: 1 }}
           leftIcon={<IconPlus size={18} />}
         >
@@ -99,7 +101,6 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
         </Button>
         <Button
           onClick={startUpload}
-          disabled={!canAddANewCard}
           variant="outline"
           leftIcon={<IconUpload size={18} />}
         >
@@ -120,14 +121,39 @@ export const ManageDeckCards = ({ deck, startUpload }: Props) => {
         label="Search"
         sx={{ flexGrow: 1 }}
       />
+      {hasPreviousPage && startCursor && (
+        <Button
+          onClick={() => {
+            setCardsPageParams({
+              last: MANAGE_DECK_CARDS_CARDS_NUM,
+              before: startCursor,
+            });
+          }}
+          variant="outline"
+        >
+          View previous...
+        </Button>
+      )}
       {currentCards.map((card) => (
         <ManageCard
           card={card}
           key={card.id}
-          onDelete={() => undefined}
+          onCardDeleted={onCardDeleted}
           forceLoading={false}
         />
       ))}
+      {hasNextPage && endCursor && (
+        <Button
+          onClick={() => {
+            setCardsPageParams({
+              first: MANAGE_DECK_CARDS_CARDS_NUM,
+              after: endCursor,
+            });
+          }}
+        >
+          View more...
+        </Button>
+      )}
     </Stack>
   );
 };

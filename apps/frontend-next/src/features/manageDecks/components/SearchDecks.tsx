@@ -15,7 +15,7 @@ import {
   UnstyledButton,
 } from '@mantine/core';
 import { useQuery } from 'urql';
-import { useDebounce } from 'use-debounce';
+import { useDebouncedCallback } from 'use-debounce';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
 
 import {
@@ -25,7 +25,7 @@ import {
 } from '@/components/deck';
 import { PageParams } from '@/utils/PageParams';
 
-export const MANAGE_DECKS_DECKS_NUM = 20;
+export const MANAGE_DECKS_DECKS_NUM = 2;
 
 type OnClickFactoryType = (deckId: string) => MouseEventHandler<HTMLDivElement>;
 
@@ -106,11 +106,17 @@ interface Props {
 // TODO: pagination
 export const SearchDecks = ({ onClickFactory }: Props) => {
   const [titleContainsInput, setTitleContainsInput] = useState('');
-  const [titleContains] = useDebounce(titleContainsInput, STANDARD_DEBOUNCE_MS);
+  const [titleContains, setTitleContains] = useState('');
   const [scope, setScope] = useState<DecksQueryScope>(DecksQueryScope.Owned);
   const [pageParams, setPageParams] = useState<PageParams>({
     first: MANAGE_DECKS_DECKS_NUM,
   });
+  const debouncedTitleContains = useDebouncedCallback((newTitleContains: string) => {
+    setTitleContains(newTitleContains);
+    setPageParams({
+      first: MANAGE_DECKS_DECKS_NUM,
+    });
+  }, STANDARD_DEBOUNCE_MS);
   const [{ data }] = useQuery({
     query: SearchDecksQuery,
     variables: {
@@ -149,9 +155,10 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
         size="md"
         mb="md"
         value={titleContainsInput}
-        onChange={(e: ChangeEvent<HTMLInputElement>) =>
-          setTitleContainsInput(e.target.value)
-        }
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
+          setTitleContainsInput(e.target.value);
+          debouncedTitleContains(e.target.value);
+        }}
       />
       {hasPreviousPage && startCursor && (
         <Button

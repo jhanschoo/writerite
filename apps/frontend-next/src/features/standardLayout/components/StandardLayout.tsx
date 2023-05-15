@@ -1,4 +1,4 @@
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { ProfilePicture } from '@/features/profilePicture/components';
@@ -31,6 +31,7 @@ import {
 
 import { ActionIcon } from '@/components/ActionIcon';
 import BrandText from '@/components/typography/BrandText';
+import { CurrentUser } from '@/lib/tokenManagement';
 
 interface Props {
   vhHeight?: boolean;
@@ -67,7 +68,13 @@ export const StandardLayout = ({
   vhHeight,
 }: PropsWithChildren<Props>) => {
   const logout = useLogout();
-  const currentUser = useCurrentUser();
+  const currentUserDangerous = useCurrentUser();
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  useEffect(() => {
+    if (!currentUser && currentUserDangerous) {
+      setCurrentUser(currentUserDangerous);
+    }
+  }, [currentUser, currentUserDangerous])
   const router = useRouter();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();

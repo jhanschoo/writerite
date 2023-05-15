@@ -48,6 +48,9 @@ export const FriendsListReceived = () => {
     data?.befrienders?.edges?.flatMap((edge) =>
       edge?.node ? [edge.node] : []
     ) ?? [];
+  if (users.length === 0) {
+    return <p>You have no received friend requests pending approval.</p>;
+  }
   const userProfiles = users.map((user) => <FriendsListReceivedItem key={user.id} user={user} />);
   return <>{userProfiles}</>;
 };

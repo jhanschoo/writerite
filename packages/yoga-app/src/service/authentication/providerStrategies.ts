@@ -20,7 +20,7 @@ export type ProviderKey =
 
 export type ProviderPrismaFieldKeys = keyof Pick<
   User,
-  'facebookId' | 'googleId' | 'id'
+  'facebookId' | 'googleId' | 'devEnvId' | 'id'
 >;
 
 // We generalize the type of `providerStrategies` in this way (losing type information about the particular key to value maps) for ease in inference.
@@ -32,6 +32,6 @@ export const providerStrategies: {
 } = {
   google: [getGoogleProfile, 'googleId'],
   facebook: [getFacebookProfile, 'facebookId'],
-  development: [getDevelopmentProfile, 'id'],
+  development: [getDevelopmentProfile, 'devEnvId'],
   id: [() => Promise.resolve(null), 'id'],
 };

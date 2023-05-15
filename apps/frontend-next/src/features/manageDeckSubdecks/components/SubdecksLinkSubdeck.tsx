@@ -1,24 +1,44 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import { useRouter } from 'next/router';
-import { DECK_DETAIL_PATH } from '@/paths';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { ManageDeckSubdecksLinkSubdeckQueryQuery } from '@generated/gql/graphql';
-import { Button, Divider, Flex, Stack, TextInput, Title } from '@mantine/core';
+import {
+  DecksQueryScope,
+  ManageDeckSubdecksLinkSubdeckQueryQuery,
+} from '@generated/gql/graphql';
+import {
+  Button,
+  Divider,
+  Flex,
+  SegmentedControl,
+  Stack,
+  TextInput,
+  Title,
+} from '@mantine/core';
 import {
   IconArrowLeft,
   IconCheck,
   IconLink,
   IconPlus,
-  IconUpload,
 } from '@tabler/icons-react';
 import { useMutation, useQuery } from 'urql';
+import { useDebounce } from 'use-debounce';
+import { PageParams } from '@/utils/PageParams';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
+import { DECK_DETAIL_PATH } from '@/paths';
 
 import { BasicList } from '@/components/BasicList';
 
 import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
 import { SubdeckListItemContent } from './SubdeckListItemContent';
 
-export const INITIAL_RECENT_DECKS = 5;
+export const MANAGE_DECKS_SUBDECKS_DECKS_NUM = 10;
+export const MANAGE_DECKS_SUBDECKS_RECENT_DECKS_NUM = 5;
 
 const ManageDeckSubdecksLinkSubdeckQuery = graphql(/* GraphQL */ `
   query ManageDeckSubdecksLinkSubdeckQuery(
@@ -38,8 +58,9 @@ const ManageDeckSubdecksLinkSubdeckQuery = graphql(/* GraphQL */ `
       edges {
         cursor
         node {
-          ...SubdeckListItemContent
           id
+          name
+          ...SubdeckListItemContent
         }
       }
       pageInfo {
@@ -88,25 +109,53 @@ export const ManageDeckSubdecksLinkSubdeck = ({
   const stoplist = subdecks.map(({ id }) => id);
   stoplist.push(deckId);
   const router = useRouter();
-  const [titleFilter, setTitleFilter] = useState('');
-  const [recentShowMore, setRecentShowMore] = useState(false);
+  const [titleContainsInput, setTitleContainsInput] = useState('');
+  const [titleContains] = useDebounce(titleContainsInput, STANDARD_DEBOUNCE_MS);
+  const [scope, setScope] = useState<DecksQueryScope>(DecksQueryScope.Owned);
+  const [pageParams, setPageParams] = useState<PageParams>({
+    first: MANAGE_DECKS_SUBDECKS_DECKS_NUM,
+  });
   const [added, setAdded] = useState<string[]>([]);
   const [persistedRecentDecks, setPersistedDecks] = useState<
     ManageDeckSubdecksLinkSubdeckQueryQuery['decks']['edges']
   >([]);
-  const [{ data }] = useQuery({
+  const [{ data: recentData }] = useQuery({
     query: ManageDeckSubdecksLinkSubdeckQuery,
     variables: {
+      first: MANAGE_DECKS_SUBDECKS_RECENT_DECKS_NUM,
       input: {
         stoplist,
       },
     },
   });
-  useEffect(() => {
-    if (data && persistedRecentDecks.length === 0) {
-      setPersistedDecks(data.decks.edges);
+  const [{ data: searchData }] = useQuery({
+    query: ManageDeckSubdecksLinkSubdeckQuery,
+    variables: {
+      ...pageParams,
+      input: {
+        stoplist,
+        scope,
+        titleContains,
+      },
+    },
+  });
+  const { hasPreviousPage, hasNextPage, startCursor, endCursor } =
+    searchData?.decks.pageInfo ?? {};
+  const searchDecks = searchData?.decks.edges.flatMap((edge) => {
+    if (
+      edge?.node?.name
+        .toLocaleLowerCase()
+        .includes(titleContainsInput.toLocaleLowerCase())
+    ) {
+      return [edge];
     }
-  }, [data, persistedRecentDecks.length]);
+    return [];
+  });
+  useEffect(() => {
+    if (recentData && persistedRecentDecks.length === 0) {
+      setPersistedDecks(recentData.decks.edges);
+    }
+  }, [recentData, persistedRecentDecks.length]);
   const [, addSubdeck] = useMutation(
     ManageDeckSubdecksLinkSubdeckAddSubdeckMutation
   );
@@ -149,34 +198,37 @@ export const ManageDeckSubdecksLinkSubdeck = ({
         ]
       : []
   );
-  const canShowMoreRecentDecks = recentDeckItems.length > INITIAL_RECENT_DECKS;
-  if (canShowMoreRecentDecks && !recentShowMore) {
-    recentDeckItems.length = INITIAL_RECENT_DECKS;
-  }
+  const searchDeckItems = searchDecks?.flatMap((edge, index) =>
+    edge
+      ? [
+          <SubdeckListItemContent
+            key={index}
+            deck={edge.node}
+            onAction={() => handleAddSubdeck(edge.node.id)}
+            actioned={added.includes(edge.node.id)}
+            actionText="Link"
+            actionedText="Linked"
+            actionIcon={<IconLink />}
+            actionedIcon={<IconCheck />}
+          />,
+        ]
+      : []
+  );
   return (
     <Stack p="sm">
+      <Button
+        sx={{ alignSelf: 'flex-start' }}
+        variant="default"
+        onClick={onFinishedLinkingSubdecks}
+        leftIcon={<IconArrowLeft />}
+      >
+        Back
+      </Button>
       <Title order={2} size="h4">
         Link subdecks
       </Title>
       <BasicList borderTop borderBottom data={recentDeckItems} />
-      {canShowMoreRecentDecks && (
-        <Button
-          fullWidth
-          variant="subtle"
-          onClick={() => setRecentShowMore(!recentShowMore)}
-        >
-          {recentShowMore && 'Show less'}
-          {!recentShowMore && 'Show more'}
-        </Button>
-      )}
       <Flex justify="space-between" align="center">
-        <Button
-          variant="subtle"
-          onClick={onFinishedLinkingSubdecks}
-          leftIcon={<IconArrowLeft />}
-        >
-          Back
-        </Button>
         <Flex gap="md" wrap="wrap" justify="flex-end">
           <Button
             variant="filled"
@@ -185,28 +237,58 @@ export const ManageDeckSubdecksLinkSubdeck = ({
           >
             New
           </Button>
-          <Button
-            variant="outline"
-            onClick={() => console.log('new subdeck')}
-            leftIcon={<IconUpload />}
-          >
-            Import
-          </Button>
         </Flex>
       </Flex>
       <Divider />
+      <Title order={3} size="h5">
+        Search
+      </Title>
+      <SegmentedControl
+        value={scope}
+        onChange={setScope as Dispatch<SetStateAction<string>>}
+        data={[
+          { label: 'Owned', value: DecksQueryScope.Owned },
+          { label: 'Public', value: DecksQueryScope.Visible },
+        ]}
+      />
       <TextInput
         variant="filled"
         label="Find more decks"
         placeholder="e.g. ocabular"
         size="md"
         mb="md"
-        value={titleFilter}
+        value={titleContainsInput}
         onChange={(e: ChangeEvent<HTMLInputElement>) => {
-          setTitleFilter(e.target.value);
+          setTitleContainsInput(e.target.value);
           setAdded([]);
         }}
       />
+      {hasPreviousPage && startCursor && (
+        <Button
+          onClick={() => {
+            setPageParams({
+              last: MANAGE_DECKS_SUBDECKS_DECKS_NUM,
+              before: startCursor,
+            });
+          }}
+          variant="outline"
+        >
+          View previous...
+        </Button>
+      )}
+      {searchDeckItems && <BasicList borderTop borderBottom data={searchDeckItems} />}
+      {hasNextPage && endCursor && (
+        <Button
+          onClick={() => {
+            setPageParams({
+              first: MANAGE_DECKS_SUBDECKS_DECKS_NUM,
+              after: endCursor,
+            });
+          }}
+        >
+          View more...
+        </Button>
+      )}
     </Stack>
   );
 };

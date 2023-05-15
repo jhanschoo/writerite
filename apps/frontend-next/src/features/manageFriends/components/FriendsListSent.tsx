@@ -36,7 +36,9 @@ const FriendsListSentItem = ({ user }: FriendsListSentItemProps) => {
   return (
     <UserProfile user={userFragment}>
       <Center>
-        <Button onClick={() => unbefriend({ befriendedId })} variant="outline">Cancel</Button>
+        <Button onClick={() => unbefriend({ befriendedId })} variant="outline">
+          Cancel
+        </Button>
       </Center>
     </UserProfile>
   );
@@ -48,6 +50,11 @@ export const FriendsListSent = () => {
     data?.befriendeds?.edges?.flatMap((edge) =>
       edge?.node ? [edge.node] : []
     ) ?? [];
-  const userProfiles = users.map((user) => <FriendsListSentItem key={user.id} user={user} />);
+  if (users.length === 0) {
+    return <p>You have no sent friend requests pending their approval.</p>;
+  }
+  const userProfiles = users.map((user) => (
+    <FriendsListSentItem key={user.id} user={user} />
+  ));
   return <>{userProfiles}</>;
 };

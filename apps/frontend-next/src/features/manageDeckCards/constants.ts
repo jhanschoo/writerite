@@ -1,0 +1,1 @@
+export const MANAGE_DECK_CARDS_CARDS_NUM = 10;

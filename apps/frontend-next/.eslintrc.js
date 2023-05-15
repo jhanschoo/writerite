@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   extends: ['custom'],
   parserOptions: {
-    project: ['./apps/frontend-next/tsconfig.json'],
+    project: ['./tsconfig.json'],
   },
   ignorePatterns: ["generated/**/*", ".eslintrc.js"]
 };

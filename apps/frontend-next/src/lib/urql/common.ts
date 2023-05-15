@@ -16,7 +16,7 @@ import { authExchange } from '@urql/exchange-auth';
 import { Data, NullArray, cacheExchange } from '@urql/exchange-graphcache';
 // import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
 import { IntrospectionQuery } from 'graphql';
-import { createClient } from 'graphql-ws';
+import { SubscribePayload, createClient } from 'graphql-ws';
 import WebSocket from 'isomorphic-ws';
 import { Exchange, fetchExchange, subscriptionExchange } from 'urql/core';
 
@@ -49,9 +49,12 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
       if (ssrContext || !token) {
         return operation;
       }
-      return appendHeaders(operation, {
+      const res = appendHeaders(operation, {
         Authorization: `Bearer ${token}`,
       });
+      const fetchOptions = res.context.fetchOptions instanceof Function ? res.context.fetchOptions() : res.context.fetchOptions;
+      res.extensions = { ...res.extensions, headers: { ...res.extensions?.headers, ...fetchOptions?.headers } };
+      return res;
     },
     willAuthError() {
       if (!token) {
@@ -85,14 +88,11 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
 });
 
 const subscription = subscriptionExchange({
-  forwardSubscription: (request) => {
-    const input = { ...request, query: request.query || '' };
-    return {
+  forwardSubscription: (operation) => ({
       subscribe: (sink) => ({
-        unsubscribe: wsClient.subscribe(input, sink),
+        unsubscribe: wsClient.subscribe(operation as SubscribePayload, sink),
       }),
-    };
-  },
+    }),
 });
 
 export const getExchanges = (ssr: Exchange) => [

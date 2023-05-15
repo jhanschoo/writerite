@@ -81,6 +81,24 @@ builder.queryFields((t) => ({
         where: { name },
       }),
   }),
+  friend: t.withAuth({ authenticated: true }).prismaField({
+    type: User,
+    args: {
+      id: t.arg.id({ required: true }),
+    },
+    nullable: true,
+    resolve: (query, _root, { id }, { prisma, sub: { bareId } }) => {
+      const friendId = decodeGlobalID(id as string).id;
+      return prisma.user.findUnique({
+        ...query,
+        where: {
+          id: friendId,
+          befriendedIn: { some: { befrienderId: bareId } },
+          befrienderIn: { some: { befriendedId: bareId } },
+        },
+      });
+    }
+  }),
 }));
 
 builder.mutationFields((t) => ({

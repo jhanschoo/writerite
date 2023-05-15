@@ -21,7 +21,7 @@ import {
   mutationRoomJoin,
   mutationRoomSetDeck,
   mutationRoomStartRound,
-  queryOccupyingUnarchivedRooms,
+  queryOccupyingUnarchivedEphemeralRooms,
   queryRoom,
   subscriptionRoomUpdatesByRoomId,
 } from '../helpers/graphql/Room.util';
@@ -857,7 +857,7 @@ describe('graphql/Room.ts', () => {
       });
     });
 
-    describe('occupyingUnarchivedRooms', () => {
+    describe('occupyingUnarchivedEphemeralRooms', () => {
       it('should be able to return ids of owned rooms and rooms you are occupying state', async () => {
         expect.assertions(5);
         // create owner user
@@ -928,10 +928,10 @@ describe('graphql/Room.ts', () => {
         );
         const roomBefore2 = roomJoinResponse2.data?.roomJoin;
         // query room
-        const occupyingUnarchivedRoomsResponse =
-          await queryOccupyingUnarchivedRooms(executor);
-        expect(occupyingUnarchivedRoomsResponse).toHaveProperty(
-          'data.occupyingUnarchivedRooms',
+        const occupyingUnarchivedEphemeralRoomsResponse =
+          await queryOccupyingUnarchivedEphemeralRooms(executor);
+        expect(occupyingUnarchivedEphemeralRoomsResponse).toHaveProperty(
+          'data.occupyingUnarchivedEphemeralRooms',
           expect.arrayContaining([
             expect.objectContaining({ id: roomBefore1?.id }),
             expect.objectContaining({ id: roomBefore2?.id }),

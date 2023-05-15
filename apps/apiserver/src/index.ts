@@ -28,6 +28,7 @@ async function main(): Promise<[Server, WebSocketServer]> {
     server: httpServer,
     path: graphqlEndpoint,
   });
+
   useServer(
     {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any

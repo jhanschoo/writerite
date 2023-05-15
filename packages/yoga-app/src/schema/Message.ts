@@ -1,4 +1,4 @@
-import { decodeGlobalID } from '@pothos/plugin-relay';
+import { decodeGlobalID, encodeGlobalID } from '@pothos/plugin-relay';
 import { Message as PMessage, Prisma } from 'database';
 import { nanoid } from 'nanoid';
 
@@ -44,18 +44,17 @@ builder.enumType(MessageContentType, {
  * A message sent by a user in a room. We do not support querying for relations on messages.
  */
 export const Message = builder.prismaNode('Message', {
-  authScopes: {
-    authenticated: true,
-  },
   id: { field: 'id' },
   fields: (t) => ({
     // ID's if revealed, need to be converted to global IDs
     // roomId: t.exposeID("roomId"),
-    // senderId: t.exposeID("senderId", {
-    //   nullable: true,
-    //   description:
-    //     "The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization",
-    // }),
+    senderId: t.field({
+      type: 'ID',
+      nullable: true,
+      description:
+        "The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization",
+      resolve: ({ senderId }) => senderId ? encodeGlobalID('User', senderId) : null,
+    }),
     type: t.field({
       type: MessageContentType,
       resolve: ({ type }) => type as MessageContentType,
@@ -131,16 +130,10 @@ export const MessageUpdate = builder
   });
 
 builder.subscriptionFields((t) => ({
-  messageUpdatesByRoomId: t.withAuth({ authenticated: true }).field({
+  messageUpdatesByRoomId: t.field({
     type: MessageUpdate,
     args: {
       id: t.arg.id({ required: true }),
-    },
-    authScopes: (_root, { id }) => {
-      return {
-        authenticated: true,
-        inRoomId: id,
-      };
     },
     subscribe: (_root, { id }, { pubsub }) => {
       id = decodeGlobalID(id as string).id;

@@ -1,6 +1,8 @@
 import { UserProfileFragment, UserProfile } from '@/components/user';
+import { FRIENDS_ROOM_PATH } from '@/paths';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
 import { Button, Center } from '@mantine/core';
+import { useRouter } from 'next/router';
 import { useQuery } from 'urql';
 
 const FriendsMutualsListQuery = graphql(/* GraphQL */ `
@@ -23,10 +25,11 @@ interface FriendsMutualsListItemProps {
 
 const FriendsMutualsListItem = ({ user }: FriendsMutualsListItemProps) => {
   const userFragment = useFragment(UserProfileFragment, user);
+  const router = useRouter();
   return (
     <UserProfile user={userFragment}>
       <Center>
-          <Button>Message</Button>
+          <Button onClick={() => router.push(FRIENDS_ROOM_PATH(userFragment.id))}>Message</Button>
       </Center>
     </UserProfile>
   );

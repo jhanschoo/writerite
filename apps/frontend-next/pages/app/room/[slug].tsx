@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { ManageRoom } from '@/features/manageRoom/components/ManageRoom';
+import { ManageRoom } from '@/features/manageRoom';
 import { usePeriodicallyRefreshToken } from '@/features/signin';
 import { StandardLayout } from '@/features/standardLayout';
 

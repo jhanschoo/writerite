@@ -119,13 +119,56 @@ builder.queryFields((t) => ({
       });
     },
   }),
-  occupyingUnarchivedRooms: t.withAuth({ authenticated: true }).prismaField({
+  persistentRoomByOccupants: t.withAuth({ authenticated: true }).prismaField({
+    type: Room,
+    args: {
+      otherOccupantIds: t.arg.idList({ required: true }),
+    },
+    nullable: true,
+    resolve: async (query, _root, { otherOccupantIds }, { prisma, sub }) => {
+      const occupantsBareIds = otherOccupantIds.map((id) =>
+        decodeGlobalID(id as string).id
+      ).concat(sub.bareId);
+      const occupantsObjs = occupantsBareIds.map((occupantId) => ({ occupantId }));
+      const occupantsClause = occupantsObjs.map((occupantIdObj) => ({
+        occupants: { some: occupantIdObj },
+      }));
+      const existingRoom = await prisma.room.findFirst({
+        ...query,
+        where: {
+          type: RoomType.PERSISTENT,
+          AND: [
+            { occupants: { every: { occupantId: { in: occupantsBareIds } } } },
+            ...occupantsClause,
+          ],
+        }
+      });
+      if (existingRoom) {
+        return existingRoom;
+      }
+      const newRoom = await prisma.room.create({
+        ...query,
+        data: {
+          type: RoomType.PERSISTENT,
+          occupants: {
+            createMany: {
+              data: occupantsObjs,
+              skipDuplicates: true
+            }
+          }
+        },
+      });
+      return newRoom;
+    },
+  }),
+  occupyingUnarchivedEphemeralRooms: t.withAuth({ authenticated: true }).prismaField({
     type: [Room],
     nullable: true,
     resolve: async (query, _root, _args, { prisma, sub }) => {
       return await prisma.room.findMany({
         ...query,
         where: {
+          type: RoomType.EPHEMERAL,
           occupants: {
             some: {
               occupantId: sub.bareId,

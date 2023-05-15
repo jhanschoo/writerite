@@ -23,7 +23,7 @@ const documents = {
     "\n  fragment DeckSummaryContent on Deck {\n    id\n    name\n    subdecksCount\n    cardsDirectCount\n    editedAt\n  }\n": types.DeckSummaryContentFragmentDoc,
     "\n  fragment UserProfile on User {\n    id\n    bareId\n    bio\n    name\n  }\n": types.UserProfileFragmentDoc,
     "\n  fragment RoomNotificationsRoomItem on Room {\n    id\n    occupants {\n      id\n      bareId\n      name\n    }\n    activeRound {\n      id\n      slug\n      deck {\n        id\n        name\n      }\n    }\n  }\n": types.RoomNotificationsRoomItemFragmentDoc,
-    "\n  query RoomNotifications {\n    occupyingUnarchivedRooms {\n      ...RoomNotificationsRoomItem\n    }\n  }\n": types.RoomNotificationsDocument,
+    "\n  query RoomNotifications {\n    occupyingUnarchivedEphemeralRooms {\n      ...RoomNotificationsRoomItem\n    }\n  }\n": types.RoomNotificationsDocument,
     "\n  mutation UserDecksSummaryNewDeckItemMutation(\n    $input: DeckCreateMutationInput!\n  ) {\n    deckCreate(input: $input) {\n      id\n    }\n  }\n": types.UserDecksSummaryNewDeckItemMutationDocument,
     "\n  fragment UserDecksSummaryDeckItem on Deck {\n    id\n    editedAt\n    ...DeckCompactSummaryContent\n  }\n": types.UserDecksSummaryDeckItemFragmentDoc,
     "\n  query UserDecksSummaryQuery(\n    $first: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      first: $first\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          ...UserDecksSummaryDeckItem\n        }\n      }\n    }\n  }\n": types.UserDecksSummaryQueryDocument,
@@ -31,23 +31,28 @@ const documents = {
     "\n  fragment ManageCard on Card {\n    answers\n    fullAnswer\n    id\n    isPrimaryTemplate\n    isTemplate\n    prompt\n  }\n": types.ManageCardFragmentDoc,
     "\n  mutation ManageCardEditCardMutation($input: CardEditMutationInput!) {\n    cardEdit(input: $input) {\n      ...ManageCard\n    }\n  }\n": types.ManageCardEditCardMutationDocument,
     "\n  mutation ManageCardDeleteCardMutation($id: ID!) {\n    cardDelete(id: $id) {\n      id\n    }\n  }\n": types.ManageCardDeleteCardMutationDocument,
-    "\n  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int) {\n    deck(id: $id) {\n      id\n    ...ManageDeckFrontMatter\n    ...ManageDeckAdditionalInfo\n    ...ManageDeckContent\n    }\n  }\n": types.DeckQueryDocument,
+    "\n  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int, $contains: String) {\n    deck(id: $id) {\n      id\n    ...ManageDeckFrontMatter\n    ...ManageDeckAdditionalInfo\n    ...ManageDeckContent\n    }\n  }\n": types.DeckQueryDocument,
     "\n  fragment ManageDeckAdditionalInfo on Deck {\n    editedAt\n  }\n": types.ManageDeckAdditionalInfoFragmentDoc,
     "\n  fragment ManageDeckContent on Deck {\n    id\n    editedAt\n    cardsDirectCount\n    subdecksCount\n    ...ManageDeckCardsUploadReview\n    ...ManageDeckSubdecks\n    ...ManageDeckCards\n  }\n": types.ManageDeckContentFragmentDoc,
     "\n  mutation ManageDeckFrontMatterEdit($input: DeckEditMutationInput!) {\n    deckEdit(input: $input) {\n      answerLang\n      description\n      id\n      name\n      promptLang\n    }\n  }\n": types.ManageDeckFrontMatterEditDocument,
     "\n  fragment ManageDeckFrontMatter on Deck {\n    id\n    name\n    description\n  }\n": types.ManageDeckFrontMatterFragmentDoc,
-    "\n  fragment ManageDeckCards on Deck {\n    id\n    cardsDirect(after: $after, before: $before, first: $first, last: $last) {\n      edges {\n        cursor\n        node {\n          id\n          ...ManageCard\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n    cardsDirectCount\n  }\n": types.ManageDeckCardsFragmentDoc,
+    "\n  fragment ManageDeckCards on Deck {\n    id\n    cardsDirect(after: $after, before: $before, first: $first, last: $last, contains: $contains) {\n      edges {\n        cursor\n        node {\n          id\n          prompt\n          fullAnswer\n          answers\n          ...ManageCard\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n    cardsDirectCount\n  }\n": types.ManageDeckCardsFragmentDoc,
     "\n  fragment ManageDeckCardsUploadReview on Deck {\n    id\n    cardsDirectCount\n    name\n  }\n": types.ManageDeckCardsUploadReviewFragmentDoc,
     "\n  mutation ManageDeckCardsAddCards(\n    $deckId: ID!\n    $cards: [CardCreateMutationInput!]!\n  ) {\n    deckAddCards(deckId: $deckId, cards: $cards) {\n      id\n    }\n  }\n": types.ManageDeckCardsAddCardsDocument,
     "\n  fragment SubdeckListItemContent on Deck {\n    ...DeckCompactSummaryContent\n    id\n  }\n": types.SubdeckListItemContentFragmentDoc,
-    "\n  query ManageDeckSubdecksLinkSubdeckQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          ...SubdeckListItemContent\n          id\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n": types.ManageDeckSubdecksLinkSubdeckQueryDocument,
+    "\n  mutation ManageDeckSubdecksBrowseRemoveSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n": types.ManageDeckSubdecksBrowseRemoveSubdeckDocument,
+    "\n  query ManageDeckSubdecksLinkSubdeckQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...SubdeckListItemContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n": types.ManageDeckSubdecksLinkSubdeckQueryDocument,
     "\n  mutation ManageDeckSubdecksLinkSubdeckAddSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckAddSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n": types.ManageDeckSubdecksLinkSubdeckAddSubdeckDocument,
     "\n    mutation ManageDeckSubdecksLinkSubdeckCreateSubdeck(\n      $input: DeckCreateMutationInput!\n    ) {\n      deckCreate(input: $input) {\n        id\n      }\n    }\n  ": types.ManageDeckSubdecksLinkSubdeckCreateSubdeckDocument,
-    "\n  mutation ManageDeckSubdecksBrowseRemoveSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n": types.ManageDeckSubdecksBrowseRemoveSubdeckDocument,
     "\n  fragment ManageDeckSubdecks on Deck {\n    id\n    subdecks {\n      id\n      ...SubdeckListItemContent\n    }\n    subdecksCount\n  }\n": types.ManageDeckSubdecksFragmentDoc,
     "\n  mutation ManageDecksNewDeckItemMutation($input: DeckCreateMutationInput!) {\n    deckCreate(input: $input) {\n      id\n    }\n  }\n": types.ManageDecksNewDeckItemMutationDocument,
     "\n  query RecentDecksQuery(\n    $first: Int!\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      first: $first\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...DeckSummaryContent\n        }\n      }\n    }\n  }\n": types.RecentDecksQueryDocument,
     "\n  query SearchDecks(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...DeckSummaryContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n": types.SearchDecksDocument,
+    "\n  query ManageFriendRoomFriendQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n      bio\n    }\n  }\n": types.ManageFriendRoomFriendQueryDocument,
+    "\n  query ManageFriendRoomQuery($otherOccupantIds: [ID!]!) {\n    persistentRoomByOccupants(otherOccupantIds: $otherOccupantIds) {\n      id\n      ...ManageRoomContextual\n    }\n  }\n": types.ManageFriendRoomQueryDocument,
+    "\n  fragment ManageFriendRoomMessages on Message {\n    content\n    createdAt\n    id\n    senderId\n    type\n  }\n": types.ManageFriendRoomMessagesFragmentDoc,
+    "\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n": types.ManageFriendRoomMessagesSubscriptionDocument,
+    "\n  mutation ManageFriendRoomPrimaryInputMutation(\n    $roomId: ID!\n    $textContent: String!\n  ) {\n    sendTextMessage(roomId: $roomId, textContent: $textContent) {\n      id\n    }\n  }\n": types.ManageFriendRoomPrimaryInputMutationDocument,
     "\n  mutation ManageFriendsBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n": types.ManageFriendsBefriendMutationDocument,
     "\n  mutation FriendsListReceivedItemBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n": types.FriendsListReceivedItemBefriendMutationDocument,
     "\n  query FriendsListReceivedQuery {\n    befrienders {\n      edges {\n        node {\n          id\n          ...UserProfile\n        }\n      }\n    }\n  }\n": types.FriendsListReceivedQueryDocument,
@@ -125,7 +130,7 @@ export function graphql(source: "\n  fragment RoomNotificationsRoomItem on Room 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query RoomNotifications {\n    occupyingUnarchivedRooms {\n      ...RoomNotificationsRoomItem\n    }\n  }\n"): (typeof documents)["\n  query RoomNotifications {\n    occupyingUnarchivedRooms {\n      ...RoomNotificationsRoomItem\n    }\n  }\n"];
+export function graphql(source: "\n  query RoomNotifications {\n    occupyingUnarchivedEphemeralRooms {\n      ...RoomNotificationsRoomItem\n    }\n  }\n"): (typeof documents)["\n  query RoomNotifications {\n    occupyingUnarchivedEphemeralRooms {\n      ...RoomNotificationsRoomItem\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -157,7 +162,7 @@ export function graphql(source: "\n  mutation ManageCardDeleteCardMutation($id: 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int) {\n    deck(id: $id) {\n      id\n    ...ManageDeckFrontMatter\n    ...ManageDeckAdditionalInfo\n    ...ManageDeckContent\n    }\n  }\n"): (typeof documents)["\n  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int) {\n    deck(id: $id) {\n      id\n    ...ManageDeckFrontMatter\n    ...ManageDeckAdditionalInfo\n    ...ManageDeckContent\n    }\n  }\n"];
+export function graphql(source: "\n  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int, $contains: String) {\n    deck(id: $id) {\n      id\n    ...ManageDeckFrontMatter\n    ...ManageDeckAdditionalInfo\n    ...ManageDeckContent\n    }\n  }\n"): (typeof documents)["\n  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int, $contains: String) {\n    deck(id: $id) {\n      id\n    ...ManageDeckFrontMatter\n    ...ManageDeckAdditionalInfo\n    ...ManageDeckContent\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -177,7 +182,7 @@ export function graphql(source: "\n  fragment ManageDeckFrontMatter on Deck {\n 
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment ManageDeckCards on Deck {\n    id\n    cardsDirect(after: $after, before: $before, first: $first, last: $last) {\n      edges {\n        cursor\n        node {\n          id\n          ...ManageCard\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n    cardsDirectCount\n  }\n"): (typeof documents)["\n  fragment ManageDeckCards on Deck {\n    id\n    cardsDirect(after: $after, before: $before, first: $first, last: $last) {\n      edges {\n        cursor\n        node {\n          id\n          ...ManageCard\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n    cardsDirectCount\n  }\n"];
+export function graphql(source: "\n  fragment ManageDeckCards on Deck {\n    id\n    cardsDirect(after: $after, before: $before, first: $first, last: $last, contains: $contains) {\n      edges {\n        cursor\n        node {\n          id\n          prompt\n          fullAnswer\n          answers\n          ...ManageCard\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n    cardsDirectCount\n  }\n"): (typeof documents)["\n  fragment ManageDeckCards on Deck {\n    id\n    cardsDirect(after: $after, before: $before, first: $first, last: $last, contains: $contains) {\n      edges {\n        cursor\n        node {\n          id\n          prompt\n          fullAnswer\n          answers\n          ...ManageCard\n        }\n      }\n      pageInfo {\n        hasNextPage\n        hasPreviousPage\n        startCursor\n        endCursor\n      }\n    }\n    cardsDirectCount\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -193,7 +198,11 @@ export function graphql(source: "\n  fragment SubdeckListItemContent on Deck {\n
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query ManageDeckSubdecksLinkSubdeckQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          ...SubdeckListItemContent\n          id\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n"): (typeof documents)["\n  query ManageDeckSubdecksLinkSubdeckQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          ...SubdeckListItemContent\n          id\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  mutation ManageDeckSubdecksBrowseRemoveSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n"): (typeof documents)["\n  mutation ManageDeckSubdecksBrowseRemoveSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query ManageDeckSubdecksLinkSubdeckQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...SubdeckListItemContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n"): (typeof documents)["\n  query ManageDeckSubdecksLinkSubdeckQuery(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...SubdeckListItemContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -202,10 +211,6 @@ export function graphql(source: "\n  mutation ManageDeckSubdecksLinkSubdeckAddSu
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n    mutation ManageDeckSubdecksLinkSubdeckCreateSubdeck(\n      $input: DeckCreateMutationInput!\n    ) {\n      deckCreate(input: $input) {\n        id\n      }\n    }\n  "): (typeof documents)["\n    mutation ManageDeckSubdecksLinkSubdeckCreateSubdeck(\n      $input: DeckCreateMutationInput!\n    ) {\n      deckCreate(input: $input) {\n        id\n      }\n    }\n  "];
-/**
- * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function graphql(source: "\n  mutation ManageDeckSubdecksBrowseRemoveSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n"): (typeof documents)["\n  mutation ManageDeckSubdecksBrowseRemoveSubdeck(\n    $deckId: ID!\n    $subdeckId: ID!\n  ) {\n    deckRemoveSubdeck(deckId: $deckId, subdeckId: $subdeckId) {\n      ...ManageDeckSubdecks\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -222,6 +227,26 @@ export function graphql(source: "\n  query RecentDecksQuery(\n    $first: Int!\n
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  query SearchDecks(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...DeckSummaryContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n"): (typeof documents)["\n  query SearchDecks(\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n    $input: DecksQueryInput!\n  ) {\n    decks(\n      after: $after\n      before: $before\n      first: $first\n      last: $last\n      input: $input\n    ) {\n      edges {\n        cursor\n        node {\n          id\n          name\n          ...DeckSummaryContent\n        }\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n        hasPreviousPage\n        startCursor\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query ManageFriendRoomFriendQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n      bio\n    }\n  }\n"): (typeof documents)["\n  query ManageFriendRoomFriendQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n      bio\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query ManageFriendRoomQuery($otherOccupantIds: [ID!]!) {\n    persistentRoomByOccupants(otherOccupantIds: $otherOccupantIds) {\n      id\n      ...ManageRoomContextual\n    }\n  }\n"): (typeof documents)["\n  query ManageFriendRoomQuery($otherOccupantIds: [ID!]!) {\n    persistentRoomByOccupants(otherOccupantIds: $otherOccupantIds) {\n      id\n      ...ManageRoomContextual\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment ManageFriendRoomMessages on Message {\n    content\n    createdAt\n    id\n    senderId\n    type\n  }\n"): (typeof documents)["\n  fragment ManageFriendRoomMessages on Message {\n    content\n    createdAt\n    id\n    senderId\n    type\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation ManageFriendRoomPrimaryInputMutation(\n    $roomId: ID!\n    $textContent: String!\n  ) {\n    sendTextMessage(roomId: $roomId, textContent: $textContent) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation ManageFriendRoomPrimaryInputMutation(\n    $roomId: ID!\n    $textContent: String!\n  ) {\n    sendTextMessage(roomId: $roomId, textContent: $textContent) {\n      id\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

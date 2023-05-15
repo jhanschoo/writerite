@@ -39,8 +39,7 @@ const RoomNotificationsRoomItemFragment = graphql(/* GraphQL */ `
   }
 `);
 
-const useStyles = createStyles((theme) => {
-  return {
+const useStyles = createStyles((theme) => ({
     roomItem: {
       backgroundImage: alertGradient(theme),
       color: theme.white,
@@ -71,8 +70,7 @@ const useStyles = createStyles((theme) => {
         fontSize: `calc(${theme.fontSizes.xl} * 2)`,
       },
     },
-  };
-});
+  }));
 
 const RoomItem = ({
   room,
@@ -113,7 +111,7 @@ const RoomItem = ({
 
 const RoomNotificationsQuery = graphql(/* GraphQL */ `
   query RoomNotifications {
-    occupyingUnarchivedRooms {
+    occupyingUnarchivedEphemeralRooms {
       ...RoomNotificationsRoomItem
     }
   }
@@ -127,7 +125,7 @@ export const RoomNotifications = ({ wrapper: Wrapper }: Props) => {
   const [{ data, fetching, error }, refetchRooms] = useQuery({
     query: RoomNotificationsQuery,
   });
-  const rooms = (data?.occupyingUnarchivedRooms || []).map((room, index) => (
+  const rooms = (data?.occupyingUnarchivedEphemeralRooms || []).map((room, index) => (
     <Wrapper key={index}>
       <RoomItem room={room} />
     </Wrapper>

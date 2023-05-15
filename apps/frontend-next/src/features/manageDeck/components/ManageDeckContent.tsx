@@ -1,13 +1,15 @@
 import { useRouter } from 'next/router';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Group, Stack, Tabs, createStyles } from '@mantine/core';
+import { Dispatch, SetStateAction } from 'react';
 import { ManageDeckCardsUpload } from '@/features/manageDeckCardsUpload';
 import {
   DECK_DETAIL_IMPORT_PATH,
   DECK_DETAIL_PATH,
   DECK_DETAIL_SUBDECK_PATH,
 } from '@/paths';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { Group, Stack, Tabs, createStyles } from '@mantine/core';
 
+import { PageParams } from '@/utils/PageParams';
 import { ManageDeckCards } from '../../manageDeckCards/components/ManageDeckCards';
 import { ManageDeckSubdecks } from '../../manageDeckSubdecks/components/ManageDeckSubdecks';
 
@@ -80,9 +82,12 @@ enum Subpage {
 interface Props {
   deck: FragmentType<typeof ManageDeckContentFragment>;
   path?: string[];
+  setCardsPageParams: Dispatch<SetStateAction<PageParams>>;
+  setCardsContain: Dispatch<SetStateAction<string>>;
+  onCardDeleted: () => void;
 }
 
-export const ManageDeckContent = ({ deck, path }: Props) => {
+export const ManageDeckContent = ({ deck, path, setCardsPageParams, setCardsContain, onCardDeleted }: Props) => {
   const deckFragment = useFragment(ManageDeckContentFragment, deck);
   const { id, cardsDirectCount, subdecksCount } = deckFragment;
   const { classes } = useStyles();
@@ -120,6 +125,9 @@ export const ManageDeckContent = ({ deck, path }: Props) => {
         <Tabs.Panel value={Subpage.Card}>
           <ManageDeckCards
             deck={deckFragment}
+            setCardsPageParams={setCardsPageParams}
+            setCardsContain={setCardsContain}
+            onCardDeleted={onCardDeleted}
             startUpload={() => router.replace(DECK_DETAIL_IMPORT_PATH(id))}
           />
         </Tabs.Panel>

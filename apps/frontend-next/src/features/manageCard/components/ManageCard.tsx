@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
@@ -17,13 +16,14 @@ import { JSONContent, useEditor } from '@tiptap/react';
 import stringify from 'fast-json-stable-stringify';
 import { useMutation } from 'urql';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
+import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 
 import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
 
 import { ManageCardAltAnswers } from './ManageCardAltAnswers';
 
 const useStyles = createStyles(({ fn }) => {
-  const { background, hover, border, color } = fn.variant({
+  const { hover, color } = fn.variant({
     variant: 'default',
   });
   return {
@@ -108,8 +108,8 @@ const ManageCardDeleteCardMutation = graphql(/* GraphQL */ `
 
 interface Props {
   card: FragmentType<typeof ManageCardFragment>;
-  onDelete: () => void;
   forceLoading: boolean;
+  onCardDeleted: () => unknown;
 }
 
 /**
@@ -137,7 +137,7 @@ interface Props {
  *   of answers is the latest answers that we have trued to update the server with (or the initial
  *   answers if we have not tried any such thing).
  */
-export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
+export const ManageCard = ({ card, forceLoading, onCardDeleted }: Props) => {
   const { id, prompt, fullAnswer, answers, isTemplate } = useFragment(
     ManageCardFragment,
     card
@@ -157,6 +157,20 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
   const [{ fetching }, cardEdit] = useMutation(ManageCardEditCardMutation);
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(
     ManageCardDeleteCardMutation
+  );
+  const updateStateToServer = (newState: State) => cardEdit({
+      input: {
+        id,
+        ...newState,
+        isTemplate,
+      },
+    });
+  const debounced = useDebouncedCallback(
+    updateStateToServer,
+    STANDARD_DEBOUNCE_MS,
+    {
+      maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS,
+    }
   );
   const promptEditor = useEditor({
     ...DEFAULT_EDITOR_PROPS,
@@ -186,26 +200,11 @@ export const ManageCard = ({ card, onDelete, forceLoading }: Props) => {
       debounceIfStateDeltaExists(debounced, initialState, latestState);
     },
   });
-  const updateStateToServer = (newState: State) => {
-    return cardEdit({
-      input: {
-        id,
-        ...newState,
-        isTemplate,
-      },
-    });
-  };
-  const handleCardDelete = () => {
+  const handleCardDelete = async () => {
     debounced.cancel();
-    cardDelete({ id });
+    await cardDelete({ id });
+    onCardDeleted();
   };
-  const debounced = useDebouncedCallback(
-    updateStateToServer,
-    STANDARD_DEBOUNCE_MS,
-    {
-      maxWait: STANDARD_MAX_WAIT_DEBOUNCE_MS,
-    }
-  );
   useEffect(
     () => () => {
       debounced.flush();

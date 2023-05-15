@@ -367,13 +367,15 @@ export type Query = {
   befrienders: QueryBefriendersConnection;
   deck: Deck;
   decks: QueryDecksConnection;
+  friend?: Maybe<User>;
   /** users who are mutual friends with you */
   friends: QueryFriendsConnection;
   health: Scalars['String'];
   me?: Maybe<User>;
   node?: Maybe<Node>;
   nodes: Array<Maybe<Node>>;
-  occupyingUnarchivedRooms?: Maybe<Array<Room>>;
+  occupyingUnarchivedEphemeralRooms?: Maybe<Array<Room>>;
+  persistentRoomByOccupants?: Maybe<Room>;
   room?: Maybe<Room>;
   roomBySlug?: Maybe<Room>;
   usersByName: Array<User>;
@@ -405,6 +407,10 @@ export type QueryDecksArgs = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type QueryFriendArgs = {
+  id: Scalars['ID'];
+};
+
 export type QueryFriendsArgs = {
   after?: InputMaybe<Scalars['ID']>;
   before?: InputMaybe<Scalars['ID']>;
@@ -418,6 +424,10 @@ export type QueryNodeArgs = {
 
 export type QueryNodesArgs = {
   ids: Array<Scalars['ID']>;
+};
+
+export type QueryPersistentRoomByOccupantsArgs = {
+  otherOccupantIds: Array<Scalars['ID']>;
 };
 
 export type QueryRoomArgs = {
@@ -916,13 +926,13 @@ export type RoomQuery = {
   } | null;
 };
 
-export type OccupyingUnarchivedRoomsQueryVariables = Exact<{
+export type OccupyingUnarchivedEphemeralRoomsQueryVariables = Exact<{
   [key: string]: never;
 }>;
 
-export type OccupyingUnarchivedRoomsQuery = {
+export type OccupyingUnarchivedEphemeralRoomsQuery = {
   __typename?: 'Query';
-  occupyingUnarchivedRooms?: Array<{
+  occupyingUnarchivedEphemeralRooms?: Array<{
     __typename?: 'Room';
     id: string;
     type: RoomType;
@@ -2355,19 +2365,19 @@ export const RoomDocument = {
     },
   ],
 } as unknown as DocumentNode<RoomQuery, RoomQueryVariables>;
-export const OccupyingUnarchivedRoomsDocument = {
+export const OccupyingUnarchivedEphemeralRoomsDocument = {
   kind: 'Document',
   definitions: [
     {
       kind: 'OperationDefinition',
       operation: 'query',
-      name: { kind: 'Name', value: 'OccupyingUnarchivedRooms' },
+      name: { kind: 'Name', value: 'OccupyingUnarchivedEphemeralRooms' },
       selectionSet: {
         kind: 'SelectionSet',
         selections: [
           {
             kind: 'Field',
-            name: { kind: 'Name', value: 'occupyingUnarchivedRooms' },
+            name: { kind: 'Name', value: 'occupyingUnarchivedEphemeralRooms' },
             selectionSet: {
               kind: 'SelectionSet',
               selections: [
@@ -2420,8 +2430,8 @@ export const OccupyingUnarchivedRoomsDocument = {
     },
   ],
 } as unknown as DocumentNode<
-  OccupyingUnarchivedRoomsQuery,
-  OccupyingUnarchivedRoomsQueryVariables
+  OccupyingUnarchivedEphemeralRoomsQuery,
+  OccupyingUnarchivedEphemeralRoomsQueryVariables
 >;
 export const RoomUpdatesByRoomIdDocument = {
   kind: 'Document',

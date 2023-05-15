@@ -228,15 +228,15 @@ export function queryRoom(
   });
 }
 
-export function queryOccupyingUnarchivedRooms(
+export function queryOccupyingUnarchivedEphemeralRooms(
   executor: ReturnType<typeof buildHTTPExecutor>
 ) {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return testQuery({
     executor,
     document: graphql(/* GraphQL */ `
-      query OccupyingUnarchivedRooms {
-        occupyingUnarchivedRooms {
+      query OccupyingUnarchivedEphemeralRooms {
+        occupyingUnarchivedEphemeralRooms {
           id
           type
           activeRound {

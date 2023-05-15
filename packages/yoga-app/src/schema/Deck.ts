@@ -66,15 +66,17 @@ export const Deck = builder.prismaNode('Deck', {
             ? {
                 OR: [
                   { promptString: { contains, mode: 'insensitive' } },
-                  { answerString: { contains, mode: 'insensitive' } },
+                  { fullAnswerString: { contains, mode: 'insensitive' } },
                   { answers: { has: contains } }, // limitation
                 ],
               }
             : {}),
         },
-        orderBy: {
+        orderBy: [{
           editedAt: 'desc',
-        },
+        }, {
+          id: 'asc',
+        }],
       }),
     }),
     cardsDirectCount: t.withAuth(PPRIVATABLE).relationCount('cards', {

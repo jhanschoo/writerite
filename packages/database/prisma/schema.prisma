@@ -170,6 +170,7 @@ model User {
   id         String   @id @default(cuid())
   facebookId String?  @unique
   googleId   String?  @unique
+  devEnvId   String?  @unique
   name       String
   // description is a JsonObject if not null
   bio        Json?
