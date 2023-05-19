@@ -161,6 +161,11 @@ type Message implements Node {
   """
   The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization
   """
+  senderBareId: ID
+
+  """
+  The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization
+  """
   senderId: ID
   type: MessageContentType!
 }

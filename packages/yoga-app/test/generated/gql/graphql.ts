@@ -178,6 +178,8 @@ export type Message = Node & {
   id: Scalars['ID'];
   sender: User;
   /** The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization */
+  senderBareId?: Maybe<Scalars['ID']>;
+  /** The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization */
   senderId?: Maybe<Scalars['ID']>;
   type: MessageContentType;
 };

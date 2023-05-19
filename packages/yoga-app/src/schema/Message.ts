@@ -55,6 +55,13 @@ export const Message = builder.prismaNode('Message', {
         "The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization",
       resolve: ({ senderId }) => senderId ? encodeGlobalID('User', senderId) : null,
     }),
+    senderBareId: t.field({
+      type: 'ID',
+      nullable: true,
+      description:
+        "The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization",
+      resolve: ({ senderId }) => senderId,
+    }),
     type: t.field({
       type: MessageContentType,
       resolve: ({ type }) => type as MessageContentType,

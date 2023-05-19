@@ -74,7 +74,7 @@ export const StandardLayout = ({
     if (!currentUser && currentUserDangerous) {
       setCurrentUser(currentUserDangerous);
     }
-  }, [currentUser, currentUserDangerous])
+  }, [currentUser, currentUserDangerous]);
   const router = useRouter();
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const theme = useMantineTheme();

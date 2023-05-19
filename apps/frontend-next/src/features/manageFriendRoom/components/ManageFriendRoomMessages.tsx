@@ -1,6 +1,8 @@
 import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { useCurrentUser } from '@/hooks';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
 import { PageParams } from '@/utils/PageParams';
-import { FragmentType, graphql } from '@generated/gql';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   ManageFriendRoomMessagesSubscriptionSubscription,
   MessageUpdateOperations,
@@ -10,7 +12,8 @@ import { useIntersection } from '@mantine/hooks';
 import { useQuery, useSubscription } from 'urql';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { STANDARD_DEBOUNCE_MS } from '@/utils';
+import { CurrentUser } from '@/lib/tokenManagement';
+
 import {
   ManageFriendRoomMessage,
   ManageFriendRoomMessagesFragment,
@@ -35,6 +38,7 @@ const ManageFriendRoomMessagesQuery = graphql(/* GraphQL */ `
           cursor
           node {
             id
+            senderBareId
             ...ManageFriendRoomMessages
           }
         }
@@ -55,6 +59,7 @@ const ManageFriendRoomMessagesSubscription = graphql(/* GraphQL */ `
       operation
       value {
         id
+        senderBareId
         ...ManageFriendRoomMessages
       }
     }
@@ -63,12 +68,14 @@ const ManageFriendRoomMessagesSubscription = graphql(/* GraphQL */ `
 
 type MessageType = FragmentType<typeof ManageFriendRoomMessagesFragment> & {
   id: string;
+  senderBareId?: string | null;
 };
 
 function handleMessageUpdates(
-  messages: MessageType[] | undefined,
+  prev: [MessageType[], MessageType | undefined] | undefined,
   response: ManageFriendRoomMessagesSubscriptionSubscription
-): MessageType[] {
+): [MessageType[], MessageType | undefined] {
+  const [messages] = prev ?? [];
   const {
     messageUpdatesByRoomId: { operation, value },
   } = response;
@@ -76,7 +83,7 @@ function handleMessageUpdates(
     case MessageUpdateOperations.MessageCreate:
     default: {
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      return [...(messages || []), value];
+      return [[...(messages || []), value], value];
     }
   }
 }
@@ -89,13 +96,19 @@ export const ManageFriendRoomMessages = ({ roomId }: Props) => {
   const [pageParams, setPageParams] = useState<PageParams>({
     first: INITIAL_FETCH_MESSAGE_COUNT,
   });
+  const currentUserDangerous = useCurrentUser();
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  useEffect(() => {
+    if (!currentUser && currentUserDangerous) {
+      setCurrentUser(currentUserDangerous);
+    }
+  }, [currentUser, currentUserDangerous]);
   const [{ data: historicalData, fetching: fetchingHistorical }] = useQuery({
     query: ManageFriendRoomMessagesQuery,
     variables: {
       id: roomId,
       ...pageParams,
     },
-    
   });
   const [lastScrollFromBottom, setLastScrollFromBottom] = useState<number>(0);
   const containerRef = useRef<HTMLDivElement>();
@@ -114,13 +127,18 @@ export const ManageFriendRoomMessages = ({ roomId }: Props) => {
     historicalData?.room?.messages?.pageInfo ?? {};
   const shouldLoadMore =
     !fetchingHistorical && entry?.isIntersecting && hasNextPage && endCursor;
-  const debouncedSetPageParams = useDebouncedCallback((newPageParams: PageParams) => {
-    if (bottomContainerRef.current) {
-      setLastScrollFromBottom(bottomContainerRef.current.scrollHeight -
-        bottomContainerRef.current.scrollTop);
-    }
-    setPageParams(newPageParams);
-  }, STANDARD_DEBOUNCE_MS);
+  const debouncedSetPageParams = useDebouncedCallback(
+    (newPageParams: PageParams) => {
+      if (bottomContainerRef.current) {
+        setLastScrollFromBottom(
+          bottomContainerRef.current.scrollHeight -
+            bottomContainerRef.current.scrollTop
+        );
+      }
+      setPageParams(newPageParams);
+    },
+    STANDARD_DEBOUNCE_MS
+  );
   useEffect(() => {
     if (shouldLoadMore) {
       debouncedSetPageParams({
@@ -147,13 +165,26 @@ export const ManageFriendRoomMessages = ({ roomId }: Props) => {
       key="start-element"
     />,
   ];
-  const [{ data }] = useSubscription(
+  const [{ data }] = useSubscription<
+    ManageFriendRoomMessagesSubscriptionSubscription,
+    [MessageType[], MessageType | undefined]
+  >(
     {
       query: ManageFriendRoomMessagesSubscription,
       variables: { id: roomId },
     },
     handleMessageUpdates
   );
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { senderBareId: lastSenderId } = data?.[1] || {};
+  useEffect(() => {
+    if (lastSenderId === currentUser?.bareId) {
+      if (bottomContainerRef.current) {
+        bottomContainerRef.current.scrollTop =
+          bottomContainerRef.current.scrollHeight;
+      }
+    }
+  }, [currentUser?.bareId, lastSenderId, data]);
   const historicalMessageComponents = (
     historicalData?.room?.messages?.edges ?? []
   ).flatMap((messageFragment) =>
@@ -167,12 +198,14 @@ export const ManageFriendRoomMessages = ({ roomId }: Props) => {
       : []
   );
   historicalMessageComponents.reverse();
-  const subscriptionMessageComponents = (data ?? []).map((messageFragment) => (
-    <ManageFriendRoomMessage
-      key={messageFragment.id}
-      message={messageFragment}
-    />
-  ));
+  const subscriptionMessageComponents = (data?.[0] ?? []).map(
+    (messageFragment) => (
+      <ManageFriendRoomMessage
+        key={messageFragment.id}
+        message={messageFragment}
+      />
+    )
+  );
   const displayMessages = stackElements
     .concat(historicalMessageComponents)
     .concat(subscriptionMessageComponents);
