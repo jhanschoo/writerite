@@ -34,7 +34,7 @@ const useStyles = createStyles((theme) =>
       gridArea: '1 / 1 / 2 / 3',
     },
     contextualPanel: {
-      gridArea: '2 / 2 / 3 / 3',
+      gridArea: '2 / 2 / 4 / 3',
     },
     chatPanel: {
       gridArea: '2 / 1 / 3 / 2',
@@ -42,7 +42,7 @@ const useStyles = createStyles((theme) =>
     },
     inputPanel: {
       width: '100%',
-      gridArea: '3 / 1 / 4 / 3',
+      gridArea: '3 / 1 / 4 / 2',
     },
   })
 );

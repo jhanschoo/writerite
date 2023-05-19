@@ -14,6 +14,7 @@ import {
 import { devtoolsExchange } from '@urql/devtools';
 import { authExchange } from '@urql/exchange-auth';
 import { Data, NullArray, cacheExchange } from '@urql/exchange-graphcache';
+import { relayPagination } from '@urql/exchange-graphcache/extras';
 // import { DeckCardsDirectCountFragmentDoc, Mutation, RefreshDocument } from '@generated/graphql';
 import { IntrospectionQuery } from 'graphql';
 import { SubscribePayload, createClient } from 'graphql-ws';
@@ -100,6 +101,11 @@ export const getExchanges = (ssr: Exchange) => [
   auth,
   cacheExchange({
     schema: schema as unknown as IntrospectionQuery, // type mismatch when using graphql.schema.json
+    resolvers: {
+      Room: {
+        messages: relayPagination(),
+      }
+    }
     // TODO: review
     // updates: {
     //   Mutation: {

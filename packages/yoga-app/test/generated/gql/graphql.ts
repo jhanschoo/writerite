@@ -524,6 +524,7 @@ export type Room = Node & {
   activeRound?: Maybe<Round>;
   id: Scalars['ID'];
   messageCount: Scalars['Int'];
+  /** Messages sent in this room, ordered from latest to earliest. */
   messages: RoomMessagesConnection;
   occupants: Array<User>;
   occupantsCount: Scalars['Int'];

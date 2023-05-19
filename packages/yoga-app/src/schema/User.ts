@@ -89,6 +89,12 @@ builder.queryFields((t) => ({
     nullable: true,
     resolve: (query, _root, { id }, { prisma, sub: { bareId } }) => {
       const friendId = decodeGlobalID(id as string).id;
+      if (friendId === bareId) {
+        return prisma.user.findUnique({
+          ...query,
+          where: { id: bareId },
+        });
+      }
       return prisma.user.findUnique({
         ...query,
         where: {

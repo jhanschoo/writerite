@@ -51,7 +51,9 @@ const documents = {
     "\n  query ManageFriendRoomFriendQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n      bio\n    }\n  }\n": types.ManageFriendRoomFriendQueryDocument,
     "\n  query ManageFriendRoomQuery($otherOccupantIds: [ID!]!) {\n    persistentRoomByOccupants(otherOccupantIds: $otherOccupantIds) {\n      id\n      ...ManageRoomContextual\n    }\n  }\n": types.ManageFriendRoomQueryDocument,
     "\n  fragment ManageFriendRoomMessages on Message {\n    content\n    createdAt\n    id\n    senderId\n    type\n  }\n": types.ManageFriendRoomMessagesFragmentDoc,
-    "\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n": types.ManageFriendRoomMessagesSubscriptionDocument,
+    "\n  query ManageFriendRoomMessageSenderQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n    }\n  }\n": types.ManageFriendRoomMessageSenderQueryDocument,
+    "\n  query ManageFriendRoomMessagesQuery(\n    $id: ID!\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n  ) {\n    room(id: $id) {\n      id\n      messages(after: $after, before: $before, first: $first, last: $last) {\n        edges {\n          cursor\n          node {\n            id\n            ...ManageFriendRoomMessages\n          }\n        }\n        pageInfo {\n          hasNextPage\n          hasPreviousPage\n          startCursor\n          endCursor\n        }\n      }\n    }\n  }\n": types.ManageFriendRoomMessagesQueryDocument,
+    "\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        id\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n": types.ManageFriendRoomMessagesSubscriptionDocument,
     "\n  mutation ManageFriendRoomPrimaryInputMutation(\n    $roomId: ID!\n    $textContent: String!\n  ) {\n    sendTextMessage(roomId: $roomId, textContent: $textContent) {\n      id\n    }\n  }\n": types.ManageFriendRoomPrimaryInputMutationDocument,
     "\n  mutation ManageFriendsBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n": types.ManageFriendsBefriendMutationDocument,
     "\n  mutation FriendsListReceivedItemBefriendMutation($befriendedId: ID!) {\n    befriend(befriendedId: $befriendedId) {\n      id\n    }\n  }\n": types.FriendsListReceivedItemBefriendMutationDocument,
@@ -242,7 +244,15 @@ export function graphql(source: "\n  fragment ManageFriendRoomMessages on Messag
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n"];
+export function graphql(source: "\n  query ManageFriendRoomMessageSenderQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n    }\n  }\n"): (typeof documents)["\n  query ManageFriendRoomMessageSenderQuery($id: ID!) {\n    friend(id: $id) {\n      id\n      name\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query ManageFriendRoomMessagesQuery(\n    $id: ID!\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n  ) {\n    room(id: $id) {\n      id\n      messages(after: $after, before: $before, first: $first, last: $last) {\n        edges {\n          cursor\n          node {\n            id\n            ...ManageFriendRoomMessages\n          }\n        }\n        pageInfo {\n          hasNextPage\n          hasPreviousPage\n          startCursor\n          endCursor\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query ManageFriendRoomMessagesQuery(\n    $id: ID!\n    $after: ID\n    $before: ID\n    $first: Int\n    $last: Int\n  ) {\n    room(id: $id) {\n      id\n      messages(after: $after, before: $before, first: $first, last: $last) {\n        edges {\n          cursor\n          node {\n            id\n            ...ManageFriendRoomMessages\n          }\n        }\n        pageInfo {\n          hasNextPage\n          hasPreviousPage\n          startCursor\n          endCursor\n        }\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        id\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n"): (typeof documents)["\n  subscription ManageFriendRoomMessagesSubscription($id: ID!) {\n    messageUpdatesByRoomId(id: $id) {\n      operation\n      value {\n        id\n        ...ManageFriendRoomMessages\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

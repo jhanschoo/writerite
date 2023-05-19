@@ -63,7 +63,15 @@ export const Room = builder.prismaNode('Room', {
   fields: (t) => ({
     messages: t
       .withAuth(PDETAIL)
-      .relatedConnection('chatMsgs', { cursor: 'id' }),
+      .relatedConnection('chatMsgs', {
+        cursor: 'id',
+        description: 'Messages sent in this room, ordered from latest to earliest.',
+        query: (args, ctx) => {
+          return {
+            orderBy: { createdAt: 'desc' },
+          };
+        },
+      }),
     messageCount: t.withAuth(PDETAIL).relationCount('chatMsgs'),
     occupantsCount: t.withAuth(PDETAIL).relationCount('occupants'),
     occupants: t.withAuth(PDETAIL).field({

@@ -322,6 +322,8 @@ type Room implements Node {
   activeRound: Round
   id: ID!
   messageCount: Int!
+
+  """Messages sent in this room, ordered from latest to earliest."""
   messages(after: ID, before: ID, first: Int, last: Int): RoomMessagesConnection!
   occupants: [User!]!
   occupantsCount: Int!
