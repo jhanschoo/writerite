@@ -12,12 +12,13 @@
     "dev": "turbo run dev",
     "dev:apps": "turbo run dev --filter='./apps/*' --filter=yoga-app --parallel",
     "format": "turbo run format --parallel",
+    "db:push": "turbo run db:push",
     "lint": "turbo run lint --parallel",
     "test": "turbo run test"
   },
   "devDependencies": {
     "eslint-config-custom-server": "workspace:*",
-    "turbo": "^1.9.4"
+    "turbo": "^1.9.8"
   },
   "packageManager": "pnpm@8.1.1",
   "engines": {

@@ -17,7 +17,7 @@ The room object:
   - The HostedPerpetual room is always associated with a single quizconductor (that quizconductor may be dormant if nobody is actively using the room).
   - Only the deck owner is able to send control commands to the quizconductor of the room.
   - Anybody can join or leave a HostedPerpetual room at any time.
-  - Any occupant can invite their friends to a HostedPerpetual room thry at any time. The invited friend sent a notification to be immediately informed of their membership in the room, and through which they can join the room.
+  - Any occupant can invite their friends to a HostedPerpetual room at any time. The invited friend is sent a notification through which they can join the room.
   - The quizconductor can tell the room to kick any occupant (but for the owner) at any time, and the room will do it. This is to handle people leaving the room silently.
   - It is not possible to request that the quizconductor be terminated.
 - GroupPerpetual

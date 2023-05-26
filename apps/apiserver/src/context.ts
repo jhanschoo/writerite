@@ -1,22 +1,11 @@
 import { createRedisEventTarget } from '@graphql-yoga/redis-event-target';
 import { PrismaClient } from 'database';
-import { PubSub, YogaInitialContext, createPubSub } from 'graphql-yoga';
+import { YogaInitialContext, createPubSub } from 'graphql-yoga';
 import Redis from 'ioredis';
 import { Context, CurrentUser, PubSubPublishArgs, getClaims } from 'yoga-app';
 
-import env from './safeEnv';
-
-const { REDIS_HOST, REDIS_PORT, REDIS_PASSWORD } = env;
-
-const commonRedisOptions = {
-  host: REDIS_HOST,
-  port: parseInt(REDIS_PORT, 10),
-  retryStrategy: (times: number): number => {
-    const delay = Math.min(times * 50, 2000);
-    return delay;
-  },
-  password: REDIS_PASSWORD || undefined,
-};
+import { Resources } from './types/Resources';
+import { commonRedisOptions } from './constants/commonRedisOptions';
 
 const redisOptions = {
   ...commonRedisOptions,
@@ -35,12 +24,14 @@ export type ContextFactoryReturnType<
 > = [
   (initialContext: YogaInitialContext) => Promise<Context>,
   () => Promise<PromiseSettledResult<unknown>[]>,
-  { prisma: P; pubsub: PubSub<Q>; redis: R }
+  Resources<P, Q, R>
 ];
 
 /**
  * Note: opts.ctx is never used if provided
  * The function, when called without params, performs creation and instantiation in the way it should be for development and production, but allows for params to be provided to expose things for testing.
+ * @param opts context fields to use instead of initializing new instances; useful for testing
+ * @param subFn a function that returns the current user; overriding what is supplied in `opts` or the default function; useful for testing
  * @returns An array where the first element is the context function, and the second is a handler to close all services opened by this particular call, and the third is a debug object containing direct references to the underlying services.
  * The context function returned should abide by the contract with the Pothos schema builder that it is unique per request and does not mutate in "shape".
  */
@@ -53,16 +44,21 @@ export function contextFactory<
     Pick<Context<P, Q, R>, 'prisma' | 'pubsub' | 'redis'>,
   subFn?: (
     initialContext: YogaInitialContext,
-    redis?: Redis
+    redis?: R
   ) => Promise<CurrentUser | undefined>
-): ContextFactoryReturnType<P, Q>;
+): ContextFactoryReturnType<P, Q, R>;
 export function contextFactory(
   opts?: Partial<Context>,
   subFn?: (
     initialContext: YogaInitialContext,
     redis?: Redis
   ) => Promise<CurrentUser | undefined>
-): ContextFactoryReturnType<PrismaClient, PubSubPublishArgs>;
+): ContextFactoryReturnType;
+/**
+ *
+ * @param opts
+ * @param subFn
+ */
 export function contextFactory<
   P extends PrismaClient = PrismaClient,
   Q extends PubSubPublishArgs = PubSubPublishArgs,
@@ -73,7 +69,7 @@ export function contextFactory<
     initialContext: YogaInitialContext,
     redis?: Redis
   ) => Promise<CurrentUser | undefined>
-): ContextFactoryReturnType<P, Q> {
+): ContextFactoryReturnType<P, Q, R> {
   const useDefaultPrisma = !opts?.prisma;
   const useDefaultRedis = !opts?.redis;
   const useDefaultPubsub = !opts?.pubsub;

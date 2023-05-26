@@ -385,6 +385,7 @@ export type Query = {
   /** users that have befriended you */
   befrienders: QueryBefriendersConnection;
   deck: Deck;
+  deckPersistentRoomByDeckId?: Maybe<Room>;
   decks: QueryDecksConnection;
   friend?: Maybe<User>;
   /** users who are mutual friends with you */
@@ -419,6 +420,11 @@ export type QueryBefriendersArgs = {
 
 export type QueryDeckArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryDeckPersistentRoomByDeckIdArgs = {
+  deckId: Scalars['ID'];
 };
 
 
@@ -554,6 +560,7 @@ export type RoomMessagesConnectionEdge = {
 };
 
 export enum RoomType {
+  DeckPersistent = 'DECK_PERSISTENT',
   Ephemeral = 'EPHEMERAL',
   Persistent = 'PERSISTENT'
 }

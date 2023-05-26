@@ -267,6 +267,7 @@ type Query {
   """users that have befriended you"""
   befrienders(after: ID, before: ID, first: Int, last: Int): QueryBefriendersConnection!
   deck(id: ID!): Deck!
+  deckPersistentRoomByDeckId(deckId: ID!): Room
   decks(after: ID, before: ID, first: Int, input: DecksQueryInput!, last: Int): QueryDecksConnection!
   friend(id: ID!): User
 
@@ -346,6 +347,7 @@ type RoomMessagesConnectionEdge {
 }
 
 enum RoomType {
+  DECK_PERSISTENT
   EPHEMERAL
   PERSISTENT
 }

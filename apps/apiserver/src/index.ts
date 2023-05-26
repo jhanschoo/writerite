@@ -4,10 +4,14 @@ import { WebSocketServer } from 'ws';
 import { WrServer, createYogaServerApp } from 'yoga-app';
 
 import { contextFactory } from './context';
+import { init } from './services/tasks/bull';
 
 const { NODE_ENV } = process.env;
 
 export const [contextFn, stopContextServices] = contextFactory();
+
+// TODO: for now we initialize jobs here
+void init();
 
 const graphqlEndpoint = '/graphql';
 

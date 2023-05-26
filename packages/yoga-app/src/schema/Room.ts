@@ -169,6 +169,58 @@ builder.queryFields((t) => ({
       return newRoom;
     },
   }),
+  deckPersistentRoomByDeckId: t.withAuth({ authenticated: true }).prismaField({
+    type: Room,
+    args: {
+      deckId: t.arg.id({ required: true }),
+    },
+    nullable: true,
+    resolve: async (query, _root, { deckId }, { prisma, sub }) => {
+      const deckBareId = decodeGlobalID(deckId as string).id;
+      const existingRoom = await prisma.room.findFirst({
+        where: {
+          type: RoomType.DECK_PERSISTENT,
+          rounds: { some: { isActive: Unit.UNIT, deckId: deckBareId } },
+        }
+      });
+      if (existingRoom) {
+        return prisma.room.update({
+          ...query,
+          where: { id: existingRoom.id },
+          data: {
+            occupants: {
+              upsert: {
+                where: { roomId_occupantId: { roomId: existingRoom.id, occupantId: sub.bareId } },
+                create: { occupantId: sub.bareId },
+                update: {},
+              },
+            },
+          },
+        });
+      }
+      const newRoom = await prisma.room.create({
+        ...query,
+        data: {
+          type: RoomType.DECK_PERSISTENT,
+          occupants: {
+            create: {
+              occupantId: sub.bareId,
+            },
+          },
+          rounds: {
+            create: {
+              deckId: deckBareId,
+              slug: genSlug(),
+              isActive: Unit.UNIT,
+              state: RoundState.PLAYING,
+            },
+          },
+        },
+      });
+      // TODO: queue a quizconductor
+      return newRoom;
+    },
+  }),
   occupyingUnarchivedEphemeralRooms: t.withAuth({ authenticated: true }).prismaField({
     type: [Room],
     nullable: true,

@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid';
 
 import { builder } from '../builder';
 import { MESSAGE_UPDATES_BY_ROOMID_TOPIC } from '../service/message';
-import { User } from './User';
 
 export enum MessageUpdateOperations {
   MESSAGE_CREATE = 'messageCreate',
