@@ -4,5 +4,5 @@ module.exports = {
   parserOptions: {
     project: ['./tsconfig.json'],
   },
-  ignorePatterns: ["prettier.config.js", ".eslintrc.js"]
+  ignorePatterns: ['prettier.config.js', '.eslintrc.js'],
 };

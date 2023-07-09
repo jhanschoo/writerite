@@ -43,6 +43,6 @@
     "codegen": "graphql-codegen",
     "lint": "eslint",
     "format": "prettier -w .",
-    "test": "export $(xargs -a .env -d '\\n') && jest"
+    "test": "export $(xargs -a .env -d '\\n') && pnpm run --filter docker-compose-dev docker-compose:up:detach && jest && pnpm run --filter docker-compose-dev docker-compose:stop"
   }
 }

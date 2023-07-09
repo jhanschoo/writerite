@@ -10,7 +10,7 @@
   "main": "./index.ts",
   "scripts": {
     "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate",
+    "db:push": "pnpm run --filter docker-compose-dev docker-compose:up:detach && sleep 5 && prisma db push --skip-generate && pnpm run --filter docker-compose-dev docker-compose:stop",
     "echo-for-dep-graph": "echo",
     "format": "prisma format"
   },

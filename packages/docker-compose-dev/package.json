@@ -1,0 +1,16 @@
+{
+  "name": "docker-compose-dev",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "pnpm run docker-compose:up",
+    "docker-compose:clean": "docker volume rm docker-compose-dev_postgres_data",
+    "docker-compose:down": "docker compose down",
+    "docker-compose:up": "docker compose up",
+    "docker-compose:up:detach": "docker compose up -d",
+    "docker-compose:stop": "docker compose stop",
+    "echo-for-dep-graph": "echo",
+    "format": "prettier -w ."
+  }
+}

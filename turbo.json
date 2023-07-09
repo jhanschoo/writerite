@@ -39,6 +39,13 @@
     "db:push": {
       "cache": false,
       "dependsOn": ["db:generate"]
+    },
+    "docker-compose:down": {
+      "cache": false
+    },
+    "docker-compose:clean": {
+      "cache": false,
+      "dependsOn": ["docker-compose:down"]
     }
   }
 }

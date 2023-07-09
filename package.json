@@ -9,10 +9,12 @@
   "scripts": {
     "build": "turbo run build",
     "clean": "turbo run clean",
-    "dev": "turbo run dev",
-    "dev:apps": "turbo run dev --filter='./apps/*' --filter=yoga-app --parallel",
-    "format": "turbo run format --parallel",
     "db:push": "turbo run db:push",
+    "dev": "turbo run dev",
+    "dev:apps": "turbo run dev --filter='./apps/*' --filter=yoga-app --filter=docker-compose-dev --parallel",
+    "docker-compose:down": "turbo run docker-compose:down",
+    "docker-compose:clean": "turbo run docker-compose:clean",
+    "format": "turbo run format --parallel",
     "lint": "turbo run lint --parallel",
     "test": "turbo run test"
   },
