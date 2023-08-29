@@ -1,20 +1,15 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import {
-  Button,
-  Divider,
-  Flex,
-  Stack,
-  TextInput,
-} from '@mantine/core';
-import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
-import { useDebouncedCallback } from 'use-debounce';
 import { AddNewCard, ManageCard } from '@/features/manageCard';
-
-import { PageParams } from '@/utils/PageParams';
 import { STANDARD_DEBOUNCE_MS } from '@/utils';
-import { accumulateContentText } from '@/components/editor';
+import { PageParams } from '@/utils/PageParams';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Button, Divider, Flex, Stack, TextInput } from '@mantine/core';
+import { IconPlus, IconSearch, IconUpload } from '@tabler/icons-react';
 import { JSONContent } from '@tiptap/core';
+import { useDebouncedCallback } from 'use-debounce';
+
+import { accumulateContentText } from '@/components/editor';
+
 import { MANAGE_DECK_CARDS_CARDS_NUM } from '../constants';
 
 const WHITESPACE_REGEX = /\s+/;
@@ -27,7 +22,13 @@ const WHITESPACE_REGEX = /\s+/;
 const ManageDeckCardsFragment = graphql(/* GraphQL */ `
   fragment ManageDeckCards on Deck {
     id
-    cardsDirect(after: $after, before: $before, first: $first, last: $last, contains: $contains) {
+    cardsDirect(
+      after: $after
+      before: $before
+      first: $first
+      last: $last
+      contains: $contains
+    ) {
       edges {
         cursor
         node {
@@ -57,14 +58,24 @@ interface Props {
   startUpload(): void;
 }
 
-export const ManageDeckCards = ({ deck, setCardsPageParams, setCardsContain, startUpload, onCardDeleted }: Props) => {
+export const ManageDeckCards = ({
+  deck,
+  setCardsPageParams,
+  setCardsContain,
+  startUpload,
+  onCardDeleted,
+}: Props) => {
   const deckFragment = useFragment(ManageDeckCardsFragment, deck);
-  const { hasNextPage, hasPreviousPage, startCursor, endCursor } = deckFragment.cardsDirect.pageInfo;
+  const { hasNextPage, hasPreviousPage, startCursor, endCursor } =
+    deckFragment.cardsDirect.pageInfo;
   const [filter, setFilter] = useState('');
-  const setCardsContainDebounced = useDebouncedCallback((newCardsContain: string) => {
-    setCardsContain(newCardsContain);
-    setCardsPageParams({ first: MANAGE_DECK_CARDS_CARDS_NUM });
-  }, STANDARD_DEBOUNCE_MS);
+  const setCardsContainDebounced = useDebouncedCallback(
+    (newCardsContain: string) => {
+      setCardsContain(newCardsContain);
+      setCardsPageParams({ first: MANAGE_DECK_CARDS_CARDS_NUM });
+    },
+    STANDARD_DEBOUNCE_MS
+  );
   const [showAddCard, setShowAddCard] = useState<boolean>(false);
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
@@ -79,10 +90,22 @@ export const ManageDeckCards = ({ deck, setCardsPageParams, setCardsContain, sta
   const currentCards = deckFragment.cardsDirect.edges.flatMap((edge) => {
     if (edge?.node) {
       const { prompt, fullAnswer, answers } = edge.node;
-      const promptString = (prompt && accumulateContentText(prompt as JSONContent))?.toLocaleLowerCase() ?? '';
+      const promptString =
+        (
+          prompt && accumulateContentText(prompt as JSONContent)
+        )?.toLocaleLowerCase() ?? '';
       const fullAnswerString =
-        (fullAnswer && accumulateContentText(fullAnswer as JSONContent))?.toLocaleLowerCase() ?? '';
-      if (filterWords.every((word) => promptString.includes(word) || fullAnswerString.includes(word) || answers.some((answer) => answer.toLocaleLowerCase().includes(word)))) {
+        (
+          fullAnswer && accumulateContentText(fullAnswer as JSONContent)
+        )?.toLocaleLowerCase() ?? '';
+      if (
+        filterWords.every(
+          (word) =>
+            promptString.includes(word) ||
+            fullAnswerString.includes(word) ||
+            answers.some((answer) => answer.toLocaleLowerCase().includes(word))
+        )
+      ) {
         return [edge.node];
       }
     }

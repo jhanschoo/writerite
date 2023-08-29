@@ -1,5 +1,6 @@
 import { Queue } from 'bullmq';
-import { commonRedisOptions } from "../../constants/commonRedisOptions";
+
+import { commonRedisOptions } from '../../constants/commonRedisOptions';
 import { workerWithResources } from './workerWithResources';
 
 const connection = {
@@ -19,8 +20,8 @@ export const init = async () => {
     defaultJobOptions: {
       removeOnComplete: { count: 1000 },
       removeOnFail: { count: 1000 },
-    }
+    },
   });
   const worker = workerWithResources('main', { connection });
-  await queue.add('hello', {}, { repeat: { pattern: '* * * * *' }});
+  await queue.add('hello', {}, { repeat: { pattern: '* * * * *' } });
 };

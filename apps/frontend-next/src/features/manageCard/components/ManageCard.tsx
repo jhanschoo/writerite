@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   Button,
@@ -16,7 +17,6 @@ import { JSONContent, useEditor } from '@tiptap/react';
 import stringify from 'fast-json-stable-stringify';
 import { useMutation } from 'urql';
 import { DebouncedState, useDebouncedCallback } from 'use-debounce';
-import { STANDARD_DEBOUNCE_MS, STANDARD_MAX_WAIT_DEBOUNCE_MS } from '@/utils';
 
 import { BareRichTextEditor, DEFAULT_EDITOR_PROPS } from '@/components/editor';
 
@@ -158,7 +158,8 @@ export const ManageCard = ({ card, forceLoading, onCardDeleted }: Props) => {
   const [{ fetching: fetchingDelete }, cardDelete] = useMutation(
     ManageCardDeleteCardMutation
   );
-  const updateStateToServer = (newState: State) => cardEdit({
+  const updateStateToServer = (newState: State) =>
+    cardEdit({
       input: {
         id,
         ...newState,

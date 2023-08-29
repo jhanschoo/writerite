@@ -1,19 +1,13 @@
+import { PropsWithChildren } from 'react';
 import { ProfilePicture } from '@/features/profilePicture';
 import { JSONObject } from '@/utils';
 import { graphql } from '@generated/gql';
-import {
-  ActionIcon,
-  Card,
-  Flex,
-  Stack,
-  Text,
-} from '@mantine/core';
+import { ActionIcon, Card, Flex, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconCopy } from '@tabler/icons-react';
+import { EditorContent } from '@tiptap/react';
 
 import { useContentViewer } from '@/components/editor';
-import { PropsWithChildren } from 'react';
-import { EditorContent } from '@tiptap/react';
 
 export const UserProfileFragment = graphql(/* GraphQL */ `
   fragment UserProfile on User {

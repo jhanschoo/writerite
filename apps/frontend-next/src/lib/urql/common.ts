@@ -53,8 +53,14 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
       const res = appendHeaders(operation, {
         Authorization: `Bearer ${token}`,
       });
-      const fetchOptions = res.context.fetchOptions instanceof Function ? res.context.fetchOptions() : res.context.fetchOptions;
-      res.extensions = { ...res.extensions, headers: { ...res.extensions?.headers, ...fetchOptions?.headers } };
+      const fetchOptions =
+        res.context.fetchOptions instanceof Function
+          ? res.context.fetchOptions()
+          : res.context.fetchOptions;
+      res.extensions = {
+        ...res.extensions,
+        headers: { ...res.extensions?.headers, ...fetchOptions?.headers },
+      };
       return res;
     },
     willAuthError() {
@@ -90,10 +96,10 @@ const auth = authExchange(async ({ appendHeaders, mutate }) => {
 
 const subscription = subscriptionExchange({
   forwardSubscription: (operation) => ({
-      subscribe: (sink) => ({
-        unsubscribe: wsClient.subscribe(operation as SubscribePayload, sink),
-      }),
+    subscribe: (sink) => ({
+      unsubscribe: wsClient.subscribe(operation as SubscribePayload, sink),
     }),
+  }),
 });
 
 export const getExchanges = (ssr: Exchange) => [
@@ -104,8 +110,8 @@ export const getExchanges = (ssr: Exchange) => [
     resolvers: {
       Room: {
         messages: relayPagination(),
-      }
-    }
+      },
+    },
     // TODO: review
     // updates: {
     //   Mutation: {

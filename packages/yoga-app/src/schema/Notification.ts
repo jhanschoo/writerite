@@ -21,7 +21,8 @@ export interface MessageUpdatePublishArgs {
 
 builder.enumType(NotificationUpdateOperations, {
   name: 'NotificationUpdateOperations',
-  description: 'Names identifying operations that trigger notification updates.',
+  description:
+    'Names identifying operations that trigger notification updates.',
 });
 
 export enum NotificationDataType {
@@ -34,7 +35,7 @@ builder.enumType(NotificationDataType, {
 
 /**
  * Notifications have no access control, except for being user-contextualized.
- * 
+ *
  * TODO: add parameter to retrieve notifications of another user, if admin
  */
 export const Notification = builder.prismaNode('Notification', {

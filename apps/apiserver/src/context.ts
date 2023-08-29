@@ -4,8 +4,8 @@ import { YogaInitialContext, createPubSub } from 'graphql-yoga';
 import Redis from 'ioredis';
 import { Context, CurrentUser, PubSubPublishArgs, getClaims } from 'yoga-app';
 
-import { Resources } from './types/Resources';
 import { commonRedisOptions } from './constants/commonRedisOptions';
+import { Resources } from './types/Resources';
 
 const redisOptions = {
   ...commonRedisOptions,

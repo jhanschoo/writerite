@@ -13,17 +13,17 @@ export const ManageDeckFrontMatterContent = ({
   descriptionElement,
   handleEdit,
 }: Props) => (
-    <Stack>
-      <Flex justify="space-between">
-        <Title order={1}>
-          <DeckName name={name} />
-        </Title>
-        {handleEdit && (
-          <Button variant="outline" radius="xl" onClick={handleEdit}>
-            Edit Deck Info
-          </Button>
-        )}
-      </Flex>
-      {descriptionElement}
-    </Stack>
-  );
+  <Stack>
+    <Flex justify="space-between">
+      <Title order={1}>
+        <DeckName name={name} />
+      </Title>
+      {handleEdit && (
+        <Button variant="outline" radius="xl" onClick={handleEdit}>
+          Edit Deck Info
+        </Button>
+      )}
+    </Flex>
+    {descriptionElement}
+  </Stack>
+);

@@ -1,15 +1,15 @@
-import { useRouter } from 'next/router';
-import { FragmentType, graphql, useFragment } from '@generated/gql';
-import { Group, Stack, Tabs, createStyles } from '@mantine/core';
 import { Dispatch, SetStateAction } from 'react';
+import { useRouter } from 'next/router';
 import { ManageDeckCardsUpload } from '@/features/manageDeckCardsUpload';
 import {
   DECK_DETAIL_IMPORT_PATH,
   DECK_DETAIL_PATH,
   DECK_DETAIL_SUBDECK_PATH,
 } from '@/paths';
-
 import { PageParams } from '@/utils/PageParams';
+import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Group, Stack, Tabs, createStyles } from '@mantine/core';
+
 import { ManageDeckCards } from '../../manageDeckCards/components/ManageDeckCards';
 import { ManageDeckSubdecks } from '../../manageDeckSubdecks/components/ManageDeckSubdecks';
 
@@ -87,7 +87,13 @@ interface Props {
   onCardDeleted: () => void;
 }
 
-export const ManageDeckContent = ({ deck, path, setCardsPageParams, setCardsContain, onCardDeleted }: Props) => {
+export const ManageDeckContent = ({
+  deck,
+  path,
+  setCardsPageParams,
+  setCardsContain,
+  onCardDeleted,
+}: Props) => {
   const deckFragment = useFragment(ManageDeckContentFragment, deck);
   const { id, cardsDirectCount, subdecksCount } = deckFragment;
   const { classes } = useStyles();

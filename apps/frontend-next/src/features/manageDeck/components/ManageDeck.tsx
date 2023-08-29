@@ -1,21 +1,28 @@
+import { useState } from 'react';
+import { MANAGE_DECK_CARDS_CARDS_NUM } from '@/features/manageDeckCards';
+import { PageParams } from '@/utils/PageParams';
 import { graphql } from '@generated/gql';
 import { Stack } from '@mantine/core';
 import { useQuery } from 'urql';
 
-import { useState } from 'react';
-import { PageParams } from '@/utils/PageParams';
-import { MANAGE_DECK_CARDS_CARDS_NUM } from '@/features/manageDeckCards';
 import { ManageDeckAdditionalInfo } from './ManageDeckAdditionalInfo';
 import { ManageDeckContent } from './ManageDeckContent';
 import { ManageDeckFrontMatter } from './ManageDeckFrontMatter';
 
 const DeckQuery = graphql(/* GraphQL */ `
-  query DeckQuery($id: ID!, $after: ID, $first: Int, $before: ID, $last: Int, $contains: String) {
+  query DeckQuery(
+    $id: ID!
+    $after: ID
+    $first: Int
+    $before: ID
+    $last: Int
+    $contains: String
+  ) {
     deck(id: $id) {
       id
-    ...ManageDeckFrontMatter
-    ...ManageDeckAdditionalInfo
-    ...ManageDeckContent
+      ...ManageDeckFrontMatter
+      ...ManageDeckAdditionalInfo
+      ...ManageDeckContent
     }
   }
 `);
@@ -53,7 +60,13 @@ export const ManageDeck = ({ deckId, path }: Props) => {
         <ManageDeckFrontMatter deck={deck} />
         <ManageDeckAdditionalInfo deck={deck} />
       </Stack>
-      <ManageDeckContent deck={deck} path={path} setCardsPageParams={setCardsPageParams} setCardsContain={setCardsContain} onCardDeleted={reexecuteQuery} />
+      <ManageDeckContent
+        deck={deck}
+        path={path}
+        setCardsPageParams={setCardsPageParams}
+        setCardsContain={setCardsContain}
+        onCardDeleted={reexecuteQuery}
+      />
     </Stack>
   );
 };

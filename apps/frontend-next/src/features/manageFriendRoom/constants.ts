@@ -1,3 +1,3 @@
 export enum ManageFriendRoomContextualState {
-  Dummy = 'dummy'
+  Dummy = 'dummy',
 }

@@ -4,9 +4,7 @@ import { DECK_DETAIL_PATH } from '@/paths';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
 import { Button, Flex } from '@mantine/core';
 
-import {
-  DeckCompactSummaryContent,
-} from '@/components/deck';
+import { DeckCompactSummaryContent } from '@/components/deck';
 
 export const SubdeckListItemContentFragment = graphql(/* GraphQL */ `
   fragment SubdeckListItemContent on Deck {

@@ -29,9 +29,9 @@ import {
   IconSun,
 } from '@tabler/icons-react';
 
+import { CurrentUser } from '@/lib/tokenManagement';
 import { ActionIcon } from '@/components/ActionIcon';
 import BrandText from '@/components/typography/BrandText';
-import { CurrentUser } from '@/lib/tokenManagement';
 
 interface Props {
   vhHeight?: boolean;

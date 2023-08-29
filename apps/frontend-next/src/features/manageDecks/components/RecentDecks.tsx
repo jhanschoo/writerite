@@ -1,12 +1,16 @@
 import { MouseEventHandler } from 'react';
 import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
 import { FragmentType, graphql } from '@generated/gql';
+import { DecksQueryScope } from '@generated/gql/graphql';
 import { Card, UnstyledButton } from '@mantine/core';
 import { useQuery } from 'urql';
 
-import { DecksQueryScope } from '@generated/gql/graphql';
-import { DeckSummaryContent, DeckSummaryContentFragment, DecksList } from '@/components/deck';
-import { DECK_DETAIL_PATH } from '@/paths';
+import {
+  DeckSummaryContent,
+  DeckSummaryContentFragment,
+  DecksList,
+} from '@/components/deck';
 
 export const INITIAL_RECENT_DECKS = 5;
 
@@ -50,14 +54,8 @@ const DeckItemFactory = (onClickFactory: OnClickFactoryType) =>
   };
 
 const RecentDecksQuery = graphql(/* GraphQL */ `
-  query RecentDecksQuery(
-    $first: Int!
-    $input: DecksQueryInput!
-  ) {
-    decks(
-      first: $first
-      input: $input
-    ) {
+  query RecentDecksQuery($first: Int!, $input: DecksQueryInput!) {
+    decks(first: $first, input: $input) {
       edges {
         cursor
         node {
@@ -78,13 +76,15 @@ export const RecentDecks = () => {
       first: INITIAL_RECENT_DECKS,
       input: {
         scope: DecksQueryScope.Owned,
-      }
-    }
+      },
+    },
   });
   if (!data) {
     return null;
   }
-  const decks = data.decks.edges.flatMap((edge) => edge?.node ? [edge.node] : []);
+  const decks = data.decks.edges.flatMap((edge) =>
+    edge?.node ? [edge.node] : []
+  );
   return (
     <DecksList
       decks={decks}
@@ -93,6 +93,5 @@ export const RecentDecks = () => {
       })}
       justifyLeading
     />
-
   );
 };

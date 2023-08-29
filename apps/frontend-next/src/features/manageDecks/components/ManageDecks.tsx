@@ -1,5 +1,6 @@
 import { MouseEventHandler } from 'react';
 import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
 import { graphql } from '@generated/gql';
 import {
   Button,
@@ -12,7 +13,6 @@ import {
   getStylesRef,
 } from '@mantine/core';
 import { useMutation } from 'urql';
-import { DECK_DETAIL_PATH } from '@/paths';
 
 import { RecentDecks } from './RecentDecks';
 import { SearchDecks } from './SearchDecks';

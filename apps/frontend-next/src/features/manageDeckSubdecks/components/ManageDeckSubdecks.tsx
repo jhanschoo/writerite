@@ -1,14 +1,14 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FragmentType, useFragment } from '@generated/gql';
 import {
   DECK_DETAIL_SUBDECK_LINK_PATH,
   DECK_DETAIL_SUBDECK_PATH,
 } from '@/paths';
+import { FragmentType, useFragment } from '@generated/gql';
 
 import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
-import { ManageDeckSubdecksLinkSubdeck } from './SubdecksLinkSubdeck';
 import { ManageDeckSubdecksBrowse } from './SubdecksBrowse';
+import { ManageDeckSubdecksLinkSubdeck } from './SubdecksLinkSubdeck';
 
 enum Subpage {
   Browse = 'browse',

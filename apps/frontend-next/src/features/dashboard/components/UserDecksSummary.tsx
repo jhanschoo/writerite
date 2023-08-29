@@ -122,14 +122,8 @@ const DeckItem = ({
 };
 
 const UserDecksSummaryQuery = graphql(/* GraphQL */ `
-  query UserDecksSummaryQuery(
-    $first: Int
-    $input: DecksQueryInput!
-  ) {
-    decks(
-      first: $first
-      input: $input
-    ) {
+  query UserDecksSummaryQuery($first: Int, $input: DecksQueryInput!) {
+    decks(first: $first, input: $input) {
       edges {
         cursor
         node {

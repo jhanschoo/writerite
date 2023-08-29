@@ -7,9 +7,7 @@ import { useMutation } from 'urql';
 import { BasicList } from '@/components/BasicList';
 
 import { ManageDeckSubdecksFragment } from '../fragments/ManageDeckSubdecksFragment';
-import {
-  SubdeckListItemContent,
-} from './SubdeckListItemContent';
+import { SubdeckListItemContent } from './SubdeckListItemContent';
 
 const ManageDeckSubdecksBrowseRemoveSubdeckMutation = graphql(/* GraphQL */ `
   mutation ManageDeckSubdecksBrowseRemoveSubdeck(

@@ -2,6 +2,7 @@ import { decodeGlobalID } from '@pothos/plugin-relay';
 import { Deck as PDeck, Prisma, Unit } from 'database';
 
 import { builder, gao, ungao } from '../builder';
+import { CARD_ANSWERS_SEPARATOR } from '../constants';
 import { getDescendantsOfDeck } from '../service/deck';
 import { flattenJSONContent } from '../service/tiptap';
 import { DecksQueryScope } from './enums';
@@ -11,7 +12,6 @@ import {
   DeckEditMutationInput,
 } from './inputs';
 import { DecksQueryInput } from './inputs/DecksQueryInput';
-import { CARD_ANSWERS_SEPARATOR } from '../constants';
 
 export const PPUBLIC = gao('getPublicInfo');
 export const PPRIVATABLE = gao('getPrivatableInfo');
@@ -72,11 +72,14 @@ export const Deck = builder.prismaNode('Deck', {
               }
             : {}),
         },
-        orderBy: [{
-          editedAt: 'desc',
-        }, {
-          id: 'asc',
-        }],
+        orderBy: [
+          {
+            editedAt: 'desc',
+          },
+          {
+            id: 'asc',
+          },
+        ],
       }),
     }),
     cardsDirectCount: t.withAuth(PPRIVATABLE).relationCount('cards', {
@@ -162,7 +165,9 @@ builder.queryFields((t) => ({
           id: stoplist
             ? { notIn: stoplist.map((id) => decodeGlobalID(id as string).id) }
             : undefined,
-          name: titleContains ? { contains: titleContains, mode: 'insensitive' } : undefined,
+          name: titleContains
+            ? { contains: titleContains, mode: 'insensitive' }
+            : undefined,
         },
         orderBy: { editedAt: 'desc' },
       });

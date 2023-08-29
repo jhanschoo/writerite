@@ -2,9 +2,9 @@ import { decodeGlobalID } from '@pothos/plugin-relay';
 import { Prisma, Unit } from 'database';
 
 import { builder } from '../builder';
-import { CardCreateMutationInput, CardEditMutationInput } from './inputs';
-import { flattenJSONContent } from '../service/tiptap';
 import { CARD_ANSWERS_SEPARATOR } from '../constants';
+import { flattenJSONContent } from '../service/tiptap';
+import { CardCreateMutationInput, CardEditMutationInput } from './inputs';
 
 /**
  * Cards have no access control, and they must not naively appear top-level.
@@ -76,9 +76,10 @@ builder.mutationFields((t) => ({
           ...query,
           data: {
             prompt: card.prompt || Prisma.DbNull,
-            promptString: flattenJSONContent(card.prompt).join("") || '',
+            promptString: flattenJSONContent(card.prompt).join('') || '',
             fullAnswer: card.fullAnswer || Prisma.DbNull,
-            fullAnswerString: flattenJSONContent(card.fullAnswer).join("") || '',
+            fullAnswerString:
+              flattenJSONContent(card.fullAnswer).join('') || '',
             answers: card.answers,
             answersString: card.answers.join(CARD_ANSWERS_SEPARATOR) || '',
             isTemplate: card.isTemplate,
@@ -126,12 +127,21 @@ builder.mutationFields((t) => ({
           where: cardConditions,
           data: {
             prompt: card.prompt === null ? Prisma.DbNull : card.prompt,
-            promptString: card.prompt === undefined ? undefined : flattenJSONContent(card.prompt).join(""),
+            promptString:
+              card.prompt === undefined
+                ? undefined
+                : flattenJSONContent(card.prompt).join(''),
             fullAnswer:
               card.fullAnswer === null ? Prisma.DbNull : card.fullAnswer,
-            fullAnswerString: card.fullAnswer === undefined ? undefined : flattenJSONContent(card.fullAnswer).join(""),
+            fullAnswerString:
+              card.fullAnswer === undefined
+                ? undefined
+                : flattenJSONContent(card.fullAnswer).join(''),
             answers: card.answers,
-            answersString: card.answers === undefined ? undefined : card.answers.join(CARD_ANSWERS_SEPARATOR),
+            answersString:
+              card.answers === undefined
+                ? undefined
+                : card.answers.join(CARD_ANSWERS_SEPARATOR),
             isPrimaryTemplate,
             deck: {
               update: { editedAt: new Date() },

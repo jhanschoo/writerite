@@ -1,8 +1,8 @@
 import type { NextPage } from 'next';
-import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 import { useRouter } from 'next/router';
 import { ManageFriendRoom } from '@/features/manageFriendRoom';
 import { usePeriodicallyRefreshToken } from '@/features/signin';
+import { StandardLayout } from '@/features/standardLayout/components/StandardLayout';
 
 const Room: NextPage = () => {
   const router = useRouter();

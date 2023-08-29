@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { graphql } from '@generated/gql';
-import {
-  Button,
-  Flex,
-  TextInput,
-} from '@mantine/core';
+import { Button, Flex, TextInput } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconHash, IconPlus } from '@tabler/icons-react';
 import { useMutation } from 'urql';
@@ -19,9 +15,7 @@ const ManageFriendsBefriendMutation = graphql(/* GraphQL */ `
 
 export const Befriend = () => {
   const [befriendedId, setBefriendedId] = useState('');
-  const [, befriendMutation] = useMutation(
-    ManageFriendsBefriendMutation
-  );
+  const [, befriendMutation] = useMutation(ManageFriendsBefriendMutation);
   const handleBefriend = async () => {
     const { data } = await befriendMutation({ befriendedId });
     if (data) {

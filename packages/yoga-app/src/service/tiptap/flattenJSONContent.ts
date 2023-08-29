@@ -1,14 +1,16 @@
-import { Prisma } from "database";
+import { Prisma } from 'database';
 
-export const flattenJSONContent = (base: Prisma.JsonObject | null | undefined) => {
+export const flattenJSONContent = (
+  base: Prisma.JsonObject | null | undefined
+) => {
   const text: string[] = [];
   let queue = [base];
   while (queue.length) {
     const current = queue.pop();
-    if (typeof current !== "object" || current === null) {
+    if (typeof current !== 'object' || current === null) {
       continue;
     }
-    if (current.type == "text") {
+    if (current.type == 'text') {
       text.push(current.text as string);
     }
     if (Array.isArray(current.content)) {
@@ -16,4 +18,4 @@ export const flattenJSONContent = (base: Prisma.JsonObject | null | undefined) =
     }
   }
   return text;
-}
+};

@@ -6,6 +6,9 @@ import {
   useState,
 } from 'react';
 import { useRouter } from 'next/router';
+import { DECK_DETAIL_PATH } from '@/paths';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
+import { PageParams } from '@/utils/PageParams';
 import { FragmentType, graphql, useFragment } from '@generated/gql';
 import {
   DecksQueryScope,
@@ -28,9 +31,6 @@ import {
 } from '@tabler/icons-react';
 import { useMutation, useQuery } from 'urql';
 import { useDebounce } from 'use-debounce';
-import { PageParams } from '@/utils/PageParams';
-import { STANDARD_DEBOUNCE_MS } from '@/utils';
-import { DECK_DETAIL_PATH } from '@/paths';
 
 import { BasicList } from '@/components/BasicList';
 
@@ -276,7 +276,9 @@ export const ManageDeckSubdecksLinkSubdeck = ({
           View previous...
         </Button>
       )}
-      {searchDeckItems && <BasicList borderTop borderBottom data={searchDeckItems} />}
+      {searchDeckItems && (
+        <BasicList borderTop borderBottom data={searchDeckItems} />
+      )}
       {hasNextPage && endCursor && (
         <Button
           onClick={() => {

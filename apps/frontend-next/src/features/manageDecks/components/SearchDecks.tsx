@@ -5,6 +5,8 @@ import {
   SetStateAction,
   useState,
 } from 'react';
+import { STANDARD_DEBOUNCE_MS } from '@/utils';
+import { PageParams } from '@/utils/PageParams';
 import { FragmentType, graphql } from '@generated/gql';
 import { DecksQueryScope } from '@generated/gql/graphql';
 import {
@@ -16,14 +18,12 @@ import {
 } from '@mantine/core';
 import { useQuery } from 'urql';
 import { useDebouncedCallback } from 'use-debounce';
-import { STANDARD_DEBOUNCE_MS } from '@/utils';
 
 import {
   DeckSummaryContent,
   DeckSummaryContentFragment,
   DecksList,
 } from '@/components/deck';
-import { PageParams } from '@/utils/PageParams';
 
 export const MANAGE_DECKS_DECKS_NUM = 2;
 
@@ -111,12 +111,15 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
   const [pageParams, setPageParams] = useState<PageParams>({
     first: MANAGE_DECKS_DECKS_NUM,
   });
-  const debouncedTitleContains = useDebouncedCallback((newTitleContains: string) => {
-    setTitleContains(newTitleContains);
-    setPageParams({
-      first: MANAGE_DECKS_DECKS_NUM,
-    });
-  }, STANDARD_DEBOUNCE_MS);
+  const debouncedTitleContains = useDebouncedCallback(
+    (newTitleContains: string) => {
+      setTitleContains(newTitleContains);
+      setPageParams({
+        first: MANAGE_DECKS_DECKS_NUM,
+      });
+    },
+    STANDARD_DEBOUNCE_MS
+  );
   const [{ data }] = useQuery({
     query: SearchDecksQuery,
     variables: {
@@ -133,7 +136,11 @@ export const SearchDecks = ({ onClickFactory }: Props) => {
   const { hasPreviousPage, hasNextPage, startCursor, endCursor } =
     data.decks.pageInfo;
   const decks = data.decks.edges.flatMap((edge) => {
-    if (edge?.node?.name.toLocaleLowerCase().includes(titleContainsInput.toLocaleLowerCase())) {
+    if (
+      edge?.node?.name
+        .toLocaleLowerCase()
+        .includes(titleContainsInput.toLocaleLowerCase())
+    ) {
       return [edge.node];
     }
     return [];

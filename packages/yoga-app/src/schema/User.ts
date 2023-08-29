@@ -103,7 +103,7 @@ builder.queryFields((t) => ({
           befrienderIn: { some: { befriendedId: bareId } },
         },
       });
-    }
+    },
   }),
 }));
 

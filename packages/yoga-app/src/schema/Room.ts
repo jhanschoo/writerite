@@ -61,17 +61,16 @@ export const Room = builder.prismaNode('Room', {
   },
   id: { field: 'id' },
   fields: (t) => ({
-    messages: t
-      .withAuth(PDETAIL)
-      .relatedConnection('chatMsgs', {
-        cursor: 'id',
-        description: 'Messages sent in this room, ordered from latest to earliest.',
-        query: (args, ctx) => {
-          return {
-            orderBy: { createdAt: 'desc' },
-          };
-        },
-      }),
+    messages: t.withAuth(PDETAIL).relatedConnection('chatMsgs', {
+      cursor: 'id',
+      description:
+        'Messages sent in this room, ordered from latest to earliest.',
+      query: (args, ctx) => {
+        return {
+          orderBy: { createdAt: 'desc' },
+        };
+      },
+    }),
     messageCount: t.withAuth(PDETAIL).relationCount('chatMsgs'),
     occupantsCount: t.withAuth(PDETAIL).relationCount('occupants'),
     occupants: t.withAuth(PDETAIL).field({
@@ -134,10 +133,12 @@ builder.queryFields((t) => ({
     },
     nullable: true,
     resolve: async (query, _root, { otherOccupantIds }, { prisma, sub }) => {
-      const occupantsBareIds = otherOccupantIds.map((id) =>
-        decodeGlobalID(id as string).id
-      ).concat(sub.bareId);
-      const occupantsObjs = occupantsBareIds.map((occupantId) => ({ occupantId }));
+      const occupantsBareIds = otherOccupantIds
+        .map((id) => decodeGlobalID(id as string).id)
+        .concat(sub.bareId);
+      const occupantsObjs = occupantsBareIds.map((occupantId) => ({
+        occupantId,
+      }));
       const occupantsClause = occupantsObjs.map((occupantIdObj) => ({
         occupants: { some: occupantIdObj },
       }));
@@ -149,7 +150,7 @@ builder.queryFields((t) => ({
             { occupants: { every: { occupantId: { in: occupantsBareIds } } } },
             ...occupantsClause,
           ],
-        }
+        },
       });
       if (existingRoom) {
         return existingRoom;
@@ -161,9 +162,9 @@ builder.queryFields((t) => ({
           occupants: {
             createMany: {
               data: occupantsObjs,
-              skipDuplicates: true
-            }
-          }
+              skipDuplicates: true,
+            },
+          },
         },
       });
       return newRoom;
@@ -181,7 +182,7 @@ builder.queryFields((t) => ({
         where: {
           type: RoomType.DECK_PERSISTENT,
           rounds: { some: { isActive: Unit.UNIT, deckId: deckBareId } },
-        }
+        },
       });
       if (existingRoom) {
         return prisma.room.update({
@@ -190,7 +191,12 @@ builder.queryFields((t) => ({
           data: {
             occupants: {
               upsert: {
-                where: { roomId_occupantId: { roomId: existingRoom.id, occupantId: sub.bareId } },
+                where: {
+                  roomId_occupantId: {
+                    roomId: existingRoom.id,
+                    occupantId: sub.bareId,
+                  },
+                },
                 create: { occupantId: sub.bareId },
                 update: {},
               },
@@ -221,24 +227,26 @@ builder.queryFields((t) => ({
       return newRoom;
     },
   }),
-  occupyingUnarchivedEphemeralRooms: t.withAuth({ authenticated: true }).prismaField({
-    type: [Room],
-    nullable: true,
-    resolve: async (query, _root, _args, { prisma, sub }) => {
-      return await prisma.room.findMany({
-        ...query,
-        where: {
-          type: RoomType.EPHEMERAL,
-          occupants: {
-            some: {
-              occupantId: sub.bareId,
+  occupyingUnarchivedEphemeralRooms: t
+    .withAuth({ authenticated: true })
+    .prismaField({
+      type: [Room],
+      nullable: true,
+      resolve: async (query, _root, _args, { prisma, sub }) => {
+        return await prisma.room.findMany({
+          ...query,
+          where: {
+            type: RoomType.EPHEMERAL,
+            occupants: {
+              some: {
+                occupantId: sub.bareId,
+              },
             },
+            archived: false,
           },
-          archived: false,
-        },
-      });
-    },
-  }),
+        });
+      },
+    }),
 }));
 
 builder.mutationFields((t) => ({

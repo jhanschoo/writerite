@@ -2,12 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { FRIENDS_PATH } from '@/paths';
 import { graphql } from '@generated/gql';
-import {
-  Box,
-  Button,
-  Title,
-  createStyles,
-} from '@mantine/core';
+import { Box, Button, Title, createStyles } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useQuery } from 'urql';
 

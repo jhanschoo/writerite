@@ -184,6 +184,10 @@ export type Message = Node & {
   createdAt: Scalars['DateTime'];
   id: Scalars['ID'];
   sender: User;
+  /** The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization */
+  senderBareId?: Maybe<Scalars['ID']>;
+  /** The client should consider transforming the message to include a sender: { id: <id>, name: <name> } field for normalization */
+  senderId?: Maybe<Scalars['ID']>;
   type: MessageContentType;
 };
 
@@ -366,6 +370,7 @@ export type Query = {
   /** users that have befriended you */
   befrienders: QueryBefriendersConnection;
   deck: Deck;
+  deckPersistentRoomByDeckId?: Maybe<Room>;
   decks: QueryDecksConnection;
   friend?: Maybe<User>;
   /** users who are mutual friends with you */
@@ -397,6 +402,10 @@ export type QueryBefriendersArgs = {
 
 export type QueryDeckArgs = {
   id: Scalars['ID'];
+};
+
+export type QueryDeckPersistentRoomByDeckIdArgs = {
+  deckId: Scalars['ID'];
 };
 
 export type QueryDecksArgs = {
@@ -495,6 +504,7 @@ export type Room = Node & {
   activeRound?: Maybe<Round>;
   id: Scalars['ID'];
   messageCount: Scalars['Int'];
+  /** Messages sent in this room, ordered from latest to earliest. */
   messages: RoomMessagesConnection;
   occupants: Array<User>;
   occupantsCount: Scalars['Int'];
@@ -521,6 +531,7 @@ export type RoomMessagesConnectionEdge = {
 };
 
 export enum RoomType {
+  DeckPersistent = 'DECK_PERSISTENT',
   Ephemeral = 'EPHEMERAL',
   Persistent = 'PERSISTENT',
 }

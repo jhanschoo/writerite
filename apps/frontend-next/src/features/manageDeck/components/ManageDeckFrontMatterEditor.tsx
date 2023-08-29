@@ -11,14 +11,14 @@ export const ManageDeckFrontMatterEditor = ({
   setName,
   descriptionEditorElement,
 }: Props) => (
-    <Stack>
-      <TextInput
-        label="Title"
-        value={name}
-        onChange={(event) => setName(event.currentTarget.value)}
-      />
-      <Input.Wrapper label="Description">
-        {descriptionEditorElement}
-      </Input.Wrapper>
-    </Stack>
-  );
+  <Stack>
+    <TextInput
+      label="Title"
+      value={name}
+      onChange={(event) => setName(event.currentTarget.value)}
+    />
+    <Input.Wrapper label="Description">
+      {descriptionEditorElement}
+    </Input.Wrapper>
+  </Stack>
+);

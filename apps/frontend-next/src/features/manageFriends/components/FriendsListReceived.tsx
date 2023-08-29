@@ -1,8 +1,8 @@
 import { FragmentType, graphql, useFragment } from '@generated/gql';
+import { Button, Center } from '@mantine/core';
 import { useMutation, useQuery } from 'urql';
 
 import { UserProfile, UserProfileFragment } from '@/components/user';
-import { Button, Center } from '@mantine/core';
 
 const FriendsListReceivedItemBefriendMutation = graphql(/* GraphQL */ `
   mutation FriendsListReceivedItemBefriendMutation($befriendedId: ID!) {
@@ -36,7 +36,7 @@ const FriendsListReceivedItem = ({ user }: FriendsListReceivedItemProps) => {
   return (
     <UserProfile user={userFragment}>
       <Center>
-          <Button onClick={() => befriend({ befriendedId })}>Accept</Button>
+        <Button onClick={() => befriend({ befriendedId })}>Accept</Button>
       </Center>
     </UserProfile>
   );
@@ -51,6 +51,8 @@ export const FriendsListReceived = () => {
   if (users.length === 0) {
     return <p>You have no received friend requests pending approval.</p>;
   }
-  const userProfiles = users.map((user) => <FriendsListReceivedItem key={user.id} user={user} />);
+  const userProfiles = users.map((user) => (
+    <FriendsListReceivedItem key={user.id} user={user} />
+  ));
   return <>{userProfiles}</>;
 };

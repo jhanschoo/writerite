@@ -3,9 +3,9 @@ import { ManageDecks } from '@/features/manageDecks';
 import { StandardLayout } from '@/features/standardLayout';
 
 const Home: NextPage = () => (
-    <StandardLayout>
-      <ManageDecks />
-    </StandardLayout>
-  );
+  <StandardLayout>
+    <ManageDecks />
+  </StandardLayout>
+);
 
 export default Home;

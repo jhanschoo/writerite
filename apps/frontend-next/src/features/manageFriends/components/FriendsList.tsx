@@ -1,8 +1,8 @@
 import { Stack, Tabs, Title } from '@mantine/core';
 
-import { FriendsMutualsList } from './FriendsMutualsList';
 import { FriendsListReceived } from './FriendsListReceived';
 import { FriendsListSent } from './FriendsListSent';
+import { FriendsMutualsList } from './FriendsMutualsList';
 
 export const FriendsList = () => (
   <Tabs defaultValue="mutuals">

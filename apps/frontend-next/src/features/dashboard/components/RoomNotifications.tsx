@@ -40,37 +40,37 @@ const RoomNotificationsRoomItemFragment = graphql(/* GraphQL */ `
 `);
 
 const useStyles = createStyles((theme) => ({
-    roomItem: {
-      backgroundImage: alertGradient(theme),
-      color: theme.white,
-      ...theme.fn.hover({
-        backgroundImage: alertGradientHover(theme),
-      }),
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
+  roomItem: {
+    backgroundImage: alertGradient(theme),
+    color: theme.white,
+    ...theme.fn.hover({
+      backgroundImage: alertGradientHover(theme),
+    }),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  avatarGroup: {
+    display: 'inline-flex',
+  },
+  roomItemButton: {
+    borderColor: theme.white,
+    color: theme.white,
+    minWidth: '25%',
+    ...theme.fn.hover({
+      background: 'none',
+    }),
+  },
+  roomItemText: {
+    fontSize: theme.fontSizes.xl,
+    [`@media (min-width: ${theme.breakpoints.sm})`]: {
+      fontSize: `calc(${theme.fontSizes.xl} * 1.5)`,
     },
-    avatarGroup: {
-      display: 'inline-flex',
+    [`@media (min-width: ${theme.breakpoints.md})`]: {
+      fontSize: `calc(${theme.fontSizes.xl} * 2)`,
     },
-    roomItemButton: {
-      borderColor: theme.white,
-      color: theme.white,
-      minWidth: '25%',
-      ...theme.fn.hover({
-        background: 'none',
-      }),
-    },
-    roomItemText: {
-      fontSize: theme.fontSizes.xl,
-      [`@media (min-width: ${theme.breakpoints.sm})`]: {
-        fontSize: `calc(${theme.fontSizes.xl} * 1.5)`,
-      },
-      [`@media (min-width: ${theme.breakpoints.md})`]: {
-        fontSize: `calc(${theme.fontSizes.xl} * 2)`,
-      },
-    },
-  }));
+  },
+}));
 
 const RoomItem = ({
   room,
@@ -125,11 +125,13 @@ export const RoomNotifications = ({ wrapper: Wrapper }: Props) => {
   const [{ data, fetching, error }, refetchRooms] = useQuery({
     query: RoomNotificationsQuery,
   });
-  const rooms = (data?.occupyingUnarchivedEphemeralRooms || []).map((room, index) => (
-    <Wrapper key={index}>
-      <RoomItem room={room} />
-    </Wrapper>
-  ));
+  const rooms = (data?.occupyingUnarchivedEphemeralRooms || []).map(
+    (room, index) => (
+      <Wrapper key={index}>
+        <RoomItem room={room} />
+      </Wrapper>
+    )
+  );
   if (rooms.length) {
     return <>{rooms}</>;
   }
